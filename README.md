@@ -1,4 +1,4 @@
 runnerup
 ========
 
-A open source run tracker
+An open source run tracker
