@@ -34,7 +34,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class Accounts extends ListActivity implements Constants {
+public class AccountsActivity extends ListActivity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
