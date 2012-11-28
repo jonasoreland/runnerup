@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+	<PreferenceScreen 
+            android:key="audocues_preferencescreen"
+            android:title="Audio cues">
+            
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="cue_time"
+        	android:title="Time triggered audio cue" />
+    	
+	    <org.runnerup.widget.TextPreference
+	        android:dependency="cue_time"
+            android:defaultValue="120"
+            android:inputType="number"
+            android:key="cue_time_intervall"
+            android:persistent="true"
+            android:summary="120"
+            android:title="Cue intervall (s)" />
+
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="cue_distance"
+        	android:title="Distance triggered audio cue" />
+    	
+	    <org.runnerup.widget.TextPreference
+	        android:dependency="cue_distance"
+            android:defaultValue="1000"
+            android:inputType="number"
+            android:key="cue_distance_intervall"
+            android:persistent="true"
+            android:summary="1000"
+            android:title="Cue intervall (m)" />
+
+    	    <PreferenceCategory android:title="Cue information">
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_total_distance"
+        		android:title="Total distance" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_total_time"
+        		android:title="Total time" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_total_speed"
+        		android:title="Total speed" />
+
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_lap_distance"
+        		android:title="Lap distance" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_lap_time"
+        		android:title="Lap time" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_lap_speed"
+        		android:title="Lap speed" />
+    						
+   		</PreferenceCategory>
+	</PreferenceScreen>
+    	    	    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_autolap_active"
+        android:persistent="true"
+        android:title="Autolap" />
+        
+	<org.runnerup.widget.TextPreference
+        android:defaultValue="1000"
+        android:dependency="pref_autolap_active"
+        android:inputType="number"
+        android:key="pref_autolap"
+        android:persistent="true"
+        android:summary="1000"
+        android:title="Autolap (m)"
+        android:enabled="true" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:persistent="true"
+        android:key="pref_countdown_active"
+        android:title="Activity countdown" />
+
+	<org.runnerup.widget.TextPreference
+        android:defaultValue="15"
+        android:dependency="pref_countdown_active"
+        android:inputType="number"
+        android:key="pref_countdown_time"
+        android:persistent="true"
+        android:summary="15"
+        android:title="Countdown time (s)" />
+
+    <ListPreference
+        android:defaultValue="mi"
+        android:key="pref_unit"
+        android:persistent="true"
+        android:title="Unit preference"
+        android:entries="@array/unitEntries"
+        android:entryValues="@array/unitValues" />
+
+	<CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_startgps"
+        android:persistent="true"
+        android:title="Auto start gps" />
+
+	<PreferenceScreen 
+            android:key="second_preferencescreen"
+            android:title="Development options">
+            
+	    <org.runnerup.widget.TextPreference
+            android:defaultValue="500"
+            android:inputType="number"
+            android:key="pref_pollInterval"
+            android:persistent="true"
+            android:summary="500"
+            android:title="Poll intervall (ms)" />
+
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="0"
+            android:inputType="number"
+            android:key="pref_pollDistance"
+            android:persistent="true"
+            android:summary="0"
+            android:title="Poll distance (m)" />
+
+	</PreferenceScreen>
+    
+</PreferenceScreen>
