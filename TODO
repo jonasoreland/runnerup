@@ -1,0 +1,21 @@
+- map view
+- workout wizard
+- text fragment for audio cues (currently translates word by word)
+- post to facebook
+- post to twitter
+- upload to MapMyRun
+- upload to Endmondo
+- upload to runtastic
+- upload from End of activity view
+- Name/comment to activity
+- configure accounts
+- multi upload
+- km/miles & speed/pace
+  should it be global settings or per workout settings ??
+  e.g maybe speed is more interesting that pace for cycling
+      but pace is more interesting fo running
+- gui/colors (gui is everything when/if publishing on Market)
+  I think RunKeeper's gui/colors is great!
+- next lap/next interval buttons
+- smoothing of raw data (offline only??)
+- routes ??
