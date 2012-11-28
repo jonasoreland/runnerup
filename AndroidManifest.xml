@@ -63,6 +63,10 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 
+		<activity android:name=".view.AccounstActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+
 		<activity android:name=".export.oauth2client.OAuth2Activity"
 		    android:screenOrientation="portrait" >
 		</activity>
@@ -78,9 +82,5 @@
 <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
 <uses-permission android:name="android.permission.CONTROL_LOCATION_UPDATES" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
-<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 <uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.USE_CREDENTIALS" />
 </manifest> 

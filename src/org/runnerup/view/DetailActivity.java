@@ -353,45 +353,6 @@ public class DetailActivity extends Activity implements Constants {
 
 	OnClickListener uploadButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-
-			TCX tcx = new TCX(mDB);
-			try {
-				FileWriter writer = new FileWriter("/mnt/sdcard/jonas.tcx",
-						false);
-				tcx.export(mID, writer);
-				writer.flush();
-				writer.close();
-			} catch (IOException e) {
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-						DetailActivity.this);
-
-				// set title
-				alertDialogBuilder.setTitle("Your Title");
-
-				// set dialog message
-				alertDialogBuilder.setMessage("" + e.toString());
-				alertDialogBuilder.show();
-			}
-
-			RunKeeper rk = new RunKeeper(mDB);
-			try {
-				FileWriter writer = new FileWriter("/mnt/sdcard/jonas2.tcx",
-						false);
-				rk.export(mID, writer);
-				writer.flush();
-				writer.close();
-			} catch (IOException e) {
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-						DetailActivity.this);
-
-				// set title
-				alertDialogBuilder.setTitle("Your Title");
-
-				// set dialog message
-				alertDialogBuilder.setMessage("" + e.toString());
-				alertDialogBuilder.show();
-			}
-
 			uploadManager.startUploading(mID);
 		}
 	};
