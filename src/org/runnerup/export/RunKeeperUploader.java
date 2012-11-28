@@ -43,12 +43,13 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	/**
 	 * @todo register OAuth2Server
 	 */
-	public static final String CLIENT_ID = "1f4fc840938f46278a9d019db93a8538";
-	public static final String CLIENT_SECRET = "ffbba1f04b75476cabfb4d87ef54e250";
+	public static final String CLIENT_ID = "1093200920e5495bbb7eedfe7bcd68e7";
+	public static final String CLIENT_SECRET = "a3d4a4012dd54c15b66c03f5f08b441f";
 
-	public static final String AUTH_URL = "https://runkeeper.com/apps/authorize";
+	// TODO: I get ssl error when using https
+	public static final String AUTH_URL = "http://runkeeper.com/apps/authorize";
 	public static final String TOKEN_URL = "http://runkeeper.com/apps/token";
-	public static final String REDIRECT_URI = "http://localhost:8080/isohealth/index.html";
+	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runkeeper";
 
 	public static final String REST_URL = "http://api.runkeeper.com";
 
