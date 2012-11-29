@@ -136,7 +136,6 @@ public class StartActivity extends Activity implements TickListener {
 				mGpsTracker.startLogging();
 				mGpsStatus.start(StartActivity.this);
 			} else if (mGpsStatus.isFixed()) {
-				log("state=" + mGpsTracker.getState());
 				mGpsStatus.stop(StartActivity.this);
 				Context ctx = getApplicationContext();
 				Workout w = WorkoutBuilder.createDefaultWorkout(debugView,
@@ -154,7 +153,7 @@ public class StartActivity extends Activity implements TickListener {
 
 	private void updateView() {
 		if (mGpsTracker != null)
-			log("mGpsTracker.getState(): " + mGpsTracker.getState());
+			log("mGpsTracker.getState(): bug23937: " + mGpsTracker.getBug23937Delta());
 		else
 			log("mGpsTracker = null");
 

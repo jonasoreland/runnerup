@@ -49,6 +49,12 @@ public class GpsTracker extends android.app.Service implements
 	private static final int NOTIFICATION_ID = 1;
 
 	/**
+	 * Work-around for http://code.google.com/p/android/issues/detail?id=23937
+	 */
+	boolean mBug23937Checked = false;
+	long mBug23937Delta = 0;
+	
+	/**
 	 *
 	 */
 	long mLapId = 0;
@@ -140,9 +146,21 @@ public class GpsTracker extends android.app.Service implements
 	}
 
 	public boolean isLogging() {
-		return state == State.LOGGING;
+		switch (state) {
+		case INIT:
+			return false;
+		case LOGGING:
+		case STARTED: 
+		case PAUSED:
+			return true;
+		}
+		return true;
 	}
 
+	public long getBug23937Delta() {
+		return mBug23937Delta;
+	}
+	
 	public long createActivity() {
 		assert (state == State.INIT);
 		/**
@@ -202,7 +220,7 @@ public class GpsTracker extends android.app.Service implements
 			/**
 			 * This saves mLastLocation as a PAUSE location
 			 */
-			onLocationChanged(mActivityLastLocation);
+			internalOnLocationChanged(mActivityLastLocation);
 		}
 
 		ContentValues tmp = new ContentValues();
@@ -213,12 +231,15 @@ public class GpsTracker extends android.app.Service implements
 		state = State.PAUSED;
 	}
 
-	public boolean isPaused() {
-		return state == State.PAUSED;
+	private void internalOnLocationChanged(Location arg0) {
+		long save = mBug23937Delta;
+		mBug23937Delta = 0;
+		onLocationChanged(arg0);
+		mBug23937Delta = save;
 	}
 
-	public State getState() {
-		return state;
+	public boolean isPaused() {
+		return state == State.PAUSED;
 	}
 
 	public void resume() {
@@ -231,7 +252,7 @@ public class GpsTracker extends android.app.Service implements
 			/**
 			 * save last know location as resume location
 			 */
-			onLocationChanged(mActivityLastLocation);
+			internalOnLocationChanged(mActivityLastLocation);
 		}
 	}
 
@@ -288,6 +309,20 @@ public class GpsTracker extends android.app.Service implements
 
 	@Override
 	public void onLocationChanged(Location arg0) {
+		if (mBug23937Checked == false) {
+			long gpsTime = arg0.getTime();
+			long utcTime = System.currentTimeMillis();
+			if (gpsTime > utcTime + 3 * 1000) {
+				mBug23937Delta = utcTime - gpsTime;
+			} else {
+				mBug23937Delta = 0;
+			}
+			mBug23937Checked = true;
+		}
+		if (mBug23937Delta != 0) {
+			arg0.setTime(arg0.getTime() + mBug23937Delta);
+		}
+		
 		if (state == State.STARTED) {
 			if (mActivityLastLocation != null) {
 				double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
