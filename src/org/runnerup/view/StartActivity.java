@@ -16,9 +16,6 @@
  */
 package org.runnerup.view;
 
-import java.text.MessageFormat;
-import java.util.Date;
-
 import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.TickListener;
@@ -30,23 +27,29 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 public class StartActivity extends Activity implements TickListener {
+
 	GpsTracker mGpsTracker = null;
 	org.runnerup.gpstracker.GpsStatus mGpsStatus = null;
+	TextToSpeech mSpeech = null;
 
+	Button startButton = null;
+	TextView gpsInfoView1 = null;
+	TextView gpsInfoView2 = null;
 	TextView debugView = null;
 
 	/** Called when the activity is first created. */
@@ -67,18 +70,8 @@ public class StartActivity extends Activity implements TickListener {
 		gpsInfoView2 = (TextView) findViewById(R.id.gpsInfo2);
 		debugView = (TextView) findViewById(R.id.textView1);
 
-		editText = (EditText) findViewById(R.id.editText1);
-		sayButton = (Button) findViewById(R.id.button1);
-		sayButton.setOnClickListener(sayButtonClick);
-		Button button2 = (Button) findViewById(R.id.button2);
-		button2.setOnClickListener(authButtonClick);
-
 		mGpsStatus = new org.runnerup.gpstracker.GpsStatus(StartActivity.this);
 	}
-
-	Button startButton = null;
-	TextView gpsInfoView1 = null;
-	TextView gpsInfoView2 = null;
 
 	@Override
 	public void onPause() {
@@ -119,11 +112,11 @@ public class StartActivity extends Activity implements TickListener {
 	void onGpsTrackerBound() {
 		log("2 mGpsTracker = " + mGpsTracker);
 		Context ctx = getApplicationContext();
-		if (PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
-				"pref_startgps", false) == true) {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
+		if (pref.getBoolean("pref_startgps", false) == true) {
 			log("autostart gps");
-			mGpsTracker.startLogging();
 			mGpsStatus.start(this);
+			mGpsTracker.startLogging();
 		} else {
 			log("don't autostart gps");
 		}
@@ -132,7 +125,12 @@ public class StartActivity extends Activity implements TickListener {
 
 	OnClickListener startButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			if (mGpsTracker.isLogging() == false) {
+			log ("here mGpsTracker.isLogging(): " + mGpsTracker.isLogging());
+			if (mGpsStatus.isEnabled() == false) {
+				log("run intent");
+				startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+			} else if (mGpsTracker.isLogging() == false) {
+				log("startLoging");
 				mGpsTracker.startLogging();
 				mGpsStatus.start(StartActivity.this);
 			} else if (mGpsStatus.isFixed()) {
@@ -152,24 +150,25 @@ public class StartActivity extends Activity implements TickListener {
 	};
 
 	private void updateView() {
-		if (mGpsTracker != null)
-			log("mGpsTracker.getState(): bug23937: " + mGpsTracker.getBug23937Delta());
-		else
-			log("mGpsTracker = null");
-
 		{
 			int cnt0 = mGpsStatus.getSatellitesFixed();
 			int cnt1 = mGpsStatus.getSatellitesAvailable();
 			gpsInfoView1.setText("" + cnt0 + "(" + cnt1 + ")");
 		}
-		Location l = mGpsTracker.getLastKnownLocation();
-		if (l != null) {
-			gpsInfoView2.setText(" " + l.getAccuracy() + "m");
+
+		if (mGpsTracker != null) {
+			Location l = mGpsTracker.getLastKnownLocation();
+
+			if (l != null) {
+				gpsInfoView2.setText(" " + l.getAccuracy() + "m");
+			}
 		}
-		if (mGpsTracker.isLogging() == false) {
+		if (mGpsStatus.isEnabled() == false) {
+			startButton.setEnabled(true);
+			startButton.setText("Enable GPS");
+		} else if (mGpsStatus.isLogging() == false) {
 			startButton.setEnabled(true);
 			startButton.setText("Start GPS");
-			mGpsTracker.startLogging();
 		} else if (mGpsStatus.isFixed() == false) {
 			startButton.setEnabled(false);
 			startButton.setText("Waiting for GPS");
@@ -179,42 +178,7 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	}
 
-	public void onLocationChanged(Location arg0) {
-		long t0 = arg0.getTime();
-		long t1 = System.currentTimeMillis();
-		long t2 = android.os.SystemClock.elapsedRealtime();
-		long t3 = android.os.SystemClock.uptimeMillis();
-		log("currentTimeMillis(): " + t1 + ", diff: "
-				+ DateUtils.formatElapsedTime(Math.abs(t0 - t1) / 1000));
-		log("elapsedRealtime: " + t2 + ", diff: "
-				+ DateUtils.formatElapsedTime(Math.abs(t0 - t2) / 1000));
-		log("uptimeMillis: " + t3 + ", diff: "
-				+ DateUtils.formatElapsedTime(Math.abs(t0 - t3) / 1000));
-		log("GPS: now: location changed: " + arg0.toString());
-		updateView();
-	}
-
-	public void onProviderDisabled(String arg0) {
-		log("GPS: provider disabled " + arg0);
-		updateView();
-	}
-
-	public void onProviderEnabled(String arg0) {
-		log("GPS: provider enabled " + arg0);
-		updateView();
-	}
-
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-		log("GPS: status changed to " + arg0 + " [" + arg1 + "]");
-		updateView();
-	}
-
-	public void onGpsStatusChanged(int event, GpsStatus gs) {
-		updateView();
-	}
-
 	private boolean mIsBound = false;
-
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
@@ -254,10 +218,6 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	}
 
-	Button sayButton = null;
-	EditText editText = null;
-	TextToSpeech mSpeech = null;
-
 	TextToSpeech.OnInitListener mTTSOnInitListener = new TextToSpeech.OnInitListener() {
 
 		@Override
@@ -267,35 +227,7 @@ public class StartActivity extends Activity implements TickListener {
 				mSpeech = null;
 			} else {
 				log("tts ok");
-				sayButton.setEnabled(true);
 			}
-		}
-	};
-
-	OnClickListener sayButtonClick = new OnClickListener() {
-		public void onClick(View v) {
-			String s = (((TextView) editText).getText()).toString();
-			log("say: " + s);
-			mSpeech.speak(s, TextToSpeech.QUEUE_ADD, null);
-
-			long l = 1352188824; // 1352188824294;
-			Date d = new Date(l);
-			log("test: " + d.toString());
-
-			Object[] arguments = { Integer.valueOf(7),
-					DateUtils.formatElapsedTime(240), new Date(240 * 1000),
-					"a disturbance in the Force" };
-
-			String result = MessageFormat
-					.format("At {1} on {2,date}, there was {3} on planet {0,number,integer}.",
-							arguments);
-
-			log("res: " + result);
-		}
-	};
-
-	OnClickListener authButtonClick = new OnClickListener() {
-		public void onClick(View v) {
 		}
 	};
 

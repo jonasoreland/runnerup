@@ -68,6 +68,7 @@ public class GpsStatus implements LocationListener,
 	}
 
 	public void start(TickListener listener) {
+		System.err.println("GpsStatus.start("+listener+")");
 		this.listener = listener;
 		locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -77,10 +78,13 @@ public class GpsStatus implements LocationListener,
 	}
 
 	public void stop(TickListener listener) {
+		System.err.println("GpsStatus.stop("+listener+")");
 		this.listener = null;
-		locationManager.removeGpsStatusListener(this);
-		locationManager.removeUpdates(this);
-		locationManager = null;
+		if (locationManager != null) {
+			locationManager.removeGpsStatusListener(this);
+			locationManager.removeUpdates(this);
+			locationManager = null;
+		}
 		clear();
 	}
 
@@ -158,6 +162,10 @@ public class GpsStatus implements LocationListener,
 			mHistory[i] = null;
 	}
 
+	public boolean isLogging() {
+		return locationManager != null;
+	}
+
 	public boolean isFixed() {
 		return mIsFixed;
 	}
@@ -168,5 +176,11 @@ public class GpsStatus implements LocationListener,
 
 	public int getSatellitesFixed() {
 		return mUsedInLastFixSatellites;
+	}
+
+	public boolean isEnabled() {
+		LocationManager lm = (LocationManager) context
+				.getSystemService(Context.LOCATION_SERVICE);
+		return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 }

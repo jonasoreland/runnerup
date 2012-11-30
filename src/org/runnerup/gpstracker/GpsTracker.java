@@ -35,7 +35,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -91,22 +90,17 @@ public class GpsTracker extends android.app.Service implements
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getWritableDatabase();
 		wakelock(false);
-		Toast.makeText(this, "GpsTracker.onCreate()", Toast.LENGTH_LONG).show();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// We want this service to continue running until it is explicitly
 		// stopped, so return sticky.
-		Toast.makeText(this, "GpsTracker.onStartCommand", Toast.LENGTH_LONG)
-				.show();
 		return START_STICKY;
 	}
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "GpsTracker.onDestroy()", Toast.LENGTH_LONG)
-				.show();
 		if (mDB != null) {
 			mDB.close();
 			mDB = null;
