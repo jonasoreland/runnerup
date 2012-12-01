@@ -218,10 +218,12 @@
 
     <Button
         android:id="@+id/stopButton"
+        style="@style/ButtonText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:background="@drawable/btn_red"
         android:text="Stop activity" />
 
 </RelativeLayout>

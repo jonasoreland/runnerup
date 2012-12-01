@@ -116,30 +116,27 @@
 
     <Button
         android:id="@+id/saveButton"
+        style="@style/ButtonText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/tableRow1"
+        android:layout_above="@+id/resumeButton"
+        android:background="@drawable/btn_green"
         android:text="Save activity" />
 
-    <TableRow
-        android:id="@+id/tableRow1"
+    <Button
+        android:id="@+id/resumeButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
+        android:layout_above="@+id/discardButton"
+        android:text="Resume" />
 
-        <Button
-            android:id="@+id/resumeButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Resume" />
-
-        <Button
-            android:id="@+id/discardButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Discard activity" />
-    </TableRow>
+    <Button
+        android:id="@+id/discardButton"
+        style="@style/ButtonText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_red"
+        android:layout_alignParentBottom="true"
+        android:text="Discard activity" />
 
 </RelativeLayout>
