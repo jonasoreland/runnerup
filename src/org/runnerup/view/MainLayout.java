@@ -43,7 +43,7 @@ public class MainLayout extends TabActivity {
 		tabHost.addTab(tabHost
 				.newTabSpec("History")
 				.setIndicator("History",
-						res.getDrawable(R.drawable.ic_tab_setup))
+						res.getDrawable(R.drawable.ic_tab_history))
 				.setContent(intent2));
 
 		Intent intent3 = new Intent(this, SettingsActivity.class);
