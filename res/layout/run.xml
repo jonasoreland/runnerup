@@ -55,7 +55,8 @@
                 android:id="@+id/TextView02"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/textView1"
@@ -63,7 +64,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Time" />
+                android:text="Time"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/textView1"
@@ -71,7 +73,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Distance" />
+                android:text="Distance"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/textView1"
@@ -79,13 +82,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Pace" />
+                android:text="Pace"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/TextView05"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textSize="20dp" />
+
         </TableRow>
 
         <TableRow
@@ -100,7 +106,8 @@
                 android:layout_gravity="right"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Total:" />
+                android:text="Total:"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/activityTime"
@@ -108,7 +115,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="32:57" />
+                android:text="32:57"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/activityDistance"
@@ -116,7 +124,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="8.34" />
+                android:text="8.34"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/activityPace"
@@ -124,13 +133,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="4:34" />
+                android:text="4:34"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/TextView06"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textSize="20dp" />
+
         </TableRow>
 
         <TableRow
@@ -145,7 +157,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Lap:" />
+                android:text="Lap:"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/lapTime"
@@ -153,7 +166,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="2:34" />
+                android:text="2:34"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/lapDistance"
@@ -161,7 +175,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="0.67" />
+                android:text="0.67"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/lapPace"
@@ -169,13 +184,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="4:24" />
+                android:text="4:24"
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/TextView07"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textSize="20dp" />
+
         </TableRow>
     </TableLayout>
 
@@ -199,14 +217,7 @@
         android:id="@+id/tableRow1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/stopButton" >
-
-        <Button
-            android:id="@+id/pauseButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Pause" />
+        android:layout_above="@+id/tableRow2" >
 
         <Button
             android:id="@+id/newLapButton"
@@ -216,14 +227,30 @@
             android:text="New lap" />
     </TableRow>
 
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+    
     <Button
         android:id="@+id/stopButton"
         style="@style/ButtonText"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:background="@drawable/btn_red"
-        android:text="Stop activity" />
+        android:layout_weight="1"
+        android:text="Stop" />
 
+    <Button
+        android:id="@+id/pauseButton"
+        style="@style/ButtonText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_grey"
+        android:layout_weight="1"
+        android:text="Pause" />
+
+    </TableRow>
+    
 </RelativeLayout>

@@ -34,7 +34,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:gravity="right" />
+            android:gravity="right"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/totalTime"
@@ -42,7 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Time" />
+            android:text="Time"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/totalDistance"
@@ -50,7 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Distance" />
+            android:text="Distance"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/totalPace"
@@ -58,7 +61,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Pace" />
+            android:text="Pace"
+            android:textSize="20dp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -74,7 +79,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="right"
-            android:text="Total" />
+            android:text="Total"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/activityTime"
@@ -82,14 +88,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Time" />
+            android:text="Time"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/activityDistance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="right" />
+            android:gravity="right"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/activityPace"
@@ -97,7 +105,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Pace" />
+            android:text="Pace"
+            android:textSize="20dp" />
+
     </LinearLayout>
 
     <ListView
@@ -112,23 +122,23 @@
         android:id="@+id/accountList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/saveButton" />
+        android:layout_above="@+id/resumeButton" />
+
+    <Button
+        android:id="@+id/resumeButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/saveButton"
+        android:text="Resume" />
 
     <Button
         android:id="@+id/saveButton"
         style="@style/ButtonText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/resumeButton"
+        android:layout_above="@+id/discardButton"
         android:background="@drawable/btn_green"
         android:text="Save activity" />
-
-    <Button
-        android:id="@+id/resumeButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/discardButton"
-        android:text="Resume" />
 
     <Button
         android:id="@+id/discardButton"

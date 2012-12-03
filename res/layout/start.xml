@@ -97,4 +97,15 @@
         android:enabled="true"
         android:text="RedButton" />
 
+    <Button
+        android:id="@+id/Button03"
+        style="@style/ButtonText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/Button02"
+        android:background="@drawable/btn_grey"
+        android:enabled="true"
+        android:text="GreyButton" />
+
 </RelativeLayout>
