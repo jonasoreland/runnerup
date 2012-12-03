@@ -138,8 +138,15 @@ public class GpsStatus implements LocationListener,
 
 	@Override
 	public void onGpsStatusChanged(int event) {
+		if (locationManager == null)
+			return;
+
 		android.location.GpsStatus gpsStatus = locationManager
 				.getGpsStatus(null);
+
+		if (gpsStatus == null)
+			return;
+
 		int cnt0 = 0, cnt1 = 0;
 		Iterable<GpsSatellite> list = gpsStatus.getSatellites();
 		for (GpsSatellite satellite : list) {
