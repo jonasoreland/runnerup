@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -91,6 +92,7 @@ public class OAuth2Activity extends Activity {
 		String url = auth_url + "?client_id=" + URLEncoder.encode(client_id)
 				+ "&response_type=code" + "&redirect_uri= "
 				+ URLEncoder.encode(mRedirectUri);
+		CookieSyncManager.createInstance(this);
 		CookieManager.getInstance().removeAllCookie();
 		wv.loadUrl(url);
 
