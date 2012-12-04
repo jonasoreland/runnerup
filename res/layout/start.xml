@@ -75,37 +75,4 @@
         android:layout_below="@+id/startButton"
         android:text="TextView" />
 
-    <Button
-        android:id="@+id/Button01"
-        style="@style/ButtonText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
-        android:background="@drawable/btn_green"
-        android:enabled="false"
-        android:text="Disabled" />
-
-    <Button
-        android:id="@+id/Button02"
-        style="@style/ButtonText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/Button01"
-        android:background="@drawable/btn_red"
-        android:enabled="true"
-        android:text="RedButton" />
-
-    <Button
-        android:id="@+id/Button03"
-        style="@style/ButtonText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/Button02"
-        android:background="@drawable/btn_grey"
-        android:enabled="true"
-        android:text="GreyButton" />
-
 </RelativeLayout>
