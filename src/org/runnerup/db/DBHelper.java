@@ -114,6 +114,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			insertAccount(arg0, values);
 		}
 
+		if (yet)
 		{
 			ContentValues values = new ContentValues();
 			values.put(DB.ACCOUNT.NAME, "RunKeeper");
@@ -132,7 +133,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			insertAccount(arg0, values);
 		}
 
-		if (notyet) {
+		if (yet) {
 			ContentValues values = new ContentValues();
 			values.put(DB.ACCOUNT.NAME, "FunBeat");
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
