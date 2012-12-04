@@ -24,7 +24,7 @@
         android:id="@+id/lapList_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:text="id"
         android:visibility="gone" />
 
@@ -38,20 +38,20 @@
         android:textStyle="" />
 
     <TextView
-        android:id="@+id/lapList_distance"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="right"
-        android:text="Distance" />
-
-    <TextView
         android:id="@+id/lapList_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="right"
         android:text="Time" />
+
+    <TextView
+        android:id="@+id/lapList_distance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="right"
+        android:text="Distance" />
 
     <TextView
         android:id="@+id/lapList_pace"
