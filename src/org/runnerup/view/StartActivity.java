@@ -55,7 +55,8 @@ public class StartActivity extends Activity implements TickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		PreferenceManager.setDefaultValues(this, R.layout.settings, false);
+		
 		log("0 mGpsTracker = " + mGpsTracker + ", mSpeech = " + mSpeech);
 		bindGpsTracker();
 		log("1 mGpsTracker = " + mGpsTracker);
