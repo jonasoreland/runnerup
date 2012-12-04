@@ -23,6 +23,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants;
 
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,9 +31,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AccountsActivity extends ListActivity implements Constants {
 
@@ -85,6 +88,7 @@ public class AccountsActivity extends ListActivity implements Constants {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Toast.makeText(this, "" + l + ", " + v + ", " + position + ", " + id, Toast.LENGTH_SHORT).show();
 	}
 
 	public class AccountListAdapter extends CursorAdapter {
@@ -97,27 +101,23 @@ public class AccountsActivity extends ListActivity implements Constants {
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			int[] to = new int[] { R.id.historyList_id,
-					R.id.historyList_startTime, R.id.historyList_distance,
-					R.id.historyList_time, R.id.historyList_pace };
-
-			int id = cursor.getInt(0);
-			long st = 0;
-			if (!cursor.isNull(1)) {
-				st = cursor.getLong(1); // start time
-			}
-			float d = 0;
-			if (!cursor.isNull(2)) {
-				d = cursor.getFloat(2); // distance
-			}
-			long t = 0;
-			if (!cursor.isNull(3)) {
-				t = cursor.getLong(3); // time (us)
+			ContentValues tmp = DBHelper.get(cursor);
+			
+			{
+				TextView tv = (TextView) view.findViewById(R.id.accountList_id);
+				tv.setText(Integer.toString(tmp.getAsInteger("_id")));
 			}
 
 			{
-				TextView tv = (TextView) view.findViewById(to[0]);
-				tv.setText(Integer.toString(id));
+				TextView tv = (TextView) view.findViewById(R.id.accountList_name);
+				tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
+			}
+			{
+				CheckBox cb = (CheckBox) view.findViewById(R.id.accountList_enabled);
+				if (tmp.getAsInteger(DB.ACCOUNT.ENABLED) != 0)
+					cb.setChecked(true);
+				else
+					cb.setChecked(false);
 			}
 		}
 

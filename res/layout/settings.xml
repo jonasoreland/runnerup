@@ -19,6 +19,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
+    <Preference
+        	android:key="cue_accounts"
+        	android:title="Accounts"
+        	android:summary="Configure accounts">
+			<intent
+			    android:targetPackage="org.runnerup"
+			    android:targetClass="org.runnerup.view.AccountsActivity" />
+    </Preference>
+    
 	<PreferenceScreen 
             android:key="audocues_preferencescreen"
             android:title="Audio cues">
