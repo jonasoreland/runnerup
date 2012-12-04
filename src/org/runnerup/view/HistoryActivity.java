@@ -56,6 +56,14 @@ public class HistoryActivity extends ListActivity implements Constants {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		for (Cursor c : mCursors) {
+			c.requery();
+		}
+	}
+
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		mDB.close();
