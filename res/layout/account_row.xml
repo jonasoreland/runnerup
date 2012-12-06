@@ -20,9 +20,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <TableRow
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/RelativeLayout1"
+        android:id="@+id/TableRow1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -34,42 +34,50 @@
             android:text="id"
             android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:scaleType="center"
-            android:src="@drawable/icon" />
-
-         <TextView
+        <TextView
             android:id="@+id/accountList_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/configureButton"
-            android:layout_toRightOf="@+id/imageView1"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:text="RunKeeper" />
+            android:text="FunBeat"
+            />
 
-        <Button
-            android:id="@+id/configureButton"
-            style="?android:attr/buttonStyleSmall"
+        <ImageView
+            android:id="@+id/accountList_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/accountList_enabled"
+            android:scaleType="center"
+            />
+
+    </TableRow>
+
+    <TableRow
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/TableRow2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/accountList_configureButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Configure" />
 
         <CheckBox
             android:id="@+id/accountList_enabled"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_weight="1"
             android:text="Enabled" />
 
-        </RelativeLayout>
-
+        <CheckBox
+            android:id="@+id/accountList_send"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Send" />
+    </TableRow>
+        
 </LinearLayout>

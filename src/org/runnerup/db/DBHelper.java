@@ -16,6 +16,7 @@
  */
 package org.runnerup.db;
 
+import org.runnerup.R;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -68,6 +69,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ " int not null default 1, " + DB.ACCOUNT.ENABLED
 			+ " int not null default 1," + DB.ACCOUNT.AUTH_METHOD
 			+ " text not null, " + DB.ACCOUNT.AUTH_CONFIG + " text, "
+			+ DB.ACCOUNT.ICON + " int null, "
 			+ "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
 
 	private static final String CREATE_TABLE_REPORT = "create table "
@@ -110,7 +112,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.NAME, "Garmin");
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-			values.put(DB.ACCOUNT.DEFAULT, 1);
+			values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
 			insertAccount(arg0, values);
 		}
 
@@ -120,7 +122,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.NAME, "RunKeeper");
 			values.put(DB.ACCOUNT.FORMAT, "runkeeper");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-			values.put(DB.ACCOUNT.DEFAULT, 1);
+			values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
 			insertAccount(arg0, values);
 		}
 
@@ -138,7 +140,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.NAME, "FunBeat");
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-			values.put(DB.ACCOUNT.DEFAULT, 1);
+			values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
 			insertAccount(arg0, values);
 		}
 
@@ -151,6 +153,10 @@ public class DBHelper extends SQLiteOpenHelper implements
 				arr, null, null, null);
 		if (!c.moveToFirst())
 			arg0.insert(DB.ACCOUNT.TABLE, null, arg1);
+		else {
+			arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
+			System.err.println("update: " + arg1);
+		}
 		c.close();
 		c = null;
 	}
