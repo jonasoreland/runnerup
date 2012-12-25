@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants.DB;
 
 import android.app.Activity;
@@ -52,13 +53,18 @@ public class UploadManager {
 	private DBHelper mDBHelper = null;
 	private SQLiteDatabase mDB = null;
 	private Activity activity = null;
-	private Set<String> pending = new HashSet<String>();
 	private Map<String, Uploader> uploaders = new HashMap<String, Uploader>();
+	private ProgressDialog mSpinner = null;
 
+	public interface Callback {
+		void run(String uploader, Uploader.Status status);
+	};
+	
 	public UploadManager(Activity activity) {
 		this.activity = activity;
 		mDBHelper = new DBHelper(activity);
 		mDB = mDBHelper.getWritableDatabase();
+		mSpinner = new ProgressDialog(activity);
 	}
 
 	public void close() {
@@ -111,76 +117,105 @@ public class UploadManager {
 		if (uploader != null) {
 			uploader.init(config);
 			uploaders.put(uploaderName, uploader);
-
-			boolean enabled = !config.containsKey(DB.EXPORT.ACCOUNT);
-			if (enabled) {
-				pending.add(uploaderName);
-			}
 		}
 	}
 
-	public Intent configure(final String name) {
+	public boolean isConfigured(final String name) {
 		Uploader l = uploaders.get(name);
 		if (l == null) {
-			return null;
+			return true;
 		}
-		return l.configure(activity);
+		return l.isConfigured();
 	}
 
-	public void enable(String tag) {
-		if (uploaders.containsKey(tag))
-			pending.add(tag);
+	public boolean isEnabled(String name) {
+		Uploader l = uploaders.get(name);
+		if (l == null) {
+			return false;
+		}
+		return l.isConfigured();
 	}
 
-	public void disable(String tag) {
-		pending.remove(tag);
-	}
-
-	private void disableUploader(Uploader currentUploader) {
+	public void configure(final Callback callback, final String name, final boolean uploading) {
+		Uploader l = uploaders.get(name);
+		if (l == null) {
+			return;
+		}
+		switch (l.getAuthMethod()) {
+		case OAUTH2:
+			Intent i = l.configure(activity);
+			activity.startActivityForResult(i, CONFIGURE_REQUEST);
+			return;
+		case POST:
+			askUsernamePassword(callback, l, "", "", false, uploading);
+			return;
+		}
 	}
 
 	private long mID = 0;
 	private Uploader currentUploader = null;
-	private ProgressDialog mSpinner = null;
-
-	public void startUploading(long id) {
+	private Callback uploadCallback = null;
+	private HashSet<String> pendingUploaders = null;
+	
+	public void startUploading(Callback callback, HashSet<String> uploaders, long id) {
 		mID = id;
-		mSpinner = new ProgressDialog(activity);
-		mSpinner.setTitle("Uploading (" + pending.size() + ")");
+		uploadCallback = callback;
+		pendingUploaders = uploaders;
+		mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
 		mSpinner.show();
 		nextUploader();
 	}
 
 	private void nextUploader() {
-		if (pending.isEmpty()) {
+		if (pendingUploaders.isEmpty()) {
 			doneUploading();
+			if (uploadCallback != null)
+				uploadCallback.run(null, null);
 			return;
 		}
 
-		mSpinner.setTitle("Uploading (" + pending.size() + ")");
-		currentUploader = uploaders.get(pending.iterator().next());
-		pending.remove(currentUploader.getName());
+		mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
+		currentUploader = uploaders.get(pendingUploaders.iterator().next());
+		pendingUploaders.remove(currentUploader.getName());
 		mSpinner.setMessage("Configure " + currentUploader.getName());
 		if (!currentUploader.isConfigured()) {
-			switch (currentUploader.getAuthMethod()) {
-			case OAUTH2:
-				Intent i = currentUploader.configure(activity);
-				activity.startActivityForResult(i, CONFIGURE_REQUEST);
-				return;
-			case POST:
-				askUsernamePassword("", "", false);
-				return;
-			}
+			configure(usernamePasswordCallback, currentUploader.getName(), true);
 			return;
 		}
 
 		doLogin();
 	}
 
-	private void askUsernamePassword(String username, String password,
-			boolean showPassword) {
+	private Callback usernamePasswordCallback = new Callback() {
+		@Override
+		public void run(String uploader, Status status) {
+			switch(status) {
+			case CANCEL:
+				disableUploader(disableUploaderCallback, currentUploader.getName());
+				return;
+			case SKIP:
+			case ERROR:
+			case INCORRECT_USAGE:
+				nextUploader();
+				break;
+			case OK:
+				doUpload();
+				break;
+			}
+		}
+	};
+	
+	private Callback disableUploaderCallback = new Callback() {
+		@Override
+		public void run(String uploader, Status status) {
+			nextUploader();
+		}
+	};
+	
+	private void askUsernamePassword(final Callback callback, final Uploader l, String username, String password,
+			boolean showPassword, final boolean uploading) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle(currentUploader.getName());
+		builder.setTitle(l.getName());
 		// Get the layout inflater
 		LayoutInflater inflater = activity.getLayoutInflater();
 		final View view = inflater.inflate(R.layout.userpass, null);
@@ -208,30 +243,43 @@ public class UploadManager {
 		builder.setPositiveButton("OK", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				testUserPass(tv1.getText().toString(),
-						tv2.getText().toString(), cb.isChecked());
+				testUserPass(callback, l, tv1.getText().toString(),
+						tv2.getText().toString(), cb.isChecked(), uploading);
 			}
 		});
+		if (uploading) {
 		builder.setNeutralButton("Skip", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				nextUploader();
+				callback.run(l.getName(), Status.SKIP);
 			}
 		});
 		builder.setNegativeButton("Disable", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				disableUploader(currentUploader);
-				nextUploader();
+				callback.run(l.getName(), Status.CANCEL);
 			}
 		});
+		} else {
+			builder.setNegativeButton("Cancel", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					callback.run(l.getName(), Status.CANCEL);
+				}
+			});
+		}
 		final AlertDialog dialog = builder.create();
 		dialog.show();
 	}
 
-	private void testUserPass(final String username, final String password,
-			final boolean showPassword) {
-		mSpinner.setMessage("Login " + currentUploader.getName());
+	private void testUserPass(final Callback callback, final Uploader l, final String username, final String password,
+			final boolean showPassword, final boolean uploading) {
+		if (uploading) {
+			mSpinner.setMessage("Login " + l.getName());
+		} else {
+			mSpinner.setTitle("Testing login " + l.getName());
+			mSpinner.show();
+		}
 		new AsyncTask<Uploader, String, Uploader.Status>() {
 
 			ContentValues config = new ContentValues();
@@ -247,26 +295,30 @@ public class UploadManager {
 					return Uploader.Status.ERROR;
 				}
 				config.put(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
-				config.put("_id", currentUploader.getId());
-				currentUploader.init(config);
+				config.put("_id", l.getId());
+				l.init(config);
 				return params[0].login();
 			}
 
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
+				if (!uploading) {
+					mSpinner.dismiss();
+				}
+				
 				if (result == Uploader.Status.OK) {
-					String args[] = { Long.toString(currentUploader.getId()) };
+					String args[] = { Long.toString(l.getId()) };
 					mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
-					doUpload();
+					callback.run(l.getName(), Uploader.Status.OK);
 					return;
 				}
 				if (result == Uploader.Status.CANCEL) {
-					askUsernamePassword(username, password, showPassword);
+					askUsernamePassword(callback, l, username, password, showPassword, uploading);
 					return;
 				}
-				nextUploader();
+				callback.run(l.getName(), Uploader.Status.ERROR);
 			}
-		}.execute(currentUploader);
+		}.execute(l);
 
 	}
 
@@ -322,7 +374,6 @@ public class UploadManager {
 
 	private void doneUploading() {
 		mSpinner.dismiss();
-		mSpinner = null;
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -341,5 +392,9 @@ public class UploadManager {
 		} else {
 			nextUploader();
 		}
+	}
+
+	public void disableUploader(Callback callback, String name) {
+		callback.run(name, Uploader.Status.OK);
 	}
 }

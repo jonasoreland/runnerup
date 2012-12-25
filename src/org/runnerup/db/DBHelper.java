@@ -16,7 +16,11 @@
  */
 package org.runnerup.db;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.runnerup.R;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -26,7 +30,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 4;
+	private static final int DBVERSION = 5;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -96,11 +100,17 @@ public class DBHelper extends SQLiteOpenHelper implements
 
 	@Override
 	public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
+		System.err.println("onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+		
 		if (newVersion < oldVersion) {
 			throw new java.lang.UnsupportedOperationException(
 					"Downgrade not supported");
 		}
 
+		if (oldVersion > 0 && oldVersion < 5 && newVersion >= 5) {
+			arg0.execSQL("alter table account add column icon int");
+		}
+		
 		insertAccounts(arg0);
 	}
 
@@ -172,5 +182,15 @@ public class DBHelper extends SQLiteOpenHelper implements
 			}
 		}
 		return ret;
+	}
+
+	public static ContentValues[] toArray(Cursor c) {
+		ArrayList<ContentValues> list = new ArrayList<ContentValues>();
+		if (c.moveToFirst()) {
+			do {
+				list.add(get(c));
+			} while (c.moveToNext());
+		}
+		return list.toArray(new ContentValues[list.size()]);
 	}
 }

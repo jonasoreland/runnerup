@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 public interface Uploader {
 
 	enum Status {
-		OK, CANCEL, ERROR, INCORRECT_USAGE;
+		OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP;
 
 		public Exception ex = null;
 	};
@@ -94,4 +94,5 @@ public interface Uploader {
 	 * @return
 	 */
 	public void logout();
+
 }

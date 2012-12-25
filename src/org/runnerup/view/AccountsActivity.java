@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants;
 
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -42,13 +44,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AccountsActivity extends ListActivity implements Constants, OnCheckedChangeListener, OnClickListener {
+public class AccountsActivity extends ListActivity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 	UploadManager uploadManager = null;
-
+	boolean send = false;
+	
 	/** Called when the activity is first created. */
 
 	@Override
@@ -63,6 +66,19 @@ public class AccountsActivity extends ListActivity implements Constants, OnCheck
 		fillData();
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() {
+		if (send) {
+			Intent data = new Intent();
+//			data.putExtra("result", uploadManager.getPendingNamesArray());
+			this.setResult(RESULT_OK, data);
+		}
+		super.onBackPressed();
+	}
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -72,6 +88,7 @@ public class AccountsActivity extends ListActivity implements Constants, OnCheck
 			c.close();
 		}
 		mCursors.clear();
+		uploadManager.close();
 	}
 
 	void fillData() {
@@ -88,7 +105,7 @@ public class AccountsActivity extends ListActivity implements Constants, OnCheck
 		};
 
 		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, null, null,
-				null, null, null, null);
+				null, null, DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
 		CursorAdapter adapter = new AccountListAdapter(this, c);
 		setListAdapter(adapter);
 		mCursors.add(c);
@@ -106,7 +123,8 @@ public class AccountsActivity extends ListActivity implements Constants, OnCheck
 		public void bindView(View view, Context context, Cursor cursor) {
 			ContentValues tmp = DBHelper.get(cursor);
 			
-			long id = tmp.getAsLong("_id");
+			String id = tmp.getAsString(DB.ACCOUNT.NAME);
+			uploadManager.add(tmp);
 			
 			{
 				ImageView im = (ImageView) view.findViewById(R.id.accountList_icon);
@@ -124,35 +142,35 @@ public class AccountsActivity extends ListActivity implements Constants, OnCheck
 			
 			{
 				TextView tv = (TextView) view.findViewById(R.id.accountList_id);
-				tv.setText(Long.toString(id));
+				tv.setText(Long.toString(tmp.getAsLong("_id")));
 			}
 
-			{
-				CheckBox cb = (CheckBox) view.findViewById(R.id.accountList_enabled);
-				if (tmp.getAsInteger(DB.ACCOUNT.ENABLED) != 0)
-					cb.setChecked(true);
-				else
-					cb.setChecked(false);
-				cb.setTag(id);
-				cb.setOnCheckedChangeListener(AccountsActivity.this);
-			}
+			boolean enabled = uploadManager.isEnabled(id);
+			boolean configured = uploadManager.isConfigured(id);
+			
 			{
 				CheckBox cb = (CheckBox) view.findViewById(R.id.accountList_send);
 				if (tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0)
-					cb.setChecked(true);
-				else
 					cb.setChecked(false);
+				else
+					cb.setChecked(true);
 				cb.setTag(id);
-				cb.setOnCheckedChangeListener(AccountsActivity.this);
+				cb.setOnCheckedChangeListener(sendCheckBox);
+				if (send) {
+					cb.setVisibility(View.VISIBLE);
+				} else {
+					cb.setVisibility(View.GONE);
+				}
 			}
+			
 			{
 				Button b = (Button) view.findViewById(R.id.accountList_configureButton);
 				b.setTag(id);
-				b.setOnClickListener(AccountsActivity.this);
-				if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.AUTH_CONFIG))) {
-					b.setText("Configure");
-				} else {
+				b.setOnClickListener(configureButtonClick);
+				if (configured && enabled) {
 					b.setText("Reset");
+				} else {
+					b.setText("Configure");
 				}
 			}
 		}
@@ -163,13 +181,35 @@ public class AccountsActivity extends ListActivity implements Constants, OnCheck
 		}
 	}
 
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		Toast.makeText(this, "" + buttonView + ", " + isChecked, Toast.LENGTH_SHORT).show();
-	}
+	OnCheckedChangeListener enableCheckBox = new OnCheckedChangeListener() {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			Toast.makeText(AccountsActivity.this, "" + buttonView + ", tag: " + buttonView.getTag() + ", " + isChecked, Toast.LENGTH_SHORT).show();
+		}
+	};
+	
+	OnCheckedChangeListener sendCheckBox = new OnCheckedChangeListener() {
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			Toast.makeText(AccountsActivity.this, "" + buttonView + ", tag: " + buttonView.getTag() + ", " + isChecked, Toast.LENGTH_SHORT).show();
+		}
+	};
 
-	@Override
-	public void onClick(View v) {
-		Toast.makeText(this, "" + v, Toast.LENGTH_SHORT).show();		
+	OnClickListener configureButtonClick = new OnClickListener() {
+		public void onClick(View v) {
+			String uploader = (String)v.getTag();
+			if (uploadManager.isConfigured(uploader)) {
+				uploadManager.disableUploader(callback, uploader);
+			} else {
+				uploadManager.configure(callback, uploader, false);
+			}
+		}
+	};
+	
+	UploadManager.Callback callback = new UploadManager.Callback() {
+		@Override
+		public void run(String uploader, Status status) {
+			for (Cursor c : mCursors) {
+				c.requery();
+			}
+		}
 	};
 }

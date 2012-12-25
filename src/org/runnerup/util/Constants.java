@@ -16,6 +16,7 @@
  */
 package org.runnerup.util;
 
+
 public interface Constants {
 
 	public interface DB {
@@ -82,6 +83,6 @@ public interface Constants {
 			public static final String STATUS = "status";
 			public static final String EXTERNAL_ID = "ext_id";
 			public static final String EXTRA = "extra";
-		};
+		}
 	};
 };
