@@ -16,14 +16,12 @@
  */
 package org.runnerup.view;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
-import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.util.Constants;
 
 import android.app.Activity;
@@ -54,19 +52,17 @@ public class DetailActivity extends Activity implements Constants {
 	long mID = 0;
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
-	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 	HashSet<String> pendingUploaders = new HashSet<String>();
 	HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
 
-	static final String groups[] = { 
-		"Laps", // lap list
-		"Map", // map view
-		"Notes", // activity notes
-		"Reports"// uploads
+	static final String groups[] = { "Notes", // activity notes
+			"Laps", // lap list
+			"Map", // map view
+			"Reports"// uploads
 	};
 	ContentValues laps[] = null;
 	ContentValues reports[] = null;
-	
+
 	int mode; // 0 == save 1 == details
 	final static int MODE_SAVE = 0;
 	final static int MODE_DETAILS = 1;
@@ -76,9 +72,11 @@ public class DetailActivity extends Activity implements Constants {
 	Button resumeButton = null;
 	TextView activityTime = null;
 	TextView activityDistance = null;
+	EditText notes = null;
 	TextView activityPace = null;
 	ExpandableListView expandableListView = null;
-	
+	Adapter adapter = null;
+
 	UploadManager uploadManager = null;
 
 	/** Called when the activity is first created. */
@@ -109,19 +107,39 @@ public class DetailActivity extends Activity implements Constants {
 		activityTime = (TextView) findViewById(R.id.activityTime);
 		activityDistance = (TextView) findViewById(R.id.activityDistance);
 		activityPace = (TextView) findViewById(R.id.activityPace);
+		notes = new EditText(this);
 		
 		if (this.mode == MODE_SAVE) {
 			saveButton.setOnClickListener(saveButtonClick);
 			discardButton.setOnClickListener(discardButtonClick);
 			resumeButton.setOnClickListener(resumeButtonClick);
-
 		} else if (this.mode == MODE_DETAILS) {
 			saveButton.setVisibility(View.GONE);
 			resumeButton.setVisibility(View.GONE);
+			resumeButton.setText("Upload activity");
+			resumeButton.setOnClickListener(uploadButtonClick);
 			discardButton.setText("Delete activity");
 			discardButton.setOnClickListener(deleteButtonClick);
 		}
 
+		fillHeaderData();
+		requery();
+		adapter = new Adapter(this);
+		expandableListView.setAdapter(adapter);
+		expandableListView.expandGroup(position(groups, "Laps"));
+		if (this.mode == MODE_SAVE || notes.getTag() != null)
+			expandableListView.expandGroup(position(groups, "Notes"));
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mDB.close();
+		mDBHelper.close();
+		uploadManager.close();
+	}
+
+	void requery() {
 		{
 			/**
 			 * Laps
@@ -141,51 +159,62 @@ public class DetailActivity extends Activity implements Constants {
 			/**
 			 * Accounts/reports
 			 */
-		String sql = new String("SELECT DISTINCT " + "  acc._id, " // 0
-				+ ("  acc." + DB.ACCOUNT.NAME + ", ")
-				+ ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
-				+ ("  acc." + DB.ACCOUNT.DEFAULT + ", ")
-				+ ("  acc."	+ DB.ACCOUNT.AUTH_METHOD + ", ")
-				+ ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
-				+ ("  acc." + DB.ACCOUNT.ENABLED + ", ")     
-				+ ("  rep._id as repid, ")
-				+ ("  rep." + DB.EXPORT.ACCOUNT + ", ")
-				+ ("  rep."	+ DB.EXPORT.ACTIVITY + ", ")
-				+ ("  rep." + DB.EXPORT.STATUS )
-				+ (" FROM " + DB.ACCOUNT.TABLE + " acc " ) 
-				+ (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
-				+ (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT )
-				+ ("     AND rep."	+ DB.EXPORT.ACTIVITY + " = " + mID + " )")
-				+ (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ;"));
+			String sql = new String(
+					"SELECT DISTINCT "
+							+ "  acc._id, " // 0
+							+ ("  acc." + DB.ACCOUNT.NAME + ", ")
+							+ ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
+							+ ("  acc." + DB.ACCOUNT.DEFAULT + ", ")
+							+ ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
+							+ ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
+							+ ("  acc." + DB.ACCOUNT.ENABLED + ", ")
+							+ ("  rep._id as repid, ")
+							+ ("  rep." + DB.EXPORT.ACCOUNT + ", ")
+							+ ("  rep." + DB.EXPORT.ACTIVITY + ", ")
+							+ ("  rep." + DB.EXPORT.STATUS)
+							+ (" FROM " + DB.ACCOUNT.TABLE + " acc ")
+							+ (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
+							+ (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
+							+ ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
+									+ mID + " )")
+							+ (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
+							+ ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null"));
 
 			Cursor c = mDB.rawQuery(sql, null);
 			reports = DBHelper.toArray(c);
 			c.close();
 		}
-		
-		fillHeaderData();
-		expandableListView.setAdapter(new Adapter(this));
-		expandableListView.expandGroup(position(groups, "Laps"));
-		expandableListView.expandGroup(position(groups, "Notes"));
-	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mDB.close();
-		mDBHelper.close();
-		uploadManager.close();
+		alreadyUploadedUploaders.clear();
+		pendingUploaders.clear();
+		for (ContentValues tmp : reports) {
+			uploadManager.add(tmp);
+			if (tmp.containsKey("repid")) {
+				alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
+			} else {
+				pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
+			}
+		}
+
+		if (this.mode == MODE_DETAILS && pendingUploaders.isEmpty()) {
+			resumeButton.setVisibility(View.GONE);
+		} else {
+			resumeButton.setVisibility(View.VISIBLE);
+		}
+
 	}
 
 	void fillHeaderData() {
 		// Fields from the database (projection)
 		// Must include the _id column for the adapter to work
 		String[] from = new String[] { DB.ACTIVITY.START_TIME,
-				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME };
+				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT };
 
 		Cursor c = mDB.query(DB.ACTIVITY.TABLE, from, "_id == " + mID, null,
 				null, null, null, null);
 		c.moveToFirst();
+		ContentValues tmp = DBHelper.get(c);
+		c.close();
 
 		java.text.DateFormat DF = android.text.format.DateFormat
 				.getDateFormat(this);
@@ -199,31 +228,36 @@ public class DetailActivity extends Activity implements Constants {
 					+ TF.format(st * 1000));
 		}
 		float d = 0;
-		if (!c.isNull(1)) {
-			d = c.getFloat(1);
+		if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
+			d = tmp.getAsFloat(DB.ACTIVITY.DISTANCE);
 			activityDistance.setText(Long.toString((long) d) + " m");
 		}
 
-		long t = 0;
-		if (!c.isNull(2)) {
-			t = c.getLong(2);
-			activityTime.setText(DateUtils.formatElapsedTime(t));
+		float t = 0;
+		if (tmp.containsKey(DB.ACTIVITY.TIME)) {
+			t = tmp.getAsFloat(DB.ACTIVITY.TIME);
+			activityTime.setText(DateUtils.formatElapsedTime((long)t));
 		}
 
-		if (!c.isNull(1) && !c.isNull(2)) {
+		if (d != 0 && t != 0) {
 			activityPace.setText(DateUtils
 					.formatElapsedTime((long) (1000 * t / d)) + "/km");
 		}
 
-		c.close();
+		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
+			notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
+			notes.setTag("value");
+		}
 	}
 
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
-	    super.onWindowFocusChanged(hasFocus);
-	    expandableListView.setIndicatorBounds(expandableListView.getRight()- 40, expandableListView.getWidth());
-	}	
-	
+		super.onWindowFocusChanged(hasFocus);
+		expandableListView.setIndicatorBounds(
+				expandableListView.getRight() - 40,
+				expandableListView.getWidth());
+	}
+
 	class Adapter extends BaseExpandableListAdapter {
 		LayoutInflater inflater = null;
 
@@ -234,16 +268,17 @@ public class DetailActivity extends Activity implements Constants {
 
 		@Override
 		public Object getChild(int groupPosition, int childPosition) {
-			if (groups[groupPosition].contentEquals("laps"))
+			if (groups[groupPosition].contentEquals("Laps"))
 				return laps[childPosition];
-			else if (groups[groupPosition].contentEquals("map"))
+			else if (groups[groupPosition].contentEquals("Map"))
 				return mID;
-			else if (groups[groupPosition].contentEquals("notes"))
+			else if (groups[groupPosition].contentEquals("Notes"))
 				return mID;
-			else if (groups[groupPosition].contentEquals("reports"))
+			else if (groups[groupPosition].contentEquals("Reports"))
 				return reports[childPosition];
 
-			throw new IllegalArgumentException("Invalid groupPosition: " + groupPosition + ", max: " + groups.length);
+			throw new IllegalArgumentException("Invalid groupPosition: "
+					+ groupPosition + ", max: " + groups.length);
 		}
 
 		@Override
@@ -257,7 +292,8 @@ public class DetailActivity extends Activity implements Constants {
 			else if (groups[groupPosition].contentEquals("Reports"))
 				return reports[childPosition].getAsLong("_id"); // account id
 
-			throw new IllegalArgumentException("Invalid groupPosition: " + groupPosition + ", max: " + groups.length);
+			throw new IllegalArgumentException("Invalid groupPosition: "
+					+ groupPosition + ", max: " + groups.length);
 		}
 
 		@Override
@@ -271,7 +307,8 @@ public class DetailActivity extends Activity implements Constants {
 			else if (groups[groupPosition].contentEquals("Reports"))
 				return reports.length + 1;
 
-			throw new IllegalArgumentException("Invalid groupPosition: " + groupPosition + ", max: " + groups.length);
+			throw new IllegalArgumentException("Invalid groupPosition: "
+					+ groupPosition + ", max: " + groups.length);
 		}
 
 		@Override
@@ -301,40 +338,53 @@ public class DetailActivity extends Activity implements Constants {
 		@Override
 		public View getChildView(int groupPosition, int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
-			
-			if (groups[groupPosition].contentEquals("Laps"))
-				return getLapsView(childPosition, isLastChild, convertView, parent);
-			else if (groups[groupPosition].contentEquals("Map"))
-				return getMapsView(childPosition, isLastChild, convertView, parent);
-			else if (groups[groupPosition].contentEquals("Notes"))
-				return getNotesView(childPosition, isLastChild, convertView, parent);
-			else if (groups[groupPosition].contentEquals("Reports"))
-				return getReportsView(childPosition, isLastChild, convertView, parent);
 
-			throw new IllegalArgumentException("Invalid groupPosition: " + groupPosition + ", max: " + groups.length);
+			if (groups[groupPosition].contentEquals("Laps"))
+				return getLapsView(childPosition, isLastChild, convertView,
+						parent);
+			else if (groups[groupPosition].contentEquals("Map"))
+				return getMapsView(childPosition, isLastChild, convertView,
+						parent);
+			else if (groups[groupPosition].contentEquals("Notes"))
+				return getNotesView(childPosition, isLastChild, convertView,
+						parent);
+			else if (groups[groupPosition].contentEquals("Reports"))
+				return getReportsView(childPosition, isLastChild, convertView,
+						parent);
+
+			throw new IllegalArgumentException("Invalid groupPosition: "
+					+ groupPosition + ", max: " + groups.length);
 		}
 
 		private View getLapsView(int childPosition, boolean isLastChild,
 				View convertView, ViewGroup parent) {
+			if (laps.length == 0) {
+				return new View(DetailActivity.this);
+			}
 			View view = inflater.inflate(R.layout.laplist_row, parent, false);
-		    TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
-	        tv1.setText(laps[childPosition].getAsString("_id"));
-	        TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);			
+			TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
+			tv1.setText(laps[childPosition].getAsString("_id"));
+			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
 			float d = laps[childPosition].getAsLong(DB.LAP.DISTANCE);
-	        tv2.setText(d + "m");
-	        TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);			
-	        long t = laps[childPosition].getAsLong(DB.LAP.TIME);
-	        tv3.setText(DateUtils.formatElapsedTime(t));
-	        TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);			
+			tv2.setText(d + "m");
+			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
+			long t = laps[childPosition].getAsLong(DB.LAP.TIME);
+			tv3.setText(DateUtils.formatElapsedTime(t));
+			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
 			tv4.setText(DateUtils.formatElapsedTime((long) (1000 * t / d))
 					+ "/km");
-	        return view;
+			return view;
 		}
 
 		private View getNotesView(int childPosition, boolean isLastChild,
 				View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			return new EditText(DetailActivity.this);
+			EditText tv = notes;
+			if (mode == MODE_SAVE) {
+				tv.setLines(3);
+			} else {
+				tv.setEnabled(false);
+			}
+			return tv;
 		}
 
 		private View getMapsView(int childPosition, boolean isLastChild,
@@ -352,14 +402,17 @@ public class DetailActivity extends Activity implements Constants {
 				b.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Intent i = new Intent(DetailActivity.this, AccountsActivity.class);
-						DetailActivity.this.startActivityForResult(i, UploadManager.CONFIGURE_REQUEST + 1);
+						Intent i = new Intent(DetailActivity.this,
+								AccountsActivity.class);
+						DetailActivity.this.startActivityForResult(i,
+								UploadManager.CONFIGURE_REQUEST + 1);
 					}
 				});
 				return b;
 			}
-			
-			View view = inflater.inflate(R.layout.reportlist_row, parent, false);
+
+			View view = inflater
+					.inflate(R.layout.reportlist_row, parent, false);
 
 			TextView tv0 = (TextView) view.findViewById(R.id.accountId);
 			CheckBox cb = (CheckBox) view.findViewById(R.id.reportSent);
@@ -371,10 +424,11 @@ public class DetailActivity extends Activity implements Constants {
 			cb.setTag(tmp.getAsString("name"));
 			if (alreadyUploadedUploaders.contains(name)) {
 				cb.setChecked(true);
-			} else {
-				cb.setChecked(true);
 				cb.setEnabled(false);
 				cb.setText("Sent");
+			} else {
+				cb.setChecked(true);
+				cb.setTag(name);
 			}
 			cb.setOnCheckedChangeListener(DetailActivity.this.onSendChecked);
 
@@ -394,11 +448,16 @@ public class DetailActivity extends Activity implements Constants {
 			return false;
 		}
 	};
-	
+
 	OnClickListener saveButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			DetailActivity.this.setResult(RESULT_OK);
-			DetailActivity.this.finish();
+			uploadManager.startUploading(new UploadManager.Callback() {
+				@Override
+				public void run(String uploader, Uploader.Status status) {
+					DetailActivity.this.setResult(RESULT_OK);
+					DetailActivity.this.finish();
+				}
+			}, pendingUploaders, mID);
 		}
 	};
 
@@ -421,6 +480,8 @@ public class DetailActivity extends Activity implements Constants {
 			uploadManager.startUploading(new UploadManager.Callback() {
 				@Override
 				public void run(String uploader, Uploader.Status status) {
+					requery();
+					adapter.notifyDataSetChanged();
 				}
 			}, pendingUploaders, mID);
 		}
@@ -470,14 +531,16 @@ public class DetailActivity extends Activity implements Constants {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == UploadManager.CONFIGURE_REQUEST) {
 			uploadManager.onActivityResult(requestCode, resultCode, data);
-			return;
 		}
+		requery();
+		adapter.notifyDataSetChanged();
+
 	}
 
 	public static int position(String arr[], String key) {
 		for (int i = 0; i < arr.length; i++) {
 			if (arr[i].contentEquals(key))
-					return i;
+				return i;
 		}
 		return -1;
 	}
