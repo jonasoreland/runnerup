@@ -64,13 +64,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Configure" />
-
-        <CheckBox
-            android:id="@+id/accountList_send"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Send" />
     </TableRow>
         
 </LinearLayout>

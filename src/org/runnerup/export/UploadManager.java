@@ -394,7 +394,34 @@ public class UploadManager {
 		}
 	}
 
+	private Callback disableCallback = null;
 	public void disableUploader(Callback callback, String name) {
+		disableCallback = callback;
+		Uploader l = uploaders.get(name);
+		if (l == null) {
+			disableCallback = null;
+			callback.run(name, Uploader.Status.SKIP);
+			return;
+		}
+		switch (l.getAuthMethod()) {
+		case OAUTH2:
+			resetDB(name);
+			return;
+		case POST:
+			resetDB(name);
+			return;
+		}
+	}
+
+	void resetDB(final String name) {
+		Uploader l = uploaders.get(name);
+		String args[] = { Long.toString(l.getId()) };
+		ContentValues config = new ContentValues();
+		config.putNull(DB.ACCOUNT.AUTH_CONFIG);
+		mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
+
+		Callback callback = disableCallback;
+		disableCallback = null;
 		callback.run(name, Uploader.Status.OK);
 	}
 }

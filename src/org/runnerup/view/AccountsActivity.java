@@ -23,10 +23,13 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants;
+import org.runnerup.util.Constants.DB;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -50,7 +53,6 @@ public class AccountsActivity extends ListActivity implements Constants {
 	SQLiteDatabase mDB = null;
 	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 	UploadManager uploadManager = null;
-	boolean send = false;
 	
 	/** Called when the activity is first created. */
 
@@ -64,19 +66,6 @@ public class AccountsActivity extends ListActivity implements Constants {
 		uploadManager = new UploadManager(this);
 		this.getListView().setDividerHeight(10);
 		fillData();
-	}
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onBackPressed()
-	 */
-	@Override
-	public void onBackPressed() {
-		if (send) {
-			Intent data = new Intent();
-//			data.putExtra("result", uploadManager.getPendingNamesArray());
-			this.setResult(RESULT_OK, data);
-		}
-		super.onBackPressed();
 	}
 
 	@Override
@@ -149,21 +138,6 @@ public class AccountsActivity extends ListActivity implements Constants {
 			boolean configured = uploadManager.isConfigured(id);
 			
 			{
-				CheckBox cb = (CheckBox) view.findViewById(R.id.accountList_send);
-				if (tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0)
-					cb.setChecked(false);
-				else
-					cb.setChecked(true);
-				cb.setTag(id);
-				cb.setOnCheckedChangeListener(sendCheckBox);
-				if (send) {
-					cb.setVisibility(View.VISIBLE);
-				} else {
-					cb.setVisibility(View.GONE);
-				}
-			}
-			
-			{
 				Button b = (Button) view.findViewById(R.id.accountList_configureButton);
 				b.setTag(id);
 				b.setOnClickListener(configureButtonClick);
@@ -187,17 +161,27 @@ public class AccountsActivity extends ListActivity implements Constants {
 		}
 	};
 	
-	OnCheckedChangeListener sendCheckBox = new OnCheckedChangeListener() {
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			Toast.makeText(AccountsActivity.this, "" + buttonView + ", tag: " + buttonView.getTag() + ", " + isChecked, Toast.LENGTH_SHORT).show();
-		}
-	};
-
 	OnClickListener configureButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			String uploader = (String)v.getTag();
+			final String uploader = (String)v.getTag();
 			if (uploadManager.isConfigured(uploader)) {
-				uploadManager.disableUploader(callback, uploader);
+				AlertDialog.Builder builder = new AlertDialog.Builder(AccountsActivity.this);
+				builder.setMessage("Are you sure?");
+				builder.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								uploadManager.disableUploader(callback, uploader);
+							}
+						});
+				builder.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								// Do nothing but close the dialog
+								dialog.dismiss();
+							}
+
+						});
+				builder.show();
 			} else {
 				uploadManager.configure(callback, uploader, false);
 			}
