@@ -16,6 +16,7 @@
  */
 package org.runnerup.view;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.runnerup.R;
@@ -24,7 +25,6 @@ import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.util.Constants;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -32,8 +32,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,16 +51,22 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class DetailActivity extends Activity implements Constants {
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+
+public class DetailActivity extends MapActivity implements Constants {
 
 	long mID = 0;
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 	HashSet<String> pendingUploaders = new HashSet<String>();
 	HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
-
+	
 	static final String groups[] = { "Notes", // activity notes
 			"Laps", // lap list
 			"Map", // map view
@@ -71,12 +83,17 @@ public class DetailActivity extends Activity implements Constants {
 	Button discardButton = null;
 	Button resumeButton = null;
 	TextView activityTime = null;
-	TextView activityDistance = null;
-	EditText notes = null;
 	TextView activityPace = null;
+	TextView activityDistance = null;
+
+	EditText notes = null;
 	ExpandableListView expandableListView = null;
 	Adapter adapter = null;
 
+	View mapViewLayout;
+	MapView mapView = null;
+	AsyncTask<String,String,RouteOverlay> loadRouteTask = null;
+	
 	UploadManager uploadManager = null;
 
 	/** Called when the activity is first created. */
@@ -92,6 +109,21 @@ public class DetailActivity extends Activity implements Constants {
 		mDB = mDBHelper.getReadableDatabase();
 		uploadManager = new UploadManager(this);
 
+		mapView = new MapView(this,"0xdNTxWhTMocROUoBkVEvmMpQvfAcivz7zNzXNQ");
+		mapView.setBuiltInZoomControls(true);
+		mapView.setClickable(true);
+		Display display = getWindowManager().getDefaultDisplay(); 
+		int width = display.getWidth();
+		int height = display.getHeight();
+		int minXY = (int) (0.8f * Math.min(width,  height));
+		LinearLayout l1 = new LinearLayout(this);
+		LinearLayout l2 = new LinearLayout(this);
+		l1.setOrientation(LinearLayout.HORIZONTAL);
+		l1.setGravity(Gravity.CENTER);
+		l1.addView(l2, minXY, minXY);
+		l2.addView(mapView);
+		mapViewLayout = l1;
+		
 		if (mode.contentEquals("save")) {
 			this.mode = MODE_SAVE;
 		} else if (mode.contentEquals("details")) {
@@ -129,6 +161,8 @@ public class DetailActivity extends Activity implements Constants {
 		expandableListView.expandGroup(position(groups, "Laps"));
 		if (this.mode == MODE_SAVE || notes.getTag() != null)
 			expandableListView.expandGroup(position(groups, "Notes"));
+
+		loadRoute();
 	}
 
 	@Override
@@ -138,7 +172,7 @@ public class DetailActivity extends Activity implements Constants {
 		mDBHelper.close();
 		uploadManager.close();
 	}
-
+	
 	void requery() {
 		{
 			/**
@@ -389,8 +423,7 @@ public class DetailActivity extends Activity implements Constants {
 
 		private View getMapsView(int childPosition, boolean isLastChild,
 				View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			return new View(DetailActivity.this);
+			return mapViewLayout;
 		}
 
 		private View getReportsView(int childPosition, boolean isLastChild,
@@ -543,5 +576,98 @@ public class DetailActivity extends Activity implements Constants {
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
+	}
+
+	class RouteOverlay extends Overlay {
+        private Paint paint = new Paint();
+        private Point p1 = new Point(0,0);
+        private Point p2 = new Point(0,0);
+   		ArrayList<GeoPoint> path = new ArrayList<GeoPoint>();	
+   		GeoPoint minPoint = null;
+   		GeoPoint maxPoint = null;
+   		
+   		@Override
+        public void draw(Canvas canvas, MapView mapview, boolean shadow) {
+            super.draw(canvas, mapview, shadow);
+            
+            paint.setAntiAlias(true);
+            paint.setARGB(100, 255, 0, 0);
+            paint.setStrokeWidth(3);
+
+            GeoPoint last = path.get(0);
+            mapview.getProjection().toPixels(last, p1);
+
+            for(GeoPoint p : path){
+                mapview.getProjection().toPixels(p, p2);
+                if (p1.x == p2.x && p1.y == p2.y)
+                	continue;
+                canvas.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
+                p1.x = p2.x;
+                p1.y = p2.y;
+            }
+        }
+
+		public GeoPoint getCenter() {
+			return new GeoPoint((maxPoint.getLatitudeE6() + minPoint.getLatitudeE6()) / 2,
+					(maxPoint.getLongitudeE6() + minPoint.getLongitudeE6()) / 2);
+		}
+	};
+
+	private void loadRoute() {
+		final String[] from = new String[] { 
+				DB.LOCATION.LATITUDE,
+				DB.LOCATION.LONGITUDE,
+				DB.LOCATION.TYPE };
+		
+		loadRouteTask = new AsyncTask<String,String,RouteOverlay>() {
+
+			@Override
+			protected RouteOverlay doInBackground(String... params) {
+				RouteOverlay route = null;
+				Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
+						null, null, null, "_id", null);
+				if (c.moveToFirst()) {
+					route = new RouteOverlay();
+					int minLat = Integer.MAX_VALUE;
+					int maxLat = Integer.MIN_VALUE;
+					int minLong = Integer.MAX_VALUE;
+					int maxLong = Integer.MIN_VALUE;
+					do {
+						int latE6 = (int)(c.getDouble(0) * 1000000);
+						int longE6 = (int)(c.getDouble(1) * 1000000);
+						minLat = Math.min(minLat, latE6);
+						maxLat = Math.max(maxLat, latE6);
+						minLong = Math.min(minLong, longE6);
+						maxLong = Math.max(maxLong, longE6);
+						route.path.add(new GeoPoint(latE6, longE6));
+					} while (c.moveToNext());
+					System.err.println("Finished loading " + route.path.size() + " points");
+					route.minPoint = new GeoPoint(minLat, minLong);
+					route.maxPoint = new GeoPoint(maxLat, maxLong);
+				}
+				c.close();
+				return route;
+			}
+
+			@Override
+			protected void onPostExecute(RouteOverlay overlay) {
+				if (overlay != null) {
+					if (mapView != null) {
+						mapView.getOverlays().add(overlay);
+						double fitFactor = 1;
+						mapView.getController().zoomToSpan((int) (Math.abs(overlay.maxPoint.getLatitudeE6() - overlay.minPoint.getLatitudeE6()) * fitFactor),
+								(int)(Math.abs(overlay.maxPoint.getLongitudeE6() - overlay.minPoint.getLongitudeE6()) * fitFactor));
+						mapView.getController().animateTo(overlay.getCenter());
+		                mapView.postInvalidate(); 
+						System.err.println("Added overlay");
+					}
+				}
+			}
+		}.execute("kalle");
 	}
 }
