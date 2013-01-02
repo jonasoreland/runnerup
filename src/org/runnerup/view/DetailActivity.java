@@ -27,7 +27,6 @@ import org.runnerup.util.Constants;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -38,20 +37,20 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TabHost;
+import android.widget.TabHost.TabContentFactory;
+import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 import com.google.android.maps.GeoPoint;
@@ -59,7 +58,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class DetailActivity extends MapActivity implements Constants {
+public class DetailActivity extends MapActivity implements Constants, TabContentFactory {
 
 	long mID = 0;
 	DBHelper mDBHelper = null;
@@ -67,14 +66,10 @@ public class DetailActivity extends MapActivity implements Constants {
 	HashSet<String> pendingUploaders = new HashSet<String>();
 	HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
 	
-	static final String groups[] = { "Notes", // activity notes
-			"Laps", // lap list
-			"Map", // map view
-			"Reports"// uploads
-	};
 	ContentValues laps[] = null;
 	ContentValues reports[] = null;
-
+	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+	
 	int mode; // 0 == save 1 == details
 	final static int MODE_SAVE = 0;
 	final static int MODE_DETAILS = 1;
@@ -87,10 +82,8 @@ public class DetailActivity extends MapActivity implements Constants {
 	TextView activityDistance = null;
 
 	EditText notes = null;
-	ExpandableListView expandableListView = null;
-	Adapter adapter = null;
 
-	View mapViewLayout;
+	View mapViewLayout = null;
 	MapView mapView = null;
 	AsyncTask<String,String,RouteOverlay> loadRouteTask = null;
 	
@@ -112,18 +105,8 @@ public class DetailActivity extends MapActivity implements Constants {
 		mapView = new MapView(this,"0xdNTxWhTMocROUoBkVEvmMpQvfAcivz7zNzXNQ");
 		mapView.setBuiltInZoomControls(true);
 		mapView.setClickable(true);
-		Display display = getWindowManager().getDefaultDisplay(); 
-		int width = display.getWidth();
-		int height = display.getHeight();
-		int minXY = (int) (0.8f * Math.min(width,  height));
-		LinearLayout l1 = new LinearLayout(this);
-		LinearLayout l2 = new LinearLayout(this);
-		l1.setOrientation(LinearLayout.HORIZONTAL);
-		l1.setGravity(Gravity.CENTER);
-		l1.addView(l2, minXY, minXY);
-		l2.addView(mapView);
-		mapViewLayout = l1;
-		
+		mapViewLayout = mapView;
+
 		if (mode.contentEquals("save")) {
 			this.mode = MODE_SAVE;
 		} else if (mode.contentEquals("details")) {
@@ -132,15 +115,14 @@ public class DetailActivity extends MapActivity implements Constants {
 			assert (false);
 		}
 
-		expandableListView = (ExpandableListView) findViewById(R.id.ExpandableListView1);
 		saveButton = (Button) findViewById(R.id.saveButton);
 		discardButton = (Button) findViewById(R.id.discardButton);
 		resumeButton = (Button) findViewById(R.id.resumeButton);
 		activityTime = (TextView) findViewById(R.id.activityTime);
 		activityDistance = (TextView) findViewById(R.id.activityDistance);
 		activityPace = (TextView) findViewById(R.id.activityPace);
-		notes = new EditText(this);
-		
+		notes = (EditText) findViewById(R.id.notesText);
+				
 		if (this.mode == MODE_SAVE) {
 			saveButton.setOnClickListener(saveButtonClick);
 			discardButton.setOnClickListener(discardButtonClick);
@@ -156,15 +138,52 @@ public class DetailActivity extends MapActivity implements Constants {
 
 		fillHeaderData();
 		requery();
-		adapter = new Adapter(this);
-		expandableListView.setAdapter(adapter);
-		expandableListView.expandGroup(position(groups, "Laps"));
-		if (this.mode == MODE_SAVE || notes.getTag() != null)
-			expandableListView.expandGroup(position(groups, "Notes"));
 
 		loadRoute();
-	}
 
+		TabHost th = (TabHost)findViewById(R.id.tabhost);
+		th.setup();
+		TabSpec tabSpec = th.newTabSpec("notes");
+		tabSpec.setIndicator("Notes");
+		tabSpec.setContent(R.id.tabMain);
+		th.addTab(tabSpec);
+
+		tabSpec = th.newTabSpec("laps");
+		tabSpec.setIndicator("Laps");
+		tabSpec.setContent(R.id.tabLap);
+		th.addTab(tabSpec);
+
+		tabSpec = th.newTabSpec("map");
+		tabSpec.setIndicator("Map");
+		tabSpec.setContent(this);
+		th.addTab(tabSpec);
+
+		tabSpec = th.newTabSpec("share");
+		tabSpec.setIndicator("Upload");
+		tabSpec.setContent(R.id.tabUpload);
+		th.addTab(tabSpec);
+		
+		{
+			int iCnt = th.getTabWidget().getChildCount();
+			for(int i=0; i<iCnt; i++)
+				th.getTabWidget().getChildAt(i).getLayoutParams().height /= 2;
+		}
+
+		{
+			ListView lv = (ListView) findViewById(R.id.laplist);
+			LapListAdapter adapter = new LapListAdapter();
+			adapters.add(adapter);
+			lv.setAdapter(adapter);
+		}
+		{
+			ListView lv = (ListView) findViewById(R.id.reportList);
+			ReportListAdapter adapter = new ReportListAdapter();
+			adapters.add(adapter);
+			lv.setAdapter(adapter);
+		}
+		
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -182,7 +201,7 @@ public class DetailActivity extends MapActivity implements Constants {
 					DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.PLANNED_TIME,
 					DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE };
 
-			Cursor c = mDB.query(DB.LAP.TABLE, from, "activity_id == " + mID,
+			Cursor c = mDB.query(DB.LAP.TABLE, from, DB.LAP.ACTIVITY + " == " + mID,
 					null, null, null, "_id", null);
 
 			laps = DBHelper.toArray(c);
@@ -236,6 +255,9 @@ public class DetailActivity extends MapActivity implements Constants {
 			resumeButton.setVisibility(View.VISIBLE);
 		}
 
+		for (BaseAdapter a : adapters) {
+			a.notifyDataSetChanged();
+		}
 	}
 
 	void fillHeaderData() {
@@ -279,157 +301,83 @@ public class DetailActivity extends MapActivity implements Constants {
 		}
 
 		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
+			System.err.println("keso: " + tmp.getAsString(DB.ACTIVITY.COMMENT));
 			notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
 			notes.setTag("value");
 		}
 	}
 
 	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		expandableListView.setIndicatorBounds(
-				expandableListView.getRight() - 40,
-				expandableListView.getWidth());
+	public View createTabContent(String tag) {
+		if (tag.contentEquals("map")) {
+			return mapViewLayout;
+		} else if (tag.contentEquals("notes")) {
+			return notes;
+		}
+		return null;
 	}
 
-	class Adapter extends BaseExpandableListAdapter {
-		LayoutInflater inflater = null;
+	class LapListAdapter extends BaseAdapter {
 
-		public Adapter(Context ctx) {
-			super();
-			inflater = LayoutInflater.from(ctx);
+		@Override
+		public int getCount() {
+			return laps.length;
 		}
 
 		@Override
-		public Object getChild(int groupPosition, int childPosition) {
-			if (groups[groupPosition].contentEquals("Laps"))
-				return laps[childPosition];
-			else if (groups[groupPosition].contentEquals("Map"))
-				return mID;
-			else if (groups[groupPosition].contentEquals("Notes"))
-				return mID;
-			else if (groups[groupPosition].contentEquals("Reports"))
-				return reports[childPosition];
-
-			throw new IllegalArgumentException("Invalid groupPosition: "
-					+ groupPosition + ", max: " + groups.length);
+		public Object getItem(int position) {
+			return laps[position];
 		}
 
 		@Override
-		public long getChildId(int groupPosition, int childPosition) {
-			if (groups[groupPosition].contentEquals("Laps"))
-				return laps[childPosition].getAsLong("_id");
-			else if (groups[groupPosition].contentEquals("Map"))
-				return mID;
-			else if (groups[groupPosition].contentEquals("Notes"))
-				return mID;
-			else if (groups[groupPosition].contentEquals("Reports"))
-				return reports[childPosition].getAsLong("_id"); // account id
-
-			throw new IllegalArgumentException("Invalid groupPosition: "
-					+ groupPosition + ", max: " + groups.length);
+		public long getItemId(int position) {
+			return laps[position].getAsLong("_id");
 		}
 
 		@Override
-		public int getChildrenCount(int groupPosition) {
-			if (groups[groupPosition].contentEquals("Laps"))
-				return laps.length;
-			else if (groups[groupPosition].contentEquals("Map"))
-				return 1;
-			else if (groups[groupPosition].contentEquals("Notes"))
-				return 1;
-			else if (groups[groupPosition].contentEquals("Reports"))
-				return reports.length + 1;
-
-			throw new IllegalArgumentException("Invalid groupPosition: "
-					+ groupPosition + ", max: " + groups.length);
-		}
-
-		@Override
-		public Object getGroup(int groupPosition) {
-			return groups[groupPosition];
-		}
-
-		@Override
-		public int getGroupCount() {
-			return groups.length;
-		}
-
-		@Override
-		public long getGroupId(int groupPosition) {
-			return groupPosition;
-		}
-
-		@Override
-		public View getGroupView(int groupPosition, boolean isExpanded,
-				View convertView, ViewGroup parent) {
-			View view = inflater.inflate(R.layout.detail_row, parent, false);
-			TextView tv = (TextView) view.findViewById(R.id.groupName);
-			tv.setText(groups[groupPosition]);
-			return view;
-		}
-
-		@Override
-		public View getChildView(int groupPosition, int childPosition,
-				boolean isLastChild, View convertView, ViewGroup parent) {
-
-			if (groups[groupPosition].contentEquals("Laps"))
-				return getLapsView(childPosition, isLastChild, convertView,
-						parent);
-			else if (groups[groupPosition].contentEquals("Map"))
-				return getMapsView(childPosition, isLastChild, convertView,
-						parent);
-			else if (groups[groupPosition].contentEquals("Notes"))
-				return getNotesView(childPosition, isLastChild, convertView,
-						parent);
-			else if (groups[groupPosition].contentEquals("Reports"))
-				return getReportsView(childPosition, isLastChild, convertView,
-						parent);
-
-			throw new IllegalArgumentException("Invalid groupPosition: "
-					+ groupPosition + ", max: " + groups.length);
-		}
-
-		private View getLapsView(int childPosition, boolean isLastChild,
-				View convertView, ViewGroup parent) {
-			if (laps.length == 0) {
-				return new View(DetailActivity.this);
-			}
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
 			View view = inflater.inflate(R.layout.laplist_row, parent, false);
 			TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
-			tv1.setText(laps[childPosition].getAsString("_id"));
+			tv1.setText(laps[position].getAsString("_id"));
 			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
-			float d = laps[childPosition].getAsLong(DB.LAP.DISTANCE);
+			float d = laps[position].getAsLong(DB.LAP.DISTANCE);
 			tv2.setText(d + "m");
 			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
-			long t = laps[childPosition].getAsLong(DB.LAP.TIME);
+			long t = laps[position].getAsLong(DB.LAP.TIME);
 			tv3.setText(DateUtils.formatElapsedTime(t));
 			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
 			tv4.setText(DateUtils.formatElapsedTime((long) (1000 * t / d))
 					+ "/km");
 			return view;
 		}
+	};
 
-		private View getNotesView(int childPosition, boolean isLastChild,
-				View convertView, ViewGroup parent) {
-			EditText tv = notes;
-			if (mode == MODE_SAVE) {
-				tv.setLines(3);
-			} else {
-				tv.setEnabled(false);
-			}
-			return tv;
+	class ReportListAdapter extends BaseAdapter {
+
+		@Override
+		public int getCount() {
+			return reports.length + 1;
 		}
 
-		private View getMapsView(int childPosition, boolean isLastChild,
-				View convertView, ViewGroup parent) {
-			return mapViewLayout;
+		@Override
+		public Object getItem(int position) {
+			if (position < reports.length)
+				return reports[position];
+			return this;
 		}
 
-		private View getReportsView(int childPosition, boolean isLastChild,
-				View convertView, ViewGroup parent) {
+		@Override
+		public long getItemId(int position) {
+			if (position < reports.length)
+				return reports[position].getAsLong("_id");
 
-			if (childPosition == reports.length) {
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (position == reports.length) {
 				Button b = new Button(DetailActivity.this);
 				b.setText("Configure accounts");
 				b.setOnClickListener(new OnClickListener() {
@@ -444,14 +392,14 @@ public class DetailActivity extends MapActivity implements Constants {
 				return b;
 			}
 
-			View view = inflater
-					.inflate(R.layout.reportlist_row, parent, false);
+			LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
+			View view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
 			TextView tv0 = (TextView) view.findViewById(R.id.accountId);
 			CheckBox cb = (CheckBox) view.findViewById(R.id.reportSent);
 			TextView tv1 = (TextView) view.findViewById(R.id.accountName);
 
-			ContentValues tmp = reports[childPosition];
+			ContentValues tmp = reports[position];
 
 			String name = tmp.getAsString("name");
 			cb.setTag(tmp.getAsString("name"));
@@ -469,21 +417,15 @@ public class DetailActivity extends MapActivity implements Constants {
 			tv1.setText(name);
 			return view;
 		}
-
-		@Override
-		public boolean hasStableIds() {
-			return true;
-		}
-
-		@Override
-		public boolean isChildSelectable(int groupPosition, int childPosition) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+		
 	};
-
+	
 	OnClickListener saveButtonClick = new OnClickListener() {
 		public void onClick(View v) {
+			ContentValues tmp = new ContentValues();
+			tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
+			String whereArgs[] = { Long.toString(mID) };
+			mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
 			uploadManager.startUploading(new UploadManager.Callback() {
 				@Override
 				public void run(String uploader, Uploader.Status status) {
@@ -514,7 +456,6 @@ public class DetailActivity extends MapActivity implements Constants {
 				@Override
 				public void run(String uploader, Uploader.Status status) {
 					requery();
-					adapter.notifyDataSetChanged();
 				}
 			}, pendingUploaders, mID);
 		}
@@ -566,8 +507,6 @@ public class DetailActivity extends MapActivity implements Constants {
 			uploadManager.onActivityResult(requestCode, resultCode, data);
 		}
 		requery();
-		adapter.notifyDataSetChanged();
-
 	}
 
 	public static int position(String arr[], String key) {
