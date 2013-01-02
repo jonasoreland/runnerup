@@ -16,10 +16,24 @@
  */
 package org.runnerup.view;
 
-import org.runnerup.R;
+import java.util.ArrayList;
 
+import org.runnerup.R;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Feedback;
+import org.runnerup.workout.Scope;
+import org.runnerup.workout.Workout;
+import org.runnerup.workout.feedback.AudioFeedback;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -27,5 +41,62 @@ public class SettingsActivity extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.layout.settings);
 		setContentView(R.layout.settings_wrapper);
+
+		Preference btn = (Preference)findPreference("test_cueinfo");
+		btn.setOnPreferenceClickListener(onTestCueinfoClick);
 	}
+	
+	OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
+
+		TextToSpeech tts = null;
+		ArrayList<Feedback> feedback = new ArrayList<Feedback>();
+		
+		private OnInitListener mTTSOnInitListener = new OnInitListener() {
+
+			@Override
+			public void onInit(int arg0) {
+				Workout w = Workout.fakeWorkoutForTestingAudioCue();
+				w.setTts(tts);
+				for (Feedback f : feedback) {
+					f.emit(w,  SettingsActivity.this.getApplicationContext());
+				}
+			}
+			
+		};
+
+		@Override
+		public boolean onPreferenceClick(Preference arg0) {
+			Context ctx = getApplicationContext();
+
+			feedback.clear();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx); 
+			if (prefs.getBoolean("cueinfo_total_distance", false)) {
+				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
+			}
+			if (prefs.getBoolean("cueinfo_total_time", false)) {
+				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
+			}
+			if (prefs.getBoolean("cueinfo_total_speed", false)) {
+				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
+			}
+			if (prefs.getBoolean("cueinfo_lap_distance", false)) {
+				feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
+			}
+			if (prefs.getBoolean("cueinfo_lap_time", false)) {
+				feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
+			}
+			if (prefs.getBoolean("cueinfo_lap_speed", false)) {
+				feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
+			}
+			
+			if (tts != null) {
+				mTTSOnInitListener.onInit(0);
+			} else {
+				tts = new TextToSpeech(ctx, mTTSOnInitListener);
+			}
+			
+			return false;
+		}
+		
+	};
 }

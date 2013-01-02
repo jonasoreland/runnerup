@@ -260,4 +260,48 @@ public class Workout implements WorkoutComponent {
 		}
 	}
 
+	private static class FakeWorkout extends Workout {
+		
+		FakeWorkout() {
+			super();
+		}
+		
+		public long getDistance(Scope scope) {
+			switch(scope) {
+			case WORKOUT:
+				return (long) (3000 + 7000 * Math.random());
+			case ACTIVITY:
+				return (long) (300 + 700 * Math.random());
+			case LAP:
+				return (long) (300 + 700 * Math.random());
+			}
+			return 0;
+		}
+
+		public long getTime(Scope scope) {
+			switch(scope) {
+			case WORKOUT:
+				return (long) (10 * 60 + 50 * 60 * Math.random());
+			case ACTIVITY:
+				return (long) (1 * 60 + 5 * 60 * Math.random());
+			case LAP:
+				return (long) (1 * 60 + 5 * 60 * Math.random());
+			}
+			return 0;
+		}
+
+		public double getSpeed(Scope scope) {
+			long d = getDistance(scope);
+			long t = getTime(scope);
+			if (t == 0)
+				return 0;
+			return ((double) d) / ((double) t);
+		}
+	};
+	
+	public static Workout fakeWorkoutForTestingAudioCue() {
+		FakeWorkout w = new FakeWorkout();
+		return w;
+	}
+
 };

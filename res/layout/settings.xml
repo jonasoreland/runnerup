@@ -96,7 +96,13 @@
         		android:title="Lap speed" />
     						
    		</PreferenceCategory>
-	</PreferenceScreen>
+    	<PreferenceCategory android:title="Test audio cue">
+			<Preference android:title="Push"
+                android:key="test_cueinfo"
+                android:summary="Test audio cue"/>
+   		</PreferenceCategory>
+	    
+    	</PreferenceScreen>
     	    	    
     <CheckBoxPreference
         android:defaultValue="true"
