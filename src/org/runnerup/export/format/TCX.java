@@ -84,6 +84,11 @@ public class TCX {
 			mXML.text(id);
 			mXML.endTag("", "Id");
 			exportLaps(activityId);
+			if (!cursor.isNull(1)) {
+				mXML.startTag("", "Notes");
+				mXML.text(cursor.getString(1));
+				mXML.endTag("", "Notes");
+			}
 			mXML.endTag("", "Activity");
 			mXML.endTag("", "Activities");
 			mXML.endTag("", "TrainingCenterDatabase");
