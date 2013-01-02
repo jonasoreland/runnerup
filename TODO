@@ -1,4 +1,4 @@
-- map view
+- map view                         (DONE)
 - workout wizard
 - text fragment for audio cues (currently translates word by word)
 - post to facebook
@@ -6,10 +6,10 @@
 - upload to MapMyRun
 - upload to Endmondo
 - upload to runtastic
-- upload from End of activity view
-- Name/comment to activity
-- configure accounts
-- multi upload
+- upload from End of activity view (DONE)
+- Name/comment to activity         (DONE)
+- configure accounts               (DONE)
+- multi upload                     (DONE)
 - km/miles & speed/pace
   should it be global settings or per workout settings ??
   e.g maybe speed is more interesting that pace for cycling
