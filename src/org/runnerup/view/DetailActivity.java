@@ -25,6 +25,10 @@ import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.util.Constants;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -36,6 +40,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,12 +58,7 @@ import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-
-public class DetailActivity extends MapActivity implements Constants, TabContentFactory {
+public class DetailActivity extends FragmentActivity implements Constants, TabContentFactory {
 
 	long mID = 0;
 	DBHelper mDBHelper = null;
@@ -84,7 +84,7 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 	EditText notes = null;
 
 	View mapViewLayout = null;
-	MapView mapView = null;
+	GoogleMap map = null;
 	AsyncTask<String,String,RouteOverlay> loadRouteTask = null;
 	
 	UploadManager uploadManager = null;
@@ -102,11 +102,6 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		mDB = mDBHelper.getReadableDatabase();
 		uploadManager = new UploadManager(this);
 
-		mapView = new MapView(this,"0xdNTxWhTMocROUoBkVEvmMpQvfAcivz7zNzXNQ");
-		mapView.setBuiltInZoomControls(true);
-		mapView.setClickable(true);
-		mapViewLayout = mapView;
-
 		if (mode.contentEquals("save")) {
 			this.mode = MODE_SAVE;
 		} else if (mode.contentEquals("details")) {
@@ -122,7 +117,9 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		activityDistance = (TextView) findViewById(R.id.activityDistance);
 		activityPace = (TextView) findViewById(R.id.activityPace);
 		notes = (EditText) findViewById(R.id.notesText);
-				
+		
+		map = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+
 		if (this.mode == MODE_SAVE) {
 			saveButton.setOnClickListener(saveButtonClick);
 			discardButton.setOnClickListener(discardButtonClick);
@@ -155,7 +152,7 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 
 		tabSpec = th.newTabSpec("map");
 		tabSpec.setIndicator("Map");
-		tabSpec.setContent(this);
+		tabSpec.setContent(R.id.tabMap);
 		th.addTab(tabSpec);
 
 		tabSpec = th.newTabSpec("share");
@@ -517,44 +514,7 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		return -1;
 	}
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
-
-	class RouteOverlay extends Overlay {
-        private Paint paint = new Paint();
-        private Point p1 = new Point(0,0);
-        private Point p2 = new Point(0,0);
-   		ArrayList<GeoPoint> path = new ArrayList<GeoPoint>();	
-   		GeoPoint minPoint = null;
-   		GeoPoint maxPoint = null;
-   		
-   		@Override
-        public void draw(Canvas canvas, MapView mapview, boolean shadow) {
-            super.draw(canvas, mapview, shadow);
-            
-            paint.setAntiAlias(true);
-            paint.setARGB(100, 255, 0, 0);
-            paint.setStrokeWidth(3);
-
-            GeoPoint last = path.get(0);
-            mapview.getProjection().toPixels(last, p1);
-
-            for(GeoPoint p : path){
-                mapview.getProjection().toPixels(p, p2);
-                if (p1.x == p2.x && p1.y == p2.y)
-                	continue;
-                canvas.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
-                p1.x = p2.x;
-                p1.y = p2.y;
-            }
-        }
-
-		public GeoPoint getCenter() {
-			return new GeoPoint((maxPoint.getLatitudeE6() + minPoint.getLatitudeE6()) / 2,
-					(maxPoint.getLongitudeE6() + minPoint.getLongitudeE6()) / 2);
-		}
+	class RouteOverlay {
 	};
 
 	private void loadRoute() {
@@ -562,51 +522,5 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 				DB.LOCATION.LATITUDE,
 				DB.LOCATION.LONGITUDE,
 				DB.LOCATION.TYPE };
-		
-		loadRouteTask = new AsyncTask<String,String,RouteOverlay>() {
-
-			@Override
-			protected RouteOverlay doInBackground(String... params) {
-				RouteOverlay route = null;
-				Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
-						null, null, null, "_id", null);
-				if (c.moveToFirst()) {
-					route = new RouteOverlay();
-					int minLat = Integer.MAX_VALUE;
-					int maxLat = Integer.MIN_VALUE;
-					int minLong = Integer.MAX_VALUE;
-					int maxLong = Integer.MIN_VALUE;
-					do {
-						int latE6 = (int)(c.getDouble(0) * 1000000);
-						int longE6 = (int)(c.getDouble(1) * 1000000);
-						minLat = Math.min(minLat, latE6);
-						maxLat = Math.max(maxLat, latE6);
-						minLong = Math.min(minLong, longE6);
-						maxLong = Math.max(maxLong, longE6);
-						route.path.add(new GeoPoint(latE6, longE6));
-					} while (c.moveToNext());
-					System.err.println("Finished loading " + route.path.size() + " points");
-					route.minPoint = new GeoPoint(minLat, minLong);
-					route.maxPoint = new GeoPoint(maxLat, maxLong);
-				}
-				c.close();
-				return route;
-			}
-
-			@Override
-			protected void onPostExecute(RouteOverlay overlay) {
-				if (overlay != null) {
-					if (mapView != null) {
-						mapView.getOverlays().add(overlay);
-						double fitFactor = 1;
-						mapView.getController().zoomToSpan((int) (Math.abs(overlay.maxPoint.getLatitudeE6() - overlay.minPoint.getLatitudeE6()) * fitFactor),
-								(int)(Math.abs(overlay.maxPoint.getLongitudeE6() - overlay.minPoint.getLongitudeE6()) * fitFactor));
-						mapView.getController().animateTo(overlay.getCenter());
-		                mapView.postInvalidate(); 
-						System.err.println("Added overlay");
-					}
-				}
-			}
-		}.execute("kalle");
 	}
 }
