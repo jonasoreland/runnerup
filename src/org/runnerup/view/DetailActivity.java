@@ -38,6 +38,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -129,11 +131,10 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 			resumeButton.setOnClickListener(resumeButtonClick);
 		} else if (this.mode == MODE_DETAILS) {
 			saveButton.setVisibility(View.GONE);
+			discardButton.setVisibility(View.GONE);
 			resumeButton.setVisibility(View.GONE);
 			resumeButton.setText("Upload activity");
 			resumeButton.setOnClickListener(uploadButtonClick);
-			discardButton.setText("Delete activity");
-			discardButton.setOnClickListener(deleteButtonClick);
 		}
 
 		fillHeaderData();
@@ -183,7 +184,24 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		}
 		
 	}
-	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (mode == MODE_DETAILS) {
+			getMenuInflater().inflate(R.menu.detail_menu, menu);
+		}
+		return true;
+	}
+
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_delete_activity:
+			deleteButtonClick.onClick(null);
+		}
+		return true;
+	}
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
