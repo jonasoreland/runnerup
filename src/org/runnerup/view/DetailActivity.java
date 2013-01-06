@@ -345,7 +345,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		}
 
 		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
-			System.err.println("keso: " + tmp.getAsString(DB.ACTIVITY.COMMENT));
 			notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
 		}
 	}
