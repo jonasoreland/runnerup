@@ -26,27 +26,13 @@ import org.runnerup.export.Uploader;
 import org.runnerup.util.Constants;
 import org.runnerup.widget.WidgetUtil;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngBounds.Builder;
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -65,10 +51,17 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TabHost.TabContentFactory;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class DetailActivity extends FragmentActivity implements Constants {
 
@@ -134,19 +127,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		notes = (EditText) findViewById(R.id.notesText);
 		map = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
-		map.setOnCameraChangeListener(new OnCameraChangeListener() {
+		if (map != null) {
+			map.setOnCameraChangeListener(new OnCameraChangeListener() {
 
-		    @Override
-		    public void onCameraChange(CameraPosition arg0) {
-		    	if (mapBounds != null) {
-		    		// Move camera.
-		    		map.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 5));
-		    		// Remove listener to prevent position reset on camera move.
-		    		map.setOnCameraChangeListener(null);
-		    	}
-		    }
-		});
-		
+				@Override
+				public void onCameraChange(CameraPosition arg0) {
+					if (mapBounds != null) {
+						// Move camera.
+						map.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 5));
+						// Remove listener to prevent position reset on camera move.
+						map.setOnCameraChangeListener(null);
+					}
+				}
+			});
+		}
 		saveButton.setOnClickListener(saveButtonClick);
 		if (this.mode == MODE_SAVE) {
 			discardButton.setOnClickListener(discardButtonClick);
