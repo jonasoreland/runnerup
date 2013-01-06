@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -17,4 +17,5 @@
   -->
 <resources>
     <string name="app_name">RunnerUp</string>
+    <string name="Google_Play_Services_Legal_Notices">Google Play Services Legal Notices</string>
 </resources>

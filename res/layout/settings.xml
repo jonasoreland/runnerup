@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -170,5 +170,15 @@
             android:title="Poll distance (m)" />
 
 	</PreferenceScreen>
-    
+
+	<PreferenceCategory android:title="About">
+		<org.runnerup.widget.AboutPreference
+        	android:title="About RunnerUp"
+        	android:dialogMessage="Not much to say at this point" /> 
+		
+		<org.runnerup.widget.AboutPreference
+        	android:title="@string/Google_Play_Services_Legal_Notices"
+        	android:dialogMessage="Not much to say at this point" /> 
+	</PreferenceCategory>
+	
 </PreferenceScreen>
