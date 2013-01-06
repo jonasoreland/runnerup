@@ -206,14 +206,8 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 			if (edit == false) {
 				edit = true;
 				WidgetUtil.setEditable(notes,  true);
-				item.setEnabled(false);
+				notes.requestFocus();
 				saveButton.setEnabled(true);
-			} else {
-				saveActivity();
-				edit = false;
-				WidgetUtil.setEditable(notes,  false);
-				item.setEnabled(true);
-				saveButton.setEnabled(false);
 			}
 			break;
 		}
