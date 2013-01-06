@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.util.Constants;
+import org.runnerup.widget.WidgetUtil;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -75,6 +76,7 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 	int mode; // 0 == save 1 == details
 	final static int MODE_SAVE = 0;
 	final static int MODE_DETAILS = 1;
+	boolean edit = false;
 
 	Button saveButton = null;
 	Button discardButton = null;
@@ -125,16 +127,17 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		activityPace = (TextView) findViewById(R.id.activityPace);
 		notes = (EditText) findViewById(R.id.notesText);
 				
+		saveButton.setOnClickListener(saveButtonClick);
 		if (this.mode == MODE_SAVE) {
-			saveButton.setOnClickListener(saveButtonClick);
 			discardButton.setOnClickListener(discardButtonClick);
 			resumeButton.setOnClickListener(resumeButtonClick);
 		} else if (this.mode == MODE_DETAILS) {
-			saveButton.setVisibility(View.GONE);
+			saveButton.setEnabled(false);
 			discardButton.setVisibility(View.GONE);
 			resumeButton.setVisibility(View.GONE);
 			resumeButton.setText("Upload activity");
 			resumeButton.setOnClickListener(uploadButtonClick);
+			WidgetUtil.setEditable(notes,  false);
 		}
 
 		fillHeaderData();
@@ -198,6 +201,21 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		switch (item.getItemId()) {
 		case R.id.menu_delete_activity:
 			deleteButtonClick.onClick(null);
+			break;
+		case R.id.menu_edit_activity:
+			if (edit == false) {
+				edit = true;
+				WidgetUtil.setEditable(notes,  true);
+				item.setEnabled(false);
+				saveButton.setEnabled(true);
+			} else {
+				saveActivity();
+				edit = false;
+				WidgetUtil.setEditable(notes,  false);
+				item.setEnabled(true);
+				saveButton.setEnabled(false);
+			}
+			break;
 		}
 		return true;
 	}
@@ -321,7 +339,6 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
 			System.err.println("keso: " + tmp.getAsString(DB.ACTIVITY.COMMENT));
 			notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
-			notes.setTag("value");
 		}
 	}
 
@@ -438,12 +455,22 @@ public class DetailActivity extends MapActivity implements Constants, TabContent
 		
 	};
 	
+	void saveActivity() {
+		ContentValues tmp = new ContentValues();
+		tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
+		String whereArgs[] = { Long.toString(mID) };
+		mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
+	}
+	
 	OnClickListener saveButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			ContentValues tmp = new ContentValues();
-			tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
-			String whereArgs[] = { Long.toString(mID) };
-			mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
+			saveActivity();
+			if (mode == MODE_DETAILS) {
+				edit = false;
+				WidgetUtil.setEditable(notes,  false);
+				saveButton.setEnabled(false);
+				return;
+			}
 			uploadManager.startUploading(new UploadManager.Callback() {
 				@Override
 				public void run(String uploader, Uploader.Status status) {

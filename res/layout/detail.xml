@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/resumeButton"
+        android:layout_above="@+id/buttons"
         android:layout_below="@+id/linearLayout1" >
 
         <LinearLayout
@@ -138,10 +138,13 @@
 
                     <EditText
                         android:id="@+id/notesText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        />
+                        android:inputType="textMultiLine"
+                        android:minLines="4"
+                        android:gravity="top|left"
+                        android:singleLine="false" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -155,7 +158,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1" >
                     </ListView>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -169,35 +171,41 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1" >
                     </ListView>
-
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
     </TabHost>
 
-    <Button
-        android:id="@+id/resumeButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/saveButton"
-        android:text="Resume" />
-
-    <Button
-        android:id="@+id/saveButton"
-        style="@style/ButtonText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/discardButton"
-        android:background="@drawable/btn_green"
-        android:text="Save activity" />
-
-    <Button
-        android:id="@+id/discardButton"
-        style="@style/ButtonText"
+    <LinearLayout
+        android:id="@+id/buttons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/btn_red"
-        android:text="Discard activity" />
+        android:orientation="vertical" >
 
+        <Button
+            android:id="@+id/resumeButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/saveButton"
+            android:text="Resume" />
+
+        <Button
+            android:id="@+id/saveButton"
+            style="@style/ButtonText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/discardButton"
+            android:background="@drawable/btn_green"
+            android:text="Save activity" />
+
+        <Button
+            android:id="@+id/discardButton"
+            style="@style/ButtonText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/btn_red"
+            android:text="Discard activity" />
+    </LinearLayout>
 </RelativeLayout>
