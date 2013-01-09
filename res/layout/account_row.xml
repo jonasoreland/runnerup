@@ -76,9 +76,8 @@
             android:id="@+id/accountList_autoUpload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Upload to this account"
             android:layout_weight="1"
-            android:text="Auto upload" />
+            android:text="Upload" />
 
     </TableRow>
 
