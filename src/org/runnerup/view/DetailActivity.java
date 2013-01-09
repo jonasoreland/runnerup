@@ -434,14 +434,15 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			ContentValues tmp = reports[position];
 
 			String name = tmp.getAsString("name");
-			cb.setTag(tmp.getAsString("name"));
+			cb.setTag(name);
 			if (alreadyUploadedUploaders.contains(name)) {
 				cb.setChecked(true);
 				cb.setEnabled(false);
-				cb.setText("Sent");
-			} else {
+				cb.setText("Uploaded");
+			} else if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
 				cb.setChecked(true);
-				cb.setTag(name);
+			} else {
+				cb.setChecked(false);
 			}
 			cb.setOnCheckedChangeListener(DetailActivity.this.onSendChecked);
 

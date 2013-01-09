@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
@@ -139,9 +140,20 @@ public class AccountsActivity extends ListActivity implements Constants {
 				b.setTag(id);
 				b.setOnClickListener(configureButtonClick);
 				if (configured && enabled) {
-					b.setText("Reset");
+					b.setText("Disconnect");
 				} else {
-					b.setText("Configure");
+					b.setText("Connect");
+				}
+			}
+			
+			{
+				CheckBox cb = (CheckBox) view.findViewById(R.id.accountList_autoUpload);
+				cb.setOnCheckedChangeListener(defaultCheckBoxClick);
+				cb.setTag(id);
+				if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
+					cb.setChecked(true);
+				} else {
+					cb.setChecked(false);
 				}
 			}
 		}
@@ -157,6 +169,17 @@ public class AccountsActivity extends ListActivity implements Constants {
 			Toast.makeText(AccountsActivity.this, "" + buttonView + ", tag: " + buttonView.getTag() + ", " + isChecked, Toast.LENGTH_SHORT).show();
 		}
 	};
+	
+	OnCheckedChangeListener defaultCheckBoxClick = new OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+			ContentValues tmp = new ContentValues();
+			tmp.put(DB.ACCOUNT.DEFAULT, isChecked ? 1 : 0);
+			String args[] = { (String)buttonView.getTag() };
+			mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
+		}
+	};
+
 	
 	OnClickListener configureButtonClick = new OnClickListener() {
 		public void onClick(View v) {
