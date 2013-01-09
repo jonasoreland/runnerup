@@ -150,7 +150,9 @@ public class AccountsActivity extends ListActivity implements Constants {
 				CheckBox cb = (CheckBox) view.findViewById(R.id.accountList_autoUpload);
 				cb.setOnCheckedChangeListener(defaultCheckBoxClick);
 				cb.setTag(id);
-				if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
+				if (! (configured && enabled)) {
+					cb.setVisibility(View.INVISIBLE);
+				} else if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
 					cb.setChecked(true);
 				} else {
 					cb.setChecked(false);
