@@ -33,6 +33,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -61,6 +62,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 public class DetailActivity extends FragmentActivity implements Constants {
@@ -563,7 +565,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	class Route {
 		PolylineOptions path = new PolylineOptions();
 		LatLngBounds.Builder bounds = new LatLngBounds.Builder();
-
+		ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>(10);
+		
 		Route () {
 			path.color(Color.RED);
 			path.width(3);
@@ -586,11 +589,48 @@ public class DetailActivity extends FragmentActivity implements Constants {
 						null, null, null, "_id", null);
 				if (c.moveToFirst()) {
 					route = new Route();
+					double acc_distance = 0;
+					int cnt_distance = 0;
+					LatLng lastLocation = null;
 					do {
 						cnt++;
 						LatLng point = new LatLng(c.getDouble(0), c.getDouble(1));
 						route.path.add(point);
 						route.bounds.include(point);
+						int type = c.getInt(2);
+						MarkerOptions m;
+						switch (type) {
+						case DB.LOCATION.TYPE_START:
+						case DB.LOCATION.TYPE_END:
+						case DB.LOCATION.TYPE_PAUSE:
+						case DB.LOCATION.TYPE_RESUME:
+							m = new MarkerOptions();
+							m.position((lastLocation = point));
+							m.title(type == DB.LOCATION.TYPE_START ? "Start" :
+									type == DB.LOCATION.TYPE_END ? "Stop" :
+									type == DB.LOCATION.TYPE_PAUSE ? "Pause" :
+									type == DB.LOCATION.TYPE_RESUME ? "Resume" : "<Unknown>");
+							m.snippet(null);
+							m.draggable(false);
+							route.markers.add(m);
+							break;
+						case DB.LOCATION.TYPE_GPS:
+							float res[] = { 0 };
+							Location.distanceBetween(lastLocation.latitude, lastLocation.longitude, point.latitude, point.longitude, res);
+							acc_distance += res[0];
+							if (acc_distance >= 1000) {
+								cnt_distance ++;
+								acc_distance = 0;
+								m = new MarkerOptions();
+								m.position(point);
+								m.title("" + cnt_distance + " km");
+								m.snippet(null);
+								m.draggable(false);
+								route.markers.add(m);
+							}
+							lastLocation = point;
+							break;
+						}
 					} while (c.moveToNext());
 					System.err.println("Finished loading " + cnt + " points");
 				}
@@ -605,6 +645,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
 						map.addPolyline(route.path);
 						mapBounds = route.bounds.build();
 						System.err.println("Added polyline");
+						int cnt = 0;
+						for (MarkerOptions m : route.markers) {
+							cnt++;
+							map.addMarker(m);
+						}
+						System.err.println("Added " + cnt + " markers");
+
+						route = new Route(); // release mem for old...
 					}
 				}
 			}
