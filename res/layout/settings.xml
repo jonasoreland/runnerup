@@ -169,7 +169,14 @@
             android:summary="0"
             android:title="Poll distance (m)" />
 
-	</PreferenceScreen>
+        <Preference android:title="Export"
+            android:key="exportdb"
+            android:summary="Export database to sdcard (e.g for upgrade)" />
+        
+        <Preference android:title="Import"
+            android:key="importdb"
+            android:summary="Import database from sdcard (e.g after upgrade)" />
+   	</PreferenceScreen>
 
 	<PreferenceCategory android:title="About">
 		<org.runnerup.widget.AboutPreference
