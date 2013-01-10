@@ -304,4 +304,10 @@ public class Activity implements TickComponent {
 		}
 		return 0;
 	}
+
+	public double getDuration(Dimension dimension) {
+		if (durationType == dimension)
+			return durationValue;
+		return 0;
+	}
 };

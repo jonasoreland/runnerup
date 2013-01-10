@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -209,6 +209,13 @@ public class Workout implements WorkoutComponent {
 			return currentActivity.getSpeed(this, scope);
 		}
 		assert (false);
+		return 0;
+	}
+
+	public double getDuration(Scope scope, Dimension dimension) {
+		if (scope == Scope.ACTIVITY && currentActivity != null) {
+			return currentActivity.getDuration(dimension);
+		}
 		return 0;
 	}
 

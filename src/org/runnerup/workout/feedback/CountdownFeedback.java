@@ -16,12 +16,18 @@
  */
 package org.runnerup.workout.feedback;
 
+import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
+import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
 import android.content.Context;
+import android.speech.tts.TextToSpeech;
 
 public class CountdownFeedback extends Feedback {
+
+	Scope scope = Scope.ACTIVITY;
+	Dimension dimension = Dimension.TIME;
 
 	@Override
 	public boolean equals(Feedback _other) {
@@ -32,8 +38,13 @@ public class CountdownFeedback extends Feedback {
 	}
 
 	@Override
-	public void emit(Workout s, Context ctx) {
-		// TODO Auto-generated method stub
+	public void emit(Workout w, Context ctx) {
+		double curr = w.get(scope, dimension); // SI
+		double duration = w.getDuration(scope, dimension);
+		if (duration > curr) {
+			String msg = "" + (int)(duration - curr);
+			w.getTts().speak(msg, TextToSpeech.QUEUE_ADD, null);
+		}
 	}
 
 }
