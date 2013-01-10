@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,9 +27,7 @@ public class Activity implements TickComponent {
 	/**
 	 * Intensity
 	 */
-	int intensity = INTENSITY_ACTIVE;
-	public static final int INTENSITY_ACTIVE = 0;
-	public static final int INTENSITY_RESTING = 1;
+	Intensity intensity = Intensity.ACTIVE;
 
 	/**
 	 * Duration
@@ -68,21 +66,6 @@ public class Activity implements TickComponent {
 	 */
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	/**
-	 * @return the intensity
-	 */
-	public int getIntensity() {
-		return intensity;
-	}
-
-	/**
-	 * @param intensity
-	 *            the intensity to set
-	 */
-	public void setIntensity(int intensity) {
-		this.intensity = intensity;
 	}
 
 	/**
@@ -190,7 +173,7 @@ public class Activity implements TickComponent {
 			lapStartTime = time;
 			lapStartDistance = dist;
 			ContentValues tmp = new ContentValues();
-			tmp.put(DB.LAP.TYPE, intensity);
+			tmp.put(DB.LAP.TYPE, intensity.getValue());
 			if (durationType != null) {
 				switch (durationType) {
 				case TIME:
