@@ -183,12 +183,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		tabSpec.setContent(R.id.tabUpload);
 		th.addTab(tabSpec);
 		
-		if (false) {
-			int iCnt = th.getTabWidget().getChildCount();
-			for(int i=0; i<iCnt; i++)
-				th.getTabWidget().getChildAt(i).getLayoutParams().height /= 2;
-		}
-
 		{
 			ListView lv = (ListView) findViewById(R.id.laplist);
 			LapListAdapter adapter = new LapListAdapter();
