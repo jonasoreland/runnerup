@@ -164,26 +164,26 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		TabHost th = (TabHost)findViewById(R.id.tabhost);
 		th.setup();
 		TabSpec tabSpec = th.newTabSpec("notes");
-		tabSpec.setIndicator("Notes");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Notes"));
 		tabSpec.setContent(R.id.tabMain);
 		th.addTab(tabSpec);
 
 		tabSpec = th.newTabSpec("laps");
-		tabSpec.setIndicator("Laps");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Laps"));
 		tabSpec.setContent(R.id.tabLap);
 		th.addTab(tabSpec);
 
 		tabSpec = th.newTabSpec("map");
-		tabSpec.setIndicator("Map");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Map"));
 		tabSpec.setContent(R.id.tabMap);
 		th.addTab(tabSpec);
 
 		tabSpec = th.newTabSpec("share");
-		tabSpec.setIndicator("Upload");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Upload"));
 		tabSpec.setContent(R.id.tabUpload);
 		th.addTab(tabSpec);
 		
-		{
+		if (false) {
 			int iCnt = th.getTabWidget().getChildCount();
 			for(int i=0; i<iCnt; i++)
 				th.getTabWidget().getChildAt(i).getLayoutParams().height /= 2;

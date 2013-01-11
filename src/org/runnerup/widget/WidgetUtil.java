@@ -16,7 +16,16 @@
  */
 package org.runnerup.widget;
 
+import org.runnerup.R;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class WidgetUtil {
 
@@ -30,4 +39,16 @@ public class WidgetUtil {
 			editText.setFocusable(onoff);
 		}
 	}
+
+	public static View createHoloTabIndicator(Context ctx, String title) {
+        Resources res = ctx.getResources(); // Resource object to get Drawables
+        TextView txtTab = new TextView(ctx);
+        txtTab.setText(title);
+        txtTab.setTextColor(Color.WHITE);
+        txtTab.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_HORIZONTAL);
+        Drawable drawable = res.getDrawable(R.drawable.tab_indicator_holo);
+        txtTab.setBackgroundDrawable(drawable); // R.drawable.tab_indicator_holo);
+        txtTab.setLineSpacing(1 + 2 * drawable.getIntrinsicHeight(), 1);
+        return txtTab;
+    }
 }
