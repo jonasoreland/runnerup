@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -16,10 +16,12 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab1Layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".view.StartActivity" >
 
     <RelativeLayout
         android:id="@+id/GPSINFO"
@@ -50,29 +52,247 @@
 
     <Button
         android:id="@+id/startButton"
+        style="@style/ButtonText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/GPSINFO"
+        android:layout_below="@id/GPSINFO"
+        android:background="@drawable/btn_green"
         android:enabled="true"
-		android:background="@drawable/btn_green"
-		style="@style/ButtonText"
-        android:text="Start GPS" >
- 
-        <requestFocus /></Button>
+        android:text="Start GPS" />
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+    <TabHost
+        android:id="@+id/tabhostStart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/startButton" >
 
-    </ScrollView>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/startButton"
-        android:text="TextView" />
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
+                <LinearLayout
+                    android:id="@+id/tabBasic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TableLayout
+                        android:id="@+id/tableSimple"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" >
+
+                        <TableRow
+                            android:id="@+id/tabRowSimple2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" >
+
+                            <CheckBox
+                                android:id="@+id/tabBasicGoal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="false"
+                                android:text="Goal" />
+
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/tabRowSimple0"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Goal" />
+
+                            <Spinner
+                                android:id="@+id/simpleType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:entries="@array/simple_types"
+                                android:prompt="@string/simple_type" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/tabRowSimple1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Duration" />
+
+                            <EditText
+                                android:id="@+id/simpleDuration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
+                        </TableRow>
+
+                        <TextView
+                            android:id="@+id/textView1"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="TextView" />
+
+                    </TableLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabInterval"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <TableLayout
+                        android:id="@+id/tableInterval"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" >
+
+                        <TableRow
+                            android:id="@+id/tabRowInterval0"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Type" />
+
+                            <Spinner
+                                android:id="@+id/simpleType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:entries="@array/simple_types"
+                                android:prompt="@string/simple_type" />
+                        </TableRow>
+
+                        <TableRow
+                            android:id="@+id/tabRowInterval1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Duration" />
+
+                            <EditText
+                                android:id="@+id/intervalDuration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
+                        </TableRow>
+                        <TableRow
+                            android:id="@+id/tabRowInterval2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Rest type" />
+
+                            <Spinner
+                                android:id="@+id/restType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:entries="@array/simple_types"
+                                android:prompt="@string/simple_type" />
+                        </TableRow>
+                        <TableRow
+                            android:id="@+id/tabRowInterval3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Rest duration" />
+
+                            <EditText
+                                android:id="@+id/intervalRestDuration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
+                        </TableRow>
+                        <TableRow
+                            android:id="@+id/tabRowInterval5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Repitions" />
+
+                            <EditText
+                                android:id="@+id/intervalRepitition"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
+                        </TableRow>
+                        <TableRow
+                            android:id="@+id/tabRowInterval4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <CheckBox
+                                android:id="@+id/intervalWarmup"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Warmup"/>
+                            
+                            <CheckBox
+                                android:id="@+id/intervalCooldown"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Cooldown" />
+                        </TableRow>
+                        </TableLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tabManual"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                </LinearLayout>
+            </FrameLayout>
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true" >
+
+            </TabWidget>
+        </RelativeLayout>
+    </TabHost>
 </RelativeLayout>

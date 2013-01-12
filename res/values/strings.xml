@@ -18,4 +18,10 @@
 <resources>
     <string name="app_name">RunnerUp</string>
     <string name="Google_Play_Services_Legal_Notices">Google Play Services Legal Notices</string>
+
+	<string name="simple_type">Type</string>
+	<string-array name="simple_types">
+	    <item>Time</item>
+	    <item>Distance</item>
+   	</string-array>
 </resources>

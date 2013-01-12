@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ package org.runnerup.view;
 import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.TickListener;
+import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
 
@@ -37,7 +38,14 @@ import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.TabHost.TabSpec;
 
 public class StartActivity extends Activity implements TickListener {
 
@@ -50,6 +58,9 @@ public class StartActivity extends Activity implements TickListener {
 	TextView gpsInfoView2 = null;
 	TextView debugView = null;
 
+	Spinner simpleType = null;
+	EditText simpleDuration = null;
+	
 	/** Called when the activity is first created. */
 
 	@Override
@@ -70,6 +81,34 @@ public class StartActivity extends Activity implements TickListener {
 		debugView = (TextView) findViewById(R.id.textView1);
 
 		mGpsStatus = new org.runnerup.gpstracker.GpsStatus(StartActivity.this);
+		
+		TabHost th = (TabHost)findViewById(R.id.tabhostStart);
+		th.setup();
+		TabSpec tabSpec = th.newTabSpec("basic");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Basic"));
+		tabSpec.setContent(R.id.tabBasic);
+		th.addTab(tabSpec);
+
+		tabSpec = th.newTabSpec("interval");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Interval"));
+		tabSpec.setContent(R.id.tabInterval);
+		th.addTab(tabSpec);
+
+		tabSpec = th.newTabSpec("advanced");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Advanced"));
+		tabSpec.setContent(R.id.tabManual);
+		th.addTab(tabSpec);
+
+		tabSpec = th.newTabSpec("manual");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Manual"));
+		tabSpec.setContent(R.id.tabManual);
+		th.addTab(tabSpec);
+
+		CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
+		goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
+		simpleType = (Spinner)findViewById(R.id.simpleType);
+		simpleDuration = (EditText) findViewById(R.id.simpleDuration);
+		simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
 	}
 
 	@Override
@@ -256,4 +295,14 @@ public class StartActivity extends Activity implements TickListener {
 	public void onTick() {
 		updateView();
 	}
+
+	OnCheckedChangeListener simpleGoalOnCheckClick = new OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+			simpleType.setEnabled(isChecked);
+			simpleDuration.setEnabled(isChecked);
+		}
+		
+	};
+
 }
