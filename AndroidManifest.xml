@@ -60,9 +60,12 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 
+		<activity android:name=".view.NewsActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
 		<activity android:name=".view.RunActivity"
 		    android:screenOrientation="portrait" >
-		    
 		</activity>
 		
 		<activity android:name=".view.SaveActivity"

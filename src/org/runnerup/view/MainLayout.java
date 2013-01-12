@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,24 +34,25 @@ public class MainLayout extends TabActivity {
 		Resources res = getResources(); // Resource object to get Drawables
 		TabHost tabHost = getTabHost(); // The activity TabHost
 
-		Intent intent = new Intent(this, StartActivity.class);
 		tabHost.addTab(tabHost.newTabSpec("Start")
 				.setIndicator("Start", res.getDrawable(R.drawable.ic_tab_main))
-				.setContent(intent));
+				.setContent(new Intent(this, StartActivity.class)));
 
-		Intent intent2 = new Intent(this, HistoryActivity.class);
+		tabHost.addTab(tabHost.newTabSpec("News")
+				.setIndicator("News", res.getDrawable(R.drawable.ic_tab_feed))
+				.setContent(new Intent(this, NewsActivity.class)));
+
 		tabHost.addTab(tabHost
 				.newTabSpec("History")
 				.setIndicator("History",
 						res.getDrawable(R.drawable.ic_tab_history))
-				.setContent(intent2));
+				.setContent(new Intent(this, HistoryActivity.class)));
 
-		Intent intent3 = new Intent(this, SettingsActivity.class);
 		tabHost.addTab(tabHost
 				.newTabSpec("Settings")
 				.setIndicator("Settings",
 						res.getDrawable(R.drawable.ic_tab_setup))
-				.setContent(intent3));
+				.setContent(new Intent(this, SettingsActivity.class)));
 
 		// Set tabs Colors
 		tabHost.setBackgroundColor(Color.BLACK);
