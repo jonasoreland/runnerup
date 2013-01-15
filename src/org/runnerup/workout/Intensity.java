@@ -18,9 +18,24 @@ package org.runnerup.workout;
 
 public enum Intensity {
 
-	RESTING(1),
+	/**
+	 * Running
+	 */
 	ACTIVE(0),
+	
+	/**
+	 *
+	 */
+	RESTING(1),
+	
+	/**
+	 * Warm up
+	 */
 	WARMUP(2),
+	
+	/**
+	 * Cool down
+	 */
 	COOLDOWN(3);
 	
 	int value;
@@ -31,6 +46,4 @@ public enum Intensity {
 	public int getValue() {
 		return value;
 	}
-
-
 }
