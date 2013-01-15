@@ -25,6 +25,7 @@ import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.util.Constants;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.Intensity;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -366,6 +367,22 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
 			View view = inflater.inflate(R.layout.laplist_row, parent, false);
+			TextView tv0 = (TextView) view.findViewById(R.id.lapList_type);
+			int  i = laps[position].getAsInteger(DB.LAP.TYPE);
+			switch (Intensity.values()[i]) {
+			case ACTIVE:
+				break;
+			case COOLDOWN:
+				tv0.setText("(cooldown)");
+				break;
+			case RESTING:
+				tv0.setText("(rest)");
+				break;
+			case WARMUP:
+				tv0.setText("(warmup)");
+				break;
+			
+			}
 			TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
 			tv1.setText(laps[position].getAsString("_id"));
 			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
@@ -375,8 +392,15 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			long t = laps[position].getAsLong(DB.LAP.TIME);
 			tv3.setText(DateUtils.formatElapsedTime(t));
 			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
-			tv4.setText(DateUtils.formatElapsedTime((long) (1000 * t / d))
-					+ "/km");
+			if (t != 0 && d != 0)
+			{
+				tv4.setText(DateUtils.formatElapsedTime((long) (1000 * t / d))
+						+ "/km");
+			}
+			else
+			{
+				tv4.setText("");
+			}
 			return view;
 		}
 	};
