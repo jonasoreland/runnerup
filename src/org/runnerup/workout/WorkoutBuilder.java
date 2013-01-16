@@ -19,6 +19,7 @@ package org.runnerup.workout;
 import java.util.ArrayList;
 
 import org.runnerup.workout.feedback.AudioFeedback;
+import org.runnerup.workout.feedback.CountdownFeedback;
 
 import android.content.SharedPreferences;
 import android.widget.TextView;
@@ -31,8 +32,36 @@ public class WorkoutBuilder {
 	public static Workout createDefaultWorkout(TextView log,
 			SharedPreferences prefs) {
 		Workout w = new Workout();
-		Activity arr[] = new Activity[1];
-		arr[0] = new Activity();
+		ArrayList<Activity> activities = new ArrayList<Activity>(2);
+		if (prefs.getBoolean("pref_countdown_active", false))
+		{
+			long val = 0;
+			String vals = prefs.getString("pref_countdown_time", "0");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			if (val > 0) {
+				System.err.println("Countdown: " + val);
+				Activity activity = new Activity();
+				activity.intensity = Intensity.RESTING;
+				activity.durationType = Dimension.TIME;
+				activity.durationValue = val;
+				IntervalTrigger trigger = new IntervalTrigger();
+				trigger.dimension = Dimension.TIME;
+				trigger.first = 1;
+				trigger.interval = 1;
+				trigger.scope = Scope.ACTIVITY;
+				CountdownFeedback feedback = new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME);
+				trigger.triggerAction = new Feedback[1];
+				trigger.triggerAction[0] = feedback;
+				activity.triggers = new Trigger[1];
+				activity.triggers[0] = trigger;
+				activities.add(activity);
+			}
+		}
+
+		Activity activity = new Activity();
 		if (prefs.getBoolean("pref_autolap_active", false)) {
 			long val = 0;
 			String vals = prefs.getString("pref_autolap", "1000");
@@ -40,7 +69,7 @@ public class WorkoutBuilder {
 				val = Long.parseLong(vals);
 			} catch (NumberFormatException e) {
 			}
-			arr[0].setAutolap(val);
+			activity.setAutolap(val);
 		}
 
 		ArrayList<Feedback> feedback = new ArrayList<Feedback>();
@@ -111,9 +140,13 @@ public class WorkoutBuilder {
 			triggers.add(ev);
 		}
 
-		arr[0].triggers = triggers.toArray(arr[0].triggers);
-
-		w.activities = arr;
+		activity.triggers = triggers.toArray(activity.triggers);
+		activities.add(activity);
+		
+		/**
+		 *
+		 */
+		w.activities = activities.toArray(w.activities);
 		return w;
 	}
 }
