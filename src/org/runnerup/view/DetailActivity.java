@@ -285,7 +285,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			uploadManager.add(tmp);
 			if (tmp.containsKey("repid")) {
 				alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
-			} else {
+			} else if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
 				pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
 			}
 		}
