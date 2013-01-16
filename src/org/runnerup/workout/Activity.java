@@ -168,9 +168,19 @@ public class Activity implements TickComponent {
 	public void onStart(Scope what, Workout s) {
 		long time = s.getTime(Scope.WORKOUT);
 		long dist = s.getDistance(Scope.WORKOUT);
+		if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
+			time = android.os.SystemClock.elapsedRealtime() / 1000;
+		}
+		
 		if (what == Scope.ACTIVITY) {
 			activityStartTime = time;
 			activityStartDistance = dist;
+			if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
+				s.gpsTracker.stopOrPause();
+				System.err.println("start: " + activityStartTime);
+			} else {
+				s.gpsTracker.startOrResume();
+			}
 		} else if (what == Scope.LAP) {
 			lapStartTime = time;
 			lapStartDistance = dist;
@@ -267,8 +277,7 @@ public class Activity implements TickComponent {
 				ContentValues tmp = new ContentValues();
 				tmp.put(DB.LAP.DISTANCE, distance);
 				tmp.put(DB.LAP.TIME, time);
-				s.saveLap(tmp, /** next lap */
-				true);
+				s.saveLap(tmp, /** next lap */ true);
 			}
 		}
 		for (Trigger t : triggers) {
@@ -289,6 +298,9 @@ public class Activity implements TickComponent {
 
 	public long getTime(Workout w, Scope s) {
 		long t = w.getTime(Scope.WORKOUT);
+		if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
+			t = android.os.SystemClock.elapsedRealtime() / 1000;
+		}
 		if (s == Scope.ACTIVITY) {
 			return t - activityStartTime;
 		} else if (s == Scope.LAP) {
