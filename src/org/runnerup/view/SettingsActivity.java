@@ -76,6 +76,7 @@ public class SettingsActivity extends PreferenceActivity {
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
 				bindValues.put(Workout.KEY_TTS, tts);
 				for (Feedback f : feedback) {
+					f.onInit(w, bindValues);
 					f.emit(w,  SettingsActivity.this.getApplicationContext());
 				}
 			}
