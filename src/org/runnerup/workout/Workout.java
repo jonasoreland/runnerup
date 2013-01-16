@@ -16,6 +16,7 @@
  */
 package org.runnerup.workout;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.runnerup.gpstracker.GpsTracker;
@@ -47,10 +48,10 @@ public class Workout implements WorkoutComponent {
 		this.gpsTracker = gpsTracker;
 	}
 
-	public void onInit(Workout w) {
+	public void onInit(Workout w, HashMap<String, Object> bindValues) {
 		assert (w == this);
 		for (Activity a : activities) {
-			a.onInit(this);
+			a.onInit(this, bindValues);
 		}
 	}
 

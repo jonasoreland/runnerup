@@ -16,6 +16,8 @@
  */
 package org.runnerup.workout;
 
+import java.util.HashMap;
+
 import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
@@ -144,9 +146,9 @@ public class Activity implements TickComponent {
 	}
 
 	@Override
-	public void onInit(Workout s) {
+	public void onInit(Workout s, HashMap<String, Object> bindValues) {
 		for (Trigger t : triggers) {
-			t.onInit(s);
+			t.onInit(s, bindValues);
 		}
 	}
 

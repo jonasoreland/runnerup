@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  */
 package org.runnerup.view;
 
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -110,6 +111,8 @@ public class RunActivity extends Activity implements TickListener {
 		mGpsTracker.setForeground(RunActivity.class);
 		mGpsTracker.start();
 		workout = mGpsTracker.getWorkout();
+		HashMap<String, Object> bindValues = new HashMap<String, Object>();
+		workout.onInit(workout, bindValues);
 		workout.setLog(debugView);
 		workout.onStart(Scope.WORKOUT, this.workout);
 		startTimer();

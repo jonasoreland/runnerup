@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,11 +16,13 @@
  */
 package org.runnerup.workout;
 
+import java.util.HashMap;
+
 import android.content.Context;
 
 public abstract class Feedback {
 
-	public void onInit(Workout s) {
+	public void onInit(Workout s, HashMap<String,Object> bindValues) {
 	}
 
 	public void onEnd(Workout s) {

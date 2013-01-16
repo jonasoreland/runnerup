@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
  */
 package org.runnerup.workout;
 
+import java.util.HashMap;
+
 public abstract class Trigger implements TickComponent {
 
 	Feedback triggerAction[] = new Feedback[0];
@@ -23,11 +25,17 @@ public abstract class Trigger implements TickComponent {
 	Scope scope = Scope.WORKOUT;
 
 	@Override
-	public void onInit(Workout s) {
+	public void onInit(Workout s, HashMap<String, Object> bindValues) {
+		for (Feedback f : triggerAction) {
+			f.onInit(s, bindValues);
+		}
 	}
 
 	@Override
 	public void onEnd(Workout s) {
+		for (Feedback f : triggerAction) {
+			f.onEnd(s);
+		}
 	}
 
 	public void fire(Workout s) {
