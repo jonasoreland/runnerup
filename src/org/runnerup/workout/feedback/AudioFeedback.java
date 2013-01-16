@@ -16,6 +16,8 @@
  */
 package org.runnerup.workout.feedback;
 
+import java.util.HashMap;
+
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Event;
 import org.runnerup.workout.Feedback;
@@ -30,7 +32,8 @@ public class AudioFeedback extends Feedback {
 	Event event = Event.STARTED;
 	Scope scope = Scope.WORKOUT;
 	Dimension dimension = Dimension.DISTANCE;
-
+		TextToSpeech textToSpeech;
+	
 	public AudioFeedback(Scope scope, Event event) {
 		super();
 		this.scope = scope;
@@ -45,6 +48,12 @@ public class AudioFeedback extends Feedback {
 		this.dimension = dimension;
 	}
 
+	@Override
+	public void onInit(Workout s, HashMap<String, Object> bindValues) {
+		super.onInit(s, bindValues);
+		textToSpeech = (TextToSpeech) bindValues.get(Workout.KEY_TTS);
+	}
+	
 	@Override
 	public boolean equals(Feedback _other) {
 		if (!(_other instanceof AudioFeedback))
@@ -72,6 +81,6 @@ public class AudioFeedback extends Feedback {
 			double val = w.get(scope, dimension); // SI
 			msg = scope.getCue(ctx) + " " + dimension.getCue(ctx, val);
 		}
-		w.getTts().speak(msg, TextToSpeech.QUEUE_ADD, null);
+		textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
 	}
 }

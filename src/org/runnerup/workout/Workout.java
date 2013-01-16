@@ -23,7 +23,6 @@ import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
-import android.speech.tts.TextToSpeech;
 import android.widget.TextView;
 
 /**
@@ -39,8 +38,9 @@ public class Workout implements WorkoutComponent {
 	HashSet<Feedback> pendingFeedback = new HashSet<Feedback>();
 
 	GpsTracker gpsTracker = null;
-	TextToSpeech tts = null;
 
+	public static final String KEY_TTS = "tts";
+	
 	public Workout() {
 	}
 
@@ -247,17 +247,7 @@ public class Workout implements WorkoutComponent {
 		}
 	}
 
-	public void setTts(TextToSpeech tts) {
-		this.tts = tts;
-	}
-
-	public TextToSpeech getTts() {
-		// TODO Auto-generated method stub
-		return tts;
-	}
-
 	TextView tv = null;
-
 	public void setLog(TextView tv) {
 		this.tv = tv;
 	}

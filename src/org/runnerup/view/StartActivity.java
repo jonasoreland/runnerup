@@ -176,7 +176,6 @@ public class StartActivity extends Activity implements TickListener {
 				Context ctx = getApplicationContext();
 				Workout w = WorkoutBuilder.createDefaultWorkout(debugView,
 						PreferenceManager.getDefaultSharedPreferences(ctx));
-				w.setTts(mSpeech);
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,
 						RunActivity.class);

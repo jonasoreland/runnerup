@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.runnerup.R;
 import org.runnerup.workout.Dimension;
@@ -72,7 +73,8 @@ public class SettingsActivity extends PreferenceActivity {
 			@Override
 			public void onInit(int arg0) {
 				Workout w = Workout.fakeWorkoutForTestingAudioCue();
-				w.setTts(tts);
+				HashMap<String, Object> bindValues = new HashMap<String, Object>();
+				bindValues.put(Workout.KEY_TTS, tts);
 				for (Feedback f : feedback) {
 					f.emit(w,  SettingsActivity.this.getApplicationContext());
 				}
