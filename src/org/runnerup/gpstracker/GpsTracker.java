@@ -58,7 +58,7 @@ public class GpsTracker extends android.app.Service implements
 	 */
 	long mLapId = 0;
 	long mActivityId = 0;
-	double mElapsedTime = 0;
+	double mElapsedTimeMillis = 0;
 	double mElapsedDistance = 0;
 
 	enum State {
@@ -168,20 +168,32 @@ public class GpsTracker extends android.app.Service implements
 		return mActivityId;
 	}
 
-	public void start(Class<?> client) {
+	public void start() {
 		assert (state == State.LOGGING);
 		state = State.STARTED;
-		mElapsedTime = 0;
+		mElapsedTimeMillis = 0;
 		mElapsedDistance = 0;
 		// TODO: check if mLastLocation is recent enough
 		mActivityLastLocation = null;
 		setNextLocationType(DB.LOCATION.TYPE_START); // New location update will
 														// be tagged with START
-
-		setForeground(client);
 	}
-
-	private void setForeground(Class<?> client) {
+	
+	public void startOrResume() {
+		switch (state) {
+		case INIT:
+			assert(false);
+			break;
+		case LOGGING:
+		case PAUSED:
+			start();
+			break;
+		case STARTED:
+			break;
+		}		
+	}
+	
+	public void setForeground(Class<?> client) {
 		Notification note = new Notification(R.drawable.icon,
 				"RunnerUp activity started", System.currentTimeMillis());
 		Intent i = new Intent(this, client);
@@ -208,6 +220,17 @@ public class GpsTracker extends android.app.Service implements
 		mDB.update(DB.LAP.TABLE, tmp, "_id = ?", key);
 	}
 
+	public void stopOrPause() {
+		switch (state) {
+		case INIT:
+		case LOGGING:
+		case PAUSED:
+			break;
+		case STARTED:
+			stop();
+		}		
+	}
+
 	public void stop() {
 		setNextLocationType(DB.LOCATION.TYPE_PAUSE);
 		if (mActivityLastLocation != null) {
@@ -219,7 +242,7 @@ public class GpsTracker extends android.app.Service implements
 
 		ContentValues tmp = new ContentValues();
 		tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-		tmp.put(Constants.DB.ACTIVITY.TIME, mElapsedTime);
+		tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
 		String key[] = { Long.toString(mActivityId) };
 		mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
 		state = State.PAUSED;
@@ -272,7 +295,7 @@ public class GpsTracker extends android.app.Service implements
 
 			ContentValues tmp = new ContentValues();
 			tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-			tmp.put(Constants.DB.ACTIVITY.TIME, mElapsedTime);
+			tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
 			String key[] = { Long.toString(mActivityId) };
 			mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
 		} else {
@@ -290,7 +313,7 @@ public class GpsTracker extends android.app.Service implements
 	}
 
 	public double getTime() {
-		return mElapsedTime; // milli seconds
+		return mElapsedTimeMillis / 1000;
 	}
 
 	public double getDistance() {
@@ -324,7 +347,7 @@ public class GpsTracker extends android.app.Service implements
 				double distDiff = arg0.distanceTo(mActivityLastLocation);
 				assert (timeDiff >= 0);
 				assert (distDiff >= 0);
-				mElapsedTime += timeDiff / 1000.0; // seconds
+				mElapsedTimeMillis += timeDiff;
 				mElapsedDistance += distDiff;
 			}
 			mActivityLastLocation = arg0;

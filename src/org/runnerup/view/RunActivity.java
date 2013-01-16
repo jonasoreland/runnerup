@@ -107,7 +107,8 @@ public class RunActivity extends Activity implements TickListener {
 	void onGpsTrackerBound() {
 		log("2 mGpsTracker = " + mGpsTracker);
 		activityId = mGpsTracker.createActivity();
-		mGpsTracker.start(RunActivity.class);
+		mGpsTracker.setForeground(RunActivity.class);
+		mGpsTracker.start();
 		workout = mGpsTracker.getWorkout();
 		workout.setLog(debugView);
 		workout.onStart(Scope.WORKOUT, this.workout);
