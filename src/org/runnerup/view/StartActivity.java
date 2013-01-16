@@ -19,6 +19,7 @@ package org.runnerup.view;
 import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.TickListener;
+import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
@@ -58,7 +59,7 @@ public class StartActivity extends Activity implements TickListener {
 	TextView gpsInfoView2 = null;
 	TextView debugView = null;
 
-	Spinner simpleType = null;
+	TitleSpinner simpleType = null;
 	EditText simpleDuration = null;
 	
 	/** Called when the activity is first created. */
@@ -106,7 +107,7 @@ public class StartActivity extends Activity implements TickListener {
 
 		CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
 		goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
-		simpleType = (Spinner)findViewById(R.id.simpleType);
+		simpleType = (TitleSpinner)findViewById(R.id.simpleType);
 		simpleDuration = (EditText) findViewById(R.id.simpleDuration);
 		simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
 	}
