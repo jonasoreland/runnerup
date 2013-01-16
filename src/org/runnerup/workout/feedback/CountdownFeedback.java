@@ -16,19 +16,32 @@
  */
 package org.runnerup.workout.feedback;
 
+import java.util.HashMap;
+
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
+import android.widget.TextView;
 
 public class CountdownFeedback extends Feedback {
 
 	Scope scope = Scope.ACTIVITY;
 	Dimension dimension = Dimension.TIME;
+	TextView textView = null;
 
+	public CountdownFeedback(Scope s, Dimension d) {
+		this.scope = s;
+		this.dimension = d;
+	}
+	
+	@Override
+	public void onInit(Workout s, HashMap<String, Object> bindValues) {
+		textView = (TextView) bindValues.get(KEY_COUNTER_VIEW);
+	}
+	
 	@Override
 	public boolean equals(Feedback _other) {
 		if (!(_other instanceof CountdownFeedback))
@@ -43,7 +56,7 @@ public class CountdownFeedback extends Feedback {
 		double duration = w.getDuration(scope, dimension);
 		if (duration > curr) {
 			String msg = "" + (int)(duration - curr);
-			w.getTts().speak(msg, TextToSpeech.QUEUE_ADD, null);
+			textView.setText(msg);
 		}
 	}
 

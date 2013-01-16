@@ -113,6 +113,7 @@ public class RunActivity extends Activity implements TickListener {
 		workout = mGpsTracker.getWorkout();
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
 		bindValues.put(Workout.KEY_TTS, mSpeech);
+		bindValues.put(Workout.KEY_COUNTER_VIEW, debugView);
 		workout.onInit(workout, bindValues);
 		workout.setLog(debugView);
 		workout.onStart(Scope.WORKOUT, this.workout);

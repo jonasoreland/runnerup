@@ -40,6 +40,7 @@ public class Workout implements WorkoutComponent {
 	GpsTracker gpsTracker = null;
 
 	public static final String KEY_TTS = "tts";
+	public static final String KEY_COUNTER_VIEW = "CountdownView";
 	
 	public Workout() {
 	}
