@@ -53,10 +53,8 @@ public class WorkoutBuilder {
 				trigger.interval = 1;
 				trigger.scope = Scope.ACTIVITY;
 				CountdownFeedback feedback = new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME);
-				trigger.triggerAction = new Feedback[1];
-				trigger.triggerAction[0] = feedback;
-				activity.triggers = new Trigger[1];
-				activity.triggers[0] = trigger;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME));
+				activity.triggers.add(trigger);
 				activities.add(activity);
 			}
 		}
@@ -86,7 +84,7 @@ public class WorkoutBuilder {
 				IntervalTrigger t = new IntervalTrigger();
 				t.first = val;
 				t.interval = val;
-				t.scope = Scope.WORKOUT;
+				t.scope = Scope.ACTIVITY;
 				t.dimension = Dimension.TIME;
 				triggers.add(t);
 			}
@@ -102,7 +100,7 @@ public class WorkoutBuilder {
 				IntervalTrigger t = new IntervalTrigger();
 				t.first = val;
 				t.interval = val;
-				t.scope = Scope.WORKOUT;
+				t.scope = Scope.ACTIVITY;
 				t.dimension = Dimension.DISTANCE;
 				triggers.add(t);
 			}
@@ -128,19 +126,19 @@ public class WorkoutBuilder {
 		}
 
 		for (Trigger t : triggers) {
-			t.triggerAction = feedback.toArray(t.triggerAction);
+			t.triggerAction = feedback;
 		}
 
 		if (triggers.size() > 0) {
 			EventTrigger ev = new EventTrigger();
 			ev.event = Event.STARTED;
 			ev.scope = Scope.LAP;
-			ev.triggerAction = new Feedback[1];
-			ev.triggerAction[0] = new AudioFeedback(Scope.LAP, Event.STARTED);
+			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
 			triggers.add(ev);
 		}
 
-		activity.triggers = triggers.toArray(activity.triggers);
+		activity.triggers = triggers;
+
 		activities.add(activity);
 		
 		/**

@@ -16,11 +16,12 @@
  */
 package org.runnerup.workout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Trigger implements TickComponent {
 
-	Feedback triggerAction[] = new Feedback[0];
+	ArrayList<Feedback> triggerAction = new ArrayList<Feedback>();
 
 	Scope scope = Scope.WORKOUT;
 

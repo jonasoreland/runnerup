@@ -64,25 +64,17 @@ public class IntervalTrigger extends Trigger {
 
 	@Override
 	public void onPause(Workout s) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStop(Workout s) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onResume(Workout s) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onComplete(Scope what, Workout s) {
-		// TODO Auto-generated method stub
-
 	}
 }

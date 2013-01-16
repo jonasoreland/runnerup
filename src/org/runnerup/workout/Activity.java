@@ -16,6 +16,7 @@
  */
 package org.runnerup.workout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.runnerup.util.Constants.DB;
@@ -53,7 +54,7 @@ public class Activity implements TickComponent {
 	/**
 	 * Triggers
 	 */
-	Trigger triggers[] = new Trigger[0];
+	ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
 	/**
 	 * @return the name
