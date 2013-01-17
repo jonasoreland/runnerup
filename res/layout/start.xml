@@ -115,122 +115,80 @@
                         android:layout_height="wrap_content"
                         android:text="TextView" />
                 </LinearLayout>
-
+                
                 <LinearLayout
                     android:id="@+id/tabInterval"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
-                    <TableLayout
-                        android:id="@+id/tableInterval"
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/intervalType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" >
+                        android:entries="@array/simple_types"
+                        android:prompt="@string/simple_type"
+                        android:text="Interval type" />
 
-                        <TableRow
-                            android:id="@+id/tabRowInterval0"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/intervalDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:defaultValue="120"
+                        android:inputType="number"
+                        android:prompt="@string/simple_type"
+                        android:text="Interval duration"
+                        runnerup:type="edittext" />
 
-                            <org.runnerup.widget.TitleSpinner
-                                android:id="@+id/simpleType"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Interval type"
-                                android:entries="@array/simple_types"
-                                android:prompt="@string/simple_type" />
-                        </TableRow>
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/restType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/simple_types"
+                        android:prompt="@string/simple_type"
+                        android:text="Rest type" />
 
-                        <TableRow
-                            android:id="@+id/tabRowInterval1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/restDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:defaultValue="120"
+                        android:inputType="number"
+                        android:prompt="@string/simple_type"
+                        android:text="Rest duration"
+                        runnerup:type="edittext" />
 
-                            <TextView
-                                android:id="@+id/textView2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Duration" />
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/intervalRepititions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:defaultValue="5"
+                        android:inputType="number"
+                        android:prompt="@string/simple_type"
+                        android:text="Repititions"
+                        runnerup:type="edittext" />
 
-                            <EditText
-                                android:id="@+id/intervalDuration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
-                        </TableRow>
-                        <TableRow
-                            android:id="@+id/tabRowInterval2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal" >
 
-                            <org.runnerup.widget.TitleSpinner
-                                android:id="@+id/restType"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Rest type"
-                                android:entries="@array/simple_types"
-                                android:prompt="@string/simple_type" />
-                            </TableRow>
-                        <TableRow
-                            android:id="@+id/tabRowInterval3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                        <CheckBox
+                            android:id="@+id/intervalWarmup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Warmup" />
 
-                            <TextView
-                                android:id="@+id/textView2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Rest duration" />
-
-                            <EditText
-                                android:id="@+id/intervalRestDuration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
-                        </TableRow>
-                        <TableRow
-                            android:id="@+id/tabRowInterval5"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
-
-                            <TextView
-                                android:id="@+id/textView2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Repitions" />
-
-                            <EditText
-                                android:id="@+id/intervalRepitition"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
-                        </TableRow>
-                        <TableRow
-                            android:id="@+id/tabRowInterval4"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
-
-                            <CheckBox
-                                android:id="@+id/intervalWarmup"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Warmup"/>
-                            
-                            <CheckBox
-                                android:id="@+id/intervalCooldown"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Cooldown" />
-                        </TableRow>
-                        </TableLayout>
+                        <CheckBox
+                            android:id="@+id/intervalCooldown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cooldown" />
+                    </LinearLayout>
                 </LinearLayout>
-
-                <LinearLayout
+				<LinearLayout
                     android:id="@+id/tabManual"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
