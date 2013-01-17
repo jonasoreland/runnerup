@@ -19,7 +19,7 @@
     android:id="@+id/titleSpinner"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@android:drawable/btn_dropdown"
+    android:background="@drawable/title_spinner"
     android:clickable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
