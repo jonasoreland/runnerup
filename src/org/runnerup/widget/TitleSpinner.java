@@ -20,7 +20,10 @@ import org.runnerup.R;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,14 +40,17 @@ import android.content.DialogInterface;
 
 public class TitleSpinner extends LinearLayout {
 
+	private String mKey = null;
 	private TextView mTitle = null;
 	private TextView mValue = null;
 	private Spinner mSpinner = null;
 	private CharSequence mPrompt = null;
 	int mInputType = 0;
+	private Context mContext;
 	
 	public TitleSpinner(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		mContext = context;
 		
 		LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.title_spinner, this);
@@ -60,6 +66,16 @@ public class TitleSpinner extends LinearLayout {
 		}
 		mPrompt = arr.getText(R.styleable.TitleSpinner_android_prompt);
 
+		CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
+		
+		CharSequence key = arr.getString(R.styleable.TitleSpinner_android_key);
+		if (key != null) {
+			mKey = key.toString();
+			loadValue(defaultValue == null ? "" : defaultValue.toString());
+		} else {
+			setValue(defaultValue == null ? "" : defaultValue.toString());
+		}
+		
 		CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
 		if (type == null || "spinner".contentEquals(type)) {
 			setupSpinner(context, arr);
@@ -73,11 +89,6 @@ public class TitleSpinner extends LinearLayout {
 	}
 
 	private void setupEditText(final Context context, TypedArray arr) {
-		CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
-		if (defaultValue != null) {
-			mValue.setText(defaultValue);
-		}
-
 		mInputType = arr.getInt(R.styleable.TitleSpinner_android_inputType, EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
 		
 		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
@@ -97,7 +108,7 @@ public class TitleSpinner extends LinearLayout {
 				dialog.setView(edit);
 				dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						mValue.setText(edit.getText());
+						setValue(edit.getText().toString());
 						dialog.dismiss();
 					}
 				});
@@ -119,7 +130,7 @@ public class TitleSpinner extends LinearLayout {
 
 		CharSequence entries[] = arr.getTextArray(R.styleable.TitleSpinner_android_entries);
 		if (entries != null) {
-			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_item, entries);
+			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_dropdown_item, entries);
 			mSpinner.setAdapter(adapter);
 		}
 
@@ -136,7 +147,7 @@ public class TitleSpinner extends LinearLayout {
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
 				Object o = arg0.getItemAtPosition(arg2);
-				mValue.setText(o.toString());
+				setValue(o.toString());
 			}
 
 			@Override
@@ -148,4 +159,34 @@ public class TitleSpinner extends LinearLayout {
 	void setAdapter(SpinnerAdapter adapter) {
 		mSpinner.setAdapter(adapter);
 	}
+
+	public void setKey(String key) {
+		mKey = key;
+		loadValue("");
+	}
+
+	public void setTitle(String title) {
+		mTitle.setText(title);
+	}
+	
+	public void setPrompt(String prompt) {
+		mPrompt = prompt;
+	}
+	
+	private void loadValue(String defaultValue) {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+		String newValue = pref.getString(mKey, defaultValue);
+		mValue.setText(newValue);
+	}
+
+	private void setValue(String value) {
+		mValue.setText(value);
+		if (mKey == null)
+			return;
+		Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+		pref.putString(mKey,  mValue.getText().toString());
+		pref.commit();
+	}
+
+	
 }
