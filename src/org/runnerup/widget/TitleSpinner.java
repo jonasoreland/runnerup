@@ -24,6 +24,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -40,6 +41,7 @@ public class TitleSpinner extends LinearLayout {
 	private TextView mValue = null;
 	private Spinner mSpinner = null;
 	private CharSequence mPrompt = null;
+	int mInputType = 0;
 	
 	public TitleSpinner(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -76,6 +78,8 @@ public class TitleSpinner extends LinearLayout {
 			mValue.setText(defaultValue);
 		}
 
+		mInputType = arr.getInt(R.styleable.TitleSpinner_android_inputType, EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+		
 		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
 		layout.setOnClickListener(new OnClickListener() {
 			@Override
@@ -89,6 +93,7 @@ public class TitleSpinner extends LinearLayout {
 
 				final EditText edit = new EditText(context);
 				edit.setText(mValue.getText());
+				edit.setInputType(mInputType);
 				dialog.setView(edit);
 				dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
