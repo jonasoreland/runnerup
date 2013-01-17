@@ -60,7 +60,7 @@ public class StartActivity extends Activity implements TickListener {
 	TextView debugView = null;
 
 	TitleSpinner simpleType = null;
-	EditText simpleDuration = null;
+	TitleSpinner simpleDuration = null;
 	
 	/** Called when the activity is first created. */
 
@@ -107,8 +107,8 @@ public class StartActivity extends Activity implements TickListener {
 
 		CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
 		goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
-		simpleType = (TitleSpinner)findViewById(R.id.simpleType);
-		simpleDuration = (EditText) findViewById(R.id.simpleDuration);
+		simpleType = (TitleSpinner)findViewById(R.id.basicType);
+		simpleDuration = (TitleSpinner) findViewById(R.id.basicDuration);
 		simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
 	}
 

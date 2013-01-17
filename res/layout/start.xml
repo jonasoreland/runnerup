@@ -16,6 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab1Layout"
     android:layout_width="fill_parent"
@@ -76,72 +77,43 @@
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
-
+                
                 <LinearLayout
                     android:id="@+id/tabBasic"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
 
-                    <TableLayout
-                        android:id="@+id/tableSimple"
+                    <CheckBox
+                        android:id="@+id/tabBasicGoal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="Goal" />
+
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/basicType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" >
+                        android:entries="@array/simple_types"
+                        android:prompt="@string/simple_type"
+                        android:text="Goal type" />
 
-                        <TableRow
-                            android:id="@+id/tabRowSimple2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" >
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/basicDuration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        runnerup:type="edittext"
+						android:defaultValue="120"
+                        android:inputType="number"
+                        android:prompt="@string/simple_type"
+                        android:text="Goal duration" />
 
-                            <CheckBox
-                                android:id="@+id/tabBasicGoal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:checked="false"
-                                android:text="Goal" />
-
-                        </TableRow>
-
-                        <TableRow
-                            android:id="@+id/tabRowSimple0"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
-
-                            <org.runnerup.widget.TitleSpinner
-                                android:id="@+id/basicType"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Goal type"
-                                android:entries="@array/simple_types"
-                                android:prompt="@string/simple_type" />
-                        </TableRow>
-
-                        <TableRow
-                            android:id="@+id/tabRowSimple1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
-
-                            <TextView
-                                android:id="@+id/textView2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Duration" />
-
-                            <EditText
-                                android:id="@+id/simpleDuration"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1" />
-                        </TableRow>
-
-                        <TextView
-                            android:id="@+id/textView1"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:text="TextView" />
-
-                    </TableLayout>
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TextView" />
                 </LinearLayout>
 
                 <LinearLayout
