@@ -17,8 +17,11 @@
   -->
 <resources>
 <declare-styleable name="TitleSpinner">
+	<attr name="type" format="string" />
     <attr name="android:text" />
     <attr name="android:prompt" />
     <attr name="android:entries" />
+    <attr name="android:inputType" />
+    <attr name="android:defaultValue" />
 </declare-styleable>    
 </resources>

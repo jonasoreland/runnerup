@@ -18,6 +18,7 @@ package org.runnerup.widget;
 
 import org.runnerup.R;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -26,20 +27,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.content.DialogInterface;
 
 public class TitleSpinner extends LinearLayout {
 
-	TextView mTitle = null;
-	TextView mValue = null;
-	Spinner mSpinner = null;
-
+	private TextView mTitle = null;
+	private TextView mValue = null;
+	private Spinner mSpinner = null;
+	private CharSequence mPrompt = null;
+	
 	public TitleSpinner(Context context, AttributeSet attrs) {
 		super(context, attrs);
-
+		
 		LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.title_spinner, this);
 			
@@ -52,10 +56,60 @@ public class TitleSpinner extends LinearLayout {
 		if (title != null) {
 			mTitle.setText(title);
 		}
+		mPrompt = arr.getText(R.styleable.TitleSpinner_android_prompt);
 
-		CharSequence prompt = arr.getText(R.styleable.TitleSpinner_android_prompt);
-		if (prompt != null) {
-			mSpinner.setPrompt(prompt);
+		CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
+		if (type == null || "spinner".contentEquals(type)) {
+			setupSpinner(context, arr);
+		} else if ("edittext".contentEquals(type)) {
+			setupEditText(context, arr);
+		} else {
+			String s = null;
+			s.charAt(8);
+		}
+		arr.recycle();  // Do this when done.
+	}
+
+	private void setupEditText(final Context context, TypedArray arr) {
+		CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
+		if (defaultValue != null) {
+			mValue.setText(defaultValue);
+		}
+
+		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+		layout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+
+				dialog.setTitle(mTitle.getText());
+				if (mPrompt != null) {
+					dialog.setMessage(mPrompt);
+				}
+
+				final EditText edit = new EditText(context);
+				edit.setText(mValue.getText());
+				dialog.setView(edit);
+				dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						mValue.setText(edit.getText());
+						dialog.dismiss();
+					}
+				});
+				dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.dismiss();
+					}
+				});
+				dialog.show();
+			}
+		});
+
+	}
+
+	private void setupSpinner(Context context, TypedArray arr) {
+		if (mPrompt != null) {
+			mSpinner.setPrompt(mPrompt);
 		}
 
 		CharSequence entries[] = arr.getTextArray(R.styleable.TitleSpinner_android_entries);
@@ -63,9 +117,7 @@ public class TitleSpinner extends LinearLayout {
 			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_item, entries);
 			mSpinner.setAdapter(adapter);
 		}
-		
-		arr.recycle();  // Do this when done.
-		
+
 		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
 		layout.setOnClickListener(new OnClickListener() {
 			@Override
@@ -87,7 +139,7 @@ public class TitleSpinner extends LinearLayout {
 			}
 		});
 	}
-
+	
 	void setAdapter(SpinnerAdapter adapter) {
 		mSpinner.setAdapter(adapter);
 	}
