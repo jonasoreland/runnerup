@@ -20,6 +20,7 @@ import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
@@ -60,8 +61,17 @@ public class StartActivity extends Activity implements TickListener {
 	TextView debugView = null;
 
 	TitleSpinner simpleType = null;
-	TitleSpinner simpleDuration = null;
-	
+	TitleSpinner simpleTime = null;
+	TitleSpinner simpleDistance = null;
+
+	TitleSpinner intervalType = null;
+	TitleSpinner intervalTime = null;
+	TitleSpinner intervalDistance = null;
+
+	TitleSpinner intervalRestType = null;
+	TitleSpinner intervalRestTime = null;
+	TitleSpinner intervalRestDistance = null;
+
 	/** Called when the activity is first created. */
 
 	@Override
@@ -108,8 +118,20 @@ public class StartActivity extends Activity implements TickListener {
 		CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
 		goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
 		simpleType = (TitleSpinner)findViewById(R.id.basicType);
-		simpleDuration = (TitleSpinner) findViewById(R.id.basicDuration);
+		simpleTime = (TitleSpinner) findViewById(R.id.basicTime);
+		simpleDistance = (TitleSpinner) findViewById(R.id.basicDistance);
+		simpleType.setOnSetValueListener(simpleTypeSetValue);
 		simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
+
+		intervalType = (TitleSpinner)findViewById(R.id.intervalType);
+		intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
+		intervalDistance = (TitleSpinner) findViewById(R.id.intervalDistance);
+		intervalType.setOnSetValueListener(intervalTypeSetValue);
+
+		intervalRestType = (TitleSpinner)findViewById(R.id.intervalRestType);
+		intervalRestTime = (TitleSpinner) findViewById(R.id.intervalRestTime);
+		intervalRestDistance = (TitleSpinner) findViewById(R.id.intervalRestDistance);
+		intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
 	}
 
 	@Override
@@ -296,13 +318,65 @@ public class StartActivity extends Activity implements TickListener {
 		updateView();
 	}
 
+	OnSetValueListener simpleTypeSetValue = new OnSetValueListener() {
+
+		@Override
+		public String preSetValue(String newValue)
+				throws IllegalArgumentException {
+			return newValue;
+		}
+
+		@Override
+		public int preSetValue(int newValue) throws IllegalArgumentException {
+			boolean time = (newValue == 0);
+			simpleTime.setVisibility(time ? View.VISIBLE : View.GONE);
+			simpleDistance.setVisibility(time ? View.GONE : View.VISIBLE);
+			return newValue;
+		}
+		
+	};
+
 	OnCheckedChangeListener simpleGoalOnCheckClick = new OnCheckedChangeListener() {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
 			simpleType.setEnabled(isChecked);
-			simpleDuration.setEnabled(isChecked);
+			simpleTime.setEnabled(isChecked);
+			simpleDistance.setEnabled(isChecked);
 		}
-		
+	};
+
+	OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
+
+		@Override
+		public String preSetValue(String newValue)
+				throws IllegalArgumentException {
+			return newValue;
+		}
+
+		@Override
+		public int preSetValue(int newValue) throws IllegalArgumentException {
+			boolean time = (newValue == 0);
+			intervalTime.setVisibility(time ? View.VISIBLE : View.GONE);
+			intervalDistance.setVisibility(time ? View.GONE : View.VISIBLE);
+			return newValue;
+		}
+	};
+
+	OnSetValueListener intervalRestTypeSetValue = new OnSetValueListener() {
+
+		@Override
+		public String preSetValue(String newValue)
+				throws IllegalArgumentException {
+			return newValue;
+		}
+
+		@Override
+		public int preSetValue(int newValue) throws IllegalArgumentException {
+			boolean time = (newValue == 0);
+			intervalRestTime.setVisibility(time ? View.VISIBLE : View.GONE);
+			intervalRestDistance.setVisibility(time ? View.GONE : View.VISIBLE);
+			return newValue;
+		}
 	};
 
 }

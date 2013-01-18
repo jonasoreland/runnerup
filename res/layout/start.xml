@@ -100,15 +100,25 @@
                         android:text="Goal type" />
 
                     <org.runnerup.widget.TitleSpinner
-                        android:id="@+id/basicDuration"
+                        android:id="@+id/basicDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         runnerup:type="edittext"
-						android:defaultValue="120"
-                        android:inputType="number"
+						android:defaultValue="5.0"
+                        android:inputType="number|numberDecimal"
                         android:prompt="@string/simple_type"
-                        android:text="Goal duration" />
+                        android:text="Goal distance (km)" />
 
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/basicTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        runnerup:type="edittext"
+						android:defaultValue="30:00"
+                        android:inputType="time"
+                        android:prompt="@string/simple_type"
+                        android:text="Goal time (HH:MM:SS)" />
+                    
                     <TextView
                         android:id="@+id/textView1"
                         android:layout_width="fill_parent"
@@ -131,17 +141,27 @@
                         android:text="Interval type" />
 
                     <org.runnerup.widget.TitleSpinner
-                        android:id="@+id/intervalDuration"
+                        android:id="@+id/intervalTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:defaultValue="120"
-                        android:inputType="number"
+                        android:defaultValue="00:01:00"
+                        android:inputType="time"
                         android:prompt="@string/simple_type"
-                        android:text="Interval duration"
+                        android:text="Interval time (HH:MM:SS)"
                         runnerup:type="edittext" />
 
                     <org.runnerup.widget.TitleSpinner
-                        android:id="@+id/restType"
+                        android:id="@+id/intervalDistance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:defaultValue="1.0"
+                        android:inputType="numberDecimal"
+                        android:prompt="@string/simple_type"
+                        android:text="Interval distance (km)"
+                        runnerup:type="edittext" />
+                    
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/intervalRestType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:entries="@array/simple_types"
@@ -149,15 +169,25 @@
                         android:text="Rest type" />
 
                     <org.runnerup.widget.TitleSpinner
-                        android:id="@+id/restDuration"
+                        android:id="@+id/intervalRestTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:defaultValue="120"
-                        android:inputType="number"
+                        android:defaultValue="00:01:00"
+                        android:inputType="time"
                         android:prompt="@string/simple_type"
-                        android:text="Rest duration"
+                        android:text="Rest time (HH:MM:SS)"
                         runnerup:type="edittext" />
 
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/intervalRestDistance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:defaultValue="0.2"
+                        android:inputType="numberDecimal"
+                        android:prompt="@string/simple_type"
+                        android:text="Rest distance"
+                        runnerup:type="edittext" />
+                    
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalRepetitions"
                         android:layout_width="match_parent"
