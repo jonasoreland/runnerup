@@ -17,7 +17,6 @@
 package org.runnerup.widget;
 
 import org.runnerup.R;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -40,6 +39,11 @@ import android.content.DialogInterface;
 
 public class TitleSpinner extends LinearLayout {
 
+	private enum Type {
+		TS_SPINNER,
+		TS_EDITTEXT
+	};
+	
 	private String mKey = null;
 	private TextView mTitle = null;
 	private TextView mValue = null;
@@ -47,6 +51,26 @@ public class TitleSpinner extends LinearLayout {
 	private CharSequence mPrompt = null;
 	int mInputType = 0;
 	private Context mContext;
+	private OnSetValueListener mSetValueListener = null;
+	private Type mType = null;
+	
+	public interface OnSetValueListener {
+		/**
+		 * 
+		 * @param newValue
+		 * @return
+		 * @throws java.lang.IllegalArgumentException
+		 */
+		public String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
+		
+		/**
+		 * 
+		 * @param newValue
+		 * @return
+		 * @throws java.lang.IllegalArgumentException
+		 */
+		public int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
+	};
 	
 	public TitleSpinner(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -66,30 +90,32 @@ public class TitleSpinner extends LinearLayout {
 		}
 		mPrompt = arr.getText(R.styleable.TitleSpinner_android_prompt);
 
-		CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
-		
-		CharSequence key = arr.getString(R.styleable.TitleSpinner_android_key);
-		if (key != null) {
-			mKey = key.toString();
-			loadValue(defaultValue == null ? "" : defaultValue.toString());
-		} else {
-			setValue(defaultValue == null ? "" : defaultValue.toString());
-		}
-		
 		CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
+		CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
 		if (type == null || "spinner".contentEquals(type)) {
-			setupSpinner(context, arr);
+			mType = Type.TS_SPINNER;
+			setupSpinner(context, arr, defaultValue);
 		} else if ("edittext".contentEquals(type)) {
-			setupEditText(context, arr);
+			mType = Type.TS_SPINNER;
+			setupEditText(context, arr, defaultValue);
 		} else {
 			String s = null;
 			s.charAt(8);
 		}
+
+		
+		CharSequence key = arr.getString(R.styleable.TitleSpinner_android_key);
+		if (key != null) {
+			mKey = key.toString();
+			loadValue(defaultValue != null ? defaultValue.toString() : null);
+		}
+		
 		arr.recycle();  // Do this when done.
 	}
 
-	private void setupEditText(final Context context, TypedArray arr) {
+	private void setupEditText(final Context context, TypedArray arr, CharSequence defaultValue) {
 		mInputType = arr.getInt(R.styleable.TitleSpinner_android_inputType, EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+		mValue.setText(defaultValue);
 		
 		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
 		layout.setOnClickListener(new OnClickListener() {
@@ -123,7 +149,7 @@ public class TitleSpinner extends LinearLayout {
 
 	}
 
-	private void setupSpinner(Context context, TypedArray arr) {
+	private void setupSpinner(Context context, TypedArray arr, CharSequence defaultValue) {
 		if (mPrompt != null) {
 			mSpinner.setPrompt(mPrompt);
 		}
@@ -132,6 +158,16 @@ public class TitleSpinner extends LinearLayout {
 		if (entries != null) {
 			ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context, android.R.layout.simple_spinner_dropdown_item, entries);
 			mSpinner.setAdapter(adapter);
+			int value = 0;
+			if (defaultValue != null) {
+				try {
+					value = Integer.parseInt(defaultValue.toString());
+				} catch (java.lang.NumberFormatException ex) {
+				}
+			}
+			if (value >= 0 && value < entries.length) {
+				mValue.setText(entries[value]);
+			}
 		}
 
 		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
@@ -144,10 +180,8 @@ public class TitleSpinner extends LinearLayout {
 
 		mSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				Object o = arg0.getItemAtPosition(arg2);
-				setValue(o.toString());
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				setValue(arg2);
 			}
 
 			@Override
@@ -160,11 +194,10 @@ public class TitleSpinner extends LinearLayout {
 		mSpinner.setAdapter(adapter);
 	}
 
-	public void setKey(String key) {
-		mKey = key;
-		loadValue("");
+	void setOnSetValueListener(OnSetValueListener listener) {
+		this.mSetValueListener = listener;
 	}
-
+	
 	public void setTitle(String title) {
 		mTitle.setText(title);
 	}
@@ -175,18 +208,53 @@ public class TitleSpinner extends LinearLayout {
 	
 	private void loadValue(String defaultValue) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
-		String newValue = pref.getString(mKey, defaultValue);
-		mValue.setText(newValue);
+		switch (mType) {
+		case TS_SPINNER:
+			int def = 0;
+			if (defaultValue != null) {
+				try {
+					def = Integer.parseInt(defaultValue);
+				} catch (NumberFormatException ex) {
+				}
+			}
+			setValue(pref.getInt(mKey, def));
+			break;
+		case TS_EDITTEXT:
+			String newValue = pref.getString(mKey, defaultValue == null ? "" : defaultValue);
+			setValue(newValue);
+		}
 	}
 
 	private void setValue(String value) {
+		if (mSetValueListener != null) {
+			try {
+				value = mSetValueListener.preSetValue(value);
+			} catch (java.lang.IllegalArgumentException ex) {
+				return;
+			}
+		}
 		mValue.setText(value);
 		if (mKey == null)
 			return;
 		Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-		pref.putString(mKey,  mValue.getText().toString());
+		pref.putString(mKey,  value);
 		pref.commit();
 	}
 
-	
+	private void setValue(int value) {
+		if (mSetValueListener != null) {
+			try {
+				value = mSetValueListener.preSetValue(value);
+			} catch (java.lang.IllegalArgumentException ex) {
+				return;
+			}
+		}
+		mSpinner.setSelection(value);
+		mValue.setText(mSpinner.getAdapter().getItem(value).toString());
+		if (mKey == null)
+			return;
+		Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+		pref.putInt(mKey, value);
+		pref.commit();
+	}
 }
