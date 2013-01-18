@@ -220,6 +220,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				WidgetUtil.setEditable(notes,  true);
 				notes.requestFocus();
 				saveButton.setEnabled(true);
+				requery();
 			}
 			break;
 		}
@@ -465,6 +466,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			} else {
 				cb.setChecked(false);
 			}
+			if (mode == MODE_DETAILS) {
+				cb.setEnabled(edit);
+			}
 			cb.setOnCheckedChangeListener(DetailActivity.this.onSendChecked);
 
 			tv0.setText(tmp.getAsString("_id"));
@@ -488,6 +492,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				edit = false;
 				WidgetUtil.setEditable(notes,  false);
 				saveButton.setEnabled(false);
+				requery();
 				return;
 			}
 			uploadManager.startUploading(new UploadManager.Callback() {
@@ -530,9 +535,16 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		@Override
 		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 			if (arg1 == true) {
+				boolean empty = pendingUploaders.isEmpty();
 				pendingUploaders.add((String) arg0.getTag());
+				if (empty) {
+					resumeButton.setVisibility(View.VISIBLE);
+				}
 			} else {
 				pendingUploaders.remove((String) arg0.getTag());
+				if (pendingUploaders.isEmpty()) {
+					resumeButton.setVisibility(View.GONE);
+				}
 			}
 		}
 
