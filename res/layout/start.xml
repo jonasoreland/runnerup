@@ -93,6 +93,7 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/basicType"
+                        android:key="basicType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:entries="@array/simple_types"
@@ -101,6 +102,7 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/basicDistance"
+                        android:key="basicDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         runnerup:type="edittext"
@@ -111,6 +113,7 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/basicTime"
+                        android:key="basicTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         runnerup:type="edittext"
@@ -134,6 +137,7 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalType"
+                        android:key="intervalType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:entries="@array/simple_types"
@@ -142,6 +146,7 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalTime"
+                        android:key="intervalTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:defaultValue="00:01:00"
@@ -152,6 +157,7 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalDistance"
+                        android:key="intervalDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:defaultValue="1.0"
@@ -162,6 +168,7 @@
                     
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalRestType"
+                        android:key="intervalRestType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:entries="@array/simple_types"
@@ -170,6 +177,7 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalRestTime"
+                        android:key="intervalRestTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:defaultValue="00:01:00"
@@ -180,16 +188,18 @@
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalRestDistance"
+                        android:key="intervalRestDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:defaultValue="0.2"
                         android:inputType="numberDecimal"
                         android:prompt="@string/simple_type"
-                        android:text="Rest distance"
+                        android:text="Rest distance (km)"
                         runnerup:type="edittext" />
                     
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/intervalRepetitions"
+                        android:key="intervalRepetitions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:defaultValue="5"
