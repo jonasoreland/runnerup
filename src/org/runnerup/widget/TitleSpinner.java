@@ -17,8 +17,10 @@
 package org.runnerup.widget;
 
 import org.runnerup.R;
+
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
@@ -35,7 +37,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.content.DialogInterface;
 
 public class TitleSpinner extends LinearLayout {
 
@@ -121,28 +122,29 @@ public class TitleSpinner extends LinearLayout {
 		layout.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+				AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
-				dialog.setTitle(mTitle.getText());
+				alert.setTitle(mTitle.getText());
 				if (mPrompt != null) {
-					dialog.setMessage(mPrompt);
+					alert.setMessage(mPrompt);
 				}
 
 				final EditText edit = new EditText(context);
 				edit.setText(mValue.getText());
 				edit.setInputType(mInputType);
-				dialog.setView(edit);
-				dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				alert.setView(edit);
+				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						setValue(edit.getText().toString());
 						dialog.dismiss();
 					}
 				});
-				dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						dialog.dismiss();
 					}
 				});
+				AlertDialog dialog = alert.create();
 				dialog.show();
 			}
 		});
