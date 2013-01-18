@@ -192,11 +192,11 @@ public class TitleSpinner extends LinearLayout {
 		});
 	}
 	
-	void setAdapter(SpinnerAdapter adapter) {
+	public void setAdapter(SpinnerAdapter adapter) {
 		mSpinner.setAdapter(adapter);
 	}
 
-	void setOnSetValueListener(OnSetValueListener listener) {
+	public void setOnSetValueListener(OnSetValueListener listener) {
 		this.mSetValueListener = listener;
 	}
 	
