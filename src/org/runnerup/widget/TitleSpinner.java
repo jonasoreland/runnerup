@@ -97,7 +97,7 @@ public class TitleSpinner extends LinearLayout {
 			mType = Type.TS_SPINNER;
 			setupSpinner(context, arr, defaultValue);
 		} else if ("edittext".contentEquals(type)) {
-			mType = Type.TS_SPINNER;
+			mType = Type.TS_EDITTEXT;
 			setupEditText(context, arr, defaultValue);
 		} else {
 			String s = null;
