@@ -259,4 +259,12 @@ public class TitleSpinner extends LinearLayout {
 		pref.putInt(mKey, value);
 		pref.commit();
 	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+		layout.setEnabled(enabled);
+		mSpinner.setEnabled(enabled);
+	}
 }
