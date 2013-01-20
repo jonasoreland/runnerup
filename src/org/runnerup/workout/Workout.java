@@ -16,6 +16,7 @@
  */
 package org.runnerup.workout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -34,7 +35,7 @@ public class Workout implements WorkoutComponent {
 	long lap = 0;
 	int currentActivityNo = -1;
 	Activity currentActivity = null;
-	Activity activities[] = new Activity[0];
+	ArrayList<Activity> activities = new ArrayList<Activity>();
 	HashSet<Feedback> pendingFeedback = new HashSet<Feedback>();
 
 	GpsTracker gpsTracker = null;
@@ -69,8 +70,8 @@ public class Workout implements WorkoutComponent {
 		initFeedback();
 
 		currentActivityNo = 0;
-		if (activities.length > 0) {
-			currentActivity = activities[currentActivityNo];
+		if (activities.size() > 0) {
+			currentActivity = activities.get(currentActivityNo);
 		}
 
 		if (currentActivity != null) {
@@ -93,8 +94,8 @@ public class Workout implements WorkoutComponent {
 			currentActivity.onComplete(Scope.LAP, this);
 			currentActivity.onComplete(Scope.ACTIVITY, this);
 			currentActivityNo++;
-			if (currentActivityNo < activities.length) {
-				currentActivity = activities[currentActivityNo];
+			if (currentActivityNo < activities.size()) {
+				currentActivity = activities.get(currentActivityNo);
 				currentActivity.onStart(Scope.ACTIVITY, this);
 				currentActivity.onStart(Scope.LAP, this);
 			} else {
