@@ -466,7 +466,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			} else {
 				cb.setChecked(false);
 			}
-			if (mode == MODE_DETAILS) {
+			if (mode == MODE_DETAILS && !alreadyUploadedUploaders.contains(name)) {
 				cb.setEnabled(edit);
 			}
 			cb.setOnCheckedChangeListener(DetailActivity.this.onSendChecked);
