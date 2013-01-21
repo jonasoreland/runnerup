@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ import org.runnerup.R;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.format.DateUtils;
 
 /**
  * This is just constant
@@ -85,7 +86,18 @@ public enum Dimension {
 			return elapsedCue(res, (long) Speed.convert(val, Speed.PACE_SPK))
 					+ " " + res.getString(R.string.perkilometer);
 		}
-		// TODO Auto-generated method stub
+		return "";
+	}
+
+	public String getRemainingText(Context ctx, double d) {
+		Resources res = ctx.getResources();
+		switch (this) {
+		case TIME:
+			return DateUtils.formatElapsedTime((long)d);
+		case DISTANCE:
+			return "" + (((double) ((long) (d * 10))) / 10) + " "
+			+ res.getString(R.string.kilometers);
+		}
 		return "";
 	}
 }

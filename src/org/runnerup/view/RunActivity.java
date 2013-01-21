@@ -59,7 +59,8 @@ public class RunActivity extends Activity implements TickListener {
 	TextView lapDistance = null;
 	TextView lapPace = null;
 	TextView debugView = null;
-
+	TextView countdownView = null;
+	
 	/** Called when the activity is first created. */
 
 	@Override
@@ -82,6 +83,7 @@ public class RunActivity extends Activity implements TickListener {
 		lapDistance = (TextView) findViewById(R.id.lapDistance);
 		lapPace = (TextView) findViewById(R.id.lapPace);
 		debugView = (TextView) findViewById(R.id.textView2);
+		countdownView = (TextView) findViewById(R.id.countdownTextView);
 	}
 
 	@Override
@@ -113,7 +115,7 @@ public class RunActivity extends Activity implements TickListener {
 		workout = mGpsTracker.getWorkout();
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
 		bindValues.put(Workout.KEY_TTS, mSpeech);
-		bindValues.put(Workout.KEY_COUNTER_VIEW, debugView);
+		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		workout.onInit(workout, bindValues);
 		workout.setLog(debugView);
 		workout.onStart(Scope.WORKOUT, this.workout);

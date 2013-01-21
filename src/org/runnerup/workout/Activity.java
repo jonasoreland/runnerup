@@ -284,6 +284,12 @@ public class Activity implements TickComponent {
 		for (Trigger t : triggers) {
 			t.onComplete(scope, s);
 		}
+
+		if (scope == Scope.ACTIVITY) {
+			for (Trigger t : triggers) {
+				t.onEnd(s);
+			}
+		}
 	}
 
 	public long getDistance(Workout w, Scope s) {

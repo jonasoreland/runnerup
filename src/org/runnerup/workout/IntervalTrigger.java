@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ public class IntervalTrigger extends Trigger {
 			if (now >= next) {
 				w.log("fire interval: " + now);
 				fire(w);
-				scheduleNext(now);
+				scheduleNext(w, now);
 			}
 		}
 		return false;
 	}
 
-	private void scheduleNext(double now) {
+	private void scheduleNext(Workout w, double now) {
 		if (interval == 0) {
 			// last occurrence (maybe first)
 			next = 0;
@@ -53,12 +53,21 @@ public class IntervalTrigger extends Trigger {
 				next = 0;
 			}
 		}
+		if (next == 0) {
+			System.err.println("here!!!");
+			for (Feedback f : triggerAction) {
+				f.onEnd(w);
+			}
+		}
 	}
 
 	@Override
 	public void onStart(Scope what, Workout s) {
 		if (this.scope == what) {
 			next = first;
+			for (Feedback f : triggerAction) {
+				f.onStart(s);
+			}
 		}
 	}
 

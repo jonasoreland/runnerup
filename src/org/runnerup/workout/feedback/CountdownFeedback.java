@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.TextView;
 
 public class CountdownFeedback extends Feedback {
@@ -43,6 +44,16 @@ public class CountdownFeedback extends Feedback {
 	}
 	
 	@Override
+	public void onStart(Workout s) {
+		textView.setVisibility(View.VISIBLE);
+	}
+	
+	@Override
+	public void onEnd(Workout s) {
+		textView.setVisibility(View.GONE);
+	}
+
+	@Override
 	public boolean equals(Feedback _other) {
 		if (!(_other instanceof CountdownFeedback))
 			return false;
@@ -55,8 +66,11 @@ public class CountdownFeedback extends Feedback {
 		double curr = w.get(scope, dimension); // SI
 		double duration = w.getDuration(scope, dimension);
 		if (duration > curr) {
-			String msg = "" + (int)(duration - curr);
-			textView.setText(msg);
+			textView.setVisibility(View.VISIBLE);
+			textView.setText(dimension.getRemainingText(ctx, duration - curr));
+		}
+		else {
+			textView.setVisibility(View.GONE);
 		}
 	}
 

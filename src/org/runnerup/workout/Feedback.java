@@ -25,6 +25,9 @@ public abstract class Feedback {
 	public void onInit(Workout s, HashMap<String,Object> bindValues) {
 	}
 
+	public void onStart(Workout s) {
+	}
+	
 	public void onEnd(Workout s) {
 	}
 

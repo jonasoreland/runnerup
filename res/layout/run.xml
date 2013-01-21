@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tab1Layout"
     android:layout_width="fill_parent"
@@ -25,6 +25,7 @@
         android:id="@+id/tableLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/countdownLayout"
         android:layout_alignParentTop="true" >
 
         <TableRow
@@ -72,7 +73,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="20dp" />
-
         </TableRow>
 
         <TableRow
@@ -123,7 +123,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="20dp" />
-
         </TableRow>
 
         <TableRow
@@ -174,23 +173,42 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="20dp" />
-
         </TableRow>
     </TableLayout>
+
+    <LinearLayout
+        android:id="@+id/countdownLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/scrollView1"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/countdownTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/countdown_background"
+            android:padding="20dp"
+            android:text="00:59"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_above="@+id/tableRow1"
-        android:layout_below="@+id/tableLayout1"
         android:fadeScrollbars="false"
         android:scrollbarAlwaysDrawVerticalTrack="true" >
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:text="TextView" />
     </ScrollView>
 
@@ -212,26 +230,25 @@
         android:id="@+id/tableRow2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-    
-    <Button
-        android:id="@+id/stopButton"
-        style="@style/ButtonText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/btn_red"
-        android:layout_weight="1"
-        android:text="Stop" />
+        android:layout_alignParentBottom="true" >
 
-    <Button
-        android:id="@+id/pauseButton"
-        style="@style/ButtonText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/btn_grey"
-        android:layout_weight="1"
-        android:text="Pause" />
+        <Button
+            android:id="@+id/stopButton"
+            style="@style/ButtonText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_red"
+            android:text="Stop" />
 
+        <Button
+            android:id="@+id/pauseButton"
+            style="@style/ButtonText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_grey"
+            android:text="Pause" />
     </TableRow>
-    
+
 </RelativeLayout>

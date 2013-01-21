@@ -192,21 +192,20 @@ public class WorkoutBuilder {
 				case 0: // Time
 					rest.durationType = Dimension.TIME;
 					rest.durationValue = intervalRestTime;
-
-					IntervalTrigger trigger = new IntervalTrigger();
-					trigger.dimension = Dimension.TIME;
-					trigger.first = 1;
-					trigger.interval = 1;
-					trigger.scope = Scope.ACTIVITY;
-					trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME));
-					rest.triggers.add(trigger);
-
 					break;
 				case 1: // Distance
 					rest.durationType = Dimension.DISTANCE;
 					rest.durationValue = intevalRestDistance;
 					break;
 				}
+				IntervalTrigger trigger = new IntervalTrigger();
+				trigger.dimension = rest.durationType;
+				trigger.first = 1;
+				trigger.interval = 1;
+				trigger.scope = Scope.ACTIVITY;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, rest.durationType));
+				rest.triggers.add(trigger);
+
 				w.activities.add(rest);
 			}
 		}
