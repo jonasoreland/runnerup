@@ -185,8 +185,10 @@ public class GpsTracker extends android.app.Service implements
 			assert(false);
 			break;
 		case LOGGING:
-		case PAUSED:
 			start();
+			break;
+		case PAUSED:
+			resume();
 			break;
 		case STARTED:
 			break;
