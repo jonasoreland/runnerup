@@ -16,12 +16,16 @@
  */
 package org.runnerup.workout;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.widget.TextView;
 
 public class WorkoutBuilder {
@@ -32,7 +36,6 @@ public class WorkoutBuilder {
 	public static Workout createDefaultWorkout(TextView log,
 			SharedPreferences prefs) {
 		Workout w = new Workout();
-		ArrayList<Activity> activities = new ArrayList<Activity>(2);
 		if (prefs.getBoolean("pref_countdown_active", false))
 		{
 			long val = 0;
@@ -52,10 +55,9 @@ public class WorkoutBuilder {
 				trigger.first = 1;
 				trigger.interval = 1;
 				trigger.scope = Scope.ACTIVITY;
-				CountdownFeedback feedback = new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME);
 				trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME));
 				activity.triggers.add(trigger);
-				activities.add(activity);
+				w.activities.add(activity);
 			}
 		}
 
@@ -139,12 +141,102 @@ public class WorkoutBuilder {
 
 		activity.triggers = triggers;
 
-		activities.add(activity);
+		w.activities.add(activity);
 		
 		/**
 		 *
 		 */
-		w.activities = activities.toArray(w.activities);
 		return w;
+	}
+	
+	
+	
+	public static Workout createDefaultIntervalWorkout(TextView debugView, SharedPreferences prefs) {
+		Workout w = new Workout();
+		boolean warmup = false;
+		boolean cooldown = false;
+
+		if (warmup) {
+			Activity activity = new Activity();
+			activity.intensity = Intensity.WARMUP;
+			activity.durationType = null;
+			w.activities.add(activity);
+		}
+		
+		int repetitions = (int) parseDouble(prefs.getString("intervalRepetitions", "1"), 1);
+
+		int intervalType = prefs.getInt("intervalType", 0);
+		long intervalTime = parseSeconds(prefs.getString("intervalTime", "00:04:00"), 4 * 60);
+		double intevalDistance = 1000 * parseDouble(prefs.getString("intervalDistance", "1.0"), 1.0);
+		int intervalRestType = prefs.getInt("intervalRestType", 0);
+		long intervalRestTime = parseSeconds(prefs.getString("intervalRestTime", "00:01:00"), 60);
+		double intevalRestDistance = 1000 * parseDouble(prefs.getString("intervalRestDistance", "0.2"), 0.2);
+		for (int i = 0; i < repetitions; i++) {
+			Activity activity = new Activity();
+			switch (intervalType) {
+			case 0: // Time
+				activity.durationType = Dimension.TIME;
+				activity.durationValue = intervalTime;
+				break;
+			case 1: // Distance
+				activity.durationType = Dimension.DISTANCE;
+				activity.durationValue = intevalDistance;
+				break;
+			}
+			w.activities.add(activity);
+
+			if (i + 1 != repetitions) {
+				Activity rest = new Activity();
+				rest.intensity = Intensity.RESTING;
+				switch (intervalRestType) {
+				case 0: // Time
+					rest.durationType = Dimension.TIME;
+					rest.durationValue = intervalRestTime;
+
+					IntervalTrigger trigger = new IntervalTrigger();
+					trigger.dimension = Dimension.TIME;
+					trigger.first = 1;
+					trigger.interval = 1;
+					trigger.scope = Scope.ACTIVITY;
+					trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME));
+					rest.triggers.add(trigger);
+
+					break;
+				case 1: // Distance
+					rest.durationType = Dimension.DISTANCE;
+					rest.durationValue = intevalRestDistance;
+					break;
+				}
+				w.activities.add(rest);
+			}
+		}
+
+		if (cooldown) {
+			Activity activity = new Activity();
+			activity.intensity = Intensity.COOLDOWN;
+			activity.durationType = null;
+			w.activities.add(activity);
+		}
+		
+		return w;
+	}
+
+	private static double parseDouble(String string, double defaultValue) {
+		double distance = defaultValue;
+		try {
+			distance = Double.parseDouble(string);
+		} catch (NumberFormatException ex) {
+		}
+		return distance;
+	}
+
+	private static long parseSeconds(String string, long defaultValue) {
+	    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss", Locale.US);
+	    long seconds = defaultValue;
+		try {
+			seconds = sdf.parse(string).getTime() / 1000;
+		} catch (ParseException e) {
+		}
+	    return seconds;
 	}
 }

@@ -46,6 +46,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
 
@@ -55,6 +56,7 @@ public class StartActivity extends Activity implements TickListener {
 	org.runnerup.gpstracker.GpsStatus mGpsStatus = null;
 	TextToSpeech mSpeech = null;
 
+	TabHost tabHost = null;
 	Button startButton = null;
 	TextView gpsInfoView1 = null;
 	TextView gpsInfoView2 = null;
@@ -93,28 +95,29 @@ public class StartActivity extends Activity implements TickListener {
 
 		mGpsStatus = new org.runnerup.gpstracker.GpsStatus(StartActivity.this);
 		
-		TabHost th = (TabHost)findViewById(R.id.tabhostStart);
-		th.setup();
-		TabSpec tabSpec = th.newTabSpec("basic");
+		tabHost = (TabHost)findViewById(R.id.tabhostStart);
+		tabHost.setup();
+		TabSpec tabSpec = tabHost.newTabSpec("basic");
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Basic"));
 		tabSpec.setContent(R.id.tabBasic);
-		th.addTab(tabSpec);
+		tabHost.addTab(tabSpec);
 
-		tabSpec = th.newTabSpec("interval");
+		tabSpec = tabHost.newTabSpec("interval");
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Interval"));
 		tabSpec.setContent(R.id.tabInterval);
-		th.addTab(tabSpec);
+		tabHost.addTab(tabSpec);
 
-		tabSpec = th.newTabSpec("advanced");
+		tabSpec = tabHost.newTabSpec("advanced");
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Advanced"));
 		tabSpec.setContent(R.id.tabManual);
-		th.addTab(tabSpec);
+		tabHost.addTab(tabSpec);
 
-		tabSpec = th.newTabSpec("manual");
+		tabSpec = tabHost.newTabSpec("manual");
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Manual"));
 		tabSpec.setContent(R.id.tabManual);
-		th.addTab(tabSpec);
-
+		tabHost.addTab(tabSpec);
+		tabHost.setOnTabChangedListener(onTabChangeListener);
+		
 		CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
 		goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
 		simpleType = (TitleSpinner)findViewById(R.id.basicType);
@@ -184,6 +187,21 @@ public class StartActivity extends Activity implements TickListener {
 		updateView();
 	}
 
+	OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
+
+		@Override
+		public void onTabChanged(String tabId) {
+			if (tabId.contentEquals("basic"))
+				startButton.setVisibility(View.VISIBLE);
+			else if (tabId.contentEquals("interval"))
+				startButton.setVisibility(View.VISIBLE);
+			else if (tabId.contentEquals("advanced"))
+				startButton.setVisibility(View.GONE);
+			else if (tabId.contentEquals("manual"))
+				startButton.setVisibility(View.GONE);
+		}
+	};
+
 	OnClickListener startButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			log ("here mGpsTracker.isLogging(): " + mGpsTracker.isLogging());
@@ -197,8 +215,12 @@ public class StartActivity extends Activity implements TickListener {
 			} else if (mGpsStatus.isFixed()) {
 				mGpsStatus.stop(StartActivity.this);
 				Context ctx = getApplicationContext();
-				Workout w = WorkoutBuilder.createDefaultWorkout(debugView,
-						PreferenceManager.getDefaultSharedPreferences(ctx));
+				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+				Workout w = null;
+				if (tabHost.getCurrentTabTag().contentEquals("basic"))
+					w = WorkoutBuilder.createDefaultWorkout(debugView, pref);
+				else if (tabHost.getCurrentTabTag().contentEquals("interval"))
+					w = WorkoutBuilder.createDefaultIntervalWorkout(debugView, pref);
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,
 						RunActivity.class);
