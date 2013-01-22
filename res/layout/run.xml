@@ -194,7 +194,8 @@
             android:text="00:59"
             android:textColor="@android:color/white"
             android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <ScrollView
