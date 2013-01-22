@@ -95,8 +95,12 @@ public enum Dimension {
 		case TIME:
 			return DateUtils.formatElapsedTime((long)d);
 		case DISTANCE:
-			return "" + (((double) ((long) (d * 10))) / 10) + " "
-			+ res.getString(R.string.kilometers);
+			String suffix = "m";
+			if (d >= 1000) {
+				d /= 1000;
+				suffix = "km";
+			}
+			return "" + (((double) ((long) (d * 10))) / 10) + " " + suffix;
 		}
 		return "";
 	}
