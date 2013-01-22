@@ -154,7 +154,7 @@ public class WorkoutBuilder {
 	public static Workout createDefaultIntervalWorkout(TextView debugView, SharedPreferences prefs) {
 		Workout w = new Workout();
 		boolean warmup = false;
-		boolean cooldown = false;
+		boolean cooldown = true;
 
 		if (warmup) {
 			Activity activity = new Activity();
