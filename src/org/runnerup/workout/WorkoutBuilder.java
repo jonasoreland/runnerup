@@ -16,62 +16,18 @@
  */
 package org.runnerup.workout;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
 import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.text.format.DateUtils;
 import android.widget.TextView;
 
 public class WorkoutBuilder {
 
-	/**
-	 * @return workout based on SharedPreferences
-	 */
-	public static Workout createDefaultWorkout(TextView log,
-			SharedPreferences prefs) {
-		Workout w = new Workout();
-		if (prefs.getBoolean("pref_countdown_active", false))
-		{
-			long val = 0;
-			String vals = prefs.getString("pref_countdown_time", "0");
-			try {
-				val = Long.parseLong(vals);
-			} catch (NumberFormatException e) {
-			}
-			if (val > 0) {
-				System.err.println("Countdown: " + val);
-				Activity activity = new Activity();
-				activity.intensity = Intensity.RESTING;
-				activity.durationType = Dimension.TIME;
-				activity.durationValue = val;
-				IntervalTrigger trigger = new IntervalTrigger();
-				trigger.dimension = Dimension.TIME;
-				trigger.first = 1;
-				trigger.interval = 1;
-				trigger.scope = Scope.ACTIVITY;
-				trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME));
-				activity.triggers.add(trigger);
-				w.activities.add(activity);
-			}
-		}
-
-		Activity activity = new Activity();
-		if (prefs.getBoolean("pref_autolap_active", false)) {
-			long val = 0;
-			String vals = prefs.getString("pref_autolap", "1000");
-			try {
-				val = Long.parseLong(vals);
-			} catch (NumberFormatException e) {
-			}
-			activity.setAutolap(val);
-		}
-
+	static ArrayList<Trigger> createDefaultTriggers(SharedPreferences prefs) {
 		ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 		ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
@@ -131,15 +87,59 @@ public class WorkoutBuilder {
 			t.triggerAction = feedback;
 		}
 
-		if (triggers.size() > 0) {
+		return triggers;
+	}
+	
+	/**
+	 * @return workout based on SharedPreferences
+	 */
+	public static Workout createDefaultWorkout(TextView log,
+			SharedPreferences prefs) {
+		Workout w = new Workout();
+		if (prefs.getBoolean("pref_countdown_active", false))
+		{
+			long val = 0;
+			String vals = prefs.getString("pref_countdown_time", "0");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			if (val > 0) {
+				System.err.println("Countdown: " + val);
+				Activity activity = new Activity();
+				activity.intensity = Intensity.RESTING;
+				activity.durationType = Dimension.TIME;
+				activity.durationValue = val;
+				IntervalTrigger trigger = new IntervalTrigger();
+				trigger.dimension = Dimension.TIME;
+				trigger.first = 1;
+				trigger.interval = 1;
+				trigger.scope = Scope.ACTIVITY;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME));
+				activity.triggers.add(trigger);
+				w.activities.add(activity);
+			}
+		}
+
+		Activity activity = new Activity();
+		if (prefs.getBoolean("pref_autolap_active", false)) {
+			long val = 0;
+			String vals = prefs.getString("pref_autolap", "1000");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			activity.setAutolap(val);
+		}
+
+		activity.triggers = createDefaultTriggers(prefs);
+		if (activity.triggers.size() > 0) {
 			EventTrigger ev = new EventTrigger();
 			ev.event = Event.STARTED;
 			ev.scope = Scope.LAP;
 			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
-			triggers.add(ev);
+			activity.triggers.add(ev);
 		}
-
-		activity.triggers = triggers;
 
 		w.activities.add(activity);
 		
@@ -163,8 +163,27 @@ public class WorkoutBuilder {
 			w.activities.add(activity);
 		}
 		
+		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
+		if (triggers.size() > 0) {
+			{
+				EventTrigger ev = new EventTrigger();
+				ev.event = Event.STARTED;
+				ev.scope = Scope.ACTIVITY;
+				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
+				triggers.add(ev);
+			}
+			
+			{
+				EventTrigger ev = new EventTrigger();
+				ev.event = Event.COMPLETED;
+				ev.scope = Scope.ACTIVITY;
+				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
+				triggers.add(ev);
+			}
+		}
+		
 		int repetitions = (int) parseDouble(prefs.getString("intervalRepetitions", "1"), 1);
-
+		
 		int intervalType = prefs.getInt("intervalType", 0);
 		long intervalTime = parseSeconds(prefs.getString("intervalTime", "00:04:00"), 4 * 60);
 		double intevalDistance = 1000 * parseDouble(prefs.getString("intervalDistance", "1.0"), 1.0);
@@ -183,6 +202,7 @@ public class WorkoutBuilder {
 				activity.durationValue = intevalDistance;
 				break;
 			}
+			activity.triggers = triggers;
 			w.activities.add(activity);
 
 			if (i + 1 != repetitions) {
@@ -230,12 +250,21 @@ public class WorkoutBuilder {
 	}
 
 	private static long parseSeconds(String string, long defaultValue) {
-	    SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss", Locale.US);
-	    long seconds = defaultValue;
-		try {
-			seconds = sdf.parse(string).getTime() / 1000;
-		} catch (ParseException e) {
+		String[] split = string.split(":");
+		long mul = 1;
+		long sum = 0;
+		for (int i = split.length - 1; i >= 0; i--) {
+			sum += Long.parseLong(split[i]) * mul;
+			mul *= 60;
 		}
-	    return seconds;
+		return sum;
+	}
+
+	public static boolean validateSeconds(String newValue) {
+		long seconds = parseSeconds(newValue, -1);
+		long seconds2 = parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
+		if (seconds == seconds2)
+			return true;
+		return false;
 	}
 }

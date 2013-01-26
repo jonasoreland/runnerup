@@ -128,11 +128,13 @@ public class StartActivity extends Activity implements TickListener {
 
 		intervalType = (TitleSpinner)findViewById(R.id.intervalType);
 		intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
+		intervalTime.setOnSetValueListener(onSetTimeValidator);
 		intervalDistance = (TitleSpinner) findViewById(R.id.intervalDistance);
 		intervalType.setOnSetValueListener(intervalTypeSetValue);
 
 		intervalRestType = (TitleSpinner)findViewById(R.id.intervalRestType);
 		intervalRestTime = (TitleSpinner) findViewById(R.id.intervalRestTime);
+		intervalRestTime.setOnSetValueListener(onSetTimeValidator);
 		intervalRestDistance = (TitleSpinner) findViewById(R.id.intervalRestDistance);
 		intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
 	}
@@ -399,6 +401,27 @@ public class StartActivity extends Activity implements TickListener {
 			intervalRestDistance.setVisibility(time ? View.GONE : View.VISIBLE);
 			return newValue;
 		}
+	};
+
+	
+	OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
+
+		@Override
+		public String preSetValue(String newValue)
+				throws IllegalArgumentException {
+
+			
+			if (WorkoutBuilder.validateSeconds(newValue))
+				return newValue;
+
+			throw new IllegalArgumentException("Unable to parse time value: " + newValue);
+		}
+
+		@Override
+		public int preSetValue(int newValue) throws IllegalArgumentException {
+			return newValue;
+		}
+		
 	};
 
 }
