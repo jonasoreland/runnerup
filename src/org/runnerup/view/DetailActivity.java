@@ -388,10 +388,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
 			tv1.setText(laps[position].getAsString("_id"));
 			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
-			float d = laps[position].getAsLong(DB.LAP.DISTANCE);
+			float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position].getAsLong(DB.LAP.DISTANCE) : 0;
 			tv2.setText(d + "m");
 			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
-			long t = laps[position].getAsLong(DB.LAP.TIME);
+			long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position].getAsLong(DB.LAP.TIME) : 0;
 			tv3.setText(DateUtils.formatElapsedTime(t));
 			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
 			if (t != 0 && d != 0)
