@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.runnerup.R;
+import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
@@ -223,6 +224,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				requery();
 			}
 			break;
+		case R.id.menu_recompute_activity:
+			ActivityCleaner.recompute(mDB, mID);
+			requery();
+			break;
 		}
 		return true;
 	}
@@ -388,7 +393,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
 			tv1.setText(laps[position].getAsString("_id"));
 			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
-			float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position].getAsLong(DB.LAP.DISTANCE) : 0;
+			float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position].getAsFloat(DB.LAP.DISTANCE) : 0;
 			tv2.setText(d + "m");
 			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
 			long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position].getAsLong(DB.LAP.TIME) : 0;

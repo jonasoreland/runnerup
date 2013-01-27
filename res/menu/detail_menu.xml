@@ -26,4 +26,9 @@
         android:id="@+id/menu_delete_activity"
         android:orderInCategory="100"
         android:title="Delete activity"/>
+    <item
+        android:id="@+id/menu_recompute_activity"
+        android:orderInCategory="100"
+        android:title="Recompute activity"
+        android:enabled="false"/>
 </menu>
