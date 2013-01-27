@@ -117,7 +117,6 @@ public class RunActivity extends Activity implements TickListener {
 		bindValues.put(Workout.KEY_TTS, mSpeech);
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		workout.onInit(workout, bindValues);
-		workout.setLog(debugView);
 		workout.onStart(Scope.WORKOUT, this.workout);
 		startTimer();
 	}

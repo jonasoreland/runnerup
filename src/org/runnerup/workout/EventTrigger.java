@@ -29,7 +29,7 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onStart(Scope what, Workout s) {
 		if (this.scope == what && this.event == Event.STARTED) {
-			s.log("fire onStart");
+			System.err.println("fire onStart");
 			fire(s);
 		}
 	}
@@ -37,7 +37,7 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onPause(Workout s) {
 		if (this.event == Event.PAUSED) {
-			s.log("fire onPause");
+			System.err.println("fire onPause");
 			fire(s);
 		}
 	}
@@ -45,7 +45,7 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onStop(Workout s) {
 		if (this.event == Event.STOPPED) {
-			s.log("fire onStop");
+			System.err.println("fire onStop");
 			fire(s);
 		}
 	}
@@ -53,7 +53,7 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onResume(Workout s) {
 		if (this.event == Event.RESUMED) {
-			s.log("fire onResume");
+			System.err.println("fire onResume");
 			fire(s);
 		}
 	}
@@ -61,7 +61,7 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onComplete(Scope what, Workout s) {
 		if (this.scope == what && this.event == Event.COMPLETED) {
-			s.log("fire onComplete");
+			System.err.println("fire onComplete");
 			fire(s);
 		}
 	}

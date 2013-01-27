@@ -249,17 +249,6 @@ public class Workout implements WorkoutComponent {
 		}
 	}
 
-	TextView tv = null;
-	public void setLog(TextView tv) {
-		this.tv = tv;
-	}
-
-	public void log(String s) {
-		if (tv != null && s != null) {
-			tv.setText(s + "\n" + tv.getText());
-		}
-	}
-
 	private static class FakeWorkout extends Workout {
 		
 		FakeWorkout() {

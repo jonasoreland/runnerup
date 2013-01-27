@@ -32,7 +32,6 @@ public class IntervalTrigger extends Trigger {
 		if (next != 0) {
 			double now = w.get(scope, dimension);
 			if (now >= next) {
-				w.log("fire interval: " + now);
 				fire(w);
 				scheduleNext(w, now);
 			}
@@ -54,7 +53,6 @@ public class IntervalTrigger extends Trigger {
 			}
 		}
 		if (next == 0) {
-			System.err.println("here!!!");
 			for (Feedback f : triggerAction) {
 				f.onEnd(w);
 			}
