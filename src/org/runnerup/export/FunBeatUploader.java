@@ -112,6 +112,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			 * connect to START_URL to get cookies/formValues
 			 */
 			conn = (HttpURLConnection) new URL(START_URL).openConnection();
+			conn.setInstanceFollowRedirects(false);
 			{
 				int responseCode = conn.getResponseCode();
 				String amsg = conn.getResponseMessage();
@@ -136,6 +137,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			kv.put(loginKey, "Logga in");
 
 			conn = (HttpURLConnection) new URL(LOGIN_URL).openConnection();
+			conn.setInstanceFollowRedirects(false);
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
 			conn.addRequestProperty("Content-Type",
@@ -157,6 +159,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 					conn.disconnect();
 					conn = (HttpURLConnection) new URL(BASE_URL + redirect)
 							.openConnection();
+					conn.setInstanceFollowRedirects(false);
 					conn.setRequestMethod("GET");
 					addCookies(conn);
 					responseCode = conn.getResponseCode();
@@ -200,6 +203,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			StringWriter writer = new StringWriter();
 			String id = tcx.export(mID, writer);
 			conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
+			conn.setInstanceFollowRedirects(false);
 			addCookies(conn);
 			getFormValues(conn); // execute the GET
 			conn.disconnect();
@@ -225,6 +229,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			Part<?> parts[] = { part1, part2, part3, part4 };
 
 			conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
+			conn.setInstanceFollowRedirects(false);
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
 			addCookies(conn);
@@ -238,6 +243,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 				conn.disconnect();
 				conn = (HttpURLConnection) new URL(BASE_URL + redirect)
 						.openConnection();
+				conn.setInstanceFollowRedirects(false);
 				conn.setRequestMethod("GET");
 				addCookies(conn);
 				responseCode = conn.getResponseCode();
@@ -260,6 +266,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			
 			String surl = BASE_URL + redirect;
 			conn = (HttpURLConnection) new URL(surl).openConnection();
+			conn.setInstanceFollowRedirects(false);
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
 			conn.addRequestProperty("Content-Type",
@@ -279,6 +286,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 					conn.disconnect();
 					conn = (HttpURLConnection) new URL(BASE_URL + redirect)
 							.openConnection();
+					conn.setInstanceFollowRedirects(false);
 					conn.setRequestMethod("GET");
 					addCookies(conn);
 					responseCode = conn.getResponseCode();
