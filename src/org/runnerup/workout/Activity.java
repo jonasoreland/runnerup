@@ -131,6 +131,10 @@ public class Activity implements TickComponent {
 		this.targetValue = targetValue;
 	}
 
+	public Intensity getIntensity() {
+		return intensity;
+	}
+
 	/**
 	 * @return the autolap
 	 */

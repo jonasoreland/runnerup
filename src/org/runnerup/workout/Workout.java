@@ -122,6 +122,10 @@ public class Workout implements WorkoutComponent {
 		return gpsTracker.isPaused();
 	}
 
+	public Activity getCurrentActivity() {
+		return currentActivity;
+	}
+
 	public void onNewLap() {
 		initFeedback();
 		if (currentActivity != null) {
@@ -249,6 +253,14 @@ public class Workout implements WorkoutComponent {
 		}
 	}
 
+	public int getActivityCount() {
+		return activities.size();
+	}
+
+	public Activity getActivity(int no) {
+		return activities.get(no);
+	}
+	
 	private static class FakeWorkout extends Workout {
 		
 		FakeWorkout() {
@@ -292,5 +304,4 @@ public class Workout implements WorkoutComponent {
 		FakeWorkout w = new FakeWorkout();
 		return w;
 	}
-
 };
