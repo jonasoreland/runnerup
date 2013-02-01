@@ -27,12 +27,16 @@ import android.text.format.DateUtils;
  */
 public enum Dimension {
 
-	TIME(1), DISTANCE(2), SPEED(3);
+	TIME(1, R.string.txt_dimension_time), 
+	DISTANCE(2, R.string.txt_dimension_distance),
+	SPEED(3, R.string.txt_dimenstion_speed);
 
 	int value = 0;
-
-	private Dimension(int val) {
+	int textId = 0;
+	
+	private Dimension(int val, int textId) {
 		this.value = val;
+		this.textId = textId;
 	}
 
 	/**
@@ -40,6 +44,10 @@ public enum Dimension {
 	 */
 	public int getValue() {
 		return value;
+	}
+
+	public int getTextId() {
+		return textId;
 	}
 
 	public boolean equal(Dimension what) {

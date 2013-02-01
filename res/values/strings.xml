@@ -24,4 +24,13 @@
 	    <item>Time</item>
 	    <item>Distance</item>
    	</string-array>
+
+	<string name="txt_intensity_active">active</string>
+	<string name="txt_intensity_resting">rest</string>
+	<string name="txt_intensity_warmup">warmup</string>
+	<string name="txt_intensity_cooldown">cooldown</string>
+
+	<string name="txt_dimension_time">time</string>
+	<string name="txt_dimension_distance">distance</string>
+	<string name="txt_dimenstion_speed">speed</string>
 </resources>

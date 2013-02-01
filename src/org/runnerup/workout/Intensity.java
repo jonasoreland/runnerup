@@ -16,34 +16,42 @@
  */
 package org.runnerup.workout;
 
+import org.runnerup.R;
+
 public enum Intensity {
 
 	/**
 	 * Running
 	 */
-	ACTIVE(0),
+	ACTIVE(0, R.string.txt_intensity_active),
 	
 	/**
 	 *
 	 */
-	RESTING(1),
+	RESTING(1, R.string.txt_intensity_resting),
 	
 	/**
 	 * Warm up
 	 */
-	WARMUP(2),
+	WARMUP(2, R.string.txt_intensity_warmup),
 	
 	/**
 	 * Cool down
 	 */
-	COOLDOWN(3);
+	COOLDOWN(3, R.string.txt_intensity_cooldown);
 	
 	int value;
-	Intensity(int val) {
+	int textId;
+	Intensity(int val, int textId) {
 		this.value = val;
+		this.textId = textId;
 	}
 
 	public int getValue() {
 		return value;
+	}
+
+	public int getTextId() {
+		return textId;
 	}
 }
