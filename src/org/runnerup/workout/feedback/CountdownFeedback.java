@@ -70,7 +70,7 @@ public class CountdownFeedback extends Feedback {
 			textView.setText(dimension.getRemainingText(ctx, duration - curr));
 		}
 		else {
-			textView.setVisibility(View.GONE);
+			textView.setVisibility(View.INVISIBLE);
 		}
 	}
 

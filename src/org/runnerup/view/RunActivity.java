@@ -16,6 +16,7 @@
  */
 package org.runnerup.view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,6 +30,7 @@ import org.runnerup.workout.Workout;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -38,9 +40,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class RunActivity extends Activity implements TickListener {
@@ -58,9 +64,14 @@ public class RunActivity extends Activity implements TickListener {
 	TextView lapTime = null;
 	TextView lapDistance = null;
 	TextView lapPace = null;
-	TextView debugView = null;
 	TextView countdownView = null;
+	ListView workoutList = null;
+	org.runnerup.workout.Activity currentActivity = null;
 	
+	class WorkoutRow { org.runnerup.workout.Activity activity = null; ContentValues lap = null;};
+	ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
+	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+
 	/** Called when the activity is first created. */
 
 	@Override
@@ -82,8 +93,10 @@ public class RunActivity extends Activity implements TickListener {
 		lapTime = (TextView) findViewById(R.id.lapTime);
 		lapDistance = (TextView) findViewById(R.id.lapDistance);
 		lapPace = (TextView) findViewById(R.id.lapPace);
-		debugView = (TextView) findViewById(R.id.textView2);
 		countdownView = (TextView) findViewById(R.id.countdownTextView);
+		workoutList = (ListView) findViewById(R.id.workoutList);
+		WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
+		workoutList.setAdapter(adapter);
 	}
 
 	@Override
@@ -96,19 +109,7 @@ public class RunActivity extends Activity implements TickListener {
 		}
 	}
 
-	void log(String s) {
-		if (debugView != null) {
-			CharSequence curr = debugView.getText();
-			int len = curr.length();
-			if (len > 1000) {
-				curr = curr.subSequence(0, 1000);
-			}
-			debugView.setText(s + "\n" + curr);
-		}
-	}
-
 	void onGpsTrackerBound() {
-		log("2 mGpsTracker = " + mGpsTracker);
 		activityId = mGpsTracker.createActivity();
 		mGpsTracker.setForeground(RunActivity.class);
 		mGpsTracker.start();
@@ -119,6 +120,20 @@ public class RunActivity extends Activity implements TickListener {
 		workout.onInit(workout, bindValues);
 		workout.onStart(Scope.WORKOUT, this.workout);
 		startTimer();
+
+		populateWorkoutList();
+	}
+
+	private void populateWorkoutList() {
+		for (int i = 0; i < workout.getActivityCount(); i++) {
+			WorkoutRow row = new WorkoutRow();
+			row.activity = workout.getActivity(i);
+			row.lap = null;
+			workoutRows.add(row);
+		}
+		for (BaseAdapter a : adapters) {
+			a.notifyDataSetChanged();
+		}
 	}
 
 	Timer timer = null;
@@ -161,7 +176,6 @@ public class RunActivity extends Activity implements TickListener {
 
 	OnClickListener stopButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			log("stopButtonClick");
 			workout.onStop(workout);
 			stopTimer();
 			Intent intent = new Intent(RunActivity.this, DetailActivity.class);
@@ -205,7 +219,6 @@ public class RunActivity extends Activity implements TickListener {
 
 	OnClickListener pauseButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			log("pauseButtonClick");
 			if (workout.isPaused()) {
 				workout.onResume(workout);
 				pauseButton.setText("Pause");
@@ -218,7 +231,6 @@ public class RunActivity extends Activity implements TickListener {
 
 	OnClickListener newLapButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			log("newLapButtonClick");
 			workout.onNewLap();
 		}
 	};
@@ -241,6 +253,21 @@ public class RunActivity extends Activity implements TickListener {
 		lapTime.setText(DateUtils.formatElapsedTime(lt));
 		lapDistance.setText("" + ld);
 		lapPace.setText(DateUtils.formatElapsedTime(lp));
+		
+		if (currentActivity != workout.getCurrentActivity()) {
+			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
+			currentActivity = workout.getCurrentActivity();
+			workoutList.setSelection(getPosition(workoutRows, currentActivity));
+		}
+	}
+
+	private int getPosition(ArrayList<WorkoutRow> workoutRows,
+			org.runnerup.workout.Activity currentActivity) {
+		for (int i = 0; i< workoutRows.size(); i++) {
+			if (workoutRows.get(i).activity == currentActivity)
+				return i;
+		}
+		return 0;
 	}
 
 	private boolean mIsBound = false;
@@ -292,11 +319,81 @@ public class RunActivity extends Activity implements TickListener {
 		@Override
 		public void onInit(int status) {
 			if (status != TextToSpeech.SUCCESS) {
-				log("tts fail: " + status);
 				mSpeech = null;
 			} else {
-				log("tts ok");
 			}
+		}
+	};
+
+	class WorkoutAdapter extends BaseAdapter {
+
+		ArrayList<WorkoutRow> rows = null;
+
+		WorkoutAdapter(ArrayList<WorkoutRow> workoutRows) {
+			this.rows = workoutRows;
+		}
+		
+		@Override
+		public int getCount() {
+			return rows.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return rows.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			WorkoutRow tmp = rows.get(position);
+			if (tmp.activity != null)
+			{
+				return getWorkoutRow(tmp.activity, convertView, parent);
+			}
+			else
+			{	
+				return getLapRow(tmp.lap, convertView, parent);
+			}
+		}
+
+		private View getWorkoutRow(org.runnerup.workout.Activity activity, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
+			View view = inflater.inflate(R.layout.workout_row, parent, false);
+			TextView intensity = (TextView) view.findViewById(R.id.step_intensity);
+			TextView durationType = (TextView) view.findViewById(R.id.step_duration_type);
+			TextView durationValue = (TextView) view.findViewById(R.id.step_duration_value);
+			TextView targetPace = (TextView) view.findViewById(R.id.step_pace);
+			intensity.setText(getResources().getText(activity.getIntensity().getTextId()));
+			if (activity.getDurationType() != null) {
+				durationType.setText(getResources().getText(activity.getDurationType().getTextId()));
+				durationValue.setText("" + activity.getDurationValue());
+			} else {
+				durationType.setText("");
+				durationValue.setText("");
+			}
+			if (workout.getCurrentActivity() == activity) {
+				view.setBackgroundResource(android.R.color.background_light);
+			} else {
+				view.setBackgroundResource(android.R.color.black);
+			}
+			targetPace.setText("");
+			return view;
+		}
+
+		private View getLapRow(ContentValues tmp, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
+			View view = inflater.inflate(R.layout.laplist_row, parent, false);
+			return view;
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return false;
 		}
 	};
 }
