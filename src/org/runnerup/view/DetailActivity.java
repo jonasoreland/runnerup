@@ -92,7 +92,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	TextView activityDistance = null;
 
 	EditText notes = null;
-
+	MenuItem recomputeMenuItem = null;
+	
 	View mapViewLayout = null;
 	GoogleMap map = null;
 	View mapView = null;
@@ -205,6 +206,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (mode == MODE_DETAILS) {
 			getMenuInflater().inflate(R.menu.detail_menu, menu);
+			recomputeMenuItem = menu.getItem(2);
 		}
 		return true;
 	}
@@ -221,6 +223,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				WidgetUtil.setEditable(notes,  true);
 				notes.requestFocus();
 				saveButton.setEnabled(true);
+				if (recomputeMenuItem != null)
+					recomputeMenuItem.setEnabled(true);
 				requery();
 			}
 			break;
@@ -497,6 +501,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				edit = false;
 				WidgetUtil.setEditable(notes,  false);
 				saveButton.setEnabled(false);
+				if (recomputeMenuItem != null)
+					recomputeMenuItem.setEnabled(false);
 				requery();
 				return;
 			}
