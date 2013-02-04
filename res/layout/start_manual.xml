@@ -14,13 +14,89 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tabManual"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-</LinearLayout>
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manualDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:prompt="@string/simple_type"
+        android:defaultValue="today"
+        android:text="Date"
+        runnerup:type="datepicker" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manualTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/manualDate"
+        android:prompt="@string/simple_type"
+        android:text="Time"
+        runnerup:type="timepicker" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manualDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/manualTime"
+        android:prompt="@string/simple_type"
+        android:text="Duration (HH:MM:SS)"
+        android:defaultValue="00:00:00"
+        runnerup:type="edittext" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manualDistance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/manualDuration"
+        android:prompt="@string/simple_type"
+        android:inputType="numberDecimal"
+        android:text="Distance (km)"
+        runnerup:type="edittext" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manualPace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/manualDistance"
+        android:prompt="@string/simple_type"
+        android:inputType="numberDecimal"
+        android:text="Pace"
+        runnerup:type="edittext" />
+
+    <EditText
+        android:id="@+id/manualNotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/manualPace"
+        android:layout_above="@+id/manualSave"
+        android:ems="10"
+        android:gravity="top|left"
+        android:inputType="textMultiLine"
+        android:singleLine="false"
+        android:hint="Add workout notes" />
+
+    <Button
+        android:id="@+id/manualSave"
+        style="@style/ButtonText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_green"
+        android:text="Save activity" />
+
+</RelativeLayout>

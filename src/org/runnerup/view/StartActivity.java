@@ -22,6 +22,7 @@ import org.runnerup.util.TickListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.Speed;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
 
@@ -37,12 +38,14 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -67,11 +70,18 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner intervalType = null;
 	TitleSpinner intervalTime = null;
 	TitleSpinner intervalDistance = null;
-
 	TitleSpinner intervalRestType = null;
 	TitleSpinner intervalRestTime = null;
 	TitleSpinner intervalRestDistance = null;
 
+	TitleSpinner manualDate = null;
+	TitleSpinner manualTime = null;
+	TitleSpinner manualDistance = null;
+	TitleSpinner manualDuration = null;
+	TitleSpinner manualPace = null;
+	EditText     manualNotes = null;
+	Button       manualSave = null;
+	
 	/** Called when the activity is first created. */
 
 	@Override
@@ -135,6 +145,20 @@ public class StartActivity extends Activity implements TickListener {
 		intervalRestTime.setOnSetValueListener(onSetTimeValidator);
 		intervalRestDistance = (TitleSpinner) findViewById(R.id.intervalRestDistance);
 		intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
+
+		manualDate = (TitleSpinner)findViewById(R.id.manualDate);
+		manualDate.setOnSetValueListener(onSetValueManual);
+		manualTime = (TitleSpinner)findViewById(R.id.manualTime);
+		manualDate.setOnSetValueListener(onSetValueManual);
+		manualDistance = (TitleSpinner)findViewById(R.id.manualDistance);
+		manualDistance.setOnSetValueListener(onSetManualDistance);
+		manualDuration = (TitleSpinner)findViewById(R.id.manualDuration);
+		manualDuration.setOnSetValueListener(onSetManualDuration);
+		manualPace = (TitleSpinner)findViewById(R.id.manualPace);
+		manualPace.setVisibility(View.GONE);
+		manualNotes = (EditText)findViewById(R.id.manualNotes);
+		manualSave = (Button)findViewById(R.id.manualSave);
+		manualSave.setEnabled(false);
 	}
 
 	@Override
@@ -422,4 +446,73 @@ public class StartActivity extends Activity implements TickListener {
 		
 	};
 
+	OnSetValueListener onSetValueManual = new OnSetValueListener() {
+
+		@Override
+		public String preSetValue(String newValue)
+				throws IllegalArgumentException {
+			manualSave.setEnabled(true);
+			return newValue;
+		}
+
+		@Override
+		public int preSetValue(int newValue) throws IllegalArgumentException {
+			manualSave.setEnabled(true);
+			return newValue;
+		}
+	};
+	
+	void setManualPace(String distance, String duration) {
+		System.err.println("distance: >" + distance + "< duration: >" + duration + "<");
+		try {
+			double dist = 1000 * Double.parseDouble(distance); // convert to meters
+			long seconds = WorkoutBuilder.parseSeconds(duration, 0);
+			double speed = dist / seconds;
+			if (dist == 0 || seconds == 0) {
+				manualPace.setVisibility(View.GONE);
+				return;
+			}
+			long val = (long) Speed.convert(speed, Speed.PACE_SPK);
+			manualPace.setValue(DateUtils.formatElapsedTime(val));
+			manualPace.setVisibility(View.VISIBLE);
+			return;
+		} catch (NumberFormatException ex) {
+		}
+		manualPace.setVisibility(View.GONE);
+	}
+	
+	OnSetValueListener onSetManualDistance = new OnSetValueListener() {
+
+		@Override
+		public String preSetValue(String newValue)
+				throws IllegalArgumentException {
+			setManualPace(newValue, manualDuration.getValue().toString());
+			manualSave.setEnabled(true);
+			return newValue;
+		}
+
+		@Override
+		public int preSetValue(int newValue) throws IllegalArgumentException {
+			manualSave.setEnabled(true);
+			return newValue;
+		}
+		
+	};
+
+	OnSetValueListener onSetManualDuration = new OnSetValueListener() {
+
+		@Override
+		public String preSetValue(String newValue)
+				throws IllegalArgumentException {
+			setManualPace(manualDistance.getValue().toString(), newValue);
+			manualSave.setEnabled(true);
+			return newValue;
+		}
+
+		@Override
+		public int preSetValue(int newValue) throws IllegalArgumentException {
+			manualSave.setEnabled(true);
+			return newValue;
+		}
+	};
 }
