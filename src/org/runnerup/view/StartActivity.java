@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -124,7 +125,9 @@ public class StartActivity extends Activity implements TickListener {
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Manual"));
 		tabSpec.setContent(R.id.tabManual);
 		tabHost.addTab(tabSpec);
+		
 		tabHost.setOnTabChangedListener(onTabChangeListener);
+		tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
 		
 		CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
 		goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
@@ -149,7 +152,7 @@ public class StartActivity extends Activity implements TickListener {
 		manualDate = (TitleSpinner)findViewById(R.id.manualDate);
 		manualDate.setOnSetValueListener(onSetValueManual);
 		manualTime = (TitleSpinner)findViewById(R.id.manualTime);
-		manualDate.setOnSetValueListener(onSetValueManual);
+		manualTime.setOnSetValueListener(onSetValueManual);
 		manualDistance = (TitleSpinner)findViewById(R.id.manualDistance);
 		manualDistance.setOnSetValueListener(onSetManualDistance);
 		manualDuration = (TitleSpinner)findViewById(R.id.manualDuration);
