@@ -76,7 +76,8 @@
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent"
+                android:layout_above="@android:id/tabs" >
                 
                 <include layout="@layout/start_basic" />
                 <include layout="@layout/start_interval" />
