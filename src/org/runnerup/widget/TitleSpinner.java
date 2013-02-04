@@ -16,6 +16,10 @@
  */
 package org.runnerup.widget;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.runnerup.R;
 
 import android.app.AlertDialog;
@@ -32,17 +36,21 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 public class TitleSpinner extends LinearLayout {
 
 	private enum Type {
 		TS_SPINNER,
-		TS_EDITTEXT
+		TS_EDITTEXT,
+		TS_DATEPICKER,
+		TS_TIMEPICKER
 	};
 	
 	private String mKey = null;
@@ -99,6 +107,12 @@ public class TitleSpinner extends LinearLayout {
 		} else if ("edittext".contentEquals(type)) {
 			mType = Type.TS_EDITTEXT;
 			setupEditText(context, arr, defaultValue);
+		} else if ("datepicker".contentEquals(type)) {
+			mType = Type.TS_DATEPICKER;
+			setupDatePicker(context, arr, defaultValue);
+		} else if ("timepicker".contentEquals(type)) {
+			mType = Type.TS_TIMEPICKER;
+			setupTimePicker(context, arr, defaultValue);
 		} else {
 			String s = null;
 			s.charAt(8);
@@ -148,7 +162,6 @@ public class TitleSpinner extends LinearLayout {
 				dialog.show();
 			}
 		});
-
 	}
 
 	private void setupSpinner(Context context, TypedArray arr, CharSequence defaultValue) {
@@ -192,6 +205,103 @@ public class TitleSpinner extends LinearLayout {
 		});
 	}
 	
+	private void setupDatePicker(final Context context, TypedArray arr, CharSequence defaultValue) {
+		if (defaultValue != null && "today".contentEquals(defaultValue)) {
+			DateFormat df = android.text.format.DateFormat.getDateFormat(context);
+			defaultValue = df.format(new Date());
+		}
+		if (defaultValue != null) {
+			mValue.setText(defaultValue);
+		} else {
+			mValue.setText("");
+		}
+		
+		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+		layout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+				alert.setTitle(mTitle.getText());
+				if (mPrompt != null) {
+					alert.setMessage(mPrompt);
+				}
+
+				final DatePicker datePicker = new DatePicker(context);
+				alert.setView(datePicker);
+				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						setValue(getValue(datePicker));
+						dialog.dismiss();
+					}
+
+					private String getValue(DatePicker dp) {
+						Calendar c = Calendar.getInstance();
+						c.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
+						DateFormat df = android.text.format.DateFormat.getDateFormat(context);
+						return df.format(c.getTime());
+					}
+				});
+				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.dismiss();
+					}
+				});
+				AlertDialog dialog = alert.create();
+				dialog.show();
+			}
+		});
+	}
+
+	private void setupTimePicker(final Context context, TypedArray arr, CharSequence defaultValue) {
+		if (defaultValue != null && "now".contentEquals(defaultValue)) {
+			DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
+			defaultValue = df.format(new Date());
+		}
+		if (defaultValue != null) {
+			mValue.setText(defaultValue);
+		} else {
+			mValue.setText("");
+		}
+		
+		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+		layout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+				alert.setTitle(mTitle.getText());
+				if (mPrompt != null) {
+					alert.setMessage(mPrompt);
+				}
+
+				final TimePicker timePicker = new TimePicker(context);
+				alert.setView(timePicker);
+				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						setValue(getValue(timePicker));
+						dialog.dismiss();
+					}
+
+					private String getValue(TimePicker dp) {
+						Calendar c = Calendar.getInstance();
+						c.set(Calendar.HOUR, dp.getCurrentHour());
+						c.set(Calendar.MINUTE, dp.getCurrentMinute());
+						DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
+						return df.format(c.getTime());
+					}
+				});
+				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.dismiss();
+					}
+				});
+				AlertDialog dialog = alert.create();
+				dialog.show();
+			}
+		});
+	}
+
 	public void setAdapter(SpinnerAdapter adapter) {
 		mSpinner.setAdapter(adapter);
 	}
@@ -227,7 +337,7 @@ public class TitleSpinner extends LinearLayout {
 		}
 	}
 
-	private void setValue(String value) {
+	public void setValue(String value) {
 		if (mSetValueListener != null) {
 			try {
 				value = mSetValueListener.preSetValue(value);
@@ -266,5 +376,9 @@ public class TitleSpinner extends LinearLayout {
 		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
 		layout.setEnabled(enabled);
 		mSpinner.setEnabled(enabled);
+	}
+
+	public CharSequence getValue() {
+		return mValue.getText();
 	}
 }
