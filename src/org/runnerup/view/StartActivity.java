@@ -43,12 +43,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
+import android.widget.TextView;
 
 public class StartActivity extends Activity implements TickListener {
 
@@ -109,7 +107,7 @@ public class StartActivity extends Activity implements TickListener {
 
 		tabSpec = tabHost.newTabSpec("advanced");
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Advanced"));
-		tabSpec.setContent(R.id.tabManual);
+		tabSpec.setContent(R.id.tabAdvanced);
 		tabHost.addTab(tabSpec);
 
 		tabSpec = tabHost.newTabSpec("manual");

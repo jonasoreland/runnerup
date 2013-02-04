@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tabBasic"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <CheckBox
+        android:id="@+id/tabBasicGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="Goal" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/basicType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/simple_types"
+        android:key="basicType"
+        android:prompt="@string/simple_type"
+        android:text="Goal type" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/basicDistance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="5.0"
+        android:inputType="number|numberDecimal"
+        android:key="basicDistance"
+        android:prompt="@string/simple_type"
+        android:text="Goal distance (km)"
+        runnerup:type="edittext" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/basicTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="30:00"
+        android:inputType="time"
+        android:key="basicTime"
+        android:prompt="@string/simple_type"
+        android:text="Goal time (HH:MM:SS)"
+        runnerup:type="edittext" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+</LinearLayout>

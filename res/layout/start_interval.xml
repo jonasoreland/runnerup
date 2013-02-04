@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
+    xmlns:tools="http://schemas.android.com/tools"
+    
+    android:id="@+id/tabInterval"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/simple_types"
+        android:key="intervalType"
+        android:prompt="@string/simple_type"
+        android:text="Interval type" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="00:01:00"
+        android:inputType="time"
+        android:key="intervalTime"
+        android:prompt="@string/simple_type"
+        android:text="Interval time (HH:MM:SS)"
+        runnerup:type="edittext" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalDistance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="1.0"
+        android:inputType="numberDecimal"
+        android:key="intervalDistance"
+        android:prompt="@string/simple_type"
+        android:text="Interval distance (km)"
+        runnerup:type="edittext" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalRestType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/simple_types"
+        android:key="intervalRestType"
+        android:prompt="@string/simple_type"
+        android:text="Rest type" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalRestTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="00:01:00"
+        android:inputType="time"
+        android:key="intervalRestTime"
+        android:prompt="@string/simple_type"
+        android:text="Rest time (HH:MM:SS)"
+        runnerup:type="edittext" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalRestDistance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="0.2"
+        android:inputType="numberDecimal"
+        android:key="intervalRestDistance"
+        android:prompt="@string/simple_type"
+        android:text="Rest distance (km)"
+        runnerup:type="edittext" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalRepetitions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="5"
+        android:inputType="number"
+        android:key="intervalRepetitions"
+        android:prompt="@string/simple_type"
+        android:text="Repetitions"
+        runnerup:type="edittext" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <CheckBox
+            android:id="@+id/intervalWarmup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Warmup" />
+
+        <CheckBox
+            android:id="@+id/intervalCooldown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cooldown" />
+    </LinearLayout>
+
+</LinearLayout>
