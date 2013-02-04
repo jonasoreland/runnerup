@@ -240,7 +240,8 @@ public class WorkoutBuilder {
 		return w;
 	}
 
-	private static double parseDouble(String string, double defaultValue) {
+	public static double parseDouble(String string, double defaultValue) {
+		//TODO move this somewhere
 		double distance = defaultValue;
 		try {
 			distance = Double.parseDouble(string);
@@ -249,7 +250,8 @@ public class WorkoutBuilder {
 		return distance;
 	}
 
-	private static long parseSeconds(String string, long defaultValue) {
+	public static long parseSeconds(String string, long defaultValue) {
+		//TODO move this somewhere
 		String[] split = string.split(":");
 		long mul = 1;
 		long sum = 0;
@@ -261,6 +263,7 @@ public class WorkoutBuilder {
 	}
 
 	public static boolean validateSeconds(String newValue) {
+		//TODO move this somewhere
 		long seconds = parseSeconds(newValue, -1);
 		long seconds2 = parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
 		if (seconds == seconds2)
