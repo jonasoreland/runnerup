@@ -320,6 +320,8 @@ public class TitleSpinner extends LinearLayout {
 	
 	private void loadValue(String defaultValue) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+		if (pref == null)
+			return;
 		switch (mType) {
 		case TS_SPINNER:
 			int def = 0;
