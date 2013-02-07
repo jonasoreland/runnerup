@@ -57,7 +57,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 	private static final String CREATE_TABLE_LAP = "create table "
 			+ DB.LAP.TABLE + " ( " + "_id integer primary key autoincrement, "
 			+ DB.LAP.ACTIVITY + " integer not null, " + DB.LAP.LAP
-			+ " integer not null, " + DB.LAP.TYPE
+			+ " integer not null, " + DB.LAP.INTENSITY
 			+ " integer not null default 0, " + DB.LAP.TIME + " integer, "
 			+ DB.LAP.DISTANCE + " real, " + DB.LAP.PLANNED_TIME + " integer, "
 			+ DB.LAP.PLANNED_DISTANCE + " real, " + DB.LAP.PLANNED_PACE

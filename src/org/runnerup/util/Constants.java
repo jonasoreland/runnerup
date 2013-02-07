@@ -55,7 +55,7 @@ public interface Constants {
 			public static final String TABLE = "lap";
 			public static final String ACTIVITY = "activity_id";
 			public static final String LAP = "lap";
-			public static final String TYPE = "type";
+			public static final String INTENSITY = "type";
 			public static final String TIME = "time";
 			public static final String DISTANCE = "distance";
 			public static final String PLANNED_TIME = "planned_time";
@@ -63,6 +63,14 @@ public interface Constants {
 			public static final String PLANNED_PACE = "planned_pace";
 		};
 
+		public interface INTENSITY {
+			public static final int ACTIVE = 0;
+			public static final int RESTING = 1;
+			public static final int WARMUP = 2;
+			public static final int COOLDOWN = 3;
+			public static final int REPEAT = 4;
+		};
+		
 		public interface ACCOUNT {
 			public static final String TABLE = "account";
 			public static final String NAME = "name";

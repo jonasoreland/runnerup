@@ -17,29 +17,35 @@
 package org.runnerup.workout;
 
 import org.runnerup.R;
+import org.runnerup.util.Constants.DB.INTENSITY;
 
 public enum Intensity {
 
 	/**
 	 * Running
 	 */
-	ACTIVE(0, R.string.txt_intensity_active),
+	ACTIVE(INTENSITY.ACTIVE, R.string.txt_intensity_active),
 	
 	/**
 	 *
 	 */
-	RESTING(1, R.string.txt_intensity_resting),
+	RESTING(INTENSITY.RESTING, R.string.txt_intensity_resting),
 	
 	/**
 	 * Warm up
 	 */
-	WARMUP(2, R.string.txt_intensity_warmup),
+	WARMUP(INTENSITY.WARMUP, R.string.txt_intensity_warmup),
 	
 	/**
 	 * Cool down
 	 */
-	COOLDOWN(3, R.string.txt_intensity_cooldown);
-	
+	COOLDOWN(INTENSITY.COOLDOWN, R.string.txt_intensity_cooldown),
+
+	/**
+	 * Loop (for workout construction/plans)
+	 */
+	REPEAT(INTENSITY.REPEAT, R.string.txt_intensity_repeat);
+
 	int value;
 	int textId;
 	Intensity(int val, int textId) {

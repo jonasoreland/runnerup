@@ -190,7 +190,7 @@ public class Activity implements TickComponent {
 			lapStartTime = time;
 			lapStartDistance = dist;
 			ContentValues tmp = new ContentValues();
-			tmp.put(DB.LAP.TYPE, intensity.getValue());
+			tmp.put(DB.LAP.INTENSITY, intensity.getValue());
 			if (durationType != null) {
 				switch (durationType) {
 				case TIME:

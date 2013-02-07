@@ -106,7 +106,7 @@ public class TCX {
 
 	private void exportLaps(long activityId) throws IOException {
 		String[] lColumns = { DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
-				DB.LAP.TYPE };
+				DB.LAP.INTENSITY };
 
 		Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, DB.LAP.ACTIVITY + " = "
 				+ activityId, null, null, null, null);

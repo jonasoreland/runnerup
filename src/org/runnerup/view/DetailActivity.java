@@ -249,7 +249,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			/**
 			 * Laps
 			 */
-			String[] from = new String[] { "_id", DB.LAP.LAP, DB.LAP.TYPE,
+			String[] from = new String[] { "_id", DB.LAP.LAP, DB.LAP.INTENSITY,
 					DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.PLANNED_TIME,
 					DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE };
 
@@ -379,7 +379,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
 			View view = inflater.inflate(R.layout.laplist_row, parent, false);
 			TextView tv0 = (TextView) view.findViewById(R.id.lapList_type);
-			int  i = laps[position].getAsInteger(DB.LAP.TYPE);
+			int  i = laps[position].getAsInteger(DB.LAP.INTENSITY);
 			switch (Intensity.values()[i]) {
 			case ACTIVE:
 				break;
