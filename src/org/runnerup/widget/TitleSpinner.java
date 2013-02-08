@@ -53,6 +53,7 @@ public class TitleSpinner extends LinearLayout {
 		TS_TIMEPICKER
 	};
 	
+	private int mValueInt = -1;
 	private String mKey = null;
 	private TextView mTitle = null;
 	private TextView mValue = null;
@@ -181,6 +182,7 @@ public class TitleSpinner extends LinearLayout {
 				}
 			}
 			if (value >= 0 && value < entries.length) {
+				mValueInt = value;
 				mValue.setText(entries[value]);
 			}
 		}
@@ -360,10 +362,14 @@ public class TitleSpinner extends LinearLayout {
 			try {
 				value = mSetValueListener.preSetValue(value);
 			} catch (java.lang.IllegalArgumentException ex) {
+				if (mValueInt != -1) {
+					mSpinner.setSelection(mValueInt);
+				}
 				return;
 			}
 		}
-		mSpinner.setSelection(value);
+		mValueInt = value;
+		mSpinner.setSelection(mValueInt);
 		mValue.setText(mSpinner.getAdapter().getItem(value).toString());
 		if (mKey == null)
 			return;
