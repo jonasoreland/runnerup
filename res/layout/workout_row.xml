@@ -24,6 +24,13 @@
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal" >
+
+		<TextView
+		    android:id="@+id/step_group"
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:visibility="gone" />
     
     	<TextView
     	    android:id="@+id/step_intensity"
