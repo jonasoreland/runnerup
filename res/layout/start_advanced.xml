@@ -27,6 +27,8 @@
         android:id="@+id/adv_workoutName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:entries="@array/simple_types"
+        android:prompt="@string/simple_type"
         android:text="Workout name"
         android:key="adv_workout" />
 
