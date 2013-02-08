@@ -76,6 +76,10 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 
+		<activity android:name=".view.AudioCueSettingsActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
 		<activity android:name=".view.DetailActivity"
 		    android:screenOrientation="portrait" >
 		</activity>

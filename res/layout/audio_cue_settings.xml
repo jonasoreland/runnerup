@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="cue_time"
+        	android:title="Time triggered audio cue" />
+    	
+	    <org.runnerup.widget.TextPreference
+	        android:dependency="cue_time"
+            android:defaultValue="120"
+            android:inputType="number"
+            android:key="cue_time_intervall"
+            android:persistent="true"
+            android:summary="120"
+            android:title="Cue intervall (s)" />
+
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="cue_distance"
+        	android:title="Distance triggered audio cue" />
+    	
+	    <org.runnerup.widget.TextPreference
+	        android:dependency="cue_distance"
+            android:defaultValue="1000"
+            android:inputType="number"
+            android:key="cue_distance_intervall"
+            android:persistent="true"
+            android:summary="1000"
+            android:title="Cue intervall (m)" />
+
+   	    <PreferenceCategory android:title="Cue information">
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_total_distance"
+        		android:title="Total distance" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_total_time"
+        		android:title="Total time" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_total_speed"
+        		android:title="Total speed" />
+
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_lap_distance"
+        		android:title="Lap distance" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_lap_time"
+        		android:title="Lap time" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_lap_speed"
+        		android:title="Lap speed" />
+    						
+   		</PreferenceCategory>
+    	<PreferenceCategory android:title="Test audio cue">
+			<Preference android:title="Push"
+                android:key="test_cueinfo"
+                android:summary="Test audio cue"/>
+   		</PreferenceCategory>	    
+</PreferenceScreen>

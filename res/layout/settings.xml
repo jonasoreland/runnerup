@@ -28,81 +28,14 @@
 			    android:targetClass="org.runnerup.view.AccountsActivity" />
     </Preference>
     
-	<PreferenceScreen 
-            android:key="audocues_preferencescreen"
-            android:title="Audio cues">
-            
-    	<CheckBoxPreference
-        	android:defaultValue="false"
-        	android:persistent="true"
-        	android:key="cue_time"
-        	android:title="Time triggered audio cue" />
-    	
-	    <org.runnerup.widget.TextPreference
-	        android:dependency="cue_time"
-            android:defaultValue="120"
-            android:inputType="number"
-            android:key="cue_time_intervall"
-            android:persistent="true"
-            android:summary="120"
-            android:title="Cue intervall (s)" />
-
-    	<CheckBoxPreference
-        	android:defaultValue="false"
-        	android:persistent="true"
-        	android:key="cue_distance"
-        	android:title="Distance triggered audio cue" />
-    	
-	    <org.runnerup.widget.TextPreference
-	        android:dependency="cue_distance"
-            android:defaultValue="1000"
-            android:inputType="number"
-            android:key="cue_distance_intervall"
-            android:persistent="true"
-            android:summary="1000"
-            android:title="Cue intervall (m)" />
-
-    	    <PreferenceCategory android:title="Cue information">
-    		<CheckBoxPreference
-        		android:defaultValue="false"
-        		android:persistent="true"
-        		android:key="cueinfo_total_distance"
-        		android:title="Total distance" />
-    		<CheckBoxPreference
-        		android:defaultValue="false"
-        		android:persistent="true"
-        		android:key="cueinfo_total_time"
-        		android:title="Total time" />
-    		<CheckBoxPreference
-        		android:defaultValue="false"
-        		android:persistent="true"
-        		android:key="cueinfo_total_speed"
-        		android:title="Total speed" />
-
-    		<CheckBoxPreference
-        		android:defaultValue="false"
-        		android:persistent="true"
-        		android:key="cueinfo_lap_distance"
-        		android:title="Lap distance" />
-    		<CheckBoxPreference
-        		android:defaultValue="false"
-        		android:persistent="true"
-        		android:key="cueinfo_lap_time"
-        		android:title="Lap time" />
-    		<CheckBoxPreference
-        		android:defaultValue="false"
-        		android:persistent="true"
-        		android:key="cueinfo_lap_speed"
-        		android:title="Lap speed" />
-    						
-   		</PreferenceCategory>
-    	<PreferenceCategory android:title="Test audio cue">
-			<Preference android:title="Push"
-                android:key="test_cueinfo"
-                android:summary="Test audio cue"/>
-   		</PreferenceCategory>
-	    
-    	</PreferenceScreen>
+    <Preference
+        	android:key="cue_accounts"
+        	android:title="Audio cues"
+        	android:summary="Configure audio cues">
+			<intent
+			    android:targetPackage="org.runnerup"
+			    android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
+    </Preference>
     	    	    
     <CheckBoxPreference
         android:defaultValue="true"
