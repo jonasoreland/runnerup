@@ -23,4 +23,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/adv_workoutName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Workout name"
+        android:key="adv_workout" />
+
+    <ListView
+        android:id="@+id/adv_workoutPlan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
 </LinearLayout>
