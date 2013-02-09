@@ -40,7 +40,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -48,14 +47,14 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class AudioCueSettingsActivity extends PreferenceActivity {
 
@@ -313,15 +312,12 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			CheckedTextView ret = (CheckedTextView) convertView;
-			if (ret == null) {
-				ret = new CheckedTextView(parent.getContext());
-				ret.setTextAppearance(parent.getContext(), android.R.style.TextAppearance_Large);
-				ret.setGravity(Gravity.CENTER_VERTICAL);
-				ret.setPadding(6,0,6, 0);
-//				ret.setCheckMarkDrawable(getResources().getDrawable(android.R.attr.listChoiceIndicatorMultiple));
-				ret.setTextColor(Color.BLACK);
+			if (convertView == null) {
+				LayoutInflater vi = (LayoutInflater) AudioCueSettingsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		        convertView = vi.inflate(android.R.layout.simple_spinner_dropdown_item, null);
 			}
+
+			TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
 			ret.setText(getItem(position).toString());
 			return ret;
 		}
