@@ -92,5 +92,11 @@ public interface Constants {
 			public static final String EXTERNAL_ID = "ext_id";
 			public static final String EXTRA = "extra";
 		}
+
+		public interface AUDIO_SCHEMES {
+			public static final String TABLE = "audio_schemes";
+			public static final String NAME = "name";
+			public static final String SORT_ORDER = "sort_order";
+		}
 	};
 };

@@ -29,7 +29,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 5;
+	private static final int DBVERSION = 7;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -82,6 +82,14 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ DB.EXPORT.STATUS + " text, " + DB.EXPORT.EXTERNAL_ID + " text, "
 			+ DB.EXPORT.EXTRA + " int not null default 1" + ");";
 
+	private static final String CREATE_TABLE_AUDIO_SCHEMES = "create table "
+			+ DB.AUDIO_SCHEMES.TABLE + " ( "
+			+ ( "_id integer primary key autoincrement, " )
+			+ ( DB.AUDIO_SCHEMES.NAME + " text not null, " )
+			+ ( DB.AUDIO_SCHEMES.SORT_ORDER + " int not null, " )
+			+ ( "unique (" + DB.AUDIO_SCHEMES.NAME + ")" )
+			+ ");";
+
 	public DBHelper(Context context) {
 		super(context, DBNAME, null, DBVERSION);
 	}
@@ -93,7 +101,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 		arg0.execSQL(CREATE_TABLE_LOCATION);
 		arg0.execSQL(CREATE_TABLE_ACCOUNT);
 		arg0.execSQL(CREATE_TABLE_REPORT);
-
+		arg0.execSQL(CREATE_TABLE_AUDIO_SCHEMES);
+		
 		onUpgrade(arg0, 0, DBVERSION);
 	}
 
@@ -108,6 +117,10 @@ public class DBHelper extends SQLiteOpenHelper implements
 
 		if (oldVersion > 0 && oldVersion < 5 && newVersion >= 5) {
 			arg0.execSQL("alter table account add column icon int");
+		}
+
+		if (oldVersion > 0 && oldVersion < 7 && newVersion >= 7) {
+			arg0.execSQL(CREATE_TABLE_AUDIO_SCHEMES);
 		}
 		
 		insertAccounts(arg0);
