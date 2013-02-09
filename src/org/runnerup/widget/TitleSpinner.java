@@ -357,7 +357,7 @@ public class TitleSpinner extends LinearLayout {
 		pref.commit();
 	}
 
-	private void setValue(int value) {
+	public void setValue(int value) {
 		if (mSetValueListener != null) {
 			try {
 				value = mSetValueListener.preSetValue(value);
