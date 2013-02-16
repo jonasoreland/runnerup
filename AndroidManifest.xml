@@ -60,7 +60,7 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 
-		<activity android:name=".view.NewsActivity"
+		<activity android:name="org.runnerup.view.FeedActivity"
 		    android:screenOrientation="portrait" >
 		</activity>
 		

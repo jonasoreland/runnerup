@@ -38,9 +38,9 @@ public class MainLayout extends TabActivity {
 				.setIndicator("Start", res.getDrawable(R.drawable.ic_tab_main))
 				.setContent(new Intent(this, StartActivity.class)));
 
-		tabHost.addTab(tabHost.newTabSpec("News")
-				.setIndicator("News", res.getDrawable(R.drawable.ic_tab_feed))
-				.setContent(new Intent(this, NewsActivity.class)));
+		tabHost.addTab(tabHost.newTabSpec("Feed")
+				.setIndicator("Feed", res.getDrawable(R.drawable.ic_tab_feed))
+				.setContent(new Intent(this, FeedActivity.class)));
 
 		tabHost.addTab(tabHost
 				.newTabSpec("History")

@@ -27,7 +27,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-public class NewsActivity extends ListActivity implements Constants {
+public class FeedActivity extends ListActivity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
