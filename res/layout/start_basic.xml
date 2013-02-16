@@ -23,6 +23,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+	<org.runnerup.widget.TitleSpinner
+        android:id="@+id/basicAudioCueSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="basicAudio"
+		android:text="Audio cue scheme"
+		runnerup:type="spinner_txt"/>
+    
     <CheckBox
         android:id="@+id/tabBasicGoal"
         android:layout_width="wrap_content"

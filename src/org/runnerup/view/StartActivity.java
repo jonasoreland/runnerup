@@ -17,6 +17,7 @@
 package org.runnerup.view;
 
 import org.runnerup.R;
+import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.TitleSpinner;
@@ -32,6 +33,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -67,6 +70,7 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner simpleType = null;
 	TitleSpinner simpleTime = null;
 	TitleSpinner simpleDistance = null;
+	AudioSchemeListAdapter simpleAudioListAdapter = null;
 
 	TitleSpinner intervalType = null;
 	TitleSpinner intervalTime = null;
@@ -74,6 +78,7 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner intervalRestType = null;
 	TitleSpinner intervalRestTime = null;
 	TitleSpinner intervalRestDistance = null;
+	AudioSchemeListAdapter intervalAudioListAdapter = null;
 
 	TitleSpinner manualDate = null;
 	TitleSpinner manualTime = null;
@@ -82,6 +87,9 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner manualPace = null;
 	EditText     manualNotes = null;
 	Button       manualSave = null;
+
+	DBHelper mDBHelper = null;
+	SQLiteDatabase mDB = null;
 	
 	/** Called when the activity is first created. */
 
@@ -89,6 +97,11 @@ public class StartActivity extends Activity implements TickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		PreferenceManager.setDefaultValues(this, R.layout.settings, false);
+		
+		mDBHelper = new DBHelper(this);
+		mDB = mDBHelper.getWritableDatabase();
+		
+		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		log("0 mGpsTracker = " + mGpsTracker + ", mSpeech = " + mSpeech);
 		bindGpsTracker();
@@ -136,7 +149,11 @@ public class StartActivity extends Activity implements TickListener {
 		simpleDistance = (TitleSpinner) findViewById(R.id.basicDistance);
 		simpleType.setOnSetValueListener(simpleTypeSetValue);
 		simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
-
+		simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
+		simpleAudioListAdapter.reload();
+		TitleSpinner simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basicAudioCueSpinner);
+		simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
+		
 		intervalType = (TitleSpinner)findViewById(R.id.intervalType);
 		intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
 		intervalTime.setOnSetValueListener(onSetTimeValidator);
@@ -148,7 +165,11 @@ public class StartActivity extends Activity implements TickListener {
 		intervalRestTime.setOnSetValueListener(onSetTimeValidator);
 		intervalRestDistance = (TitleSpinner) findViewById(R.id.intervalRestDistance);
 		intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
-
+		intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
+		intervalAudioListAdapter.reload();
+		TitleSpinner intervalAudioSpinner = (TitleSpinner) findViewById(R.id.intervalAudioCueSpinner);
+		intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
+		
 		manualDate = (TitleSpinner)findViewById(R.id.manualDate);
 		manualDate.setOnSetValueListener(onSetValueManual);
 		manualTime = (TitleSpinner)findViewById(R.id.manualTime);
@@ -172,6 +193,8 @@ public class StartActivity extends Activity implements TickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
+		simpleAudioListAdapter.reload();
+		intervalAudioListAdapter.reload();
 	}
 
 	@Override
@@ -187,6 +210,8 @@ public class StartActivity extends Activity implements TickListener {
 			mGpsStatus.stop(this);
 			mGpsStatus = null;
 		}
+		mDB.close();
+		mDBHelper.close();
 	}
 
 	void log(String s) {
@@ -244,10 +269,14 @@ public class StartActivity extends Activity implements TickListener {
 				Context ctx = getApplicationContext();
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 				Workout w = null;
-				if (tabHost.getCurrentTabTag().contentEquals("basic"))
-					w = WorkoutBuilder.createDefaultWorkout(debugView, pref);
-				else if (tabHost.getCurrentTabTag().contentEquals("interval"))
-					w = WorkoutBuilder.createDefaultIntervalWorkout(debugView, pref);
+				if (tabHost.getCurrentTabTag().contentEquals("basic")) {
+					SharedPreferences audioPref = WorkoutBuilder.getSubPreferences(ctx, pref, "basicAudio");
+					w = WorkoutBuilder.createDefaultWorkout(debugView, pref, audioPref);
+				}
+				else if (tabHost.getCurrentTabTag().contentEquals("interval")) {
+					SharedPreferences audioPref = WorkoutBuilder.getSubPreferences(ctx, pref, "intervalAudio");
+					w = WorkoutBuilder.createDefaultIntervalWorkout(debugView, pref, audioPref);
+				}
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,
 						RunActivity.class);

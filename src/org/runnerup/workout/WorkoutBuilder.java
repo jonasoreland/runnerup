@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.format.DateUtils;
 import android.widget.TextView;
@@ -94,7 +95,8 @@ public class WorkoutBuilder {
 	 * @return workout based on SharedPreferences
 	 */
 	public static Workout createDefaultWorkout(TextView log,
-			SharedPreferences prefs) {
+			SharedPreferences prefs,
+			SharedPreferences audioPrefs) {
 		Workout w = new Workout();
 		if (prefs.getBoolean("pref_countdown_active", false))
 		{
@@ -132,7 +134,7 @@ public class WorkoutBuilder {
 			activity.setAutolap(val);
 		}
 
-		activity.triggers = createDefaultTriggers(prefs);
+		activity.triggers = createDefaultTriggers(audioPrefs);
 		if (activity.triggers.size() > 0) {
 			EventTrigger ev = new EventTrigger();
 			ev.event = Event.STARTED;
@@ -151,7 +153,9 @@ public class WorkoutBuilder {
 	
 	
 	
-	public static Workout createDefaultIntervalWorkout(TextView debugView, SharedPreferences prefs) {
+	public static Workout createDefaultIntervalWorkout(TextView debugView,
+			SharedPreferences prefs,
+			SharedPreferences audioPrefs) {
 		Workout w = new Workout();
 		boolean warmup = false;
 		boolean cooldown = true;
@@ -163,7 +167,7 @@ public class WorkoutBuilder {
 			w.activities.add(activity);
 		}
 		
-		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
+		ArrayList<Trigger> triggers = createDefaultTriggers(audioPrefs);
 		if (triggers.size() > 0) {
 			{
 				EventTrigger ev = new EventTrigger();
@@ -269,5 +273,15 @@ public class WorkoutBuilder {
 		if (seconds == seconds2)
 			return true;
 		return false;
+	}
+
+	public static SharedPreferences getSubPreferences(Context ctx, SharedPreferences pref,
+			String key) {
+		String name = pref.getString(key, null);
+		if (name == null) {
+			return pref;
+		}
+
+		return ctx.getSharedPreferences(name, Context.MODE_PRIVATE);
 	}
 }

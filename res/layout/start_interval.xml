@@ -25,6 +25,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+	<org.runnerup.widget.TitleSpinner
+        android:id="@+id/intervalAudioCueSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="intervalAudio"
+		android:text="Audio cue scheme"
+		runnerup:type="spinner_txt"/>
+    
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/intervalType"
         android:layout_width="match_parent"
