@@ -306,6 +306,7 @@ public class TitleSpinner extends LinearLayout {
 
 	public void setAdapter(SpinnerAdapter adapter) {
 		mSpinner.setAdapter(adapter);
+		loadValue("0");
 	}
 
 	public void setOnSetValueListener(OnSetValueListener listener) {
