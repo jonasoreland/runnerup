@@ -38,7 +38,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -51,18 +50,14 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.TextView;
 
 public class AudioCueSettingsActivity extends PreferenceActivity {
 
 	boolean started = false;
 	boolean delete = false;
 	String settingsName = null;
-	SchemeListAdapter adapter = null; 
-	ArrayList<String> audioSchemes = new ArrayList<String>();
+	AudioSchemeListAdapter adapter = null; 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 
@@ -91,8 +86,10 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			btn.setOnPreferenceClickListener(onTestCueinfoClick);
 		}
 
-		adapter = new SchemeListAdapter();
-		reload();
+		final boolean createNewItem = true;
+		adapter = new AudioSchemeListAdapter(mDB, (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE),
+				createNewItem);
+		adapter.reload();
 		
 		{
 			TitleSpinner spinner = (TitleSpinner) findViewById(R.id.settingsSpinner);
@@ -102,19 +99,11 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			if (settingsName == null) {
 				spinner.setValue(0);
 			} else {
-				int idx = find(adapter, settingsName);
+				int idx = adapter.find(settingsName);
 				spinner.setValue(idx);
 			}
 			spinner.setOnSetValueListener(onSetValueListener);
 		}
-	}
-
-	private int find(SchemeListAdapter adapter, String name) {
-		for (int i = 0; i < adapter.getCount(); i++) {
-			if (name.contentEquals(adapter.getItem(i).toString()))
-				return i;
-		}
-		return 0;
 	}
 
 	@Override
@@ -126,19 +115,6 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 		}
 		mDB.close();
 		mDBHelper.close();
-	}
-
-	void reload() {
-		audioSchemes.clear();
-		String[] from = new String[] { DB.AUDIO_SCHEMES.NAME };
-
-		Cursor c = mDB.query(DB.AUDIO_SCHEMES.TABLE, from, null, null, null, null, DB.AUDIO_SCHEMES.SORT_ORDER + " desc");
-		if (c.moveToFirst()) {
-			do {
-				audioSchemes.add(c.getString(0));
-			} while (c.moveToNext());
-		}
-		adapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -285,44 +261,6 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 		dialog.show();
 	}
 
-	class SchemeListAdapter extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			return audioSchemes.size() + 2;
-		}
-
-		@Override
-		public Object getItem(int position) {
-			if (position == 0)
-				return "Default";
-			
-			position -= 1;
-			
-			if (position < audioSchemes.size())
-				return audioSchemes.get(position);
-			
-			return "New audio scheme";
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				LayoutInflater vi = (LayoutInflater) AudioCueSettingsActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		        convertView = vi.inflate(android.R.layout.simple_spinner_dropdown_item, null);
-			}
-
-			TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
-			ret.setText(getItem(position).toString());
-			return ret;
-		}
-	};
-	
 	OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 
 		TextToSpeech tts = null;
