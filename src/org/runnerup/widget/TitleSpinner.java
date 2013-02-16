@@ -370,7 +370,8 @@ public class TitleSpinner extends LinearLayout {
 		}
 		mValueInt = value;
 		mSpinner.setSelection(mValueInt);
-		mValue.setText(mSpinner.getAdapter().getItem(value).toString());
+		if (mSpinner.getAdapter() != null)
+			mValue.setText(mSpinner.getAdapter().getItem(value).toString());
 		if (mKey == null)
 			return;
 		Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
