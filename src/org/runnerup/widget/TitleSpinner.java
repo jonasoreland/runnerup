@@ -48,6 +48,7 @@ public class TitleSpinner extends LinearLayout {
 
 	private enum Type {
 		TS_SPINNER,
+		TS_SPINNER_TXT,
 		TS_EDITTEXT,
 		TS_DATEPICKER,
 		TS_TIMEPICKER
@@ -104,6 +105,9 @@ public class TitleSpinner extends LinearLayout {
 		CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
 		if (type == null || "spinner".contentEquals(type)) {
 			mType = Type.TS_SPINNER;
+			setupSpinner(context, arr, defaultValue);
+		} else if ("spinner_txt".contentEquals(type)) {
+			mType = Type.TS_SPINNER_TXT;
 			setupSpinner(context, arr, defaultValue);
 		} else if ("edittext".contentEquals(type)) {
 			mType = Type.TS_EDITTEXT;
@@ -198,7 +202,13 @@ public class TitleSpinner extends LinearLayout {
 		mSpinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				setValue(arg2);
+				if (mType == Type.TS_SPINNER_TXT) {
+					if (mSpinner.getAdapter() != null) {
+						setValue(mSpinner.getAdapter().getItem(arg2).toString());
+					}
+				} else { 
+					setValue(arg2);
+				}
 			}
 
 			@Override
@@ -306,7 +316,7 @@ public class TitleSpinner extends LinearLayout {
 
 	public void setAdapter(SpinnerAdapter adapter) {
 		mSpinner.setAdapter(adapter);
-		loadValue("0");
+		loadValue(null);
 	}
 
 	public void setOnSetValueListener(OnSetValueListener listener) {
@@ -336,6 +346,10 @@ public class TitleSpinner extends LinearLayout {
 			}
 			setValue(pref.getInt(mKey, def));
 			break;
+		case TS_SPINNER_TXT:
+			final String val = pref.getString(mKey, defaultValue == null ? "" : defaultValue);
+			setValue(val);
+			break;
 		case TS_EDITTEXT:
 			String newValue = pref.getString(mKey, defaultValue == null ? "" : defaultValue);
 			setValue(newValue);
@@ -350,12 +364,29 @@ public class TitleSpinner extends LinearLayout {
 				return;
 			}
 		}
+		
 		mValue.setText(value);
+		if (mType == Type.TS_SPINNER_TXT) {
+			if (mSpinner.getAdapter() != null) {
+				int intVal = find(mSpinner.getAdapter(), value);
+				mSpinner.setSelection(intVal);
+			}
+		}
+		
 		if (mKey == null)
 			return;
 		Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
 		pref.putString(mKey,  value);
 		pref.commit();
+	}
+
+	private int find(SpinnerAdapter adapter, String value) {
+		for (int i = 0; i < adapter.getCount(); i++) {
+			if (value.contentEquals(adapter.getItem(i).toString())) {
+				return i;
+			}
+		}
+		return 0;
 	}
 
 	public void setValue(int value) {
