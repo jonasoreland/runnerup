@@ -61,7 +61,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 
-	static final String SUFFIX = "_audio_cues";
+	public static final String DEFAULT = "Default";
+	public static final String SUFFIX = "_audio_cues";
 	static final String PREFS_DIR = "shared_prefs";
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -196,7 +197,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 		public int preSetValue(int newValueId) throws IllegalArgumentException {
 			String newValue = (String) adapter.getItem(newValueId);
 			PreferenceManager prefMgr = getPreferenceManager();
-			if (newValue.contentEquals("Default")) {
+			if (newValue.contentEquals(DEFAULT)) {
 				prefMgr.getSharedPreferences().edit().commit();
 				switchTo(null);
 			} else if (newValue.contentEquals("New audio scheme")) {

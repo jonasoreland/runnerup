@@ -18,6 +18,7 @@ package org.runnerup.workout;
 
 import java.util.ArrayList;
 
+import org.runnerup.view.AudioCueSettingsActivity;
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
@@ -48,6 +49,7 @@ public class WorkoutBuilder {
 				triggers.add(t);
 			}
 		}
+		
 		if (prefs.getBoolean("cue_distance", false)) {
 			long val = 0;
 			String vals = prefs.getString("cue_distance_intervall", "1000");
@@ -107,7 +109,6 @@ public class WorkoutBuilder {
 			} catch (NumberFormatException e) {
 			}
 			if (val > 0) {
-				System.err.println("Countdown: " + val);
 				Activity activity = new Activity();
 				activity.intensity = Intensity.RESTING;
 				activity.durationType = Dimension.TIME;
@@ -275,13 +276,16 @@ public class WorkoutBuilder {
 		return false;
 	}
 
+	public static SharedPreferences getAudioCuePreferences(Context ctx, SharedPreferences pref, String key) {
+		return getSubPreferences(ctx, pref, key, AudioCueSettingsActivity.DEFAULT, AudioCueSettingsActivity.SUFFIX);
+	}
+
 	public static SharedPreferences getSubPreferences(Context ctx, SharedPreferences pref,
-			String key) {
+			String key, String defaultVal, String suffix) {
 		String name = pref.getString(key, null);
-		if (name == null) {
+		if (name == null || name.contentEquals(defaultVal)) {
 			return pref;
 		}
-
-		return ctx.getSharedPreferences(name, Context.MODE_PRIVATE);
+		return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
 	}
 }

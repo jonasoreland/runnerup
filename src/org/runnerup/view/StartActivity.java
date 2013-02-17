@@ -270,11 +270,11 @@ public class StartActivity extends Activity implements TickListener {
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 				Workout w = null;
 				if (tabHost.getCurrentTabTag().contentEquals("basic")) {
-					SharedPreferences audioPref = WorkoutBuilder.getSubPreferences(ctx, pref, "basicAudio");
+					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
 					w = WorkoutBuilder.createDefaultWorkout(debugView, pref, audioPref);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals("interval")) {
-					SharedPreferences audioPref = WorkoutBuilder.getSubPreferences(ctx, pref, "intervalAudio");
+					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
 					w = WorkoutBuilder.createDefaultIntervalWorkout(debugView, pref, audioPref);
 				}
 				mGpsTracker.setWorkout(w);
