@@ -190,6 +190,11 @@ public class RunActivity extends Activity implements TickListener {
 	};
 
 	@Override
+	public void onBackPressed() {
+		stopButtonClick.onClick(stopButton);
+	}
+
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == Activity.RESULT_OK) {
 			/**

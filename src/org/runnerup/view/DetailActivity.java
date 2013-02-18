@@ -518,11 +518,38 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 	OnClickListener discardButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			DetailActivity.this.setResult(RESULT_CANCELED);
-			DetailActivity.this.finish();
+			AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+			builder.setTitle("Discard activity");
+			builder.setMessage("Are you sure?");
+			builder.setPositiveButton("Yes",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							DetailActivity.this.setResult(RESULT_CANCELED);
+							DetailActivity.this.finish();
+						}
+					});
+			builder.setNegativeButton("No",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							// Do nothing but close the dialog
+							dialog.dismiss();
+						}
+
+					});
+			builder.show();
 		}
 	};
 
+	@Override
+	public void onBackPressed() {
+		if (mode == MODE_SAVE) {
+			discardButtonClick.onClick(discardButton);
+		} else {
+			super.onBackPressed();
+		}
+	}
+	
 	OnClickListener resumeButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			DetailActivity.this.setResult(RESULT_FIRST_USER);
@@ -565,6 +592,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		public void onClick(View v) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					DetailActivity.this);
+			builder.setTitle("Delete activity");
 			builder.setMessage("Are you sure?");
 			builder.setPositiveButton("Yes",
 					new DialogInterface.OnClickListener() {
