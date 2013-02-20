@@ -91,22 +91,27 @@ public class Workout implements WorkoutComponent {
 			if (finished == false)
 				break;
 
-			currentActivity.onComplete(Scope.LAP, this);
-			currentActivity.onComplete(Scope.ACTIVITY, this);
-			currentActivityNo++;
-			if (currentActivityNo < activities.size()) {
-				currentActivity = activities.get(currentActivityNo);
-				currentActivity.onStart(Scope.ACTIVITY, this);
-				currentActivity.onStart(Scope.LAP, this);
-			} else {
-				currentActivity.onComplete(Scope.WORKOUT, this);
-				currentActivity = null;
-				gpsTracker.stop();
-			}
+			onNextStep();
 		}
 		emitFeedback();
 	}
 
+	public void onNextStep() {
+		currentActivity.onComplete(Scope.LAP, this);
+		currentActivity.onComplete(Scope.ACTIVITY, this);
+		currentActivityNo++;
+		if (currentActivityNo < activities.size()) {
+			currentActivity = activities.get(currentActivityNo);
+			currentActivity.onStart(Scope.ACTIVITY, this);
+			currentActivity.onStart(Scope.LAP, this);
+		} else {
+			currentActivity.onComplete(Scope.WORKOUT, this);
+			currentActivity = null;
+			gpsTracker.stop();
+		}
+	}
+
+	
 	public void onPause(Workout w) {
 
 		gpsTracker.stop();
@@ -259,6 +264,16 @@ public class Workout implements WorkoutComponent {
 
 	public Activity getActivity(int no) {
 		return activities.get(no);
+	}
+
+	public boolean isLastActivity() {
+		return currentActivityNo + 1 == activities.size();
+	}
+
+	public boolean isSimple() {
+		if (activities.size() > 2)
+			return false;
+		return getActivity(0).intensity == Intensity.RESTING; // activity countdown
 	}
 	
 	private static class FakeWorkout extends Workout {
