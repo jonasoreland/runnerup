@@ -214,10 +214,21 @@
 
         <Button
             android:id="@+id/newLapButton"
+            style="@style/ButtonText"
+            android:background="@drawable/btn_grey"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="New lap" />
+
+        <Button
+            android:id="@+id/pauseButton"
+            style="@style/ButtonText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_grey"
+            android:text="Pause" />
     </TableRow>
 
     <TableRow
@@ -234,15 +245,6 @@
             android:layout_weight="1"
             android:background="@drawable/btn_red"
             android:text="Stop" />
-
-        <Button
-            android:id="@+id/pauseButton"
-            style="@style/ButtonText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/btn_grey"
-            android:text="Pause" />
     </TableRow>
 
 </RelativeLayout>
