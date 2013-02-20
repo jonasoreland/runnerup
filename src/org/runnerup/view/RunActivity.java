@@ -86,7 +86,6 @@ public class RunActivity extends Activity implements TickListener {
 		pauseButton = (Button) findViewById(R.id.pauseButton);
 		pauseButton.setOnClickListener(pauseButtonClick);
 		newLapButton = (Button) findViewById(R.id.newLapButton);
-		newLapButton.setOnClickListener(newLapButtonClick);
 		activityTime = (TextView) findViewById(R.id.activityTime);
 		activityDistance = (TextView) findViewById(R.id.activityDistance);
 		activityPace = (TextView) findViewById(R.id.activityPace);
@@ -120,6 +119,14 @@ public class RunActivity extends Activity implements TickListener {
 		workout.onInit(workout, bindValues);
 		workout.onStart(Scope.WORKOUT, this.workout);
 		startTimer();
+
+		if (workout.isSimple()) {
+			newLapButton.setOnClickListener(newLapButtonClick);
+			newLapButton.setText("New lap");
+		} else {
+			newLapButton.setOnClickListener(nextStepButtonClick);
+			newLapButton.setText("Next lap");
+		}
 
 		populateWorkoutList();
 	}
@@ -227,9 +234,11 @@ public class RunActivity extends Activity implements TickListener {
 			if (workout.isPaused()) {
 				workout.onResume(workout);
 				pauseButton.setText("Pause");
+				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_grey));
 			} else {
 				workout.onPause(workout);
 				pauseButton.setText("Resume");
+				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_green));
 			}
 		}
 	};
@@ -237,6 +246,12 @@ public class RunActivity extends Activity implements TickListener {
 	OnClickListener newLapButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			workout.onNewLap();
+		}
+	};
+
+	OnClickListener nextStepButtonClick = new OnClickListener() {
+		public void onClick(View v) {
+			workout.onNextStep();
 		}
 	};
 
@@ -263,6 +278,10 @@ public class RunActivity extends Activity implements TickListener {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
 			currentActivity = workout.getCurrentActivity();
 			workoutList.setSelection(getPosition(workoutRows, currentActivity));
+			if (!workout.isSimple() && workout.isLastActivity())
+			{
+				newLapButton.setEnabled(false);
+			}
 		}
 	}
 
