@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@ package org.runnerup.db;
 import java.util.ArrayList;
 
 import org.runnerup.R;
+import org.runnerup.export.FunBeatUploader;
+import org.runnerup.export.GarminUploader;
+import org.runnerup.export.MapMyRunUploader;
+import org.runnerup.export.RunKeeperUploader;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,7 +33,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 7;
+	private static final int DBVERSION = 10;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -122,8 +126,67 @@ public class DBHelper extends SQLiteOpenHelper implements
 		if (oldVersion > 0 && oldVersion < 7 && newVersion >= 7) {
 			arg0.execSQL(CREATE_TABLE_AUDIO_SCHEMES);
 		}
+
+		if (oldVersion > 0 && oldVersion < 10 && newVersion >= 10) {
+			recreateAccount(arg0);
+		}
 		
 		insertAccounts(arg0);
+	}
+
+	private static void echoDo(SQLiteDatabase arg0, String str) {
+		System.err.println("execSQL(" + str + ")");
+		arg0.execSQL(str);
+	}
+	
+	private void recreateAccount(SQLiteDatabase arg0) {
+		Cursor c = null;
+		try {
+			String cols[] = { "method" };
+			c = arg0.query(DB.ACCOUNT.TABLE, cols, null, null, null, null, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		if (c != null)
+			c.close();
+		
+		StringBuffer newtab = new StringBuffer();
+		newtab.append(CREATE_TABLE_ACCOUNT);
+		newtab.replace(0,  
+				("create table " + DB.ACCOUNT.TABLE).length(),
+				"create table " + DB.ACCOUNT.TABLE + "_new");
+		String copy = 
+				"insert into " + DB.ACCOUNT.TABLE + "_new" +
+						"(_id, " +
+						DB.ACCOUNT.NAME + ", " +
+						DB.ACCOUNT.URL + ", " +
+						DB.ACCOUNT.DESCRIPTION + ", " +
+						DB.ACCOUNT.FORMAT + ", " +
+						DB.ACCOUNT.DEFAULT + ", " +
+						DB.ACCOUNT.ENABLED + ", " +
+						DB.ACCOUNT.AUTH_METHOD + ", " +
+						DB.ACCOUNT.AUTH_CONFIG + ") " +
+						"select " +
+						"_id, " +
+						DB.ACCOUNT.NAME + ", " +
+						DB.ACCOUNT.URL + ", " +
+						DB.ACCOUNT.DESCRIPTION + ", " +
+						DB.ACCOUNT.FORMAT + ", " +
+						DB.ACCOUNT.DEFAULT + ", " +
+						DB.ACCOUNT.ENABLED + ", " +
+						DB.ACCOUNT.AUTH_METHOD + ", " +
+						DB.ACCOUNT.AUTH_CONFIG + " " +
+						"FROM " + DB.ACCOUNT.TABLE;
+		try {
+			echoDo(arg0, newtab.toString());
+			echoDo(arg0, copy);
+			echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + " rename to " + DB.ACCOUNT.TABLE + "_old");
+			echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + "_new" + " rename to " + DB.ACCOUNT.TABLE);
+			echoDo(arg0, "drop table " + DB.ACCOUNT.TABLE + "_old");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void insertAccounts(SQLiteDatabase arg0) {
@@ -131,7 +194,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 		boolean notyet = false;
 		if (yet) {
 			ContentValues values = new ContentValues();
-			values.put(DB.ACCOUNT.NAME, "Garmin");
+			values.put(DB.ACCOUNT.NAME, GarminUploader.NAME);
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
@@ -141,7 +204,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 		if (yet)
 		{
 			ContentValues values = new ContentValues();
-			values.put(DB.ACCOUNT.NAME, "RunKeeper");
+			values.put(DB.ACCOUNT.NAME, RunKeeperUploader.NAME);
 			values.put(DB.ACCOUNT.FORMAT, "runkeeper");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
@@ -159,13 +222,21 @@ public class DBHelper extends SQLiteOpenHelper implements
 
 		if (yet) {
 			ContentValues values = new ContentValues();
-			values.put(DB.ACCOUNT.NAME, "FunBeat");
+			values.put(DB.ACCOUNT.NAME, FunBeatUploader.NAME);
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
 			insertAccount(arg0, values);
 		}
 
+		if (yet) {
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, MapMyRunUploader.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "tcx");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a3_mapmyrun_logo);
+			insertAccount(arg0, values);
+		}
 	}
 
 	void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
