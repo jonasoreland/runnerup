@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public class FunBeatUploader extends FormCrawler implements Uploader {
 
+	public static final String NAME = "FunBeat";
 	public static final String BASE_URL = "http://www.funbeat.se";
 	public static final String START_URL = BASE_URL + "/index.aspx";
 	public static final String LOGIN_URL = BASE_URL + "/index.aspx";
@@ -58,7 +59,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 
 	@Override
 	public String getName() {
-		return "FunBeat";
+		return NAME;
 	}
 
 	@Override
@@ -101,7 +102,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Status login() {
+	public Status login(ContentValues config) {
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		cookies.clear();

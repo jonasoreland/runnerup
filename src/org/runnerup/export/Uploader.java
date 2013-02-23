@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -76,10 +76,9 @@ public interface Uploader {
 	/**
 	 * Login
 	 * 
-	 * @param callback
 	 * @return true ok false cancel/fail
 	 */
-	public Status login();
+	public Status login(ContentValues config);
 
 	/**
 	 * 

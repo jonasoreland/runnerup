@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class GarminUploader extends FormCrawler implements Uploader {
 
+	public static final String NAME = "Garmin";
 	public static String START_URL = "https://connect.garmin.com/signin";
 	public static String LOGIN_URL = "https://connect.garmin.com/signin";
 	public static String CHECK_URL = "http://connect.garmin.com/user/username";
@@ -100,7 +101,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Status login() {
+	public Status login(ContentValues config) {
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		logout();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -105,13 +105,14 @@ public class UploadManager {
 			return;
 		}
 		Uploader uploader = null;
-		if (uploaderName.contentEquals("RunKeeper")) {
+		if (uploaderName.contentEquals(RunKeeperUploader.NAME)) {
 			uploader = new RunKeeperUploader();
-		} else if (uploaderName.contentEquals("Garmin")) {
+		} else if (uploaderName.contentEquals(GarminUploader.NAME)) {
 			uploader = new GarminUploader();
-		} else if (uploaderName.contentEquals("FunBeat")) {
+		} else if (uploaderName.contentEquals(FunBeatUploader.NAME)) {
 			uploader = new FunBeatUploader();
-		}
+		} else if (uploaderName.contentEquals(MapMyRunUploader.NAME))
+			uploader = new MapMyRunUploader();
 
 		if (uploader != null) {
 			uploader.init(config);
@@ -296,7 +297,7 @@ public class UploadManager {
 				config.put(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
 				config.put("_id", l.getId());
 				l.init(config);
-				return params[0].login();
+				return params[0].login(config);
 			}
 
 			@Override
@@ -327,7 +328,7 @@ public class UploadManager {
 
 			@Override
 			protected Uploader.Status doInBackground(Uploader... params) {
-				return params[0].login();
+				return params[0].login(null);
 			}
 
 			@Override

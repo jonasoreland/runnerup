@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Server {
+
+	public static final String NAME = "RunKeeper";
 
 	/**
 	 * @todo register OAuth2Server
@@ -97,7 +99,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
 	@Override
 	public String getName() {
-		return "RunKeeper";
+		return NAME;
 	}
 
 	@Override
@@ -129,7 +131,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	}
 
 	@Override
-	public Uploader.Status login() {
+	public Uploader.Status login(ContentValues config) {
 		if (isConfigured()) {
 			if (this.fitnessActivitiesUrl != null) {
 				return Uploader.Status.OK;
