@@ -4,7 +4,10 @@
 - text fragment for audio cues (currently translates word by word)
 - post to facebook
 - post to twitter
-- upload to MapMyRun
+- upload to RunKeeper              (DONE)
+- upload to Garmin                 (DONE)
+- upload to FunBeat                (DONE)
+- upload to MapMyRun               (DONE)
 - upload to Endmondo
 - upload to runtastic
 - upload from End of activity view (DONE)
@@ -32,4 +35,3 @@
 
 BUGS:
 - pause during rest step
-- back during workout
