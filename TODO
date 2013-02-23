@@ -1,6 +1,12 @@
+- audio countdown
+- manual entry of workouts
+- BUG: pause during rest step
+- gui/colors (gui is everything when/if publishing on Market)
+  I think RunKeeper's gui/colors is great!
+- km/miles
+
 - map view                         (DONE)
 - workout wizard ala Garmin 410    (DONE)
-- advanced workout editor
 - text fragment for audio cues (currently translates word by word)
 - post to facebook
 - post to twitter
@@ -14,24 +20,19 @@
 - Name/comment to activity         (DONE)
 - configure accounts               (DONE)
 - multi upload                     (DONE)
-- km/miles
 - speed/pace
   should it be global settings or per workout settings ??
   e.g maybe speed is more interesting that pace for cycling
       but pace is more interesting for running
-- gui/colors (gui is everything when/if publishing on Market)
-  I think RunKeeper's gui/colors is great!
-- next lap/next interval buttons
+- next lap/next interval buttons   (DONE)
 - smoothing of raw data (offline only??)
-- routes ??
 - edit laps (e.g crop/merge/delete)
 - recompute laps                   (DONE) 
   (e.g after battery outage)
 - visual countdown                 (DONE)
-- audio countdown
 - multiple audio cue schemes       (DONE)
-- manual entry of workouts
-- feed
 
-BUGS:
-- pause during rest step
+- routes ??
+- feed
+- advanced workout editor
+
