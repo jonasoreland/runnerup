@@ -41,7 +41,8 @@ public class TCX {
 	long mID = 0;
 	SQLiteDatabase mDB = null;
 	XmlSerializer mXML = null;
-
+	String notes = null;
+	
 	public TCX(SQLiteDatabase mDB) {
 		this.mDB = mDB;
 	}
@@ -85,8 +86,9 @@ public class TCX {
 			mXML.endTag("", "Id");
 			exportLaps(activityId);
 			if (!cursor.isNull(1)) {
+				notes = cursor.getString(1);
 				mXML.startTag("", "Notes");
-				mXML.text(cursor.getString(1));
+				mXML.text(notes);
 				mXML.endTag("", "Notes");
 			}
 			mXML.endTag("", "Activity");
@@ -195,5 +197,9 @@ public class TCX {
 		}
 		cLap.close();
 		cLocation.close();
+	}
+
+	public String getNotes() {
+		return notes;
 	}
 }
