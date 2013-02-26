@@ -16,9 +16,15 @@
  */
 package org.runnerup.view;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.util.Constants.DB;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
@@ -29,6 +35,7 @@ import org.runnerup.workout.WorkoutBuilder;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -183,6 +190,7 @@ public class StartActivity extends Activity implements TickListener {
 		manualNotes = (EditText)findViewById(R.id.manualNotes);
 		manualSave = (Button)findViewById(R.id.manualSave);
 		manualSave.setEnabled(false);
+		manualSave.setOnClickListener(manualSaveButtonClick);
 	}
 
 	@Override
@@ -545,6 +553,55 @@ public class StartActivity extends Activity implements TickListener {
 		public int preSetValue(int newValue) throws IllegalArgumentException {
 			manualSave.setEnabled(true);
 			return newValue;
+		}
+	};
+
+	OnClickListener manualSaveButtonClick = new OnClickListener()  {
+
+		@Override
+		public void onClick(View v) {
+			ContentValues save = new ContentValues();
+			CharSequence date = manualDate.getValue();
+			CharSequence time = manualTime.getValue();
+			CharSequence distance = manualDistance.getValue();
+			CharSequence duration = manualDuration.getValue();
+			String notes = manualNotes.getText().toString().trim();
+			long start_time = 0;
+			
+			if (notes.length() > 0) {
+				save.put(DB.ACTIVITY.COMMENT, notes);
+			}
+			if (distance.length() > 0) {
+				double dist = 1000 * Double.parseDouble(distance.toString()); // convert to meters
+				save.put(DB.ACTIVITY.DISTANCE, dist);
+			}
+			if (duration.length() > 0) {
+				long secs = WorkoutBuilder.parseSeconds(duration.toString(), 0);
+				save.put(DB.ACTIVITY.TIME, secs);
+			}
+			if (date.length() > 0) {
+				DateFormat df = android.text.format.DateFormat.getDateFormat(StartActivity.this);
+				try {
+					Date d = df.parse(date.toString());
+					start_time += d.getTime() / 1000;
+				} catch (ParseException e) {
+				}
+			}
+			if (time.length() > 0) {
+				DateFormat df = android.text.format.DateFormat.getTimeFormat(StartActivity.this);
+				try {
+					Date d = df.parse(time.toString());
+					start_time += d.getTime() / 1000;
+				} catch (ParseException e) {
+				}
+			}
+			save.put(DB.ACTIVITY.START_TIME, start_time);
+
+			long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);
+			Intent intent = new Intent(StartActivity.this, DetailActivity.class);
+			intent.putExtra("mode", "save");
+			intent.putExtra("ID", id);
+			StartActivity.this.startActivityForResult(intent, 0);
 		}
 	};
 }
