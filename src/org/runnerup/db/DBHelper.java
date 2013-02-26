@@ -38,25 +38,30 @@ public class DBHelper extends SQLiteOpenHelper implements
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
 			+ DB.ACTIVITY.TABLE + " ( "
-			+ "_id integer primary key autoincrement, "
-			+ DB.ACTIVITY.START_TIME
-			+ " integer not null default (strftime('%s','now')),"
-			+ DB.ACTIVITY.DISTANCE + " real, " + DB.ACTIVITY.TIME
-			+ " integer, " + DB.ACTIVITY.NAME + " text," + DB.ACTIVITY.COMMENT
-			+ " text," + DB.ACTIVITY.TYPE + " integer,"
-			+ "deleted integer not null default 0, "
+			+ ( "_id integer primary key autoincrement, " ) 
+			+ ( DB.ACTIVITY.START_TIME + " integer not null default (strftime('%s','now'))," )
+			+ ( DB.ACTIVITY.DISTANCE + " real, " ) 
+			+ ( DB.ACTIVITY.TIME + " integer, " )
+			+ ( DB.ACTIVITY.NAME + " text," )
+			+ ( DB.ACTIVITY.COMMENT + " text," )
+			+ ( DB.ACTIVITY.TYPE + " integer," )
+			+ ( "deleted integer not null default 0, " )
 			+ "nullColumnHack text null" + ");";
 
 	private static final String CREATE_TABLE_LOCATION = "create table "
 			+ DB.LOCATION.TABLE + " ( "
-			+ "_id integer primary key autoincrement, " + DB.LOCATION.ACTIVITY
-			+ " integer not null, " + DB.LOCATION.LAP + " integer not null, "
-			+ DB.LOCATION.TYPE + " integer not null, " + DB.LOCATION.TIME
-			+ " integer not null, " + DB.LOCATION.LONGITUDE
-			+ " real not null, " + DB.LOCATION.LATITUDE + " real not null, "
-			+ DB.LOCATION.ACCURANCY + " real, " + DB.LOCATION.ALTITUDE
-			+ " real, " + DB.LOCATION.SPEED + " real, " + DB.LOCATION.BEARING
-			+ " real " + ");";
+			+ ( "_id integer primary key autoincrement, " )
+			+ ( DB.LOCATION.ACTIVITY + " integer not null, " )
+			+ ( DB.LOCATION.LAP + " integer not null, " )
+			+ ( DB.LOCATION.TYPE + " integer not null, " )
+			+ ( DB.LOCATION.TIME + " integer not null, " )
+			+ ( DB.LOCATION.LONGITUDE + " real not null, " )
+			+ ( DB.LOCATION.LATITUDE + " real not null, " )
+			+ ( DB.LOCATION.ACCURANCY + " real, " )
+			+ ( DB.LOCATION.ALTITUDE + " real, " )
+			+ ( DB.LOCATION.SPEED + " real, " )
+			+ ( DB.LOCATION.BEARING	+ " real " )
+			+ ");";
 
 	private static final String CREATE_TABLE_LAP = "create table "
 			+ DB.LAP.TABLE + " ( " + "_id integer primary key autoincrement, "
