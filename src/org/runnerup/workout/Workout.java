@@ -273,6 +273,8 @@ public class Workout implements WorkoutComponent {
 	public boolean isSimple() {
 		if (activities.size() > 2)
 			return false;
+		if (activities.size() == 1)
+			return true;
 		return getActivity(0).intensity == Intensity.RESTING; // activity countdown
 	}
 	
