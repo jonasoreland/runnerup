@@ -84,7 +84,7 @@ public class TCX {
 			String id = formatTime(startTime * 1000);
 			mXML.text(id);
 			mXML.endTag("", "Id");
-			exportLaps(activityId);
+			exportLaps(activityId, startTime * 1000);
 			if (!cursor.isNull(1)) {
 				notes = cursor.getString(1);
 				mXML.startTag("", "Notes");
@@ -106,12 +106,12 @@ public class TCX {
 		}
 	}
 
-	private void exportLaps(long activityId) throws IOException {
+	private void exportLaps(long activityId, long startTime) throws IOException {
 		String[] lColumns = { DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
 				DB.LAP.INTENSITY };
 
-		Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, DB.LAP.ACTIVITY + " = "
-				+ activityId, null, null, null, null);
+		Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, DB.LAP.DISTANCE + " > 0 and " 
+				+ DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
 		String[] pColumns = { DB.LOCATION.LAP, DB.LOCATION.TIME,
 				DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
 				DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE };
@@ -128,25 +128,28 @@ public class TCX {
 				while (pok && cLocation.getLong(0) != lap) {
 					pok = cLocation.moveToNext();
 				}
+				mXML.startTag("", "Lap");
 				if (pok && cLocation.getLong(0) == lap) {
-					mXML.startTag("", "Lap");
-					mXML.attribute("", "StartTime",
-							formatTime(cLocation.getLong(1)));
-					mXML.startTag("", "TotalTimeSeconds");
-					mXML.text("" + cLap.getLong(2));
-					mXML.endTag("", "TotalTimeSeconds");
-					mXML.startTag("", "DistanceMeters");
-					mXML.text("" + cLap.getFloat(1));
-					mXML.endTag("", "DistanceMeters");
-					mXML.startTag("", "Calories");
-					mXML.text("0");
-					mXML.endTag("", "Calories");
-					mXML.startTag("", "Intensity");
-					mXML.text("Active");
-					mXML.endTag("", "Intensity");
-					mXML.startTag("", "TriggerMethod");
-					mXML.text("Manual");
-					mXML.endTag("", "TriggerMethod");
+					mXML.attribute("", "StartTime", formatTime(cLocation.getLong(1)));
+				} else {
+					mXML.attribute("", "StartTime", formatTime(startTime));
+				}
+				mXML.startTag("", "TotalTimeSeconds");
+				mXML.text("" + cLap.getLong(2));
+				mXML.endTag("", "TotalTimeSeconds");
+				mXML.startTag("", "DistanceMeters");
+				mXML.text("" + cLap.getFloat(1));
+				mXML.endTag("", "DistanceMeters");
+				mXML.startTag("", "Calories");
+				mXML.text("0");
+				mXML.endTag("", "Calories");
+				mXML.startTag("", "Intensity");
+				mXML.text("Active");
+				mXML.endTag("", "Intensity");
+				mXML.startTag("", "TriggerMethod");
+				mXML.text("Manual");
+				mXML.endTag("", "TriggerMethod");
+				if (pok && cLocation.getLong(0) == lap) {
 					mXML.startTag("", "Track");
 					float last_lat = 0;
 					float last_longi = 0;
@@ -190,8 +193,8 @@ public class TCX {
 						pok = cLocation.moveToNext();
 					}
 					mXML.endTag("", "Track");
-					mXML.endTag("", "Lap");
 				}
+				mXML.endTag("", "Lap");
 			}
 			lok = cLap.moveToNext();
 		}
