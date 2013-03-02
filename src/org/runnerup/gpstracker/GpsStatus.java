@@ -68,17 +68,21 @@ public class GpsStatus implements LocationListener,
 	}
 
 	public void start(TickListener listener) {
-		System.err.println("GpsStatus.start("+listener+")");
 		this.listener = listener;
-		locationManager = (LocationManager) context
-				.getSystemService(Context.LOCATION_SERVICE);
-		locationManager.addGpsStatusListener(this);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-				0, this);
+		LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		try {
+			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,0, this);
+		} catch (Exception ex) {
+			lm = null;
+		}
+
+		if (lm != null) {
+			locationManager = lm; 
+			locationManager.addGpsStatusListener(this);
+		}
 	}
 
 	public void stop(TickListener listener) {
-		System.err.println("GpsStatus.stop("+listener+")");
 		this.listener = null;
 		if (locationManager != null) {
 			locationManager.removeGpsStatusListener(this);
