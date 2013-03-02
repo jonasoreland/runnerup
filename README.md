@@ -9,7 +9,7 @@ Features:
 - Mediocre gui
 - Highly configurable audio cues
 - Messy code (my first android project even and first java project in +10 years)
-- Integrated upload of activities to Garmin, RunKeeper and FunBeat
+- Integrated upload of activities to Garmin, RunKeeper, FunBeat and MapMyRun
   no need for manual export/upload
 - Interval wizard (ala Garmin 410)
 
