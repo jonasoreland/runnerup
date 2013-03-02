@@ -1,5 +1,4 @@
 - audio countdown
-- manual entry of workouts
 - BUG: pause during rest step
 - gui/colors (gui is everything when/if publishing on Market)
   I think RunKeeper's gui/colors is great!
@@ -31,6 +30,7 @@
   (e.g after battery outage)
 - visual countdown                 (DONE)
 - multiple audio cue schemes       (DONE)
+- manual entry of workouts         (DONE)
 
 - routes ??
 - feed
