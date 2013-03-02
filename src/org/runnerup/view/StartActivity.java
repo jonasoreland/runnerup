@@ -571,12 +571,14 @@ public class StartActivity extends Activity implements TickListener {
 			if (notes.length() > 0) {
 				save.put(DB.ACTIVITY.COMMENT, notes);
 			}
+			double dist = 0;
 			if (distance.length() > 0) {
-				double dist = 1000 * Double.parseDouble(distance.toString()); // convert to meters
+				dist = 1000 * Double.parseDouble(distance.toString()); // convert to meters
 				save.put(DB.ACTIVITY.DISTANCE, dist);
 			}
+			long secs = 0;
 			if (duration.length() > 0) {
-				long secs = WorkoutBuilder.parseSeconds(duration.toString(), 0);
+				secs = WorkoutBuilder.parseSeconds(duration.toString(), 0);
 				save.put(DB.ACTIVITY.TIME, secs);
 			}
 			if (date.length() > 0) {
@@ -598,6 +600,15 @@ public class StartActivity extends Activity implements TickListener {
 			save.put(DB.ACTIVITY.START_TIME, start_time);
 
 			long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);
+
+			ContentValues lap = new ContentValues();
+			lap.put(DB.LAP.ACTIVITY, id);
+			lap.put(DB.LAP.LAP, 0);
+			lap.put(DB.LAP.INTENSITY, DB.INTENSITY.ACTIVE);
+			lap.put(DB.LAP.TIME, secs);
+			lap.put(DB.LAP.DISTANCE, dist);
+			mDB.insert(DB.LAP.TABLE, null, lap);
+			
 			Intent intent = new Intent(StartActivity.this, DetailActivity.class);
 			intent.putExtra("mode", "save");
 			intent.putExtra("ID", id);
