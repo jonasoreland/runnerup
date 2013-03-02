@@ -62,7 +62,8 @@ public class GpsTracker extends android.app.Service implements
 	double mElapsedDistance = 0;
 
 	enum State {
-		INIT, LOGGING, STARTED, PAUSED
+		INIT, LOGGING, STARTED, PAUSED,
+		ERROR /* Failed to init GPS */
 	};
 
 	State state = State.INIT;
@@ -133,14 +134,19 @@ public class GpsTracker extends android.app.Service implements
 						"pref_pollDistance", "5");
 		LocationManager lm = (LocationManager) this
 				.getSystemService(LOCATION_SERVICE);
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				Integer.valueOf(frequency_ms),
-				Integer.valueOf(frequency_meters), this);
-		state = State.LOGGING;
+		try {
+			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+					Integer.valueOf(frequency_ms),
+					Integer.valueOf(frequency_meters), this);
+			state = State.LOGGING;
+		} catch (Exception ex) {
+			state = State.ERROR;
+		}
 	}
-
+	
 	public boolean isLogging() {
 		switch (state) {
+		case ERROR:
 		case INIT:
 			return false;
 		case LOGGING:
@@ -182,6 +188,7 @@ public class GpsTracker extends android.app.Service implements
 	public void startOrResume() {
 		switch (state) {
 		case INIT:
+		case ERROR:
 			assert(false);
 			break;
 		case LOGGING:
@@ -225,6 +232,7 @@ public class GpsTracker extends android.app.Service implements
 	public void stopOrPause() {
 		switch (state) {
 		case INIT:
+		case ERROR:
 		case LOGGING:
 		case PAUSED:
 			break;
