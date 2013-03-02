@@ -215,7 +215,7 @@
         <Button
             android:id="@+id/newLapButton"
             style="@style/ButtonText"
-            android:background="@drawable/btn_grey"
+            android:background="@drawable/btn_blue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -227,7 +227,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/btn_grey"
+            android:background="@drawable/btn_blue"
             android:text="Pause" />
     </TableRow>
 

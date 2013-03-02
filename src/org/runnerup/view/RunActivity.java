@@ -234,7 +234,7 @@ public class RunActivity extends Activity implements TickListener {
 			if (workout.isPaused()) {
 				workout.onResume(workout);
 				pauseButton.setText("Pause");
-				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_grey));
+				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_blue));
 			} else {
 				workout.onPause(workout);
 				pauseButton.setText("Resume");

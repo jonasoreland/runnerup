@@ -199,7 +199,7 @@
         <Button
             android:id="@+id/resumeButton"
             style="@style/ButtonText"
-            android:background="@drawable/btn_grey"
+            android:background="@drawable/btn_blue"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/saveButton"
