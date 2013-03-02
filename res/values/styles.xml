@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 <style name="ButtonText">
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_height">wrap_content</item>
-    <item name="android:textColor">#ffffff</item>
+    <item name="android:textColor">@color/btn_text_color</item>
     <item name="android:gravity">center</item>
     <item name="android:layout_margin">3dp</item>
     <item name="android:textSize">20dp</item>
