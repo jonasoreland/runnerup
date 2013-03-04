@@ -18,7 +18,6 @@ package org.runnerup.view;
 
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.runnerup.R;
