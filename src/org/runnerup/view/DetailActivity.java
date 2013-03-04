@@ -443,6 +443,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			if (position == reports.length) {
 				Button b = new Button(DetailActivity.this);
 				b.setText("Configure accounts");
+				b.setBackgroundResource(R.drawable.btn_blue);
+				b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
 				b.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
