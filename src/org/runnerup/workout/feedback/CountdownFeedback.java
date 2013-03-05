@@ -29,7 +29,7 @@ import android.widget.TextView;
 
 public class CountdownFeedback extends Feedback {
 
-	Scope scope = Scope.ACTIVITY;
+	Scope scope = Scope.STEP;
 	Dimension dimension = Dimension.TIME;
 	TextView textView = null;
 

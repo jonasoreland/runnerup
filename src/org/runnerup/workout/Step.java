@@ -23,7 +23,7 @@ import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
 
-public class Activity implements TickComponent {
+public class Step implements TickComponent {
 
 	String name = null;
 
@@ -164,8 +164,8 @@ public class Activity implements TickComponent {
 		}
 	}
 
-	long activityStartTime = 0;
-	long activityStartDistance = 0;
+	long stepStartTime = 0;
+	long stepStartDistance = 0;
 	long lapStartTime = 0;
 	long lapStartDistance = 0;
 
@@ -177,12 +177,12 @@ public class Activity implements TickComponent {
 			time = android.os.SystemClock.elapsedRealtime() / 1000;
 		}
 		
-		if (what == Scope.ACTIVITY) {
-			activityStartTime = time;
-			activityStartDistance = dist;
+		if (what == Scope.STEP) {
+			stepStartTime = time;
+			stepStartDistance = dist;
 			if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
 				s.gpsTracker.stopOrPause();
-				System.err.println("start: " + activityStartTime);
+				System.err.println("start: " + stepStartTime);
 			} else {
 				s.gpsTracker.startOrResume();
 			}
@@ -263,7 +263,7 @@ public class Activity implements TickComponent {
 		if (durationType == null)
 			return false;
 
-		return s.get(Scope.ACTIVITY, durationType) >= this.durationValue;
+		return s.get(Scope.STEP, durationType) >= this.durationValue;
 	}
 
 	@Override
@@ -289,7 +289,7 @@ public class Activity implements TickComponent {
 			t.onComplete(scope, s);
 		}
 
-		if (scope == Scope.ACTIVITY) {
+		if (scope == Scope.STEP) {
 			for (Trigger t : triggers) {
 				t.onEnd(s);
 			}
@@ -298,8 +298,8 @@ public class Activity implements TickComponent {
 
 	public long getDistance(Workout w, Scope s) {
 		long d = w.getDistance(Scope.WORKOUT);
-		if (s == Scope.ACTIVITY) {
-			return d - activityStartDistance;
+		if (s == Scope.STEP) {
+			return d - stepStartDistance;
 		} else if (s == Scope.LAP) {
 			return d - lapStartDistance;
 		}
@@ -312,8 +312,8 @@ public class Activity implements TickComponent {
 		if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
 			t = android.os.SystemClock.elapsedRealtime() / 1000;
 		}
-		if (s == Scope.ACTIVITY) {
-			return t - activityStartTime;
+		if (s == Scope.STEP) {
+			return t - stepStartTime;
 		} else if (s == Scope.LAP) {
 			return t - lapStartTime;
 		}

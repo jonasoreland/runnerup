@@ -66,9 +66,9 @@ public class RunActivity extends Activity implements TickListener {
 	TextView lapPace = null;
 	TextView countdownView = null;
 	ListView workoutList = null;
-	org.runnerup.workout.Activity currentActivity = null;
+	org.runnerup.workout.Step currentStep = null;
 	
-	class WorkoutRow { org.runnerup.workout.Activity activity = null; ContentValues lap = null;};
+	class WorkoutRow { org.runnerup.workout.Step step = null; ContentValues lap = null;};
 	ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 
@@ -132,9 +132,9 @@ public class RunActivity extends Activity implements TickListener {
 	}
 
 	private void populateWorkoutList() {
-		for (int i = 0; i < workout.getActivityCount(); i++) {
+		for (int i = 0; i < workout.getStepCount(); i++) {
 			WorkoutRow row = new WorkoutRow();
-			row.activity = workout.getActivity(i);
+			row.step = workout.getStep(i);
 			row.lap = null;
 			workoutRows.add(row);
 		}
@@ -274,11 +274,11 @@ public class RunActivity extends Activity implements TickListener {
 		lapDistance.setText("" + ld);
 		lapPace.setText(DateUtils.formatElapsedTime(lp));
 		
-		if (currentActivity != workout.getCurrentActivity()) {
+		if (currentStep != workout.getCurrentStep()) {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
-			currentActivity = workout.getCurrentActivity();
-			workoutList.setSelection(getPosition(workoutRows, currentActivity));
-			if (!workout.isSimple() && workout.isLastActivity())
+			currentStep = workout.getCurrentStep();
+			workoutList.setSelection(getPosition(workoutRows, currentStep));
+			if (!workout.isSimple() && workout.isLastStep())
 			{
 				newLapButton.setEnabled(false);
 			}
@@ -286,9 +286,9 @@ public class RunActivity extends Activity implements TickListener {
 	}
 
 	private int getPosition(ArrayList<WorkoutRow> workoutRows,
-			org.runnerup.workout.Activity currentActivity) {
+			org.runnerup.workout.Step currentActivity) {
 		for (int i = 0; i< workoutRows.size(); i++) {
-			if (workoutRows.get(i).activity == currentActivity)
+			if (workoutRows.get(i).step == currentActivity)
 				return i;
 		}
 		return 0;
@@ -375,9 +375,9 @@ public class RunActivity extends Activity implements TickListener {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			WorkoutRow tmp = rows.get(position);
-			if (tmp.activity != null)
+			if (tmp.step != null)
 			{
-				return getWorkoutRow(tmp.activity, convertView, parent);
+				return getWorkoutRow(tmp.step, convertView, parent);
 			}
 			else
 			{	
@@ -385,22 +385,22 @@ public class RunActivity extends Activity implements TickListener {
 			}
 		}
 
-		private View getWorkoutRow(org.runnerup.workout.Activity activity, View convertView, ViewGroup parent) {
+		private View getWorkoutRow(org.runnerup.workout.Step step, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
 			View view = inflater.inflate(R.layout.workout_row, parent, false);
 			TextView intensity = (TextView) view.findViewById(R.id.step_intensity);
 			TextView durationType = (TextView) view.findViewById(R.id.step_duration_type);
 			TextView durationValue = (TextView) view.findViewById(R.id.step_duration_value);
 			TextView targetPace = (TextView) view.findViewById(R.id.step_pace);
-			intensity.setText(getResources().getText(activity.getIntensity().getTextId()));
-			if (activity.getDurationType() != null) {
-				durationType.setText(getResources().getText(activity.getDurationType().getTextId()));
-				durationValue.setText("" + activity.getDurationValue());
+			intensity.setText(getResources().getText(step.getIntensity().getTextId()));
+			if (step.getDurationType() != null) {
+				durationType.setText(getResources().getText(step.getDurationType().getTextId()));
+				durationValue.setText("" + step.getDurationValue());
 			} else {
 				durationType.setText("");
 				durationValue.setText("");
 			}
-			if (workout.getCurrentActivity() == activity) {
+			if (workout.getCurrentStep() == step) {
 				view.setBackgroundResource(android.R.color.background_light);
 			} else {
 				view.setBackgroundResource(android.R.color.black);

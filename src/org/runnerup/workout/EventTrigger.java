@@ -18,7 +18,7 @@ package org.runnerup.workout;
 
 public class EventTrigger extends Trigger {
 
-	Scope scope = Scope.ACTIVITY;
+	Scope scope = Scope.STEP;
 	Event event = Event.STARTED;
 
 	@Override
@@ -29,7 +29,6 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onStart(Scope what, Workout s) {
 		if (this.scope == what && this.event == Event.STARTED) {
-			System.err.println("fire onStart");
 			fire(s);
 		}
 	}
@@ -37,7 +36,6 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onPause(Workout s) {
 		if (this.event == Event.PAUSED) {
-			System.err.println("fire onPause");
 			fire(s);
 		}
 	}
@@ -45,7 +43,6 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onStop(Workout s) {
 		if (this.event == Event.STOPPED) {
-			System.err.println("fire onStop");
 			fire(s);
 		}
 	}
@@ -53,7 +50,6 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onResume(Workout s) {
 		if (this.event == Event.RESUMED) {
-			System.err.println("fire onResume");
 			fire(s);
 		}
 	}
@@ -61,7 +57,6 @@ public class EventTrigger extends Trigger {
 	@Override
 	public void onComplete(Scope what, Workout s) {
 		if (this.scope == what && this.event == Event.COMPLETED) {
-			System.err.println("fire onComplete");
 			fire(s);
 		}
 	}

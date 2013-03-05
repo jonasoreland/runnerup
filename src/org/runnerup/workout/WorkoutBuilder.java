@@ -44,7 +44,7 @@ public class WorkoutBuilder {
 				IntervalTrigger t = new IntervalTrigger();
 				t.first = val;
 				t.interval = val;
-				t.scope = Scope.ACTIVITY;
+				t.scope = Scope.STEP;
 				t.dimension = Dimension.TIME;
 				triggers.add(t);
 			}
@@ -61,7 +61,7 @@ public class WorkoutBuilder {
 				IntervalTrigger t = new IntervalTrigger();
 				t.first = val;
 				t.interval = val;
-				t.scope = Scope.ACTIVITY;
+				t.scope = Scope.STEP;
 				t.dimension = Dimension.DISTANCE;
 				triggers.add(t);
 			}
@@ -109,22 +109,22 @@ public class WorkoutBuilder {
 			} catch (NumberFormatException e) {
 			}
 			if (val > 0) {
-				Activity activity = new Activity();
-				activity.intensity = Intensity.RESTING;
-				activity.durationType = Dimension.TIME;
-				activity.durationValue = val;
+				Step step = new Step();
+				step.intensity = Intensity.RESTING;
+				step.durationType = Dimension.TIME;
+				step.durationValue = val;
 				IntervalTrigger trigger = new IntervalTrigger();
 				trigger.dimension = Dimension.TIME;
 				trigger.first = 1;
 				trigger.interval = 1;
-				trigger.scope = Scope.ACTIVITY;
-				trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, Dimension.TIME));
-				activity.triggers.add(trigger);
-				w.activities.add(activity);
+				trigger.scope = Scope.STEP;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, Dimension.TIME));
+				step.triggers.add(trigger);
+				w.steps.add(step);
 			}
 		}
 
-		Activity activity = new Activity();
+		Step step = new Step();
 		if (prefs.getBoolean("pref_autolap_active", false)) {
 			long val = 0;
 			String vals = prefs.getString("pref_autolap", "1000");
@@ -132,19 +132,19 @@ public class WorkoutBuilder {
 				val = Long.parseLong(vals);
 			} catch (NumberFormatException e) {
 			}
-			activity.setAutolap(val);
+			step.setAutolap(val);
 		}
 
-		activity.triggers = createDefaultTriggers(audioPrefs);
-		if (activity.triggers.size() > 0) {
+		step.triggers = createDefaultTriggers(audioPrefs);
+		if (step.triggers.size() > 0) {
 			EventTrigger ev = new EventTrigger();
 			ev.event = Event.STARTED;
 			ev.scope = Scope.LAP;
 			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
-			activity.triggers.add(ev);
+			step.triggers.add(ev);
 		}
 
-		w.activities.add(activity);
+		w.steps.add(step);
 		
 		/**
 		 *
@@ -162,10 +162,10 @@ public class WorkoutBuilder {
 		boolean cooldown = true;
 
 		if (warmup) {
-			Activity activity = new Activity();
-			activity.intensity = Intensity.WARMUP;
-			activity.durationType = null;
-			w.activities.add(activity);
+			Step step = new Step();
+			step.intensity = Intensity.WARMUP;
+			step.durationType = null;
+			w.steps.add(step);
 		}
 		
 		ArrayList<Trigger> triggers = createDefaultTriggers(audioPrefs);
@@ -173,7 +173,7 @@ public class WorkoutBuilder {
 			{
 				EventTrigger ev = new EventTrigger();
 				ev.event = Event.STARTED;
-				ev.scope = Scope.ACTIVITY;
+				ev.scope = Scope.STEP;
 				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
 				triggers.add(ev);
 			}
@@ -181,7 +181,7 @@ public class WorkoutBuilder {
 			{
 				EventTrigger ev = new EventTrigger();
 				ev.event = Event.COMPLETED;
-				ev.scope = Scope.ACTIVITY;
+				ev.scope = Scope.STEP;
 				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
 				triggers.add(ev);
 			}
@@ -196,22 +196,22 @@ public class WorkoutBuilder {
 		long intervalRestTime = parseSeconds(prefs.getString("intervalRestTime", "00:01:00"), 60);
 		double intevalRestDistance = 1000 * parseDouble(prefs.getString("intervalRestDistance", "0.2"), 0.2);
 		for (int i = 0; i < repetitions; i++) {
-			Activity activity = new Activity();
+			Step step = new Step();
 			switch (intervalType) {
 			case 0: // Time
-				activity.durationType = Dimension.TIME;
-				activity.durationValue = intervalTime;
+				step.durationType = Dimension.TIME;
+				step.durationValue = intervalTime;
 				break;
 			case 1: // Distance
-				activity.durationType = Dimension.DISTANCE;
-				activity.durationValue = intevalDistance;
+				step.durationType = Dimension.DISTANCE;
+				step.durationValue = intevalDistance;
 				break;
 			}
-			activity.triggers = triggers;
-			w.activities.add(activity);
+			step.triggers = triggers;
+			w.steps.add(step);
 
 			if (i + 1 != repetitions) {
-				Activity rest = new Activity();
+				Step rest = new Step();
 				rest.intensity = Intensity.RESTING;
 				switch (intervalRestType) {
 				case 0: // Time
@@ -227,19 +227,19 @@ public class WorkoutBuilder {
 				trigger.dimension = rest.durationType;
 				trigger.first = 1;
 				trigger.interval = 1;
-				trigger.scope = Scope.ACTIVITY;
-				trigger.triggerAction.add(new CountdownFeedback(Scope.ACTIVITY, rest.durationType));
+				trigger.scope = Scope.STEP;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, rest.durationType));
 				rest.triggers.add(trigger);
 
-				w.activities.add(rest);
+				w.steps.add(rest);
 			}
 		}
 
 		if (cooldown) {
-			Activity activity = new Activity();
-			activity.intensity = Intensity.COOLDOWN;
-			activity.durationType = null;
-			w.activities.add(activity);
+			Step step = new Step();
+			step.intensity = Intensity.COOLDOWN;
+			step.durationType = null;
+			w.steps.add(step);
 		}
 		
 		return w;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import android.content.res.Resources;
  */
 public enum Scope {
 
-	WORKOUT(1), ACTIVITY(2), LAP(3);
+	WORKOUT(1), STEP(2), LAP(3);
 
 	int value = 0;
 
@@ -52,7 +52,7 @@ public enum Scope {
 		switch (this) {
 		case WORKOUT:
 			return res.getString(R.string.workout);
-		case ACTIVITY:
+		case STEP:
 			return res.getString(R.string.activity);
 		case LAP:
 			return res.getString(R.string.lap);

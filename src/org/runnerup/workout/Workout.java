@@ -24,7 +24,6 @@ import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
-import android.widget.TextView;
 
 /**
  * This class is the top level object for a workout, it is being called by
@@ -33,9 +32,9 @@ import android.widget.TextView;
 public class Workout implements WorkoutComponent {
 
 	long lap = 0;
-	int currentActivityNo = -1;
-	Activity currentActivity = null;
-	ArrayList<Activity> activities = new ArrayList<Activity>();
+	int currentStepNo = -1;
+	Step currentStep = null;
+	ArrayList<Step> steps = new ArrayList<Step>();
 	HashSet<Feedback> pendingFeedback = new HashSet<Feedback>();
 
 	GpsTracker gpsTracker = null;
@@ -52,14 +51,14 @@ public class Workout implements WorkoutComponent {
 
 	public void onInit(Workout w, HashMap<String, Object> bindValues) {
 		assert (w == this);
-		for (Activity a : activities) {
+		for (Step a : steps) {
 			a.onInit(this, bindValues);
 		}
 	}
 
 	public void onEnd(Workout w) {
 		assert (w == this);
-		for (Activity a : activities) {
+		for (Step a : steps) {
 			a.onEnd(this);
 		}
 	}
@@ -69,15 +68,15 @@ public class Workout implements WorkoutComponent {
 
 		initFeedback();
 
-		currentActivityNo = 0;
-		if (activities.size() > 0) {
-			currentActivity = activities.get(currentActivityNo);
+		currentStepNo = 0;
+		if (steps.size() > 0) {
+			currentStep = steps.get(currentStepNo);
 		}
 
-		if (currentActivity != null) {
-			currentActivity.onStart(Scope.WORKOUT, this);
-			currentActivity.onStart(Scope.ACTIVITY, this);
-			currentActivity.onStart(Scope.LAP, this);
+		if (currentStep != null) {
+			currentStep.onStart(Scope.WORKOUT, this);
+			currentStep.onStart(Scope.STEP, this);
+			currentStep.onStart(Scope.LAP, this);
 		}
 
 		emitFeedback();
@@ -86,8 +85,8 @@ public class Workout implements WorkoutComponent {
 	public void onTick() {
 		initFeedback();
 
-		while (currentActivity != null) {
-			boolean finished = currentActivity.onTick(this);
+		while (currentStep != null) {
+			boolean finished = currentStep.onTick(this);
 			if (finished == false)
 				break;
 
@@ -97,16 +96,16 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public void onNextStep() {
-		currentActivity.onComplete(Scope.LAP, this);
-		currentActivity.onComplete(Scope.ACTIVITY, this);
-		currentActivityNo++;
-		if (currentActivityNo < activities.size()) {
-			currentActivity = activities.get(currentActivityNo);
-			currentActivity.onStart(Scope.ACTIVITY, this);
-			currentActivity.onStart(Scope.LAP, this);
+		currentStep.onComplete(Scope.LAP, this);
+		currentStep.onComplete(Scope.STEP, this);
+		currentStepNo++;
+		if (currentStepNo < steps.size()) {
+			currentStep = steps.get(currentStepNo);
+			currentStep.onStart(Scope.STEP, this);
+			currentStep.onStart(Scope.LAP, this);
 		} else {
-			currentActivity.onComplete(Scope.WORKOUT, this);
-			currentActivity = null;
+			currentStep.onComplete(Scope.WORKOUT, this);
+			currentStep = null;
 			gpsTracker.stop();
 		}
 	}
@@ -117,8 +116,8 @@ public class Workout implements WorkoutComponent {
 		gpsTracker.stop();
 
 		initFeedback();
-		if (currentActivity != null) {
-			currentActivity.onPause(this);
+		if (currentStep != null) {
+			currentStep.onPause(this);
 		}
 		emitFeedback();
 	}
@@ -127,15 +126,15 @@ public class Workout implements WorkoutComponent {
 		return gpsTracker.isPaused();
 	}
 
-	public Activity getCurrentActivity() {
-		return currentActivity;
+	public Step getCurrentStep() {
+		return currentStep;
 	}
 
 	public void onNewLap() {
 		initFeedback();
-		if (currentActivity != null) {
-			currentActivity.onComplete(Scope.LAP, this);
-			currentActivity.onStart(Scope.LAP, this);
+		if (currentStep != null) {
+			currentStep.onComplete(Scope.LAP, this);
+			currentStep.onStart(Scope.LAP, this);
 		}
 		emitFeedback();
 	}
@@ -145,8 +144,8 @@ public class Workout implements WorkoutComponent {
 		gpsTracker.stop();
 
 		initFeedback();
-		if (currentActivity != null) {
-			currentActivity.onStop(this);
+		if (currentStep != null) {
+			currentStep.onStop(this);
 		}
 		emitFeedback();
 	}
@@ -155,20 +154,20 @@ public class Workout implements WorkoutComponent {
 		gpsTracker.resume();
 
 		initFeedback();
-		if (currentActivity != null) {
-			currentActivity.onResume(this);
+		if (currentStep != null) {
+			currentStep.onResume(this);
 		}
 		emitFeedback();
 	}
 
 	public void onComplete(Scope s, Workout w) {
-		if (currentActivity != null) {
-			currentActivity.onComplete(Scope.LAP, this);
-			currentActivity.onComplete(Scope.ACTIVITY, this);
-			currentActivity.onComplete(Scope.WORKOUT, this);
+		if (currentStep != null) {
+			currentStep.onComplete(Scope.LAP, this);
+			currentStep.onComplete(Scope.STEP, this);
+			currentStep.onComplete(Scope.WORKOUT, this);
 		}
-		currentActivity = null;
-		currentActivityNo = -1;
+		currentStep = null;
+		currentStepNo = -1;
 	}
 
 	public void onSave() {
@@ -193,8 +192,8 @@ public class Workout implements WorkoutComponent {
 	public long getDistance(Scope scope) {
 		if (scope == Scope.WORKOUT)
 			return (long) gpsTracker.getDistance();
-		else if (currentActivity != null) {
-			return currentActivity.getDistance(this, scope);
+		else if (currentStep != null) {
+			return currentStep.getDistance(this, scope);
 		}
 		assert (false);
 		return 0;
@@ -203,8 +202,8 @@ public class Workout implements WorkoutComponent {
 	public long getTime(Scope scope) {
 		if (scope == Scope.WORKOUT)
 			return (long) gpsTracker.getTime();
-		else if (currentActivity != null) {
-			return currentActivity.getTime(this, scope);
+		else if (currentStep != null) {
+			return currentStep.getTime(this, scope);
 		}
 		assert (false);
 		return 0;
@@ -217,16 +216,16 @@ public class Workout implements WorkoutComponent {
 			if (t == 0)
 				return 0;
 			return ((double) d) / ((double) t);
-		} else if (currentActivity != null) {
-			return currentActivity.getSpeed(this, scope);
+		} else if (currentStep != null) {
+			return currentStep.getSpeed(this, scope);
 		}
 		assert (false);
 		return 0;
 	}
 
 	public double getDuration(Scope scope, Dimension dimension) {
-		if (scope == Scope.ACTIVITY && currentActivity != null) {
-			return currentActivity.getDuration(dimension);
+		if (scope == Scope.STEP && currentStep != null) {
+			return currentStep.getDuration(dimension);
 		}
 		return 0;
 	}
@@ -258,24 +257,24 @@ public class Workout implements WorkoutComponent {
 		}
 	}
 
-	public int getActivityCount() {
-		return activities.size();
+	public int getStepCount() {
+		return steps.size();
 	}
 
-	public Activity getActivity(int no) {
-		return activities.get(no);
+	public Step getStep(int no) {
+		return steps.get(no);
 	}
 
-	public boolean isLastActivity() {
-		return currentActivityNo + 1 == activities.size();
+	public boolean isLastStep() {
+		return currentStepNo + 1 == steps.size();
 	}
 
 	public boolean isSimple() {
-		if (activities.size() > 2)
+		if (steps.size() > 2)
 			return false;
-		if (activities.size() == 1)
+		if (steps.size() == 1)
 			return true;
-		return getActivity(0).intensity == Intensity.RESTING; // activity countdown
+		return getStep(0).intensity == Intensity.RESTING; // activity countdown
 	}
 	
 	private static class FakeWorkout extends Workout {
@@ -288,7 +287,7 @@ public class Workout implements WorkoutComponent {
 			switch(scope) {
 			case WORKOUT:
 				return (long) (3000 + 7000 * Math.random());
-			case ACTIVITY:
+			case STEP:
 				return (long) (300 + 700 * Math.random());
 			case LAP:
 				return (long) (300 + 700 * Math.random());
@@ -300,7 +299,7 @@ public class Workout implements WorkoutComponent {
 			switch(scope) {
 			case WORKOUT:
 				return (long) (10 * 60 + 50 * 60 * Math.random());
-			case ACTIVITY:
+			case STEP:
 				return (long) (1 * 60 + 5 * 60 * Math.random());
 			case LAP:
 				return (long) (1 * 60 + 5 * 60 * Math.random());
