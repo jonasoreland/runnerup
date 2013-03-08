@@ -230,6 +230,17 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
+	public double getRemaining(Scope scope, Dimension dimension) {
+		double curr = this.get(scope, dimension);
+		double duration = this.getDuration(scope, dimension);
+		if (duration > curr) {
+			return duration - curr;
+		} else {
+			return 0;
+		}
+		
+	}
+	
 	private void initFeedback() {
 		pendingFeedback.clear();
 	}
