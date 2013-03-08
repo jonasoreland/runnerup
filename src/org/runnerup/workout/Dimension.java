@@ -56,7 +56,7 @@ public enum Dimension {
 		return true;
 	}
 
-	private String elapsedCue(Resources res, long seconds) {
+	private static String elapsedCue(Resources res, long seconds, boolean emitDimension) {
 		long hours = 0;
 		long minutes = 0;
 		if (seconds >= 3600) {
@@ -69,30 +69,34 @@ public enum Dimension {
 		}
 		StringBuilder s = new StringBuilder();
 		if (hours > 0) {
+			emitDimension = true;
 			s.append(hours).append(" ").append(res.getString(R.string.hours));
 		}
 		if (minutes > 0) {
+			emitDimension = true;
 			s.append(minutes).append(" ")
 					.append(res.getString(R.string.minutes));
 		}
-		if (seconds > 0) {
+		if (seconds > 0 && emitDimension) {
 			s.append(seconds).append(" ")
 					.append(res.getString(R.string.seconds));
+		} else {
+			s.append(seconds);	
 		}
 		return s.toString();
 	}
 
-	public String getCue(Context ctx, double val) {
+	public String getCue(Context ctx, double val, boolean emitDimension) {
 		Resources res = ctx.getResources();
 		switch (this) {
 		case TIME:
-			return elapsedCue(res, (long) val);
+			return elapsedCue(res, (long) val, emitDimension);
 		case DISTANCE:
-			return "" + (((double) ((long) (val * 10))) / 10) + " "
-					+ res.getString(R.string.kilometers);
+			return "" + (((double) ((long) (val * 10))) / 10) + 
+					(emitDimension ? " " + res.getString(R.string.kilometers) : "");
 		case SPEED:
-			return elapsedCue(res, (long) Speed.convert(val, Speed.PACE_SPK))
-					+ " " + res.getString(R.string.perkilometer);
+			return elapsedCue(res, (long) Speed.convert(val, Speed.PACE_SPK), emitDimension)
+					+ (emitDimension ? " " + res.getString(R.string.perkilometer) : "");
 		}
 		return "";
 	}

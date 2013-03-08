@@ -79,7 +79,7 @@ public class AudioFeedback extends Feedback {
 			msg = scope.getCue(ctx) + " " + event.getCue(ctx);
 		} else {
 			double val = w.get(scope, dimension); // SI
-			msg = scope.getCue(ctx) + " " + dimension.getCue(ctx, val);
+			msg = scope.getCue(ctx) + " " + dimension.getCue(ctx, val, true);
 		}
 		textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
 	}
