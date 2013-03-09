@@ -34,6 +34,7 @@ public class Workout implements WorkoutComponent {
 	long lap = 0;
 	int currentStepNo = -1;
 	Step currentStep = null;
+	boolean paused = false;
 	ArrayList<Step> steps = new ArrayList<Step>();
 	HashSet<Feedback> pendingFeedback = new HashSet<Feedback>();
 
@@ -120,10 +121,11 @@ public class Workout implements WorkoutComponent {
 			currentStep.onPause(this);
 		}
 		emitFeedback();
+		paused = true;
 	}
 
 	public boolean isPaused() {
-		return gpsTracker.isPaused();
+		return paused;
 	}
 
 	public Step getCurrentStep() {
@@ -158,6 +160,7 @@ public class Workout implements WorkoutComponent {
 			currentStep.onResume(this);
 		}
 		emitFeedback();
+		paused = false;
 	}
 
 	public void onComplete(Scope s, Workout w) {
