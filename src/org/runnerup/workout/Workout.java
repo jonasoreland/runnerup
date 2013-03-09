@@ -114,8 +114,6 @@ public class Workout implements WorkoutComponent {
 	
 	public void onPause(Workout w) {
 
-		gpsTracker.stop();
-
 		initFeedback();
 		if (currentStep != null) {
 			currentStep.onPause(this);
@@ -153,8 +151,6 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public void onResume(Workout w) {
-		gpsTracker.resume();
-
 		initFeedback();
 		if (currentStep != null) {
 			currentStep.onResume(this);

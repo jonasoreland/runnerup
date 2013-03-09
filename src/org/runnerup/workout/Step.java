@@ -235,6 +235,7 @@ public class Step implements TickComponent {
 
 	@Override
 	public void onPause(Workout s) {
+		s.gpsTracker.stopOrPause();
 		for (Trigger t : triggers) {
 			t.onPause(s);
 		}
@@ -271,6 +272,7 @@ public class Step implements TickComponent {
 		for (Trigger t : triggers) {
 			t.onResume(s);
 		}
+		s.gpsTracker.startOrResume();
 	}
 
 	@Override
