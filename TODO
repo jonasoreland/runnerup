@@ -1,5 +1,3 @@
-- audio countdown
-- BUG: pause during rest step
 - gui/colors (gui is everything when/if publishing on Market)
   I think RunKeeper's gui/colors is great!
 - km/miles
@@ -31,6 +29,9 @@
 - visual countdown                 (DONE)
 - multiple audio cue schemes       (DONE)
 - manual entry of workouts         (DONE)
+- audio countdown                  (DONE)
+- BUG: pause during rest step      (DONE)
+- BUG: pause during rest step confuses audio countdown
 
 - routes ??
 - feed
