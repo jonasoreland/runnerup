@@ -344,7 +344,12 @@ public class Step implements TickComponent {
 	}
 
 	public static Step createPauseStep(Dimension dim, double duration) {
-		Step step = new Step();
+		Step step = null;
+		if (dim == Dimension.TIME)
+			step = new PauseStep();
+		else
+			step = new Step();
+		
 		step.intensity = Intensity.RESTING;
 		step.durationType = dim;
 		step.durationValue = duration;
