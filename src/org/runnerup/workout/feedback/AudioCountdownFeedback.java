@@ -68,10 +68,6 @@ public class AudioCountdownFeedback extends Feedback {
 			boolean emitUnit = false;
 			String msg = (emitScope ? scope.getCue(ctx) + " " : "" ) + dimension.getCue(ctx, remaining, emitUnit);
 			textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
-			Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
-		}
-		else {
-			System.err.println("kalle:");
 		}
 	}
 }

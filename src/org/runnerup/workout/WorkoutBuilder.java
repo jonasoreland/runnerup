@@ -284,7 +284,7 @@ public class WorkoutBuilder {
 		 */
 		ArrayList<Double> triggerTimes = new ArrayList<Double>();
 		for (Double d : list) {
-			if (d > step.getDurationValue())
+			if (d >= step.getDurationValue())
 				continue;
 			triggerTimes.add(step.getDurationValue() - d);
 		}
@@ -298,7 +298,7 @@ public class WorkoutBuilder {
 			step.triggers.add(trigger);
 		}
 
-		if (triggerTimes.size() > 0 || step.getDurationValue() > first) {
+		if (true) {
 			/**
 			 * Add add information just when pause step starts...
 			 */
