@@ -219,6 +219,8 @@ public class Step implements TickComponent {
 			t.onStop(s);
 		}
 
+		s.gpsTracker.stopOrPause();
+
 		/**
 		 * Save current lap so that it shows in DetailActivity
 		 */

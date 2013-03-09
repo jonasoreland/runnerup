@@ -141,8 +141,6 @@ public class Workout implements WorkoutComponent {
 
 	public void onStop(Workout w) {
 
-		gpsTracker.stop();
-
 		initFeedback();
 		if (currentStep != null) {
 			currentStep.onStop(this);
