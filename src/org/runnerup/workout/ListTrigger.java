@@ -24,13 +24,13 @@ public class ListTrigger extends Trigger {
 	Dimension dimension = Dimension.TIME;
 
 	int pos = Integer.MAX_VALUE;
-	ArrayList<Integer> triggerTimes = new ArrayList<Integer>(); 
+	ArrayList<Double> triggerTimes = new ArrayList<Double>(); 
 
 	@Override
 	public boolean onTick(Workout w) {
 		if (pos < triggerTimes.size()) {
 			double now = w.get(scope, dimension);
-			if (now <= triggerTimes.get(pos).doubleValue()) {
+			if (now >= triggerTimes.get(pos).doubleValue()) {
 				fire(w);
 				scheduleNext(w, now);
 			}
@@ -39,7 +39,7 @@ public class ListTrigger extends Trigger {
 	}
 
 	private void scheduleNext(Workout w, double now) {
-		while (pos < triggerTimes.size() && now <= triggerTimes.get(pos).doubleValue()) {
+		while (pos < triggerTimes.size() && now >= triggerTimes.get(pos).doubleValue()) {
 			pos++;
 		}
 

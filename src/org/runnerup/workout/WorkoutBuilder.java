@@ -17,8 +17,10 @@
 package org.runnerup.workout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.runnerup.view.AudioCueSettingsActivity;
+import org.runnerup.workout.feedback.AudioCountdownFeedback;
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
@@ -100,6 +102,7 @@ public class WorkoutBuilder {
 			SharedPreferences prefs,
 			SharedPreferences audioPrefs) {
 		Workout w = new Workout();
+		Step countdownStep = null;
 		if (prefs.getBoolean("pref_countdown_active", false))
 		{
 			long val = 0;
@@ -118,6 +121,7 @@ public class WorkoutBuilder {
 				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, Dimension.TIME));
 				step.triggers.add(trigger);
 				w.steps.add(step);
+				countdownStep = step;
 			}
 		}
 
@@ -139,6 +143,10 @@ public class WorkoutBuilder {
 			ev.scope = Scope.LAP;
 			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
 			step.triggers.add(ev);
+
+			if (countdownStep != null) {
+				createAudioCountdown(countdownStep);
+			}
 		}
 
 		w.steps.add(step);
@@ -148,8 +156,6 @@ public class WorkoutBuilder {
 		 */
 		return w;
 	}
-	
-	
 	
 	public static Workout createDefaultIntervalWorkout(TextView debugView,
 			SharedPreferences prefs,
@@ -225,6 +231,9 @@ public class WorkoutBuilder {
 				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, rest.durationType));
 				rest.triggers.add(trigger);
 
+				if (triggers.size() > 0) {
+					createAudioCountdown(rest);
+				}
 				w.steps.add(rest);
 			}
 		}
@@ -239,6 +248,68 @@ public class WorkoutBuilder {
 		return w;
 	}
 
+	private static void createAudioCountdown(Step step) {
+		double first = 0;
+		ArrayList<Double> list = new ArrayList<Double>();
+		switch (step.getDurationType()) {
+		case TIME:
+			first = 60; // 1 minute
+			Double tmp0[] = { 60d, 30d, 10d, 5d, 3d, 2d, 1d };
+			list.addAll(Arrays.asList(tmp0));
+			break;
+		case DISTANCE:
+			first = 100; // 100 meters
+			Double tmp1[] ={ 100d, 50d, 20d, 10d }; 
+			list.addAll(Arrays.asList(tmp1));
+			break;
+		default:
+			return;
+		}
+
+		if (step.getDurationValue() > first) {
+			/**
+			 * If longer than limit...create a Interval trigger for ">" part
+			 */
+			IntervalTrigger trigger = new IntervalTrigger();
+			trigger.dimension = step.getDurationType();
+			trigger.scope = Scope.STEP;
+			trigger.first = first;
+			trigger.interval = first;
+			trigger.triggerAction.add(new AudioCountdownFeedback(Scope.STEP, step.getDurationType()));
+			step.triggers.add(trigger);
+		}
+
+		/**
+		 * Then create a list trigger for reminder...
+		 */
+		ArrayList<Double> triggerTimes = new ArrayList<Double>();
+		for (Double d : list) {
+			if (d > step.getDurationValue())
+				continue;
+			triggerTimes.add(step.getDurationValue() - d);
+		}
+		
+		{
+			ListTrigger trigger = new ListTrigger();
+			trigger.dimension = step.getDurationType();
+			trigger.scope = Scope.STEP;
+			trigger.triggerTimes = triggerTimes;
+			trigger.triggerAction.add(new AudioCountdownFeedback(Scope.STEP, step.getDurationType()));
+			step.triggers.add(trigger);
+		}
+
+		if (triggerTimes.size() > 0 || step.getDurationValue() > first) {
+			/**
+			 * Add add information just when pause step starts...
+			 */
+			EventTrigger ev = new EventTrigger();
+			ev.event = Event.STARTED;
+			ev.scope = Scope.STEP;
+			ev.triggerAction.add(new AudioCountdownFeedback(Scope.STEP, step.getDurationType()));
+			step.triggers.add(ev);
+		}
+	}
+	
 	public static double parseDouble(String string, double defaultValue) {
 		//TODO move this somewhere
 		double distance = defaultValue;

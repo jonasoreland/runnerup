@@ -73,15 +73,20 @@ public enum Dimension {
 			s.append(hours).append(" ").append(res.getString(R.string.hours));
 		}
 		if (minutes > 0) {
+			if (hours > 0)
+				s.append(" ");
 			emitDimension = true;
-			s.append(minutes).append(" ")
-					.append(res.getString(R.string.minutes));
+			s.append(minutes).append(" ").append(res.getString(R.string.minutes));
 		}
-		if (seconds > 0 && emitDimension) {
-			s.append(seconds).append(" ")
-					.append(res.getString(R.string.seconds));
-		} else {
-			s.append(seconds);	
+		if (seconds > 0) {
+			if (hours > 0 || minutes > 0)
+				s.append(" ");
+			
+			if (emitDimension) {
+				s.append(seconds).append(" ").append(res.getString(R.string.seconds));
+			} else {
+				s.append(seconds);	
+			}
 		}
 		return s.toString();
 	}
