@@ -173,22 +173,14 @@ public class Step implements TickComponent {
 	public void onStart(Scope what, Workout s) {
 		long time = s.getTime(Scope.WORKOUT);
 		long dist = s.getDistance(Scope.WORKOUT);
-		if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
-			time = android.os.SystemClock.elapsedRealtime() / 1000;
-		}
 		
 		if (what == Scope.STEP) {
 			stepStartTime = time;
 			stepStartDistance = dist;
-			if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
+			if (s.isPaused())
 				s.gpsTracker.stopOrPause();
-				System.err.println("start: " + stepStartTime);
-			} else {
-				if (s.isPaused())
-					s.gpsTracker.stopOrPause();
-				else
-					s.gpsTracker.startOrResume();
-			}
+			else
+				s.gpsTracker.startOrResume();
 		} else if (what == Scope.LAP) {
 			lapStartTime = time;
 			lapStartDistance = dist;
@@ -316,9 +308,6 @@ public class Step implements TickComponent {
 
 	public long getTime(Workout w, Scope s) {
 		long t = w.getTime(Scope.WORKOUT);
-		if (intensity == Intensity.RESTING && durationType != Dimension.DISTANCE) {
-			t = android.os.SystemClock.elapsedRealtime() / 1000;
-		}
 		if (s == Scope.STEP) {
 			return t - stepStartTime;
 		} else if (s == Scope.LAP) {
