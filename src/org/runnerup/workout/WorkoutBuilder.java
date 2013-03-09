@@ -109,10 +109,7 @@ public class WorkoutBuilder {
 			} catch (NumberFormatException e) {
 			}
 			if (val > 0) {
-				Step step = new Step();
-				step.intensity = Intensity.RESTING;
-				step.durationType = Dimension.TIME;
-				step.durationValue = val;
+				Step step = Step.createPauseStep(Dimension.TIME, val);
 				IntervalTrigger trigger = new IntervalTrigger();
 				trigger.dimension = Dimension.TIME;
 				trigger.first = 1;
@@ -211,16 +208,13 @@ public class WorkoutBuilder {
 			w.steps.add(step);
 
 			if (i + 1 != repetitions) {
-				Step rest = new Step();
-				rest.intensity = Intensity.RESTING;
+				Step rest = null;
 				switch (intervalRestType) {
 				case 0: // Time
-					rest.durationType = Dimension.TIME;
-					rest.durationValue = intervalRestTime;
+					rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
 					break;
 				case 1: // Distance
-					rest.durationType = Dimension.DISTANCE;
-					rest.durationValue = intevalRestDistance;
+					rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
 					break;
 				}
 				IntervalTrigger trigger = new IntervalTrigger();

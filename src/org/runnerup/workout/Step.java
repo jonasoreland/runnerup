@@ -184,7 +184,10 @@ public class Step implements TickComponent {
 				s.gpsTracker.stopOrPause();
 				System.err.println("start: " + stepStartTime);
 			} else {
-				s.gpsTracker.startOrResume();
+				if (s.isPaused())
+					s.gpsTracker.stopOrPause();
+				else
+					s.gpsTracker.startOrResume();
 			}
 		} else if (what == Scope.LAP) {
 			lapStartTime = time;
@@ -338,5 +341,13 @@ public class Step implements TickComponent {
 		if (durationType == dimension)
 			return durationValue;
 		return 0;
+	}
+
+	public static Step createPauseStep(Dimension dim, double duration) {
+		Step step = new Step();
+		step.intensity = Intensity.RESTING;
+		step.durationType = dim;
+		step.durationValue = duration;
+		return step;
 	}
 };
