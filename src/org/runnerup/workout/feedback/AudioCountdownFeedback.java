@@ -25,7 +25,6 @@ import org.runnerup.workout.Workout;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
-import android.widget.Toast;
 
 public class AudioCountdownFeedback extends Feedback {
 
