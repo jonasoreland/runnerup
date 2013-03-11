@@ -24,6 +24,7 @@ import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
+import android.content.Context;
 
 /**
  * This class is the top level object for a workout, it is being called by
@@ -36,7 +37,36 @@ public class Workout implements WorkoutComponent {
 	Step currentStep = null;
 	boolean paused = false;
 	ArrayList<Step> steps = new ArrayList<Step>();
-	HashSet<Feedback> pendingFeedback = new HashSet<Feedback>();
+	
+	class PendingFeedback {
+		int depth = 0;
+		HashSet<Feedback> set = new HashSet<Feedback>();      // For uniquing
+		ArrayList<Feedback> list = new ArrayList<Feedback>(); // For emitting
+
+		void init() {
+			depth++;
+		}
+		
+		void add(Feedback f) {
+			if (set.contains(f))
+				return;
+			set.add(f);
+			list.add(f);
+		}
+		
+		boolean end(Context context) {
+			--depth;
+			if (depth == 0) {
+				for (Feedback f : list) {
+					f.emit(Workout.this, context);
+				}
+				set.clear();
+				list.clear();
+			}
+			return depth == 0;
+		}
+	};
+	PendingFeedback pendingFeedback = new PendingFeedback();
 
 	GpsTracker gpsTracker = null;
 
@@ -239,7 +269,7 @@ public class Workout implements WorkoutComponent {
 	}
 	
 	private void initFeedback() {
-		pendingFeedback.clear();
+		pendingFeedback.init();
 	}
 
 	public void addFeedback(Feedback f) {
@@ -247,12 +277,9 @@ public class Workout implements WorkoutComponent {
 	}
 
 	private void emitFeedback() {
-		for (Feedback f : pendingFeedback) {
-			f.emit(this, gpsTracker.getApplicationContext());
-		}
-		pendingFeedback.clear();
+		pendingFeedback.end(gpsTracker.getApplicationContext());
 	}
-
+	
 	void newLap(ContentValues tmp) {
 		tmp.put(DB.LAP.LAP, lap);
 		gpsTracker.newLap(tmp);
