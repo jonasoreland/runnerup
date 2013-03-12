@@ -26,6 +26,7 @@ import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.util.Constants;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Intensity;
 
 import android.app.AlertDialog;
@@ -338,7 +339,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		float d = 0;
 		if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
 			d = tmp.getAsFloat(DB.ACTIVITY.DISTANCE);
-			activityDistance.setText(Long.toString((long) d) + " m");
+			activityDistance.setText(Dimension.distanceCue(getResources(), (long)d, true, true));
 		}
 
 		float t = 0;
@@ -398,7 +399,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			tv1.setText(laps[position].getAsString("_id"));
 			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
 			float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position].getAsFloat(DB.LAP.DISTANCE) : 0;
-			tv2.setText(d + "m");
+			tv2.setText(Dimension.distanceCue(getResources(), (long)d, true, true));
 			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
 			long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position].getAsLong(DB.LAP.TIME) : 0;
 			tv3.setText(DateUtils.formatElapsedTime(t));

@@ -33,5 +33,16 @@
 	
 	<string name="txt_dimension_time">time</string>
 	<string name="txt_dimension_distance">distance</string>
-	<string name="txt_dimenstion_speed">speed</string>
+	<string name="txt_dimension_speed">speed</string>
+
+	<string name="txt_distance_kilometer">kilometer</string>
+	<string name="txt_distance_kilometers">kilometers</string>
+	<string name="txt_distance_mile">mile</string>
+	<string name="txt_distance_miles">miles</string>
+	<string name="txt_distance_meter">meter</string>
+	<string name="txt_distance_meters">meters</string>
+
+	<string name="txt_distance_km">km</string>
+	<string name="txt_distance_mile">mi</string>
+	<string name="txt_distance_m">m</string>
 </resources>

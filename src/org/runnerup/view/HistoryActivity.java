@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants;
+import org.runnerup.workout.Dimension;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -147,7 +148,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[2]);
 				if (!cursor.isNull(2)) {
-					tv.setText(Long.toString((long) d) + " m");
+					tv.setText(Dimension.distanceCue(getResources(), (long)d, true, true));
 				} else {
 					tv.setText("");
 				}
