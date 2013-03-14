@@ -206,13 +206,20 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public double get(Scope scope, Dimension d) {
-		if (d == Dimension.DISTANCE)
+		switch(d) {
+		case DISTANCE:
 			return getDistance(scope);
-		else if (d == Dimension.TIME)
+		case TIME:
 			return getTime(scope);
-		else if (d == Dimension.SPEED)
+		case SPEED:
 			return getSpeed(scope);
-		assert (false);
+		case PACE: {
+			double s = getSpeed(scope);
+			if (s != 0)
+				return 1.0d/s;
+			return 0;
+		}
+		}
 		return 0;
 	}
 
