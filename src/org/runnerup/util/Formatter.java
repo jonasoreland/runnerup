@@ -53,6 +53,8 @@ public class Formatter {
 			return formatDistance(target, (long)value);
 		case TIME:
 			return formatTime(target, (long)value);
+		case PACE:
+			return formatPace(target, value);
 		}
 		return "";
 	}

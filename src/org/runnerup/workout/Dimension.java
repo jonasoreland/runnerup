@@ -29,7 +29,8 @@ public enum Dimension {
 
 	TIME(1, R.string.txt_dimension_time), 
 	DISTANCE(2, R.string.txt_dimension_distance),
-	SPEED(3, R.string.txt_dimension_speed);
+	SPEED(3, R.string.txt_dimension_speed),
+	PACE(4, R.string.txt_dimension_pace);
 
 	int value = 0;
 	int textId = 0;
