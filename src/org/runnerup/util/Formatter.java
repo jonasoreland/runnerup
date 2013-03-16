@@ -35,7 +35,7 @@ public class Formatter {
 		CUE,           // for text to speech
 		CUE_COUNTDOWN, // for text to speech countdown
 		TXT,           // same as TXT_BRIEF
-		TXT_BRIEF,     // brief for printing
+		TXT_SHORT,     // brief for printing
 		TXT_LONG       // long for printing
 	};
 	
@@ -75,7 +75,7 @@ public class Formatter {
 		case CUE:
 			return cuePace(meter_per_seconds);
 		case TXT:
-		case TXT_BRIEF:
+		case TXT_SHORT:
 			return txtPace(meter_per_seconds, false);
 		case TXT_LONG:
 			return txtPace(meter_per_seconds, true);
@@ -155,7 +155,7 @@ public class Formatter {
 		case CUE:
 			return cueDistance(meters, false);
 		case TXT:
-		case TXT_BRIEF:
+		case TXT_SHORT:
 			return cueDistance(meters, true);
 		case TXT_LONG:
 			return Long.toString(meters) + " m";
