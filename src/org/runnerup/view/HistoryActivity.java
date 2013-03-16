@@ -82,7 +82,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME };
 
 		Cursor c = mDB.query(DB.ACTIVITY.TABLE, from, "deleted == 0", null,
-				null, null, "_id desc", "25");
+				null, null, "_id desc", "100");
 		CursorAdapter adapter = new HistoryListAdapter(this, c);
 		setListAdapter(adapter);
 		mCursors.add(c);
