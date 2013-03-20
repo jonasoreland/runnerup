@@ -66,7 +66,7 @@ public class UploadManager {
 		mSpinner = new ProgressDialog(activity);
 	}
 
-	public void close() {
+	public synchronized void close() {
 		if (mDB != null) {
 			mDB.close();
 			mDB = null;
@@ -77,6 +77,10 @@ public class UploadManager {
 		}
 	}
 
+	public synchronized boolean isClosed() {
+		return mDB == null;
+	}
+	
 	public void load(String uploaderName) {
 		String from[] = new String[] { "_id", DB.ACCOUNT.AUTH_CONFIG };
 		String args[] = { uploaderName };
@@ -333,6 +337,10 @@ public class UploadManager {
 
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
+				if (isClosed()) {
+					return;
+				}
+				
 				if (result == Uploader.Status.OK) {
 					doUpload();
 					return;
@@ -343,33 +351,36 @@ public class UploadManager {
 	}
 
 	private void doUpload() {
-		mSpinner.setMessage("Uploading " + currentUploader.getName());
+		final ProgressDialog copySpinner = mSpinner;
+		final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
+
+		copySpinner.setMessage("Uploading " + currentUploader.getName());
+
 		new AsyncTask<Uploader, String, Uploader.Status>() {
 
 			@Override
 			protected Uploader.Status doInBackground(Uploader... params) {
-				return params[0].upload(mDB, mID);
+				return params[0].upload(copyDB, mID);
 			}
 
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
 				if (result == Uploader.Status.OK) {
-					uploadOK();
-					return;
+					uploadOK(copySpinner, copyDB);
 				}
+				copyDB.close();
 				nextUploader();
 			}
 		}.execute(currentUploader);
 	}
 
-	private void uploadOK() {
-		mSpinner.setMessage("Saving");
+	private void uploadOK(ProgressDialog copySpinner, SQLiteDatabase copyDB) {
+		copySpinner.setMessage("Saving");
 		ContentValues tmp = new ContentValues();
 		tmp.put(DB.EXPORT.ACCOUNT, currentUploader.getId());
 		tmp.put(DB.EXPORT.ACTIVITY, mID);
 		tmp.put(DB.EXPORT.STATUS, 0);
-		mDB.insert(DB.EXPORT.TABLE, null, tmp);
-		nextUploader();
+		copyDB.insert(DB.EXPORT.TABLE, null, tmp);
 	}
 
 	private void doneUploading() {
