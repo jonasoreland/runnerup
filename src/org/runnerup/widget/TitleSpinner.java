@@ -288,6 +288,7 @@ public class TitleSpinner extends LinearLayout {
 				}
 
 				final TimePicker timePicker = new TimePicker(context);
+				timePicker.setIs24HourView(true);
 				alert.setView(timePicker);
 				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
