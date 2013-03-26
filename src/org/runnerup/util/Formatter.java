@@ -34,7 +34,7 @@ public class Formatter {
 	public enum Type {
 		CUE,           // for text to speech
 		CUE_COUNTDOWN, // for text to speech countdown
-		TXT,           // same as TXT_BRIEF
+		TXT,           // same as TXT_SHORT
 		TXT_SHORT,     // brief for printing
 		TXT_LONG       // long for printing
 	};
