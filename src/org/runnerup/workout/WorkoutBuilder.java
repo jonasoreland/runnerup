@@ -286,7 +286,11 @@ public class WorkoutBuilder {
 		for (Double d : list) {
 			if (d >= step.getDurationValue())
 				continue;
-			triggerTimes.add(step.getDurationValue() - d);
+			double val = step.getDurationValue() - d;
+			if ((val % first) == 0) {
+				continue; // handled by interval trigger
+			}
+			triggerTimes.add(val);
 		}
 		
 		{
