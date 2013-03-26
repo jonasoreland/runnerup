@@ -25,8 +25,8 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.util.Constants;
+import org.runnerup.util.Formatter;
 import org.runnerup.widget.WidgetUtil;
-import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Intensity;
 
 import android.app.AlertDialog;
@@ -40,7 +40,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -102,7 +101,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	AsyncTask<String, String, Route> loadRouteTask = null;
 	
 	UploadManager uploadManager = null;
-
+	Formatter formatter = null;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -115,7 +115,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();
 		uploadManager = new UploadManager(this);
-
+		formatter = new Formatter(this);
+		
 		if (mode.contentEquals("save")) {
 			this.mode = MODE_SAVE;
 		} else if (mode.contentEquals("details")) {
@@ -325,32 +326,25 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		ContentValues tmp = DBHelper.get(c);
 		c.close();
 
-		java.text.DateFormat DF = android.text.format.DateFormat
-				.getDateFormat(this);
-		java.text.DateFormat TF = android.text.format.DateFormat
-				.getTimeFormat(this);
-
 		long st = 0;
 		if (false && !c.isNull(0)) {
 			st = c.getLong(0);
-			activityTime.setText(DF.format(st * 1000) + " "
-					+ TF.format(st * 1000));
+			activityTime.setText(formatter.formatDateTime(Formatter.Type.TXT_LONG, st));
 		}
 		float d = 0;
 		if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
 			d = tmp.getAsFloat(DB.ACTIVITY.DISTANCE);
-			activityDistance.setText(Dimension.distanceCue(getResources(), (long)d, true, true));
+			activityDistance.setText(formatter.formatDistance(Formatter.Type.TXT_LONG, (long) d));
 		}
 
 		float t = 0;
 		if (tmp.containsKey(DB.ACTIVITY.TIME)) {
 			t = tmp.getAsFloat(DB.ACTIVITY.TIME);
-			activityTime.setText(DateUtils.formatElapsedTime((long)t));
+			activityTime.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, (long)t));
 		}
 
 		if (d != 0 && t != 0) {
-			activityPace.setText(DateUtils
-					.formatElapsedTime((long) (1000 * t / d)) + "/km");
+			activityPace.setText(formatter.formatPace(Formatter.Type.TXT_LONG, d / t));
 		}
 
 		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
@@ -399,15 +393,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			tv1.setText(laps[position].getAsString("_id"));
 			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
 			float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position].getAsFloat(DB.LAP.DISTANCE) : 0;
-			tv2.setText(Dimension.distanceCue(getResources(), (long)d, true, true));
+			tv2.setText(formatter.formatDistance(Formatter.Type.TXT_LONG, (long)d));
 			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
 			long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position].getAsLong(DB.LAP.TIME) : 0;
-			tv3.setText(DateUtils.formatElapsedTime(t));
+			tv3.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, t));
 			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
 			if (t != 0 && d != 0)
 			{
-				tv4.setText(DateUtils.formatElapsedTime((long) (1000 * t / d))
-						+ "/km");
+				tv4.setText(formatter.formatPace(Formatter.Type.TXT_LONG, d / t));
 			}
 			else
 			{

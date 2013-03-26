@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants;
-import org.runnerup.workout.Dimension;
+import org.runnerup.util.Formatter;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +40,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
+	Formatter formatter = null;
 	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 
 	/** Called when the activity is first created. */
@@ -52,6 +52,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();
+		formatter = new Formatter(this);
 		this.getListView().setDividerHeight(2);
 		fillData();
 	}
@@ -82,7 +83,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME };
 
 		Cursor c = mDB.query(DB.ACTIVITY.TABLE, from, "deleted == 0", null,
-				null, null, "_id desc", "100");
+				null, null, "_id desc", null);
 		CursorAdapter adapter = new HistoryListAdapter(this, c);
 		setListAdapter(adapter);
 		mCursors.add(c);
@@ -98,16 +99,10 @@ public class HistoryActivity extends ListActivity implements Constants {
 
 	public class HistoryListAdapter extends CursorAdapter {
 		LayoutInflater inflater;
-		java.text.DateFormat mDF = null;
-		java.text.DateFormat mTF = null;
 
 		public HistoryListAdapter(Context context, Cursor c) {
 			super(context, c);
 			inflater = LayoutInflater.from(context);
-			mDF = android.text.format.DateFormat
-					.getDateFormat(HistoryActivity.this);
-			mTF = android.text.format.DateFormat
-					.getTimeFormat(HistoryActivity.this);
 		}
 
 		@Override
@@ -138,8 +133,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[1]);
 				if (!cursor.isNull(1)) {
-					tv.setText(mDF.format(st * 1000) + " "
-							+ mTF.format(st * 1000));
+					tv.setText(formatter.formatDateTime(Formatter.Type.TXT_LONG, st));
 				} else {
 					tv.setText("");
 				}
@@ -148,7 +142,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[2]);
 				if (!cursor.isNull(2)) {
-					tv.setText(Dimension.distanceCue(getResources(), (long)d, true, true));
+					tv.setText(formatter.formatDistance(Formatter.Type.TXT_SHORT, (long)d));
 				} else {
 					tv.setText("");
 				}
@@ -157,7 +151,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[3]);
 				if (!cursor.isNull(3)) {
-					tv.setText(DateUtils.formatElapsedTime(t));
+					tv.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, t));
 				} else {
 					tv.setText("");
 				}
@@ -166,8 +160,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[4]);
 				if (!cursor.isNull(3) && !cursor.isNull(3)) {
-					tv.setText(DateUtils
-							.formatElapsedTime((long) (1000 * t / d)) + "/km");
+					tv.setText(formatter.formatPace(Formatter.Type.TXT_LONG, d/t));
 				} else {
 					tv.setText("");
 				}

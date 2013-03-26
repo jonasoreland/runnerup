@@ -135,7 +135,7 @@ public class Formatter {
 	 * @param seconds_since_epoch
 	 * @return
 	 */
-	String formatDateTime(Type target, long seconds_since_epoch) {
+	public String formatDateTime(Type target, long seconds_since_epoch) {
 		// ignore target
 		StringBuffer s = new StringBuffer();
 		s.append(dateFormat.format(seconds_since_epoch * 1000)); // takes milliseconds as argument
@@ -150,7 +150,7 @@ public class Formatter {
 	 * @param meters
 	 * @return
 	 */
-	String formatDistance(Type target, long meters) {
+	public String formatDistance(Type target, long meters) {
 		switch(target) {
 		case CUE:
 			return cueDistance(meters, false);
@@ -189,5 +189,9 @@ public class Formatter {
 			s.append(" ").append(resources.getString(meters > 1 ? res_meters : res_meter));
 		}
 		return s.toString();
+	}
+
+	public CharSequence formatElapsedTime(Type target, long elapsedSeconds) {
+		return DateUtils.formatElapsedTime(elapsedSeconds);
 	}
 }

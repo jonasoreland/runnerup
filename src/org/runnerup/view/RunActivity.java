@@ -23,9 +23,9 @@ import java.util.TimerTask;
 
 import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
 import org.runnerup.workout.Scope;
-import org.runnerup.workout.Speed;
 import org.runnerup.workout.Workout;
 
 import android.app.Activity;
@@ -39,7 +39,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,6 +66,7 @@ public class RunActivity extends Activity implements TickListener {
 	TextView countdownView = null;
 	ListView workoutList = null;
 	org.runnerup.workout.Step currentStep = null;
+	Formatter formatter = null;
 	
 	class WorkoutRow { org.runnerup.workout.Step step = null; ContentValues lap = null;};
 	ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
@@ -80,7 +80,8 @@ public class RunActivity extends Activity implements TickListener {
 		setContentView(R.layout.run);
 		bindGpsTracker();
 		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
-
+		formatter = new Formatter(this);
+		
 		stopButton = (Button) findViewById(R.id.stopButton);
 		stopButton.setOnClickListener(stopButtonClick);
 		pauseButton = (Button) findViewById(R.id.pauseButton);
@@ -259,20 +260,15 @@ public class RunActivity extends Activity implements TickListener {
 		double ad = workout.getDistance(Scope.WORKOUT);
 		long at = workout.getTime(Scope.WORKOUT);
 		double as = workout.getSpeed(Scope.WORKOUT);
-		long ap = (long) Speed.convert(as, Speed.PACE_SPK); // seconds per
-															// kilometer...suitable
-															// for
-															// formatElapsedTime
-		activityTime.setText(DateUtils.formatElapsedTime(at));
-		activityDistance.setText("" + ad);
-		activityPace.setText(DateUtils.formatElapsedTime(ap));
+		activityTime.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, at));
+		activityDistance.setText(formatter.formatDistance(Formatter.Type.TXT_SHORT, (long) ad));
+		activityPace.setText(formatter.formatPace(Formatter.Type.TXT_SHORT, as));
 		double ld = workout.getDistance(Scope.LAP);
 		long lt = workout.getTime(Scope.LAP);
 		double ls = workout.getSpeed(Scope.LAP);
-		long lp = (long) Speed.convert(ls, Speed.PACE_SPK);
-		lapTime.setText(DateUtils.formatElapsedTime(lt));
-		lapDistance.setText("" + ld);
-		lapPace.setText(DateUtils.formatElapsedTime(lp));
+		lapTime.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, lt));
+		lapDistance.setText(formatter.formatDistance(Formatter.Type.TXT_SHORT, (long) ld));
+		lapPace.setText(formatter.formatPace(Formatter.Type.TXT_SHORT, ls));
 		
 		if (currentStep != workout.getCurrentStep()) {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
