@@ -51,7 +51,7 @@
         android:key="intervalTime"
         android:prompt="@string/simple_type"
         android:text="Interval time (HH:MM:SS)"
-        runnerup:type="edittext" />
+        runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/intervalDistance"
@@ -61,8 +61,8 @@
         android:inputType="numberDecimal"
         android:key="intervalDistance"
         android:prompt="@string/simple_type"
-        android:text="Interval distance (km)"
-        runnerup:type="edittext" />
+        android:text="Interval distance (m)"
+        runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/intervalRestType"
@@ -82,7 +82,7 @@
         android:key="intervalRestTime"
         android:prompt="@string/simple_type"
         android:text="Rest time (HH:MM:SS)"
-        runnerup:type="edittext" />
+        runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/intervalRestDistance"
@@ -92,8 +92,8 @@
         android:inputType="numberDecimal"
         android:key="intervalRestDistance"
         android:prompt="@string/simple_type"
-        android:text="Rest distance (km)"
-        runnerup:type="edittext" />
+        android:text="Rest distance (m)"
+        runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/intervalRepetitions"

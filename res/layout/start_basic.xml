@@ -67,7 +67,7 @@
         android:key="basicTime"
         android:prompt="@string/simple_type"
         android:text="Goal time (HH:MM:SS)"
-        runnerup:type="edittext" />
+        runnerup:type="durationpicker" />
 
     <TextView
         android:id="@+id/textView1"

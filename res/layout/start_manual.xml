@@ -53,7 +53,7 @@
         android:prompt="@string/simple_type"
         android:text="Duration (HH:MM:SS)"
         android:defaultValue="00:00:00"
-        runnerup:type="edittext" />
+        runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manualDistance"
