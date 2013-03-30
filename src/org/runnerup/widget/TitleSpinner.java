@@ -29,7 +29,9 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -51,7 +53,9 @@ public class TitleSpinner extends LinearLayout {
 		TS_SPINNER_TXT,
 		TS_EDITTEXT,
 		TS_DATEPICKER,
-		TS_TIMEPICKER
+		TS_TIMEPICKER,
+		TS_DURATIONPICKER,
+		TS_DISTANCEPICKER
 	};
 	
 	private int mValueInt = -1;
@@ -118,6 +122,12 @@ public class TitleSpinner extends LinearLayout {
 		} else if ("timepicker".contentEquals(type)) {
 			mType = Type.TS_TIMEPICKER;
 			setupTimePicker(context, arr, defaultValue);
+		} else if ("durationpicker".contentEquals(type)) {
+			mType = Type.TS_DURATIONPICKER;
+			setupDurationPicker(context, arr, defaultValue);
+		} else if ("distancepicker".contentEquals(type)) {
+			mType = Type.TS_DISTANCEPICKER;
+			setupDistancePicker(context, arr, defaultValue);
 		} else {
 			String s = null;
 			s.charAt(8);
@@ -315,6 +325,111 @@ public class TitleSpinner extends LinearLayout {
 		});
 	}
 
+	private static long parseSeconds(String string, long defaultValue) {
+		String[] split = string.split(":");
+		long mul = 1;
+		long sum = 0;
+		for (int i = split.length - 1; i >= 0; i--) {
+			sum += Long.parseLong(split[i]) * mul;
+			mul *= 60;
+		}
+		return sum;
+	}
+	
+	private void setupDurationPicker(final Context context, TypedArray arr, CharSequence defaultValue) {
+		if (defaultValue != null) {
+			mValue.setText(defaultValue);
+		} else {
+			mValue.setText("");
+		}
+		
+		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+		layout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+				alert.setTitle(mTitle.getText());
+				if (mPrompt != null) {
+					alert.setMessage(mPrompt);
+				}
+
+				final DurationPicker timePicker = new DurationPicker(context, null);
+				timePicker.setEpochTime(parseSeconds(mValue.getText().toString(), 0));
+
+				final LinearLayout layout = new LinearLayout(context);
+				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+				layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+				layout.addView(timePicker);
+				alert.setView(layout);
+				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						setValue(getValue(timePicker));
+						dialog.dismiss();
+					}
+
+					private String getValue(DurationPicker dp) {
+						return DateUtils.formatElapsedTime(timePicker.getEpochTime());
+					}
+				});
+				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.dismiss();
+					}
+				});
+				AlertDialog dialog = alert.create();
+				dialog.show();
+			}
+		});
+	}
+
+	private void setupDistancePicker(final Context context, TypedArray arr, CharSequence defaultValue) {
+		if (defaultValue != null) {
+			mValue.setText(defaultValue);
+		} else {
+			mValue.setText("");
+		}
+		
+		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+		layout.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+				alert.setTitle(mTitle.getText());
+				if (mPrompt != null) {
+					alert.setMessage(mPrompt);
+				}
+
+				final DistancePicker distancePicker = new DistancePicker(context, null);
+				distancePicker.setDistance((long)Double.parseDouble(mValue.getText().toString()));
+
+				final LinearLayout layout = new LinearLayout(context);
+				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+				layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+				layout.addView(distancePicker);
+				alert.setView(layout);
+				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						setValue(getValue(distancePicker));
+						dialog.dismiss();
+					}
+
+					private String getValue(DistancePicker dp) {
+						return Long.toString(dp.getDistance());
+					}
+				});
+				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.dismiss();
+					}
+				});
+				AlertDialog dialog = alert.create();
+				dialog.show();
+			}
+		});
+	}
+
 	public void setAdapter(SpinnerAdapter adapter) {
 		mSpinner.setAdapter(adapter);
 		loadValue(null);
@@ -348,12 +463,12 @@ public class TitleSpinner extends LinearLayout {
 			setValue(pref.getInt(mKey, def));
 			break;
 		case TS_SPINNER_TXT:
+		case TS_EDITTEXT:
+		case TS_DURATIONPICKER:
+		case TS_DISTANCEPICKER:
 			final String val = pref.getString(mKey, defaultValue == null ? "" : defaultValue);
 			setValue(val);
 			break;
-		case TS_EDITTEXT:
-			String newValue = pref.getString(mKey, defaultValue == null ? "" : defaultValue);
-			setValue(newValue);
 		}
 	}
 
