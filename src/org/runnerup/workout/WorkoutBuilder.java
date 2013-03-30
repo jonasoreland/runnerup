@@ -161,7 +161,7 @@ public class WorkoutBuilder {
 			SharedPreferences prefs,
 			SharedPreferences audioPrefs) {
 		Workout w = new Workout();
-		boolean warmup = false;
+		boolean warmup = true;
 		boolean cooldown = true;
 
 		if (warmup) {
@@ -194,10 +194,10 @@ public class WorkoutBuilder {
 		
 		int intervalType = prefs.getInt("intervalType", 0);
 		long intervalTime = parseSeconds(prefs.getString("intervalTime", "00:04:00"), 4 * 60);
-		double intevalDistance = 1000 * parseDouble(prefs.getString("intervalDistance", "1.0"), 1.0);
+		double intevalDistance = parseDouble(prefs.getString("intervalDistance", "1000"), 1000);
 		int intervalRestType = prefs.getInt("intervalRestType", 0);
 		long intervalRestTime = parseSeconds(prefs.getString("intervalRestTime", "00:01:00"), 60);
-		double intevalRestDistance = 1000 * parseDouble(prefs.getString("intervalRestDistance", "0.2"), 0.2);
+		double intevalRestDistance = parseDouble(prefs.getString("intervalRestDistance", "200"), 200);
 		for (int i = 0; i < repetitions; i++) {
 			Step step = new Step();
 			switch (intervalType) {
