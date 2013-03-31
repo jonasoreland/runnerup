@@ -18,6 +18,7 @@ package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
 
+import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Event;
 import org.runnerup.workout.Feedback;
@@ -32,7 +33,8 @@ public class AudioFeedback extends Feedback {
 	Event event = Event.STARTED;
 	Scope scope = Scope.WORKOUT;
 	Dimension dimension = Dimension.DISTANCE;
-		TextToSpeech textToSpeech;
+	TextToSpeech textToSpeech;
+	Formatter formatter;
 	
 	public AudioFeedback(Scope scope, Event event) {
 		super();
@@ -52,6 +54,7 @@ public class AudioFeedback extends Feedback {
 	public void onInit(Workout s, HashMap<String, Object> bindValues) {
 		super.onInit(s, bindValues);
 		textToSpeech = (TextToSpeech) bindValues.get(Workout.KEY_TTS);
+		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
 	}
 	
 	@Override

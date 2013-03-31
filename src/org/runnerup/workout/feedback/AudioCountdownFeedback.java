@@ -18,6 +18,7 @@ package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
 
+import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Scope;
@@ -32,7 +33,8 @@ public class AudioCountdownFeedback extends Feedback {
 	Scope scope = Scope.STEP;
 	Dimension dimension = Dimension.TIME;
 	TextToSpeech textToSpeech;
-
+	Formatter formatter;
+	
 	public AudioCountdownFeedback(Scope s, Dimension d) {
 		this.scope = s;
 		this.dimension = d;
@@ -41,6 +43,7 @@ public class AudioCountdownFeedback extends Feedback {
 	@Override
 	public void onInit(Workout s, HashMap<String, Object> bindValues) {
 		textToSpeech = (TextToSpeech) bindValues.get(Workout.KEY_TTS);
+		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
 	}
 	
 	@Override

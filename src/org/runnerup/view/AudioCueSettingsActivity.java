@@ -23,6 +23,7 @@ import java.util.HashMap;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Formatter;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.workout.Dimension;
@@ -274,6 +275,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				Workout w = Workout.fakeWorkoutForTestingAudioCue();
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
 				bindValues.put(Workout.KEY_TTS, tts);
+				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
 				for (Feedback f : feedback) {
 					f.onInit(w, bindValues);
 					f.emit(w,  AudioCueSettingsActivity.this.getApplicationContext());

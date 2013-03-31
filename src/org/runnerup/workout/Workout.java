@@ -72,6 +72,7 @@ public class Workout implements WorkoutComponent {
 
 	public static final String KEY_TTS = "tts";
 	public static final String KEY_COUNTER_VIEW = "CountdownView";
+	public static final String KEY_FORMATTER = "Formatter";
 	
 	public Workout() {
 	}
