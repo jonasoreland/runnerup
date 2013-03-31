@@ -18,6 +18,7 @@ package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
 
+import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Scope;
@@ -32,6 +33,7 @@ public class CountdownFeedback extends Feedback {
 	Scope scope = Scope.STEP;
 	Dimension dimension = Dimension.TIME;
 	TextView textView = null;
+	Formatter formatter;
 
 	public CountdownFeedback(Scope s, Dimension d) {
 		this.scope = s;
@@ -41,6 +43,7 @@ public class CountdownFeedback extends Feedback {
 	@Override
 	public void onInit(Workout s, HashMap<String, Object> bindValues) {
 		textView = (TextView) bindValues.get(Workout.KEY_COUNTER_VIEW);
+		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
 	}
 	
 	@Override
