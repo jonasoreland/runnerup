@@ -261,15 +261,15 @@ public class RunActivity extends Activity implements TickListener {
 		double ad = workout.getDistance(Scope.WORKOUT);
 		long at = workout.getTime(Scope.WORKOUT);
 		double as = workout.getSpeed(Scope.WORKOUT);
-		activityTime.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, at));
-		activityDistance.setText(formatter.formatDistance(Formatter.Type.TXT_SHORT, (long) ad));
-		activityPace.setText(formatter.formatPace(Formatter.Type.TXT_SHORT, as));
+		activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, at));
+		activityDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ad));
+		activityPace.setText(formatter.formatPace(Formatter.TXT_SHORT, as));
 		double ld = workout.getDistance(Scope.LAP);
 		long lt = workout.getTime(Scope.LAP);
 		double ls = workout.getSpeed(Scope.LAP);
-		lapTime.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, lt));
-		lapDistance.setText(formatter.formatDistance(Formatter.Type.TXT_SHORT, (long) ld));
-		lapPace.setText(formatter.formatPace(Formatter.Type.TXT_SHORT, ls));
+		lapTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, lt));
+		lapDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ld));
+		lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ls));
 		
 		if (currentStep != workout.getCurrentStep()) {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();

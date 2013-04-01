@@ -329,22 +329,22 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		long st = 0;
 		if (false && !c.isNull(0)) {
 			st = c.getLong(0);
-			activityTime.setText(formatter.formatDateTime(Formatter.Type.TXT_LONG, st));
+			activityTime.setText(formatter.formatDateTime(Formatter.TXT_LONG, st));
 		}
 		float d = 0;
 		if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
 			d = tmp.getAsFloat(DB.ACTIVITY.DISTANCE);
-			activityDistance.setText(formatter.formatDistance(Formatter.Type.TXT_LONG, (long) d));
+			activityDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) d));
 		}
 
 		float t = 0;
 		if (tmp.containsKey(DB.ACTIVITY.TIME)) {
 			t = tmp.getAsFloat(DB.ACTIVITY.TIME);
-			activityTime.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, (long)t));
+			activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, (long)t));
 		}
 
 		if (d != 0 && t != 0) {
-			activityPace.setText(formatter.formatPace(Formatter.Type.TXT_LONG, d / t));
+			activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, d / t));
 		}
 
 		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
@@ -393,14 +393,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			tv1.setText(laps[position].getAsString("_id"));
 			TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
 			float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position].getAsFloat(DB.LAP.DISTANCE) : 0;
-			tv2.setText(formatter.formatDistance(Formatter.Type.TXT_LONG, (long)d));
+			tv2.setText(formatter.formatDistance(Formatter.TXT_LONG, (long)d));
 			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
 			long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position].getAsLong(DB.LAP.TIME) : 0;
-			tv3.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, t));
+			tv3.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, t));
 			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
 			if (t != 0 && d != 0)
 			{
-				tv4.setText(formatter.formatPace(Formatter.Type.TXT_LONG, d / t));
+				tv4.setText(formatter.formatPace(Formatter.TXT_LONG, d / t));
 			}
 			else
 			{

@@ -133,7 +133,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[1]);
 				if (!cursor.isNull(1)) {
-					tv.setText(formatter.formatDateTime(Formatter.Type.TXT_LONG, st));
+					tv.setText(formatter.formatDateTime(Formatter.TXT_LONG, st));
 				} else {
 					tv.setText("");
 				}
@@ -142,7 +142,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[2]);
 				if (!cursor.isNull(2)) {
-					tv.setText(formatter.formatDistance(Formatter.Type.TXT_SHORT, (long)d));
+					tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long)d));
 				} else {
 					tv.setText("");
 				}
@@ -151,7 +151,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[3]);
 				if (!cursor.isNull(3)) {
-					tv.setText(formatter.formatElapsedTime(Formatter.Type.TXT_LONG, t));
+					tv.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, t));
 				} else {
 					tv.setText("");
 				}
@@ -160,7 +160,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 			{
 				TextView tv = (TextView) view.findViewById(to[4]);
 				if (!cursor.isNull(3) && !cursor.isNull(3)) {
-					tv.setText(formatter.formatPace(Formatter.Type.TXT_LONG, d/t));
+					tv.setText(formatter.formatPace(Formatter.TXT_LONG, d/t));
 				} else {
 					tv.setText("");
 				}

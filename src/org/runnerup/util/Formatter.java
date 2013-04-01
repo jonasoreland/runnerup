@@ -31,13 +31,11 @@ public class Formatter {
 	java.text.DateFormat dateFormat = null;
 	java.text.DateFormat timeFormat = null;
 
-	public enum Type {
-		CUE,           // for text to speech
-		CUE_COUNTDOWN, // for text to speech countdown
-		TXT,           // same as TXT_SHORT
-		TXT_SHORT,     // brief for printing
-		TXT_LONG       // long for printing
-	};
+	public static final int CUE = 1;           // for text to speech
+	public static final int CUE_COUNTDOWN = 2; // for text to speech countdown
+	public static final int TXT = 4;           // same as TXT_SHORT
+	public static final int TXT_SHORT = 8;     // brief for printing
+	public static final int TXT_LONG = 16;     // long for printing
 	
 	public Formatter(Context ctx) {
 		context = ctx;
@@ -47,7 +45,7 @@ public class Formatter {
 		timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
 	}
 
-	public String format(Type target, Dimension dimension, double value) {
+	public String format(int target, Dimension dimension, double value) {
 		switch(dimension) {
 		case DISTANCE:
 			return formatDistance(target, (long)value);
@@ -59,7 +57,7 @@ public class Formatter {
 		return "";
 	}
 		
-	private String formatTime(Type target, long value) {
+	private String formatTime(int target, long value) {
 		return "";
 	}
 
@@ -70,7 +68,7 @@ public class Formatter {
 	 * @param meter_per_seconds
 	 * @return
 	 */
-	public String formatPace(Type target, double meter_per_seconds) {
+	public String formatPace(int target, double meter_per_seconds) {
 		switch(target) {
 		case CUE:
 			return cuePace(meter_per_seconds);
@@ -135,7 +133,7 @@ public class Formatter {
 	 * @param seconds_since_epoch
 	 * @return
 	 */
-	public String formatDateTime(Type target, long seconds_since_epoch) {
+	public String formatDateTime(int target, long seconds_since_epoch) {
 		// ignore target
 		StringBuffer s = new StringBuffer();
 		s.append(dateFormat.format(seconds_since_epoch * 1000)); // takes milliseconds as argument
@@ -150,7 +148,7 @@ public class Formatter {
 	 * @param meters
 	 * @return
 	 */
-	public String formatDistance(Type target, long meters) {
+	public String formatDistance(int target, long meters) {
 		switch(target) {
 		case CUE:
 			return cueDistance(meters, false);
@@ -191,7 +189,7 @@ public class Formatter {
 		return s.toString();
 	}
 
-	public CharSequence formatElapsedTime(Type target, long elapsedSeconds) {
+	public CharSequence formatElapsedTime(int target, long elapsedSeconds) {
 		return DateUtils.formatElapsedTime(elapsedSeconds);
 	}
 }
