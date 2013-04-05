@@ -32,10 +32,11 @@ public class Formatter {
 	java.text.DateFormat timeFormat = null;
 
 	public static final int CUE = 1;           // for text to speech
-	public static final int CUE_COUNTDOWN = 2; // for text to speech countdown
+	public static final int CUE_SHORT = 2;     // brief for tts
+	public static final int CUE_LONG = 3;      // long for tts
 	public static final int TXT = 4;           // same as TXT_SHORT
-	public static final int TXT_SHORT = 8;     // brief for printing
-	public static final int TXT_LONG = 16;     // long for printing
+	public static final int TXT_SHORT = 5;     // brief for printing
+	public static final int TXT_LONG = 6;     // long for printing
 	
 	public Formatter(Context ctx) {
 		context = ctx;
@@ -50,17 +51,93 @@ public class Formatter {
 		case DISTANCE:
 			return formatDistance(target, (long)value);
 		case TIME:
-			return formatTime(target, (long)value);
+			return formatElapsedTime(target, (long)value);
 		case PACE:
 			return formatPace(target, value);
 		}
 		return "";
 	}
 		
-	private String formatTime(int target, long value) {
+	public String formatElapsedTime(int target, long seconds) {
+		switch(target) {
+		case CUE:
+		case CUE_SHORT:
+			return cueElapsedTime(seconds, false);
+		case CUE_LONG:
+			return cueElapsedTime(seconds, true);
+		case TXT:
+		case TXT_SHORT:
+			return DateUtils.formatElapsedTime(seconds);
+		case TXT_LONG:
+			return txtElapsedTime(seconds);
+		}
 		return "";
 	}
 
+	private String cueElapsedTime(long seconds, boolean includeDimension) {
+		long hours = 0;
+		long minutes = 0;
+		if (seconds >= 3600) {
+			hours = seconds / 3600;
+			seconds -= hours * 3600;
+		}
+		if (seconds >= 60) {
+			minutes = seconds / 60;
+			seconds -= minutes * 60;
+		}
+		StringBuilder s = new StringBuilder();
+		if (hours > 0) {
+			includeDimension = true;
+			s.append(hours).append(" ").append(resources.getString(hours > 1 ? R.string.hours : R.string.hour));
+		}
+		if (minutes > 0) {
+			if (hours > 0)
+				s.append(" ");
+			includeDimension = true;
+			s.append(minutes).append(" ").append(resources.getString(minutes > 1 ? R.string.minutes : R.string.minute));
+		}
+		if (seconds > 0) {
+			if (hours > 0 || minutes > 0)
+				s.append(" ");
+			
+			if (includeDimension) {
+				s.append(seconds).append(" ").append(resources.getString(seconds > 1 ? R.string.seconds : R.string.second));
+			} else {
+				s.append(seconds);
+			}
+		}
+		return s.toString();
+	}
+
+	private String txtElapsedTime(long seconds) {
+		long hours = 0;
+		long minutes = 0;
+		if (seconds >= 3600) {
+			hours = seconds / 3600;
+			seconds -= hours * 3600;
+		}
+		if (seconds >= 60) {
+			minutes = seconds / 60;
+			seconds -= minutes * 60;
+		}
+		StringBuilder s = new StringBuilder();
+		if (hours > 0) {
+			s.append(hours).append(" ").append(resources.getString(R.string.txt_elapsed_h));
+		}
+		if (minutes > 0) {
+			if (hours > 0)
+				s.append(" ");
+			s.append(minutes).append(" ").append(resources.getString(R.string.txt_elapsed_m));
+		}
+		if (seconds > 0) {
+			if (hours > 0 || minutes > 0)
+				s.append(" ");
+			s.append(seconds).append(" ").append(resources.getString(R.string.txt_elapsed_s));
+		}
+		return s.toString();
+	}
+
+	
 	/**
 	 * Format pace
 	 * 
@@ -71,6 +148,8 @@ public class Formatter {
 	public String formatPace(int target, double meter_per_seconds) {
 		switch(target) {
 		case CUE:
+		case CUE_SHORT:
+		case CUE_LONG:
 			return cuePace(meter_per_seconds);
 		case TXT:
 		case TXT_SHORT:
@@ -86,7 +165,7 @@ public class Formatter {
 	 * @param speed_meter_per_second
 	 * @return string suitable for printing according to settings
 	 */
-	public String txtPace(double meter_per_second, boolean includeUnit) {
+	private String txtPace(double meter_per_second, boolean includeUnit) {
 		//TODO read preferences for preferred unit
 		long val = (long) Speed.convert(meter_per_second, Speed.PACE_SPK);
 		String str = DateUtils.formatElapsedTime(val);
@@ -96,7 +175,7 @@ public class Formatter {
 			return str + "/km";
 	}
 
-	public String cuePace(double meter_per_seconds) {
+	private String cuePace(double meter_per_seconds) {
 		long seconds_per_unit = (long) Speed.convert(meter_per_seconds, Speed.PACE_SPK);
 		long hours_per_unit = 0;
 		long minutes_per_unit = 0;
@@ -110,18 +189,17 @@ public class Formatter {
 		}
 		StringBuilder s = new StringBuilder();
 		if (hours_per_unit > 0) {
-			s.append(hours_per_unit).append(" ").append(resources.getString(R.string.hours));
+			s.append(hours_per_unit).append(" ").append(resources.getString(hours_per_unit > 1 ? R.string.hours : R.string.hour));
 		}
 		if (minutes_per_unit > 0) {
 			if (hours_per_unit > 0)
 				s.append(" ");
-			s.append(minutes_per_unit).append(" ").append(resources.getString(R.string.minutes));
+			s.append(minutes_per_unit).append(" ").append(resources.getString(minutes_per_unit > 1 ? R.string.minutes : R.string.minute));
 		}
 		if (seconds_per_unit > 0) {
 			if (hours_per_unit > 0 || minutes_per_unit > 0)
 				s.append(" ");
-			
-			s.append(seconds_per_unit).append(" ").append(resources.getString(R.string.seconds));
+			s.append(seconds_per_unit).append(" ").append(resources.getString(seconds_per_unit > 1 ? R.string.seconds : R.string.second));
 		}
 		s.append(" " + resources.getString(R.string.perkilometer));
 		return s.toString();
@@ -151,6 +229,8 @@ public class Formatter {
 	public String formatDistance(int target, long meters) {
 		switch(target) {
 		case CUE:
+		case CUE_LONG:
+		case CUE_SHORT:
 			return cueDistance(meters, false);
 		case TXT:
 		case TXT_SHORT:
@@ -161,7 +241,7 @@ public class Formatter {
 		return null;
 	}
 
-	String cueDistance(long meters, boolean txt) {
+	private String cueDistance(long meters, boolean txt) {
 		double base_val = 1000; // 1km
 		double decimals = 1;
 		int res_base = R.string.txt_distance_kilometer;
@@ -187,9 +267,5 @@ public class Formatter {
 			s.append(" ").append(resources.getString(meters > 1 ? res_meters : res_meter));
 		}
 		return s.toString();
-	}
-
-	public CharSequence formatElapsedTime(int target, long elapsedSeconds) {
-		return DateUtils.formatElapsedTime(elapsedSeconds);
 	}
 }

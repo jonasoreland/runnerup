@@ -340,7 +340,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		float t = 0;
 		if (tmp.containsKey(DB.ACTIVITY.TIME)) {
 			t = tmp.getAsFloat(DB.ACTIVITY.TIME);
-			activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, (long)t));
+			activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, (long)t));
 		}
 
 		if (d != 0 && t != 0) {
@@ -396,7 +396,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			tv2.setText(formatter.formatDistance(Formatter.TXT_LONG, (long)d));
 			TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
 			long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position].getAsLong(DB.LAP.TIME) : 0;
-			tv3.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, t));
+			tv3.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
 			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
 			if (t != 0 && d != 0)
 			{
