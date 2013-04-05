@@ -140,11 +140,14 @@ public class UploadManager {
 		return l.isConfigured();
 	}
 
+	private Callback configureCallback = null;
 	public void configure(final Callback callback, final String name, final boolean uploading) {
 		Uploader l = uploaders.get(name);
 		if (l == null) {
 			return;
 		}
+		currentUploader = l;
+		configureCallback = callback;
 		switch (l.getAuthMethod()) {
 		case OAUTH2:
 			Intent i = l.configure(activity);
@@ -186,7 +189,6 @@ public class UploadManager {
 			configure(usernamePasswordCallback, currentUploader.getName(), true);
 			return;
 		}
-
 		doLogin();
 	}
 
@@ -203,7 +205,7 @@ public class UploadManager {
 				nextUploader();
 				break;
 			case OK:
-				doUpload();
+				doLogin();
 				break;
 			}
 		}
@@ -399,9 +401,9 @@ public class UploadManager {
 			mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
 			tmp.put("_id", currentUploader.getId());
 			currentUploader.init(tmp);
-			doLogin();
+			configureCallback.run(currentUploader.getName(), Uploader.Status.OK);
 		} else {
-			nextUploader();
+			configureCallback.run(currentUploader.getName(), Uploader.Status.ERROR);
 		}
 	}
 

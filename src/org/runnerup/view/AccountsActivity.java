@@ -29,6 +29,7 @@ import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -218,4 +219,12 @@ public class AccountsActivity extends ListActivity implements Constants {
 			}
 		}
 	};
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == UploadManager.CONFIGURE_REQUEST) {
+			uploadManager.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
 }

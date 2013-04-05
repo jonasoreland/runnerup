@@ -115,6 +115,8 @@ public class OAuth2Activity extends Activity {
 
 				}
 
+				System.err.println("onPageFinished: >" + url + "<");
+				
 				if (url.startsWith(mRedirectUri)) {
 					Uri u = Uri.parse(url);
 					String e = null;
@@ -127,6 +129,7 @@ public class OAuth2Activity extends Activity {
 					}
 
 					if (e != null) {
+						System.err.println("e: " + e);
 						Intent res = new Intent();
 						res.putExtra("error", e);
 						OAuth2Activity.this.setResult(Activity.RESULT_CANCELED,
@@ -173,6 +176,7 @@ public class OAuth2Activity extends Activity {
 						if (obj.has("expires"))
 							res.putExtra("expires", obj.getString("expires"));
 					} catch (Exception ex) {
+						ex.printStackTrace(System.err);
 						res.putExtra("ex", ex.toString());
 						resultCode = Activity.RESULT_CANCELED;
 					}
