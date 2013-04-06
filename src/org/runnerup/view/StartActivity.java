@@ -24,6 +24,7 @@ import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
@@ -97,6 +98,8 @@ public class StartActivity extends Activity implements TickListener {
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 	
+	Formatter formatter = null;
+
 	/** Called when the activity is first created. */
 
 	@Override
@@ -106,6 +109,7 @@ public class StartActivity extends Activity implements TickListener {
 		
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getWritableDatabase();
+		formatter = new Formatter(this);
 		
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
@@ -506,13 +510,12 @@ public class StartActivity extends Activity implements TickListener {
 		try {
 			double dist = 1000 * Double.parseDouble(distance); // convert to meters
 			long seconds = WorkoutBuilder.parseSeconds(duration, 0);
-			double speed = dist / seconds;
 			if (dist == 0 || seconds == 0) {
 				manualPace.setVisibility(View.GONE);
 				return;
 			}
-			long val = (long) Speed.convert(speed, Speed.PACE_SPK);
-			manualPace.setValue(DateUtils.formatElapsedTime(val));
+			double speed = dist / seconds;
+			manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, speed));
 			manualPace.setVisibility(View.VISIBLE);
 			return;
 		} catch (NumberFormatException ex) {
