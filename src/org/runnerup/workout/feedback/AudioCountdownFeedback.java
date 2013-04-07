@@ -32,7 +32,7 @@ public class AudioCountdownFeedback extends Feedback {
 	boolean emitScope = false;
 	Scope scope = Scope.STEP;
 	Dimension dimension = Dimension.TIME;
-	TextToSpeech textToSpeech;
+	RUTextToSpeech textToSpeech;
 	Formatter formatter;
 	
 	public AudioCountdownFeedback(Scope s, Dimension d) {
@@ -42,7 +42,7 @@ public class AudioCountdownFeedback extends Feedback {
 	
 	@Override
 	public void onInit(Workout s, HashMap<String, Object> bindValues) {
-		textToSpeech = (TextToSpeech) bindValues.get(Workout.KEY_TTS);
+		textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
 		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
 	}
 	
@@ -67,8 +67,7 @@ public class AudioCountdownFeedback extends Feedback {
 		double remaining = w.getRemaining(scope, dimension); // SI
 		
 		if (remaining > 0) {
-			boolean emitUnit = false;
-			String msg = (emitScope ? scope.getCue(ctx) + " " : "" ) + dimension.getCue(ctx, remaining, emitUnit);
+			String msg = formatter.formatRemaining(Formatter.CUE_SHORT, dimension, remaining);
 			textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
 		}
 	}

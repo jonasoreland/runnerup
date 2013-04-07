@@ -18,7 +18,6 @@ package org.runnerup.util;
 
 import org.runnerup.R;
 import org.runnerup.workout.Dimension;
-import org.runnerup.workout.Speed;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -49,15 +48,18 @@ public class Formatter {
 	public String format(int target, Dimension dimension, double value) {
 		switch(dimension) {
 		case DISTANCE:
-			return formatDistance(target, (long)value);
+			return formatDistance(target, (long) value);
 		case TIME:
-			return formatElapsedTime(target, (long)value);
+			return formatElapsedTime(target, (long) value);
 		case PACE:
 			return formatPace(target, value);
+		case SPEED:
+			//TODO
+			return "";
 		}
 		return "";
 	}
-		
+
 	public String formatElapsedTime(int target, long seconds) {
 		switch(target) {
 		case CUE:
@@ -142,20 +144,20 @@ public class Formatter {
 	 * Format pace
 	 * 
 	 * @param target
-	 * @param meter_per_seconds
+	 * @param seconds_per_meter
 	 * @return
 	 */
-	public String formatPace(int target, double meter_per_seconds) {
+	public String formatPace(int target, double seconds_per_meter) {
 		switch(target) {
 		case CUE:
 		case CUE_SHORT:
 		case CUE_LONG:
-			return cuePace(meter_per_seconds);
+			return cuePace(seconds_per_meter);
 		case TXT:
 		case TXT_SHORT:
-			return txtPace(meter_per_seconds, false);
+			return txtPace(seconds_per_meter, false);
 		case TXT_LONG:
-			return txtPace(meter_per_seconds, true);
+			return txtPace(seconds_per_meter, true);
 		}
 		return "";
 	}
@@ -165,9 +167,9 @@ public class Formatter {
 	 * @param speed_meter_per_second
 	 * @return string suitable for printing according to settings
 	 */
-	private String txtPace(double meter_per_second, boolean includeUnit) {
+	private String txtPace(double seconds_per_meter, boolean includeUnit) {
 		//TODO read preferences for preferred unit
-		long val = (long) Speed.convert(meter_per_second, Speed.PACE_SPK);
+		long val = Math.round(1000.0d * seconds_per_meter);
 		String str = DateUtils.formatElapsedTime(val);
 		if (includeUnit == false)
 			return str;
@@ -175,8 +177,8 @@ public class Formatter {
 			return str + "/km";
 	}
 
-	private String cuePace(double meter_per_seconds) {
-		long seconds_per_unit = (long) Speed.convert(meter_per_seconds, Speed.PACE_SPK);
+	private String cuePace(double seconds_per_meter) {
+		long seconds_per_unit = Math.round(1000.0d * seconds_per_meter);
 		long hours_per_unit = 0;
 		long minutes_per_unit = 0;
 		if (seconds_per_unit >= 3600) {
@@ -267,5 +269,23 @@ public class Formatter {
 			s.append(" ").append(resources.getString(meters > 1 ? res_meters : res_meter));
 		}
 		return s.toString();
+	}
+
+	public String formatRemaining(int target, Dimension dimension, double value) {
+		switch(dimension) {
+		case DISTANCE:
+			return formatRemainingDistance(target, (long)value);
+		case TIME:
+			return formatRemainingTime(target, (long)value);
+		}
+		return "";
+	}
+		
+	public String formatRemainingTime(int target, double value) {
+		return formatElapsedTime(target, (long) value);
+	}
+
+	public String formatRemainingDistance(int target, double value) {
+		return formatDistance(target, (long) value);
 	}
 }

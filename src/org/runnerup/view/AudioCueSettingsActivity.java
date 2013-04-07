@@ -31,6 +31,7 @@ import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.AudioFeedback;
+import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -274,7 +275,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			public void onInit(int arg0) {
 				Workout w = Workout.fakeWorkoutForTestingAudioCue();
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
-				bindValues.put(Workout.KEY_TTS, tts);
+				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts));
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
 				for (Feedback f : feedback) {
 					f.onInit(w, bindValues);
@@ -296,8 +297,11 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			if (prefs.getBoolean("cueinfo_total_time", false)) {
 				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
 			}
-			if (prefs.getBoolean("cueinfo_total_speed", false)) {
+			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_total_speed", false)) {
 				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
+			}
+			if (prefs.getBoolean("cueinfo_total_pace", false)) {
+				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
 			}
 			if (prefs.getBoolean("cueinfo_lap_distance", false)) {
 				feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
@@ -305,8 +309,11 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			if (prefs.getBoolean("cueinfo_lap_time", false)) {
 				feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
 			}
-			if (prefs.getBoolean("cueinfo_lap_speed", false)) {
+			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_lap_speed", false)) {
 				feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
+			}
+			if (prefs.getBoolean("cueinfo_lap_pace", false)) {
+				feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
 			}
 			
 			if (tts != null) {

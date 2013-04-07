@@ -29,7 +29,6 @@ import org.runnerup.util.TickListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
-import org.runnerup.workout.Speed;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
 
@@ -48,7 +47,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -514,8 +512,8 @@ public class StartActivity extends Activity implements TickListener {
 				manualPace.setVisibility(View.GONE);
 				return;
 			}
-			double speed = dist / seconds;
-			manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, speed));
+			double pace = seconds / dist;
+			manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, pace));
 			manualPace.setVisibility(View.VISIBLE);
 			return;
 		} catch (NumberFormatException ex) {

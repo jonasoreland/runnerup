@@ -344,7 +344,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		}
 
 		if (d != 0 && t != 0) {
-			activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, d / t));
+			activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
 		}
 
 		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
@@ -400,7 +400,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
 			if (t != 0 && d != 0)
 			{
-				tv4.setText(formatter.formatPace(Formatter.TXT_LONG, d / t));
+				tv4.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
 			}
 			else
 			{

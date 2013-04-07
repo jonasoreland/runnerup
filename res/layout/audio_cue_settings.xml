@@ -63,9 +63,17 @@
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
+        		android:key="cueinfo_total_pace"
+        		android:title="Total pace" />
+
+<!-- 
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
         		android:key="cueinfo_total_speed"
         		android:title="Total speed" />
-
+-->
+ 
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
@@ -79,8 +87,15 @@
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
+        		android:key="cueinfo_lap_pace"
+        		android:title="Lap pace" />
+<!-- 
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
         		android:key="cueinfo_lap_speed"
         		android:title="Lap speed" />
+-->
     						
    		</PreferenceCategory>
     	<PreferenceCategory android:title="Test audio cue">

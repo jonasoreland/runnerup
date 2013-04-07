@@ -214,12 +214,8 @@ public class Workout implements WorkoutComponent {
 			return getTime(scope);
 		case SPEED:
 			return getSpeed(scope);
-		case PACE: {
-			double s = getSpeed(scope);
-			if (s != 0)
-				return 1.0d/s;
-			return 0;
-		}
+		case PACE:
+			return getPace(scope);
 		}
 		return 0;
 	}
@@ -255,6 +251,13 @@ public class Workout implements WorkoutComponent {
 			return currentStep.getSpeed(this, scope);
 		}
 		assert (false);
+		return 0;
+	}
+
+	public double getPace(Scope scope) {
+		double s = getSpeed(scope);
+		if (s != 0)
+			return 1.0d/s;
 		return 0;
 	}
 

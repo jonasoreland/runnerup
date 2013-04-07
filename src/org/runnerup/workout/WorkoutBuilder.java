@@ -75,8 +75,11 @@ public class WorkoutBuilder {
 		if (prefs.getBoolean("cueinfo_total_time", false)) {
 			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
 		}
-		if (prefs.getBoolean("cueinfo_total_speed", false)) {
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_total_speed", false)) {
 			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
+		}
+		if (prefs.getBoolean("cueinfo_total_pace", false)) {
+			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
 		}
 		if (prefs.getBoolean("cueinfo_lap_distance", false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
@@ -84,8 +87,11 @@ public class WorkoutBuilder {
 		if (prefs.getBoolean("cueinfo_lap_time", false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
 		}
-		if (prefs.getBoolean("cueinfo_lap_speed", false)) {
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_lap_speed", false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
+		}
+		if (prefs.getBoolean("cueinfo_lap_pace", false)) {
+			feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
 		}
 
 		for (Trigger t : triggers) {

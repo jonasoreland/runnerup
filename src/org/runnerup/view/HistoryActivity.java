@@ -159,8 +159,8 @@ public class HistoryActivity extends ListActivity implements Constants {
 
 			{
 				TextView tv = (TextView) view.findViewById(to[4]);
-				if (!cursor.isNull(3) && !cursor.isNull(3)) {
-					tv.setText(formatter.formatPace(Formatter.TXT_LONG, d/t));
+				if (!cursor.isNull(3) && !cursor.isNull(3) && d != 0 && t != 0) {
+					tv.setText(formatter.formatPace(Formatter.TXT_LONG, t/d));
 				} else {
 					tv.setText("");
 				}

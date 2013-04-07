@@ -33,7 +33,7 @@ public class AudioFeedback extends Feedback {
 	Event event = Event.STARTED;
 	Scope scope = Scope.WORKOUT;
 	Dimension dimension = Dimension.DISTANCE;
-	TextToSpeech textToSpeech;
+	RUTextToSpeech textToSpeech;
 	Formatter formatter;
 	
 	public AudioFeedback(Scope scope, Event event) {
@@ -53,7 +53,7 @@ public class AudioFeedback extends Feedback {
 	@Override
 	public void onInit(Workout s, HashMap<String, Object> bindValues) {
 		super.onInit(s, bindValues);
-		textToSpeech = (TextToSpeech) bindValues.get(Workout.KEY_TTS);
+		textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
 		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
 	}
 	
@@ -82,7 +82,7 @@ public class AudioFeedback extends Feedback {
 			msg = scope.getCue(ctx) + " " + event.getCue(ctx);
 		} else {
 			double val = w.get(scope, dimension); // SI
-			msg = scope.getCue(ctx) + " " + dimension.getCue(ctx, val, true);
+			msg = scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
 		}
 		textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
 	}

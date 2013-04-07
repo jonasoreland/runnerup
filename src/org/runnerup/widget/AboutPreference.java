@@ -18,12 +18,12 @@ package org.runnerup.widget;
 
 import org.runnerup.R;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class AboutPreference extends DialogPreference {
 

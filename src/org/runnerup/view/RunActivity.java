@@ -27,6 +27,7 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -115,7 +116,7 @@ public class RunActivity extends Activity implements TickListener {
 		mGpsTracker.start();
 		workout = mGpsTracker.getWorkout();
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
-		bindValues.put(Workout.KEY_TTS, mSpeech);
+		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
 		workout.onInit(workout, bindValues);
@@ -260,16 +261,16 @@ public class RunActivity extends Activity implements TickListener {
 	private void updateView() {
 		double ad = workout.getDistance(Scope.WORKOUT);
 		long at = workout.getTime(Scope.WORKOUT);
-		double as = workout.getSpeed(Scope.WORKOUT);
+		double ap = workout.getPace(Scope.WORKOUT);
 		activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, at));
 		activityDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ad));
-		activityPace.setText(formatter.formatPace(Formatter.TXT_SHORT, as));
+		activityPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ap));
 		double ld = workout.getDistance(Scope.LAP);
 		long lt = workout.getTime(Scope.LAP);
-		double ls = workout.getSpeed(Scope.LAP);
+		double lp = workout.getPace(Scope.LAP);
 		lapTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, lt));
 		lapDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ld));
-		lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ls));
+		lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, lp));
 		
 		if (currentStep != workout.getCurrentStep()) {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
