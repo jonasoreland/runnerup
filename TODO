@@ -1,6 +1,5 @@
 - gui/colors (gui is everything when/if publishing on Market)
   I think RunKeeper's gui/colors is great!
-- km/miles
 
 - map view                         (DONE)
 - workout wizard ala Garmin 410    (DONE)
@@ -27,9 +26,11 @@
 - multiple audio cue schemes       (DONE)
 - manual entry of workouts         (DONE)
 - audio countdown                  (DONE)
+- km/miles                         (DONE)
 - BUG: pause during rest step      (DONE)
 - BUG: pause during rest step confuses audio countdown
 - BUG: test of non Default audio scheme is broken
+- BUG: km/mi in misc dialogs
 
 - routes ??
 - feed
