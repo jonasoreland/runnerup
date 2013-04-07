@@ -22,12 +22,12 @@ import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-public class FeedActivity extends ListActivity implements Constants {
+public class FeedActivity extends Activity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
@@ -38,7 +38,7 @@ public class FeedActivity extends ListActivity implements Constants {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.history);
+		setContentView(R.layout.feed);
 
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();

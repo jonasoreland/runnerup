@@ -32,6 +32,7 @@
 		runnerup:type="spinner_txt"/>
     
     <CheckBox
+        android:visibility="gone"
         android:id="@+id/tabBasicGoal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,6 +40,7 @@
         android:text="Goal" />
 
     <org.runnerup.widget.TitleSpinner
+        android:visibility="gone"
         android:id="@+id/basicType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,6 +50,7 @@
         android:text="Goal type" />
 
     <org.runnerup.widget.TitleSpinner
+        android:visibility="gone"
         android:id="@+id/basicDistance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,6 +62,7 @@
         runnerup:type="edittext" />
 
     <org.runnerup.widget.TitleSpinner
+        android:visibility="gone"
         android:id="@+id/basicTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,11 +72,5 @@
         android:prompt="@string/simple_type"
         android:text="Goal time (HH:MM:SS)"
         runnerup:type="durationpicker" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
 
 </LinearLayout>

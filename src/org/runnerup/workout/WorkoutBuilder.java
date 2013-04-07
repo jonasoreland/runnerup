@@ -104,8 +104,7 @@ public class WorkoutBuilder {
 	/**
 	 * @return workout based on SharedPreferences
 	 */
-	public static Workout createDefaultWorkout(TextView log,
-			SharedPreferences prefs,
+	public static Workout createDefaultWorkout(SharedPreferences prefs,
 			SharedPreferences audioPrefs) {
 		Workout w = new Workout();
 		Step countdownStep = null;
@@ -163,8 +162,7 @@ public class WorkoutBuilder {
 		return w;
 	}
 	
-	public static Workout createDefaultIntervalWorkout(TextView debugView,
-			SharedPreferences prefs,
+	public static Workout createDefaultIntervalWorkout(SharedPreferences prefs,
 			SharedPreferences audioPrefs) {
 		Workout w = new Workout();
 		boolean warmup = true;

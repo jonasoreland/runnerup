@@ -70,7 +70,6 @@ public class StartActivity extends Activity implements TickListener {
 	Button startButton = null;
 	TextView gpsInfoView1 = null;
 	TextView gpsInfoView2 = null;
-	TextView debugView = null;
 
 	TitleSpinner simpleType = null;
 	TitleSpinner simpleTime = null;
@@ -109,22 +108,17 @@ public class StartActivity extends Activity implements TickListener {
 		mDB = mDBHelper.getWritableDatabase();
 		formatter = new Formatter(this);
 		
-		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
-		log("0 mGpsTracker = " + mGpsTracker + ", mSpeech = " + mSpeech);
 		bindGpsTracker();
-		log("1 mGpsTracker = " + mGpsTracker);
-
+		mGpsStatus = new org.runnerup.gpstracker.GpsStatus(this);
 		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
+
+		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		setContentView(R.layout.start);
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(startButtonClick);
 		gpsInfoView1 = (TextView) findViewById(R.id.gpsInfo1);
 		gpsInfoView2 = (TextView) findViewById(R.id.gpsInfo2);
-		debugView = (TextView) findViewById(R.id.textView1);
 
-		mGpsStatus = new org.runnerup.gpstracker.GpsStatus(StartActivity.this);
-		
 		tabHost = (TabHost)findViewById(R.id.tabhostStart);
 		tabHost.setup();
 		TabSpec tabSpec = tabHost.newTabSpec("basic");
@@ -223,27 +217,13 @@ public class StartActivity extends Activity implements TickListener {
 		mDBHelper.close();
 	}
 
-	void log(String s) {
-		if (debugView != null) {
-			CharSequence curr = debugView.getText();
-			int len = curr.length();
-			if (len > 1000) {
-				curr = curr.subSequence(0, 1000);
-			}
-			debugView.setText(s + "\n" + curr);
-		}
-	}
-
 	void onGpsTrackerBound() {
-		log("2 mGpsTracker = " + mGpsTracker);
 		Context ctx = getApplicationContext();
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
 		if (pref.getBoolean("pref_startgps", false) == true) {
-			log("autostart gps");
 			mGpsStatus.start(this);
 			mGpsTracker.startLogging();
 		} else {
-			log("don't autostart gps");
 		}
 		updateView();
 	}
@@ -265,12 +245,9 @@ public class StartActivity extends Activity implements TickListener {
 
 	OnClickListener startButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			log ("here mGpsTracker.isLogging(): " + mGpsTracker.isLogging());
 			if (mGpsStatus.isEnabled() == false) {
-				log("run intent");
 				startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 			} else if (mGpsTracker.isLogging() == false) {
-				log("startLoging");
 				mGpsTracker.startLogging();
 				mGpsStatus.start(StartActivity.this);
 			} else if (mGpsStatus.isFixed()) {
@@ -280,11 +257,11 @@ public class StartActivity extends Activity implements TickListener {
 				Workout w = null;
 				if (tabHost.getCurrentTabTag().contentEquals("basic")) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
-					w = WorkoutBuilder.createDefaultWorkout(debugView, pref, audioPref);
+					w = WorkoutBuilder.createDefaultWorkout(pref, audioPref);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals("interval")) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
-					w = WorkoutBuilder.createDefaultIntervalWorkout(debugView, pref, audioPref);
+					w = WorkoutBuilder.createDefaultIntervalWorkout(pref, audioPref);
 				}
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,
@@ -370,28 +347,21 @@ public class StartActivity extends Activity implements TickListener {
 		@Override
 		public void onInit(int status) {
 			if (status != TextToSpeech.SUCCESS) {
-				log("tts fail: " + status);
 				mSpeech = null;
 			} else {
-				log("tts ok");
 			}
 		}
 	};
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		log("onActivityResult(" + requestCode + ", " + resultCode + ", "
-				+ (data == null ? "null" : data.toString()));
 		if (data != null) {
 			if (data.getStringExtra("url") != null)
-				log("data.getStringExtra(\"url\") => "
-						+ data.getStringExtra("url"));
+				System.err.println("data.getStringExtra(\"url\") => "+ data.getStringExtra("url"));
 			if (data.getStringExtra("ex") != null)
-				log("data.getStringExtra(\"ex\") => "
-						+ data.getStringExtra("ex"));
+				System.err.println("data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
 			if (data.getStringExtra("obj") != null)
-				log("data.getStringExtra(\"obj\") => "
-						+ data.getStringExtra("obj"));
+				System.err.println("data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
 		}
 		if (requestCode == 112) {
 			onGpsTrackerBound();

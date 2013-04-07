@@ -17,10 +17,7 @@
 - Name/comment to activity         (DONE)
 - configure accounts               (DONE)
 - multi upload                     (DONE)
-- speed/pace
-  should it be global settings or per workout settings ??
-  e.g maybe speed is more interesting that pace for cycling
-      but pace is more interesting for running
+- speed and/or pace
 - next lap/next interval buttons   (DONE)
 - smoothing of raw data (offline only??)
 - edit laps (e.g crop/merge/delete)
@@ -32,10 +29,10 @@
 - audio countdown                  (DONE)
 - BUG: pause during rest step      (DONE)
 - BUG: pause during rest step confuses audio countdown
+- BUG: test of non Default audio scheme is broken
 
 - routes ??
 - feed
 - advanced workout editor
 - advanced audio cue editor
 - target pace (present in DB)
-
