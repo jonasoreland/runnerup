@@ -16,20 +16,33 @@
  */
 package org.runnerup.util;
 
+import java.util.Locale;
+
 import org.runnerup.R;
 import org.runnerup.workout.Dimension;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
-public class Formatter {
+public class Formatter implements OnSharedPreferenceChangeListener {
 
 	Context context = null;
 	Resources resources = null;
+	SharedPreferences sharedPreferences = null;
 	java.text.DateFormat dateFormat = null;
 	java.text.DateFormat timeFormat = null;
 
+	boolean km = true;
+	String base_unit = "km";
+	double base_meters = km_meters;
+	
+	final static double km_meters = 1000.0;
+	final static double mi_meters = 1609.34;
+	
 	public static final int CUE = 1;           // for text to speech
 	public static final int CUE_SHORT = 2;     // brief for tts
 	public static final int CUE_LONG = 3;      // long for tts
@@ -40,9 +53,66 @@ public class Formatter {
 	public Formatter(Context ctx) {
 		context = ctx;
 		resources = ctx.getResources();
-
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+		
 		dateFormat = android.text.format.DateFormat.getDateFormat(ctx);
 		timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
+
+		setUnit();
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		if (key != null && "pref_unit".contentEquals(key))
+			setUnit();
+	}
+
+	private void setUnit() {
+		String unit = sharedPreferences.getString("pref_unit", null);
+		if (unit == null)
+			km = guessDefaultUnit();
+		else if (unit.contentEquals("km"))
+			km = true;
+		else if (unit.contentEquals("mi"))
+			km = false;
+		else
+			km = guessDefaultUnit();
+
+		if (km) {
+			base_unit = "km";
+			base_meters = km_meters;
+		} else {
+			base_unit = "mi";
+			base_meters = mi_meters;
+		}
+	}
+	
+	private boolean guessDefaultUnit() {
+		String countryCode = Locale.getDefault().getCountry();
+		System.err.println("guessDefaultUnit: countryCode: " + countryCode);
+		if (countryCode == null)
+			return true; // km;
+		if ("US".contentEquals(countryCode) ||
+			"GB".contentEquals(countryCode))
+		{
+			sharedPreferences.edit().putString("pref_unit", "mi");
+			return false;
+		}
+		else
+		{
+			sharedPreferences.edit().putString("pref_unit", "km");
+		}
+		return true;
+	}
+
+	public double getUnitMeters() {
+		return this.base_meters;
+	}
+	
+	public String getUnitString() {
+		return this.base_unit;
 	}
 
 	public String format(int target, Dimension dimension, double value) {
@@ -168,17 +238,18 @@ public class Formatter {
 	 * @return string suitable for printing according to settings
 	 */
 	private String txtPace(double seconds_per_meter, boolean includeUnit) {
-		//TODO read preferences for preferred unit
-		long val = Math.round(1000.0d * seconds_per_meter);
+		long val = Math.round(base_meters * seconds_per_meter);
 		String str = DateUtils.formatElapsedTime(val);
 		if (includeUnit == false)
 			return str;
-		else
-			return str + "/km";
+		else {
+			int res = km ? R.string.txt_distance_km : R.string.txt_distance_mi;
+			return str + "/" + resources.getString(res);
+		}
 	}
 
 	private String cuePace(double seconds_per_meter) {
-		long seconds_per_unit = Math.round(1000.0d * seconds_per_meter);
+		long seconds_per_unit = Math.round(base_meters * seconds_per_meter);
 		long hours_per_unit = 0;
 		long minutes_per_unit = 0;
 		if (seconds_per_unit >= 3600) {
@@ -203,7 +274,7 @@ public class Formatter {
 				s.append(" ");
 			s.append(seconds_per_unit).append(" ").append(resources.getString(seconds_per_unit > 1 ? R.string.seconds : R.string.second));
 		}
-		s.append(" " + resources.getString(R.string.perkilometer));
+		s.append(" " + resources.getString(km ? R.string.perkilometer : R.string.permile));
 		return s.toString();
 	}
 
@@ -244,16 +315,28 @@ public class Formatter {
 	}
 
 	private String cueDistance(long meters, boolean txt) {
-		double base_val = 1000; // 1km
+		double base_val = km_meters; // 1km
 		double decimals = 1;
 		int res_base = R.string.txt_distance_kilometer;
 		int res_base_multi = R.string.txt_distance_kilometers;
+		if (km == false) {
+			base_val = mi_meters;
+			res_base = R.string.txt_distance_mile;
+			res_base_multi = R.string.txt_distance_miles;
+		}
+		
 		int res_meter = R.string.txt_distance_meter;
 		int res_meters = R.string.txt_distance_meters;
 
 		if (txt) {
-			res_base = R.string.txt_distance_km;
-			res_base_multi = R.string.txt_distance_km;
+			if (km) {
+				res_base = R.string.txt_distance_km;
+				res_base_multi = R.string.txt_distance_km;
+			} else {
+				res_base = R.string.txt_distance_mi;
+				res_base_multi = R.string.txt_distance_mi;
+			}
+			
 			res_meter = R.string.txt_distance_m;
 			res_meters = R.string.txt_distance_m;
 		}

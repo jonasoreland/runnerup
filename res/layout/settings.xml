@@ -69,7 +69,6 @@
         android:title="Countdown time (s)" />
 
     <ListPreference
-        android:defaultValue="mi"
         android:key="pref_unit"
         android:persistent="true"
         android:title="Unit preference"

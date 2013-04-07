@@ -30,7 +30,8 @@
     <string name="kilometer">kilometer</string>
     <string name="kilometers">kilometers</string>
     <string name="perkilometer">per kilometer</string>
-
+    <string name="permile">per mile</string>
+    
     <string name="started">started</string>
     <string name="paused">paused</string>
     <string name="resumed">resumed</string>

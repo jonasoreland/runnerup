@@ -44,7 +44,7 @@
 	<string name="txt_distance_meters">meters</string>
 
 	<string name="txt_distance_km">km</string>
-	<string name="txt_distance_mile">mi</string>
+	<string name="txt_distance_mi">mi</string>
 	<string name="txt_distance_m">m</string>
 	
 	<string name="txt_elapsed_h">h</string>
