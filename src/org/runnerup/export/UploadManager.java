@@ -433,6 +433,8 @@ public class UploadManager {
 		config.putNull(DB.ACCOUNT.AUTH_CONFIG);
 		mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
 
+		l.reset();
+		
 		Callback callback = disableCallback;
 		disableCallback = null;
 		callback.run(name, Uploader.Status.OK);

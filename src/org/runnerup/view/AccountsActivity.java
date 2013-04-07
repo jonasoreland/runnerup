@@ -153,14 +153,16 @@ public class AccountsActivity extends ListActivity implements Constants {
 				cb.setTag(id);
 				if (! (configured && enabled)) {
 					cb.setVisibility(View.INVISIBLE);
-				} else if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
-					cb.setChecked(true);
 				} else {
-					cb.setChecked(false);
+					cb.setVisibility(View.VISIBLE);
+					if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
+						cb.setChecked(true);
+					} else {
+						cb.setChecked(false);
+					}
 				}
 			}
 		}
-
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 			return inflater.inflate(R.layout.account_row, parent, false);
