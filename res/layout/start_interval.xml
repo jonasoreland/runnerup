@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="intervalAudio"
-		android:text="Audio cue scheme"
+		android:text="Audio cue settings"
 		runnerup:type="spinner_txt"/>
     
     <org.runnerup.widget.TitleSpinner
@@ -116,6 +116,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="true"
+            android:enabled="false"
             android:text="Warmup" />
 
         <CheckBox
@@ -123,6 +125,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:checked="true"
+            android:enabled="false"
             android:text="Cooldown" />
     </LinearLayout>
 
