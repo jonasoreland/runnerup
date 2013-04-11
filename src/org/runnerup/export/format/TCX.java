@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,6 +18,10 @@ package org.runnerup.export.format;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.runnerup.util.Constants.DB;
 import org.xmlpull.v1.XmlSerializer;
@@ -42,14 +46,16 @@ public class TCX {
 	SQLiteDatabase mDB = null;
 	XmlSerializer mXML = null;
 	String notes = null;
+	SimpleDateFormat simpleDateFormat = null;
 	
 	public TCX(SQLiteDatabase mDB) {
 		this.mDB = mDB;
+		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'", Locale.US);
+		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
-	static String formatTime(long time) {
-		return android.text.format.DateFormat.format(
-				"yyyy-MM-dd'T'kk:mm:ss'Z'", time).toString();
+	String formatTime(long time) {
+		return simpleDateFormat.format(new Date(time));
 	}
 
 	/**

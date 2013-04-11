@@ -345,6 +345,7 @@ public class GpsTracker extends android.app.Service implements
 				mBug23937Delta = 0;
 			}
 			mBug23937Checked = true;
+			System.err.println("Bug23937: gpsTime: " + gpsTime + " utcTime: " + utcTime + " (diff: " + Math.abs(gpsTime - utcTime) + ") => delta: " + mBug23937Delta);
 		}
 		if (mBug23937Delta != 0) {
 			arg0.setTime(arg0.getTime() + mBug23937Delta);
