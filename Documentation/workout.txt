@@ -1,0 +1,28 @@
+<workout> =  name <sport> <step>+
+
+<step> = <intensity> <duration>? <target>? <trigger>* <autolap>?
+
+<sport> = running
+
+<intensity> = active | resting | warmup | cooldown
+
+<dimension> = time | distance | pace | speed
+
+<scope> = workout | activity | lap
+
+<duration> = <dimension> value
+
+<target> = pace | speed  | heart rate | heart rate zone
+
+<trigger> = [ <event-trigger> | <interval-trigger> ] <feedback>+
+
+<interval-trigger> = <scope> <dimension> first interval
+
+<event-trigger> = <scope> <event>
+
+<event> = started | completed | paused | resumed
+
+<feedback> = <audio cue> | <vibration> | <visual countdown> | <audio countdown>
+
+<audio cue> = ( <scope> <dimension> remaining? ) | ( <scope> <event> )
+
