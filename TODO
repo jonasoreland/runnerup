@@ -12,6 +12,8 @@
 - upload to MapMyRun               (DONE)
 - upload to Endmondo
 - upload to runtastic
+- upload to jogg.se
+- upload to www.sports-tracker.com
 - upload from End of activity view (DONE)
 - Name/comment to activity         (DONE)
 - configure accounts               (DONE)
@@ -28,12 +30,16 @@
 - audio countdown                  (DONE)
 - km/miles                         (DONE)
 - BUG: pause during rest step      (DONE)
+
 - BUG: pause during rest step confuses audio countdown
 - BUG: test of non Default audio scheme is broken
 - BUG: km/mi in misc dialogs
+- BUG: pause+stop+resume
 
 - routes ??
 - feed
 - advanced workout editor
 - advanced audio cue editor
 - target pace (present in DB)
+- simple workout goal
+
