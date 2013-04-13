@@ -58,7 +58,12 @@ public class Workout implements WorkoutComponent {
 			--depth;
 			if (depth == 0) {
 				for (Feedback f : list) {
-					f.emit(Workout.this, context);
+					try {
+						f.emit(Workout.this, context);
+					} catch (Exception ex) {
+						// make sure that no small misstake crashes a workout...
+						ex.printStackTrace();
+					}
 				}
 				set.clear();
 				list.clear();
