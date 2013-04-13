@@ -194,13 +194,15 @@ public class Step implements TickComponent {
 					break;
 				}
 			}
-			switch (targetType) {
-			case PACE:
-				tmp.put(DB.LAP.PLANNED_PACE, targetValue);
-				break;
-			case SPEED:
-				if (targetValue != 0) {
-					tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue);
+			if (targetType != null) {
+				switch (targetType) {
+				case PACE:
+					tmp.put(DB.LAP.PLANNED_PACE, targetValue);
+					break;
+				case SPEED:
+					if (targetValue != 0) {
+						tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue);
+					}
 				}
 			}
 			s.newLap(tmp);
