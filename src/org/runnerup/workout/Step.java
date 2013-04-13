@@ -41,10 +41,8 @@ public class Step implements TickComponent {
 	/**
 	 * Target
 	 */
-	int targetType = TARGET_TYPE_NONE;
+	Dimension targetType = null;
 	double targetValue = 0;
-	public static final int TARGET_TYPE_NONE = 0;
-	public static final int TARGET_TYPE_SPEED = 1; // m/s
 
 	/**
 	 * Autolap (m)
@@ -104,7 +102,7 @@ public class Step implements TickComponent {
 	/**
 	 * @return the targetType
 	 */
-	public int getTargetType() {
+	public Dimension getTargetType() {
 		return targetType;
 	}
 
@@ -112,7 +110,7 @@ public class Step implements TickComponent {
 	 * @param targetType
 	 *            the targetType to set
 	 */
-	public void setTargetType(int targetType) {
+	public void setTargetType(Dimension targetType) {
 		this.targetType = targetType;
 	}
 
@@ -197,8 +195,13 @@ public class Step implements TickComponent {
 				}
 			}
 			switch (targetType) {
-			case TARGET_TYPE_SPEED:
+			case PACE:
 				tmp.put(DB.LAP.PLANNED_PACE, targetValue);
+				break;
+			case SPEED:
+				if (targetValue != 0) {
+					tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue);
+				}
 			}
 			s.newLap(tmp);
 		}
