@@ -30,11 +30,11 @@
 - audio countdown                  (DONE)
 - km/miles                         (DONE)
 - BUG: pause during rest step      (DONE)
+- BUG: pause+stop+resume           (DONE)
 
 - BUG: pause during rest step confuses audio countdown
 - BUG: test of non Default audio scheme is broken
 - BUG: km/mi in misc dialogs
-- BUG: pause+stop+resume
 
 - routes ??
 - feed
