@@ -195,7 +195,7 @@ public class RunActivity extends Activity implements TickListener {
 			 */
 			intent.putExtra("mode", "save");
 			intent.putExtra("ID", activityId);
-			RunActivity.this.startActivityForResult(intent, 0);
+			RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
 		}
 	};
 
@@ -225,8 +225,12 @@ public class RunActivity extends Activity implements TickListener {
 			finish();
 			return;
 		} else if (resultCode == Activity.RESULT_FIRST_USER) {
-			workout.onResume(workout);
 			startTimer();
+			if (requestCode == 0) {
+				workout.onResume(workout);
+			} else {
+				// we were paused before stopButtonClick...don't resume
+			}
 		} else {
 			assert (false);
 		}
