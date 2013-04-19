@@ -20,12 +20,22 @@ public class EventTrigger extends Trigger {
 
 	Scope scope = Scope.STEP;
 	Event event = Event.STARTED;
+	int skipCounter = 0;
 
 	@Override
 	public boolean onTick(Workout w) {
 		return false;
 	}
 
+	@Override
+	public void fire(Workout s) {
+		if (skipCounter > 0) {
+			skipCounter--;
+		} else {
+			super.fire(s);
+		}
+	} 
+	
 	@Override
 	public void onStart(Scope what, Workout s) {
 		if (this.scope == what && this.event == Event.STARTED) {
