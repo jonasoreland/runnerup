@@ -96,8 +96,17 @@
         		android:key="cueinfo_lap_speed"
         		android:title="Lap speed" />
 -->
-    						
    		</PreferenceCategory>
+    	<PreferenceCategory android:title="Misc cues">
+			<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="cueinfo_skip_startstop"
+        		android:title="Skip event audio cues"
+        		android:summary="Keep silent when workout start/pause/resume/stop"
+        		/>
+   		</PreferenceCategory>
+	    
     	<PreferenceCategory android:title="Test audio cue">
 			<Preference android:title="Push"
                 android:key="test_cueinfo"
