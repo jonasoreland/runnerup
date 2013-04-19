@@ -361,4 +361,70 @@ public class WorkoutBuilder {
 		}
 		return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
 	}
+
+	public static Workout createAdvancedWorkout(SharedPreferences prefs,
+			SharedPreferences audioPrefs) {
+		Workout w = new Workout();
+		boolean warmup = true;
+		boolean cooldown = true;
+
+		if (warmup) {
+			Step step = new Step();
+			step.intensity = Intensity.WARMUP;
+			step.durationType = null;
+			w.steps.add(step);
+		}
+		
+		ArrayList<Trigger> triggers = createDefaultTriggers(audioPrefs);
+		if (triggers.size() > 0) {
+			{
+				EventTrigger ev = new EventTrigger();
+				ev.event = Event.STARTED;
+				ev.scope = Scope.STEP;
+				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
+				triggers.add(ev);
+			}
+			
+			{
+				EventTrigger ev = new EventTrigger();
+				ev.event = Event.COMPLETED;
+				ev.scope = Scope.STEP;
+				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
+				triggers.add(ev);
+			}
+		}
+		
+		for (int i = 0; i < 2; i++)
+		{
+			int runtimes[] = { 6 * 60, 4 * 60, 2 * 60 };
+			int resttimes[] = { 120, 90, 60 };
+			for (int j = 0; j < 3; j++)
+			{
+				Step step0 = new Step();
+				step0.durationType = Dimension.TIME;
+				step0.durationValue = runtimes[j];
+				step0.triggers = triggers;
+				w.steps.add(step0);
+				Step rest0 = Step.createPauseStep(Dimension.TIME, resttimes[j]);
+				IntervalTrigger trigger = new IntervalTrigger();
+				trigger.dimension = rest0.durationType;
+				trigger.first = 1;
+				trigger.interval = 1;
+				trigger.scope = Scope.STEP;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, rest0.durationType));
+				rest0.triggers.add(trigger);
+				createAudioCountdown(rest0);
+				w.steps.add(rest0);
+			}
+		}
+
+		if (cooldown) {
+			Step step = new Step();
+			step.intensity = Intensity.COOLDOWN;
+			step.durationType = null;
+			w.steps.add(step);
+		}
+		
+		return w;
+	}
 }

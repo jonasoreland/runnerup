@@ -62,6 +62,11 @@ import android.widget.TextView;
 
 public class StartActivity extends Activity implements TickListener {
 
+	final static String TAB_BASIC    = "basic";
+	final static String TAB_INTERVAL = "interval";
+	final static String TAB_ADVANCED = "advanced";
+	final static String TAB_MANUAL   = "manual";
+	
 	GpsTracker mGpsTracker = null;
 	org.runnerup.gpstracker.GpsStatus mGpsStatus = null;
 	TextToSpeech mSpeech = null;
@@ -121,22 +126,22 @@ public class StartActivity extends Activity implements TickListener {
 
 		tabHost = (TabHost)findViewById(R.id.tabhostStart);
 		tabHost.setup();
-		TabSpec tabSpec = tabHost.newTabSpec("basic");
+		TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Basic"));
 		tabSpec.setContent(R.id.tabBasic);
 		tabHost.addTab(tabSpec);
 
-		tabSpec = tabHost.newTabSpec("interval");
+		tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Interval"));
 		tabSpec.setContent(R.id.tabInterval);
 		tabHost.addTab(tabSpec);
 
-		tabSpec = tabHost.newTabSpec("advanced");
+		tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Advanced"));
 		tabSpec.setContent(R.id.tabAdvanced);
 		tabHost.addTab(tabSpec);
 
-		tabSpec = tabHost.newTabSpec("manual");
+		tabSpec = tabHost.newTabSpec(TAB_MANUAL);
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Manual"));
 		tabSpec.setContent(R.id.tabManual);
 		tabHost.addTab(tabSpec);
@@ -232,13 +237,13 @@ public class StartActivity extends Activity implements TickListener {
 
 		@Override
 		public void onTabChanged(String tabId) {
-			if (tabId.contentEquals("basic"))
+			if (tabId.contentEquals(TAB_BASIC))
 				startButton.setVisibility(View.VISIBLE);
-			else if (tabId.contentEquals("interval"))
+			else if (tabId.contentEquals(TAB_INTERVAL))
 				startButton.setVisibility(View.VISIBLE);
-			else if (tabId.contentEquals("advanced"))
+			else if (tabId.contentEquals(TAB_ADVANCED))
 				startButton.setVisibility(View.GONE);
-			else if (tabId.contentEquals("manual"))
+			else if (tabId.contentEquals(TAB_MANUAL))
 				startButton.setVisibility(View.GONE);
 		}
 	};
@@ -263,6 +268,10 @@ public class StartActivity extends Activity implements TickListener {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
 					w = WorkoutBuilder.createDefaultIntervalWorkout(pref, audioPref);
 				}
+				else if (tabHost.getCurrentTabTag().contentEquals("advanced")) {
+					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
+					w = WorkoutBuilder.createAdvancedWorkout(pref, audioPref);
+				}
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,
 						RunActivity.class);
@@ -277,16 +286,19 @@ public class StartActivity extends Activity implements TickListener {
 		{
 			int cnt0 = mGpsStatus.getSatellitesFixed();
 			int cnt1 = mGpsStatus.getSatellitesAvailable();
-			gpsInfoView1.setText("" + cnt0 + "(" + cnt1 + ")");
+			gpsInfoView1.setText("" + cnt0 + "/" + cnt1);
 		}
 
+		String gpsInfo2 = "";
 		if (mGpsTracker != null) {
 			Location l = mGpsTracker.getLastKnownLocation();
 
-			if (l != null) {
-				gpsInfoView2.setText(" " + l.getAccuracy() + "m");
+			if (l != null && l.getAccuracy() > 0) {
+				gpsInfo2 = ", " + l.getAccuracy() + "m";
 			}
 		}
+		gpsInfoView2.setText(gpsInfo2);
+		
 		if (mGpsStatus.isEnabled() == false) {
 			startButton.setEnabled(true);
 			startButton.setText("Enable GPS");
