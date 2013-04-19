@@ -22,6 +22,7 @@ import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -356,8 +357,15 @@ public class GpsTracker extends android.app.Service implements
 				double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
 						.getTime());
 				double distDiff = arg0.distanceTo(mActivityLastLocation);
-				assert (timeDiff >= 0);
-				assert (distDiff >= 0);
+				if (timeDiff < 0) {
+					// time moved backward ??
+					System.err.println("lastTime:       " + mActivityLastLocation.getTime());
+					System.err.println("arg0.getTime(): " + arg0.getTime());
+					System.err.println(" => delta time: " + timeDiff);
+					System.err.println(" => delta dist: " + distDiff);
+					//TODO investigate if this is known...only seems to happen in emulator
+					timeDiff = 0;
+				}
 				mElapsedTimeMillis += timeDiff;
 				mElapsedDistance += distDiff;
 			}
@@ -410,6 +418,7 @@ public class GpsTracker extends android.app.Service implements
 		return mBinder;
 	}
 
+	@SuppressLint("Wakelock") // or else it will complain that "not all code path reach mWakelock.release()" 
 	private void wakelock(boolean get) {
 		if (mWakeLock != null) {
 			if (mWakeLock.isHeld()) {
