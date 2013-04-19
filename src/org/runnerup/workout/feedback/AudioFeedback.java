@@ -22,10 +22,12 @@ import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Event;
 import org.runnerup.workout.Feedback;
+import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.speech.tts.TextToSpeech;
 
 public class AudioFeedback extends Feedback {
@@ -33,6 +35,7 @@ public class AudioFeedback extends Feedback {
 	Event event = Event.STARTED;
 	Scope scope = Scope.WORKOUT;
 	Dimension dimension = Dimension.DISTANCE;
+	Intensity intensity = null;
 	RUTextToSpeech textToSpeech;
 	Formatter formatter;
 	
@@ -48,6 +51,14 @@ public class AudioFeedback extends Feedback {
 		this.scope = scope;
 		this.event = null;
 		this.dimension = dimension;
+	}
+
+	public AudioFeedback(Intensity intensity, Event event) {
+		super();
+		this.scope = null;
+		this.dimension = null;
+		this.intensity = intensity;
+		this.event = event;
 	}
 
 	@Override
@@ -78,9 +89,12 @@ public class AudioFeedback extends Feedback {
 	@Override
 	public void emit(Workout w, Context ctx) {
 		String msg = null;
-		if (event != null) {
+		if (event != null && scope != null) {
 			msg = scope.getCue(ctx) + " " + event.getCue(ctx);
-		} else {
+		} else if (event != null && intensity != null) {
+			Resources res = ctx.getResources();
+			msg = res.getString(intensity.getCueId(), "") + " " + event.getCue(ctx);
+		} else if (dimension != null && scope != null) {
 			double val = w.get(scope, dimension); // SI
 			msg = scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
 		}
