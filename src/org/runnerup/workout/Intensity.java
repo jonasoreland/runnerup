@@ -60,4 +60,8 @@ public enum Intensity {
 	public int getTextId() {
 		return textId;
 	}
+
+	public int getCueId() {
+		return textId;
+	}
 }
