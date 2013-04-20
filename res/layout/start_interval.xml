@@ -104,7 +104,7 @@
         android:key="intervalRepetitions"
         android:prompt="@string/simple_type"
         android:text="Repetitions"
-        runnerup:type="edittext" />
+        runnerup:type="numberpicker" />
 
     <LinearLayout
         android:layout_width="match_parent"
