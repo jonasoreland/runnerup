@@ -25,6 +25,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
@@ -487,20 +488,16 @@ public class StartActivity extends Activity implements TickListener {
 	
 	void setManualPace(String distance, String duration) {
 		System.err.println("distance: >" + distance + "< duration: >" + duration + "<");
-		try {
-			double dist = Double.parseDouble(distance); // convert to meters
-			long seconds = WorkoutBuilder.parseSeconds(duration, 0);
-			if (dist == 0 || seconds == 0) {
-				manualPace.setVisibility(View.GONE);
-				return;
-			}
-			double pace = seconds / dist;
-			manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, pace));
-			manualPace.setVisibility(View.VISIBLE);
+		double dist = SafeParse.parseDouble(distance, 0); // convert to meters
+		long seconds = SafeParse.parseSeconds(duration, 0);
+		if (dist == 0 || seconds == 0) {
+			manualPace.setVisibility(View.GONE);
 			return;
-		} catch (NumberFormatException ex) {
 		}
-		manualPace.setVisibility(View.GONE);
+		double pace = seconds / dist;
+		manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, pace));
+		manualPace.setVisibility(View.VISIBLE);
+		return;
 	}
 	
 	OnSetValueListener onSetManualDistance = new OnSetValueListener() {
@@ -560,7 +557,7 @@ public class StartActivity extends Activity implements TickListener {
 			}
 			long secs = 0;
 			if (duration.length() > 0) {
-				secs = WorkoutBuilder.parseSeconds(duration.toString(), 0);
+				secs = SafeParse.parseSeconds(duration.toString(), 0);
 				save.put(DB.ACTIVITY.TIME, secs);
 			}
 			if (date.length() > 0) {
