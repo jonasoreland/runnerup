@@ -488,7 +488,7 @@ public class StartActivity extends Activity implements TickListener {
 	void setManualPace(String distance, String duration) {
 		System.err.println("distance: >" + distance + "< duration: >" + duration + "<");
 		try {
-			double dist = 1000 * Double.parseDouble(distance); // convert to meters
+			double dist = Double.parseDouble(distance); // convert to meters
 			long seconds = WorkoutBuilder.parseSeconds(duration, 0);
 			if (dist == 0 || seconds == 0) {
 				manualPace.setVisibility(View.GONE);
@@ -555,7 +555,7 @@ public class StartActivity extends Activity implements TickListener {
 			}
 			double dist = 0;
 			if (distance.length() > 0) {
-				dist = 1000 * Double.parseDouble(distance.toString()); // convert to meters
+				dist = Double.parseDouble(distance.toString()); // convert to meters
 				save.put(DB.ACTIVITY.DISTANCE, dist);
 			}
 			long secs = 0;

@@ -63,8 +63,8 @@
         android:layout_below="@+id/manualDuration"
         android:prompt="@string/simple_type"
         android:inputType="numberDecimal"
-        android:text="Distance (km)"
-        runnerup:type="edittext" />
+        android:text="Distance"
+        runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manualPace"
@@ -75,7 +75,7 @@
         android:prompt="@string/simple_type"
         android:inputType="numberDecimal"
         android:text="Pace"
-        runnerup:type="edittext" />
+        runnerup:type="durationpicker" />
 
     <EditText
         android:id="@+id/manualNotes"
