@@ -70,15 +70,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	}
 
 	private void setUnit() {
-		String unit = sharedPreferences.getString("pref_unit", null);
-		if (unit == null)
-			km = guessDefaultUnit();
-		else if (unit.contentEquals("km"))
-			km = true;
-		else if (unit.contentEquals("mi"))
-			km = false;
-		else
-			km = guessDefaultUnit();
+		km = getUseKilometers(sharedPreferences);
 
 		if (km) {
 			base_unit = "km";
@@ -89,7 +81,22 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		}
 	}
 	
-	private boolean guessDefaultUnit() {
+	public static boolean getUseKilometers(SharedPreferences prefs) {
+		boolean _km = true;
+		String unit = prefs.getString("pref_unit", null);
+		if (unit == null)
+			_km = guessDefaultUnit(prefs);
+		else if (unit.contentEquals("km"))
+			_km = true;
+		else if (unit.contentEquals("mi"))
+			_km = false;
+		else
+			_km = guessDefaultUnit(prefs);
+
+		return _km;
+	}
+	
+	private static boolean guessDefaultUnit(SharedPreferences prefs) {
 		String countryCode = Locale.getDefault().getCountry();
 		System.err.println("guessDefaultUnit: countryCode: " + countryCode);
 		if (countryCode == null)
@@ -97,18 +104,25 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		if ("US".contentEquals(countryCode) ||
 			"GB".contentEquals(countryCode))
 		{
-			sharedPreferences.edit().putString("pref_unit", "mi");
+			prefs.edit().putString("pref_unit", "mi");
 			return false;
 		}
 		else
 		{
-			sharedPreferences.edit().putString("pref_unit", "km");
+			prefs.edit().putString("pref_unit", "km");
 		}
 		return true;
 	}
 
 	public double getUnitMeters() {
 		return this.base_meters;
+	}
+	
+	public static double getUnitMeters(SharedPreferences prefs) {
+		if (getUseKilometers(prefs))
+			return km_meters;
+		else
+			return mi_meters;
 	}
 	
 	public String getUnitString() {
