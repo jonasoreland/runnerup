@@ -66,9 +66,9 @@ public class CoachFeedback extends AudioFeedback {
 
 		int cmp = range.compare(val);
 		String msg = "";
-		if (cmp < 0) {
+		if (cmp > 0) {
 			msg = " " + ctx.getResources().getString(R.string.cue_speedup);
-		} else if (cmp > 0) {
+		} else if (cmp < 0) {
 			msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
 		}
 		if (! "".contentEquals(msg)) {

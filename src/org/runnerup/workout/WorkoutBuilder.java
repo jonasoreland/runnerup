@@ -19,6 +19,7 @@ package org.runnerup.workout;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.view.AudioCueSettingsActivity;
 import org.runnerup.workout.feedback.AudioCountdownFeedback;
@@ -134,7 +135,8 @@ public class WorkoutBuilder {
 	 * @return workout based on SharedPreferences
 	 */
 	public static Workout createDefaultWorkout(SharedPreferences prefs,
-			SharedPreferences audioPrefs) {
+			SharedPreferences audioPrefs,
+			boolean targetPace) {
 		Workout w = new Workout();
 		Step countdownStep = null;
 		if (prefs.getBoolean("pref_countdown_active", false))
@@ -204,17 +206,16 @@ public class WorkoutBuilder {
 		
 		w.steps.add(step);
 
-		boolean targetPace = false;
 		if (targetPace)
 		{
-			double unitMeters = 1000.0; //TODO
-			double seconds_per_unit = (double)SafeParse.parseSeconds(prefs.getString("target_pace_max", "00:05:00"), 5*60);
-			int targetPaceRange = prefs.getInt("target_pace_min_range", 15);
+			double unitMeters = Formatter.getUnitMeters(prefs);
+			double seconds_per_unit = (double)SafeParse.parseSeconds(prefs.getString("basic_target_pace_max", "00:05:00"), 5*60);
+			int targetPaceRange = prefs.getInt("basic_target_pace_min_range", 15);
 			double targetPaceMax = seconds_per_unit / unitMeters;
 			double targetPaceMin = (targetPaceMax * unitMeters - targetPaceRange) / unitMeters;
 			Range range = new Range(targetPaceMin, targetPaceMax);
-			int averageSeconds = prefs.getInt("target_pace_moving_average_seconds", 5);
-			int graceSeconds = prefs.getInt("target_pace_grace_seconds", 15);
+			int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "15"), 15);
+			int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "25"), 25);
 			TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
 			tr.scope = Scope.STEP;
 			tr.dimension = Dimension.PACE;

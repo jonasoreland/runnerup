@@ -83,8 +83,20 @@
 
 	<PreferenceScreen 
             android:key="second_preferencescreen"
-            android:title="Development options">
+            android:title="Advanced options">
             
+	    <org.runnerup.widget.TextPreference
+            android:inputType="number"
+            android:key="target_pace_moving_average_seconds"
+            android:persistent="true"
+            android:title="Target pace moving average seconds" />
+	    
+	    <org.runnerup.widget.TextPreference
+            android:inputType="number"
+            android:key="target_pace_grace_seconds"
+            android:persistent="true"
+            android:title="Target pace grace seconds" />
+	    
 	    <org.runnerup.widget.TextPreference
             android:defaultValue="500"
             android:inputType="number"

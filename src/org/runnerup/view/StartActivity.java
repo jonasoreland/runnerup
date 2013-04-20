@@ -81,6 +81,8 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner simpleTime = null;
 	TitleSpinner simpleDistance = null;
 	AudioSchemeListAdapter simpleAudioListAdapter = null;
+	CheckBox simpleTargetPace = null;
+	TitleSpinner simpleTargetPaceValue = null;
 
 	TitleSpinner intervalType = null;
 	TitleSpinner intervalTime = null;
@@ -161,6 +163,16 @@ public class StartActivity extends Activity implements TickListener {
 		simpleAudioListAdapter.reload();
 		TitleSpinner simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basicAudioCueSpinner);
 		simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
+		simpleTargetPace = (CheckBox)findViewById(R.id.tabBasicTargetPace);
+		simpleTargetPaceValue = (TitleSpinner)findViewById(R.id.tabBasicTargetPaceMax);
+		simpleTargetPace.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				simpleTargetPaceValue.setEnabled(isChecked);
+			}
+		});
+		simpleTargetPaceValue.setEnabled(simpleTargetPace.isChecked());
 		
 		intervalType = (TitleSpinner)findViewById(R.id.intervalType);
 		intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
@@ -263,7 +275,7 @@ public class StartActivity extends Activity implements TickListener {
 				Workout w = null;
 				if (tabHost.getCurrentTabTag().contentEquals("basic")) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
-					w = WorkoutBuilder.createDefaultWorkout(pref, audioPref);
+					w = WorkoutBuilder.createDefaultWorkout(pref, audioPref, simpleTargetPace.isChecked());
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals("interval")) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");

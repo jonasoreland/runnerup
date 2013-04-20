@@ -22,8 +22,13 @@ public class Range {
 	private double maxValue;
 
 	public Range (double minValue, double maxValue) {
-		this.minValue = minValue;
-		this.maxValue = maxValue;
+		if (minValue <= maxValue) {
+			this.minValue = minValue;
+			this.maxValue = maxValue;
+		} else {
+			this.minValue = maxValue;
+			this.maxValue = minValue;
+		}
 	}
 
 	public boolean inside(double d) {
@@ -40,5 +45,9 @@ public class Range {
 
 	public boolean contentEquals(Range range) {
 		return this.maxValue == range.maxValue && this.minValue == range.minValue;
+	}
+	
+	public String toString () {
+		return "[ " + minValue + " - " + maxValue + " ]";
 	}
 }

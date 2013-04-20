@@ -73,4 +73,23 @@
         android:text="Goal time (HH:MM:SS)"
         runnerup:type="durationpicker" />
 
+
+    <CheckBox
+        android:id="@+id/tabBasicTargetPace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="Target pace" />
+    
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/tabBasicTargetPaceMax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="00:05:00"
+        android:inputType="time"
+        android:key="basic_target_pace_max"
+        android:prompt="@string/simple_type"
+        android:text="Target pace (HH:MM:SS)"
+        runnerup:type="durationpicker" />
+
 </LinearLayout>

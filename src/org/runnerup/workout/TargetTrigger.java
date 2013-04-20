@@ -19,8 +19,11 @@ package org.runnerup.workout;
 public class TargetTrigger extends Trigger {
 
 	boolean paused = false;
-	int graceCount = 3;    // 1.5s start delay
-	int minGraceCount = 6; // min delay between "coaching" (3s)
+	double lastTimestamp = 0;
+	
+	int graceCount    = 25; //
+	int initialGrace  = 10;
+	int minGraceCount = 25; //
 	
 	Scope scope = Scope.STEP;
 	Dimension dimension = Dimension.PACE;
@@ -33,7 +36,8 @@ public class TargetTrigger extends Trigger {
 	
 	public TargetTrigger(int movingAverageSeconds, int graceSeconds) {
 		measures = new double[movingAverageSeconds];
-		graceCount = graceSeconds;
+		minGraceCount = graceSeconds;
+		reset();
 	}
 	
 	@Override
@@ -42,11 +46,31 @@ public class TargetTrigger extends Trigger {
 		{
 			return false;
 		}
-		double val = w.get(scope, dimension);
-		double avg = addObservation(val); // returns moving average
 
+		double now = w.get(Scope.WORKOUT, Dimension.TIME);
+
+		if (now < lastTimestamp) {
+			// time move backwards...skip
+			lastTimestamp = now;
+		}
+		if (lastTimestamp == 0) {
+			// first time
+			lastTimestamp = now;
+		}
+		if ((now - lastTimestamp) < 1.0) {
+			return false;
+		}
+		final int elapsed = (int) (now - lastTimestamp);
+		lastTimestamp = now;
+
+		final double val = w.get(scope, dimension);
+		for (int i = 0; i < elapsed; i++) {
+			addObservation(val);
+		}
+		double avg = getValue();
+		
 		if (graceCount > 0) { // only emit coaching ever so often
-			graceCount--;
+			graceCount -= elapsed;
 		}
 		else {
 			double cmp = range.compare(avg);
@@ -79,18 +103,20 @@ public class TargetTrigger extends Trigger {
 		}
 	}
 	
-	private void clear() {
+	private void reset() {
 		for (int i = 0; i < measures.length; i++)
 			measures[i] = 0;
 		cntMeasures = 0;
 		sumMeasures = 0;
+		
+		lastTimestamp = 0;
+		graceCount = initialGrace;
 	}
 	
 	@Override
 	public void onStart(Scope what, Workout s) {
 		if (this.scope == what) {
-			clear();
-			graceCount = minGraceCount;
+			reset();
 			for (Feedback f : triggerAction) {
 				f.onStart(s);
 			}
@@ -100,8 +126,6 @@ public class TargetTrigger extends Trigger {
 	@Override
 	public void onPause(Workout s) {
 		paused = true;
-		graceCount = minGraceCount;
-		clear();
 	}
 
 	@Override
@@ -112,8 +136,7 @@ public class TargetTrigger extends Trigger {
 	@Override
 	public void onResume(Workout s) {
 		paused = false;
-		graceCount = minGraceCount;
-		clear();
+		reset();
 	}
 
 	@Override
