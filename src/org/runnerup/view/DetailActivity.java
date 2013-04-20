@@ -83,7 +83,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	final static int MODE_SAVE = 0;
 	final static int MODE_DETAILS = 1;
 	boolean edit = false;
-
+	boolean uploading = false;
+	
 	Button saveButton = null;
 	Button discardButton = null;
 	Button resumeButton = null;
@@ -502,9 +503,11 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				requery();
 				return;
 			}
+			uploading = true;
 			uploadManager.startUploading(new UploadManager.Callback() {
 				@Override
 				public void run(String uploader, Uploader.Status status) {
+					uploading = false;
 					DetailActivity.this.setResult(RESULT_OK);
 					DetailActivity.this.finish();
 				}
@@ -539,6 +542,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 	@Override
 	public void onBackPressed() {
+		if (uploading == true) {
+			/**
+			 * Ignore while uploading
+			 */
+			return;
+		}
 		if (mode == MODE_SAVE) {
 			discardButtonClick.onClick(discardButton);
 		} else {
@@ -555,9 +564,11 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 	OnClickListener uploadButtonClick = new OnClickListener() {
 		public void onClick(View v) {
+			uploading = true;
 			uploadManager.startUploading(new UploadManager.Callback() {
 				@Override
 				public void run(String uploader, Uploader.Status status) {
+					uploading = false;
 					requery();
 				}
 			}, pendingUploaders, mID);
