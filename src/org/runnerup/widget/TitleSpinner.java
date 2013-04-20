@@ -347,7 +347,15 @@ public class TitleSpinner extends LinearLayout {
 		}
 		return defaultValue;
 	}
-	
+
+	private static double parseDouble(String string, double defaultValue) {
+		try {
+			return Double.parseDouble(string);
+		} catch (Exception ex) {
+		}
+		return defaultValue;
+	}
+
 	private void setupDurationPicker(final Context context, TypedArray arr, CharSequence defaultValue) {
 		if (defaultValue != null) {
 			mValue.setText(defaultValue);
@@ -414,7 +422,7 @@ public class TitleSpinner extends LinearLayout {
 				}
 
 				final DistancePicker distancePicker = new DistancePicker(context, null);
-				distancePicker.setDistance((long)Double.parseDouble(mValue.getText().toString()));
+				distancePicker.setDistance((long)parseDouble(mValue.getText().toString(), 0));
 
 				final LinearLayout layout = new LinearLayout(context);
 				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
