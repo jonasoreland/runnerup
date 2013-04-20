@@ -16,6 +16,8 @@
  */
 package org.runnerup.widget;
 
+import org.runnerup.util.Formatter;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
@@ -43,13 +45,16 @@ public class DistancePicker extends LinearLayout {
 		addView(unitMeters);
 		addView(meters);
 
-		setBaseUint(1000, "km");
+		{
+			Formatter f = new Formatter(context);
+			setBaseUint((long) f.getUnitMeters(), f.getUnitString());
+		}
 	}
 
 	public void setBaseUint(long baseUnit, String baseString) {
 		baseUnitMeters = baseUnit;
 		baseUnitString = baseString;
-		meters.setRange(0,  (int)baseUnitMeters, true);
+		meters.setRange(0,  (int)baseUnitMeters - 1, true);
 	}
 	
 	public long getDistance() {
