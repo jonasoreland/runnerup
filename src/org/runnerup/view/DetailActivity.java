@@ -684,12 +684,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
 							float res[] = { 0 };
 							Location.distanceBetween(lastLocation.latitude, lastLocation.longitude, point.latitude, point.longitude, res);
 							acc_distance += res[0];
-							if (acc_distance >= 1000) {
+							if (acc_distance >= formatter.getUnitMeters()) {
 								cnt_distance ++;
 								acc_distance = 0;
 								m = new MarkerOptions();
 								m.position(point);
-								m.title("" + cnt_distance + " km");
+								m.title("" + cnt_distance + " " + formatter.getUnitString());
 								m.snippet(null);
 								m.draggable(false);
 								route.markers.add(m);
