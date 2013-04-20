@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.runnerup.R;
+import org.runnerup.util.SafeParse;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -194,10 +195,7 @@ public class TitleSpinner extends LinearLayout {
 			mSpinner.setAdapter(adapter);
 			int value = 0;
 			if (defaultValue != null) {
-				try {
-					value = Integer.parseInt(defaultValue.toString());
-				} catch (java.lang.NumberFormatException ex) {
-				}
+				value = SafeParse.parseInt(defaultValue.toString(), 0);
 			}
 			if (value >= 0 && value < entries.length) {
 				mValueInt = value;
@@ -329,33 +327,6 @@ public class TitleSpinner extends LinearLayout {
 		});
 	}
 
-	private static long parseSeconds(String string, long defaultValue) {
-		String[] split = string.split(":");
-		long mul = 1;
-		long sum = 0;
-		for (int i = split.length - 1; i >= 0; i--) {
-			sum += Long.parseLong(split[i]) * mul;
-			mul *= 60;
-		}
-		return sum;
-	}
-	
-	private static int parseInt(String string, int defaultValue) {
-		try {
-			return Integer.parseInt(string);
-		} catch (Exception ex) {
-		}
-		return defaultValue;
-	}
-
-	private static double parseDouble(String string, double defaultValue) {
-		try {
-			return Double.parseDouble(string);
-		} catch (Exception ex) {
-		}
-		return defaultValue;
-	}
-
 	private void setupDurationPicker(final Context context, TypedArray arr, CharSequence defaultValue) {
 		if (defaultValue != null) {
 			mValue.setText(defaultValue);
@@ -375,7 +346,7 @@ public class TitleSpinner extends LinearLayout {
 				}
 
 				final DurationPicker timePicker = new DurationPicker(context, null);
-				timePicker.setEpochTime(parseSeconds(mValue.getText().toString(), 0));
+				timePicker.setEpochTime(SafeParse.parseSeconds(mValue.getText().toString(), 0));
 
 				final LinearLayout layout = new LinearLayout(context);
 				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -422,7 +393,7 @@ public class TitleSpinner extends LinearLayout {
 				}
 
 				final DistancePicker distancePicker = new DistancePicker(context, null);
-				distancePicker.setDistance((long)parseDouble(mValue.getText().toString(), 0));
+				distancePicker.setDistance((long)SafeParse.parseDouble(mValue.getText().toString(), 0));
 
 				final LinearLayout layout = new LinearLayout(context);
 				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -470,7 +441,7 @@ public class TitleSpinner extends LinearLayout {
 
 				final NumberPicker numberPicker = new NumberPicker(context, null);
 				numberPicker.setOrientation(VERTICAL);
-				numberPicker.setValue(parseInt(mValue.getText().toString(), 0));
+				numberPicker.setValue(SafeParse.parseInt(mValue.getText().toString(), 0));
 
 				final LinearLayout layout = new LinearLayout(context);
 				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -523,10 +494,7 @@ public class TitleSpinner extends LinearLayout {
 		case TS_SPINNER:
 			int def = 0;
 			if (defaultValue != null) {
-				try {
-					def = Integer.parseInt(defaultValue);
-				} catch (NumberFormatException ex) {
-				}
+				def = SafeParse.parseInt(defaultValue, 0);
 			}
 			setValue(pref.getInt(mKey, def));
 			break;
