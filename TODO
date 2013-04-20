@@ -31,10 +31,11 @@
 - km/miles                         (DONE)
 - BUG: pause during rest step      (DONE)
 - BUG: pause+stop+resume           (DONE)
+- BUG: km/mi in misc dialogs       (DONE)
+  I think I got them all
 
 - BUG: pause during rest step confuses audio countdown
 - BUG: test of non Default audio scheme is broken
-- BUG: km/mi in misc dialogs
 
 - routes ??
 - feed
