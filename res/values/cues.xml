@@ -37,4 +37,7 @@
     <string name="resumed">resumed</string>
     <string name="stopped">stopped</string>
     <string name="completed">completed</string>
+    
+    <string name="cue_speedup">speedup</string>
+    <string name="cue_slowdown">slowdown</string>
 </resources>

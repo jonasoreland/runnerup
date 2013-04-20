@@ -86,8 +86,7 @@ public class AudioFeedback extends Feedback {
 		return true;
 	}
 
-	@Override
-	public void emit(Workout w, Context ctx) {
+	protected String getCue(Workout w, Context ctx) {
 		String msg = null;
 		if (event != null && scope != null) {
 			msg = scope.getCue(ctx) + " " + event.getCue(ctx);
@@ -98,6 +97,12 @@ public class AudioFeedback extends Feedback {
 			double val = w.get(scope, dimension); // SI
 			msg = scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
 		}
+		return msg;
+	}
+	
+	@Override
+	public void emit(Workout w, Context ctx) {
+		String msg = getCue(w, ctx);
 		textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
 	}
 }
