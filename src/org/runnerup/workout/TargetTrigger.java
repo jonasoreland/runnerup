@@ -28,8 +28,13 @@ public class TargetTrigger extends Trigger {
 	Range range = null;
 
 	int cntMeasures = 0;
-	double measures[] = new double[6]; // 3s moving average
+	double measures[] = null;
 	double sumMeasures = 0;
+	
+	public TargetTrigger(int movingAverageSeconds, int graceSeconds) {
+		measures = new double[movingAverageSeconds];
+		graceCount = graceSeconds;
+	}
 	
 	@Override
 	public boolean onTick(Workout w) {
@@ -61,7 +66,13 @@ public class TargetTrigger extends Trigger {
 		measures[cntMeasures % measures.length] = val;
 		cntMeasures++;
 		
-		if (cntMeasures < measures.length) {
+		return getValue();
+	}
+
+	public double getValue() {
+		if (cntMeasures == 0) {
+			return 0;
+		} else if (cntMeasures < measures.length) {
 			return sumMeasures / cntMeasures;
 		} else {
 			return sumMeasures / measures.length;

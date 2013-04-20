@@ -21,6 +21,7 @@ import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Range;
 import org.runnerup.workout.Scope;
+import org.runnerup.workout.TargetTrigger;
 import org.runnerup.workout.Workout;
 
 import android.content.Context;
@@ -29,10 +30,12 @@ import android.speech.tts.TextToSpeech;
 public class CoachFeedback extends AudioFeedback {
 
 	Range range = null;
+	TargetTrigger trigger = null;
 	
-	public CoachFeedback(Scope scope, Dimension dimension, Range range) {
+	public CoachFeedback(Scope scope, Dimension dimension, Range range, TargetTrigger trigger) {
 		super(scope, dimension);
 		this.range = range;
+		this.trigger = trigger;
 	}
 
 	@Override
@@ -55,7 +58,12 @@ public class CoachFeedback extends AudioFeedback {
 
 	@Override
 	public void emit(Workout s, Context ctx) {
-		double val = s.get(scope, dimension);
+		double val;
+		if (trigger != null)
+			val = trigger.getValue();
+		else
+			val = s.get(scope, dimension);
+
 		int cmp = range.compare(val);
 		String msg = "";
 		if (cmp < 0) {
