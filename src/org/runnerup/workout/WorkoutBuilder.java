@@ -19,6 +19,7 @@ package org.runnerup.workout;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.runnerup.util.SafeParse;
 import org.runnerup.view.AudioCueSettingsActivity;
 import org.runnerup.workout.feedback.AudioCountdownFeedback;
 import org.runnerup.workout.feedback.AudioFeedback;
@@ -272,14 +273,14 @@ public class WorkoutBuilder {
 			}
 		}
 		
-		int repetitions = (int) parseDouble(prefs.getString("intervalRepetitions", "1"), 1);
+		int repetitions = (int) SafeParse.parseDouble(prefs.getString("intervalRepetitions", "1"), 1);
 		
 		int intervalType = prefs.getInt("intervalType", 0);
-		long intervalTime = parseSeconds(prefs.getString("intervalTime", "00:04:00"), 4 * 60);
-		double intevalDistance = parseDouble(prefs.getString("intervalDistance", "1000"), 1000);
+		long intervalTime = SafeParse.parseSeconds(prefs.getString("intervalTime", "00:04:00"), 4 * 60);
+		double intevalDistance = SafeParse.parseDouble(prefs.getString("intervalDistance", "1000"), 1000);
 		int intervalRestType = prefs.getInt("intervalRestType", 0);
-		long intervalRestTime = parseSeconds(prefs.getString("intervalRestTime", "00:01:00"), 60);
-		double intevalRestDistance = parseDouble(prefs.getString("intervalRestDistance", "200"), 200);
+		long intervalRestTime = SafeParse.parseSeconds(prefs.getString("intervalRestTime", "00:01:00"), 60);
+		double intevalRestDistance = SafeParse.parseDouble(prefs.getString("intervalRestDistance", "200"), 200);
 		for (int i = 0; i < repetitions; i++) {
 			Step step = new Step();
 			switch (intervalType) {
@@ -405,32 +406,10 @@ public class WorkoutBuilder {
 		}
 	}
 	
-	public static double parseDouble(String string, double defaultValue) {
-		//TODO move this somewhere
-		double distance = defaultValue;
-		try {
-			distance = Double.parseDouble(string);
-		} catch (NumberFormatException ex) {
-		}
-		return distance;
-	}
-
-	public static long parseSeconds(String string, long defaultValue) {
-		//TODO move this somewhere
-		String[] split = string.split(":");
-		long mul = 1;
-		long sum = 0;
-		for (int i = split.length - 1; i >= 0; i--) {
-			sum += Long.parseLong(split[i]) * mul;
-			mul *= 60;
-		}
-		return sum;
-	}
-
 	public static boolean validateSeconds(String newValue) {
 		//TODO move this somewhere
-		long seconds = parseSeconds(newValue, -1);
-		long seconds2 = parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
+		long seconds = SafeParse.parseSeconds(newValue, -1);
+		long seconds2 = SafeParse.parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
 		if (seconds == seconds2)
 			return true;
 		return false;
