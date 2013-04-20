@@ -20,20 +20,28 @@ import org.runnerup.util.Formatter;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class DistancePicker extends LinearLayout {
 
 	long baseUnitMeters;
-	CharSequence baseUnitString;
 	
 	NumberPicker unitMeters; // e.g km or mi
+	TextView unitString;
 	NumberPicker meters;
 	
 	public DistancePicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	
 		unitMeters = new NumberPicker(context, attrs);
+		LinearLayout unitStringLayout = new LinearLayout(context, attrs);
+		unitStringLayout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+		unitStringLayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+		unitString = new TextView(context, attrs);
+		unitString.setTextSize(25);
+		unitStringLayout.addView(unitString);
 		meters = new NumberPicker(context, attrs);
 		
 		unitMeters.setOrientation(VERTICAL);
@@ -43,6 +51,7 @@ public class DistancePicker extends LinearLayout {
 		setOrientation(HORIZONTAL);
 		setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		addView(unitMeters);
+		addView(unitStringLayout);
 		addView(meters);
 
 		{
@@ -53,7 +62,7 @@ public class DistancePicker extends LinearLayout {
 
 	public void setBaseUint(long baseUnit, String baseString) {
 		baseUnitMeters = baseUnit;
-		baseUnitString = baseString;
+		unitString.setText(baseString);
 		meters.setRange(0,  (int)baseUnitMeters - 1, true);
 	}
 	
