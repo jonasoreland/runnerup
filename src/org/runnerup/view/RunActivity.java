@@ -201,7 +201,10 @@ public class RunActivity extends Activity implements TickListener {
 
 	@Override
 	public void onBackPressed() {
-		stopButtonClick.onClick(stopButton);
+		boolean ignore_back = true; // atleast magnus belives that this is better...
+		if (ignore_back == false) {
+			stopButtonClick.onClick(stopButton);
+		}
 	}
 
 	@Override
