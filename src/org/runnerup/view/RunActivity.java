@@ -186,16 +186,18 @@ public class RunActivity extends Activity implements TickListener {
 
 	OnClickListener stopButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			workout.onStop(workout);
-			stopTimer();
-			Intent intent = new Intent(RunActivity.this, DetailActivity.class);
-			/**
-			 * The same activity is used to show details and to save activity
-			 * they show almost the same information
-			 */
-			intent.putExtra("mode", "save");
-			intent.putExtra("ID", activityId);
-			RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
+			if (timer != null) {
+				workout.onStop(workout);
+				stopTimer(); // set timer=null;
+				Intent intent = new Intent(RunActivity.this, DetailActivity.class);
+				/**
+				 * The same activity is used to show details and to save activity
+				 * they show almost the same information
+				 */
+				intent.putExtra("mode", "save");
+				intent.putExtra("ID", activityId);
+				RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
+			}
 		}
 	};
 
