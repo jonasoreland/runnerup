@@ -17,6 +17,7 @@
 package org.runnerup.workout.feedback;
 
 import org.runnerup.R;
+import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Range;
@@ -72,7 +73,8 @@ public class CoachFeedback extends AudioFeedback {
 			msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
 		}
 		if (! "".contentEquals(msg)) {
-			textToSpeech.speak(super.getCue(s, ctx) + msg, TextToSpeech.QUEUE_ADD, null);
+			textToSpeech.speak(scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val) + msg,
+					TextToSpeech.QUEUE_ADD, null);
 		}
 	}
 }

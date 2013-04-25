@@ -19,7 +19,6 @@ package org.runnerup.workout;
 public class TargetTrigger extends Trigger {
 
 	boolean paused = false;
-	double lastTimestamp = 0;
 	
 	int graceCount    = 25; //
 	int initialGrace  = 10;
@@ -29,15 +28,44 @@ public class TargetTrigger extends Trigger {
 	Dimension dimension = Dimension.PACE;
 
 	Range range = null;
-
+	
 	int cntMeasures = 0;
-	double measures[] = null;
-	double sumMeasures = 0;
+	double measure_time[] = null;
+	double measure_distance[] = null;
 	
 	public TargetTrigger(int movingAverageSeconds, int graceSeconds) {
-		measures = new double[movingAverageSeconds];
+		measure_time = new double[movingAverageSeconds];
+		measure_distance = new double[movingAverageSeconds];
 		minGraceCount = graceSeconds;
 		reset();
+	}
+
+	private double getLastTimestamp() {
+		int pos = (cntMeasures - 1) % measure_time.length;
+		return measure_time[pos];
+	}
+
+	private double getOldestTimestamp() {
+		int pos = 0;
+		if (cntMeasures >= measure_time.length) {
+			pos = (cntMeasures - measure_time.length) % measure_time.length;
+		}
+
+		return measure_time[pos];
+	}
+
+	private double getLastDistance() {
+		int pos = (cntMeasures - 1) % measure_time.length;
+		return measure_distance[pos];
+	}
+
+	private double getOldestDistance() {
+		int pos = 0;
+		if (cntMeasures >= measure_time.length) {
+			pos = (cntMeasures - measure_time.length) % measure_time.length;
+		}
+
+		return measure_distance[pos];
 	}
 	
 	@Override
@@ -47,32 +75,30 @@ public class TargetTrigger extends Trigger {
 			return false;
 		}
 
-		double now = w.get(Scope.WORKOUT, Dimension.TIME);
-
-		if (now < lastTimestamp) {
-			// time move backwards...skip
-			lastTimestamp = now;
-		}
-		if (lastTimestamp == 0) {
-			// first time
-			lastTimestamp = now;
-		}
-		if ((now - lastTimestamp) < 1.0) {
+		double time_now = w.get(Scope.WORKOUT, Dimension.TIME);
+		double distance_now = w.get(Scope.WORKOUT, Dimension.DISTANCE);
+		double lastTimestamp = getLastTimestamp();
+		
+		if (time_now < lastTimestamp) {
+			reset();
 			return false;
 		}
-		final int elapsed = (int) (now - lastTimestamp);
-		lastTimestamp = now;
-
-		final double val = w.get(scope, dimension);
-		for (int i = 0; i < elapsed; i++) {
-			addObservation(val);
+		
+		if ((time_now - lastTimestamp) < 1.0) {
+			return false;
 		}
-		double avg = getValue();
+
+		double elapsed_time = time_now - lastTimestamp;
+		final int elapsed_seconds = (int)elapsed_time;
+		for (int i = 0; i < elapsed_seconds; i++) {
+			addObservation(time_now, distance_now);
+		}
 		
 		if (graceCount > 0) { // only emit coaching ever so often
-			graceCount -= elapsed;
+			graceCount -= elapsed_seconds;
 		}
 		else {
+			double avg = getValue();
 			double cmp = range.compare(avg);
 			if (cmp == 0)
 			{
@@ -84,32 +110,36 @@ public class TargetTrigger extends Trigger {
 		return false;
 	}
 
-	private double addObservation (double val) {
-		sumMeasures += val;
-		sumMeasures -= measures[cntMeasures % measures.length];
-		measures[cntMeasures % measures.length] = val;
-		cntMeasures++;
-		
-		return getValue();
+	private void addObservation (double time_now, double distance_now) {
+		int pos = cntMeasures % measure_time.length;
+		measure_time[pos] = time_now;
+		measure_distance[pos] = distance_now;
+		cntMeasures ++;
 	}
 
 	public double getValue() {
-		if (cntMeasures == 0) {
-			return 0;
-		} else if (cntMeasures < measures.length) {
-			return sumMeasures / cntMeasures;
-		} else {
-			return sumMeasures / measures.length;
+		double elapsed_time = getLastTimestamp() - getOldestTimestamp();
+		double elapsed_distance = getLastDistance() - getOldestDistance();
+		
+		switch (dimension) {
+		case PACE:
+			if (elapsed_distance == 0)
+				return 0;
+			return elapsed_time / elapsed_distance;
+		case SPEED:
+			if (elapsed_time == 0)
+				return 0;
+			return elapsed_distance / elapsed_time;
 		}
+		return 0;
 	}
 	
 	private void reset() {
-		for (int i = 0; i < measures.length; i++)
-			measures[i] = 0;
-		cntMeasures = 0;
-		sumMeasures = 0;
-		
-		lastTimestamp = 0;
+		for (int i = 0; i < measure_time.length; i++) {
+			measure_time[i] = 0;
+			measure_distance[i] = 0;
+		}
+		cntMeasures = 1;
 		graceCount = initialGrace;
 	}
 	
