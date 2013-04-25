@@ -19,6 +19,8 @@ package org.runnerup.widget;
 import org.runnerup.R;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -39,7 +41,15 @@ public class AboutPreference extends DialogPreference {
 
 	void init() {
 		setNegativeButtonText(null);
-		Resources res = getContext().getResources();
+		Context ctx = getContext();
+		Resources res = ctx.getResources();
+		try {
+			PackageInfo pInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
+			this.setDialogTitle("RunnerUp v" + pInfo.versionName);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String str = res.getString(R.string.Google_Play_Services_Legal_Notices);
 		if (str.contentEquals(this.getTitle())) {
 			CharSequence msg = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this.getContext());
