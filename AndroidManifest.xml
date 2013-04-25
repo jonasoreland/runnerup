@@ -16,8 +16,8 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="org.runnerup" android:versionCode="5"
-	android:versionName="1.05">
+	package="org.runnerup" android:versionCode="6"
+	android:versionName="1.06">
 
         <uses-sdk
             android:minSdkVersion="8" />
