@@ -50,5 +50,23 @@
 	<string name="txt_elapsed_h">h</string>
 	<string name="txt_elapsed_m">m</string>
 	<string name="txt_elapsed_s">s</string>
-			
+	
+	<string-array name="intensity_types">
+        <item>Active</item>
+        <item>Rest</item>
+        <item>Warmup</item>
+        <item>Cooldown</item>
+        <item>Repeat</item>
+    </string-array>
+
+	<string-array name="duration_types">
+		<item>None</item>
+	    <item>Time</item>
+        <item>Distance</item>
+    </string-array>
+
+	<string-array name="target_types">
+        <item>Pace</item>
+    </string-array>
+		
 </resources>
