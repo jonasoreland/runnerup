@@ -254,9 +254,10 @@ public class StartActivity extends Activity implements TickListener {
 				startButton.setVisibility(View.VISIBLE);
 			else if (tabId.contentEquals(TAB_INTERVAL))
 				startButton.setVisibility(View.VISIBLE);
-			else if (tabId.contentEquals(TAB_ADVANCED))
+			else if (tabId.contentEquals(TAB_ADVANCED)) {
+//				startButton.setVisibility(View.VISIBLE);
 				startButton.setVisibility(View.GONE);
-			else if (tabId.contentEquals(TAB_MANUAL))
+			} else if (tabId.contentEquals(TAB_MANUAL))
 				startButton.setVisibility(View.GONE);
 		}
 	};
@@ -273,15 +274,15 @@ public class StartActivity extends Activity implements TickListener {
 				Context ctx = getApplicationContext();
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 				Workout w = null;
-				if (tabHost.getCurrentTabTag().contentEquals("basic")) {
+				if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
 					w = WorkoutBuilder.createDefaultWorkout(pref, audioPref, simpleTargetPace.isChecked());
 				}
-				else if (tabHost.getCurrentTabTag().contentEquals("interval")) {
+				else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
 					w = WorkoutBuilder.createDefaultIntervalWorkout(pref, audioPref);
 				}
-				else if (tabHost.getCurrentTabTag().contentEquals("advanced")) {
+				else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
 					w = WorkoutBuilder.createAdvancedWorkout(pref, audioPref);
 				}
