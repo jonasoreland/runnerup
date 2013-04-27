@@ -34,7 +34,7 @@
     </string-array>
     
     <string-array name="duration_types">
-        <item>None (until press Next)</item>
+        <item>None</item>
         <item>Time</item>
         <item>Distance</item>
     </string-array>
@@ -42,5 +42,5 @@
     <string-array name="target_types">
         <item>None</item>
         <item>Pace</item>
-    </string-array>
+	</string-array>
 </resources>
