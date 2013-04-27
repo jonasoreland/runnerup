@@ -80,4 +80,36 @@
         android:text="Target pace MM:SS/km"
         runnerup:type="durationpicker" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+			android:layout_weight="1"
+            android:text="OK" 
+            style="@style/ButtonText"
+        	android:background="@drawable/btn_green"/>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="OK" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+			android:layout_weight="1"
+            android:text="Cancel"
+            style="@style/ButtonText"
+        	android:background="@drawable/btn_red"/>
+            
+
+    </LinearLayout>
+
 </LinearLayout>

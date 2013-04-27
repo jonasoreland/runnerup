@@ -17,20 +17,18 @@
 -->
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/step"
+    android:id="@+id/stepButton"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="0dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
-    android:gravity="center_vertical"
-    tools:ignore="DuplicateIds" >
+    android:gravity="center_vertical" >
 
     <TableRow
-        android:id="@+id/TableRow1"
+        android:id="@+id/stepRow0"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         tools:ignore="HardcodedText" >
@@ -40,7 +38,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:gravity="center_vertical|left"
             android:text="Interval"
             android:textColor="@android:color/black"
@@ -51,7 +48,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:gravity="center_vertical|left"
             android:text="Duration"
             android:textColor="@android:color/black" />
@@ -61,20 +57,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:gravity="center_vertical|right"
             android:text="3 min"
             android:textColor="@android:color/black" />
     </TableRow>
 
     <TableRow
-        android:visibility="visible"
-        android:id="@+id/TableRow1"
+        android:id="@+id/stepRow1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:visibility="visible"
         tools:ignore="HardcodedText" >
 
         <TextView
@@ -82,7 +76,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:gravity="center_vertical|left"
             android:text=""
             android:textColor="@android:color/black"
@@ -94,7 +87,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:gravity="center_vertical|left"
             android:text="Pace"
             android:textColor="@android:color/black" />
@@ -104,7 +96,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:clickable="false"
             android:gravity="center_vertical|right"
             android:text="4:00 - 4:15 min/km"
             android:textColor="@android:color/black" />
