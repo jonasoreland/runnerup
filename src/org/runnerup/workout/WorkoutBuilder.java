@@ -214,8 +214,8 @@ public class WorkoutBuilder {
 			double targetPaceMax = seconds_per_unit / unitMeters;
 			double targetPaceMin = (targetPaceMax * unitMeters - targetPaceRange) / unitMeters;
 			Range range = new Range(targetPaceMin, targetPaceMax);
-			int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "15"), 15);
-			int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "25"), 25);
+			int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "20"), 20);
+			int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "30"), 30);
 			TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
 			tr.scope = Scope.STEP;
 			tr.dimension = Dimension.PACE;
