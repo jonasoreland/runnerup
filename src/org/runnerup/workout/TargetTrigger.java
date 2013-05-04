@@ -18,11 +18,12 @@ package org.runnerup.workout;
 
 public class TargetTrigger extends Trigger {
 
+	boolean inited = false;
 	boolean paused = false;
 	
-	int graceCount    = 25; //
-	int initialGrace  = 10;
-	int minGraceCount = 25; //
+	int graceCount    = 30; //
+	int initialGrace  = 20;
+	int minGraceCount = 30; //
 	
 	Scope scope = Scope.STEP;
 	Dimension dimension = Dimension.PACE;
@@ -30,44 +31,34 @@ public class TargetTrigger extends Trigger {
 	Range range = null;
 	
 	int cntMeasures = 0;
+	double measure[] = null;
+	int skip_values = 1;
+	double sort_measure[] = null;
+	double lastTimestamp = 0;
+	
 	double measure_time[] = null;
 	double measure_distance[] = null;
-	
+
+	/**
+	 * cache computing of median
+	 */
+	double lastVal = 0;
+	int lastValCnt = 0;
+
 	public TargetTrigger(int movingAverageSeconds, int graceSeconds) {
-		measure_time = new double[movingAverageSeconds];
-		measure_distance = new double[movingAverageSeconds];
+		measure = new double[movingAverageSeconds];
+		sort_measure = new double[movingAverageSeconds];
+
+		if (dimension == Dimension.SPEED || dimension == Dimension.PACE) {
+			measure_time = new double[movingAverageSeconds];
+			measure_distance = new double[movingAverageSeconds];
+		}
 		minGraceCount = graceSeconds;
+		skip_values = (5 * movingAverageSeconds) / 100; // ignore 5% lowest and 5% higest values
+
 		reset();
 	}
 
-	private double getLastTimestamp() {
-		int pos = (cntMeasures - 1) % measure_time.length;
-		return measure_time[pos];
-	}
-
-	private double getOldestTimestamp() {
-		int pos = 0;
-		if (cntMeasures >= measure_time.length) {
-			pos = (cntMeasures - measure_time.length) % measure_time.length;
-		}
-
-		return measure_time[pos];
-	}
-
-	private double getLastDistance() {
-		int pos = (cntMeasures - 1) % measure_time.length;
-		return measure_distance[pos];
-	}
-
-	private double getOldestDistance() {
-		int pos = 0;
-		if (cntMeasures >= measure_time.length) {
-			pos = (cntMeasures - measure_time.length) % measure_time.length;
-		}
-
-		return measure_distance[pos];
-	}
-	
 	@Override
 	public boolean onTick(Workout w) {
 		if (paused)
@@ -75,73 +66,131 @@ public class TargetTrigger extends Trigger {
 			return false;
 		}
 
-		double time_now = w.get(Scope.WORKOUT, Dimension.TIME);
-		double distance_now = w.get(Scope.WORKOUT, Dimension.DISTANCE);
-		double lastTimestamp = getLastTimestamp();
-		
+		double time_now = w.get(Scope.STEP, Dimension.TIME);
+
 		if (time_now < lastTimestamp) {
+			System.out.println("time_now < lastTimestamp");
 			reset();
+			return false;
+		}
+
+		if (inited == false) {
+			System.out.println("inited == false");
+			lastTimestamp = time_now;
+			initMeasurement(w, time_now);
+			inited = true;
 			return false;
 		}
 		
 		if ((time_now - lastTimestamp) < 1.0) {
 			return false;
 		}
-
-		double elapsed_time = time_now - lastTimestamp;
-		final int elapsed_seconds = (int)elapsed_time;
-		for (int i = 0; i < elapsed_seconds; i++) {
-			addObservation(time_now, distance_now);
-		}
 		
-		if (graceCount > 0) { // only emit coaching ever so often
-			graceCount -= elapsed_seconds;
-		}
-		else {
-			double avg = getValue();
-			double cmp = range.compare(avg);
-			if (cmp == 0)
-			{
-				return false;
+		final int elapsed_seconds = (int)(time_now - lastTimestamp);
+		lastTimestamp = time_now;
+
+		try {
+			double val_now = getMeasurement(w, time_now);
+			for (int i = 0; i < elapsed_seconds; i++) {
+				addObservation(val_now);
 			}
-			fire(w);
-			graceCount = minGraceCount;
+//			System.err.println("val_now: " + val_now + " elapsed: " + elapsed_seconds);
+		
+			if (graceCount > 0) { // only emit coaching ever so often
+//				System.err.println("graceCount: " + graceCount);
+				graceCount -= elapsed_seconds;
+			} else {
+				double avg = getValue();
+				double cmp = range.compare(avg);
+//				System.err.println(" => avg: " + avg + " => cmp: " + cmp);
+				if (cmp == 0) {
+					return false;
+				}
+				fire(w);
+				graceCount = minGraceCount;
+			}
+		} catch (ArithmeticException ex) {
+			return false;
 		}
 		return false;
 	}
 
-	private void addObservation (double time_now, double distance_now) {
+	private void addObservation (double val_now) {
 		int pos = cntMeasures % measure_time.length;
-		measure_time[pos] = time_now;
-		measure_distance[pos] = distance_now;
+		measure[pos] = val_now;
 		cntMeasures ++;
 	}
 
 	public double getValue() {
-		double elapsed_time = getLastTimestamp() - getOldestTimestamp();
-		double elapsed_distance = getLastDistance() - getOldestDistance();
+		if (cntMeasures == lastValCnt)
+			return lastVal;
 		
-		switch (dimension) {
-		case PACE:
-			if (elapsed_distance == 0)
-				return 0;
-			return elapsed_time / elapsed_distance;
-		case SPEED:
-			if (elapsed_time == 0)
-				return 0;
-			return elapsed_distance / elapsed_time;
+		System.arraycopy(measure,  0, sort_measure, 0, measure.length);
+		java.util.Arrays.sort(sort_measure);
+		double cnt = 0;
+		double val = 0;
+		for (int i = skip_values; i < sort_measure.length - skip_values; i++) {
+			val += sort_measure[i];
+			cnt++;
 		}
-		return 0;
+		lastVal = val / cnt; 
+		lastValCnt = cntMeasures;
+		return lastVal;
 	}
 	
 	private void reset() {
-		for (int i = 0; i < measure_time.length; i++) {
-			measure_time[i] = 0;
-			measure_distance[i] = 0;
+		for (int i = 0; i < measure.length; i++) {
+			measure[i] = 0;
 		}
-		cntMeasures = 1;
+		inited = false;
+		cntMeasures = 0;
 		graceCount = initialGrace;
+		lastTimestamp = 0;
+		
+		lastVal = 0;
+		lastValCnt = 0;
 	}
+
+	private void initMeasurement(Workout w, double time_now) {
+		switch(dimension) {
+		case PACE:
+		case SPEED:
+			double distance_now = w.get(scope,  Dimension.DISTANCE);
+			if (lastTimestamp == 0) {
+				measure_time[0] = time_now;
+				measure_distance[0] = distance_now;
+			}
+		}
+	}
+
+	private double getMeasurement(Workout w, double time_now) {
+		switch(dimension) {
+		case PACE:
+		case SPEED:
+			double distance_now = w.get(scope,  Dimension.DISTANCE);
+
+			int oldpos = 0;
+			int newpos = (cntMeasures + 1) % measure_time.length;
+			if (cntMeasures >= measure_time.length) {
+				oldpos = newpos;
+			}
+			double delta_distance = distance_now - measure_distance[oldpos];
+			double delta_time = time_now - measure_time[oldpos];
+
+			measure_time[newpos] = time_now;
+			measure_distance[newpos] = distance_now;
+			
+			if (dimension == Dimension.PACE) {
+				return delta_time / delta_distance;
+			} else {
+				assert(dimension == Dimension.SPEED);
+				return delta_distance / delta_time;
+			}
+		}
+		return 0;
+	}
+
+
 	
 	@Override
 	public void onStart(Scope what, Workout s) {
