@@ -390,7 +390,11 @@ public class StartActivity extends Activity implements TickListener {
 				System.err.println("data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
 		}
 		if (requestCode == 112) {
-			onGpsTrackerBound();
+			if (mIsBound == false || mGpsTracker == null) {
+				bindGpsTracker();
+			} else {
+				onGpsTrackerBound();
+			}
 		} else {
 			updateView();
 		}
