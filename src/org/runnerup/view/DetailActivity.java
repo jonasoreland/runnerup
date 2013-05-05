@@ -609,6 +609,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 							String args[] = { "" + mID };
 							mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", args);
 							dialog.dismiss();
+							DetailActivity.this.setResult(RESULT_OK);
+							DetailActivity.this.finish();
 						}
 					});
 			builder.setNegativeButton("No",
