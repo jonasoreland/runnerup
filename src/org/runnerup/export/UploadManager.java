@@ -64,6 +64,7 @@ public class UploadManager {
 		mDBHelper = new DBHelper(activity);
 		mDB = mDBHelper.getWritableDatabase();
 		mSpinner = new ProgressDialog(activity);
+		mSpinner.setCancelable(false);
 	}
 
 	public synchronized void close() {
@@ -303,7 +304,12 @@ public class UploadManager {
 				config.put(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
 				config.put("_id", l.getId());
 				l.init(config);
-				return params[0].login(config);
+				try {
+					return params[0].login(config);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return Uploader.Status.ERROR;
+				}
 			}
 
 			@Override
@@ -334,7 +340,12 @@ public class UploadManager {
 
 			@Override
 			protected Uploader.Status doInBackground(Uploader... params) {
-				return params[0].login(null);
+				try {
+					return params[0].login(null);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return Uploader.Status.ERROR;
+				}
 			}
 
 			@Override
@@ -362,7 +373,12 @@ public class UploadManager {
 
 			@Override
 			protected Uploader.Status doInBackground(Uploader... params) {
-				return params[0].upload(copyDB, mID);
+				try {
+					return params[0].upload(copyDB, mID);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return Uploader.Status.ERROR;
+				}
 			}
 
 			@Override
