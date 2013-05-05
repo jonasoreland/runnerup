@@ -22,6 +22,7 @@ import java.util.HashMap;
 import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
+import android.util.Pair;
 
 public class Step implements TickComponent {
 
@@ -262,6 +263,10 @@ public class Step implements TickComponent {
 		return false;
 	}
 
+	public boolean onNextStep(Workout w) {
+		return true; // move to next step
+	}
+	
 	private boolean checkFinished(Workout s) {
 		if (durationType == null)
 			return false;
@@ -348,5 +353,21 @@ public class Step implements TickComponent {
 		step.durationType = dim;
 		step.durationValue = duration;
 		return step;
+	}
+
+	public void getSteps(Step parent, ArrayList<Pair<Step, Step>> list) {
+		list.add(Pair.create(parent, this));
+	}
+
+	public Step getCurrentStep() {
+		return this;
+	}
+
+	public int getRepeatCount() {
+		return 1;
+	}
+
+	public int getCurrentRepeat() {
+		return 0;
 	}
 };

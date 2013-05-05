@@ -25,6 +25,7 @@ import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Pair;
 
 /**
  * This class is the top level object for a workout, it is being called by
@@ -135,7 +136,10 @@ public class Workout implements WorkoutComponent {
 	public void onNextStep() {
 		currentStep.onComplete(Scope.LAP, this);
 		currentStep.onComplete(Scope.STEP, this);
-		currentStepNo++;
+		
+		if (currentStep.onNextStep(this))
+			currentStepNo++;
+
 		if (currentStepNo < steps.size()) {
 			currentStep = steps.get(currentStepNo);
 			currentStep.onStart(Scope.STEP, this);
@@ -162,7 +166,7 @@ public class Workout implements WorkoutComponent {
 		return paused;
 	}
 
-	public Step getCurrentStep() {
+	public Step getCurrentStepNo() {
 		return currentStep;
 	}
 
@@ -326,6 +330,23 @@ public class Workout implements WorkoutComponent {
 		if (steps.size() == 1)
 			return true;
 		return getStep(0).intensity == Intensity.RESTING; // activity countdown
+	}
+	
+	/**
+	 * @return flattened list of all steps in workout
+	 */
+	public ArrayList<Pair<Step,Step>> getSteps() {
+		ArrayList<Pair<Step, Step>> list = new ArrayList<Pair<Step,Step>>();
+		for (Step s : steps) {
+			s.getSteps(null, list);
+		}
+		return list;
+	}
+
+	public Step getCurrentStep() {
+		if (currentStepNo < steps.size())
+			return steps.get(currentStepNo).getCurrentStep();
+		return null;
 	}
 	
 	private static class FakeWorkout extends Workout {

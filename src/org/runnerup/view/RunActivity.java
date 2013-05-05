@@ -281,9 +281,9 @@ public class RunActivity extends Activity implements TickListener {
 		lapDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ld));
 		lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, lp));
 		
-		if (currentStep != workout.getCurrentStep()) {
+		if (currentStep != workout.getCurrentStepNo()) {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
-			currentStep = workout.getCurrentStep();
+			currentStep = workout.getCurrentStepNo();
 			workoutList.setSelection(getPosition(workoutRows, currentStep));
 			if (!workout.isSimple() && workout.isLastStep())
 			{
@@ -407,7 +407,7 @@ public class RunActivity extends Activity implements TickListener {
 				durationType.setText("");
 				durationValue.setText("");
 			}
-			if (workout.getCurrentStep() == step) {
+			if (workout.getCurrentStepNo() == step) {
 				view.setBackgroundResource(android.R.color.background_light);
 			} else {
 				view.setBackgroundResource(android.R.color.black);
