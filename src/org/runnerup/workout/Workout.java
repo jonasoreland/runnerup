@@ -166,10 +166,6 @@ public class Workout implements WorkoutComponent {
 		return paused;
 	}
 
-	public Step getCurrentStepNo() {
-		return currentStep;
-	}
-
 	public void onNewLap() {
 		initFeedback();
 		if (currentStep != null) {
@@ -316,10 +312,6 @@ public class Workout implements WorkoutComponent {
 		return steps.size();
 	}
 
-	public Step getStep(int no) {
-		return steps.get(no);
-	}
-
 	public boolean isLastStep() {
 		return currentStepNo + 1 == steps.size();
 	}
@@ -329,7 +321,7 @@ public class Workout implements WorkoutComponent {
 			return false;
 		if (steps.size() == 1)
 			return true;
-		return getStep(0).intensity == Intensity.RESTING; // activity countdown
+		return steps.get(0).intensity == Intensity.RESTING; // activity countdown
 	}
 	
 	/**
