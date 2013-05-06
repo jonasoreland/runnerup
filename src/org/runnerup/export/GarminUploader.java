@@ -162,7 +162,8 @@ public class GarminUploader extends FormCrawler implements Uploader {
 				int responseCode = conn.getResponseCode();
 				String amsg = conn.getResponseMessage();
 				System.err.println("obj: " + obj.toString());
-				if (obj.getString("username").contentEquals(username)) {
+				// Returns username(which is actually Displayname from profile) if logged in
+				if (obj.getString("username").length() > 0) {
 					return Uploader.Status.OK;
 				} else {
 					return Uploader.Status.CANCEL;
