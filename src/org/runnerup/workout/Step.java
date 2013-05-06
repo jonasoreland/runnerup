@@ -364,7 +364,7 @@ public class Step implements TickComponent {
 	}
 
 	public int getRepeatCount() {
-		return 1;
+		return 0;
 	}
 
 	public int getCurrentRepeat() {
