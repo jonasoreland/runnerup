@@ -50,6 +50,11 @@ public class RepeatStep extends Step {
 	}
 
 	@Override
+	public String toString() {
+		return "currentStep: " + currentStep + "(" + steps.size() + ") currentRepeat: " + currentRepeat + "(" + repeatCount + ")";
+	}
+	
+	@Override
 	public void onEnd(Workout w) {
 		currentStep = 0;
 		currentRepeat = 0;
@@ -76,10 +81,7 @@ public class RepeatStep extends Step {
 	@Override
 	public boolean onTick(Workout w) {
 		if (steps.get(currentStep).onTick(w)) {
-			steps.get(currentStep).onComplete(Scope.LAP, w);
-			steps.get(currentStep).onComplete(Scope.STEP, w);
-
-			return onNextStep(w);
+			return true;
 		}
 		return false;
 	}
@@ -98,8 +100,6 @@ public class RepeatStep extends Step {
 				}
 				currentStep = 0;
 			}
-			steps.get(currentStep).onStart(Scope.STEP, w);
-			steps.get(currentStep).onStart(Scope.LAP, w);
 		}
 		return false;
 	}
@@ -158,5 +158,4 @@ public class RepeatStep extends Step {
 			s2.getSteps(this, list);
 		}
 	}
-
 }
