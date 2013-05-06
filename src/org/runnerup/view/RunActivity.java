@@ -25,6 +25,7 @@ import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
+import org.runnerup.workout.RepeatStep;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
@@ -284,9 +285,10 @@ public class RunActivity extends Activity implements TickListener {
 		lapDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ld));
 		lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, lp));
 		
-		if (currentStep != workout.getCurrentStepNo()) {
+		Step curr = workout.getCurrentStep();
+		if (curr != currentStep) {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
-			currentStep = workout.getCurrentStepNo();
+			currentStep = curr;
 			workoutList.setSelection(getPosition(workoutRows, currentStep));
 			if (!workout.isSimple() && workout.isLastStep())
 			{
@@ -410,15 +412,20 @@ public class RunActivity extends Activity implements TickListener {
 				durationType.setText("");
 				durationValue.setText("");
 			}
-			if (workout.getCurrentStepNo() == step) {
+			if (currentStep == step) {
 				view.setBackgroundResource(android.R.color.background_light);
 			} else {
 				view.setBackgroundResource(android.R.color.black);
 			}
+			
 			if (step.getTargetType() == null) {
 				targetPace.setText("");
 			} else {
 				targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), step.getTargetValue()));
+			}
+			
+			if (step.getRepeatCount() > 0) {
+				durationType.setText("" + (step.getCurrentRepeat() + 1) + "/" + step.getRepeatCount());
 			}
 			return view;
 		}
