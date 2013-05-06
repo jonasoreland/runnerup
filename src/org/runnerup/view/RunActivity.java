@@ -26,6 +26,7 @@ import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
 import org.runnerup.workout.Scope;
+import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
@@ -40,6 +41,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -135,9 +137,10 @@ public class RunActivity extends Activity implements TickListener {
 	}
 
 	private void populateWorkoutList() {
-		for (int i = 0; i < workout.getStepCount(); i++) {
+		ArrayList<Pair<Step,Step>> list = workout.getSteps();
+		for (int i = 0; i < list.size(); i++) {
 			WorkoutRow row = new WorkoutRow();
-			row.step = workout.getStep(i);
+			row.step = list.get(i).second;
 			row.lap = null;
 			workoutRows.add(row);
 		}
@@ -412,7 +415,11 @@ public class RunActivity extends Activity implements TickListener {
 			} else {
 				view.setBackgroundResource(android.R.color.black);
 			}
-			targetPace.setText("");
+			if (step.getTargetType() == null) {
+				targetPace.setText("");
+			} else {
+				targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), step.getTargetValue()));
+			}
 			return view;
 		}
 
