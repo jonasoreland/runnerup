@@ -20,6 +20,10 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
+
+import java.io.File;
+import java.util.List;
 
 public interface Uploader {
 
@@ -31,6 +35,11 @@ public interface Uploader {
 
 	enum AuthMethod {
 		OAUTH2, POST
+	}
+
+	enum Feature {
+		WORKOUT_LIST,
+		GET_WORKOUT
 	};
 
 	/**
@@ -87,6 +96,27 @@ public interface Uploader {
 	 */
 	public Status upload(SQLiteDatabase db, long mID);
 
+	/**
+	 * Check if an uploader supports a feature
+	 * @param f
+	 * @return
+	 */
+	public boolean checkSupport(Feature f);
+	
+	/**
+	 * List workouts
+	 * @return list of Pair<Uploader,Workout>
+	 */
+	public Status listWorkouts(List<Pair<String,String>> list);
+	
+	/**
+	 * Download workout with key and store it in dst
+	 * @param dst
+	 * @param key
+	 * @return
+	 */
+	public void downloadWorkout(File dst, String key) throws Exception;
+	
 	/**
 	 * logout
 	 * 

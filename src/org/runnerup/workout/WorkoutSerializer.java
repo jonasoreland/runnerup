@@ -87,8 +87,6 @@ public class WorkoutSerializer {
 		Collections.sort(list, new Comparator<jsonstep>(){
 			@Override
 			public int compare(jsonstep lhs, jsonstep rhs) {
-				if (lhs.group != rhs.group)
-					return lhs.group - rhs.group;
 				return lhs.order - rhs.order;
 			}});
 
@@ -325,8 +323,12 @@ public class WorkoutSerializer {
 		return js;
 	}
 
+	public static File getFile(Context ctx, String name) {
+		return new File(ctx.getDir(WORKOUTS_DIR, 0).getPath() + File.separator + name);
+	}
+	
 	public static Workout readFile(Context ctx, String name) throws FileNotFoundException, JSONException {
-		File fin = new File(ctx.getDir(WORKOUTS_DIR, 0).getPath() + File.separator + name);
+		File fin = getFile(ctx, name);
 		System.err.println("reading " + fin.getPath());
 		return readJSON(new FileReader(fin));
 	}

@@ -209,6 +209,13 @@ public class StartActivity extends Activity implements TickListener {
 		advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
 		advancedWorkoutListAdapter.reload();
 		advancedWorkoutSpinner.setAdapter(advancedWorkoutListAdapter);
+		advancedDownloadWorkoutButton = (Button)findViewById(R.id.advancedDownloadButton);
+		advancedDownloadWorkoutButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(StartActivity.this, DownloadWorkoutsActivity.class);
+				StartActivity.this.startActivityForResult(intent, 113);
+			}});
 		
 		manualDate = (TitleSpinner)findViewById(R.id.manualDate);
 		manualDate.setOnSetValueListener(onSetValueManual);
@@ -433,6 +440,7 @@ public class StartActivity extends Activity implements TickListener {
 			}
 		} else {
 			updateView();
+			advancedWorkoutListAdapter.reload();
 		}
 	}
 

@@ -92,6 +92,10 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 
+		<activity android:name=".view.DownloadWorkoutsActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
 		<activity android:name=".export.oauth2client.OAuth2Activity"
 		    android:screenOrientation="portrait" >
 		</activity>

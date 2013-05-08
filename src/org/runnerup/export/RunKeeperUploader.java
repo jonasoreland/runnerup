@@ -18,16 +18,19 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.Uploader.Status;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -37,6 +40,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
 public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Server {
 
@@ -222,6 +226,20 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 		return s;
 	}
 
+	@Override
+	public boolean checkSupport(Uploader.Feature f) {
+		return false;
+	}
+	
+	@Override
+	public Status listWorkouts(List<Pair<String, String>> list) {
+		return Status.OK;
+	}
+
+	@Override
+	public void downloadWorkout(File dst, String key) {
+	}
+	
 	@Override
 	public void logout() {
 		this.fitnessActivitiesUrl = null;

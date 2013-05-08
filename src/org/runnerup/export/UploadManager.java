@@ -16,6 +16,8 @@
  */
 package org.runnerup.export;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,8 +26,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager.Callback;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.workout.WorkoutSerializer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,6 +42,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.text.InputType;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -94,20 +99,20 @@ public class UploadManager {
 		c.close();
 	}
 
-	public void add(ContentValues config) {
+	public Uploader add(ContentValues config) {
 		if (config == null) {
 			System.err.println("Add null!");
 			assert (false);
-			return;
+			return null;
 		}
 
 		String uploaderName = config.getAsString(DB.ACCOUNT.NAME);
 		if (uploaderName == null) {
 			System.err.println("name not found!");
-			return;
+			return null;
 		}
 		if (uploaders.containsKey(uploaderName)) {
-			return;
+			return uploaders.get(uploaderName);
 		}
 		Uploader uploader = null;
 		if (uploaderName.contentEquals(RunKeeperUploader.NAME)) {
@@ -123,6 +128,7 @@ public class UploadManager {
 			uploader.init(config);
 			uploaders.put(uploaderName, uploader);
 		}
+		return uploader;
 	}
 
 	public boolean isConfigured(final String name) {
@@ -177,8 +183,6 @@ public class UploadManager {
 	private void nextUploader() {
 		if (pendingUploaders.isEmpty()) {
 			doneUploading();
-			if (uploadCallback != null)
-				uploadCallback.run(null, null);
 			return;
 		}
 
@@ -190,9 +194,20 @@ public class UploadManager {
 			configure(usernamePasswordCallback, currentUploader.getName(), true);
 			return;
 		}
-		doLogin();
+		doLogin(doLoginUploaderCallback);
 	}
-
+	
+	private Callback doLoginUploaderCallback = new Callback() {
+		@Override
+		public void run(String uploader, Status status) {
+			if (status == Uploader.Status.OK) {
+				doUpload();
+				return;
+			}
+			nextUploader();
+		}
+	};
+	
 	private Callback usernamePasswordCallback = new Callback() {
 		@Override
 		public void run(String uploader, Status status) {
@@ -206,7 +221,7 @@ public class UploadManager {
 				nextUploader();
 				break;
 			case OK:
-				doLogin();
+				doLogin(doLoginUploaderCallback);
 				break;
 			}
 		}
@@ -255,7 +270,7 @@ public class UploadManager {
 			}
 		});
 		if (uploading) {
-		builder.setNeutralButton("Skip", new OnClickListener() {
+			builder.setNeutralButton("Skip", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				callback.run(l.getName(), Status.SKIP);
@@ -334,7 +349,7 @@ public class UploadManager {
 
 	}
 
-	private void doLogin() {
+	private void doLogin(final Callback callback) {
 		mSpinner.setMessage("Login " + currentUploader.getName());
 		new AsyncTask<Uploader, String, Uploader.Status>() {
 
@@ -354,11 +369,7 @@ public class UploadManager {
 					return;
 				}
 				
-				if (result == Uploader.Status.OK) {
-					doUpload();
-					return;
-				}
-				nextUploader();
+				callback.run(currentUploader.getName(), result);
 			}
 		}.execute(currentUploader);
 	}
@@ -403,6 +414,11 @@ public class UploadManager {
 
 	private void doneUploading() {
 		mSpinner.dismiss();
+		final Callback cb = uploadCallback;
+		uploadCallback = null;
+		if (cb != null)
+			cb.run(null, null);
+
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -454,5 +470,151 @@ public class UploadManager {
 		Callback callback = disableCallback;
 		disableCallback = null;
 		callback.run(name, Uploader.Status.OK);
+	}
+
+	public static class WorkoutRef {
+		public WorkoutRef(String uploader, String key, String name) {
+			this.uploader = uploader;
+			this.workoutKey = key;
+			this.workoutName = name;
+		}
+		public final String uploader;
+		public final String workoutKey;
+		public final String workoutName;
+	};
+	
+	Callback listWorkoutCallback = null;
+	HashSet<String> pendingListWorkout = null;
+	ArrayList<WorkoutRef> workoutRef = null;
+	public void loadWorkoutList(ArrayList<WorkoutRef> workoutRef, Callback callback,
+			HashSet<String> uploaders) {
+		
+		listWorkoutCallback = callback;
+		pendingListWorkout = uploaders;
+		this.workoutRef = workoutRef;
+		
+		mSpinner.setTitle("Loading workout list (" + pendingListWorkout.size() + ")");
+		mSpinner.show();
+		nextListWorkout();
+	}
+
+	public void nextListWorkout() {
+		if (pendingListWorkout.isEmpty()) {
+			doneListing();
+			return;
+		}
+
+		mSpinner.setTitle("Loading workout list (" + pendingListWorkout.size() + ")");
+		currentUploader = uploaders.get(pendingListWorkout.iterator().next());
+		pendingListWorkout.remove(currentUploader.getName());
+		mSpinner.setMessage("Configure " + currentUploader.getName());
+		if (!currentUploader.isConfigured()) {
+			nextListWorkout();
+			return;
+		}
+		doLogin(new Callback() {
+			@Override
+			public void run(String uploader, Status status) {
+				if (status == Uploader.Status.OK) {
+					doListWorkout();
+				}
+			}
+		});
+	}
+
+	protected void doListWorkout() {
+		final ProgressDialog copySpinner = mSpinner;
+
+		copySpinner.setMessage("Listing from " + currentUploader.getName());
+
+		new AsyncTask<Uploader, String, Uploader.Status>() {
+
+			@Override
+			protected Uploader.Status doInBackground(Uploader... params) {
+				try {
+					ArrayList<Pair<String,String>> list = new ArrayList<Pair<String,String>>();
+					Uploader.Status ret = params[0].listWorkouts(list);
+					if (ret == Uploader.Status.OK) {
+						for (Pair<String,String> w : list) {
+							workoutRef.add(new WorkoutRef(params[0].getName(), w.first, w.second));
+						}
+					}
+					return ret;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return Uploader.Status.ERROR;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Uploader.Status result) {
+				nextListWorkout();
+			}
+		}.execute(currentUploader);
+	}
+
+	private void doneListing() {
+		mSpinner.dismiss();
+		Callback cb = listWorkoutCallback;
+		listWorkoutCallback = null;
+		if (cb != null)
+			cb.run(null, null);
+	}
+
+	public void loadWorkouts(final HashSet<WorkoutRef> pendingWorkouts, final Callback callback) {
+		int cnt = pendingWorkouts.size();
+		mSpinner.setTitle("Downloading workouts (" + cnt + ")");
+		mSpinner.show();
+		new AsyncTask<Uploader, String, Uploader.Status>() {
+
+
+			@Override
+			protected void onProgressUpdate(String... values) {
+				mSpinner.setMessage("Loading " + values[0] + " from " + values[1]);
+			}
+
+			@Override
+			protected Uploader.Status doInBackground(Uploader... params) {
+				for (WorkoutRef ref : pendingWorkouts) {
+					publishProgress(ref.workoutName, ref.uploader);
+					Uploader uploader = uploaders.get(ref.uploader);
+					File f = WorkoutSerializer.getFile(activity, ref.workoutName);
+					File w = f;
+					if (f.exists()) {
+						w = WorkoutSerializer.getFile(activity, ref.workoutName + ".tmp");
+					}
+					try {
+						uploader.downloadWorkout(w, ref.workoutKey);
+						if (w != f) {
+							if (compareFiles(w, f) != true) {
+								//@TODO dialog
+								f.delete();
+								w.renameTo(f);
+							} else {
+								w.delete();
+							}
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						w.delete();
+					}
+				}
+				return Uploader.Status.OK;
+			}
+
+			@Override
+			protected void onPostExecute(Uploader.Status result) {
+				mSpinner.dismiss();
+				if (callback != null) {
+					callback.run(null,  Uploader.Status.OK);
+				}
+			}
+		}.execute(currentUploader);
+	}
+
+	protected boolean compareFiles(File w, File f) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

@@ -18,14 +18,10 @@ package org.runnerup.view;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 
-import org.runnerup.util.Constants.DB;
 import org.runnerup.workout.WorkoutSerializer;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,12 +76,7 @@ class WorkoutListAdapter extends BaseAdapter {
 	}
 
 	public void reload() {
-		File f = inflater.getContext().getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
-		String[] list = f.list(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String filename) {
-				return filename.endsWith(".json");
-			}});
+		String[] list = load(inflater.getContext());
 		if (list == null) {
 			if (workoutList != null && workoutList.length == 0) {
 				// return;
@@ -96,5 +87,14 @@ class WorkoutListAdapter extends BaseAdapter {
 			workoutList = list;
 		}
 		this.notifyDataSetChanged();
+	}
+
+	public static String[] load(Context ctx) {
+		File f = ctx.getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
+		return f.list(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String filename) {
+				return filename.endsWith(".json");
+			}});
 	}
 }

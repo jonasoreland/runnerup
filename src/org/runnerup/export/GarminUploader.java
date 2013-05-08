@@ -18,6 +18,8 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,10 +28,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Scanner;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.Uploader.Status;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
 
@@ -37,6 +42,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
 public class GarminUploader extends FormCrawler implements Uploader {
 
@@ -45,7 +51,9 @@ public class GarminUploader extends FormCrawler implements Uploader {
 	public static String LOGIN_URL = "https://connect.garmin.com/signin";
 	public static String CHECK_URL = "http://connect.garmin.com/user/username";
 	public static String UPLOAD_URL = "http://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
-
+	public static String LIST_WORKOUTS_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
+	public static String GET_WORKOUT_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
+	
 	long id = 0;
 	private String username = null;
 	private String password = null;
@@ -226,7 +234,111 @@ public class GarminUploader extends FormCrawler implements Uploader {
 		}
 		return s;
 	}
+	@Override
+	public boolean checkSupport(Uploader.Feature f) {
+		switch(f) {
+		case WORKOUT_LIST:
+			return true;
+		case GET_WORKOUT:
+			return true;
+		}
+		return false;
+	}
 
+	@Override
+	public Status listWorkouts(List<Pair<String, String>> list) {
+		HttpURLConnection conn = null;
+		Exception ex = null;
+		try {
+			conn = (HttpURLConnection) new URL(LIST_WORKOUTS_URL).openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("GET");
+			addCookies(conn);
+			conn.connect();
+			getCookies(conn);
+			InputStream in = new BufferedInputStream(conn.getInputStream());
+			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			conn.disconnect();
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+			if (responseCode == 200) {
+				obj = obj.getJSONObject("com.garmin.connect.workout.dto.BaseUserWorkoutListDto");
+				JSONArray arr = obj.getJSONArray("baseUserWorkouts");
+				for (int i = 0; ; i++) {
+					obj = arr.optJSONObject(i);
+					if (obj == null)
+						break;
+					list.add(new Pair<String,String>(obj.getString("workoutId"), obj.getString("workoutName") + ".json"));
+				}
+				return Status.OK;
+			}
+			ex = new Exception(amsg);
+		} catch (IOException e) {
+			ex = e;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			ex = e;
+		}
+
+		Uploader.Status s = Uploader.Status.ERROR;
+		s.ex = ex;
+		if (ex != null) {
+			ex.printStackTrace();
+		}
+		return s;
+	}
+
+	@Override
+	public void downloadWorkout(File dst, String key) throws Exception {
+		HttpURLConnection conn = null;
+		Exception ex = null;
+		FileOutputStream out = null;
+		try {
+			conn = (HttpURLConnection) new URL(GET_WORKOUT_URL + key).openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("GET");
+			addCookies(conn);
+			conn.connect();
+			getCookies(conn);
+			InputStream in = new BufferedInputStream(conn.getInputStream());
+			out = new FileOutputStream(dst);
+			int cnt = 0;
+			byte buf[] = new byte[1024];
+			while (in.read(buf) > 0) {
+				cnt += buf.length;
+				out.write(buf);
+			}
+			System.err.println("downloaded workout key: " + key + " " + cnt + " bytes from " + getName());
+			in.close();
+			out.close();
+			conn.disconnect();
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+			if (responseCode == 200) {
+				return;
+			}
+			ex = new Exception(amsg);
+		} catch (Exception e) {
+			ex = e;
+		}
+
+		if (conn != null) {
+			try {
+				conn.disconnect();
+			} catch (Exception e) {
+			}
+		}
+		
+		if (out != null) {
+			try {
+				out.close();
+			} catch (Exception e) {
+			}
+		}
+		ex.printStackTrace();
+		throw ex;
+	}
+	
 	@Override
 	public void logout() {
 		super.logout();
