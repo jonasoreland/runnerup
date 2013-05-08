@@ -32,11 +32,14 @@ import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
+import org.runnerup.workout.WorkoutSerializer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -80,6 +83,7 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner simpleType = null;
 	TitleSpinner simpleTime = null;
 	TitleSpinner simpleDistance = null;
+	TitleSpinner simpleAudioSpinner = null;
 	AudioSchemeListAdapter simpleAudioListAdapter = null;
 	CheckBox simpleTargetPace = null;
 	TitleSpinner simpleTargetPaceValue = null;
@@ -90,8 +94,15 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner intervalRestType = null;
 	TitleSpinner intervalRestTime = null;
 	TitleSpinner intervalRestDistance = null;
+	TitleSpinner intervalAudioSpinner = null;
 	AudioSchemeListAdapter intervalAudioListAdapter = null;
 
+	TitleSpinner advancedWorkoutSpinner = null;
+	WorkoutListAdapter advancedWorkoutListAdapter = null;
+	TitleSpinner advancedAudioSpinner = null;
+	AudioSchemeListAdapter advancedAudioListAdapter = null;
+	Button       advancedDownloadWorkoutButton = null;
+	
 	TitleSpinner manualDate = null;
 	TitleSpinner manualTime = null;
 	TitleSpinner manualDistance = null;
@@ -161,7 +172,7 @@ public class StartActivity extends Activity implements TickListener {
 		simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
 		simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
 		simpleAudioListAdapter.reload();
-		TitleSpinner simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basicAudioCueSpinner);
+		simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basicAudioCueSpinner);
 		simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
 		simpleTargetPace = (CheckBox)findViewById(R.id.tabBasicTargetPace);
 		simpleTargetPaceValue = (TitleSpinner)findViewById(R.id.tabBasicTargetPaceMax);
@@ -187,8 +198,17 @@ public class StartActivity extends Activity implements TickListener {
 		intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
 		intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
 		intervalAudioListAdapter.reload();
-		TitleSpinner intervalAudioSpinner = (TitleSpinner) findViewById(R.id.intervalAudioCueSpinner);
+		intervalAudioSpinner = (TitleSpinner) findViewById(R.id.intervalAudioCueSpinner);
 		intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
+
+		advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
+		advancedAudioListAdapter.reload();
+		advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advancedAudioCueSpinner);
+		advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
+		advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advancedWorkoutSpinner);
+		advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
+		advancedWorkoutListAdapter.reload();
+		advancedWorkoutSpinner.setAdapter(advancedWorkoutListAdapter);
 		
 		manualDate = (TitleSpinner)findViewById(R.id.manualDate);
 		manualDate.setOnSetValueListener(onSetValueManual);
@@ -255,8 +275,8 @@ public class StartActivity extends Activity implements TickListener {
 			else if (tabId.contentEquals(TAB_INTERVAL))
 				startButton.setVisibility(View.VISIBLE);
 			else if (tabId.contentEquals(TAB_ADVANCED)) {
-//				startButton.setVisibility(View.VISIBLE);
-				startButton.setVisibility(View.GONE);
+				startButton.setVisibility(View.VISIBLE);
+//				startButton.setVisibility(View.GONE);
 			} else if (tabId.contentEquals(TAB_MANUAL))
 				startButton.setVisibility(View.GONE);
 		}
@@ -270,7 +290,6 @@ public class StartActivity extends Activity implements TickListener {
 				mGpsTracker.startLogging();
 				mGpsStatus.start(StartActivity.this);
 			} else if (mGpsStatus.isFixed()) {
-				mGpsStatus.stop(StartActivity.this);
 				Context ctx = getApplicationContext();
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
 				Workout w = null;
@@ -283,9 +302,26 @@ public class StartActivity extends Activity implements TickListener {
 					w = WorkoutBuilder.createDefaultIntervalWorkout(pref, audioPref);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
-					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
-					w = WorkoutBuilder.createAdvancedWorkout(pref, audioPref);
+					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
+					String name = pref.getString("advancedWorkout", "");
+					try {
+						w = WorkoutSerializer.readFile(ctx, name);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
+						builder.setTitle("Failed to load workout!!");
+						builder.setMessage("" + ex.toString());
+						builder.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+										dialog.dismiss();
+									}
+								});
+						builder.show();
+						return;
+					}
 				}
+				mGpsStatus.stop(StartActivity.this);
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,
 						RunActivity.class);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -24,13 +24,6 @@
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal" >
-
-		<TextView
-		    android:id="@+id/step_group"
-		    android:layout_width="0dp"
-		    android:layout_height="wrap_content"
-		    android:layout_weight="1"
-		    android:visibility="gone" />
     
     	<TextView
     	    android:id="@+id/step_intensity"
@@ -40,29 +33,29 @@
     	    android:gravity="left"
     	    android:text="intensity" />
 
-	    <TextView
-	        android:id="@+id/step_duration_type"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
+    	<TextView
+    	    android:id="@+id/step_duration_type"
     	    android:layout_width="0dp"
-    	    android:gravity="right"
-	        android:text="distance" />
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1"
+    	    android:gravity="left"
+    	    android:text="distance" />
 
 	    <TextView
 	        android:id="@+id/step_duration_value"
+	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
-    	    android:layout_width="0dp"
-    	    android:gravity="right"
-	        android:text="1 km" />
+	        android:gravity="left"
+	        android:text="6000 m" />
 
 	    <TextView
 	        android:id="@+id/step_pace"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
     	    android:layout_width="0dp"
-    	    android:gravity="right"
-	        android:text="4:10 per km" />
+    	    android:gravity="left"
+	        android:text="4:05 - 4:25" />
 
 	</LinearLayout>
 </LinearLayout>

@@ -18,11 +18,11 @@ package org.runnerup.workout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
-import android.util.Pair;
 
 public class Step implements TickComponent {
 
@@ -359,8 +359,8 @@ public class Step implements TickComponent {
 		return step;
 	}
 
-	public void getSteps(Step parent, ArrayList<Pair<Step, Step>> list) {
-		list.add(Pair.create(parent, this));
+	public void getSteps(Step parent, int i, List<Workout.StepListEntry> list) {
+		list.add(new Workout.StepListEntry(this, i, parent));
 	}
 
 	public Step getCurrentStep() {

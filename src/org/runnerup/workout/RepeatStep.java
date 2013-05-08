@@ -18,8 +18,7 @@ package org.runnerup.workout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import android.util.Pair;
+import java.util.List;
 
 public class RepeatStep extends Step {
 
@@ -152,10 +151,10 @@ public class RepeatStep extends Step {
 	}
 
 	@Override
-	public void getSteps(Step parent, ArrayList<Pair<Step, Step>> list) {
-		list.add(Pair.create(parent, (Step)this));
+	public void getSteps(Step parent, int level, List<Workout.StepListEntry> list) {
+		list.add(new Workout.StepListEntry(this, level, parent));
 		for (Step s2 : steps) {
-			s2.getSteps(this, list);
+			s2.getSteps(this, level + 1, list);
 		}
 	}
 }

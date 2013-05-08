@@ -19,13 +19,13 @@ package org.runnerup.workout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.util.Pair;
 
 /**
  * This class is the top level object for a workout, it is being called by
@@ -327,10 +327,20 @@ public class Workout implements WorkoutComponent {
 	/**
 	 * @return flattened list of all steps in workout
 	 */
-	public ArrayList<Pair<Step,Step>> getSteps() {
-		ArrayList<Pair<Step, Step>> list = new ArrayList<Pair<Step,Step>>();
+	static public class StepListEntry {
+		public StepListEntry(Step step, int level, Step parent) {
+			this.level = level;
+			this.step = step;
+			this.parent = parent;
+		}
+		public final int level;
+		public final Step parent;
+		public final Step step;
+	};
+	public List<StepListEntry> getSteps() {
+		ArrayList<StepListEntry> list = new ArrayList<StepListEntry>();
 		for (Step s : steps) {
-			s.getSteps(null, list);
+			s.getSteps(null, 0, list);
 		}
 		return list;
 	}

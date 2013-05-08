@@ -18,6 +18,7 @@ package org.runnerup.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,7 +26,6 @@ import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
-import org.runnerup.workout.RepeatStep;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
@@ -42,7 +42,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -72,7 +71,8 @@ public class RunActivity extends Activity implements TickListener {
 	org.runnerup.workout.Step currentStep = null;
 	Formatter formatter = null;
 	
-	class WorkoutRow { org.runnerup.workout.Step step = null; ContentValues lap = null;};
+	class WorkoutRow { org.runnerup.workout.Step step = null; ContentValues lap = null;
+	public int level;};
 	ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 
@@ -138,10 +138,11 @@ public class RunActivity extends Activity implements TickListener {
 	}
 
 	private void populateWorkoutList() {
-		ArrayList<Pair<Step,Step>> list = workout.getSteps();
+		List<Workout.StepListEntry> list = workout.getSteps();
 		for (int i = 0; i < list.size(); i++) {
 			WorkoutRow row = new WorkoutRow();
-			row.step = list.get(i).second;
+			row.level = list.get(i).level;
+			row.step = list.get(i).step;
 			row.lap = null;
 			workoutRows.add(row);
 		}
@@ -389,7 +390,7 @@ public class RunActivity extends Activity implements TickListener {
 			WorkoutRow tmp = rows.get(position);
 			if (tmp.step != null)
 			{
-				return getWorkoutRow(tmp.step, convertView, parent);
+				return getWorkoutRow(tmp.step, tmp.level, convertView, parent);
 			}
 			else
 			{	
@@ -397,17 +398,18 @@ public class RunActivity extends Activity implements TickListener {
 			}
 		}
 
-		private View getWorkoutRow(org.runnerup.workout.Step step, View convertView, ViewGroup parent) {
+		private View getWorkoutRow(org.runnerup.workout.Step step, int level, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
 			View view = inflater.inflate(R.layout.workout_row, parent, false);
 			TextView intensity = (TextView) view.findViewById(R.id.step_intensity);
 			TextView durationType = (TextView) view.findViewById(R.id.step_duration_type);
 			TextView durationValue = (TextView) view.findViewById(R.id.step_duration_value);
 			TextView targetPace = (TextView) view.findViewById(R.id.step_pace);
+			intensity.setPadding(level * 10, 0, 0, 0);
 			intensity.setText(getResources().getText(step.getIntensity().getTextId()));
 			if (step.getDurationType() != null) {
 				durationType.setText(getResources().getText(step.getDurationType().getTextId()));
-				durationValue.setText("" + step.getDurationValue());
+				durationValue.setText(formatter.format(Formatter.TXT_LONG, step.getDurationType(), step.getDurationValue()));
 			} else {
 				durationType.setText("");
 				durationValue.setText("");
@@ -426,13 +428,13 @@ public class RunActivity extends Activity implements TickListener {
 				if (minValue == maxValue) {
 					targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), minValue));
 				} else {
-					targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), minValue) + " - " +
+					targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), minValue) + "-" +
 							           formatter.format(Formatter.TXT_SHORT, step.getTargetType(), maxValue));
 				}
 			}
 			
 			if (step.getRepeatCount() > 0) {
-				durationType.setText("" + (step.getCurrentRepeat() + 1) + "/" + step.getRepeatCount());
+				durationValue.setText("" + (step.getCurrentRepeat() + 1) + "/" + step.getRepeatCount());
 			}
 			return view;
 		}
