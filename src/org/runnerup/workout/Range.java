@@ -18,8 +18,8 @@ package org.runnerup.workout;
 
 public class Range {
 	
-	private double minValue;
-	private double maxValue;
+	public double minValue;
+	public double maxValue;
 
 	public Range (double minValue, double maxValue) {
 		if (minValue <= maxValue) {

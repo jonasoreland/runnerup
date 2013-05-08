@@ -43,7 +43,7 @@ public class Step implements TickComponent {
 	 * Target
 	 */
 	Dimension targetType = null;
-	double targetValue = 0;
+	Range targetValue = null;
 
 	/**
 	 * Autolap (m)
@@ -118,7 +118,7 @@ public class Step implements TickComponent {
 	/**
 	 * @return the targetValue
 	 */
-	public double getTargetValue() {
+	public Range getTargetValue() {
 		return targetValue;
 	}
 
@@ -127,7 +127,11 @@ public class Step implements TickComponent {
 	 *            the targetValue to set
 	 */
 	public void setTargetValue(double targetValue) {
-		this.targetValue = targetValue;
+		this.targetValue = new Range(targetValue, targetValue);
+	}
+
+	public void setTargetValue(double min, double max) {
+		this.targetValue = new Range(min, max);
 	}
 
 	public Intensity getIntensity() {
@@ -198,11 +202,11 @@ public class Step implements TickComponent {
 			if (targetType != null) {
 				switch (targetType) {
 				case PACE:
-					tmp.put(DB.LAP.PLANNED_PACE, targetValue);
+					tmp.put(DB.LAP.PLANNED_PACE, targetValue.maxValue);
 					break;
 				case SPEED:
-					if (targetValue != 0) {
-						tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue);
+					if (targetValue.maxValue != 0) {
+						tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue.maxValue);
 					}
 				}
 			}

@@ -421,7 +421,14 @@ public class RunActivity extends Activity implements TickListener {
 			if (step.getTargetType() == null) {
 				targetPace.setText("");
 			} else {
-				targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), step.getTargetValue()));
+				double minValue = step.getTargetValue().minValue;
+				double maxValue = step.getTargetValue().maxValue;
+				if (minValue == maxValue) {
+					targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), minValue));
+				} else {
+					targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(), minValue) + " - " +
+							           formatter.format(Formatter.TXT_SHORT, step.getTargetType(), maxValue));
+				}
 			}
 			
 			if (step.getRepeatCount() > 0) {

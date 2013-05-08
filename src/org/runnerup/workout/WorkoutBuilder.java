@@ -227,7 +227,7 @@ public class WorkoutBuilder {
 			 * Set it on step, so that it will be recorded in DB
 			 */
 			step.targetType = Dimension.PACE;
-			step.targetValue = targetPaceMax;
+			step.targetValue = range;
 		}
 		
 		/**
