@@ -17,6 +17,8 @@
 package org.runnerup.export;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -587,15 +589,16 @@ public class UploadManager {
 						uploader.downloadWorkout(w, ref.workoutKey);
 						if (w != f) {
 							if (compareFiles(w, f) != true) {
-								//@TODO dialog
+								System.err.println("overwriting " + f.getPath() + " with " + w.getPath());
+								// TODO dialog
 								f.delete();
 								w.renameTo(f);
 							} else {
+								System.err.println("file identical...deleting temporary " + w.getPath());
 								w.delete();
 							}
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 						w.delete();
 					}
@@ -613,8 +616,47 @@ public class UploadManager {
 		}.execute(currentUploader);
 	}
 
-	protected boolean compareFiles(File w, File f) {
-		// TODO Auto-generated method stub
-		return false;
+	public static boolean compareFiles(File w, File f) {
+		if (w.length() != f.length())
+			return false;
+		
+		boolean cmp = true;
+		FileInputStream f1 = null;
+		FileInputStream f2 = null;
+		try {
+			f1 = new FileInputStream(w);
+			f2 = new FileInputStream(f);
+			byte buf1[] = new byte[1024];
+			byte buf2[] = new byte[1024];
+			do {
+				int cnt1 = f1.read(buf1);
+				int cnt2 = f2.read(buf2);
+				if (cnt1 <= 0 || cnt2 <= 0)
+					break;
+				
+				if (!java.util.Arrays.equals(buf1, buf2)) {
+					cmp = false;
+					break;
+				}
+			} while(true);
+		} catch (Exception ex) {
+		}
+		
+		if (f1 != null) {
+			try {
+				f1.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (f2 != null) {
+			try {
+				f2.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return cmp;
 	}
 }
