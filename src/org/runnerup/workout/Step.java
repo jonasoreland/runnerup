@@ -374,4 +374,8 @@ public class Step implements TickComponent {
 	public int getCurrentRepeat() {
 		return 0;
 	}
+
+	public boolean isLastStep() {
+		return true;
+	}
 };

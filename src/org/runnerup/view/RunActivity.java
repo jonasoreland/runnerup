@@ -26,6 +26,7 @@ import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
+import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
@@ -75,6 +76,7 @@ public class RunActivity extends Activity implements TickListener {
 	public int level;};
 	ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+	boolean simpleWorkout;
 
 	/** Called when the activity is first created. */
 
@@ -123,18 +125,23 @@ public class RunActivity extends Activity implements TickListener {
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
 		workout.onInit(workout, bindValues);
-		workout.onStart(Scope.WORKOUT, this.workout);
 		startTimer();
 
-		if (workout.isSimple()) {
+		populateWorkoutList();
+		simpleWorkout = false;
+		if (workoutRows.size() == 1 ||
+			workoutRows.size() == 2 && workoutRows.get(0).step.getIntensity() == Intensity.RESTING) {
+			simpleWorkout = true;
+		}
+			
+		if (simpleWorkout) {
 			newLapButton.setOnClickListener(newLapButtonClick);
 			newLapButton.setText("New lap");
 		} else {
 			newLapButton.setOnClickListener(nextStepButtonClick);
 			newLapButton.setText("Next lap");
 		}
-
-		populateWorkoutList();
+		workout.onStart(Scope.WORKOUT, this.workout);
 	}
 
 	private void populateWorkoutList() {
@@ -291,7 +298,7 @@ public class RunActivity extends Activity implements TickListener {
 			((WorkoutAdapter)workoutList.getAdapter()).notifyDataSetChanged();
 			currentStep = curr;
 			workoutList.setSelection(getPosition(workoutRows, currentStep));
-			if (!workout.isSimple() && workout.isLastStep())
+			if (!simpleWorkout && workout.isLastStep())
 			{
 				newLapButton.setEnabled(false);
 			}

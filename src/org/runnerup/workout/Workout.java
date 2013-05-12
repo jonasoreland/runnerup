@@ -313,17 +313,13 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public boolean isLastStep() {
-		return currentStepNo + 1 == steps.size();
+		if (currentStepNo + 1 < steps.size())
+			return false;
+		if (currentStepNo < steps.size())
+			return steps.get(currentStepNo).isLastStep();
+		return true;
 	}
 
-	public boolean isSimple() {
-		if (steps.size() > 2)
-			return false;
-		if (steps.size() == 1)
-			return true;
-		return steps.get(0).intensity == Intensity.RESTING; // activity countdown
-	}
-	
 	/**
 	 * @return flattened list of all steps in workout
 	 */

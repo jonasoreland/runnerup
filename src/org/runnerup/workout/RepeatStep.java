@@ -90,14 +90,13 @@ public class RepeatStep extends Step {
 		if (steps.get(currentStep).onNextStep(w)) {
 			currentStep++;
 			if (currentStep == steps.size()) {
+				currentStep = 0;
 				currentRepeat ++;
 				if (currentRepeat == repeatCount) {
 					// reset in preparation for next outer iteration
-					currentStep = 0;
 					currentRepeat = 0;
 					return true;
 				}
-				currentStep = 0;
 			}
 		}
 		return false;
@@ -146,10 +145,19 @@ public class RepeatStep extends Step {
 	@Override
 	public Step getCurrentStep() {
 		if (currentStep < steps.size())
-			return steps.get(currentStep);
+			return steps.get(currentStep).getCurrentStep();
 		return null;
 	}
 
+	@Override
+	public boolean isLastStep() {
+		if (currentStep + 1 < steps.size())
+			return false;
+		if (currentRepeat < repeatCount)
+			return false;
+		return steps.get(currentStep).isLastStep();
+	} 
+	
 	@Override
 	public void getSteps(Step parent, int level, List<Workout.StepListEntry> list) {
 		list.add(new Workout.StepListEntry(this, level, parent));
