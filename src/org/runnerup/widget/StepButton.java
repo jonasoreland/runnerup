@@ -17,18 +17,32 @@
 package org.runnerup.widget;
 
 import org.runnerup.R;
+import org.runnerup.util.Formatter;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Step;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 public class StepButton extends TableLayout {
 
 	private Context mContext;
 	private TableLayout mLayout;
+	private TextView mIntensity;
+	private TextView mDurationType;
+	private TextView mDurationValue;
+	private TextView mGoalType;
+	private TextView mGoalValue;
+	private TableRow mGoalRow;
+	private Formatter formatter;
 	
 	public StepButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -36,8 +50,15 @@ public class StepButton extends TableLayout {
 		
 		LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		inflater.inflate(R.layout.step_button, this);
+		formatter = new Formatter(context);
 		mLayout = (TableLayout) findViewById(R.id.stepButton);
-
+		mIntensity = (TextView) findViewById(R.id.stepIntensity);
+		mDurationType = (TextView) findViewById(R.id.stepDurationType);
+		mDurationValue = (TextView) findViewById(R.id.stepDurationValue);
+		mGoalType = (TextView) findViewById(R.id.stepGoalType);
+		mGoalValue = (TextView) findViewById(R.id.stepGoalValue);
+		mGoalRow = (TableRow) findViewById(R.id.stepRow1);
+		
 		mLayout.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -59,5 +80,32 @@ public class StepButton extends TableLayout {
 		}
 	}
 
-	
+	public void setStep(Step step) {
+		Resources res = getResources();
+		mIntensity.setText(res.getText(step.getIntensity().getTextId()));
+		if (step.getIntensity() == Intensity.REPEAT) {
+			mDurationType.setText("");
+			mDurationValue.setText("" + step.getRepeatCount());
+			mGoalRow.setVisibility(View.GONE);
+			return;
+		}
+		Dimension durationType = step.getDurationType();
+		if (durationType == null) {
+			mDurationType.setText("");
+			mDurationValue.setText("Until pressed");
+		} else {
+			mDurationType.setText(res.getString(durationType.getTextId()));
+			mDurationValue.setText(formatter.format(Formatter.TXT_LONG, durationType, step.getDurationValue()));
+		}
+
+		Dimension goalType = step.getTargetType();
+		if (goalType == null) {
+			mGoalRow.setVisibility(View.GONE);
+		} else {
+			mGoalRow.setVisibility(View.VISIBLE);
+			mGoalType.setText(res.getString(goalType.getTextId()));
+			mGoalValue.setText(formatter.format(Formatter.TXT_SHORT, goalType, step.getTargetValue().minValue) + "-" +
+					formatter.format(Formatter.TXT_LONG, goalType, step.getTargetValue().maxValue));
+		}
+	}
 }
