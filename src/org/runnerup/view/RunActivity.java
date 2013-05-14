@@ -290,7 +290,7 @@ public class RunActivity extends Activity implements TickListener {
 		long lt = workout.getTime(Scope.LAP);
 		double lp = workout.getPace(Scope.LAP);
 		lapTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, lt));
-		lapDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ld));
+		lapDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) ld));
 		lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, lp));
 		
 		Step curr = workout.getCurrentStep();
