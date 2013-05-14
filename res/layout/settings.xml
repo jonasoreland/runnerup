@@ -37,6 +37,15 @@
 			    android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
     </Preference>
     	    	    
+    <Preference
+        	android:key="cue_workouts"
+        	android:title="Manage workouts"
+        	android:summary="Download/edit/remove workouts">
+			<intent
+			    android:targetPackage="org.runnerup"
+			    android:targetClass="org.runnerup.view.DownloadWorkoutsActivity" />
+    </Preference>
+    
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="pref_autolap_active"
