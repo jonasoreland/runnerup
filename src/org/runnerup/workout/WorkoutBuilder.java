@@ -366,7 +366,7 @@ public class WorkoutBuilder {
 		
 		return w;
 	}
-
+	
 	private static void createAudioCountdown(Step step) {
 		double first = 0;
 		ArrayList<Double> list = new ArrayList<Double>();
@@ -519,5 +519,61 @@ public class WorkoutBuilder {
 		}
 		
 		return w;
+	}
+
+	public static void addAudioCuesToWorkout(Workout w, SharedPreferences prefs) {
+		addAudioCuesToWorkout(w.steps, prefs);
+	}
+
+	private static void addAudioCuesToWorkout(ArrayList<Step> steps, SharedPreferences prefs) {
+		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
+		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
+		boolean silent = triggers.size() == 0;
+		addPauseStopResumeTriggers(triggers, prefs);
+		if (!silent)
+		{
+			EventTrigger ev = new EventTrigger();
+			ev.event = Event.STARTED;
+			ev.scope = Scope.STEP;
+			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
+			triggers.add(ev);
+		}
+		
+		for (Step step : steps) {
+			switch(step.getIntensity()) {
+			case REPEAT:
+				addAudioCuesToWorkout(((RepeatStep)step).steps, prefs);
+				break;
+			case ACTIVE:
+				step.triggers.addAll(triggers);
+				break;
+			case RESTING: {
+				IntervalTrigger trigger = new IntervalTrigger();
+				trigger.dimension = step.durationType;
+				trigger.first = 1;
+				trigger.interval = 1;
+				trigger.scope = Scope.STEP;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
+				step.triggers.add(trigger);
+				addPauseStopResumeTriggers(step.triggers, prefs);
+
+				if (!silent) {
+					createAudioCountdown(step);
+				}
+				break;
+			}
+			case WARMUP:
+			case COOLDOWN:
+				addPauseStopResumeTriggers(step.triggers, prefs);
+				if (skip_startstop_cue == false) {
+					EventTrigger ev = new EventTrigger();
+					ev.event = Event.STARTED;
+					ev.scope = Scope.STEP;
+					ev.triggerAction.add(new AudioFeedback(step.getIntensity(), Event.STARTED));
+					step.triggers.add(ev);
+				}
+				break;
+			}
+		}
 	}
 }

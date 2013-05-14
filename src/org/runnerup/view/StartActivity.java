@@ -18,7 +18,9 @@ package org.runnerup.view;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
@@ -27,10 +29,12 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
+import org.runnerup.widget.StepButton;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -54,11 +58,14 @@ import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -102,6 +109,9 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner advancedAudioSpinner = null;
 	AudioSchemeListAdapter advancedAudioListAdapter = null;
 	Button       advancedDownloadWorkoutButton = null;
+	Workout      advancedWorkout = null;
+	ListView     advancedStepList = null;
+	WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
 	
 	TitleSpinner manualDate = null;
 	TitleSpinner manualTime = null;
@@ -209,6 +219,22 @@ public class StartActivity extends Activity implements TickListener {
 		advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
 		advancedWorkoutListAdapter.reload();
 		advancedWorkoutSpinner.setAdapter(advancedWorkoutListAdapter);
+		advancedWorkoutSpinner.setOnSetValueListener(new OnSetValueListener() {
+			@Override
+			public String preSetValue(String newValue)
+					throws IllegalArgumentException {
+				loadAdvanced();
+				return newValue;
+			}
+
+			@Override
+			public int preSetValue(int newValue)
+					throws IllegalArgumentException {
+				loadAdvanced();
+				return newValue;
+			}});
+		advancedStepList = (ListView)findViewById(R.id.advancedStepList);
+		advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 		advancedDownloadWorkoutButton = (Button)findViewById(R.id.advancedDownloadButton);
 		advancedDownloadWorkoutButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -243,6 +269,12 @@ public class StartActivity extends Activity implements TickListener {
 		super.onResume();
 		simpleAudioListAdapter.reload();
 		intervalAudioListAdapter.reload();
+		advancedAudioListAdapter.reload();
+		advancedWorkoutListAdapter.reload();
+		if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
+			loadAdvanced();
+		}
+
 	}
 
 	@Override
@@ -283,7 +315,7 @@ public class StartActivity extends Activity implements TickListener {
 				startButton.setVisibility(View.VISIBLE);
 			else if (tabId.contentEquals(TAB_ADVANCED)) {
 				startButton.setVisibility(View.VISIBLE);
-//				startButton.setVisibility(View.GONE);
+				loadAdvanced();
 			} else if (tabId.contentEquals(TAB_MANUAL))
 				startButton.setVisibility(View.GONE);
 		}
@@ -310,23 +342,8 @@ public class StartActivity extends Activity implements TickListener {
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
 					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
-					String name = pref.getString("advancedWorkout", "");
-					try {
-						w = WorkoutSerializer.readFile(ctx, name);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-						AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-						builder.setTitle("Failed to load workout!!");
-						builder.setMessage("" + ex.toString());
-						builder.setPositiveButton("OK",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {
-										dialog.dismiss();
-									}
-								});
-						builder.show();
-						return;
-					}
+					w = advancedWorkout;
+					WorkoutBuilder.addAudioCuesToWorkout(w, audioPref);
 				}
 				mGpsStatus.stop(StartActivity.this);
 				mGpsTracker.setWorkout(w);
@@ -366,8 +383,10 @@ public class StartActivity extends Activity implements TickListener {
 			startButton.setEnabled(false);
 			startButton.setText("Waiting for GPS");
 		} else {
-			startButton.setEnabled(true);
-			startButton.setText("Start activity");
+			if (!tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) || advancedWorkout != null) {
+				startButton.setEnabled(true);
+				startButton.setText("Start activity");
+			}
 		}
 	}
 
@@ -510,6 +529,68 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	};
 
+	
+	void loadAdvanced() {
+		Context ctx = getApplicationContext();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+		String name = pref.getString("advancedWorkout", "");
+		advancedWorkout = null;
+		if ("".contentEquals(name))
+			return;
+		try {
+			advancedWorkout = WorkoutSerializer.readFile(ctx, name);
+			advancedWorkoutStepsAdapter.steps = advancedWorkout.getSteps();
+			advancedWorkoutStepsAdapter.notifyDataSetChanged();
+			advancedDownloadWorkoutButton.setVisibility(View.GONE);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
+			builder.setTitle("Failed to load workout!!");
+			builder.setMessage("" + ex.toString());
+			builder.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+			builder.show();
+			return;
+		}
+	}
+	
+	class WorkoutStepsAdapter extends BaseAdapter {
+
+		List<StepListEntry> steps = new ArrayList<StepListEntry>();
+		
+		@Override
+		public int getCount() {
+			return steps.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return steps.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return 0;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			StepListEntry entry = steps.get(position);
+			StepButton button = null;
+			if (convertView != null && convertView instanceof StepButton) {
+				button = (StepButton)convertView;
+			} else {
+				button = new StepButton(StartActivity.this, null);
+			}
+			button.setStep(entry.step);
+			button.setPadding(entry.level * 7, 0, 0, 0);
+			return button;
+		}
+	};
 	
 	OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
 
