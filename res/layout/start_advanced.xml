@@ -45,6 +45,14 @@
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
+    <ListView
+        android:id="@+id/advancedStepList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/advancedWorkoutSpinner"
+        android:layout_above="@+id/advancedDownloadButton"
+    />
+    
     <Button
         android:id="@+id/advancedDownloadButton"
         style="@style/ButtonText"
