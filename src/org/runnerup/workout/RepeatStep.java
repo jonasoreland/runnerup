@@ -104,7 +104,7 @@ public class RepeatStep extends Step {
 	
 	@Override
 	public void onResume(Workout s) {
-		steps.get(currentStep).onPause(s);
+		steps.get(currentStep).onResume(s);
 	}
 
 	@Override
