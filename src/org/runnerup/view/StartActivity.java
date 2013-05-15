@@ -586,6 +586,7 @@ public class StartActivity extends Activity implements TickListener {
 			} else {
 				button = new StepButton(StartActivity.this, null);
 			}
+			button.setEnabled(false); // not yet implemented
 			button.setStep(entry.step);
 			button.setPadding(entry.level * 7, 0, 0, 0);
 			return button;
