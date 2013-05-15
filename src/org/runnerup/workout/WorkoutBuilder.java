@@ -539,13 +539,26 @@ public class WorkoutBuilder {
 			triggers.add(ev);
 		}
 		
-		for (Step step : steps) {
+		Step stepArr[] = new Step[steps.size()];
+		steps.toArray(stepArr);
+		for (int i = 0 ; i < stepArr.length; i++) {
+			Step prev = i == 0 ? null : stepArr[i-1];
+			Step step = stepArr[i];
+			Step next = i + 1 == stepArr.length ? null : stepArr[i+1];
 			switch(step.getIntensity()) {
 			case REPEAT:
 				addAudioCuesToWorkout(((RepeatStep)step).steps, prefs);
 				break;
 			case ACTIVE:
 				step.triggers.addAll(triggers);
+				if (!silent && (next == null || next.getIntensity() != step.getIntensity()))
+				{
+					EventTrigger ev = new EventTrigger();
+					ev.event = Event.COMPLETED;
+					ev.scope = Scope.STEP;
+					ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
+					step.triggers.add(ev);
+				}
 				break;
 			case RESTING: {
 				IntervalTrigger trigger = new IntervalTrigger();
