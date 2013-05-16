@@ -62,6 +62,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 	AudioSchemeListAdapter adapter = null; 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
+	MenuItem newSettings;
 
 	public static final String DEFAULT = "Default";
 	public static final String SUFFIX = "_audio_cues";
@@ -87,6 +88,11 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 		{
 			Preference btn = (Preference)findPreference("test_cueinfo");
 			btn.setOnPreferenceClickListener(onTestCueinfoClick);
+		}
+
+		{
+			Preference btn = (Preference)findPreference("cue_silence");
+			btn.setOnPreferenceClickListener(this.onSilenceClick);
 		}
 
 		final boolean createNewItem = true;
@@ -122,7 +128,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuItem deleteMenuItem = menu.add("Delete scheme");
+		newSettings = menu.add("New settings");
+		MenuItem deleteMenuItem = menu.add("Delete settings");
 		if (settingsName == null)
 			deleteMenuItem.setEnabled(false);
 		return true;
@@ -130,6 +137,10 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
+		if (item == newSettings) {
+			createNewAudioSchemeDialog();
+			return true;
+		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Are you sure?");
 		builder.setPositiveButton("Yes",
@@ -264,6 +275,45 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 		dialog.show();
 	}
 
+	OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
+		@Override
+		public boolean onPreferenceClick(Preference preference) {
+			String clearList[] = {
+					"cueinfo_total_distance",
+					"cueinfo_total_time",
+					"cueinfo_total_speed",
+					"cueinfo_total_pace",
+					"cueinfo_lap_distance",
+					"cueinfo_lap_time",
+					"cueinfo_lap_speed",
+					"cueinfo_lap_pace",
+					"cueinfo_target_coaching"
+			};
+
+			String setList[] = {
+					"cueinfo_skip_startstop"
+			};
+			
+			for (String s : clearList) {
+				Preference a = getPreferenceManager().findPreference(s);
+				if (a != null) {
+					a.getEditor().putBoolean(s, false);
+					a.getEditor().commit();
+				}
+			}
+			
+			for (String s : setList) {
+				Preference a = getPreferenceManager().findPreference(s);
+				if (a != null) {
+					a.getEditor().putBoolean(s, true);
+					a.getEditor().commit();
+				}
+			}
+			return false;
+		}
+		
+	};
+
 	OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 
 		TextToSpeech tts = null;
@@ -290,7 +340,12 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			Context ctx = getApplicationContext();
 
 			feedback.clear();
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx); 
+			SharedPreferences prefs = null;
+			if (settingsName.contentEquals(DEFAULT) || settingsName == null)
+				prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+			else
+				prefs = ctx.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
+
 			if (prefs.getBoolean("cueinfo_total_distance", false)) {
 				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
 			}

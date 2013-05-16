@@ -19,7 +19,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    	<CheckBoxPreference
+<!-- Doesn't work yet :-( 
+        <CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="false"
+        	android:key="cue_silence"
+        	android:title="Silence"
+        	android:summary="Clear all cues"/>
+-->    
+   	    <PreferenceCategory android:title="Triggers" />
+    
+   	    <CheckBoxPreference
         	android:defaultValue="false"
         	android:persistent="true"
         	android:key="cue_time"
@@ -99,6 +109,13 @@
    		</PreferenceCategory>
     	<PreferenceCategory android:title="Misc cues">
 			<CheckBoxPreference
+        		android:defaultValue="true"
+        		android:persistent="true"
+        		android:key="cueinfo_target_coaching"
+        		android:title="Target coaching"
+        		android:summary="Coach to help you reach target (if having set target)"
+        		/>
+    	    <CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="cueinfo_skip_startstop"
