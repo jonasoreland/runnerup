@@ -223,14 +223,14 @@ public class StartActivity extends Activity implements TickListener {
 			@Override
 			public String preSetValue(String newValue)
 					throws IllegalArgumentException {
-				loadAdvanced();
+				loadAdvanced(newValue);
 				return newValue;
 			}
 
 			@Override
 			public int preSetValue(int newValue)
 					throws IllegalArgumentException {
-				loadAdvanced();
+				loadAdvanced(null);
 				return newValue;
 			}});
 		advancedStepList = (ListView)findViewById(R.id.advancedStepList);
@@ -272,7 +272,7 @@ public class StartActivity extends Activity implements TickListener {
 		advancedAudioListAdapter.reload();
 		advancedWorkoutListAdapter.reload();
 		if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
-			loadAdvanced();
+			loadAdvanced(null);
 		}
 
 	}
@@ -315,7 +315,7 @@ public class StartActivity extends Activity implements TickListener {
 				startButton.setVisibility(View.VISIBLE);
 			else if (tabId.contentEquals(TAB_ADVANCED)) {
 				startButton.setVisibility(View.VISIBLE);
-				loadAdvanced();
+				loadAdvanced(null);
 			} else if (tabId.contentEquals(TAB_MANUAL))
 				startButton.setVisibility(View.GONE);
 		}
@@ -530,10 +530,12 @@ public class StartActivity extends Activity implements TickListener {
 	};
 
 	
-	void loadAdvanced() {
+	void loadAdvanced(String name) {
 		Context ctx = getApplicationContext();
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-		String name = pref.getString("advancedWorkout", "");
+		if (name == null) {
+			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+			name = pref.getString("advancedWorkout", "");
+		}
 		advancedWorkout = null;
 		if ("".contentEquals(name))
 			return;
