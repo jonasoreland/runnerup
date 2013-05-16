@@ -529,6 +529,16 @@ public class WorkoutBuilder {
 		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
 		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
 		boolean silent = triggers.size() == 0;
+		final boolean coaching = prefs.getBoolean("cueinfo_target_coaching", false);
+		if (silent && coaching) {
+			for (Step s : steps) {
+				if (s.getTargetType() != null) {
+					silent = false;
+					break;
+				}
+			}
+		}
+		
 		addPauseStopResumeTriggers(triggers, prefs);
 		if (!silent)
 		{
@@ -586,6 +596,18 @@ public class WorkoutBuilder {
 					step.triggers.add(ev);
 				}
 				break;
+			}
+
+			if (coaching && step.getTargetType() != null) {
+				Range range = step.getTargetValue();
+				int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "20"), 20);
+				int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "30"), 30);
+				TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
+				tr.scope = Scope.STEP;
+				tr.dimension = step.getTargetType();
+				tr.range = range;
+				tr.triggerAction.add(new CoachFeedback(Scope.WORKOUT, step.getTargetType(), range, tr));
+				step.triggers.add(tr);
 			}
 		}
 	}
