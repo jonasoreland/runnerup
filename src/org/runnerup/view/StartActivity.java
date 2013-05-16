@@ -331,20 +331,21 @@ public class StartActivity extends Activity implements TickListener {
 			} else if (mGpsStatus.isFixed()) {
 				Context ctx = getApplicationContext();
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+				SharedPreferences audioPref = null;
 				Workout w = null;
 				if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
-					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
-					w = WorkoutBuilder.createDefaultWorkout(pref, audioPref, simpleTargetPace.isChecked());
+					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
+					w = WorkoutBuilder.createDefaultWorkout(pref, simpleTargetPace.isChecked());
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
-					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
-					w = WorkoutBuilder.createDefaultIntervalWorkout(pref, audioPref);
+					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
+					w = WorkoutBuilder.createDefaultIntervalWorkout(pref);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
-					SharedPreferences audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
+					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
 					w = advancedWorkout;
-					WorkoutBuilder.addAudioCuesToWorkout(w, audioPref);
 				}
+				WorkoutBuilder.addAudioCuesToWorkout(w, audioPref);
 				mGpsStatus.stop(StartActivity.this);
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,

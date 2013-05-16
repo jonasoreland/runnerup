@@ -92,7 +92,9 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
 		{
 			Preference btn = (Preference)findPreference("cue_silence");
-			btn.setOnPreferenceClickListener(this.onSilenceClick);
+			if (btn != null) {
+				btn.setOnPreferenceClickListener(this.onSilenceClick);
+			}
 		}
 
 		final boolean createNewItem = true;

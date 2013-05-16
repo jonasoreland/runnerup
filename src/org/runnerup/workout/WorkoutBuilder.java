@@ -33,7 +33,256 @@ import android.text.format.DateUtils;
 
 public class WorkoutBuilder {
 
-	static ArrayList<Trigger> createDefaultTriggers(SharedPreferences prefs) {
+	/**
+	 * @return workout based on SharedPreferences
+	 */
+	public static Workout createDefaultWorkout(SharedPreferences prefs,
+			boolean targetPace) {
+		Workout w = new Workout();
+		if (prefs.getBoolean("pref_countdown_active", false))
+		{
+			long val = 0;
+			String vals = prefs.getString("pref_countdown_time", "0");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			if (val > 0) {
+				Step step = Step.createPauseStep(Dimension.TIME, val);
+				w.steps.add(step);
+			}
+		}
+
+		Step step = new Step();
+		if (prefs.getBoolean("pref_autolap_active", false)) {
+			long val = 0;
+			String vals = prefs.getString("pref_autolap", "1000");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			step.setAutolap(val);
+		}
+
+		w.steps.add(step);
+
+		if (targetPace)
+		{
+			double unitMeters = Formatter.getUnitMeters(prefs);
+			double seconds_per_unit = (double)SafeParse.parseSeconds(prefs.getString("basic_target_pace_max", "00:05:00"), 5*60);
+			int targetPaceRange = prefs.getInt("basic_target_pace_min_range", 15);
+			double targetPaceMax = seconds_per_unit / unitMeters;
+			double targetPaceMin = (targetPaceMax * unitMeters - targetPaceRange) / unitMeters;
+			Range range = new Range(targetPaceMin, targetPaceMax);
+			step.targetType = Dimension.PACE;
+			step.targetValue = range;
+		}
+		
+		/**
+		 *
+		 */
+		return w;
+	}
+	
+	public static Workout createDefaultIntervalWorkout(SharedPreferences prefs) {
+		Workout w = new Workout();
+		final boolean warmup = true;
+		final boolean cooldown = true;
+
+		if (warmup) {
+			Step step = new Step();
+			step.intensity = Intensity.WARMUP;
+			step.durationType = null;
+			w.steps.add(step);
+		}
+
+		boolean countdown_before_interval = true; //TODO configurable ??
+		
+		if (countdown_before_interval)
+		{
+			long val = 15; // default 15s
+			String vals = prefs.getString("pref_interval_countdown_time", "15");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			if (val > 0) {
+				Step step = Step.createPauseStep(Dimension.TIME, val);
+				w.steps.add(step);
+			}
+		}
+		
+		int repetitions = (int) SafeParse.parseDouble(prefs.getString("intervalRepetitions", "1"), 1);
+		
+		int intervalType = prefs.getInt("intervalType", 0);
+		long intervalTime = SafeParse.parseSeconds(prefs.getString("intervalTime", "00:04:00"), 4 * 60);
+		double intevalDistance = SafeParse.parseDouble(prefs.getString("intervalDistance", "1000"), 1000);
+		int intervalRestType = prefs.getInt("intervalRestType", 0);
+		long intervalRestTime = SafeParse.parseSeconds(prefs.getString("intervalRestTime", "00:01:00"), 60);
+		double intevalRestDistance = SafeParse.parseDouble(prefs.getString("intervalRestDistance", "200"), 200);
+		
+		RepeatStep repeat = new RepeatStep();
+		repeat.repeatCount = repetitions;
+		{
+			Step step = new Step();
+			switch (intervalType) {
+			case 0: // Time
+				step.durationType = Dimension.TIME;
+				step.durationValue = intervalTime;
+				break;
+			case 1: // Distance
+				step.durationType = Dimension.DISTANCE;
+				step.durationValue = intevalDistance;
+				break;
+			}
+			repeat.steps.add(step);
+
+			if (true) {
+				Step rest = null;
+				switch (intervalRestType) {
+				case 0: // Time
+					rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
+					break;
+				case 1: // Distance
+					rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
+					break;
+				}
+				repeat.steps.add(rest);
+			}
+		}
+		w.steps.add(repeat);
+		
+		if (cooldown) {
+			Step step = new Step();
+			step.intensity = Intensity.COOLDOWN;
+			step.durationType = null;
+			w.steps.add(step);
+		}
+		
+		return w;
+	}
+	
+	public static boolean validateSeconds(String newValue) {
+		//TODO move this somewhere
+		long seconds = SafeParse.parseSeconds(newValue, -1);
+		long seconds2 = SafeParse.parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
+		if (seconds == seconds2)
+			return true;
+		return false;
+	}
+
+	public static SharedPreferences getAudioCuePreferences(Context ctx, SharedPreferences pref, String key) {
+		return getSubPreferences(ctx, pref, key, AudioCueSettingsActivity.DEFAULT, AudioCueSettingsActivity.SUFFIX);
+	}
+
+	public static SharedPreferences getSubPreferences(Context ctx, SharedPreferences pref,
+			String key, String defaultVal, String suffix) {
+		String name = pref.getString(key, null);
+		if (name == null || name.contentEquals(defaultVal)) {
+			return pref;
+		}
+		return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
+	}
+
+	public static void addAudioCuesToWorkout(Workout w, SharedPreferences prefs) {
+		addAudioCuesToWorkout(w.steps, prefs);
+	}
+
+	private static void addAudioCuesToWorkout(ArrayList<Step> steps, SharedPreferences prefs) {
+		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
+		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
+		boolean silent = triggers.size() == 0;
+		final boolean coaching = prefs.getBoolean("cueinfo_target_coaching", false);
+		if (silent && coaching) {
+			for (Step s : steps) {
+				if (s.getTargetType() != null) {
+					silent = false;
+					break;
+				}
+			}
+		}
+		
+		addPauseStopResumeTriggers(triggers, prefs);
+		if (!silent)
+		{
+			EventTrigger ev = new EventTrigger();
+			ev.event = Event.STARTED;
+			ev.scope = Scope.STEP;
+			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
+			triggers.add(ev);
+			
+			EventTrigger ev2 = new EventTrigger(); // for autolap
+			ev2.event = Event.STARTED;
+			ev2.scope = Scope.LAP;
+			ev2.skipCounter = 1; // skip above
+			ev2.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
+			triggers.add(ev2);
+		}
+		
+		Step stepArr[] = new Step[steps.size()];
+		steps.toArray(stepArr);
+		for (int i = 0 ; i < stepArr.length; i++) {
+			Step prev = i == 0 ? null : stepArr[i-1];
+			Step step = stepArr[i];
+			Step next = i + 1 == stepArr.length ? null : stepArr[i+1];
+			switch(step.getIntensity()) {
+			case REPEAT:
+				addAudioCuesToWorkout(((RepeatStep)step).steps, prefs);
+				break;
+			case ACTIVE:
+				step.triggers.addAll(triggers);
+				if (!silent && (next == null || next.getIntensity() != step.getIntensity()))
+				{
+					EventTrigger ev = new EventTrigger();
+					ev.event = Event.COMPLETED;
+					ev.scope = Scope.STEP;
+					ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
+					step.triggers.add(ev);
+				}
+				break;
+			case RESTING: {
+				IntervalTrigger trigger = new IntervalTrigger();
+				trigger.dimension = step.durationType;
+				trigger.first = 1;
+				trigger.interval = 1;
+				trigger.scope = Scope.STEP;
+				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
+				step.triggers.add(trigger);
+				addPauseStopResumeTriggers(step.triggers, prefs);
+
+				if (!silent) {
+					createAudioCountdown(step);
+				}
+				break;
+			}
+			case WARMUP:
+			case COOLDOWN:
+				addPauseStopResumeTriggers(step.triggers, prefs);
+				if (skip_startstop_cue == false) {
+					EventTrigger ev = new EventTrigger();
+					ev.event = Event.STARTED;
+					ev.scope = Scope.STEP;
+					ev.triggerAction.add(new AudioFeedback(step.getIntensity(), Event.STARTED));
+					step.triggers.add(ev);
+				}
+				break;
+			}
+
+			if (coaching && step.getTargetType() != null) {
+				Range range = step.getTargetValue();
+				int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "20"), 20);
+				int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "30"), 30);
+				TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
+				tr.scope = Scope.STEP;
+				tr.dimension = step.getTargetType();
+				tr.range = range;
+				tr.triggerAction.add(new CoachFeedback(Scope.WORKOUT, step.getTargetType(), range, tr));
+				step.triggers.add(tr);
+			}
+		}
+	}
+
+	private static ArrayList<Trigger> createDefaultTriggers(SharedPreferences prefs) {
 		ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 		ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
@@ -103,7 +352,7 @@ public class WorkoutBuilder {
 		return triggers;
 	}
 	
-	public static void addPauseStopResumeTriggers(ArrayList<Trigger> list, SharedPreferences prefs) {
+	private static void addPauseStopResumeTriggers(ArrayList<Trigger> list, SharedPreferences prefs) {
 		if (prefs.getBoolean("cueinfo_skip_startstop", false) == false) {
 			{
 				EventTrigger p = new EventTrigger();
@@ -129,244 +378,8 @@ public class WorkoutBuilder {
 				list.add(ev);
 			}
 		}
-	}
-	
-	/**
-	 * @return workout based on SharedPreferences
-	 */
-	public static Workout createDefaultWorkout(SharedPreferences prefs,
-			SharedPreferences audioPrefs,
-			boolean targetPace) {
-		Workout w = new Workout();
-		Step countdownStep = null;
-		if (prefs.getBoolean("pref_countdown_active", false))
-		{
-			long val = 0;
-			String vals = prefs.getString("pref_countdown_time", "0");
-			try {
-				val = Long.parseLong(vals);
-			} catch (NumberFormatException e) {
-			}
-			if (val > 0) {
-				Step step = Step.createPauseStep(Dimension.TIME, val);
-				IntervalTrigger trigger = new IntervalTrigger();
-				trigger.dimension = Dimension.TIME;
-				trigger.first = 1;
-				trigger.interval = 1;
-				trigger.scope = Scope.STEP;
-				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, Dimension.TIME));
-				step.triggers.add(trigger);
-				w.steps.add(step);
-				countdownStep = step;
-			}
-		}
+	}	
 
-		Step step = new Step();
-		if (prefs.getBoolean("pref_autolap_active", false)) {
-			long val = 0;
-			String vals = prefs.getString("pref_autolap", "1000");
-			try {
-				val = Long.parseLong(vals);
-			} catch (NumberFormatException e) {
-			}
-			step.setAutolap(val);
-		}
-
-		step.triggers = createDefaultTriggers(audioPrefs);
-		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
-
-		if (step.triggers.size() > 0) {
-			EventTrigger ev = new EventTrigger();
-			ev.event = Event.STARTED;
-			ev.scope = Scope.LAP;
-			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
-			if (skip_startstop_cue == false) {
-				ev.skipCounter = 1;
-			}
-			step.triggers.add(ev);
-		}
-
-		if (skip_startstop_cue == false)
-		{
-			if (countdownStep != null) {
-				createAudioCountdown(countdownStep);
-			}
-
-			// activity started/paused/resumed
-			{
-				EventTrigger ev = new EventTrigger();
-				ev.event = Event.STARTED;
-				ev.scope = Scope.STEP;
-				ev.triggerAction.add(new AudioFeedback(Scope.WORKOUT, Event.STARTED));
-				step.triggers.add(ev);
-			}
-			
-			addPauseStopResumeTriggers(step.triggers, audioPrefs);
-		}
-		
-		w.steps.add(step);
-
-		if (targetPace)
-		{
-			double unitMeters = Formatter.getUnitMeters(prefs);
-			double seconds_per_unit = (double)SafeParse.parseSeconds(prefs.getString("basic_target_pace_max", "00:05:00"), 5*60);
-			int targetPaceRange = prefs.getInt("basic_target_pace_min_range", 15);
-			double targetPaceMax = seconds_per_unit / unitMeters;
-			double targetPaceMin = (targetPaceMax * unitMeters - targetPaceRange) / unitMeters;
-			Range range = new Range(targetPaceMin, targetPaceMax);
-			int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "20"), 20);
-			int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "30"), 30);
-			TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
-			tr.scope = Scope.STEP;
-			tr.dimension = Dimension.PACE;
-			tr.range = range;
-			tr.triggerAction.add(new CoachFeedback(Scope.WORKOUT, Dimension.PACE, range, tr));
-			step.triggers.add(tr);
-
-			/**
-			 * Set it on step, so that it will be recorded in DB
-			 */
-			step.targetType = Dimension.PACE;
-			step.targetValue = range;
-		}
-		
-		/**
-		 *
-		 */
-		return w;
-	}
-	
-	public static Workout createDefaultIntervalWorkout(SharedPreferences prefs,
-			SharedPreferences audioPrefs) {
-		Workout w = new Workout();
-		final boolean warmup = true;
-		final boolean cooldown = true;
-		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
-
-		if (warmup) {
-			Step step = new Step();
-			step.intensity = Intensity.WARMUP;
-			step.durationType = null;
-			if (skip_startstop_cue == false) {
-				EventTrigger ev = new EventTrigger();
-				ev.event = Event.STARTED;
-				ev.scope = Scope.STEP;
-				ev.triggerAction.add(new AudioFeedback(Intensity.WARMUP, Event.STARTED));
-				step.triggers.add(ev);
-			}
-			w.steps.add(step);
-		}
-
-		boolean countdown_before_interval = true; //TODO configurable ??
-		
-		if (countdown_before_interval)
-		{
-			long val = 15; // default 15s
-			String vals = prefs.getString("pref_interval_countdown_time", "15");
-			try {
-				val = Long.parseLong(vals);
-			} catch (NumberFormatException e) {
-			}
-			if (val > 0) {
-				Step step = Step.createPauseStep(Dimension.TIME, val);
-				IntervalTrigger trigger = new IntervalTrigger();
-				trigger.dimension = Dimension.TIME;
-				trigger.first = 1;
-				trigger.interval = 1;
-				trigger.scope = Scope.STEP;
-				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, Dimension.TIME));
-				step.triggers.add(trigger);
-				w.steps.add(step);
-			}
-		}
-		
-		ArrayList<Trigger> triggers = createDefaultTriggers(audioPrefs);
-		addPauseStopResumeTriggers(triggers, audioPrefs);
-		if (triggers.size() > 0) {
-			{
-				EventTrigger ev = new EventTrigger();
-				ev.event = Event.STARTED;
-				ev.scope = Scope.STEP;
-				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
-				triggers.add(ev);
-			}
-			
-			{
-				EventTrigger ev = new EventTrigger();
-				ev.event = Event.COMPLETED;
-				ev.scope = Scope.STEP;
-				ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
-				triggers.add(ev);
-			}
-		}
-		
-		int repetitions = (int) SafeParse.parseDouble(prefs.getString("intervalRepetitions", "1"), 1);
-		
-		int intervalType = prefs.getInt("intervalType", 0);
-		long intervalTime = SafeParse.parseSeconds(prefs.getString("intervalTime", "00:04:00"), 4 * 60);
-		double intevalDistance = SafeParse.parseDouble(prefs.getString("intervalDistance", "1000"), 1000);
-		int intervalRestType = prefs.getInt("intervalRestType", 0);
-		long intervalRestTime = SafeParse.parseSeconds(prefs.getString("intervalRestTime", "00:01:00"), 60);
-		double intevalRestDistance = SafeParse.parseDouble(prefs.getString("intervalRestDistance", "200"), 200);
-		for (int i = 0; i < repetitions; i++) {
-			Step step = new Step();
-			switch (intervalType) {
-			case 0: // Time
-				step.durationType = Dimension.TIME;
-				step.durationValue = intervalTime;
-				break;
-			case 1: // Distance
-				step.durationType = Dimension.DISTANCE;
-				step.durationValue = intevalDistance;
-				break;
-			}
-			step.triggers = triggers;
-			w.steps.add(step);
-
-			if (true) {
-				Step rest = null;
-				switch (intervalRestType) {
-				case 0: // Time
-					rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
-					break;
-				case 1: // Distance
-					rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
-					break;
-				}
-				IntervalTrigger trigger = new IntervalTrigger();
-				trigger.dimension = rest.durationType;
-				trigger.first = 1;
-				trigger.interval = 1;
-				trigger.scope = Scope.STEP;
-				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, rest.durationType));
-				rest.triggers.add(trigger);
-				addPauseStopResumeTriggers(rest.triggers, audioPrefs);
-				
-				if (triggers.size() > 0) {
-					createAudioCountdown(rest);
-				}
-				w.steps.add(rest);
-			}
-		}
-
-		if (cooldown) {
-			Step step = new Step();
-			step.intensity = Intensity.COOLDOWN;
-			step.durationType = null;
-			addPauseStopResumeTriggers(step.triggers, audioPrefs);
-			if (skip_startstop_cue == false) {
-				EventTrigger ev = new EventTrigger();
-				ev.event = Event.STARTED;
-				ev.scope = Scope.STEP;
-				ev.triggerAction.add(new AudioFeedback(Intensity.COOLDOWN, Event.STARTED));
-				step.triggers.add(ev);
-			}
-			w.steps.add(step);
-		}
-		
-		return w;
-	}
-	
 	private static void createAudioCountdown(Step step) {
 		double first = 0;
 		ArrayList<Double> list = new ArrayList<Double>();
@@ -431,118 +444,5 @@ public class WorkoutBuilder {
 			ev.triggerAction.add(new AudioCountdownFeedback(Scope.STEP, step.getDurationType()));
 			step.triggers.add(ev);
 		}
-	}
-	
-	public static boolean validateSeconds(String newValue) {
-		//TODO move this somewhere
-		long seconds = SafeParse.parseSeconds(newValue, -1);
-		long seconds2 = SafeParse.parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
-		if (seconds == seconds2)
-			return true;
-		return false;
-	}
-
-	public static SharedPreferences getAudioCuePreferences(Context ctx, SharedPreferences pref, String key) {
-		return getSubPreferences(ctx, pref, key, AudioCueSettingsActivity.DEFAULT, AudioCueSettingsActivity.SUFFIX);
-	}
-
-	public static SharedPreferences getSubPreferences(Context ctx, SharedPreferences pref,
-			String key, String defaultVal, String suffix) {
-		String name = pref.getString(key, null);
-		if (name == null || name.contentEquals(defaultVal)) {
-			return pref;
-		}
-		return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
-	}
-
-	public static void addAudioCuesToWorkout(Workout w, SharedPreferences prefs) {
-		addAudioCuesToWorkout(w.steps, prefs);
-	}
-
-	private static void addAudioCuesToWorkout(ArrayList<Step> steps, SharedPreferences prefs) {
-		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
-		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
-		boolean silent = triggers.size() == 0;
-		final boolean coaching = prefs.getBoolean("cueinfo_target_coaching", false);
-		if (silent && coaching) {
-			for (Step s : steps) {
-				if (s.getTargetType() != null) {
-					silent = false;
-					break;
-				}
-			}
-		}
-		
-		addPauseStopResumeTriggers(triggers, prefs);
-		if (!silent)
-		{
-			EventTrigger ev = new EventTrigger();
-			ev.event = Event.STARTED;
-			ev.scope = Scope.STEP;
-			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
-			triggers.add(ev);
-		}
-		
-		Step stepArr[] = new Step[steps.size()];
-		steps.toArray(stepArr);
-		for (int i = 0 ; i < stepArr.length; i++) {
-			Step prev = i == 0 ? null : stepArr[i-1];
-			Step step = stepArr[i];
-			Step next = i + 1 == stepArr.length ? null : stepArr[i+1];
-			switch(step.getIntensity()) {
-			case REPEAT:
-				addAudioCuesToWorkout(((RepeatStep)step).steps, prefs);
-				break;
-			case ACTIVE:
-				step.triggers.addAll(triggers);
-				if (!silent && (next == null || next.getIntensity() != step.getIntensity()))
-				{
-					EventTrigger ev = new EventTrigger();
-					ev.event = Event.COMPLETED;
-					ev.scope = Scope.STEP;
-					ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
-					step.triggers.add(ev);
-				}
-				break;
-			case RESTING: {
-				IntervalTrigger trigger = new IntervalTrigger();
-				trigger.dimension = step.durationType;
-				trigger.first = 1;
-				trigger.interval = 1;
-				trigger.scope = Scope.STEP;
-				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
-				step.triggers.add(trigger);
-				addPauseStopResumeTriggers(step.triggers, prefs);
-
-				if (!silent) {
-					createAudioCountdown(step);
-				}
-				break;
-			}
-			case WARMUP:
-			case COOLDOWN:
-				addPauseStopResumeTriggers(step.triggers, prefs);
-				if (skip_startstop_cue == false) {
-					EventTrigger ev = new EventTrigger();
-					ev.event = Event.STARTED;
-					ev.scope = Scope.STEP;
-					ev.triggerAction.add(new AudioFeedback(step.getIntensity(), Event.STARTED));
-					step.triggers.add(ev);
-				}
-				break;
-			}
-
-			if (coaching && step.getTargetType() != null) {
-				Range range = step.getTargetValue();
-				int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "20"), 20);
-				int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "30"), 30);
-				TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
-				tr.scope = Scope.STEP;
-				tr.dimension = step.getTargetType();
-				tr.range = range;
-				tr.triggerAction.add(new CoachFeedback(Scope.WORKOUT, step.getTargetType(), range, tr));
-				step.triggers.add(tr);
-			}
-		}
-	}
+	}	
 }
