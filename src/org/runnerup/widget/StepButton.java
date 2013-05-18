@@ -63,10 +63,13 @@ public class StepButton extends TableLayout {
 
 			@Override
 			public void onClick(View v) {
-				final Dialog dialog = new Dialog(mContext);
-				dialog.setContentView(R.layout.step_dialog);
-				dialog.setTitle("Title...");
-				dialog.show();
+				//TODO
+				if (false) {
+					final Dialog dialog = new Dialog(mContext);
+					dialog.setContentView(R.layout.step_dialog);
+					dialog.setTitle("Title...");
+					dialog.show();
+				}
 			}
 		});
 	}
@@ -92,7 +95,7 @@ public class StepButton extends TableLayout {
 		Dimension durationType = step.getDurationType();
 		if (durationType == null) {
 			mDurationType.setText("");
-			mDurationValue.setText("Until pressed");
+			mDurationValue.setText("Until press");
 		} else {
 			mDurationType.setText(res.getString(durationType.getTextId()));
 			mDurationValue.setText(formatter.format(Formatter.TXT_LONG, durationType, step.getDurationValue()));

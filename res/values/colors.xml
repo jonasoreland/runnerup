@@ -20,4 +20,5 @@
      <color name="blue">#00f</color>
      <color name="red">#f00</color>
      <color name="green">#0f8</color>
+     <color name="workoutbg">#171717</color>
 </resources>

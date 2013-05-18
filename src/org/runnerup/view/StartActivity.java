@@ -234,6 +234,7 @@ public class StartActivity extends Activity implements TickListener {
 				return newValue;
 			}});
 		advancedStepList = (ListView)findViewById(R.id.advancedStepList);
+		advancedStepList.setDividerHeight(0);
 		advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 		advancedDownloadWorkoutButton = (Button)findViewById(R.id.advancedDownloadButton);
 		advancedDownloadWorkoutButton.setOnClickListener(new OnClickListener() {
@@ -589,7 +590,6 @@ public class StartActivity extends Activity implements TickListener {
 			} else {
 				button = new StepButton(StartActivity.this, null);
 			}
-			button.setEnabled(false); // not yet implemented
 			button.setStep(entry.step);
 			button.setPadding(entry.level * 7, 0, 0, 0);
 			return button;

@@ -49,9 +49,12 @@
         android:id="@+id/advancedStepList"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/advancedWorkoutSpinner"
         android:layout_above="@+id/advancedDownloadButton"
-    />
+        android:layout_below="@+id/advancedWorkoutSpinner"
+        android:background="@android:color/darker_gray"
+        android:cacheColorHint="@android:color/darker_gray"
+        android:fadeScrollbars="false"
+        android:scrollbarAlwaysDrawVerticalTrack="true" />
     
     <Button
         android:id="@+id/advancedDownloadButton"
