@@ -22,7 +22,6 @@ import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -418,7 +417,6 @@ public class GpsTracker extends android.app.Service implements
 		return mBinder;
 	}
 
-	@SuppressLint("Wakelock") // or else it will complain that "not all code path reach mWakelock.release()" 
 	private void wakelock(boolean get) {
 		if (mWakeLock != null) {
 			if (mWakeLock.isHeld()) {
