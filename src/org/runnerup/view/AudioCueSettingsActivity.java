@@ -343,7 +343,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
 			feedback.clear();
 			SharedPreferences prefs = null;
-			if (settingsName.contentEquals(DEFAULT) || settingsName == null)
+			if (settingsName == null || settingsName.contentEquals(DEFAULT))
 				prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 			else
 				prefs = ctx.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
