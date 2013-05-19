@@ -43,7 +43,7 @@
         	android:summary="Download/edit/remove workouts">
 			<intent
 			    android:targetPackage="org.runnerup"
-			    android:targetClass="org.runnerup.view.DownloadWorkoutsActivity" />
+			    android:targetClass="org.runnerup.view.ManageWorkoutsActivity" />
     </Preference>
     
     <CheckBoxPreference

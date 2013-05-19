@@ -240,7 +240,7 @@ public class StartActivity extends Activity implements TickListener {
 		advancedDownloadWorkoutButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(StartActivity.this, DownloadWorkoutsActivity.class);
+				Intent intent = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
 				StartActivity.this.startActivityForResult(intent, 113);
 			}});
 		

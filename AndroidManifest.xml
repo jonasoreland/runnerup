@@ -92,7 +92,7 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 
-		<activity android:name=".view.DownloadWorkoutsActivity"
+		<activity android:name=".view.ManageWorkoutsActivity"
 		    android:screenOrientation="portrait" >
 		</activity>
 		

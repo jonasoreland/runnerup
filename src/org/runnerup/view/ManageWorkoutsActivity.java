@@ -46,7 +46,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class DownloadWorkoutsActivity extends Activity implements Constants {
+public class ManageWorkoutsActivity extends Activity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
@@ -67,7 +67,7 @@ public class DownloadWorkoutsActivity extends Activity implements Constants {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.download_workouts_account_list);
+		setContentView(R.layout.manage_workouts_account_list);
 
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();
@@ -190,23 +190,23 @@ public class DownloadWorkoutsActivity extends Activity implements Constants {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (position == accounts.length) {
-				Button b = new Button(DownloadWorkoutsActivity.this);
+				Button b = new Button(ManageWorkoutsActivity.this);
 				b.setText("Configure accounts");
 				b.setBackgroundResource(R.drawable.btn_blue);
 				b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
 				b.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						Intent i = new Intent(DownloadWorkoutsActivity.this,
+						Intent i = new Intent(ManageWorkoutsActivity.this,
 								AccountsActivity.class);
-						DownloadWorkoutsActivity.this.startActivityForResult(i,
+						ManageWorkoutsActivity.this.startActivityForResult(i,
 								UploadManager.CONFIGURE_REQUEST + 1);
 					}
 				});
 				return b;
 			}
 
-			LayoutInflater inflater = LayoutInflater.from(DownloadWorkoutsActivity.this);
+			LayoutInflater inflater = LayoutInflater.from(ManageWorkoutsActivity.this);
 			View view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
 			TextView tv0 = (TextView) view.findViewById(R.id.accountId);
@@ -225,7 +225,7 @@ public class DownloadWorkoutsActivity extends Activity implements Constants {
 			}
 			cb.setText("List remote workouts");
 			cb.setEnabled(true);
-			cb.setOnCheckedChangeListener(DownloadWorkoutsActivity.this.onListChecked);
+			cb.setOnCheckedChangeListener(ManageWorkoutsActivity.this.onListChecked);
 
 			tv0.setText(tmp.getAsString("_id"));
 			tv1.setText(name);
@@ -255,8 +255,8 @@ public class DownloadWorkoutsActivity extends Activity implements Constants {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = LayoutInflater.from(DownloadWorkoutsActivity.this);
-			View view = inflater.inflate(R.layout.download_workouts_list_row, parent, false);
+			LayoutInflater inflater = LayoutInflater.from(ManageWorkoutsActivity.this);
+			View view = inflater.inflate(R.layout.manage_workouts_list_row, parent, false);
 
 			TextView tv0 = (TextView) view.findViewById(R.id.downloadWorkoutAccount);
 			TextView tv1 = (TextView) view.findViewById(R.id.downloadWorkoutName);
