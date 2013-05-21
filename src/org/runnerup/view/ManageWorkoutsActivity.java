@@ -67,7 +67,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.manage_workouts_account_list);
+		setContentView(R.layout.manage_workouts);
 
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();

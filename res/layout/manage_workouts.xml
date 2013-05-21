@@ -15,37 +15,41 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ExpandableListView
-        android:id="@+id/expandableListView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ExpandableListView>
-    
     <ListView
         android:id="@+id/listWorkoutsAccountList"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-    
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true" />
+
     <Button
         android:id="@+id/listWorkoutsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/listWorkoutsAccountList"
         android:text="Load list" />
 
     <ListView
         android:id="@+id/listWorkouts"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/listWorkoutsButton" />
 
     <Button
         android:id="@+id/syncronizeWorkoutsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false"
+        android:layout_below="@+id/listWorkouts"
         android:text="Download workouts" />
-    
-</LinearLayout>
+
+</RelativeLayout>
