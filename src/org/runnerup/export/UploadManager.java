@@ -28,7 +28,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager.Callback;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.workout.WorkoutSerializer;
@@ -560,7 +559,7 @@ public class UploadManager {
 		Callback cb = listWorkoutCallback;
 		listWorkoutCallback = null;
 		if (cb != null)
-			cb.run(null, null);
+			cb.run(null, Status.OK);
 	}
 
 	public void loadWorkouts(final HashSet<WorkoutRef> pendingWorkouts, final Callback callback) {
