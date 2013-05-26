@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.Uploader.Status;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
 
