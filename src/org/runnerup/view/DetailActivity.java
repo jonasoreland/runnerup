@@ -328,9 +328,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		c.close();
 
 		long st = 0;
-		if (false && !c.isNull(0)) {
-			st = c.getLong(0);
-			activityTime.setText(formatter.formatDateTime(Formatter.TXT_LONG, st));
+		if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
+			st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
+			setTitle("RunnerUp - " + formatter.formatDateTime(Formatter.TXT_LONG, st));
 		}
 		float d = 0;
 		if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
