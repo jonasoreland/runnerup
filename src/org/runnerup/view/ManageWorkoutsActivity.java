@@ -16,50 +16,66 @@
  */
 package org.runnerup.view;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
+import org.runnerup.export.UploadManager.Callback;
 import org.runnerup.export.UploadManager.WorkoutRef;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants;
+import org.runnerup.workout.WorkoutSerializer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
-	HashSet<String> pendingUploaders = new HashSet<String>();
-	HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
+
+	static final String PHONE_STRING = "phone";
 	
-	ContentValues accounts[] = new ContentValues[1];
-	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
-	ArrayList<UploadManager.WorkoutRef> workoutRef = new ArrayList<UploadManager.WorkoutRef>();
+	HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
+	ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
+	HashMap<String, ArrayList<UploadManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<UploadManager.WorkoutRef>>();
+	WorkoutAccountListAdapter adapter = null;
+	
+	HashSet<String> loadedProviders = new HashSet<String>();
 	
 	boolean uploading = false;
-	Button loadListButton = null;
-	Button loadWorkoutsButton;
+	ExpandableListView list = null;
+	CompoundButton currentlySelectedWorkout = null;
+	Button downloadButton = null;
+	Button deleteButton = null;
 	
 	UploadManager uploadManager = null;
 	
@@ -72,28 +88,34 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();
 		uploadManager = new UploadManager(this);
+		adapter = new WorkoutAccountListAdapter(this);
+		list = (ExpandableListView) findViewById(R.id.expandableListView);
+		list.setAdapter(adapter);
+		downloadButton = (Button) findViewById(R.id.downloadWorkoutButton);
+		downloadButton.setOnClickListener(downloadButtonClick);
+		deleteButton = (Button) findViewById(R.id.deleteWorkoutButton);
+		deleteButton.setOnClickListener(deleteButtonClick);
 		
-		loadListButton = (Button) findViewById(R.id.listWorkoutsButton);
-		loadListButton.setOnClickListener(loadListButtonClick);
-		
-		loadWorkoutsButton = (Button) findViewById(R.id.syncronizeWorkoutsButton);
-		loadWorkoutsButton.setOnClickListener(loadWorkoutButtonClick);
+		handleButtons();
 		
 		requery();
 		listLocal();
-		
-		{
-			ListView lv = (ListView) findViewById(R.id.listWorkoutsAccountList);
-			AccountListAdapter adapter = new AccountListAdapter();
-			adapters.add(adapter);
-			lv.setAdapter(adapter);
+	}
+
+	private void handleButtons() {
+		if (currentlySelectedWorkout == null) {
+			downloadButton.setEnabled(false);
+			deleteButton.setEnabled(false);
+			return;
 		}
 
-		{
-			ListView lv = (ListView) findViewById(R.id.listWorkouts);
-			WorkoutListAdapter adapter = new WorkoutListAdapter();
-			adapters.add(adapter);
-			lv.setAdapter(adapter);
+		WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+		if (PHONE_STRING.contentEquals(selected.uploader)) {
+			downloadButton.setEnabled(false);
+			deleteButton.setEnabled(true);
+		} else {
+			downloadButton.setEnabled(true);
+			deleteButton.setEnabled(false);
 		}
 	}
 
@@ -102,14 +124,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		String [] list = org.runnerup.view.WorkoutListAdapter.load(this);
 		if (list != null) {
 			for (String s : list) {
-				newlist.add(new UploadManager.WorkoutRef(null, null, s));
+				newlist.add(new UploadManager.WorkoutRef(PHONE_STRING,  null, s));
 			}
 		}
-		workoutRef = filter(workoutRef, newlist, new Filter<UploadManager.WorkoutRef>() {
-			@Override
-			public boolean match(WorkoutRef t) {
-				return t.uploader != null;
-			}});
+
+		workouts.remove(PHONE_STRING);
+		workouts.put(PHONE_STRING, newlist);
+		adapter.notifyDataSetChanged();
 	}
 	
 	@Override
@@ -144,140 +165,24 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 			c.close();
 		}
 
-		pendingUploaders.clear();
-		ArrayList<ContentValues> list = new ArrayList<ContentValues>(alluploaders.length);
+		providers.clear();
+		
+		ContentValues phone = new ContentValues();
+		phone.put(DB.ACCOUNT.NAME, PHONE_STRING);
+		providers.add(phone);
+		
 		for (ContentValues tmp : alluploaders) {
 			Uploader uploader = uploadManager.add(tmp);
 			if (uploader != null && uploader.checkSupport(Uploader.Feature.WORKOUT_LIST)) {
-				boolean showList = true;
-				if (showList) {
-					pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
-				}
-				list.add(tmp);
+				providers.add(tmp);
+
+				workouts.remove(uploader.getName());
+				workouts.put(uploader.getName(), new ArrayList<WorkoutRef>());
 			}
 		}
-		accounts = list.toArray(accounts);
-		list = null;
-		alluploaders = null;
 		
-		for (BaseAdapter a : adapters) {
-			a.notifyDataSetChanged();
-		}
+		adapter.notifyDataSetChanged();
 	}
-
-	class AccountListAdapter extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			return accounts.length + 1;
-		}
-
-		@Override
-		public Object getItem(int position) {
-			if (position < accounts.length)
-				return accounts[position];
-			return this;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			if (position < accounts.length)
-				return accounts[position].getAsLong("_id");
-
-			return 0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (position == accounts.length) {
-				Button b = new Button(ManageWorkoutsActivity.this);
-				b.setText("Configure accounts");
-				b.setBackgroundResource(R.drawable.btn_blue);
-				b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
-				b.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Intent i = new Intent(ManageWorkoutsActivity.this,
-								AccountsActivity.class);
-						ManageWorkoutsActivity.this.startActivityForResult(i,
-								UploadManager.CONFIGURE_REQUEST + 1);
-					}
-				});
-				return b;
-			}
-
-			LayoutInflater inflater = LayoutInflater.from(ManageWorkoutsActivity.this);
-			View view = inflater.inflate(R.layout.reportlist_row, parent, false);
-
-			TextView tv0 = (TextView) view.findViewById(R.id.accountId);
-			CheckBox cb = (CheckBox) view.findViewById(R.id.reportSent);
-			TextView tv1 = (TextView) view.findViewById(R.id.accountName);
-
-			ContentValues tmp = accounts[position];
-
-			String name = tmp.getAsString("name");
-			cb.setTag(name);
-			boolean showList = true;
-			if (showList) {
-				cb.setChecked(true);
-			} else {
-				cb.setChecked(false);
-			}
-			cb.setText("List remote workouts");
-			cb.setEnabled(true);
-			cb.setOnCheckedChangeListener(ManageWorkoutsActivity.this.onListChecked);
-
-			tv0.setText(tmp.getAsString("_id"));
-			tv1.setText(name);
-			return view;
-		}
-		
-	};
-
-	class WorkoutListAdapter extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			return workoutRef.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			if (position < workoutRef.size())
-				return workoutRef.get(position);
-			return this;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = LayoutInflater.from(ManageWorkoutsActivity.this);
-			View view = inflater.inflate(R.layout.manage_workouts_list_row, parent, false);
-
-			TextView tv0 = (TextView) view.findViewById(R.id.downloadWorkoutAccount);
-			TextView tv1 = (TextView) view.findViewById(R.id.downloadWorkoutName);
-			CheckBox cb = (CheckBox) view.findViewById(R.id.downloadWorkoutCheckbox);
-
-			WorkoutRef tmp = workoutRef.get(position);
-			if (tmp.uploader == null) {
-				tv0.setText("<phone>");
-				cb.setVisibility(View.INVISIBLE);
-			} else {
-				tv0.setText(tmp.uploader);
-				cb.setVisibility(View.VISIBLE);
-				cb.setText("Download");
-				cb.setOnCheckedChangeListener(onWorkoutChecked);
-				cb.setChecked(false);
-			}
-			tv1.setText(tmp.workoutName);
-			cb.setTag(tmp);
-			return view;
-		}
-	};
 
 	@Override
 	public void onBackPressed() {
@@ -307,55 +212,125 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		return newlist;
 	}
 	
-	OnClickListener loadListButtonClick = new OnClickListener() {
+	OnClickListener downloadButtonClick = new OnClickListener() {
+
+		@Override
 		public void onClick(View v) {
+			if (currentlySelectedWorkout == null)
+				return;
+
+			final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+			ArrayList<WorkoutRef> local = workouts.get(PHONE_STRING);
+			if (contains(local, selected)) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
+				builder.setTitle("Downloading " + selected.workoutName + " will overwrite " + PHONE_STRING + " workout with same name");
+				builder.setMessage("Are you sure?");
+				builder.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+								downloadWorkout(selected);
+								return;
+							}
+						});
+				builder.setNegativeButton("No",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								// Do nothing but close the dialog
+								dialog.dismiss();
+							}
+
+						});
+				builder.show();
+				return;
+			}
+			
+			downloadWorkout(selected);
+		}
+
+		private void downloadWorkout(WorkoutRef selected) {
 			uploading = true;
-			workoutRef = filter(workoutRef, new Filter<UploadManager.WorkoutRef>() {
-				@Override
-				public boolean match(WorkoutRef t) {
-					return t.uploader == null;
-				}});
-			uploadManager.loadWorkoutList(workoutRef, new UploadManager.Callback() {
+			HashSet<WorkoutRef> list = new HashSet<WorkoutRef>();
+			list.add((WorkoutRef) currentlySelectedWorkout.getTag());
+			uploadManager.loadWorkouts(list, new UploadManager.Callback() {
 				@Override
 				public void run(String uploader, Uploader.Status status) {
 					uploading = false;
-					requery();
+					currentlySelectedWorkout = null;
+					listLocal();
+					handleButtons();
 				}
-			}, pendingUploaders);
+			});
 		}
-	};
 
-	public OnCheckedChangeListener onListChecked = new OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-			if (arg1 == true) {
-				boolean empty = pendingUploaders.isEmpty();
-				pendingUploaders.add((String) arg0.getTag());
-				if (empty) {
-					loadListButton.setEnabled(true);
-				}
-			} else {
-				pendingUploaders.remove((String) arg0.getTag());
-				if (pendingUploaders.isEmpty()) {
-					loadListButton.setEnabled(false);
+		private boolean contains(ArrayList<WorkoutRef> local,
+				WorkoutRef selected) {
+			for (WorkoutRef w : local) {
+				if (selected.uploader.contentEquals(w.uploader) &&
+					selected.workoutName.contentEquals(w.workoutName)) {
+					return true;
 				}
 			}
+			return false;
 		}
+	};
+	
+	private OnClickListener deleteButtonClick = new OnClickListener() {
 
+		@Override
+		public void onClick(View v) {
+			if (currentlySelectedWorkout == null)
+				return;
+
+			final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+			AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
+			builder.setTitle("Delete workout " + selected.workoutName);
+			builder.setMessage("Are you sure?");
+			builder.setPositiveButton("Yes",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					deleteWorkout(selected);
+					return;
+				}
+			});
+			builder.setNegativeButton("No",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					// Do nothing but close the dialog
+					dialog.dismiss();
+				}
+
+			});
+			builder.show();
+			return;
+		}
 	};
 
+	private void deleteWorkout(WorkoutRef selected) {
+		File f = WorkoutSerializer.getFile(this, selected.workoutName);
+		f.delete();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		if (selected.workoutName.contentEquals(pref.getString("advancedWorkout", ""))) {
+			pref.edit().putString("advancedWorkout", "");
+		}
+		listLocal();
+		
+	}
+	
 	public OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
 		@Override
-		public void onCheckedChanged(CompoundButton arg0,
-				boolean isChecked) {
-			UploadManager.WorkoutRef workout = (UploadManager.WorkoutRef) arg0.getTag();
-			if (isChecked == false) {
-				pendingWorkouts.remove(workout);
-			} else {
-				pendingWorkouts.add(workout);
+		public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
+			if (currentlySelectedWorkout != null) {
+				currentlySelectedWorkout.setChecked(false);
 			}
+			if (isChecked) {
+				currentlySelectedWorkout = arg0;
+			} else {
+				currentlySelectedWorkout = null;
+			}
+			handleButtons();
 		}
-		
 	};
 
 	
@@ -378,4 +353,148 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		}
 		requery();
 	}
+
+	class WorkoutAccountListAdapter extends BaseExpandableListAdapter {
+
+		Context context;
+		
+		WorkoutAccountListAdapter(Context ctx) {
+			context = ctx;
+		}
+		
+		String getProvider(int index) {
+			return providers.get(index).getAsString(DB.ACCOUNT.NAME);
+		}
+		
+		@Override
+		public Object getChild(int groupPosition, int childPosition) {
+			return workouts.get(getProvider(groupPosition)).get(childPosition);
+		}
+
+		@Override
+		public long getChildId(int groupPosition, int childPosition) {
+			return 0;
+		}
+
+		@Override
+		public View getChildView(int groupPosition, int childPosition,
+				boolean isLastChild, View view, ViewGroup parent) {
+
+			if (view == null || !(view instanceof LinearLayout)) {
+				LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				view = infalInflater.inflate(R.layout.manage_workouts_list_row, null);
+			}
+
+			WorkoutRef workout = workouts.get(getProvider(groupPosition)).get(childPosition);
+			RadioButton cb = (RadioButton) view.findViewById(R.id.downloadWorkoutCheckbox);
+			TextView tv = (TextView) view.findViewById(R.id.downloadWorkoutName);
+			
+			cb.setTag(workout);
+			cb.setChecked(currentlySelectedWorkout != null && currentlySelectedWorkout.getTag() == workout);
+			cb.setOnCheckedChangeListener(onWorkoutChecked);
+			tv.setText(workout.workoutName);
+			return view;
+		}
+
+		@Override
+		public int getChildrenCount(int groupPosition) {
+			return workouts.get(getProvider(groupPosition)).size();
+		}
+
+		@Override
+		public Object getGroup(int groupPosition) {
+			return providers.get(groupPosition);
+		}
+
+		@Override
+		public int getGroupCount() {
+			return providers.size();
+		}
+
+		@Override
+		public long getGroupId(int groupPosition) {
+			return 0;
+		}
+
+		@Override
+		public View getGroupView(int groupPosition, boolean isExpanded,
+				View convertView, ViewGroup parent) {
+			TextView view = null;
+			if (convertView != null && convertView instanceof TextView)
+				view = (TextView)convertView;
+			else
+				view = new TextView(context);
+
+			view.setGravity(Gravity.CENTER_HORIZONTAL);
+			view.setText(getProvider(groupPosition));
+			view.setBackgroundResource(android.R.drawable.btn_default_small);
+			view.setTextAppearance(context, R.style.ButtonTextGrey);
+			return view;
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return false;
+		}
+
+		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			return false;
+		}
+
+		int saveGroupPosition;
+		@Override
+		public void onGroupExpanded(int groupPosition) {
+			String provider = getProvider(groupPosition);
+			if (PHONE_STRING.contentEquals(provider)) {
+				super.onGroupExpanded(groupPosition);
+				return;
+			}
+
+			if (loadedProviders.contains(provider)) {
+				super.onGroupExpanded(groupPosition);
+				return;
+			}
+			
+			saveGroupPosition = groupPosition;
+			ArrayList<WorkoutRef> list = workouts.get(provider);
+			list.clear();
+			
+			HashSet<String> tmp = new HashSet<String>();
+			tmp.add(provider);
+
+			uploading = true;
+			uploadManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);
+		}
+		
+		private void onGroupExpandedImpl() {
+			super.onGroupExpanded(saveGroupPosition);
+		}
+
+		private Callback onLoadWorkoutListCallback = new Callback () {
+
+			@Override
+			public void run(String uploader, Status status) {
+				uploading = false;
+				if (status == Status.OK) {
+					loadedProviders.add(getProvider(saveGroupPosition));
+					adapter.notifyDataSetChanged();
+					onGroupExpandedImpl();
+				}
+			}
+		};
+
+		@Override
+		public void onGroupCollapsed(int groupPosition) {
+			super.onGroupCollapsed(groupPosition);
+			String provider = getProvider(groupPosition);
+			if (currentlySelectedWorkout != null) {
+				WorkoutRef ref = (WorkoutRef) currentlySelectedWorkout.getTag();
+				if (ref.uploader.contentEquals(provider)) {
+					currentlySelectedWorkout.setChecked(false);
+					currentlySelectedWorkout = null;
+				}
+			}
+		}
+	};
 }

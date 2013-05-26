@@ -18,14 +18,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:paddingLeft="20dp" >
 
-    <TextView
-        android:id="@+id/downloadWorkoutAccount"
-        android:layout_width="0dp"
+    <RadioButton
+        android:id="@+id/downloadWorkoutCheckbox"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Garmin" />
+        android:checked="true" />
 
     <TextView
         android:id="@+id/downloadWorkoutName"
@@ -33,12 +33,5 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Tröskel" />
-
-    <CheckBox
-        android:id="@+id/downloadWorkoutCheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="Download" />
 
 </LinearLayout>

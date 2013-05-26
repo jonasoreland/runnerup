@@ -21,35 +21,40 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ListView
-        android:id="@+id/listWorkoutsAccountList"
-        android:layout_width="fill_parent"
+    <ExpandableListView
+        android:id="@+id/expandableListView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentTop="true" />
+        android:layout_above="@+id/LinearLayout1"
+        android:layout_alignParentTop="true" >
 
-    <Button
-        android:id="@+id/listWorkoutsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/listWorkoutsAccountList"
-        android:text="Load list" />
+    </ExpandableListView>
 
-    <ListView
-        android:id="@+id/listWorkouts"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/listWorkoutsButton" />
+        android:layout_alignParentBottom="true" >
 
-    <Button
-        android:id="@+id/syncronizeWorkoutsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="false"
-        android:layout_below="@+id/listWorkouts"
-        android:text="Download workouts" />
+        <Button
+            android:id="@+id/downloadWorkoutButton"
+            style="@style/ButtonText"
+            android:background="@drawable/btn_blue"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Download"
+		/>
+
+        <Button
+            android:id="@+id/deleteWorkoutButton"
+            style="@style/ButtonText"
+            android:background="@drawable/btn_red"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            />
+	</LinearLayout>
 
 </RelativeLayout>
