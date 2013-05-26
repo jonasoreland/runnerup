@@ -266,8 +266,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		private boolean contains(ArrayList<WorkoutRef> local,
 				WorkoutRef selected) {
 			for (WorkoutRef w : local) {
-				if (selected.uploader.contentEquals(w.uploader) &&
-					selected.workoutName.contentEquals(w.workoutName)) {
+				if (selected.workoutName.contentEquals(w.workoutName)) {
 					return true;
 				}
 			}
