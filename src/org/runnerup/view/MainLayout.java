@@ -23,6 +23,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TabHost;
 
 public class MainLayout extends TabActivity {
@@ -58,5 +60,34 @@ public class MainLayout extends TabActivity {
 		tabHost.setBackgroundColor(Color.BLACK);
 		tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
 		tabHost.setCurrentTab(0);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		Intent i = null;
+		switch (item.getItemId()) {
+		case R.id.menu_accounts:
+			i = new Intent(this, AccountsActivity.class);
+			break;
+		case R.id.menu_workouts:
+			i = new Intent(this, ManageWorkoutsActivity.class);
+			break;
+		case R.id.menu_audio_cues:
+			i = new Intent(this, AudioCueSettingsActivity.class);
+			break;
+		case R.id.menu_settings:
+			getTabHost().setCurrentTab(3);
+			return true;
+		}
+		if (i != null) {
+			startActivity(i);
+		}
+		return true;
 	}
 }
