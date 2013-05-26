@@ -3,6 +3,8 @@
 
 - map view                         (DONE)
 - workout wizard ala Garmin 410    (DONE)
+- advancved workouts               (DONE)
+- download workouts from Garmin    (DONE)
 - text fragment for audio cues (currently translates word by word)
 - post to facebook
 - post to twitter
@@ -33,14 +35,13 @@
 - BUG: pause+stop+resume           (DONE)
 - BUG: km/mi in misc dialogs       (DONE)
   I think I got them all
+- BUG: test of non Default audio scheme is broken
+                                   (DONE)
 
 - BUG: pause during rest step confuses audio countdown
-- BUG: test of non Default audio scheme is broken
 
 - routes ??
 - feed
-- advanced workout editor
+- edit advanced workouts
 - advanced audio cue editor
-- target pace (present in DB)
-- simple workout goal
 
