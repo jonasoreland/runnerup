@@ -62,7 +62,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 
-	static final String PHONE_STRING = "phone";
+	static final String PHONE_STRING = "my phone";
 	
 	HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
 	ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
