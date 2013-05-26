@@ -12,6 +12,7 @@ Features:
 - Integrated upload of activities to Garmin, RunKeeper, FunBeat and MapMyRun
   no need for manual export/upload
 - Interval wizard (ala Garmin 410)
+- Download workouts from Garmin connect
 - Great ideas for future features
 
 Patches, forks, pull requests, suggestions or harsh flame is welcome!
