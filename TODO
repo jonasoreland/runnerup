@@ -45,3 +45,9 @@
 - edit advanced workouts
 - advanced audio cue editor
 
+- setting: autolap during interval
+- setting: delayed start after warmup
+- better audio cue defaults
+- audio cues settings: activity/step/lap summaries
+- audio cues settings: step time/distance/pace
+
