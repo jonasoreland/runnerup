@@ -192,7 +192,7 @@ public class WorkoutBuilder {
 		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
 		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
 		boolean silent = triggers.size() == 0;
-		final boolean coaching = prefs.getBoolean("cueinfo_target_coaching", false);
+		final boolean coaching = prefs.getBoolean("cueinfo_target_coaching", true);
 		if (silent && coaching) {
 			for (Step s : steps) {
 				if (s.getTargetType() != null) {
