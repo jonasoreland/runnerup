@@ -45,7 +45,7 @@
             android:title="Cue intervall (s)" />
 
     	<CheckBoxPreference
-        	android:defaultValue="false"
+        	android:defaultValue="true"
         	android:persistent="true"
         	android:key="cue_distance"
         	android:title="Distance triggered audio cue" />
@@ -61,12 +61,12 @@
 
    	    <PreferenceCategory android:title="Cue information">
     		<CheckBoxPreference
-        		android:defaultValue="false"
+        		android:defaultValue="true"
         		android:persistent="true"
         		android:key="cueinfo_total_distance"
         		android:title="Total distance" />
     		<CheckBoxPreference
-        		android:defaultValue="false"
+        		android:defaultValue="true"
         		android:persistent="true"
         		android:key="cueinfo_total_time"
         		android:title="Total time" />

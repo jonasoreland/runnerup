@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TabHost;
@@ -33,6 +34,9 @@ public class MainLayout extends TabActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		PreferenceManager.setDefaultValues(this, R.layout.settings, false);
+		PreferenceManager.setDefaultValues(this, R.layout.audio_cue_settings, true);
+		
 		Resources res = getResources(); // Resource object to get Drawables
 		TabHost tabHost = getTabHost(); // The activity TabHost
 

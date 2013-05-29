@@ -131,7 +131,6 @@ public class StartActivity extends Activity implements TickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		PreferenceManager.setDefaultValues(this, R.layout.settings, false);
 		
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getWritableDatabase();
