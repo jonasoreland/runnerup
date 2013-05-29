@@ -309,7 +309,10 @@ public class GpsTracker extends android.app.Service implements
 			String key[] = { Long.toString(mActivityId) };
 			mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
 		} else {
-			// TODO write discard code
+			ContentValues tmp = new ContentValues();
+			tmp.put("deleted", 1);
+			String key[] = { Long.toString(mActivityId) };
+			mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
 		}
 		this.stopForeground(true);
 		stopLogging();
