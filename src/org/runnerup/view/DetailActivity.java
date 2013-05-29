@@ -189,6 +189,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Upload"));
 		tabSpec.setContent(R.id.tabUpload);
 		th.addTab(tabSpec);
+
+		th.getTabWidget().setBackgroundColor(Color.DKGRAY);
+
 		
 		{
 			ListView lv = (ListView) findViewById(R.id.laplist);
