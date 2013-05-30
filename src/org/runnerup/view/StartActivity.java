@@ -86,7 +86,8 @@ public class StartActivity extends Activity implements TickListener {
 	Button startButton = null;
 	TextView gpsInfoView1 = null;
 	TextView gpsInfoView2 = null;
-
+	View gpsInfoLayout = null;
+	
 	TitleSpinner simpleType = null;
 	TitleSpinner simpleTime = null;
 	TitleSpinner simpleDistance = null;
@@ -113,6 +114,7 @@ public class StartActivity extends Activity implements TickListener {
 	ListView     advancedStepList = null;
 	WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
 	
+	boolean manualSetValue = false;
 	TitleSpinner manualDate = null;
 	TitleSpinner manualTime = null;
 	TitleSpinner manualDistance = null;
@@ -143,9 +145,10 @@ public class StartActivity extends Activity implements TickListener {
 		setContentView(R.layout.start);
 		startButton = (Button) findViewById(R.id.startButton);
 		startButton.setOnClickListener(startButtonClick);
+		gpsInfoLayout = findViewById(R.id.GPSINFO);
 		gpsInfoView1 = (TextView) findViewById(R.id.gpsInfo1);
 		gpsInfoView2 = (TextView) findViewById(R.id.gpsInfo2);
-
+		
 		tabHost = (TabHost)findViewById(R.id.tabhostStart);
 		tabHost.setup();
 		TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
@@ -376,7 +379,10 @@ public class StartActivity extends Activity implements TickListener {
 		gpsInfoView2.setText(gpsInfo2);
 		
 		if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
+			gpsInfoLayout.setVisibility(View.GONE);
+			startButton.setEnabled(manualSetValue);
 			startButton.setText("Save activity");
+			return;
 		} else if (mGpsStatus.isEnabled() == false) {
 			startButton.setEnabled(true);
 			startButton.setText("Enable GPS");
@@ -394,6 +400,7 @@ public class StartActivity extends Activity implements TickListener {
 				startButton.setEnabled(false);
 			}
 		}
+		gpsInfoLayout.setVisibility(View.VISIBLE);
 	}
 
 	private boolean mIsBound = false;
@@ -625,12 +632,14 @@ public class StartActivity extends Activity implements TickListener {
 		@Override
 		public String preSetValue(String newValue)
 				throws IllegalArgumentException {
+			manualSetValue = true;
 			startButton.setEnabled(true);
 			return newValue;
 		}
 
 		@Override
 		public int preSetValue(int newValue) throws IllegalArgumentException {
+			manualSetValue = true;
 			startButton.setEnabled(true);
 			return newValue;
 		}
