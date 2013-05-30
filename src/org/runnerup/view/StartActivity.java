@@ -119,7 +119,6 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner manualDuration = null;
 	TitleSpinner manualPace = null;
 	EditText     manualNotes = null;
-	Button       manualSave = null;
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
@@ -254,9 +253,6 @@ public class StartActivity extends Activity implements TickListener {
 		manualPace = (TitleSpinner)findViewById(R.id.manualPace);
 		manualPace.setVisibility(View.GONE);
 		manualNotes = (EditText)findViewById(R.id.manualNotes);
-		manualSave = (Button)findViewById(R.id.manualSave);
-		manualSave.setEnabled(false);
-		manualSave.setOnClickListener(manualSaveButtonClick);
 	}
 
 	@Override
@@ -316,14 +312,19 @@ public class StartActivity extends Activity implements TickListener {
 			else if (tabId.contentEquals(TAB_ADVANCED)) {
 				startButton.setVisibility(View.VISIBLE);
 				loadAdvanced(null);
-			} else if (tabId.contentEquals(TAB_MANUAL))
-				startButton.setVisibility(View.GONE);
+			} else if (tabId.contentEquals(TAB_MANUAL)) {
+				startButton.setText("Save activity");
+			}
+			updateView();
 		}
 	};
 
 	OnClickListener startButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			if (mGpsStatus.isEnabled() == false) {
+			if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
+				manualSaveButtonClick.onClick(v);
+				return;
+			} else if (mGpsStatus.isEnabled() == false) {
 				startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 			} else if (mGpsTracker.isLogging() == false) {
 				mGpsTracker.startLogging();
@@ -374,7 +375,9 @@ public class StartActivity extends Activity implements TickListener {
 		}
 		gpsInfoView2.setText(gpsInfo2);
 		
-		if (mGpsStatus.isEnabled() == false) {
+		if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
+			startButton.setText("Save activity");
+		} else if (mGpsStatus.isEnabled() == false) {
 			startButton.setEnabled(true);
 			startButton.setText("Enable GPS");
 		} else if (mGpsStatus.isLogging() == false) {
@@ -384,9 +387,11 @@ public class StartActivity extends Activity implements TickListener {
 			startButton.setEnabled(false);
 			startButton.setText("Waiting for GPS");
 		} else {
+			startButton.setText("Start activity");
 			if (!tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) || advancedWorkout != null) {
 				startButton.setEnabled(true);
-				startButton.setText("Start activity");
+			} else {
+				startButton.setEnabled(false);
 			}
 		}
 	}
@@ -620,13 +625,13 @@ public class StartActivity extends Activity implements TickListener {
 		@Override
 		public String preSetValue(String newValue)
 				throws IllegalArgumentException {
-			manualSave.setEnabled(true);
+			startButton.setEnabled(true);
 			return newValue;
 		}
 
 		@Override
 		public int preSetValue(int newValue) throws IllegalArgumentException {
-			manualSave.setEnabled(true);
+			startButton.setEnabled(true);
 			return newValue;
 		}
 	};
@@ -651,13 +656,13 @@ public class StartActivity extends Activity implements TickListener {
 		public String preSetValue(String newValue)
 				throws IllegalArgumentException {
 			setManualPace(newValue, manualDuration.getValue().toString());
-			manualSave.setEnabled(true);
+			startButton.setEnabled(true);
 			return newValue;
 		}
 
 		@Override
 		public int preSetValue(int newValue) throws IllegalArgumentException {
-			manualSave.setEnabled(true);
+			startButton.setEnabled(true);
 			return newValue;
 		}
 		
@@ -669,13 +674,13 @@ public class StartActivity extends Activity implements TickListener {
 		public String preSetValue(String newValue)
 				throws IllegalArgumentException {
 			setManualPace(manualDistance.getValue().toString(), newValue);
-			manualSave.setEnabled(true);
+			startButton.setEnabled(true);
 			return newValue;
 		}
 
 		@Override
 		public int preSetValue(int newValue) throws IllegalArgumentException {
-			manualSave.setEnabled(true);
+			startButton.setEnabled(true);
 			return newValue;
 		}
 	};

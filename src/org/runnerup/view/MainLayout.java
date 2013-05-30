@@ -20,8 +20,9 @@ import org.runnerup.R;
 
 import android.app.TabActivity;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -30,6 +31,11 @@ import android.widget.TabHost;
 
 public class MainLayout extends TabActivity {
 
+	private Drawable getDrawable(int resId) {
+		Drawable d = getResources().getDrawable(resId);
+		return d;
+	}
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
@@ -37,27 +43,22 @@ public class MainLayout extends TabActivity {
 		PreferenceManager.setDefaultValues(this, R.layout.settings, false);
 		PreferenceManager.setDefaultValues(this, R.layout.audio_cue_settings, true);
 		
-		Resources res = getResources(); // Resource object to get Drawables
 		TabHost tabHost = getTabHost(); // The activity TabHost
 
 		tabHost.addTab(tabHost.newTabSpec("Start")
-				.setIndicator("Start", res.getDrawable(R.drawable.ic_tab_main))
+				.setIndicator("Start", getDrawable(R.drawable.ic_tab_main))
 				.setContent(new Intent(this, StartActivity.class)));
 
 		tabHost.addTab(tabHost.newTabSpec("Feed")
-				.setIndicator("Feed", res.getDrawable(R.drawable.ic_tab_feed))
+				.setIndicator("Feed", getDrawable(R.drawable.ic_tab_feed))
 				.setContent(new Intent(this, FeedActivity.class)));
 
-		tabHost.addTab(tabHost
-				.newTabSpec("History")
-				.setIndicator("History",
-						res.getDrawable(R.drawable.ic_tab_history))
+		tabHost.addTab(tabHost.newTabSpec("History")
+				.setIndicator("History", getDrawable(R.drawable.ic_tab_history))
 				.setContent(new Intent(this, HistoryActivity.class)));
 
-		tabHost.addTab(tabHost
-				.newTabSpec("Settings")
-				.setIndicator("Settings",
-						res.getDrawable(R.drawable.ic_tab_setup))
+		tabHost.addTab(tabHost.newTabSpec("Settings")
+				.setIndicator("Settings", getDrawable(R.drawable.ic_tab_setup))
 				.setContent(new Intent(this, SettingsActivity.class)));
 
 		// Set tabs Colors

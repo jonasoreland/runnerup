@@ -23,75 +23,74 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     tools:context=".view.StartActivity" >
-
-    <RelativeLayout
-        android:id="@+id/GPSINFO"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/gpsInfoText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GPS satelites: " />
-
-        <TextView
-            android:id="@+id/gpsInfo1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/gpsInfoText"
-            android:text="0" />
-
-        <TextView
-            android:id="@+id/gpsInfo2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/gpsInfo1"
-            android:text="0" />
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/startButton"
-        style="@style/ButtonText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/GPSINFO"
-        android:background="@drawable/btn_green"
-        android:enabled="true"
-        android:text="Start GPS" />
-
+    
     <TabHost
         android:id="@+id/tabhostStart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/startButton" >
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/GPSINFO" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:layout_height="match_parent" >
 
+		    <TabWidget
+    		    android:id="@android:id/tabs"
+        		android:layout_width="match_parent"
+        		android:layout_height="wrap_content" >
+    		</TabWidget>
+            
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@android:id/tabs" >
+                android:layout_below="@android:id/tabs" >
                 
                 <include layout="@layout/start_basic" />
                 <include layout="@layout/start_interval" />
                 <include layout="@layout/start_advanced" />
                 <include layout="@layout/start_manual" />
 			</FrameLayout>
-
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" >
-
-            </TabWidget>
         </RelativeLayout>
     </TabHost>
+
+    <RelativeLayout
+        android:id="@+id/GPSINFO"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@+id/startButton" >
+
+	<TextView
+        android:id="@+id/gpsInfoText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GPS satelites: " />
+	
+	<TextView
+        android:id="@+id/gpsInfo1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/gpsInfoText"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/gpsInfo2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/gpsInfo1"
+        android:text="0" />
+    </RelativeLayout>
+    
+   	<Button
+        android:id="@+id/startButton"
+        style="@style/ButtonText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_green"
+        android:enabled="true"
+        android:text="Start GPS"
+        android:layout_alignParentBottom="true" />
+
 </RelativeLayout>

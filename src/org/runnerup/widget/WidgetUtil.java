@@ -48,7 +48,11 @@ public class WidgetUtil {
         txtTab.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_HORIZONTAL);
         Drawable drawable = res.getDrawable(R.drawable.tab_indicator_holo);
         txtTab.setBackgroundDrawable(drawable); // R.drawable.tab_indicator_holo);
-        txtTab.setLineSpacing(1 + 2 * drawable.getIntrinsicHeight(), 1);
+
+        int h = (25 * drawable.getIntrinsicHeight()) / 10;
+        txtTab.setPadding(0, h, 0, h);
+//        txtTab.setHeight(1 + 10 * drawable.getIntrinsicHeight());
+//        txtTab.setLineSpacing(1 + 5 * drawable.getIntrinsicHeight(), 1);
         return txtTab;
     }
 }
