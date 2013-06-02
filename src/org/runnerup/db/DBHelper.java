@@ -44,7 +44,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.ACTIVITY.TIME + " integer, " )
 			+ ( DB.ACTIVITY.NAME + " text," )
 			+ ( DB.ACTIVITY.COMMENT + " text," )
-			+ ( DB.ACTIVITY.TYPE + " integer," )
+			+ ( DB.ACTIVITY.SPORT + " integer," )
 			+ ( "deleted integer not null default 0, " )
 			+ "nullColumnHack text null" + ");";
 

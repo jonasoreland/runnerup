@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -161,13 +161,16 @@ public class GpsTracker extends android.app.Service implements
 		return mBug23937Delta;
 	}
 	
-	public long createActivity() {
+	public long createActivity(int sport) {
 		assert (state == State.INIT);
 		/**
 		 * Create an Activity instance
 		 */
 		ContentValues tmp = new ContentValues();
+		tmp.put(DB.ACTIVITY.SPORT, sport);
 		mActivityId = mDB.insert(DB.ACTIVITY.TABLE, "nullColumnHack", tmp);
+		
+		tmp.clear();
 		tmp.put(DB.LOCATION.ACTIVITY, mActivityId);
 		tmp.put(DB.LOCATION.LAP, 0); // always start with lap 0
 		mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp);

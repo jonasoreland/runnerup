@@ -284,6 +284,10 @@ public class Workout implements WorkoutComponent {
 		
 	}
 	
+	public int getSport() {
+		return DB.ACTIVITY.SPORT_RUNNING;
+	}
+	
 	private void initFeedback() {
 		pendingFeedback.init();
 	}

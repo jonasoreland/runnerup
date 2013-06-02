@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,7 +28,10 @@ public interface Constants {
 			public static final String TIME = "time";
 			public static final String NAME = "name";
 			public static final String COMMENT = "comment";
-			public static final String TYPE = "type";
+			public static final String SPORT = "type";
+
+			public static final int SPORT_RUNNING = 0;
+			public static final int SPORT_BIKING = 1;
 		};
 
 		public interface LOCATION {
