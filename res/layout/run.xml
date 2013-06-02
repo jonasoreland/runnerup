@@ -30,7 +30,8 @@
         <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp" >
 
             <TextView
                 android:id="@+id/TextView02"
@@ -40,7 +41,7 @@
                 android:textSize="20dp" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/TextView03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -49,7 +50,7 @@
                 android:textSize="20dp" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/TextView04"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -58,26 +59,20 @@
                 android:textSize="20dp" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/activitySpeedPace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="Pace"
                 android:textSize="20dp" />
-
-            <TextView
-                android:id="@+id/TextView05"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="20dp" />
         </TableRow>
 
         <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp" >
 
             <TextView
                 android:id="@+id/TextView01"
@@ -115,20 +110,14 @@
                 android:gravity="right"
                 android:text="4:34"
                 android:textSize="20dp" />
-
-            <TextView
-                android:id="@+id/TextView06"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="20dp" />
         </TableRow>
 
         <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right" >
+            android:layout_gravity="right"
+            android:paddingRight="10dp" >
 
             <TextView
                 android:id="@+id/TextView01"
@@ -164,13 +153,6 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:text="4:24"
-                android:textSize="20dp" />
-
-            <TextView
-                android:id="@+id/TextView07"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:textSize="20dp" />
         </TableRow>
     </TableLayout>
