@@ -68,7 +68,7 @@ public class TCX {
 	public String export(long activityId, Writer writer) throws IOException {
 
 		String[] aColumns = { DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
-				DB.ACTIVITY.START_TIME };
+				DB.ACTIVITY.START_TIME, DB.ACTIVITY.SPORT };
 		Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
 				+ activityId, null, null, null, null);
 		cursor.moveToFirst();
@@ -85,7 +85,21 @@ public class TCX {
 					"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
 			mXML.startTag("", "Activities");
 			mXML.startTag("", "Activity");
-			mXML.attribute("", "Sport", "Running"); // TODO other sports ??
+			if (cursor.isNull(3)) {
+				mXML.attribute("", "Sport", "Running");
+			} else {
+				switch(cursor.getInt(3)) {
+				case DB.ACTIVITY.SPORT_RUNNING:
+					mXML.attribute("", "Sport", "Running");
+					break;
+				case DB.ACTIVITY.SPORT_BIKING:
+					mXML.attribute("", "Sport", "Biking");
+					break;
+				default:
+					mXML.attribute("", "Sport", "Other");
+					break;
+				}
+			}
 			mXML.startTag("", "Id");
 			String id = formatTime(startTime * 1000);
 			mXML.text(id);

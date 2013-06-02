@@ -49,7 +49,7 @@ public class RunKeeper {
 	public void export(long activityId, Writer writer) throws IOException {
 
 		String[] aColumns = { DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
-				DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME };
+				DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT };
 		Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
 				+ activityId, null, null, null, null);
 		cursor.moveToFirst();
@@ -63,7 +63,26 @@ public class RunKeeper {
 		try {
 			JsonWriter w = new JsonWriter(writer);
 			w.beginObject();
-			w.name("type").value("Running");
+			if (cursor.isNull(5)) {
+				w.name("type").value("Running");
+			} else {
+/**
+ * Running, Cycling, Mountain Biking, Walking, Hiking, Downhill Skiing,
+ * Cross-Country Skiing, Snowboarding, Skating, Swimming, Wheelchair,
+ * Rowing, Elliptical, Other
+ */
+				switch(cursor.getInt(5)) {
+				case DB.ACTIVITY.SPORT_RUNNING:
+					w.name("type").value("Running");
+					break;
+				case DB.ACTIVITY.SPORT_BIKING:
+					w.name("type").value("Cycling");
+					break;
+				default:
+					w.name("type").value("Other");
+					break;
+				}
+			}
 			w.name("equipment").value("None");
 			w.name("start_time").value(formatTime(startTime * 1000));
 			w.name("total_distance").value(distance);
