@@ -38,7 +38,8 @@ public class Workout implements WorkoutComponent {
 	Step currentStep = null;
 	boolean paused = false;
 	ArrayList<Step> steps = new ArrayList<Step>();
-	
+	int sport = DB.ACTIVITY.SPORT_RUNNING;
+
 	class PendingFeedback {
 		int depth = 0;
 		HashSet<Feedback> set = new HashSet<Feedback>();      // For uniquing
@@ -285,7 +286,7 @@ public class Workout implements WorkoutComponent {
 	}
 	
 	public int getSport() {
-		return DB.ACTIVITY.SPORT_RUNNING;
+		return sport;
 	}
 	
 	private void initFeedback() {

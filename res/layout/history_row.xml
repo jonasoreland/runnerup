@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -14,22 +14,39 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/historyList_startTime"
+    <RelativeLayout
+        android:id="@+id/historyRow0"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="20dp"
-        android:textStyle="bold" />
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/historyList_startTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text=""
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/historyList_sport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Running"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
@@ -68,7 +85,6 @@
             android:text="id"
             android:textSize="20dp"
             android:visibility="gone" />
-
     </LinearLayout>
 
 </LinearLayout>

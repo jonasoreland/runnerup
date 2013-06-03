@@ -31,7 +31,16 @@
 		android:text="Audio cue settings"
 		runnerup:type="spinner_txt"/>
     
-    <CheckBox
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/basicSport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/sportEntries"
+        android:key="basicSport"
+        android:prompt="@string/simple_type"
+        android:text="Sport" />
+	
+	<CheckBox
         android:visibility="gone"
         android:id="@+id/tabBasicGoal"
         android:layout_width="wrap_content"

@@ -19,6 +19,7 @@ package org.runnerup.workout;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.view.AudioCueSettingsActivity;
@@ -39,6 +40,8 @@ public class WorkoutBuilder {
 	public static Workout createDefaultWorkout(SharedPreferences prefs,
 			boolean targetPace) {
 		Workout w = new Workout();
+		w.sport = prefs.getInt("basicSport", DB.ACTIVITY.SPORT_RUNNING);
+
 		if (prefs.getBoolean("pref_countdown_active", false))
 		{
 			long val = 0;

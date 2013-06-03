@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 		// Fields from the database (projection)
 		// Must include the _id column for the adapter to work
 		String[] from = new String[] { "_id", DB.ACTIVITY.START_TIME,
-				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME };
+				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT };
 
 		Cursor c = mDB.query(DB.ACTIVITY.TABLE, from, "deleted == 0", null,
 				null, null, "_id desc", null);
@@ -109,7 +109,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 		public void bindView(View view, Context context, Cursor cursor) {
 			int[] to = new int[] { R.id.historyList_id,
 					R.id.historyList_startTime, R.id.historyList_distance,
-					R.id.historyList_time, R.id.historyList_pace };
+					R.id.historyList_time, R.id.historyList_pace, R.id.historyList_sport };
 
 			int id = cursor.getInt(0);
 			long st = 0;
@@ -163,6 +163,25 @@ public class HistoryActivity extends ListActivity implements Constants {
 					tv.setText(formatter.formatPace(Formatter.TXT_LONG, t/d));
 				} else {
 					tv.setText("");
+				}
+			}
+
+			{
+				TextView tv = (TextView) view.findViewById(to[5]);
+				if (cursor.isNull(4)) {
+					tv.setText("Running");
+				} else {
+					switch(cursor.getInt(4)) {
+					case DB.ACTIVITY.SPORT_RUNNING:
+						tv.setText("Running");
+						break;
+					case DB.ACTIVITY.SPORT_BIKING:
+						tv.setText("Biking");
+						break;
+					default:
+						tv.setText("Unknown?? (" + cursor.getInt(4) + ")");
+						break;
+					}
 				}
 			}
 		}
