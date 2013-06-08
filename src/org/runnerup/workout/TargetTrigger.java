@@ -190,8 +190,10 @@ public class TargetTrigger extends Trigger {
 		return 0;
 	}
 
+	@Override
+	public void onRepeat(int current, int limit) {
+	}
 
-	
 	@Override
 	public void onStart(Scope what, Workout s) {
 		if (this.scope == what) {

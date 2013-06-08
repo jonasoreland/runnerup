@@ -102,11 +102,19 @@ public class Workout implements WorkoutComponent {
 		}
 	}
 
+	@Override
+	public void onRepeat(int current, int limit) {
+	}
+
 	public void onStart(Scope s, Workout w) {
 		assert (w == this);
 
 		initFeedback();
 
+		for (Step st : steps) {
+			st.onRepeat(0, 1);
+		}
+		
 		currentStepNo = 0;
 		if (steps.size() > 0) {
 			currentStep = steps.get(currentStepNo);

@@ -16,11 +16,20 @@
  */
 package org.runnerup.workout;
 
+import java.util.HashMap;
+
 public class EventTrigger extends Trigger {
 
 	Scope scope = Scope.STEP;
 	Event event = Event.STARTED;
 	int skipCounter = 0;
+	int currentSkipCounter = 0;
+	
+	@Override
+	public void onInit(Workout s, HashMap<String, Object> bindValues) {
+		super.onInit(s, bindValues);
+		currentSkipCounter = skipCounter;
+	}
 
 	@Override
 	public boolean onTick(Workout w) {
@@ -29,13 +38,18 @@ public class EventTrigger extends Trigger {
 
 	@Override
 	public void fire(Workout s) {
-		if (skipCounter > 0) {
-			skipCounter--;
+		if (currentSkipCounter > 0) {
+			currentSkipCounter--;
 		} else {
 			super.fire(s);
 		}
-	} 
-	
+	}
+
+	@Override
+	public void onRepeat(int current, int limit) {
+		currentSkipCounter = skipCounter;
+	}
+
 	@Override
 	public void onStart(Scope what, Workout s) {
 		if (this.scope == what && this.event == Event.STARTED) {

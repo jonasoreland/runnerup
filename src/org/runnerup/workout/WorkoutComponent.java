@@ -25,6 +25,11 @@ public interface WorkoutComponent {
 	public void onInit(Workout s, HashMap<String, Object> bindValues);
 
 	/**
+	 * Called before onStart
+	 */
+	public void onRepeat(int current, int limit);
+	
+	/**
 	 * Called when *what* starts
 	 */
 	public void onStart(Scope what, Workout s);

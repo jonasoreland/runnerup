@@ -55,10 +55,18 @@ public class RepeatStep extends Step {
 	
 	@Override
 	public void onEnd(Workout w) {
+		for (Step s : steps) {
+			s.onEnd(w);
+		}
+	}
+
+	@Override
+	public void onRepeat(int current, int count) {
+		super.onRepeat(current, count);
 		currentStep = 0;
 		currentRepeat = 0;
 		for (Step s : steps) {
-			s.onEnd(w);
+			s.onRepeat(0, repeatCount);
 		}
 	}
 
@@ -93,9 +101,10 @@ public class RepeatStep extends Step {
 				currentStep = 0;
 				currentRepeat ++;
 				if (currentRepeat == repeatCount) {
-					// reset in preparation for next outer iteration
-					currentRepeat = 0;
 					return true;
+				}
+				for (Step s : steps) {
+					s.onRepeat(currentRepeat, repeatCount);
 				}
 			}
 		}

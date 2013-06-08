@@ -167,6 +167,12 @@ public class Step implements TickComponent {
 		}
 	}
 
+	public void onRepeat(int current, int count) {
+		for (Trigger t : triggers) {
+			t.onRepeat(current, count);
+		}
+	}
+
 	long stepStartTime = 0;
 	long stepStartDistance = 0;
 	long lapStartTime = 0;
