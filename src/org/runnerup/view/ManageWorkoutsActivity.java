@@ -156,9 +156,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 							+ ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
 							+ ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
 							+ ("  acc." + DB.ACCOUNT.ENABLED + " ")
-							+ (" FROM " + DB.ACCOUNT.TABLE + " acc ")
-							+ (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
-							+ ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null"));
+							+ (" FROM " + DB.ACCOUNT.TABLE + " acc "));
 
 			Cursor c = mDB.rawQuery(sql, null);
 			alluploaders = DBHelper.toArray(c);
@@ -454,17 +452,36 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 				super.onGroupExpanded(groupPosition);
 				return;
 			}
-			
-			saveGroupPosition = groupPosition;
-			ArrayList<WorkoutRef> list = workouts.get(provider);
-			list.clear();
-			
-			HashSet<String> tmp = new HashSet<String>();
-			tmp.add(provider);
 
 			uploading = true;
-			uploadManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);
+			saveGroupPosition = groupPosition;
+
+			if (!uploadManager.isConfigured(provider)) {
+				uploadManager.configure(onUploaderConfiguredCallback, provider, false);
+			}
+			else {
+				onUploaderConfiguredCallback.run(provider,  Uploader.Status.OK);
+			}
 		}
+
+		Callback onUploaderConfiguredCallback = new Callback() {
+			@Override
+			public void run(String uploader, Status status) {
+				System.out.println("status: " + status);
+				if (status != Uploader.Status.OK) {
+					uploading = false;
+					return;
+				}
+
+				ArrayList<WorkoutRef> list = workouts.get(uploader);
+				list.clear();
+				
+				HashSet<String> tmp = new HashSet<String>();
+				tmp.add(uploader);
+
+				uploadManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);
+			}
+		};
 		
 		private void onGroupExpandedImpl() {
 			super.onGroupExpanded(saveGroupPosition);
