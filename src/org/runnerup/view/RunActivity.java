@@ -441,7 +441,11 @@ public class RunActivity extends Activity implements TickListener {
 			}
 			
 			if (step.getRepeatCount() > 0) {
-				durationValue.setText("" + (step.getCurrentRepeat() + 1) + "/" + step.getRepeatCount());
+				if (step.getCurrentRepeat() == step.getRepeatCount()) {
+					durationValue.setText("finished");
+				} else {
+					durationValue.setText("" + (step.getCurrentRepeat() + 1) + "/" + step.getRepeatCount());
+				}
 			}
 			return view;
 		}
