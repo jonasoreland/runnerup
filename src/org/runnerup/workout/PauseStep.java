@@ -22,11 +22,13 @@ public class PauseStep extends Step {
 
 	long elapsedTime = 0;
 	long lastTime = 0;
+	double saveDurationValue = 0;
 	
 	@Override
 	public void onInit(Workout s, HashMap<String, Object> bindValues) {
 		super.onInit(s, bindValues);
 		assert(getIntensity() == Intensity.RESTING && getDurationType() == Dimension.TIME);
+		saveDurationValue = super.durationValue;
 	}
 
 	@Override
@@ -43,6 +45,14 @@ public class PauseStep extends Step {
 		}
 	}
 
+	@Override
+	public void onComplete(Scope what, Workout s) {
+		if (what == Scope.STEP) {
+			super.durationValue = saveDurationValue;
+		}
+		super.onComplete(what, s);
+	}
+	
 	private void sample(boolean paused) {
 		long now = android.os.SystemClock.elapsedRealtime();
 		long diff = now - lastTime;
@@ -50,8 +60,10 @@ public class PauseStep extends Step {
 		elapsedTime += diff;
 		if (paused) {
 			/**
-			 * to make sure that actual pause time is save...we increase the durationValue every time elapsedTime is increased
-			 * if we're currently paused
+			 * to make sure that actual pause time is save...we increase the durationValue every time
+			 *  elapsedTime is increased if we're currently paused
+			 *
+			 * to handle repeats, this is later restored in onComplete() 
 			 */
 			super.durationValue += ((double)diff) / 1000.0;
 		}
