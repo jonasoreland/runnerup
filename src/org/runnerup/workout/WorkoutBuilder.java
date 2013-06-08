@@ -323,6 +323,18 @@ public class WorkoutBuilder {
 		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
 			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
 		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_distance), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.DISTANCE));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_time), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.TIME));
+		}
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_step_speed), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.SPEED));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
+		}
 		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_distance), false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
 		}
