@@ -349,6 +349,7 @@ public class StartActivity extends Activity implements TickListener {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
 					w = advancedWorkout;
 				}
+				WorkoutBuilder.prepareWorkout(getResources(), pref, w, TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
 				WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
 				mGpsStatus.stop(StartActivity.this);
 				mGpsTracker.setWorkout(w);

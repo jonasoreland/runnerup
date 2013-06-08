@@ -18,12 +18,14 @@ package org.runnerup.workout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.runnerup.R;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.view.AudioCueSettingsActivity;
+import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.feedback.AudioCountdownFeedback;
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CoachFeedback;
@@ -101,22 +103,6 @@ public class WorkoutBuilder {
 			w.steps.add(step);
 		}
 
-		boolean countdown_before_interval = true; //TODO configurable ??
-		
-		if (countdown_before_interval)
-		{
-			long val = 15; // default 15s
-			String vals = prefs.getString("pref_interval_countdown_time", "15");
-			try {
-				val = Long.parseLong(vals);
-			} catch (NumberFormatException e) {
-			}
-			if (val > 0) {
-				Step step = Step.createPauseStep(Dimension.TIME, val);
-				w.steps.add(step);
-			}
-		}
-		
 		int repetitions = (int) SafeParse.parseDouble(prefs.getString("intervalRepetitions", "1"), 1);
 		
 		int intervalType = prefs.getInt("intervalType", 0);
@@ -227,7 +213,7 @@ public class WorkoutBuilder {
 		Step stepArr[] = new Step[steps.size()];
 		steps.toArray(stepArr);
 		for (int i = 0 ; i < stepArr.length; i++) {
-			Step prev = i == 0 ? null : stepArr[i-1];
+			// Step prev = i == 0 ? null : stepArr[i-1];
 			Step step = stepArr[i];
 			Step next = i + 1 == stepArr.length ? null : stepArr[i+1];
 			switch(step.getIntensity()) {
@@ -450,4 +436,73 @@ public class WorkoutBuilder {
 			step.triggers.add(ev);
 		}
 	}	
+
+	public static void prepareWorkout(Resources res, SharedPreferences prefs, Workout w, boolean basic) {
+		List<StepListEntry> steps = w.getSteps();
+		
+		/**
+		 * Add/remove autolap
+		 */
+		boolean autolap = prefs.getBoolean(res.getString(R.string.pref_autolap_active), false);
+		if (basic == false) {
+			autolap = prefs.getBoolean(res.getString(R.string.pref_step_autolap_active), autolap);
+		}
+		if (autolap) {
+			long val = 0;
+			String vals = prefs.getString(res.getString(R.string.pref_autolap), "1000");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			System.out.println("setAutolap("+val+")");
+			for (StepListEntry s : steps) {
+				s.step.setAutolap(val);
+			}
+		}
+
+		/**
+		 * Add countdowns after steps with duration "until pressed", if next is not a countdown
+		 */
+		if (prefs.getBoolean(res.getString(R.string.pref_step_countdown_active), true))
+		{
+			long val = 15; // default 15s
+			String vals = prefs.getString(res.getString(R.string.pref_step_countdown_time), "15");
+			try {
+				val = Long.parseLong(vals);
+			} catch (NumberFormatException e) {
+			}
+			if (val > 0) {
+				StepListEntry stepArr[] = new StepListEntry[steps.size()];
+				steps.toArray(stepArr);
+				for (int i = 0; i < stepArr.length; i++) {
+					// Step prev = i == 0 ? null : stepArr[i-1];
+					Step step = stepArr[i].step;
+					Step next = i + 1 == stepArr.length ? null : stepArr[i+1].step;
+					
+					if (step.durationType != null)
+						continue;
+					
+					if (step.intensity == Intensity.REPEAT)
+						continue;
+					
+					if (next == null)
+						continue;
+					
+					if (next.durationType == Dimension.TIME && next.intensity == Intensity.RESTING)
+						continue;
+					
+					Step s = Step.createPauseStep(Dimension.TIME, val);
+					if (stepArr[i].parent == null) {
+						w.steps.add(i + 1, s);
+						System.err.println("Added step at index: " + (i + 1));
+					} else {
+						RepeatStep rs = (RepeatStep) stepArr[i].parent;
+						int idx = rs.steps.indexOf(step);
+						rs.steps.add(idx, s);
+						System.err.println("Added step at index: " + (i + 1) + " repeat index: " + (idx + 1));
+					}
+				}
+			}
+		}
+	}
 }

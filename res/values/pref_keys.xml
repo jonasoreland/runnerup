@@ -42,4 +42,10 @@
 
 	<string name="target_pace_moving_average_seconds">target_pace_moving_average_seconds</string>
 	<string name="target_pace_grace_seconds">target_pace_grace_seconds</string>
+
+	<!-- TODO add these to preferences -->
+    <string name="pref_step_autolap_active">pref_step_autolap_active</string>
+    <string name="pref_step_countdown_active">pref_step_countdown_active</string>
+    <string name="pref_step_countdown_time">pref_step_countdown_time</string>
+    	
 </resources>
