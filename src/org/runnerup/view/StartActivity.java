@@ -339,17 +339,17 @@ public class StartActivity extends Activity implements TickListener {
 				Workout w = null;
 				if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
-					w = WorkoutBuilder.createDefaultWorkout(pref, simpleTargetPace.isChecked());
+					w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, simpleTargetPace.isChecked());
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
-					w = WorkoutBuilder.createDefaultIntervalWorkout(pref);
+					w = WorkoutBuilder.createDefaultIntervalWorkout(getResources(),pref);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
 					w = advancedWorkout;
 				}
-				WorkoutBuilder.addAudioCuesToWorkout(w, audioPref);
+				WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
 				mGpsStatus.stop(StartActivity.this);
 				mGpsTracker.setWorkout(w);
 				Intent intent = new Intent(StartActivity.this,

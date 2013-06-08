@@ -32,14 +32,14 @@
    	    <CheckBoxPreference
         	android:defaultValue="false"
         	android:persistent="true"
-        	android:key="cue_time"
+        	android:key="@string/cue_time"
         	android:title="Time triggered audio cue" />
     	
 	    <org.runnerup.widget.TextPreference
 	        android:dependency="cue_time"
             android:defaultValue="120"
             android:inputType="number"
-            android:key="cue_time_intervall"
+            android:key="@string/cue_time_intervall"
             android:persistent="true"
             android:summary="120"
             android:title="Cue intervall (s)" />
@@ -47,14 +47,14 @@
     	<CheckBoxPreference
         	android:defaultValue="true"
         	android:persistent="true"
-        	android:key="cue_distance"
+        	android:key="@string/cue_distance"
         	android:title="Distance triggered audio cue" />
     	
 	    <org.runnerup.widget.TextPreference
-	        android:dependency="cue_distance"
+	        android:dependency="@string/cue_distance"
             android:defaultValue="1000"
             android:inputType="number"
-            android:key="cue_distance_intervall"
+            android:key="@string/cue_distance_intervall"
             android:persistent="true"
             android:summary="1000"
             android:title="Cue intervall (m)" />
@@ -63,41 +63,41 @@
     		<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
-        		android:key="cueinfo_total_distance"
+        		android:key="@string/cueinfo_total_distance"
         		android:title="Total distance" />
     		<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
-        		android:key="cueinfo_total_time"
+        		android:key="@string/cueinfo_total_time"
         		android:title="Total time" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
-        		android:key="cueinfo_total_pace"
+        		android:key="@string/cueinfo_total_pace"
         		android:title="Total pace" />
 
 <!-- 
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
-        		android:key="cueinfo_total_speed"
+        		android:key="@string/cueinfo_total_speed"
         		android:title="Total speed" />
 -->
  
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
-        		android:key="cueinfo_lap_distance"
+        		android:key="@string/cueinfo_lap_distance"
         		android:title="Lap distance" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
-        		android:key="cueinfo_lap_time"
+        		android:key="@string/cueinfo_lap_time"
         		android:title="Lap time" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
-        		android:key="cueinfo_lap_pace"
+        		android:key="@string/cueinfo_lap_pace"
         		android:title="Lap pace" />
 <!-- 
     		<CheckBoxPreference
@@ -111,14 +111,14 @@
 			<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
-        		android:key="cueinfo_target_coaching"
+        		android:key="@string/cueinfo_target_coaching"
         		android:title="Target coaching"
         		android:summary="Coach to help you reach target (if having set target)"
         		/>
     	    <CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
-        		android:key="cueinfo_skip_startstop"
+        		android:key="@string/cueinfo_skip_startstop"
         		android:title="Skip event audio cues"
         		android:summary="Keep silent when workout start/pause/resume/stop"
         		/>

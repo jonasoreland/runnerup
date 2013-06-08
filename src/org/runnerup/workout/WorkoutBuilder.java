@@ -19,6 +19,7 @@ package org.runnerup.workout;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.runnerup.R;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
@@ -30,6 +31,7 @@ import org.runnerup.workout.feedback.CountdownFeedback;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.text.format.DateUtils;
 
 public class WorkoutBuilder {
@@ -37,15 +39,15 @@ public class WorkoutBuilder {
 	/**
 	 * @return workout based on SharedPreferences
 	 */
-	public static Workout createDefaultWorkout(SharedPreferences prefs,
+	public static Workout createDefaultWorkout(Resources res, SharedPreferences prefs,
 			boolean targetPace) {
 		Workout w = new Workout();
 		w.sport = prefs.getInt("basicSport", DB.ACTIVITY.SPORT_RUNNING);
 
-		if (prefs.getBoolean("pref_countdown_active", false))
+		if (prefs.getBoolean(res.getString(R.string.pref_countdown_active), false))
 		{
 			long val = 0;
-			String vals = prefs.getString("pref_countdown_time", "0");
+			String vals = prefs.getString(res.getString(R.string.pref_countdown_time), "0");
 			try {
 				val = Long.parseLong(vals);
 			} catch (NumberFormatException e) {
@@ -57,9 +59,9 @@ public class WorkoutBuilder {
 		}
 
 		Step step = new Step();
-		if (prefs.getBoolean("pref_autolap_active", false)) {
+		if (prefs.getBoolean(res.getString(R.string.pref_autolap_active), false)) {
 			long val = 0;
-			String vals = prefs.getString("pref_autolap", "1000");
+			String vals = prefs.getString(res.getString(R.string.pref_autolap), "1000");
 			try {
 				val = Long.parseLong(vals);
 			} catch (NumberFormatException e) {
@@ -87,7 +89,7 @@ public class WorkoutBuilder {
 		return w;
 	}
 	
-	public static Workout createDefaultIntervalWorkout(SharedPreferences prefs) {
+	public static Workout createDefaultIntervalWorkout(Resources res, SharedPreferences prefs) {
 		Workout w = new Workout();
 		final boolean warmup = true;
 		final boolean cooldown = true;
@@ -187,15 +189,15 @@ public class WorkoutBuilder {
 		return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
 	}
 
-	public static void addAudioCuesToWorkout(Workout w, SharedPreferences prefs) {
-		addAudioCuesToWorkout(w.steps, prefs);
+	public static void addAudioCuesToWorkout(Resources res, Workout w, SharedPreferences prefs) {
+		addAudioCuesToWorkout(res, w.steps, prefs);
 	}
 
-	private static void addAudioCuesToWorkout(ArrayList<Step> steps, SharedPreferences prefs) {
-		final boolean skip_startstop_cue = prefs.getBoolean("cueinfo_skip_startstop", false);
-		ArrayList<Trigger> triggers = createDefaultTriggers(prefs);
+	private static void addAudioCuesToWorkout(Resources res, ArrayList<Step> steps, SharedPreferences prefs) {
+		final boolean skip_startstop_cue = prefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false);
+		ArrayList<Trigger> triggers = createDefaultTriggers(res, prefs);
 		boolean silent = triggers.size() == 0;
-		final boolean coaching = prefs.getBoolean("cueinfo_target_coaching", true);
+		final boolean coaching = prefs.getBoolean(res.getString(R.string.cueinfo_target_coaching), true);
 		if (silent && coaching) {
 			for (Step s : steps) {
 				if (s.getTargetType() != null) {
@@ -205,7 +207,7 @@ public class WorkoutBuilder {
 			}
 		}
 		
-		addPauseStopResumeTriggers(triggers, prefs);
+		addPauseStopResumeTriggers(res, triggers, prefs);
 		if (!silent)
 		{
 			EventTrigger ev = new EventTrigger();
@@ -230,7 +232,7 @@ public class WorkoutBuilder {
 			Step next = i + 1 == stepArr.length ? null : stepArr[i+1];
 			switch(step.getIntensity()) {
 			case REPEAT:
-				addAudioCuesToWorkout(((RepeatStep)step).steps, prefs);
+				addAudioCuesToWorkout(res, ((RepeatStep)step).steps, prefs);
 				break;
 			case ACTIVE:
 				step.triggers.addAll(triggers);
@@ -251,7 +253,7 @@ public class WorkoutBuilder {
 				trigger.scope = Scope.STEP;
 				trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
 				step.triggers.add(trigger);
-				addPauseStopResumeTriggers(step.triggers, prefs);
+				addPauseStopResumeTriggers(res, step.triggers, prefs);
 
 				if (!silent) {
 					createAudioCountdown(step);
@@ -260,7 +262,7 @@ public class WorkoutBuilder {
 			}
 			case WARMUP:
 			case COOLDOWN:
-				addPauseStopResumeTriggers(step.triggers, prefs);
+				addPauseStopResumeTriggers(res, step.triggers, prefs);
 				if (skip_startstop_cue == false) {
 					EventTrigger ev = new EventTrigger();
 					ev.event = Event.STARTED;
@@ -273,8 +275,8 @@ public class WorkoutBuilder {
 
 			if (coaching && step.getTargetType() != null) {
 				Range range = step.getTargetValue();
-				int averageSeconds = SafeParse.parseInt(prefs.getString("target_pace_moving_average_seconds", "20"), 20);
-				int graceSeconds = SafeParse.parseInt(prefs.getString("target_pace_grace_seconds", "30"), 30);
+				int averageSeconds = SafeParse.parseInt(prefs.getString(res.getString(R.string.target_pace_moving_average_seconds), "20"), 20);
+				int graceSeconds = SafeParse.parseInt(prefs.getString(res.getString(R.string.target_pace_grace_seconds), "30"), 30);
 				TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
 				tr.scope = Scope.STEP;
 				tr.dimension = step.getTargetType();
@@ -285,13 +287,13 @@ public class WorkoutBuilder {
 		}
 	}
 
-	private static ArrayList<Trigger> createDefaultTriggers(SharedPreferences prefs) {
+	private static ArrayList<Trigger> createDefaultTriggers(Resources res, SharedPreferences prefs) {
 		ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 		ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
-		if (prefs.getBoolean("cue_time", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cue_time), false)) {
 			long val = 0;
-			String vals = prefs.getString("cue_time_intervall", "120");
+			String vals = prefs.getString(res.getString(R.string.cue_time_intervall), "120");
 			try {
 				val = Long.parseLong(vals);
 			} catch (NumberFormatException e) {
@@ -306,9 +308,9 @@ public class WorkoutBuilder {
 			}
 		}
 		
-		if (prefs.getBoolean("cue_distance", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cue_distance), false)) {
 			long val = 0;
-			String vals = prefs.getString("cue_distance_intervall", "1000");
+			String vals = prefs.getString(res.getString(R.string.cue_distance_intervall), "1000");
 			try {
 				val = Long.parseLong(vals);
 			} catch (NumberFormatException e) {
@@ -323,28 +325,28 @@ public class WorkoutBuilder {
 			}
 		}
 
-		if (prefs.getBoolean("cueinfo_total_distance", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
 			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
 		}
-		if (prefs.getBoolean("cueinfo_total_time", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_time), false)) {
 			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
 		}
-		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_total_speed", false)) {
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_total_speed), false)) {
 			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
 		}
-		if (prefs.getBoolean("cueinfo_total_pace", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
 			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
 		}
-		if (prefs.getBoolean("cueinfo_lap_distance", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_distance), false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
 		}
-		if (prefs.getBoolean("cueinfo_lap_time", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_time), false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
 		}
-		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_lap_speed", false)) {
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_lap_speed), false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
 		}
-		if (prefs.getBoolean("cueinfo_lap_pace", false)) {
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_pace), false)) {
 			feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
 		}
 
@@ -355,8 +357,8 @@ public class WorkoutBuilder {
 		return triggers;
 	}
 	
-	private static void addPauseStopResumeTriggers(ArrayList<Trigger> list, SharedPreferences prefs) {
-		if (prefs.getBoolean("cueinfo_skip_startstop", false) == false) {
+	private static void addPauseStopResumeTriggers(Resources res, ArrayList<Trigger> list, SharedPreferences prefs) {
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false) == false) {
 			{
 				EventTrigger p = new EventTrigger();
 				p.event = Event.PAUSED;

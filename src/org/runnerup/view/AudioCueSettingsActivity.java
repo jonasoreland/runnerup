@@ -40,6 +40,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -280,34 +281,35 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 	OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
 		@Override
 		public boolean onPreferenceClick(Preference preference) {
-			String clearList[] = {
-					"cueinfo_total_distance",
-					"cueinfo_total_time",
-					"cueinfo_total_speed",
-					"cueinfo_total_pace",
-					"cueinfo_lap_distance",
-					"cueinfo_lap_time",
-					"cueinfo_lap_speed",
-					"cueinfo_lap_pace",
-					"cueinfo_target_coaching"
+			Resources res = getResources();
+			int clearList[] = {
+					R.string.cueinfo_total_distance,
+					R.string.cueinfo_total_time,
+					R.string.cueinfo_total_speed,
+					R.string.cueinfo_total_pace,
+					R.string.cueinfo_lap_distance,
+					R.string.cueinfo_lap_time,
+					R.string.cueinfo_lap_speed,
+					R.string.cueinfo_lap_pace,
+					R.string.cueinfo_target_coaching
 			};
 
-			String setList[] = {
-					"cueinfo_skip_startstop"
+			int setList[] = {
+					R.string.cueinfo_skip_startstop
 			};
 			
-			for (String s : clearList) {
-				Preference a = getPreferenceManager().findPreference(s);
+			for (int s : clearList) {
+				Preference a = getPreferenceManager().findPreference(res.getString(s));
 				if (a != null) {
-					a.getEditor().putBoolean(s, false);
+					a.getEditor().putBoolean(res.getString(s), false);
 					a.getEditor().commit();
 				}
 			}
 			
-			for (String s : setList) {
-				Preference a = getPreferenceManager().findPreference(s);
+			for (int s : setList) {
+				Preference a = getPreferenceManager().findPreference(res.getString(s));
 				if (a != null) {
-					a.getEditor().putBoolean(s, true);
+					a.getEditor().putBoolean(res.getString(s), true);
 					a.getEditor().commit();
 				}
 			}
@@ -340,7 +342,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 		@Override
 		public boolean onPreferenceClick(Preference arg0) {
 			Context ctx = getApplicationContext();
-
+			Resources res = getResources();
+			
 			feedback.clear();
 			SharedPreferences prefs = null;
 			if (settingsName == null || settingsName.contentEquals(DEFAULT))
@@ -348,28 +351,28 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			else
 				prefs = ctx.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
 
-			if (prefs.getBoolean("cueinfo_total_distance", false)) {
+			if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
 				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
 			}
-			if (prefs.getBoolean("cueinfo_total_time", false)) {
+			if (prefs.getBoolean(res.getString(R.string.cueinfo_total_time), false)) {
 				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
 			}
-			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_total_speed", false)) {
+			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_total_speed), false)) {
 				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
 			}
-			if (prefs.getBoolean("cueinfo_total_pace", false)) {
+			if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
 				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
 			}
-			if (prefs.getBoolean("cueinfo_lap_distance", false)) {
+			if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_distance), false)) {
 				feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
 			}
-			if (prefs.getBoolean("cueinfo_lap_time", false)) {
+			if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_time), false)) {
 				feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
 			}
-			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean("cueinfo_lap_speed", false)) {
+			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_lap_speed), false)) {
 				feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
 			}
-			if (prefs.getBoolean("cueinfo_lap_pace", false)) {
+			if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_pace), false)) {
 				feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
 			}
 			

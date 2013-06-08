@@ -48,15 +48,15 @@
     
     <CheckBoxPreference
         android:defaultValue="true"
-        android:key="pref_autolap_active"
+        android:key="@string/pref_autolap_active"
         android:persistent="true"
         android:title="Autolap" />
         
 	<org.runnerup.widget.TextPreference
         android:defaultValue="1000"
-        android:dependency="pref_autolap_active"
+        android:dependency="@string/pref_autolap_active"
         android:inputType="number"
-        android:key="pref_autolap"
+        android:key="@string/pref_autolap"
         android:persistent="true"
         android:summary="1000"
         android:title="Autolap (m)"
@@ -65,20 +65,20 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"
-        android:key="pref_countdown_active"
+        android:key="@string/pref_countdown_active"
         android:title="Activity countdown" />
 
 	<org.runnerup.widget.TextPreference
         android:defaultValue="15"
-        android:dependency="pref_countdown_active"
+        android:dependency="@string/pref_countdown_active"
         android:inputType="number"
-        android:key="pref_countdown_time"
+        android:key="@string/pref_countdown_time"
         android:persistent="true"
         android:summary="15"
         android:title="Countdown time (s)" />
 
     <ListPreference
-        android:key="pref_unit"
+        android:key="@string/pref_unit"
         android:persistent="true"
         android:title="Unit preference"
         android:entries="@array/unitEntries"
@@ -86,7 +86,7 @@
 
 	<CheckBoxPreference
         android:defaultValue="true"
-        android:key="pref_startgps"
+        android:key="@string/pref_startgps"
         android:persistent="true"
         android:title="Auto start gps" />
 
@@ -96,20 +96,20 @@
             
 	    <org.runnerup.widget.TextPreference
             android:inputType="number"
-            android:key="target_pace_moving_average_seconds"
+            android:key="@string/target_pace_moving_average_seconds"
             android:persistent="true"
             android:title="Target pace moving average seconds" />
 	    
 	    <org.runnerup.widget.TextPreference
             android:inputType="number"
-            android:key="target_pace_grace_seconds"
+            android:key="@string/target_pace_grace_seconds"
             android:persistent="true"
             android:title="Target pace grace seconds" />
 	    
 	    <org.runnerup.widget.TextPreference
             android:defaultValue="500"
             android:inputType="number"
-            android:key="pref_pollInterval"
+            android:key="@string/pref_pollInterval"
             android:persistent="true"
             android:summary="500"
             android:title="Poll intervall (ms)" />
@@ -117,7 +117,7 @@
         <org.runnerup.widget.TextPreference
             android:defaultValue="0"
             android:inputType="number"
-            android:key="pref_pollDistance"
+            android:key="@string/pref_pollDistance"
             android:persistent="true"
             android:summary="0"
             android:title="Poll distance (m)" />
