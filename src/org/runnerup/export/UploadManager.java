@@ -152,6 +152,7 @@ public class UploadManager {
 	public void configure(final Callback callback, final String name, final boolean uploading) {
 		Uploader l = uploaders.get(name);
 		if (l == null) {
+			callback.run(name,  Uploader.Status.INCORRECT_USAGE);
 			return;
 		}
 		currentUploader = l;
@@ -340,6 +341,7 @@ public class UploadManager {
 					callback.run(l.getName(), Uploader.Status.OK);
 					return;
 				}
+				l.reset();
 				if (result == Uploader.Status.CANCEL) {
 					askUsernamePassword(callback, l, username, password, showPassword, uploading);
 					return;
