@@ -38,6 +38,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -77,12 +78,32 @@ public class RunActivity extends Activity implements TickListener {
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 	boolean simpleWorkout;
 
-	/** Called when the activity is first created. */
+	boolean started = false;
+	boolean timerOn = true;
+	class SaveConfig {
+		boolean timerOn;
+		GpsTracker gpsTracker;
+	};
 
+	
+	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.run);
+
+		Object obj = getLastNonConfigurationInstance();
+		if (obj != null && obj instanceof SaveConfig) {
+			SaveConfig cfg = (SaveConfig) obj;
+			started = true;
+			timerOn = cfg.timerOn;
+			mGpsTracker = cfg.gpsTracker;
+			if (mGpsTracker != null) {
+				workout = mGpsTracker.getWorkout(); 
+			}
+		}
+		System.err.println("started: " + started + ", timerOn: " + timerOn + ", mGpsTracker=" + mGpsTracker);
+		
 		bindGpsTracker();
 		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
 		formatter = new Formatter(this);
@@ -105,6 +126,14 @@ public class RunActivity extends Activity implements TickListener {
 	}
 
 	@Override
+	public Object onRetainNonConfigurationInstance() {
+		SaveConfig cfg = new SaveConfig();
+		cfg.timerOn = timerOn;
+		cfg.gpsTracker = mGpsTracker;
+		return cfg;
+	}
+
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		unbindGpsTracker();
@@ -115,17 +144,19 @@ public class RunActivity extends Activity implements TickListener {
 		stopTimer();
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		System.err.println("onConfigurationChange...do nothing!!");
+	}
+
 	void onGpsTrackerBound() {
 		workout = mGpsTracker.getWorkout();
-		mGpsTracker.createActivity(workout.getSport());
 		mGpsTracker.setForeground(RunActivity.class);
-		mGpsTracker.start();
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
 		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
 		workout.onBind(workout, bindValues);
-		startTimer();
 
 		populateWorkoutList();
 		simpleWorkout = false;
@@ -141,8 +172,17 @@ public class RunActivity extends Activity implements TickListener {
 			newLapButton.setOnClickListener(nextStepButtonClick);
 			newLapButton.setText("Next lap");
 		}
-		workout.onInit(workout);
-		workout.onStart(Scope.WORKOUT, this.workout);
+
+		if (timerOn) {
+			startTimer();
+		}
+		
+		if (started == false) {
+			mGpsTracker.createActivity(workout.getSport());
+			mGpsTracker.start();
+			workout.onInit(workout);
+			workout.onStart(Scope.WORKOUT, this.workout);
+		}
 	}
 
 	private void populateWorkoutList() {
@@ -161,6 +201,7 @@ public class RunActivity extends Activity implements TickListener {
 
 	Timer timer = null;
 	void startTimer() {
+		timerOn = true;
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -175,6 +216,7 @@ public class RunActivity extends Activity implements TickListener {
 	}
 
 	void stopTimer() {
+		timerOn = false;
 		if (timer != null) {
 			timer.cancel();
 			timer.purge();
@@ -324,11 +366,9 @@ public class RunActivity extends Activity implements TickListener {
 			// interact with the service. Because we have bound to a explicit
 			// service that we know is running in our own process, we can
 			// cast its IBinder to a concrete class and directly access it.
-			if (mGpsTracker == null) {
-				mGpsTracker = ((GpsTracker.LocalBinder) service).getService();
-				// Tell the user about this for our demo.
-				RunActivity.this.onGpsTrackerBound();
-			}
+			mGpsTracker = ((GpsTracker.LocalBinder) service).getService();
+			// Tell the user about this for our demo.
+			RunActivity.this.onGpsTrackerBound();
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
