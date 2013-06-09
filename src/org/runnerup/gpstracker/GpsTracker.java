@@ -340,6 +340,10 @@ public class GpsTracker extends android.app.Service implements
 		return mLastLocation;
 	}
 
+	public long getActivityId() {
+		return mActivityId;
+	}
+	
 	@Override
 	public void onLocationChanged(Location arg0) {
 		if (mBug23937Checked == false) {
