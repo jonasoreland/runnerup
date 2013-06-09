@@ -22,8 +22,14 @@ public interface WorkoutComponent {
 	/**
 	 * Called before workout begins
 	 */
-	public void onInit(Workout s, HashMap<String, Object> bindValues);
+	public void onInit(Workout s);
 
+	/**
+	 * Called at least once before onStart
+	 * Can be called later if orientation changes
+	 */
+	public void onBind(Workout s, HashMap<String, Object> bindValues);
+	
 	/**
 	 * Called before onStart
 	 */

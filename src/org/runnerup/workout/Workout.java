@@ -88,10 +88,16 @@ public class Workout implements WorkoutComponent {
 		this.gpsTracker = gpsTracker;
 	}
 
-	public void onInit(Workout w, HashMap<String, Object> bindValues) {
+	public void onInit(Workout w) {
 		assert (w == this);
 		for (Step a : steps) {
-			a.onInit(this, bindValues);
+			a.onInit(this);
+		}
+	}
+
+	public void onBind(Workout w, HashMap<String, Object> bindValues) {
+		for (Step a : steps) {
+			a.onBind(w, bindValues);
 		}
 	}
 

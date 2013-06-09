@@ -26,8 +26,7 @@ public class EventTrigger extends Trigger {
 	int currentSkipCounter = 0;
 	
 	@Override
-	public void onInit(Workout s, HashMap<String, Object> bindValues) {
-		super.onInit(s, bindValues);
+	public void onInit(Workout s) {
 		currentSkipCounter = skipCounter;
 	}
 

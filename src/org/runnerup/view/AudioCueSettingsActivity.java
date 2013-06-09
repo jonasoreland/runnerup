@@ -332,7 +332,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts));
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
 				for (Feedback f : feedback) {
-					f.onInit(w, bindValues);
+					f.onInit(w);
+					f.onBind(w, bindValues);
 					f.emit(w,  AudioCueSettingsActivity.this.getApplicationContext());
 				}
 			}

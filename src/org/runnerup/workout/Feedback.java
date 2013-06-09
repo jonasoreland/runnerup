@@ -22,7 +22,10 @@ import android.content.Context;
 
 public abstract class Feedback {
 
-	public void onInit(Workout s, HashMap<String,Object> bindValues) {
+	public void onInit(Workout s) {
+	}
+
+	public void onBind(Workout s, HashMap<String,Object> bindValues) {
 	}
 
 	public void onStart(Workout s) {

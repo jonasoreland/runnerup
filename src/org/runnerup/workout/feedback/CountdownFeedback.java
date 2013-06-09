@@ -41,7 +41,8 @@ public class CountdownFeedback extends Feedback {
 	}
 	
 	@Override
-	public void onInit(Workout s, HashMap<String, Object> bindValues) {
+	public void onBind(Workout s, HashMap<String, Object> bindValues) {
+		super.onBind(s, bindValues);
 		textView = (TextView) bindValues.get(Workout.KEY_COUNTER_VIEW);
 		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
 	}

@@ -123,7 +123,7 @@ public class RunActivity extends Activity implements TickListener {
 		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
-		workout.onInit(workout, bindValues);
+		workout.onBind(workout, bindValues);
 		startTimer();
 
 		populateWorkoutList();
@@ -140,6 +140,7 @@ public class RunActivity extends Activity implements TickListener {
 			newLapButton.setOnClickListener(nextStepButtonClick);
 			newLapButton.setText("Next lap");
 		}
+		workout.onInit(workout);
 		workout.onStart(Scope.WORKOUT, this.workout);
 	}
 

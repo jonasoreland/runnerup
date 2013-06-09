@@ -154,9 +154,16 @@ public class Step implements TickComponent {
 	}
 
 	@Override
-	public void onInit(Workout s, HashMap<String, Object> bindValues) {
+	public void onInit(Workout s) {
 		for (Trigger t : triggers) {
-			t.onInit(s, bindValues);
+			t.onInit(s);
+		}
+	}
+
+	@Override
+	public void onBind(Workout s, HashMap<String, Object> bindValues) {
+		for (Trigger t : triggers) {
+			t.onBind(s, bindValues);
 		}
 	}
 

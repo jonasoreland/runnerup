@@ -25,10 +25,15 @@ public class PauseStep extends Step {
 	double saveDurationValue = 0;
 	
 	@Override
-	public void onInit(Workout s, HashMap<String, Object> bindValues) {
-		super.onInit(s, bindValues);
+	public void onInit(Workout s) {
+		super.onInit(s);
 		assert(getIntensity() == Intensity.RESTING && getDurationType() == Dimension.TIME);
 		saveDurationValue = super.durationValue;
+	}
+
+	@Override
+	public void onBind(Workout s, HashMap<String, Object> bindValues) {
+		super.onBind(s, bindValues);
 	}
 
 	@Override

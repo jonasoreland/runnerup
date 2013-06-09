@@ -40,11 +40,18 @@ public class RepeatStep extends Step {
 	}
 
 	@Override
-	public void onInit(Workout w, HashMap<String, Object> bindValues) {
+	public void onInit(Workout w) {
 		currentStep = 0;
 		currentRepeat = 0;
 		for (Step s : steps) {
-			s.onInit(w, bindValues);
+			s.onInit(w);
+		}
+	}
+
+	@Override
+	public void onBind(Workout w, HashMap<String, Object> bindValues) {
+		for (Step s : steps) {
+			s.onBind(w, bindValues);
 		}
 	}
 
