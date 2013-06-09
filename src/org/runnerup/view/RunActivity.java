@@ -116,6 +116,7 @@ public class RunActivity extends Activity implements TickListener {
 
 	void onGpsTrackerBound() {
 		workout = mGpsTracker.getWorkout();
+		mGpsTracker.createActivity(workout.getSport());
 		mGpsTracker.setForeground(RunActivity.class);
 		mGpsTracker.start();
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
