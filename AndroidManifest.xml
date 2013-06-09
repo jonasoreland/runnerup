@@ -65,7 +65,6 @@
 		</activity>
 		
 		<activity android:name=".view.RunActivity"
-		    android:configChanges="orientation"
 		    android:screenOrientation="portrait" >
 		</activity>
 		
