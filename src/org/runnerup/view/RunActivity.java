@@ -56,7 +56,6 @@ public class RunActivity extends Activity implements TickListener {
 	Workout workout = null;
 	GpsTracker mGpsTracker = null;
 	Handler handler = new Handler();
-	long activityId = 0;
 
 	Button pauseButton = null;
 	Button stopButton = null;
@@ -117,7 +116,6 @@ public class RunActivity extends Activity implements TickListener {
 
 	void onGpsTrackerBound() {
 		workout = mGpsTracker.getWorkout();
-		activityId = mGpsTracker.createActivity(workout.getSport());
 		mGpsTracker.setForeground(RunActivity.class);
 		mGpsTracker.start();
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
@@ -207,7 +205,7 @@ public class RunActivity extends Activity implements TickListener {
 				 * they show almost the same information
 				 */
 				intent.putExtra("mode", "save");
-				intent.putExtra("ID", activityId);
+				intent.putExtra("ID", mGpsTracker.getActivityId());
 				RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
 			}
 		}
