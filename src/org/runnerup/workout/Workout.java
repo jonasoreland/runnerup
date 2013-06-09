@@ -355,7 +355,7 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public Step getCurrentStep() {
-		if (currentStepNo < steps.size())
+		if (currentStepNo >= 0 && currentStepNo < steps.size())
 			return steps.get(currentStepNo).getCurrentStep();
 		return null;
 	}
