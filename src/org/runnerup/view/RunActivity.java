@@ -112,6 +112,7 @@ public class RunActivity extends Activity implements TickListener {
 			mSpeech.shutdown();
 			mSpeech = null;
 		}
+		stopTimer();
 	}
 
 	void onGpsTrackerBound() {
@@ -159,7 +160,6 @@ public class RunActivity extends Activity implements TickListener {
 	}
 
 	Timer timer = null;
-
 	void startTimer() {
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
@@ -174,8 +174,15 @@ public class RunActivity extends Activity implements TickListener {
 		}, 0, 500);
 	}
 
+	void stopTimer() {
+		if (timer != null) {
+			timer.cancel();
+			timer.purge();
+			timer = null;
+		}
+	}
+	
 	Location l = null;
-
 	public void onTick() {
 		if (workout != null) {
 			workout.onTick();
@@ -188,12 +195,6 @@ public class RunActivity extends Activity implements TickListener {
 				}
 			}
 		}
-	}
-
-	void stopTimer() {
-		timer.cancel();
-		timer.purge();
-		timer = null;
 	}
 
 	OnClickListener stopButtonClick = new OnClickListener() {
@@ -335,6 +336,7 @@ public class RunActivity extends Activity implements TickListener {
 			// unexpectedly disconnected -- that is, its process crashed.
 			// Because it is running in our same process, we should never
 			// see this happen.
+			mIsBound = false;
 			mGpsTracker = null;
 		}
 	};
