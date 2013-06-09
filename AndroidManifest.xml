@@ -65,6 +65,7 @@
 		</activity>
 		
 		<activity android:name=".view.RunActivity"
+		    android:configChanges="keyboardHidden|orientation"
 		    android:screenOrientation="portrait" >
 		</activity>
 		

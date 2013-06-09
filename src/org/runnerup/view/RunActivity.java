@@ -38,6 +38,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -102,6 +103,12 @@ public class RunActivity extends Activity implements TickListener {
 		workoutList = (ListView) findViewById(R.id.workoutList);
 		WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
 		workoutList.setAdapter(adapter);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		System.err.println("onConfigurationChange => do NOTHING!!");
 	}
 
 	@Override
