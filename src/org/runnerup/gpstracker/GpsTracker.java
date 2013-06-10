@@ -299,13 +299,13 @@ public class GpsTracker extends android.app.Service implements
 
 	public void completeActivity(boolean save) {
 		assert (state == State.PAUSED);
-		save = true;
-		if (save) {
-			setNextLocationType(DB.LOCATION.TYPE_END);
-			if (mActivityLastLocation != null) {
-				mDBWriter.onLocationChanged(mActivityLastLocation);
-			}
 
+		setNextLocationType(DB.LOCATION.TYPE_END);
+		if (mActivityLastLocation != null) {
+			mDBWriter.onLocationChanged(mActivityLastLocation);
+		}
+
+		if (save) {
 			ContentValues tmp = new ContentValues();
 			tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
 			tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
