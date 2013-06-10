@@ -16,7 +16,6 @@
  */
 package org.runnerup.workout;
 
-import java.util.HashMap;
 
 public class EventTrigger extends Trigger {
 
