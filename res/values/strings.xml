@@ -49,5 +49,6 @@
 	
 	<string name="txt_elapsed_h">h</string>
 	<string name="txt_elapsed_m">m</string>
+	<string name="txt_elapsed_min">min</string>
 	<string name="txt_elapsed_s">s</string>
 </resources>

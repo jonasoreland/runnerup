@@ -213,7 +213,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		if (minutes > 0) {
 			if (hours > 0)
 				s.append(" ");
-			s.append(minutes).append(" ").append(resources.getString(R.string.txt_elapsed_m));
+			if (hours > 0 || seconds > 0)
+				s.append(minutes).append(" ").append(resources.getString(R.string.txt_elapsed_m));
+			else
+				s.append(minutes).append(" ").append(resources.getString(R.string.txt_elapsed_min));
 		}
 		if (seconds > 0) {
 			if (hours > 0 || minutes > 0)
