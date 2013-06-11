@@ -468,7 +468,17 @@ public class WorkoutBuilder {
 			}
 			System.out.println("setAutolap("+val+")");
 			for (StepListEntry s : steps) {
-				s.step.setAutolap(val);
+				s.step.setAutolap(0); // reset
+				switch(s.step.getIntensity()) {
+				case ACTIVE:
+					s.step.setAutolap(val);
+					break;
+				case RESTING:
+				case WARMUP:
+				case COOLDOWN:
+				case REPEAT:
+					break;
+				}
 			}
 		}
 
