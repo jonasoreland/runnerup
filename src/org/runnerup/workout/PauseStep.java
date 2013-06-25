@@ -99,7 +99,7 @@ public class PauseStep extends Step {
 	}
 
 	@Override
-	public long getTime(Workout w, Scope s) {
+	public double getTime(Workout w, Scope s) {
 		sample(w.isPaused());
 		switch (s) {
 		case STEP:

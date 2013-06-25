@@ -240,9 +240,9 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
-	public long getDistance(Scope scope) {
+	public double getDistance(Scope scope) {
 		if (scope == Scope.WORKOUT)
-			return (long) gpsTracker.getDistance();
+			return gpsTracker.getDistance();
 		else if (currentStep != null) {
 			return currentStep.getDistance(this, scope);
 		}
@@ -250,9 +250,9 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
-	public long getTime(Scope scope) {
+	public double getTime(Scope scope) {
 		if (scope == Scope.WORKOUT)
-			return (long) gpsTracker.getTime();
+			return gpsTracker.getTime();
 		else if (currentStep != null) {
 			return currentStep.getTime(this, scope);
 		}
@@ -262,11 +262,11 @@ public class Workout implements WorkoutComponent {
 
 	public double getSpeed(Scope scope) {
 		if (scope == Scope.WORKOUT) {
-			long d = getDistance(scope);
-			long t = getTime(scope);
+			double d = getDistance(scope);
+			double t = getTime(scope);
 			if (t == 0)
 				return 0;
-			return ((double) d) / ((double) t);
+			return d / t;
 		} else if (currentStep != null) {
 			return currentStep.getSpeed(this, scope);
 		}
@@ -372,36 +372,36 @@ public class Workout implements WorkoutComponent {
 			super();
 		}
 		
-		public long getDistance(Scope scope) {
+		public double getDistance(Scope scope) {
 			switch(scope) {
 			case WORKOUT:
-				return (long) (3000 + 7000 * Math.random());
+				return (3000 + 7000 * Math.random());
 			case STEP:
-				return (long) (300 + 700 * Math.random());
+				return (300 + 700 * Math.random());
 			case LAP:
-				return (long) (300 + 700 * Math.random());
+				return (300 + 700 * Math.random());
 			}
 			return 0;
 		}
 
-		public long getTime(Scope scope) {
+		public double getTime(Scope scope) {
 			switch(scope) {
 			case WORKOUT:
-				return (long) (10 * 60 + 50 * 60 * Math.random());
+				return (10 * 60 + 50 * 60 * Math.random());
 			case STEP:
-				return (long) (1 * 60 + 5 * 60 * Math.random());
+				return (1 * 60 + 5 * 60 * Math.random());
 			case LAP:
-				return (long) (1 * 60 + 5 * 60 * Math.random());
+				return (1 * 60 + 5 * 60 * Math.random());
 			}
 			return 0;
 		}
 
 		public double getSpeed(Scope scope) {
-			long d = getDistance(scope);
-			long t = getTime(scope);
+			double d = getDistance(scope);
+			double t = getTime(scope);
 			if (t == 0)
 				return 0;
-			return ((double) d) / ((double) t);
+			return d / t;
 		}
 	};
 	

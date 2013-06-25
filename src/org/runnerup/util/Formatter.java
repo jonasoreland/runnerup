@@ -132,9 +132,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	public String format(int target, Dimension dimension, double value) {
 		switch(dimension) {
 		case DISTANCE:
-			return formatDistance(target, (long) value);
+			return formatDistance(target, Math.round(value));
 		case TIME:
-			return formatElapsedTime(target, (long) value);
+			return formatElapsedTime(target, Math.round(value));
 		case PACE:
 			return formatPace(target, value);
 		case SPEED:
@@ -374,18 +374,18 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	public String formatRemaining(int target, Dimension dimension, double value) {
 		switch(dimension) {
 		case DISTANCE:
-			return formatRemainingDistance(target, (long)value);
+			return formatRemainingDistance(target, value);
 		case TIME:
-			return formatRemainingTime(target, (long)value);
+			return formatRemainingTime(target, value);
 		}
 		return "";
 	}
 		
 	public String formatRemainingTime(int target, double value) {
-		return formatElapsedTime(target, (long) value);
+		return formatElapsedTime(target, Math.round(value));
 	}
 
 	public String formatRemainingDistance(int target, double value) {
-		return formatDistance(target, (long) value);
+		return formatDistance(target, Math.round(value));
 	}
 }

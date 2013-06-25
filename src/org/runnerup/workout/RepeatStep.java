@@ -129,12 +129,12 @@ public class RepeatStep extends Step {
 	}
 
 	@Override
-	public long getDistance(Workout w, Scope s) {
+	public double getDistance(Workout w, Scope s) {
 		return steps.get(currentStep).getDistance(w, s);
 	}
 
 	@Override
-	public long getTime(Workout w, Scope s) {
+	public double getTime(Workout w, Scope s) {
 		return steps.get(currentStep).getTime(w, s);
 	}
 

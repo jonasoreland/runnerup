@@ -289,16 +289,16 @@ public class RunActivity extends Activity implements TickListener {
 
 	private void updateView() {
 		double ad = workout.getDistance(Scope.WORKOUT);
-		long at = workout.getTime(Scope.WORKOUT);
+		double at = workout.getTime(Scope.WORKOUT);
 		double ap = workout.getPace(Scope.WORKOUT);
-		activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, at));
-		activityDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) ad));
+		activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(at)));
+		activityDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, Math.round(ad)));
 		activityPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ap));
 		double ld = workout.getDistance(Scope.LAP);
-		long lt = workout.getTime(Scope.LAP);
+		double lt = workout.getTime(Scope.LAP);
 		double lp = workout.getPace(Scope.LAP);
-		lapTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, lt));
-		lapDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) ld));
+		lapTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(lt)));
+		lapDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, Math.round(ld)));
 		lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, lp));
 		
 		Step curr = workout.getCurrentStep();

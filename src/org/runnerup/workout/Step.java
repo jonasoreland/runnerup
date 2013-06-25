@@ -180,15 +180,15 @@ public class Step implements TickComponent {
 		}
 	}
 
-	long stepStartTime = 0;
-	long stepStartDistance = 0;
-	long lapStartTime = 0;
-	long lapStartDistance = 0;
+	double stepStartTime = 0;
+	double stepStartDistance = 0;
+	double lapStartTime = 0;
+	double lapStartDistance = 0;
 
 	@Override
 	public void onStart(Scope what, Workout s) {
-		long time = s.getTime(Scope.WORKOUT);
-		long dist = s.getDistance(Scope.WORKOUT);
+		double time = s.getTime(Scope.WORKOUT);
+		double dist = s.getDistance(Scope.WORKOUT);
 		
 		if (what == Scope.STEP) {
 			stepStartTime = time;
@@ -242,8 +242,8 @@ public class Step implements TickComponent {
 		/**
 		 * Save current lap so that it shows in DetailActivity
 		 */
-		long distance = s.getDistance(Scope.LAP);
-		long time = s.getTime(Scope.LAP);
+		long distance = Math.round(s.getDistance(Scope.LAP));
+		long time = Math.round(s.getTime(Scope.LAP));
 		if (distance > 0 || time > 0) {
 			ContentValues tmp = new ContentValues();
 			tmp.put(DB.LAP.DISTANCE, distance);
@@ -302,8 +302,8 @@ public class Step implements TickComponent {
 	@Override
 	public void onComplete(Scope scope, Workout s) {
 		if (scope == Scope.LAP) {
-			long distance = s.getDistance(scope);
-			long time = s.getTime(scope);
+			long distance = Math.round(s.getDistance(scope));
+			long time = Math.round(s.getTime(scope));
 			if (distance > 0 || time > 0) {
 				ContentValues tmp = new ContentValues();
 				tmp.put(DB.LAP.DISTANCE, distance);
@@ -322,8 +322,8 @@ public class Step implements TickComponent {
 		}
 	}
 
-	public long getDistance(Workout w, Scope s) {
-		long d = w.getDistance(Scope.WORKOUT);
+	public double getDistance(Workout w, Scope s) {
+		double d = w.getDistance(Scope.WORKOUT);
 		if (s == Scope.STEP) {
 			return d - stepStartDistance;
 		} else if (s == Scope.LAP) {
@@ -333,8 +333,8 @@ public class Step implements TickComponent {
 		return 0;
 	}
 
-	public long getTime(Workout w, Scope s) {
-		long t = w.getTime(Scope.WORKOUT);
+	public double getTime(Workout w, Scope s) {
+		double t = w.getTime(Scope.WORKOUT);
 		if (s == Scope.STEP) {
 			return t - stepStartTime;
 		} else if (s == Scope.LAP) {
@@ -345,10 +345,10 @@ public class Step implements TickComponent {
 	}
 
 	public double getSpeed(Workout w, Scope s) {
-		long t = getTime(w, s);
-		long d = getDistance(w, s);
+		double t = getTime(w, s);
+		double d = getDistance(w, s);
 		if (t != 0) {
-			return ((double) d) / ((double) t);
+			return d / t;
 		}
 		return 0;
 	}
