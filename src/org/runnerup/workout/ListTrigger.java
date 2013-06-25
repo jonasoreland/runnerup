@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 public class ListTrigger extends Trigger {
 
+	boolean remaining = false;
 	Scope scope = Scope.WORKOUT;
 	Dimension dimension = Dimension.TIME;
 
@@ -29,18 +30,32 @@ public class ListTrigger extends Trigger {
 	@Override
 	public boolean onTick(Workout w) {
 		if (pos < triggerTimes.size()) {
-			double now = w.get(scope, dimension);
-			if (now >= triggerTimes.get(pos).doubleValue()) {
-				fire(w);
-				scheduleNext(w, now);
+			if (remaining == false) {
+				double now = w.get(scope, dimension);
+				if (now >= triggerTimes.get(pos).doubleValue()) {
+					fire(w);
+					scheduleNext(w, now);
+				}
+			} else {
+				double now = w.getRemaining(scope,  dimension);
+				if (now <= triggerTimes.get(pos).doubleValue()) {
+					fire(w);
+					scheduleNext(w, now);
+				}
 			}
 		}
 		return false;
 	}
 
 	private void scheduleNext(Workout w, double now) {
-		while (pos < triggerTimes.size() && now >= triggerTimes.get(pos).doubleValue()) {
-			pos++;
+		if (remaining == false) {
+			while (pos < triggerTimes.size() && now >= triggerTimes.get(pos).doubleValue()) {
+				pos++;
+			}
+		} else {
+			while (pos < triggerTimes.size() && now <= triggerTimes.get(pos).doubleValue()) {
+				pos++;
+			}
 		}
 
 		if (pos >= triggerTimes.size()) {

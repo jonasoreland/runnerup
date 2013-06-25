@@ -425,11 +425,13 @@ public class WorkoutBuilder {
 			if ((val % first) == 0) {
 				continue; // handled by interval trigger
 			}
-			triggerTimes.add(val);
+			double margin = 0.4d; // add a bit of margin, NOTE: less than 0.5
+			triggerTimes.add(d + margin);
 		}
 		
 		{
 			ListTrigger trigger = new ListTrigger();
+			trigger.remaining = true;
 			trigger.dimension = step.getDurationType();
 			trigger.scope = Scope.STEP;
 			trigger.triggerTimes = triggerTimes;
