@@ -22,11 +22,13 @@ import android.speech.tts.TextToSpeech;
 
 public class RUTextToSpeech {
 
+	boolean mute = false;
 	boolean trace = true;
 	TextToSpeech textToSpeech;
 	
-	public RUTextToSpeech(TextToSpeech tts) {
+	public RUTextToSpeech(TextToSpeech tts, String mute) {
 		this.textToSpeech = tts;
+		this.mute = ! ("yes".equalsIgnoreCase(mute));
 	}
 
 	int speak(String text, int queueMode, HashMap<String, String> params) {

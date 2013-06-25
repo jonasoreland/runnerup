@@ -48,5 +48,14 @@
 	<string-array name="sportEntries">
     	<item>Running</item>
     	<item>Biking</item>
-	</string-array>    
+	</string-array>
+	
+	<string-array name="muteEntries">
+    	<item>No</item>
+    	<item>Yes</item>
+	</string-array>
+	<string-array name="muteValues">
+    	<item>no</item>
+    	<item>yes</item>
+	</string-array>	
 </resources>

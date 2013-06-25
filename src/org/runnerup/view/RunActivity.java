@@ -38,11 +38,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,8 +129,12 @@ public class RunActivity extends Activity implements TickListener {
 		mGpsTracker.createActivity(workout.getSport());
 		mGpsTracker.setForeground(RunActivity.class);
 		mGpsTracker.start();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		final String mute = prefs.getString(getResources().getString(R.string.pref_mute), "no");
+		
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
-		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech));
+		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
 		workout.onBind(workout, bindValues);
