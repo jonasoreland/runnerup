@@ -18,11 +18,15 @@ package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
+import android.speech.tts.UtteranceProgressListener;
 
 public class RUTextToSpeech {
 
-	boolean mute = false;
+	boolean mute = true;
 	boolean trace = true;
 	TextToSpeech textToSpeech;
 	
@@ -31,10 +35,51 @@ public class RUTextToSpeech {
 		this.mute = ! ("yes".equalsIgnoreCase(mute));
 	}
 
-	int speak(String text, int queueMode, HashMap<String, String> params) {
+	int speak(String text, int queueMode, HashMap<String, String> params, Context ctx) {
 		if (trace) {
+			System.err.println("should mute: "+ mute);
 			System.err.println("speak: " + text);
 		}
-		return textToSpeech.speak(text,  queueMode, params);
+		
+		if (mute && ctx != null) {
+			final AudioManager am = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+			int result = am.requestAudioFocus(null,// afChangeListener,
+					AudioManager.STREAM_MUSIC,
+					AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+
+			if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+				textToSpeech.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
+					@Override
+					public void onUtteranceCompleted(String utteranceId) {
+						if("RUTextTospeech".equalsIgnoreCase(utteranceId)){
+							am.abandonAudioFocus(null);
+						}
+					}
+				});
+				if(params == null){
+					params = new HashMap<String,String>();
+				}
+				params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "RUTextTospeech");
+				int res = textToSpeech.speak(text, queueMode, params);
+// This is how it should be done in newer versions of android.				
+//				textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+//					@Override
+//					public void onStart(String utteranceId) {						
+//					}
+//					@Override
+//					public void onError(String utteranceId) {
+//						am.abandonAudioFocus(null);// afChangeListener						
+//					}
+//					@Override
+//					public void onDone(String utteranceId) {
+//						am.abandonAudioFocus(null);// afChangeListener
+//					}
+//				});
+				return res;
+			}
+			return TextToSpeech.ERROR;			
+		} else {
+		  return textToSpeech.speak(text,  queueMode, params);
+		}
 	}
 }
