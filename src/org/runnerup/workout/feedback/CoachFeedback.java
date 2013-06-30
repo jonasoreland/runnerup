@@ -74,7 +74,7 @@ public class CoachFeedback extends AudioFeedback {
 		}
 		if (! "".contentEquals(msg)) {
 			textToSpeech.speak(scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val) + msg,
-					TextToSpeech.QUEUE_ADD, null,ctx);
+					TextToSpeech.QUEUE_ADD, null);
 		}
 	}
 }

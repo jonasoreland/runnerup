@@ -22,20 +22,23 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
-import android.speech.tts.UtteranceProgressListener;
 
 public class RUTextToSpeech {
 
+	private static final String UTTERANCE_ID = "RUTextTospeech";
 	boolean mute = true;
 	boolean trace = true;
 	TextToSpeech textToSpeech;
-	
-	public RUTextToSpeech(TextToSpeech tts, String mute) {
+	Context ctx;
+	public RUTextToSpeech(TextToSpeech tts, String mute, Context context) {
 		this.textToSpeech = tts;
 		this.mute = ! ("yes".equalsIgnoreCase(mute));
+		this.ctx = context;	
 	}
+	
+	
 
-	int speak(String text, int queueMode, HashMap<String, String> params, Context ctx) {
+	int speak(String text, int queueMode, HashMap<String, String> params) {
 		if (trace) {
 			System.err.println("should mute: "+ mute);
 			System.err.println("speak: " + text);
@@ -51,7 +54,7 @@ public class RUTextToSpeech {
 				textToSpeech.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
 					@Override
 					public void onUtteranceCompleted(String utteranceId) {
-						if("RUTextTospeech".equalsIgnoreCase(utteranceId)){
+						if(UTTERANCE_ID.equalsIgnoreCase(utteranceId)){
 							am.abandonAudioFocus(null);
 						}
 					}
@@ -59,7 +62,7 @@ public class RUTextToSpeech {
 				if(params == null){
 					params = new HashMap<String,String>();
 				}
-				params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "RUTextTospeech");
+				params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, UTTERANCE_ID);
 				int res = textToSpeech.speak(text, queueMode, params);
 // This is how it should be done in newer versions of android.				
 //				textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {

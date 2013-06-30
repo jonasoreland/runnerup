@@ -69,7 +69,7 @@ public class AudioCountdownFeedback extends Feedback {
 		
 		if (remaining > 0) {
 			String msg = formatter.formatRemaining(Formatter.CUE_SHORT, dimension, remaining);
-			textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null, ctx);
+			textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
 }

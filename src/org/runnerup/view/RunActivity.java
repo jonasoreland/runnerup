@@ -134,7 +134,7 @@ public class RunActivity extends Activity implements TickListener {
 		final String mute = prefs.getString(getResources().getString(R.string.pref_mute), "no");
 		
 		HashMap<String, Object> bindValues = new HashMap<String, Object>();
-		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute));
+		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute,getApplicationContext()));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
 		workout.onBind(workout, bindValues);

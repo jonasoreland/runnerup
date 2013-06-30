@@ -103,6 +103,6 @@ public class AudioFeedback extends Feedback {
 	@Override
 	public void emit(Workout w, Context ctx) {
 		String msg = getCue(w, ctx);
-		textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null, ctx);
+		textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
 	}
 }
