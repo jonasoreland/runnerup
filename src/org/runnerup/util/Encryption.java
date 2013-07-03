@@ -31,6 +31,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import android.util.Base64;
+
 public class Encryption {
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
@@ -58,7 +60,7 @@ public class Encryption {
 			final byte[] rawHmac = mac.doFinal(data.getBytes());
 
 			// base64-encode the hmac
-			return android.util.Base64.encodeToString(rawHmac, 0);
+			return android.util.Base64.encodeToString(rawHmac, Base64.NO_WRAP);
 		} catch (final Exception e) {
 			throw new SignatureException("Failed to generate HMAC : "
 					+ e.getMessage());
@@ -161,8 +163,6 @@ public class Encryption {
 				final FileInputStream in = new FileInputStream(name);
 				final FileOutputStream out = new FileOutputStream(name + ".des");
 				encrypt(in,out, key);
-				in.close();
-				out.close();
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
