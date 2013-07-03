@@ -16,6 +16,9 @@
  */
 package org.runnerup.view;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -24,6 +27,7 @@ import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
+import org.runnerup.export.format.GPX;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.widget.WidgetUtil;
@@ -37,6 +41,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -56,6 +61,7 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -238,6 +244,33 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			ActivityCleaner.recompute(mDB, mID);
 			requery();
 			break;
+		case R.id.menu_share_activity: {
+			String name = getCacheDir() + File.separator + "jonas.gpx";
+			try {
+				FileWriter writer = new FileWriter(name);
+				GPX gpx = new GPX(mDB);
+				gpx.export(mID,  writer);
+				writer.close();
+				System.err.println("wrote to: " + name);
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"email@example.com"});
+				intent.putExtra(Intent.EXTRA_SUBJECT, "subject here");
+				intent.putExtra(Intent.EXTRA_TEXT, "body text");
+				File file = new File(name);
+				if (!file.exists() || !file.canRead()) {
+				    Toast.makeText(this, "Attachment Error", Toast.LENGTH_SHORT).show();
+				    break;
+				}
+				Uri uri = Uri.fromFile(file);
+				intent.putExtra(Intent.EXTRA_STREAM, uri);
+				startActivity(Intent.createChooser(intent, "Send email..."));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+			
 		}
 		return true;
 	}

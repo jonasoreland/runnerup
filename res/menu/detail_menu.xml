@@ -21,7 +21,10 @@
         android:id="@+id/menu_edit_activity"
         android:orderInCategory="100"
         android:title="Edit activity"/>
-
+    <item
+        android:id="@+id/menu_share_activity"
+        android:orderInCategory="100"
+        android:title="Share activity"/>
     <item
         android:id="@+id/menu_delete_activity"
         android:orderInCategory="100"
