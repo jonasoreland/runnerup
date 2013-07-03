@@ -55,6 +55,9 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	private String username = null;
 	private String password = null;
 
+	FunBeatUploader(UploadManager uploadManager) {
+	}
+
 	@Override
 	public long getId() {
 		return id;

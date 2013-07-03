@@ -58,6 +58,9 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 	private String user_id = null;
 	private String user_key = null;
 	
+	MapMyRunUploader(UploadManager uploadManager) {
+	}
+	
 	@Override
 	public long getId() {
 		return id;

@@ -16,9 +16,11 @@
  */
 package org.runnerup.export;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +32,7 @@ import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Encryption;
 import org.runnerup.workout.WorkoutSerializer;
 
 import android.app.Activity;
@@ -117,13 +120,13 @@ public class UploadManager {
 		}
 		Uploader uploader = null;
 		if (uploaderName.contentEquals(RunKeeperUploader.NAME)) {
-			uploader = new RunKeeperUploader();
+			uploader = new RunKeeperUploader(this);
 		} else if (uploaderName.contentEquals(GarminUploader.NAME)) {
-			uploader = new GarminUploader();
+			uploader = new GarminUploader(this);
 		} else if (uploaderName.contentEquals(FunBeatUploader.NAME)) {
-			uploader = new FunBeatUploader();
+			uploader = new FunBeatUploader(this);
 		} else if (uploaderName.contentEquals(MapMyRunUploader.NAME))
-			uploader = new MapMyRunUploader();
+			uploader = new MapMyRunUploader(this);
 
 		if (uploader != null) {
 			uploader.init(config);
@@ -659,5 +662,22 @@ public class UploadManager {
 			}
 		}
 		return cmp;
+	}
+
+	/**
+	 * Load uploader private data
+	 * 
+	 * @param uploader
+	 * @return
+	 * @throws Exception
+	 */
+	String loadData(Uploader uploader) throws Exception {
+		InputStream in = activity.getAssets()
+				.open(uploader.getName() + ".data");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		String key = Encryption.calculateRFC2104HMAC("RunnerUp",
+				uploader.getName());
+		Encryption.decrypt(in, out, key);
+		return out.toString();
 	}
 }

@@ -62,7 +62,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	private String authToken = null;
 	private String fitnessActivitiesUrl = null;
 
-	RunKeeperUploader() {
+	RunKeeperUploader(UploadManager uploadManager) {
 	}
 
 	@Override
