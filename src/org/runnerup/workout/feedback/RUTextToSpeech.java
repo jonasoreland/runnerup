@@ -25,64 +25,65 @@ import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 
 public class RUTextToSpeech {
 
-	private static final String UTTERANCE_ID = "RUTextTospeech";
-	boolean mute = true;
-	boolean trace = true;
-	TextToSpeech textToSpeech;
-	Context ctx;
-	public RUTextToSpeech(TextToSpeech tts, String mute, Context context) {
-		this.textToSpeech = tts;
-		this.mute = ! ("yes".equalsIgnoreCase(mute));
-		this.ctx = context;	
-	}
-	
-	
+    private static final String UTTERANCE_ID = "RUTextTospeech";
+    boolean mute = false;
+    boolean trace = true;
+    TextToSpeech textToSpeech;
+    Context ctx;
 
-	int speak(String text, int queueMode, HashMap<String, String> params) {
-		if (trace) {
-			System.err.println("should mute: "+ mute);
-			System.err.println("speak: " + text);
-		}
-		
-		if (mute && ctx != null) {
-			final AudioManager am = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
-			int result = am.requestAudioFocus(null,// afChangeListener,
-					AudioManager.STREAM_MUSIC,
-					AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+    public RUTextToSpeech(TextToSpeech tts, String mute, Context context) {
+        this.textToSpeech = tts;
+        this.mute = "yes".equalsIgnoreCase(mute);
+        this.ctx = context;
+    }
 
-			if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-				textToSpeech.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
-					@Override
-					public void onUtteranceCompleted(String utteranceId) {
-						if(UTTERANCE_ID.equalsIgnoreCase(utteranceId)){
-							am.abandonAudioFocus(null);
-						}
-					}
-				});
-				if(params == null){
-					params = new HashMap<String,String>();
-				}
-				params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, UTTERANCE_ID);
-				int res = textToSpeech.speak(text, queueMode, params);
-// This is how it should be done in newer versions of android.				
-//				textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-//					@Override
-//					public void onStart(String utteranceId) {						
-//					}
-//					@Override
-//					public void onError(String utteranceId) {
-//						am.abandonAudioFocus(null);// afChangeListener						
-//					}
-//					@Override
-//					public void onDone(String utteranceId) {
-//						am.abandonAudioFocus(null);// afChangeListener
-//					}
-//				});
-				return res;
-			}
-			return TextToSpeech.ERROR;			
-		} else {
-		  return textToSpeech.speak(text,  queueMode, params);
-		}
-	}
+    int speak(String text, int queueMode, HashMap<String, String> params) {
+        if (trace) {
+            System.err.println("should mute: " + mute);
+            System.err.println("speak: " + text);
+        }
+        if (mute && ctx != null) {
+            return speakWithMute(text, queueMode, params);
+        } else {
+            return textToSpeech.speak(text, queueMode, params);
+        }
+    }
+
+    /**
+     * Requests audio focus before speaking, if no focus is given nothing is
+     * said.
+     * 
+     * @param text
+     * @param queueMode
+     * @param params
+     * @return
+     */
+    private int speakWithMute(String text, int queueMode, HashMap<String, String> params) {
+        final AudioManager am = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
+        int result = am.requestAudioFocus(null,// afChangeListener,
+                AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            final String utId = UTTERANCE_ID + text.hashCode();
+            //Should use setOnUtteranceProgressListener, if target is API version newer than 15.
+            textToSpeech.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
+                @Override
+                public void onUtteranceCompleted(String utteranceId) {
+                    if (utId.equalsIgnoreCase(utteranceId)) {
+                        am.abandonAudioFocus(null);
+                    }
+                }
+            });
+            if (params == null) {
+                params = new HashMap<String, String>();
+            }
+            params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
+            int res = textToSpeech.speak(text, queueMode, params);
+            if (res == TextToSpeech.ERROR) {
+                am.abandonAudioFocus(null);
+            }
+            return res;
+        }
+        System.err.println("Could not get audio focus.");
+        return TextToSpeech.ERROR;
+    }
 }

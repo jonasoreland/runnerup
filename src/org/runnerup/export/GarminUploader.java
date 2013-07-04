@@ -57,6 +57,9 @@ public class GarminUploader extends FormCrawler implements Uploader {
 	private String username = null;
 	private String password = null;
 
+	GarminUploader(UploadManager uploadManager) {
+	}
+
 	@Override
 	public long getId() {
 		return id;

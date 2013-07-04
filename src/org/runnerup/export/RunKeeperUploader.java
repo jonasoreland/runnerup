@@ -48,8 +48,8 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	/**
 	 * @todo register OAuth2Server
 	 */
-	public static final String CLIENT_ID = "1093200920e5495bbb7eedfe7bcd68e7";
-	public static final String CLIENT_SECRET = "a3d4a4012dd54c15b66c03f5f08b441f";
+	public static String CLIENT_ID = null;
+	public static String CLIENT_SECRET = null;
 
 	// TODO: I get ssl error when using https
 	public static final String AUTH_URL = "http://runkeeper.com/apps/authorize";
@@ -62,7 +62,16 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	private String authToken = null;
 	private String fitnessActivitiesUrl = null;
 
-	RunKeeperUploader() {
+	RunKeeperUploader(UploadManager uploadManager) {
+		if (CLIENT_ID == null || CLIENT_SECRET == null) {
+			try {
+				JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+				CLIENT_ID = tmp.getString("CLIENT_ID");
+				CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	@Override

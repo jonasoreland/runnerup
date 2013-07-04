@@ -45,7 +45,7 @@ import android.util.Pair;
 public class MapMyRunUploader extends FormCrawler implements Uploader {
 
 	public static final String NAME = "MapMyRun";
-	private static final String CONSUMER_KEY = "294c54fae628d72f9ad1631d8b6ef251";
+	private static String CONSUMER_KEY;
 	private static final String BASE_URL = "https://api.mapmyfitness.com/3.1";
 	private static final String GET_USER_URL = BASE_URL + "/users/get_user";
 	private static final String IMPORT_URL = BASE_URL + "/workouts/import_tcx";
@@ -57,6 +57,17 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 	private String md5pass = null;
 	private String user_id = null;
 	private String user_key = null;
+	
+	MapMyRunUploader(UploadManager uploadManager) {
+		if (CONSUMER_KEY == null) {
+			try {
+				JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+				CONSUMER_KEY = tmp.getString("CONSUMER_KEY");
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
 	
 	@Override
 	public long getId() {
