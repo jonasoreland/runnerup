@@ -212,7 +212,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (mode == MODE_DETAILS) {
 			getMenuInflater().inflate(R.menu.detail_menu, menu);
-			recomputeMenuItem = menu.getItem(2);
+			recomputeMenuItem = menu.findItem(R.id.menu_recompute_activity);
 		}
 		return true;
 	}
