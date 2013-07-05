@@ -16,6 +16,7 @@
 - upload to runtastic
 - upload to jogg.se
 - upload to www.sports-tracker.com
+- upload to Nike+
 - upload from End of activity view (DONE)
 - Name/comment to activity         (DONE)
 - configure accounts               (DONE)
@@ -37,17 +38,16 @@
   I think I got them all
 - BUG: test of non Default audio scheme is broken
                                    (DONE)
-
 - BUG: pause during rest step confuses audio countdown
-
+                                   (DONE)
 - routes ??
 - feed
 - edit advanced workouts
 - advanced audio cue editor
 
-- setting: autolap during interval
-- setting: delayed start after warmup
-- better audio cue defaults
+- setting: autolap during interval    (DONE, BUT not yet configurable)
+- setting: delayed start after warmup (DONE, BUT not yet configurable)
+- better audio cue defaults           (DONE)
 - audio cues settings: activity/step/lap summaries
 - audio cues settings: step time/distance/pace
 
