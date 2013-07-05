@@ -332,7 +332,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
 				Workout w = Workout.fakeWorkoutForTestingAudioCue();
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
-				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute));
+				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute,getApplicationContext()));
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
 				for (Feedback f : feedback) {
 					f.onInit(w);
