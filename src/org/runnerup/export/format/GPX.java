@@ -82,16 +82,18 @@ public class GPX {
 			mXML.attribute("", "xmlns", "http://www.topografix.com/GPX/1/1");
 			mXML.attribute("", "xsi:schemaLocation", "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
 //			mXML.attribute("", "xmlns:gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v1");
-			mXML.startTag("", "trk");
 
-			mXML.startTag("", "name");
-			mXML.text("Untitled");
-			mXML.endTag("", "name");
-			
+			mXML.startTag("", "metadata");
 			mXML.startTag("", "time");
 			final String time = formatTime(startTime * 1000);
 			mXML.text(time);
 			mXML.endTag("", "time");
+			mXML.endTag("", "metadata");
+			
+			mXML.startTag("", "trk");
+			mXML.startTag("", "name");
+			mXML.text("Untitled");
+			mXML.endTag("", "name");
 			if (!cursor.isNull(1)) {
 				notes = cursor.getString(1);
 				mXML.startTag("", "desc");
