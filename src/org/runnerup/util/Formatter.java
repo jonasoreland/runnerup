@@ -40,8 +40,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	String base_unit = "km";
 	double base_meters = km_meters;
 	
-	final static double km_meters = 1000.0;
-	final static double mi_meters = 1609.34;
+	public final static double km_meters = 1000.0;
+	public final static double mi_meters = 1609.34;
 	
 	public static final int CUE = 1;           // for text to speech
 	public static final int CUE_SHORT = 2;     // brief for tts
