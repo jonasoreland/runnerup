@@ -296,7 +296,6 @@ public class GarminUploader extends FormCrawler implements Uploader {
 		FileOutputStream out = null;
 		try {
 			conn = (HttpURLConnection) new URL(GET_WORKOUT_URL + key).openConnection();
-			conn.setDoOutput(true);
 			conn.setRequestMethod("GET");
 			addCookies(conn);
 			conn.connect();
