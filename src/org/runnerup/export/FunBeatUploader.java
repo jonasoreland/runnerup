@@ -108,7 +108,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Status login(ContentValues config) {
+	public Status login(ContentValues _config) {
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		cookies.clear();

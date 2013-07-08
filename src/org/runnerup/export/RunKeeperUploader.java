@@ -143,7 +143,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	}
 
 	@Override
-	public Uploader.Status login(ContentValues config) {
+	public Uploader.Status login(ContentValues _config) {
 		if (isConfigured()) {
 			if (this.fitnessActivitiesUrl != null) {
 				return Uploader.Status.OK;
