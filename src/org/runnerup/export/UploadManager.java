@@ -221,7 +221,7 @@ public class UploadManager {
 		public void run(String uploader, Status status) {
 			switch(status) {
 			case CANCEL:
-				disableUploader(disableUploaderCallback, currentUploader.getName());
+				disableUploader(disableUploaderCallback, currentUploader.getName(), false);
 				return;
 			case SKIP:
 			case ERROR:
@@ -449,7 +449,7 @@ public class UploadManager {
 	}
 
 	private Callback disableCallback = null;
-	public void disableUploader(Callback callback, String name) {
+	public void disableUploader(Callback callback, String name, boolean clearUploads) {
 		disableCallback = callback;
 		Uploader l = uploaders.get(name);
 		if (l == null) {
@@ -459,21 +459,25 @@ public class UploadManager {
 		}
 		switch (l.getAuthMethod()) {
 		case OAUTH2:
-			resetDB(name);
+			resetDB(name, clearUploads);
 			return;
 		case POST:
-			resetDB(name);
+			resetDB(name, clearUploads);
 			return;
 		}
 	}
 
-	void resetDB(final String name) {
+	void resetDB(final String name, final boolean clearUploads) {
 		Uploader l = uploaders.get(name);
-		String args[] = { Long.toString(l.getId()) };
+		final String args[] = { Long.toString(l.getId()) };
 		ContentValues config = new ContentValues();
 		config.putNull(DB.ACCOUNT.AUTH_CONFIG);
 		mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
 
+		if (clearUploads) {
+			mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?",  args);
+		}
+		
 		l.reset();
 		
 		Callback callback = disableCallback;

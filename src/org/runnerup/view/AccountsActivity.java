@@ -29,6 +29,7 @@ import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -43,6 +44,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -189,16 +191,18 @@ public class AccountsActivity extends ListActivity implements Constants {
 	OnClickListener configureButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			final String uploader = (String)v.getTag();
+			final CharSequence items[] = { "Clear uploads" };
+			final boolean selected[] = { true };
 			if (uploadManager.isConfigured(uploader)) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(AccountsActivity.this);
-				builder.setMessage("Are you sure?");
-				builder.setPositiveButton("Yes",
+				builder.setTitle("Disconnect account");
+				builder.setPositiveButton("OK",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
-								uploadManager.disableUploader(callback, uploader);
+								uploadManager.disableUploader(callback, uploader, selected[0]);
 							}
 						});
-				builder.setNegativeButton("No",
+				builder.setNegativeButton("Cancel",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								// Do nothing but close the dialog
@@ -206,6 +210,13 @@ public class AccountsActivity extends ListActivity implements Constants {
 							}
 
 						});
+				builder.setMultiChoiceItems(items, selected, new OnMultiChoiceClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1,
+							boolean arg2) {
+						selected[arg1] = arg2;
+					}
+				});
 				builder.show();
 			} else {
 				uploadManager.configure(callback, uploader, false);
