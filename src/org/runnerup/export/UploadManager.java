@@ -125,9 +125,12 @@ public class UploadManager {
 			uploader = new GarminUploader(this);
 		} else if (uploaderName.contentEquals(FunBeatUploader.NAME)) {
 			uploader = new FunBeatUploader(this);
-		} else if (uploaderName.contentEquals(MapMyRunUploader.NAME))
+		} else if (uploaderName.contentEquals(MapMyRunUploader.NAME)) {
 			uploader = new MapMyRunUploader(this);
-
+		} else if (uploaderName.contentEquals(NikePlus.NAME)) {
+			uploader = new NikePlus(this);
+		}
+		
 		if (uploader != null) {
 			uploader.init(config);
 			uploaders.put(uploaderName, uploader);
