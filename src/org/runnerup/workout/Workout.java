@@ -26,6 +26,7 @@ import org.runnerup.util.Constants.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 
 /**
  * This class is the top level object for a workout, it is being called by
@@ -76,6 +77,7 @@ public class Workout implements WorkoutComponent {
 	PendingFeedback pendingFeedback = new PendingFeedback();
 
 	GpsTracker gpsTracker = null;
+	SharedPreferences audioCuePrefs;
 
 	public static final String KEY_TTS = "tts";
 	public static final String KEY_COUNTER_VIEW = "CountdownView";
@@ -408,5 +410,13 @@ public class Workout implements WorkoutComponent {
 	public static Workout fakeWorkoutForTestingAudioCue() {
 		FakeWorkout w = new FakeWorkout();
 		return w;
+	}
+
+	public void setAudioCues(SharedPreferences prefs) {
+		audioCuePrefs = prefs;
+	}
+
+	public SharedPreferences getAudioCues() {
+		return audioCuePrefs;
 	}
 };

@@ -58,8 +58,16 @@
             android:persistent="true"
             android:summary="1000"
             android:title="Cue intervall (m)" />
+	    
+	    <ListPreference
+        	android:defaultValue="yes"
+        	android:entries="@array/muteEntries"
+        	android:entryValues="@array/muteValues"
+        	android:key="@string/pref_mute"
+        	android:persistent="true"
+        	android:title="Mute music during audio cues" />
 
-   	    <PreferenceCategory android:title="Cue information">
+		<PreferenceCategory android:title="Cue information">
     		<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"

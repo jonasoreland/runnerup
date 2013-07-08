@@ -84,14 +84,6 @@
         android:entries="@array/unitEntries"
         android:entryValues="@array/unitValues" />
 
-    <ListPreference
-        android:defaultValue="yes"
-        android:key="@string/pref_mute"
-        android:persistent="true"
-        android:title="Mute music during audio cues"
-        android:entries="@array/muteEntries"
-        android:entryValues="@array/muteValues" />
-	
 	<CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_startgps"

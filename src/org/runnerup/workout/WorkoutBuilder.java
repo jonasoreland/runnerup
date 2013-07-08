@@ -176,6 +176,7 @@ public class WorkoutBuilder {
 	}
 
 	public static void addAudioCuesToWorkout(Resources res, Workout w, SharedPreferences prefs) {
+		w.setAudioCues(prefs);
 		addAudioCuesToWorkout(res, w.steps, prefs);
 	}
 

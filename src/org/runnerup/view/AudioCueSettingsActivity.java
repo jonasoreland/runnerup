@@ -327,12 +327,16 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
 			@Override
 			public void onInit(int arg0) {
-				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				SharedPreferences prefs = null;
+				if (settingsName == null || settingsName.contentEquals(DEFAULT))
+					prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+				else
+					prefs = getApplicationContext().getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
 				final String mute = prefs.getString(getResources().getString(R.string.pref_mute), "no");
 
 				Workout w = Workout.fakeWorkoutForTestingAudioCue();
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
-				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute,getApplicationContext()));
+				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute, getApplicationContext()));
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
 				for (Feedback f : feedback) {
 					f.onInit(w);
