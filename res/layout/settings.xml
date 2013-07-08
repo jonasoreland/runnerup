@@ -85,7 +85,7 @@
         android:entryValues="@array/unitValues" />
 
     <ListPreference
-        android:defaultValue="no"
+        android:defaultValue="yes"
         android:key="@string/pref_mute"
         android:persistent="true"
         android:title="Mute music during audio cues"
