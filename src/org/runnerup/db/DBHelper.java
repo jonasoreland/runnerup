@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.export.FunBeatUploader;
 import org.runnerup.export.GarminUploader;
+import org.runnerup.export.JoggSE;
 import org.runnerup.export.MapMyRunUploader;
 import org.runnerup.export.NikePlus;
 import org.runnerup.export.RunKeeperUploader;
@@ -34,7 +35,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 11;
+	private static final int DBVERSION = 12;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -198,6 +199,13 @@ public class DBHelper extends SQLiteOpenHelper implements
 	public void insertAccounts(SQLiteDatabase arg0) {
 		boolean yet = true;
 		boolean notyet = false;
+
+		if (notyet) {
+			/**
+			 * just removing warning from notyet
+			 */
+		}
+		
 		if (yet) {
 			ContentValues values = new ContentValues();
 			values.put(DB.ACCOUNT.NAME, GarminUploader.NAME);
@@ -217,12 +225,13 @@ public class DBHelper extends SQLiteOpenHelper implements
 			insertAccount(arg0, values);
 		}
 
-		if (notyet) {
+		if (yet) {
 			ContentValues values = new ContentValues();
-			values.put(DB.ACCOUNT.NAME, "jogg.se");
-			values.put(DB.ACCOUNT.FORMAT, "tcx");
+			values.put(DB.ACCOUNT.NAME, JoggSE.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "gpx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.DEFAULT, 1);
+			values.put(DB.ACCOUNT.ICON, R.drawable.a5_jogg);
 			insertAccount(arg0, values);
 		}
 

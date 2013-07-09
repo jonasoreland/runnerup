@@ -129,6 +129,8 @@ public class UploadManager {
 			uploader = new MapMyRunUploader(this);
 		} else if (uploaderName.contentEquals(NikePlus.NAME)) {
 			uploader = new NikePlus(this);
+		} else if (uploaderName.contentEquals(JoggSE.NAME)) {
+			uploader = new JoggSE(this);
 		}
 		
 		if (uploader != null) {
