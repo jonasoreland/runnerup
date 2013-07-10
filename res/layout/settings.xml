@@ -105,7 +105,13 @@
             android:key="@string/target_pace_grace_seconds"
             android:persistent="true"
             android:title="Target pace grace seconds" />
-	    
+
+    	<CheckBoxPreference
+        	android:defaultValue="true"
+        	android:persistent="true"
+        	android:key="@string/pref_step_autolap_active"
+        	android:title="Autolap during intervals" />
+	    	    
 	    <org.runnerup.widget.TextPreference
             android:defaultValue="500"
             android:inputType="number"
