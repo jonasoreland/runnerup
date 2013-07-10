@@ -470,7 +470,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				cb.setChecked(true);
 				cb.setEnabled(false);
 				cb.setText("Uploaded");
-			} else if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
+			} else if ((tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) ||
+					    pendingUploaders.contains(name)) {
 				cb.setChecked(true);
 			} else {
 				cb.setChecked(false);
