@@ -67,7 +67,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 
 	@Override
 	public String getName() {
-		return "Garmin";
+		return NAME;
 	}
 
 	@Override
