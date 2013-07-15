@@ -131,6 +131,8 @@ public class UploadManager {
 			uploader = new NikePlus(this);
 		} else if (uploaderName.contentEquals(JoggSE.NAME)) {
 			uploader = new JoggSE(this);
+		} else if (uploaderName.contentEquals(Endomondo.NAME)) {
+			uploader = new Endomondo(this);
 		}
 		
 		if (uploader != null) {

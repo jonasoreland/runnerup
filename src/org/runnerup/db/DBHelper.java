@@ -19,6 +19,7 @@ package org.runnerup.db;
 import java.util.ArrayList;
 
 import org.runnerup.R;
+import org.runnerup.export.Endomondo;
 import org.runnerup.export.FunBeatUploader;
 import org.runnerup.export.GarminUploader;
 import org.runnerup.export.JoggSE;
@@ -35,7 +36,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 12;
+	private static final int DBVERSION = 13;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -259,6 +260,15 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "nikeplus,gpx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a4_nikeplus);
+			insertAccount(arg0, values);
+		}
+
+		if (yet) {
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, Endomondo.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "endomondotrack");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a6_endomondo);
 			insertAccount(arg0, values);
 		}
 	}
