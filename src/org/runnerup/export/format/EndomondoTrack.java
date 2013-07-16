@@ -61,7 +61,7 @@ public class EndomondoTrack {
 				+ activityId, null, null, null, null);
 		cursor.moveToFirst();
 
-		final double distance = cursor.getDouble(3);
+		final double distance = cursor.getDouble(3) / 1000; // in km
 		final long duration = cursor.getLong(4);
 
 		if (summary != null) {
