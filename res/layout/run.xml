@@ -113,6 +113,49 @@
         </TableRow>
 
         <TableRow
+            android:id="@+id/tableRowInterval"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Step:"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/intervalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="20:34"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/intervallDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="5.67"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/intervalPace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="4:24"
+                android:textSize="20dp" />
+        </TableRow>
+
+        <TableRow
             android:id="@+id/tableRow2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -152,9 +195,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="4:24"
+                android:text="4:14"
                 android:textSize="20dp" />
         </TableRow>
+
     </TableLayout>
 
     <LinearLayout
