@@ -333,7 +333,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
 	private String cueDistance(long meters, boolean txt) {
 		double base_val = km_meters; // 1km
-		double decimals = 1;
+		double decimals = 2;
 		int res_base = R.string.txt_distance_kilometer;
 		int res_base_multi = R.string.txt_distance_kilometers;
 		if (km == false) {
@@ -362,7 +362,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		if (meters >= base_val) {
 			double base = ((double)meters) / base_val;
 			double exp = Math.pow(10, decimals);
-			double val = Math.round(base * exp) / exp;
+			double val = Math.floor(base * exp) / exp;
 			s.append(val).append(" ").append(resources.getString(base > 1 ? res_base_multi : res_base));
 		} else {
 			s.append(meters);
