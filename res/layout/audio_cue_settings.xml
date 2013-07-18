@@ -69,12 +69,12 @@
 
 		<PreferenceCategory android:title="Cue information">
     		<CheckBoxPreference
-        		android:defaultValue="true"
+        		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_total_distance"
         		android:title="Total distance" />
     		<CheckBoxPreference
-        		android:defaultValue="true"
+        		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_total_time"
         		android:title="Total time" />
@@ -84,6 +84,21 @@
         		android:key="@string/cueinfo_total_pace"
         		android:title="Total pace" />
 
+    		<CheckBoxPreference
+        		android:defaultValue="true"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_step_distance"
+        		android:title="Interval distance" />
+    		<CheckBoxPreference
+        		android:defaultValue="true"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_step_time"
+        		android:title="Interval time" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_step_pace"
+        		android:title="Interval pace" />
 <!-- 
     		<CheckBoxPreference
         		android:defaultValue="false"
