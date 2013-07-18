@@ -240,9 +240,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			};
 		
 		graphView.addSeries(graphViewData); // data
-		graphView.setScrollable(true);  
-		// optional - activate scaling / zooming  
-		graphView.setScalable(true);
 		LinearLayout layout = (LinearLayout) findViewById(R.id.tabGraph);
 		layout.addView(graphView);
 		
@@ -730,11 +727,22 @@ public class DetailActivity extends FragmentActivity implements Constants {
 						route.bounds.include(point);
 						int type = c.getInt(2);
 						MarkerOptions m;
+						boolean paused = false;
 						switch (type) {
 						case DB.LOCATION.TYPE_START:
 						case DB.LOCATION.TYPE_END:
 						case DB.LOCATION.TYPE_PAUSE:
 						case DB.LOCATION.TYPE_RESUME:
+							if(type == DB.LOCATION.TYPE_PAUSE)
+							{
+								paused = true;
+							}
+							else if(type == DB.LOCATION.TYPE_RESUME)
+							{
+								paused = false;
+								lastTime = c.getLong(3);
+								step_distance = 0;
+							}
 							m = new MarkerOptions();
 							m.position((lastLocation = point));
 							m.title(type == DB.LOCATION.TYPE_START ? "Start" :
@@ -751,7 +759,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 							acc_distance += res[0];
 							tot_distance += res[0];
 							step_distance += res[0];
-							if(lastLocation != null && cnt % 30 == 0)
+							if(!paused && lastLocation != null && cnt % 30 == 0)
 							{
 								Long time = c.getLong(3);
 								double speed = calcPaceInSecondsPerMeter(time, lastTime, step_distance);
