@@ -63,7 +63,7 @@
 		<activity android:name="org.runnerup.view.FeedActivity"
 		    android:screenOrientation="portrait" >
 		</activity>
-		
+				
 		<activity android:name=".view.RunActivity"
 		    android:configChanges="keyboardHidden|orientation"
 		    android:screenOrientation="portrait" >
