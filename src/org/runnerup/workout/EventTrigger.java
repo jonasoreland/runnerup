@@ -21,12 +21,13 @@ public class EventTrigger extends Trigger {
 
 	Scope scope = Scope.STEP;
 	Event event = Event.STARTED;
+	int counter = 0;
 	int skipCounter = 0;
-	int currentSkipCounter = 0;
+	int maxCounter = Integer.MAX_VALUE;
 	
 	@Override
 	public void onInit(Workout s) {
-		currentSkipCounter = skipCounter;
+		counter = 0;
 	}
 
 	@Override
@@ -36,16 +37,15 @@ public class EventTrigger extends Trigger {
 
 	@Override
 	public void fire(Workout s) {
-		if (currentSkipCounter > 0) {
-			currentSkipCounter--;
-		} else {
+		if (counter >= skipCounter && (counter < maxCounter)) {
 			super.fire(s);
 		}
+		counter++;
 	}
 
 	@Override
 	public void onRepeat(int current, int limit) {
-		currentSkipCounter = skipCounter;
+		counter = 0;
 	}
 
 	@Override
@@ -82,5 +82,4 @@ public class EventTrigger extends Trigger {
 			fire(s);
 		}
 	}
-
 }
