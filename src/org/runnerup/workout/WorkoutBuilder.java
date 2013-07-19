@@ -200,6 +200,7 @@ public class WorkoutBuilder {
 			EventTrigger ev = new EventTrigger();
 			ev.event = Event.STARTED;
 			ev.scope = Scope.STEP;
+			ev.maxCounter = 1;
 			ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
 			triggers.add(ev);
 			
