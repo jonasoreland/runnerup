@@ -64,7 +64,8 @@ public class StepButton extends TableLayout {
 			@Override
 			public void onClick(View v) {
 				//TODO
-				if (false) {
+				boolean SOON = false;
+				if (SOON) {
 					final Dialog dialog = new Dialog(mContext);
 					dialog.setContentView(R.layout.step_dialog);
 					dialog.setTitle("Title...");
