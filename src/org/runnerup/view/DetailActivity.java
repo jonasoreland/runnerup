@@ -18,6 +18,7 @@ package org.runnerup.view;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.runnerup.R;
 import org.runnerup.db.ActivityCleaner;
@@ -50,6 +51,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -66,6 +68,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
 
 public class DetailActivity extends FragmentActivity implements Constants {
 
@@ -100,6 +106,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	View mapView = null;
 	LatLngBounds mapBounds = null;
 	AsyncTask<String, String, Route> loadRouteTask = null;
+	GraphView graphView;
+	List<GraphViewData> speedList;
 	
 	UploadManager uploadManager = null;
 	Formatter formatter = null;
@@ -179,12 +187,17 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Laps"));
 		tabSpec.setContent(R.id.tabLap);
 		th.addTab(tabSpec);
-
+		
 		tabSpec = th.newTabSpec("map");
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Map"));
 		tabSpec.setContent(R.id.tabMap);
 		th.addTab(tabSpec);
-
+		
+		tabSpec = th.newTabSpec("graph");
+		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Graph"));
+		tabSpec.setContent(R.id.tabGraph);
+		th.addTab(tabSpec);
+		
 		tabSpec = th.newTabSpec("share");
 		tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Upload"));
 		tabSpec.setContent(R.id.tabUpload);
@@ -205,6 +218,30 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			adapters.add(adapter);
 			lv.setAdapter(adapter);
 		}
+		
+	}
+
+	private void loadGraph() {
+		
+		GraphViewSeries graphViewData = new GraphViewSeries(speedList.toArray(new GraphViewData[speedList.size()]));
+		speedList.clear(); //release some memory?
+			graphView = new LineGraphView(
+					this
+					, "Pace"
+			){
+				@Override  
+				   protected String formatLabel(double value, boolean isValueX) {  
+				      if (!isValueX) {
+				    	  return formatter.formatPace(Formatter.TXT_SHORT, value);
+				      } 
+				      else 
+				    	  return formatter.formatDistance(Formatter.TXT_SHORT, (long) (value));
+				   }  
+			};
+		
+		graphView.addSeries(graphViewData); // data
+		LinearLayout layout = (LinearLayout) findViewById(R.id.tabGraph);
+		layout.addView(graphView);
 		
 	}
 
@@ -655,17 +692,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			path.width(3);
 		}
 	};
-	
+		
 	private void loadRoute() {
 		final String[] from = new String[] { 
 				DB.LOCATION.LATITUDE,
 				DB.LOCATION.LONGITUDE,
-				DB.LOCATION.TYPE };
+				DB.LOCATION.TYPE,
+				DB.LOCATION.TIME};
 		
 		loadRouteTask = new AsyncTask<String,String,Route>() {
 
 			@Override
 			protected Route doInBackground(String... params) {
+				speedList= new ArrayList<GraphViewData>();
+				
 				int cnt = 0;
 				Route route = null;
 				Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
@@ -673,20 +713,36 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				if (c.moveToFirst()) {
 					route = new Route();
 					double acc_distance = 0;
+					double tot_distance = 0;
+					double step_distance = 0;
 					int cnt_distance = 0;
 					LatLng lastLocation = null;
+					long lastTime = 0;
 					do {
 						cnt++;
+						if(cnt == 1)
+							lastTime = c.getLong(3);
 						LatLng point = new LatLng(c.getDouble(0), c.getDouble(1));
 						route.path.add(point);
 						route.bounds.include(point);
 						int type = c.getInt(2);
 						MarkerOptions m;
+						boolean paused = false;
 						switch (type) {
 						case DB.LOCATION.TYPE_START:
 						case DB.LOCATION.TYPE_END:
 						case DB.LOCATION.TYPE_PAUSE:
 						case DB.LOCATION.TYPE_RESUME:
+							if(type == DB.LOCATION.TYPE_PAUSE)
+							{
+								paused = true;
+							}
+							else if(type == DB.LOCATION.TYPE_RESUME)
+							{
+								paused = false;
+								lastTime = c.getLong(3);
+								step_distance = 0;
+							}
 							m = new MarkerOptions();
 							m.position((lastLocation = point));
 							m.title(type == DB.LOCATION.TYPE_START ? "Start" :
@@ -701,6 +757,17 @@ public class DetailActivity extends FragmentActivity implements Constants {
 							float res[] = { 0 };
 							Location.distanceBetween(lastLocation.latitude, lastLocation.longitude, point.latitude, point.longitude, res);
 							acc_distance += res[0];
+							tot_distance += res[0];
+							step_distance += res[0];
+							if(!paused && lastLocation != null && cnt % 30 == 0)
+							{
+								Long time = c.getLong(3);
+								double speed = calcPaceInSecondsPerMeter(time, lastTime, step_distance);
+								double distance = tot_distance;
+								speedList.add(new GraphViewData(distance,speed));
+								lastTime = time;
+								step_distance = 0;
+							}
 							if (acc_distance >= formatter.getUnitMeters()) {
 								cnt_distance ++;
 								acc_distance = 0;
@@ -721,9 +788,16 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				return route;
 			}
 
+			private double calcPaceInSecondsPerMeter(Long time, long lastTime,
+					double step_distance) {
+				return ((time - lastTime)/(1000.0)) / (step_distance);
+			}
+
 			@Override
 			protected void onPostExecute(Route route) {
+				
 				if (route != null) {
+					loadGraph();
 					if (map != null) {
 						map.addPolyline(route.path);
 						mapBounds = route.bounds.build();
