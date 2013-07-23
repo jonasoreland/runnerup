@@ -107,7 +107,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	LatLngBounds mapBounds = null;
 	AsyncTask<String, String, Route> loadRouteTask = null;
 	GraphView graphView;
-	List<GraphViewData> speedList;
+	List<GraphViewData> paceList;
 	
 	UploadManager uploadManager = null;
 	Formatter formatter = null;
@@ -223,8 +223,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 	private void loadGraph() {
 		
-		GraphViewSeries graphViewData = new GraphViewSeries(speedList.toArray(new GraphViewData[speedList.size()]));
-		speedList.clear(); //release some memory?
+		System.err.println("graph: " + paceList.size() + " points");
+		GraphViewSeries graphViewData = new GraphViewSeries(paceList.toArray(new GraphViewData[paceList.size()]));
+		paceList.clear(); //release some memory?
 			graphView = new LineGraphView(
 					this
 					, "Pace"
@@ -692,19 +693,118 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			path.width(3);
 		}
 	};
+
+	class GraphProducer {
+		static final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
+		static final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec 
 		
+		int interval;
+		int pos = 0;
+		double time[] = null;
+		double distance[] = null;
+		double sum_time = 0;
+		double sum_distance = 0;
+		double acc_time = 0;
+		List<GraphViewData> paceList = null;
+
+		GraphProducer(List<GraphViewData> dst) {
+			this(dst, GRAPH_INTERVAL_SECONDS, GRAPH_AVERAGE_SECONDS);
+		}
+
+		public GraphProducer(List<GraphViewData> dst,
+				int graphIntervalSeconds, int graphAverageSeconds) {
+			this.paceList = dst;
+			this.interval = graphIntervalSeconds;
+			this.time = new double[graphAverageSeconds];
+			this.distance = new double[graphAverageSeconds];
+			clear(0);
+		}
+
+		void clear(double tot_distance) {
+			if (pos >= (this.time.length / 2) && (acc_time >= 1000 * (interval / 2)) && sum_distance > 0) {
+				emit(tot_distance);
+			}
+
+			for (int i = 0; i < this.distance.length; i++) {
+				time[i] = 0;
+				distance[i] = 0;
+			}
+			pos = 0;
+			sum_time = 0;
+			sum_distance = 0;
+			acc_time = 0;
+		}
+		
+		void addObservation(double delta_time, double delta_distance, double tot_distance) {
+			int p = pos % this.time.length;
+			sum_time -= this.time[p];
+			sum_distance -= this.distance[p];
+			sum_time += delta_time;
+			sum_distance += delta_distance;
+
+			this.time[p] = delta_time;
+			this.distance[p] = delta_distance;
+			pos = (pos + 1);
+			
+			acc_time += delta_time;
+		
+			if (pos >= this.time.length && (acc_time >= 1000 * interval) && sum_distance > 0) {
+				emit(tot_distance);
+			}
+		}
+		
+		void emit(double tot_distance) {
+			double avg_time = sum_time;
+			double avg_dist = sum_distance;
+			if (true) {
+				// remove max/min time/distance to get smoother graph
+				double max_time[] = { 0, 0 };
+				double max_dist[] = { 0, 0 };
+				double min_time[] = { Double.MAX_VALUE, Double.MAX_VALUE };
+				double min_dist[] = { Double.MAX_VALUE, Double.MAX_VALUE };
+				for (int i = 0; i < this.time.length; i++) {
+					if (this.time[i] > max_time[0]) {
+						max_time[0] = this.time[i];
+						max_dist[0] = this.distance[i];
+					}
+					if (this.distance[i] > max_time[1]) {
+						max_time[1] = this.time[i];
+						max_dist[1] = this.distance[i];
+					}
+					if (this.time[i] < min_time[0]) {
+						min_time[0] = this.time[i];
+						min_dist[0] = this.distance[i];
+					}
+					if (this.distance[i] < min_time[1]) {
+						min_time[1] = this.time[i];
+						min_dist[1] = this.distance[i];
+					}
+				}
+				avg_time -= (max_time[0] + max_time[1] + min_time[0] + min_time[1]);
+				avg_dist -= (max_dist[0] + max_dist[1] + min_dist[0] + min_dist[1]);
+			}
+			if (avg_dist > 0) {
+				double pace = avg_time / avg_dist / 1000.0;
+				paceList.add(new GraphViewData(tot_distance, pace));
+				acc_time = 0;
+			}
+		}
+	};
+	
 	private void loadRoute() {
 		final String[] from = new String[] { 
 				DB.LOCATION.LATITUDE,
 				DB.LOCATION.LONGITUDE,
 				DB.LOCATION.TYPE,
-				DB.LOCATION.TIME};
+				DB.LOCATION.TIME,
+				DB.LOCATION.LAP };
 		
 		loadRouteTask = new AsyncTask<String,String,Route>() {
 
 			@Override
 			protected Route doInBackground(String... params) {
-				speedList= new ArrayList<GraphViewData>();
+				paceList = new ArrayList<GraphViewData>();
+				final GraphProducer graphData = new GraphProducer(paceList);
 				
 				int cnt = 0;
 				Route route = null;
@@ -714,34 +814,42 @@ public class DetailActivity extends FragmentActivity implements Constants {
 					route = new Route();
 					double acc_distance = 0;
 					double tot_distance = 0;
-					double step_distance = 0;
 					int cnt_distance = 0;
 					LatLng lastLocation = null;
+
 					long lastTime = 0;
+					int lastLap = -1;
 					do {
 						cnt++;
-						if(cnt == 1)
-							lastTime = c.getLong(3);
 						LatLng point = new LatLng(c.getDouble(0), c.getDouble(1));
 						route.path.add(point);
 						route.bounds.include(point);
 						int type = c.getInt(2);
+						long time = c.getLong(3);
+						int lap = c.getInt(4);
 						MarkerOptions m;
-						boolean paused = false;
 						switch (type) {
 						case DB.LOCATION.TYPE_START:
 						case DB.LOCATION.TYPE_END:
 						case DB.LOCATION.TYPE_PAUSE:
 						case DB.LOCATION.TYPE_RESUME:
-							if(type == DB.LOCATION.TYPE_PAUSE)
+							if (type == DB.LOCATION.TYPE_PAUSE)
 							{
-								paused = true;
+								if (lap != lastLap) {
+									graphData.clear(tot_distance);
+								} else if (lastTime != 0 && lastLocation != null) {
+									float res[] = { 0 };
+									Location.distanceBetween(lastLocation.latitude, lastLocation.longitude, point.latitude, point.longitude, res);
+									graphData.addObservation(time - lastTime, res[0], tot_distance);
+									graphData.clear(tot_distance);
+								}
+								lastLap = lap;
+								lastTime = 0;
 							}
-							else if(type == DB.LOCATION.TYPE_RESUME)
+							else if (type == DB.LOCATION.TYPE_RESUME)
 							{
-								paused = false;
-								lastTime = c.getLong(3);
-								step_distance = 0;
+								lastLap = lap;
+								lastTime = time;
 							}
 							m = new MarkerOptions();
 							m.position((lastLocation = point));
@@ -758,16 +866,15 @@ public class DetailActivity extends FragmentActivity implements Constants {
 							Location.distanceBetween(lastLocation.latitude, lastLocation.longitude, point.latitude, point.longitude, res);
 							acc_distance += res[0];
 							tot_distance += res[0];
-							step_distance += res[0];
-							if(!paused && lastLocation != null && cnt % 30 == 0)
-							{
-								Long time = c.getLong(3);
-								double speed = calcPaceInSecondsPerMeter(time, lastTime, step_distance);
-								double distance = tot_distance;
-								speedList.add(new GraphViewData(distance,speed));
-								lastTime = time;
-								step_distance = 0;
+
+							if (lap != lastLap) {
+								graphData.clear(tot_distance);
+							} else if (lastTime != 0) {
+								graphData.addObservation(time - lastTime, res[0], tot_distance);
 							}
+							lastLap = lap;
+							lastTime = time;
+
 							if (acc_distance >= formatter.getUnitMeters()) {
 								cnt_distance ++;
 								acc_distance = 0;
@@ -786,11 +893,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				}
 				c.close();
 				return route;
-			}
-
-			private double calcPaceInSecondsPerMeter(Long time, long lastTime,
-					double step_distance) {
-				return ((time - lastTime)/(1000.0)) / (step_distance);
 			}
 
 			@Override
