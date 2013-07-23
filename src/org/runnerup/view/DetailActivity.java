@@ -757,31 +757,24 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			double avg_time = sum_time;
 			double avg_dist = sum_distance;
 			if (true) {
-				// remove max/min time/distance to get smoother graph
-				double max_time[] = { 0, 0 };
-				double max_dist[] = { 0, 0 };
-				double min_time[] = { Double.MAX_VALUE, Double.MAX_VALUE };
-				double min_dist[] = { Double.MAX_VALUE, Double.MAX_VALUE };
+				// remove max/min pace to (maybe) get smoother graph
+				double max_pace[] = { 0, 0, 0 };
+				double min_pace[] = { Double.MAX_VALUE, 0, 0 };
 				for (int i = 0; i < this.time.length; i++) {
-					if (this.time[i] > max_time[0]) {
-						max_time[0] = this.time[i];
-						max_dist[0] = this.distance[i];
+					double pace = this.time[i] / this.distance[i];
+					if (pace > max_pace[0]) {
+						max_pace[0] = pace;
+						max_pace[1] = this.time[i];
+						max_pace[2] = this.distance[i];
 					}
-					if (this.distance[i] > max_time[1]) {
-						max_time[1] = this.time[i];
-						max_dist[1] = this.distance[i];
-					}
-					if (this.time[i] < min_time[0]) {
-						min_time[0] = this.time[i];
-						min_dist[0] = this.distance[i];
-					}
-					if (this.distance[i] < min_time[1]) {
-						min_time[1] = this.time[i];
-						min_dist[1] = this.distance[i];
+					if (pace < min_pace[0]) {
+						min_pace[0] = pace;
+						min_pace[1] = this.time[i];
+						min_pace[2] = this.distance[i];
 					}
 				}
-				avg_time -= (max_time[0] + max_time[1] + min_time[0] + min_time[1]);
-				avg_dist -= (max_dist[0] + max_dist[1] + min_dist[0] + min_dist[1]);
+				avg_time -= (max_pace[1] + min_pace[1]);
+				avg_dist -= (max_pace[2] + min_pace[2]);
 			}
 			if (avg_dist > 0) {
 				double pace = avg_time / avg_dist / 1000.0;
