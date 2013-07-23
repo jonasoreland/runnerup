@@ -99,6 +99,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
 				audioSchemes.add(c.getString(0));
 			} while (c.moveToNext());
 		}
+		c.close();
 		this.notifyDataSetChanged();
 	}
 }
