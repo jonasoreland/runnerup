@@ -23,6 +23,7 @@ import org.runnerup.workout.Dimension;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
@@ -70,7 +71,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	}
 
 	private void setUnit() {
-		km = getUseKilometers(sharedPreferences);
+		km = getUseKilometers(sharedPreferences, null);
 
 		if (km) {
 			base_unit = "km";
@@ -81,35 +82,35 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		}
 	}
 	
-	public static boolean getUseKilometers(SharedPreferences prefs) {
+	public static boolean getUseKilometers(SharedPreferences prefs, Editor editor) {
 		boolean _km = true;
 		String unit = prefs.getString("pref_unit", null);
 		if (unit == null)
-			_km = guessDefaultUnit(prefs);
+			_km = guessDefaultUnit(prefs, editor);
 		else if (unit.contentEquals("km"))
 			_km = true;
 		else if (unit.contentEquals("mi"))
 			_km = false;
 		else
-			_km = guessDefaultUnit(prefs);
+			_km = guessDefaultUnit(prefs, editor);
 
 		return _km;
 	}
 	
-	private static boolean guessDefaultUnit(SharedPreferences prefs) {
+	private static boolean guessDefaultUnit(SharedPreferences prefs, Editor editor) {
 		String countryCode = Locale.getDefault().getCountry();
 		System.err.println("guessDefaultUnit: countryCode: " + countryCode);
 		if (countryCode == null)
 			return true; // km;
 		if ("US".contentEquals(countryCode) ||
-			"GB".contentEquals(countryCode))
-		{
-			prefs.edit().putString("pref_unit", "mi");
+			"GB".contentEquals(countryCode)) {
+			if (editor != null)
+				editor.putString("pref_unit", "mi");
 			return false;
 		}
-		else
-		{
-			prefs.edit().putString("pref_unit", "km");
+		else {
+			if (editor != null)
+				editor.putString("pref_unit", "km");
 		}
 		return true;
 	}
@@ -119,7 +120,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	}
 	
 	public static double getUnitMeters(SharedPreferences prefs) {
-		if (getUseKilometers(prefs))
+		if (getUseKilometers(prefs, null))
 			return km_meters;
 		else
 			return mi_meters;

@@ -17,9 +17,14 @@
 package org.runnerup.view;
 
 import org.runnerup.R;
+import org.runnerup.util.Formatter;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -35,10 +40,42 @@ public class MainLayout extends TabActivity {
 		return d;
 	}
 	
+	private enum UpgradeState { UNKNOWN, NEW, UPGRADE, DOWNGRADE, SAME };
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		int versionCode = 0;
+		UpgradeState upgradeState = UpgradeState.UNKNOWN;
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		Editor editor = pref.edit();
+		try {
+			PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			versionCode = pInfo.versionCode;
+			int version = pref.getInt("app-version", -1);
+			if (version == -1) {
+				upgradeState = UpgradeState.NEW;
+			} else if (versionCode == version) {
+				upgradeState = UpgradeState.SAME;
+			} else if (versionCode > version) {
+				upgradeState = UpgradeState.UPGRADE;
+			} else if (versionCode < version) {
+				upgradeState = UpgradeState.DOWNGRADE;
+			}
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		editor.putInt("app-version", versionCode);
+		boolean km = Formatter.getUseKilometers(pref, editor);
+
+		if (upgradeState == UpgradeState.NEW) {
+			editor.putString(getResources().getString(R.string.pref_autolap),
+					Double.toString(km ? Formatter.km_meters : Formatter.mi_meters));
+		}
+		editor.commit();
+		
+		System.err.println("app-version: " + versionCode + ", upgradeState: " + upgradeState + ", km: " + km);
+		
 		PreferenceManager.setDefaultValues(this, R.layout.settings, false);
 		PreferenceManager.setDefaultValues(this, R.layout.audio_cue_settings, true);
 		
