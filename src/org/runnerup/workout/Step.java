@@ -48,7 +48,7 @@ public class Step implements TickComponent {
 	/**
 	 * Autolap (m)
 	 */
-	long autolap = 0;
+	double autolap = 0;
 
 	/**
 	 * Triggers
@@ -141,16 +141,16 @@ public class Step implements TickComponent {
 	/**
 	 * @return the autolap
 	 */
-	public long getAutolap() {
+	public double getAutolap() {
 		return autolap;
 	}
 
 	/**
-	 * @param autolap
+	 * @param val
 	 *            the autolap to set
 	 */
-	public void setAutolap(long autolap) {
-		this.autolap = autolap;
+	public void setAutolap(double val) {
+		this.autolap = val;
 	}
 
 	@Override

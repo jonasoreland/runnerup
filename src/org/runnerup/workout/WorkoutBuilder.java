@@ -62,10 +62,10 @@ public class WorkoutBuilder {
 
 		Step step = new Step();
 		if (prefs.getBoolean(res.getString(R.string.pref_autolap_active), false)) {
-			long val = 0;
+			double val = 0;
 			String vals = prefs.getString(res.getString(R.string.pref_autolap), "1000");
 			try {
-				val = Long.parseLong(vals);
+				val = Double.parseDouble(vals);
 			} catch (NumberFormatException e) {
 			}
 			step.setAutolap(val);
@@ -464,10 +464,10 @@ public class WorkoutBuilder {
 			autolap = prefs.getBoolean(res.getString(R.string.pref_step_autolap_active), autolap);
 		}
 		if (autolap) {
-			long val = 0;
+			double val = 0;
 			String vals = prefs.getString(res.getString(R.string.pref_autolap), "1000");
 			try {
-				val = Long.parseLong(vals);
+				val = Double.parseDouble(vals);
 			} catch (NumberFormatException e) {
 			}
 			System.out.println("setAutolap("+val+")");
