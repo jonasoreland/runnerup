@@ -534,6 +534,8 @@ public class UploadManager {
 			public void run(String uploader, Status status) {
 				if (status == Uploader.Status.OK) {
 					doListWorkout();
+				} else {
+					nextListWorkout();
 				}
 			}
 		});
