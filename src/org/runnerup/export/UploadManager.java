@@ -133,6 +133,8 @@ public class UploadManager {
 			uploader = new JoggSE(this);
 		} else if (uploaderName.contentEquals(Endomondo.NAME)) {
 			uploader = new Endomondo(this);
+		} else if (uploaderName.contentEquals(RunningAHEAD.NAME)) {
+			uploader = new RunningAHEAD(this);
 		}
 		
 		if (uploader != null) {
