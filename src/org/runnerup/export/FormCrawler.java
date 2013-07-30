@@ -75,13 +75,13 @@ public class FormCrawler {
 		Value value = null;
 	};
 	
-	public class FormValues extends HashMap<String,String> implements Writable {
+	public static class FormValues extends HashMap<String,String> implements Writable {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -5681066662144155533L;
 
-		FormValues() {
+		public FormValues() {
 			super();
 		}
 
