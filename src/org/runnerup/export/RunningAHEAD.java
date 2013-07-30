@@ -16,21 +16,22 @@
  */
 package org.runnerup.export;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.GZIPOutputStream;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.RunKeeper;
+import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.util.Constants.DB;
@@ -152,7 +153,45 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 
 	@Override
 	public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+		String URL = IMPORT_URL + "?access_token=" + authToken;
+		TCX tcx = new TCX(db);
+		HttpURLConnection conn = null;
+		Exception ex = null;
+		try {
+			StringWriter writer = new StringWriter();
+			tcx.export(mID, writer);
+			conn = (HttpURLConnection) new URL(URL).openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.addRequestProperty("Content-Encoding", "gzip");
+			OutputStream out = new GZIPOutputStream(new BufferedOutputStream(conn.getOutputStream()));
+			out.write(writer.toString().getBytes());
+			out.flush();
+			out.close();
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+			System.err.println("code: " + responseCode + ", amsg: " + amsg);
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			System.err.println("obj: " + obj);
+			
+			if (responseCode == 200 && obj.has("ids")) {
+				conn.disconnect();
+				return Status.OK;
+			}
+			ex = new Exception(amsg);
+		} catch (IOException e) {
+			ex = e;
+		} catch (JSONException e) {
+			ex = e;
+		}
+
 		Uploader.Status s = Uploader.Status.ERROR;
+		s.ex = ex;
+		if (ex != null) {
+			ex.printStackTrace();
+		}
 		return s;
 	}
 
