@@ -17,13 +17,16 @@
 package org.runnerup.export.oauth2client;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Scanner;
 
 import org.json.JSONObject;
+import org.runnerup.export.FormCrawler.FormValues;
 import org.runnerup.util.Constants.DB;
 
 import android.app.Activity;
@@ -90,7 +93,7 @@ public class OAuth2Activity extends Activity {
 		wv.getSettings().setSavePassword(false);
 
 		String url = auth_url + "?client_id=" + URLEncoder.encode(client_id)
-				+ "&response_type=code" + "&redirect_uri= "
+				+ "&response_type=code" + "&redirect_uri="
 				+ URLEncoder.encode(mRedirectUri);
 		CookieSyncManager.createInstance(this);
 		CookieManager.getInstance().removeAllCookie();
@@ -140,19 +143,13 @@ public class OAuth2Activity extends Activity {
 
 					Bundle b = mArgs;
 					String code = u.getQueryParameter("code");
-					String token_url = b
-							.getString(OAuth2ServerCredentials.TOKEN_URL)
-							+ "?client_id="
-							+ URLEncoder.encode(b
-									.getString(OAuth2ServerCredentials.CLIENT_ID))
-							+ "&client_secret="
-							+ URLEncoder.encode(b
-									.getString(OAuth2ServerCredentials.CLIENT_SECRET))
-							+ "&grant_type=authorization_code"
-							+ "&redirect_uri="
-							+ URLEncoder.encode(b
-									.getString(OAuth2ServerCredentials.REDIRECT_URI))
-							+ "&code=" + URLEncoder.encode(code);
+					String token_url = b.getString(OAuth2ServerCredentials.TOKEN_URL);
+					FormValues fv = new FormValues();
+					fv.put("client_id", b.getString(OAuth2ServerCredentials.CLIENT_ID));
+					fv.put("client_secret", b.getString(OAuth2ServerCredentials.CLIENT_SECRET));
+					fv.put("grant_type", "authorization_code");
+					fv.put("redirect_uri", b.getString(OAuth2ServerCredentials.REDIRECT_URI));
+					fv.put("code", code);
 
 					JSONObject obj = null;
 					HttpURLConnection conn = null;
@@ -163,9 +160,16 @@ public class OAuth2Activity extends Activity {
 					try {
 						URL newurl = new URL(token_url);
 						conn = (HttpURLConnection) newurl.openConnection();
+						conn.setDoOutput(true);
 						conn.setRequestMethod("POST");
 						conn.setRequestProperty("Content-Type",
 								"application/x-www-form-urlencoded");
+						{
+							OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+							fv.write(wr);
+							wr.flush();
+							wr.close();
+						}
 						InputStream in = new BufferedInputStream(conn
 								.getInputStream());
 						obj = new JSONObject(new Scanner(in)
