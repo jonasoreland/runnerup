@@ -475,7 +475,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 					@Override
 					public void onClick(View v) {
 						Intent i = new Intent(DetailActivity.this,
-								AccountsActivity.class);
+								AccountListActivity.class);
 						DetailActivity.this.startActivityForResult(i,
 								UploadManager.CONFIGURE_REQUEST + 1);
 					}

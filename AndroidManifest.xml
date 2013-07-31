@@ -89,7 +89,7 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 
-		<activity android:name=".view.AccountsActivity"
+		<activity android:name=".view.AccountListActivity"
 		    android:screenOrientation="portrait" >
 		</activity>
 

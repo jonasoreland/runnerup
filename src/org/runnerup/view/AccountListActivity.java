@@ -47,7 +47,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AccountsActivity extends ListActivity implements Constants {
+public class AccountListActivity extends ListActivity implements Constants {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
@@ -172,7 +172,7 @@ public class AccountsActivity extends ListActivity implements Constants {
 
 	OnCheckedChangeListener enableCheckBox = new OnCheckedChangeListener() {
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			Toast.makeText(AccountsActivity.this, "" + buttonView + ", tag: " + buttonView.getTag() + ", " + isChecked, Toast.LENGTH_SHORT).show();
+			Toast.makeText(AccountListActivity.this, "" + buttonView + ", tag: " + buttonView.getTag() + ", " + isChecked, Toast.LENGTH_SHORT).show();
 		}
 	};
 	
@@ -193,7 +193,7 @@ public class AccountsActivity extends ListActivity implements Constants {
 			final CharSequence items[] = { "Clear uploads" };
 			final boolean selected[] = { true };
 			if (uploadManager.isConfigured(uploader)) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(AccountsActivity.this);
+				AlertDialog.Builder builder = new AlertDialog.Builder(AccountListActivity.this);
 				builder.setTitle("Disconnect account");
 				builder.setPositiveButton("OK",
 						new DialogInterface.OnClickListener() {

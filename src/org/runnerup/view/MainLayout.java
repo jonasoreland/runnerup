@@ -114,7 +114,7 @@ public class MainLayout extends TabActivity {
 		Intent i = null;
 		switch (item.getItemId()) {
 		case R.id.menu_accounts:
-			i = new Intent(this, AccountsActivity.class);
+			i = new Intent(this, AccountListActivity.class);
 			break;
 		case R.id.menu_workouts:
 			i = new Intent(this, ManageWorkoutsActivity.class);
