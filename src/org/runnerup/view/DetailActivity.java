@@ -51,9 +51,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -69,9 +69,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
 
 public class DetailActivity extends FragmentActivity implements Constants {
 
@@ -107,7 +107,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	LatLngBounds mapBounds = null;
 	AsyncTask<String, String, Route> loadRouteTask = null;
 	GraphView graphView;
-	List<GraphViewData> paceList;
 	
 	UploadManager uploadManager = null;
 	Formatter formatter = null;
@@ -218,32 +217,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			adapters.add(adapter);
 			lv.setAdapter(adapter);
 		}
-		
-	}
 
-	private void loadGraph() {
-		
-		System.err.println("graph: " + paceList.size() + " points");
-		GraphViewSeries graphViewData = new GraphViewSeries(paceList.toArray(new GraphViewData[paceList.size()]));
-		paceList.clear(); //release some memory?
-			graphView = new LineGraphView(
-					this
-					, "Pace"
-			){
-				@Override  
-				   protected String formatLabel(double value, boolean isValueX) {  
-				      if (!isValueX) {
-				    	  return formatter.formatPace(Formatter.TXT_SHORT, value);
-				      } 
-				      else 
-				    	  return formatter.formatDistance(Formatter.TXT_SHORT, (long) (value));
-				   }  
+		{
+			graphView = new LineGraphView(this, "Pace") {
+				@Override
+				protected String formatLabel(double value, boolean isValueX) {
+					if (!isValueX) {
+						return formatter.formatPace(Formatter.TXT_SHORT, value);
+					} else
+						return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+				}
 			};
-		
-		graphView.addSeries(graphViewData); // data
-		LinearLayout layout = (LinearLayout) findViewById(R.id.tabGraph);
-		layout.addView(graphView);
-		
+			LinearLayout layout = (LinearLayout) findViewById(R.id.tabGraph);
+			layout.addView(graphView);
+		}
 	}
 
 	@Override
@@ -705,15 +692,15 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		double sum_time = 0;
 		double sum_distance = 0;
 		double acc_time = 0;
+		double avg_pace = 0;
 		List<GraphViewData> paceList = null;
 
-		GraphProducer(List<GraphViewData> dst) {
-			this(dst, GRAPH_INTERVAL_SECONDS, GRAPH_AVERAGE_SECONDS);
+		GraphProducer() {
+			this(GRAPH_INTERVAL_SECONDS, GRAPH_AVERAGE_SECONDS);
 		}
 
-		public GraphProducer(List<GraphViewData> dst,
-				int graphIntervalSeconds, int graphAverageSeconds) {
-			this.paceList = dst;
+		public GraphProducer(int graphIntervalSeconds, int graphAverageSeconds) {
+			this.paceList = new ArrayList<GraphViewData>();
 			this.interval = graphIntervalSeconds;
 			this.time = new double[graphAverageSeconds];
 			this.distance = new double[graphAverageSeconds];
@@ -736,6 +723,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		}
 		
 		void addObservation(double delta_time, double delta_distance, double tot_distance) {
+			if (delta_time < 500)
+				return;
+			
 			int p = pos % this.time.length;
 			sum_time -= this.time[p];
 			sum_distance -= this.distance[p];
@@ -780,11 +770,21 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				double pace = avg_time / avg_dist / 1000.0;
 				paceList.add(new GraphViewData(tot_distance, pace));
 				acc_time = 0;
+				avg_pace += pace;
 			}
+		}
+		public void complete(GraphView graphView) {
+			avg_pace /= paceList.size();
+			System.err.println("graph: " + paceList.size() + " points");
+			GraphViewSeries graphViewData = new GraphViewSeries(paceList.toArray(new GraphViewData[paceList.size()]));
+			graphView.addSeries(graphViewData); // data
+			graphView.redrawAll();
 		}
 	};
 	
 	private void loadRoute() {
+		final GraphProducer graphData = new GraphProducer();
+
 		final String[] from = new String[] { 
 				DB.LOCATION.LATITUDE,
 				DB.LOCATION.LONGITUDE,
@@ -796,8 +796,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 			@Override
 			protected Route doInBackground(String... params) {
-				paceList = new ArrayList<GraphViewData>();
-				final GraphProducer graphData = new GraphProducer(paceList);
 				
 				int cnt = 0;
 				Route route = null;
@@ -892,7 +890,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			protected void onPostExecute(Route route) {
 				
 				if (route != null) {
-					loadGraph();
+					graphData.complete(graphView);
 					if (map != null) {
 						map.addPolyline(route.path);
 						mapBounds = route.bounds.build();
