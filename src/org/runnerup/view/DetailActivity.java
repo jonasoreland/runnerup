@@ -35,12 +35,14 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -906,22 +908,65 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		};
 		
 		public void complete(GraphView graphView) {
-			avg_pace /= paceList.size();
+			avg_pace /= paceList.size(); 
 			System.err.println("graph: " + paceList.size() + " points");
 			
-			boolean filterData = false;
-			if (filterData)
-			{
+			boolean smoothData = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this).getBoolean(getResources().getString(R.string.pref_pace_graph_smoothing), true); 
+			if (smoothData) {
 				GraphFilter f = new GraphFilter(paceList);
-//				f.KolmogorovZurbenko(3, 31);
-				f.KolmogorovZurbenko(5, 11);
-				f.SavitzkyGolay5();
-				f.movingMedian(23);
+				String filterList = "mm(31);kz(5,13);sg(5)";
+				filterList = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this).getString(getResources().getString(R.string.pref_pace_graph_smoothing_filters), filterList);
+				String filters[] = filterList.split(";");
+				System.err.print("Applying filters(" + filters.length +"):");
+				for (int i = 0; i < filters.length; i++) {
+					int args[] = getArgs(filters[i]);
+					if (filters[i].startsWith("mm")) {
+						if (args.length == 1) {
+							f.movingMedian(args[0]);
+							System.err.print(" mm("+args[0]+")");
+						}
+					} else if (filters[i].startsWith("ma")) {
+						if (args.length == 1) {
+							f.movingAvergage(args[0]);
+							System.err.print(" ma("+args[0]+")");
+						}
+					} else if (filters[i].startsWith("kz")) {
+						if (args.length == 2) {
+							f.KolmogorovZurbenko(args[0], args[1]);
+							System.err.print(" kz("+args[0]+","+args[1]+")");
+						}
+					} else if (filters[i].startsWith("sg")) {
+						if (args.length == 1 && args[0] == 5) {
+							f.SavitzkyGolay5();
+							System.err.print(" sg(5)");
+						} else if (args.length == 1 && args[0] == 7) {
+							f.SavitzkyGolay7(); 
+							System.err.print(" sg(7)");
+						}
+					}
+				}
+				System.err.println("");
 				f.complete();
 			}
 			GraphViewSeries graphViewData = new GraphViewSeries(paceList.toArray(new GraphViewData[paceList.size()]));
 			graphView.addSeries(graphViewData); // data
 			graphView.redrawAll();
+		}
+
+		private int[] getArgs(String s) {
+			try {
+				s = s.substring(s.indexOf('(') + 1);
+				s = s.substring(0, s.indexOf(')'));
+				String sargs[] = s.split(",");
+				int args[] = new int[sargs.length];
+				for (int i = 0; i < args.length; i++) {
+					args[i] = Integer.parseInt(sargs[i]);
+				}
+				return args;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new int[0];
+			}
 		}
 	};
 	

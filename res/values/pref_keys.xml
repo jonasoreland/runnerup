@@ -55,5 +55,7 @@
     <string name="pref_step_autolap_active">pref_step_autolap_active</string>
     <string name="pref_step_countdown_active">pref_step_countdown_active</string>
     <string name="pref_step_countdown_time">pref_step_countdown_time</string>
-    	
+
+    <string name="pref_pace_graph_smoothing">pref_pace_graph_smoothing</string>
+    <string name="pref_pace_graph_smoothing_filters">pref_pace_graph_smoothing_filters</string>
 </resources>

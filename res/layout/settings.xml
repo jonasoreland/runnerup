@@ -127,7 +127,22 @@
         	android:summary="15"
         	android:title="Step countdown time (s)" />
     	
-    	<org.runnerup.widget.TextPreference
+    	<CheckBoxPreference
+        	android:defaultValue="true"
+        	android:persistent="true"
+        	android:key="@string/pref_pace_graph_smoothing"
+        	android:title="Smooth pace graph" />
+
+		<org.runnerup.widget.TextPreference
+        	android:defaultValue=""
+        	android:dependency="@string/pref_pace_graph_smoothing"
+        	android:inputType="number"
+        	android:key="@string/pref_pace_graph_smoothing_filters"
+        	android:persistent="true"
+        	android:summary=""
+        	android:title="filter(s)" />
+		
+        <org.runnerup.widget.TextPreference
             android:defaultValue="500"
             android:inputType="number"
             android:key="@string/pref_pollInterval"
