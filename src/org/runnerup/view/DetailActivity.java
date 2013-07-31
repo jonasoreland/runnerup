@@ -228,7 +228,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 						return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
 				}
 			};
-			LinearLayout layout = (LinearLayout) findViewById(R.id.tabGraph);
+			LinearLayout layout = (LinearLayout) findViewById(R.id.graphLayout);
 			layout.addView(graphView);
 		}
 	}
