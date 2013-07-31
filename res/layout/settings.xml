@@ -25,7 +25,7 @@
         	android:summary="Configure accounts">
 			<intent
 			    android:targetPackage="org.runnerup"
-			    android:targetClass="org.runnerup.view.AccountsActivity" />
+			    android:targetClass="org.runnerup.view.AccountListActivity" />
     </Preference>
     
     <Preference
