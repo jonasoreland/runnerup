@@ -17,6 +17,7 @@
 package org.runnerup.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -692,7 +693,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		double sum_time = 0;
 		double sum_distance = 0;
 		double acc_time = 0;
+
 		double avg_pace = 0;
+		double min_pace = Double.MAX_VALUE;
+		double max_pace = Double.MIN_VALUE;
 		List<GraphViewData> paceList = null;
 
 		GraphProducer() {
@@ -770,12 +774,151 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				double pace = avg_time / avg_dist / 1000.0;
 				paceList.add(new GraphViewData(tot_distance, pace));
 				acc_time = 0;
+				
 				avg_pace += pace;
+				min_pace = Math.min(min_pace,  pace);
+				max_pace = Math.max(max_pace,  pace);
 			}
 		}
+
+		class GraphFilter {
+
+			double data[] = null;
+			List<GraphViewData> source;
+
+			GraphFilter(List<GraphViewData> paceList) {
+				source = paceList;
+				data = new double[paceList.size()];
+				for (int i = 0; i < paceList.size(); i++)
+					data[i] = paceList.get(i).valueY;
+			}
+
+			void complete() {
+				for (int i = 0; i < source.size(); i++)
+					source.set(i, new GraphViewData(source.get(i).valueX, data[i]));
+			}
+
+			void init(double window[], double val) {
+				for (int j = 0; j < window.length - 1; j++)
+					window[j] = val;
+			}
+			
+			void shiftLeft(double window[], double newVal) {
+				for (int j = 0; j < window.length - 1; j++)
+					window[j] = window[j + 1];
+				window[window.length - 1] = newVal;
+			}
+			
+			/**
+			 * Perform in place moving average
+			 */
+			void movingAvergage(int windowLen) {
+				double window[] = new double[windowLen];
+				init(window, data[0]);
+
+				final int mid = (window.length - 1) / 2;
+				final int last = window.length - 1;
+				for (int i = 0; i < data.length && i <= mid; i++) {
+					window[i + mid] = data[i];
+				}
+
+				double sum = 0;
+				for (int i = 0; i < window.length; i++)
+					sum += window[i];
+
+				for (int i = 0; i < data.length; i++) {
+					double newY = sum / windowLen;
+					data[i] = newY;
+					sum -= window[0];
+					shiftLeft(window, (i + mid) < data.length ? data[i + mid] : avg_pace);
+					sum += window[last];
+				}
+			}
+
+			/**
+			 * Perform in place moving average
+			 */
+			void movingMedian(int windowLen) {
+				double window[] = new double[windowLen];
+				init(window, data[0]);
+
+				final int mid = (window.length - 1) / 2;
+				for (int i = 0; i < data.length && i <= mid; i++) {
+					window[i + mid] = data[i];
+				}
+
+				double sort[] = new double[windowLen];
+				for (int i = 0; i < data.length; i++) {
+					System.arraycopy(window,  0, sort, 0, windowLen);
+					Arrays.sort(sort);
+					data[i] = sort[mid];
+					shiftLeft(window, (i + mid) < data.length ? data[i + mid] : avg_pace);
+				}
+			}
+
+			/**
+			 * Perform in place SavitzkyGolay windowLen = 5
+			 */
+			void SavitzkyGolay5() {
+				final int len = 5;
+				double window[] = new double[len];
+				init(window, data[0]);
+
+				final int mid = (window.length - 1) / 2;
+				for (int i = 0; i < data.length && i <= mid; i++) {
+					window[i + mid] = data[i];
+				}
+				for (int i = 0; i < data.length; i++) {
+					double newY = (-3 * window[0] + 12 * window[1] + 17
+							* window[2] + 12 * window[3] - 3 * window[4]) / 35;
+					data[i] = newY;
+					shiftLeft(window,
+							(i + mid) < data.length ? data[i + mid]	: avg_pace);
+				}
+			}
+
+			/**
+			 * Perform in place SavitzkyGolay windowLen = 7
+			 */
+			void SavitzkyGolay7() {
+				final int len = 7;
+				double window[] = new double[len];
+				init(window, data[0]);
+
+				final int mid = (window.length - 1) / 2;
+				for (int i = 0; i < data.length && i <= mid; i++) {
+					window[i + mid] = data[i];
+				}
+				for (int i = 0; i < data.length; i++) {
+					double newY = (-2 * window[0] + 3 * window[1] + 6
+							* window[2] + 7 * window[3] + 6 * window[4] + 3
+							* window[5] - 2 * window[6]) / 21;
+					data[i] = newY;
+					shiftLeft(window,
+							(i + mid) < data.length ? data[i + mid]	: avg_pace);
+				}
+			}
+
+			void KolmogorovZurbenko(int n, int len) {
+				for (int i = 0; i < n; i++)
+					movingAvergage(len);
+			}
+		};
+		
 		public void complete(GraphView graphView) {
 			avg_pace /= paceList.size();
 			System.err.println("graph: " + paceList.size() + " points");
+			
+			boolean filterData = false;
+			if (filterData)
+			{
+				GraphFilter f = new GraphFilter(paceList);
+//				f.KolmogorovZurbenko(3, 31);
+				f.KolmogorovZurbenko(5, 11);
+				f.SavitzkyGolay5();
+				f.movingMedian(23);
+				f.complete();
+			}
 			GraphViewSeries graphViewData = new GraphViewSeries(paceList.toArray(new GraphViewData[paceList.size()]));
 			graphView.addSeries(graphViewData); // data
 			graphView.redrawAll();
