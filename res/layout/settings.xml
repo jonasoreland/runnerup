@@ -136,7 +136,6 @@
 		<org.runnerup.widget.TextPreference
         	android:defaultValue=""
         	android:dependency="@string/pref_pace_graph_smoothing"
-        	android:inputType="number"
         	android:key="@string/pref_pace_graph_smoothing_filters"
         	android:persistent="true"
         	android:summary=""
