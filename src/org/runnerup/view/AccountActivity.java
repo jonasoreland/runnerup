@@ -35,6 +35,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -162,6 +164,53 @@ public class AccountActivity extends Activity implements Constants {
 		table.addView(row);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.account_menu, menu);
+		return true;
+	}
+
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_clear_uploads:
+			clearUploadsButtonClick.onClick(null);
+			break;
+		case R.id.menu_upload_workouts:
+			break;
+		case R.id.menu_disconnect_account:
+			disconnectButtonClick.onClick(null);
+			break;
+		}
+		return true;
+	}
+		
+	OnClickListener clearUploadsButtonClick = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					AccountActivity.this);
+			builder.setTitle("Clear uploads");
+			builder.setMessage("Note that workouts are not removed from " + uploader + ", only from RunnerUp list of workouts uploaded to " + uploader);
+			builder.setPositiveButton("OK",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							uploadManager.clearUploads(callback, uploader);
+						}
+					});
+
+			builder.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							// Do nothing but close the dialog
+							dialog.dismiss();
+						}
+
+					});
+			builder.show();
+		}
+	};
+	
 	OnClickListener urlButtonClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
