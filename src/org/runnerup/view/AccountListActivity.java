@@ -21,15 +21,13 @@ import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,13 +37,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class AccountListActivity extends ListActivity implements Constants {
 
@@ -88,7 +82,6 @@ public class AccountListActivity extends ListActivity implements Constants {
 				DB.ACCOUNT.URL,
 				DB.ACCOUNT.DESCRIPTION,
 				DB.ACCOUNT.ENABLED,
-				DB.ACCOUNT.DEFAULT,
 				DB.ACCOUNT.ICON,
 				DB.ACCOUNT.AUTH_CONFIG
 		};
@@ -129,11 +122,6 @@ public class AccountListActivity extends ListActivity implements Constants {
 				}
 			}
 			
-			{
-				TextView tv = (TextView) view.findViewById(R.id.accountList_id);
-				tv.setText(Long.toString(tmp.getAsLong("_id")));
-			}
-
 			boolean enabled = uploadManager.isEnabled(id);
 			boolean configured = uploadManager.isConfigured(id);
 			
@@ -142,81 +130,26 @@ public class AccountListActivity extends ListActivity implements Constants {
 				b.setTag(id);
 				b.setOnClickListener(configureButtonClick);
 				if (configured && enabled) {
-					b.setText("Disconnect");
+					b.setText("Edit");
+					b.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_blue));
 				} else {
 					b.setText("Connect");
-				}
-			}
-			
-			{
-				CheckBox cb = (CheckBox) view.findViewById(R.id.accountList_autoUpload);
-				cb.setOnCheckedChangeListener(defaultCheckBoxClick);
-				cb.setTag(id);
-				if (! (configured && enabled)) {
-					cb.setVisibility(View.INVISIBLE);
-				} else {
-					cb.setVisibility(View.VISIBLE);
-					if (tmp.containsKey(DB.ACCOUNT.DEFAULT) && tmp.getAsInteger(DB.ACCOUNT.DEFAULT) != 0) {
-						cb.setChecked(true);
-					} else {
-						cb.setChecked(false);
-					}
+					b.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_green));
 				}
 			}
 		}
+
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 			return inflater.inflate(R.layout.account_row, parent, false);
 		}
 	}
 
-	OnCheckedChangeListener enableCheckBox = new OnCheckedChangeListener() {
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			Toast.makeText(AccountListActivity.this, "" + buttonView + ", tag: " + buttonView.getTag() + ", " + isChecked, Toast.LENGTH_SHORT).show();
-		}
-	};
-	
-	OnCheckedChangeListener defaultCheckBoxClick = new OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
-			ContentValues tmp = new ContentValues();
-			tmp.put(DB.ACCOUNT.DEFAULT, isChecked ? 1 : 0);
-			String args[] = { (String)buttonView.getTag() };
-			mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
-		}
-	};
-
-	
 	OnClickListener configureButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			final String uploader = (String)v.getTag();
-			final CharSequence items[] = { "Clear uploads" };
-			final boolean selected[] = { true };
 			if (uploadManager.isConfigured(uploader)) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(AccountListActivity.this);
-				builder.setTitle("Disconnect account");
-				builder.setPositiveButton("OK",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								uploadManager.disableUploader(callback, uploader, selected[0]);
-							}
-						});
-				builder.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								// Do nothing but close the dialog
-								dialog.dismiss();
-							}
-
-						});
-				builder.setMultiChoiceItems(items, selected, new OnMultiChoiceClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1,
-							boolean arg2) {
-						selected[arg1] = arg2;
-					}
-				});
-				builder.show();
+				startActivity(uploader, true);
 			} else {
 				uploadManager.configure(callback, uploader, false);
 			}
@@ -226,16 +159,28 @@ public class AccountListActivity extends ListActivity implements Constants {
 	UploadManager.Callback callback = new UploadManager.Callback() {
 		@Override
 		public void run(String uploader, Status status) {
-			for (Cursor c : mCursors) {
-				c.requery();
+			if (status == Uploader.Status.OK) {
+				startActivity(uploader, false);
 			}
 		}
 	};
+
+	void startActivity(String uploader, boolean edit) {
+		Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
+		intent.putExtra("uploader", uploader);
+		intent.putExtra("edit", edit);
+		AccountListActivity.this.startActivityForResult(intent, UploadManager.CONFIGURE_REQUEST + 1000);
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == UploadManager.CONFIGURE_REQUEST) {
 			uploadManager.onActivityResult(requestCode, resultCode, data);
+		} else if (requestCode == UploadManager.CONFIGURE_REQUEST + 1000) {
+			uploadManager.clear();
+			for (Cursor c : mCursors) {
+				c.requery();
+			}
 		}
 	}
 

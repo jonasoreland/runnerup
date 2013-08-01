@@ -21,18 +21,11 @@
     android:orientation="vertical" >
 
     <TableRow
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/TableRow1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal" >
-
-        <TextView
-            android:id="@+id/accountList_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="id"
-            android:visibility="gone" />
 
         <TextView
             android:id="@+id/accountList_name"
@@ -47,37 +40,19 @@
             android:layout_height="wrap_content"
             android:scaleType="center"
             />
-
-    </TableRow>
-
-    <TableRow
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/TableRow2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
+        
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />                
+        
         <Button
             android:id="@+id/accountList_configureButton"
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            style="@style/ButtonText"
+	        android:background="@drawable/btn_blue"
             android:text="Configure" />
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:text="" />
-
-        <CheckBox
-            android:id="@+id/accountList_autoUpload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Upload" />
 
     </TableRow>
 

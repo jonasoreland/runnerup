@@ -37,7 +37,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 14;
+	private static final int DBVERSION = 15;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -81,7 +81,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ "_id integer primary key autoincrement, " + DB.ACCOUNT.NAME
 			+ " text not null, " + DB.ACCOUNT.DESCRIPTION + " text, "
 			+ DB.ACCOUNT.URL + " text, " + DB.ACCOUNT.FORMAT
-			+ " text not null, " + DB.ACCOUNT.DEFAULT
+			+ " text not null, " + DB.ACCOUNT.FLAGS
 			+ " int not null default 1, " + DB.ACCOUNT.ENABLED
 			+ " int not null default 1," + DB.ACCOUNT.AUTH_METHOD
 			+ " text not null, " + DB.ACCOUNT.AUTH_CONFIG + " text, "
@@ -172,7 +172,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 						DB.ACCOUNT.URL + ", " +
 						DB.ACCOUNT.DESCRIPTION + ", " +
 						DB.ACCOUNT.FORMAT + ", " +
-						DB.ACCOUNT.DEFAULT + ", " +
+						DB.ACCOUNT.FLAGS + ", " +
 						DB.ACCOUNT.ENABLED + ", " +
 						DB.ACCOUNT.AUTH_METHOD + ", " +
 						DB.ACCOUNT.AUTH_CONFIG + ") " +
@@ -182,7 +182,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 						DB.ACCOUNT.URL + ", " +
 						DB.ACCOUNT.DESCRIPTION + ", " +
 						DB.ACCOUNT.FORMAT + ", " +
-						DB.ACCOUNT.DEFAULT + ", " +
+						DB.ACCOUNT.FLAGS + ", " +
 						DB.ACCOUNT.ENABLED + ", " +
 						DB.ACCOUNT.AUTH_METHOD + ", " +
 						DB.ACCOUNT.AUTH_CONFIG + " " +
@@ -214,6 +214,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
+			values.put(DB.ACCOUNT.URL, "http://connect.garmin.com/");
 			insertAccount(arg0, values);
 		}
 
@@ -224,6 +225,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "runkeeper");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
+			values.put(DB.ACCOUNT.URL, "http://runkeeper.com/");
 			insertAccount(arg0, values);
 		}
 
@@ -232,8 +234,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.NAME, JoggSE.NAME);
 			values.put(DB.ACCOUNT.FORMAT, "gpx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-			values.put(DB.ACCOUNT.DEFAULT, 1);
 			values.put(DB.ACCOUNT.ICON, R.drawable.a5_jogg);
+			values.put(DB.ACCOUNT.URL, "http://jogg.se/");
 			insertAccount(arg0, values);
 		}
 
@@ -243,6 +245,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
+			values.put(DB.ACCOUNT.URL, "http://www.funbeat.se/");
 			insertAccount(arg0, values);
 		}
 
@@ -252,6 +255,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a3_mapmyrun_logo);
+			values.put(DB.ACCOUNT.URL, "http://www.mapmyrun.com/");
 			insertAccount(arg0, values);
 		}
 
@@ -261,6 +265,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "nikeplus,gpx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a4_nikeplus);
+			values.put(DB.ACCOUNT.URL, "http://nikeplus.nike.com");
 			insertAccount(arg0, values);
 		}
 
@@ -270,6 +275,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "endomondotrack");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a6_endomondo);
+			values.put(DB.ACCOUNT.URL, "http://www.endomondo.com");
 			insertAccount(arg0, values);
 		}
 
@@ -279,6 +285,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.FORMAT, "tcx");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
+			values.put(DB.ACCOUNT.URL, "http://www.runningahead.com");
 			insertAccount(arg0, values);
 		}
 	}
