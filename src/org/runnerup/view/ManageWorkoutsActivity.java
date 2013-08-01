@@ -152,7 +152,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 							+ "  acc._id, " // 0
 							+ ("  acc." + DB.ACCOUNT.NAME + ", ")
 							+ ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
-							+ ("  acc." + DB.ACCOUNT.DEFAULT + ", ")
 							+ ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
 							+ ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
 							+ ("  acc." + DB.ACCOUNT.ENABLED + " ")
