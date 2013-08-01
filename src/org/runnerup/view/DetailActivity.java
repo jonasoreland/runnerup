@@ -913,10 +913,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			boolean smoothData = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this).getBoolean(getResources().getString(R.string.pref_pace_graph_smoothing), true); 
 			if (smoothData) {
 				GraphFilter f = new GraphFilter(paceList);
-				String filterList = "mm(31);kz(5,13);sg(5)";
-				filterList = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this).getString(getResources().getString(R.string.pref_pace_graph_smoothing_filters), filterList);
-				String filters[] = filterList.split(";");
-				System.err.print("Applying filters(" + filters.length +"):");
+				final String defaultFilterList = "mm(31);kz(5,13);sg(5)";
+				final String filterList = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this).getString(getResources().getString(R.string.pref_pace_graph_smoothing_filters), defaultFilterList);
+				final String filters[] = filterList.split(";");
+				System.err.print("Applying filters(" + filters.length + ", >" + filterList + "<):");
 				for (int i = 0; i < filters.length; i++) {
 					int args[] = getArgs(filters[i]);
 					if (filters[i].startsWith("mm")) {

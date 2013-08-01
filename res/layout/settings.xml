@@ -134,12 +134,12 @@
         	android:title="Smooth pace graph" />
 
 		<org.runnerup.widget.TextPreference
-        	android:defaultValue=""
+        	android:defaultValue="mm(31);kz(5,13);sg(5)"
         	android:dependency="@string/pref_pace_graph_smoothing"
         	android:key="@string/pref_pace_graph_smoothing_filters"
         	android:persistent="true"
-        	android:summary=""
-        	android:title="filter(s)" />
+        	android:summary="mm(31);kz(5,13);sg(5)"
+        	android:title="Smooth pace filter(s)" />
 		
         <org.runnerup.widget.TextPreference
             android:defaultValue="500"
