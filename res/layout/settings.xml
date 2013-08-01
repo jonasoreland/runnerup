@@ -138,6 +138,7 @@
         	android:dependency="@string/pref_pace_graph_smoothing"
         	android:key="@string/pref_pace_graph_smoothing_filters"
         	android:persistent="true"
+            android:inputType="none"
         	android:summary="mm(31);kz(5,13);sg(5)"
         	android:title="Smooth pace filter(s)" />
 		
