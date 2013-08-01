@@ -499,6 +499,12 @@ public class UploadManager {
 		callback.run(name, Uploader.Status.OK);
 	}
 
+	public void clearUploads(Callback callback, String uploader) {
+		final String args[] = { uploader };
+		mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?",  args);
+		callback.run(uploader,  Uploader.Status.OK);
+	}
+	
 	public static class WorkoutRef {
 		public WorkoutRef(String uploader, String key, String name) {
 			this.uploader = uploader;
