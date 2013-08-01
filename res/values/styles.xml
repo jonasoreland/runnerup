@@ -42,4 +42,21 @@
     <item name="android:shadowDy">1</item>
     <item name="android:shadowRadius">2</item>
 </style>
+<style name="RunHeader">
+    <item name="android:layout_width">0dp</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_weight">1</item>
+    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textSize">15sp</item>
+    <item name="android:textStyle">bold|italic</item>
+</style>
+<style name="RunInfo">
+    <item name="android:layout_width">0dp</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_weight">1</item>
+    <item name="android:gravity">right</item>
+    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textSize">20sp</item>
+    <item name="android:textStyle">bold</item>
+</style>
 </resources>
