@@ -140,9 +140,9 @@
                         android:id="@+id/notesText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
-                        android:minLines="4"
                         android:gravity="top|left"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:minLines="4"
                         android:singleLine="false" />
 
                 </LinearLayout>
