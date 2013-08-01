@@ -91,6 +91,14 @@ public class UploadManager {
 		return mDB == null;
 	}
 	
+	public void remove(String uploaderName) {
+		uploaders.remove(uploaderName);
+	}
+	
+	public void clear() {
+		uploaders.clear();
+	}
+
 	public void load(String uploaderName) {
 		String from[] = new String[] { "_id", DB.ACCOUNT.AUTH_CONFIG };
 		String args[] = { uploaderName };
@@ -102,7 +110,7 @@ public class UploadManager {
 		}
 		c.close();
 	}
-
+	
 	public Uploader add(ContentValues config) {
 		if (config == null) {
 			System.err.println("Add null!");
