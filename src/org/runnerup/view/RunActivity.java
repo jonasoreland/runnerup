@@ -74,7 +74,7 @@ public class RunActivity extends Activity implements TickListener {
 	TextView intervalPace = null;
 	TextView countdownView = null;
 	ListView workoutList = null;
-	TableRow tableRowInterval = null;
+	View tableRowInterval = null;
 	org.runnerup.workout.Step currentStep = null;
 	Formatter formatter = null;
 	
@@ -107,7 +107,7 @@ public class RunActivity extends Activity implements TickListener {
 		lapPace = (TextView) findViewById(R.id.lapPace);
 		intervalTime = (TextView) findViewById(R.id.intervalTime);
 		intervalDistance = (TextView) findViewById(R.id.intervallDistance);
-		tableRowInterval = (TableRow) findViewById(R.id.tableRowInterval);
+		tableRowInterval = (View) findViewById(R.id.tableRowInterval);
 		intervalPace = (TextView) findViewById(R.id.intervalPace);
 		countdownView = (TextView) findViewById(R.id.countdownTextView);
 		workoutList = (ListView) findViewById(R.id.workoutList);
