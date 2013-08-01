@@ -176,7 +176,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
 			System.err.println("obj: " + obj);
 			
-			if (responseCode == 200 && obj.has("ids")) {
+			if (responseCode == 200 && obj.getJSONObject("data").getJSONArray("workoutIds").length() == 1) {
 				conn.disconnect();
 				return Status.OK;
 			}
