@@ -59,7 +59,7 @@ public class AccountListActivity extends ListActivity implements Constants {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.accounts);
+		setContentView(R.layout.account_list);
 
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();
