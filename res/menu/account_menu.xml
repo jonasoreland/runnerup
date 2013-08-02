@@ -22,10 +22,10 @@
         android:orderInCategory="100"
         android:title="Clear uploads"/>
 
-    <item
-        android:id="@+id/menu_upload_workouts"
-        android:orderInCategory="100"
-        android:title="Upload (missing) workouts"/>
+<!--     <item -->
+<!--         android:id="@+id/menu_upload_workouts" -->
+<!--         android:orderInCategory="100" -->
+<!--         android:title="Upload (missing) workouts"/> -->
 
     <item
         android:id="@+id/menu_disconnect_account"

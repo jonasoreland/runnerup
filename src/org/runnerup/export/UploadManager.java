@@ -99,16 +99,19 @@ public class UploadManager {
 		uploaders.clear();
 	}
 
-	public void load(String uploaderName) {
+	public long load(String uploaderName) {
 		String from[] = new String[] { "_id", DB.ACCOUNT.AUTH_CONFIG };
 		String args[] = { uploaderName };
 		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
 				args, null, null, null, null);
+		long id = -1;
 		if (c.moveToFirst()) {
 			ContentValues config = DBHelper.get(c);
+			id = config.getAsLong("_id");
 			add(config);
 		}
 		c.close();
+		return id;
 	}
 	
 	public Uploader add(ContentValues config) {
@@ -708,5 +711,34 @@ public class UploadManager {
 				uploader.getName());
 		Encryption.decrypt(in, out, key);
 		return out.toString();
+	}
+
+	/**
+	 * Uploads all the workouts that has not been uploaded for a specific uploader
+	 */
+	public void uploadWorkouts(Callback callback, String uploader) {
+		final StringBuffer doCancel = new StringBuffer();
+		long uploaderId = load(uploader);
+		String sql = new String(
+					"SELECT count(_id) "
+					+ (" FROM " + DB.ACTIVITY.TABLE + " a ")
+					+ (" WHERE a.deleted = 0 " )
+					+ (" AND NOT EXISTS (SELECT 1 FROM " + DB.EXPORT.TABLE + " b ")
+					+ ("     WHERE a._id = b." + DB.EXPORT.ACTIVITY )
+					+ ("       AND b." + DB.EXPORT.ACCOUNT + " = " + uploaderId + ")"));
+
+		Cursor c = mDB.rawQuery(sql, null);
+		c.moveToFirst();
+		long count = c.getLong(0);
+		c.close();
+		mSpinner.setTitle("Uploading " + count + " workouts...");
+		mSpinner.setButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				doCancel.append(true);
+				mSpinner.setMessage("cancelling");
+			}
+		});
+		mSpinner.show();
 	}
 }
