@@ -34,60 +34,61 @@
 
             <TextView
                 android:id="@+id/TextView03"
-        		style="@style/RunHeader"
-        		android:gravity="right"
+                style="@style/RunHeader"
+                android:gravity="right"
                 android:text="Time" />
 
             <TextView
                 android:id="@+id/TextView04"
-        		style="@style/RunHeader"
-        		android:gravity="right"
+                style="@style/RunHeader"
+                android:gravity="right"
                 android:text="Distance" />
 
             <TextView
                 android:id="@+id/activitySpeedPace"
-        		style="@style/RunHeader"
-        		android:gravity="right"
+                style="@style/RunHeader"
+                android:gravity="right"
                 android:text="Pace" />
         </TableRow>
 
         <LinearLayout
-			android:orientation="vertical"
-			android:layout_width="fill_parent"
-            android:layout_height="wrap_content" 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/countdown_background"
-            >
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/TextView01"
-        		style="@style/RunHeader"
-                android:text="Total" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/TextView01"
+                    style="@style/RunHeader"
+                    android:layout_marginLeft="10dp"
+                    android:text="Total" />
+            </LinearLayout>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/activityTime"
+                    style="@style/RunInfo"
+                    android:text="32:57" />
+
+                <TextView
+                    android:id="@+id/activityDistance"
+                    style="@style/RunInfo"
+                    android:text="8.34" />
+
+                <TextView
+                    android:id="@+id/activityPace"
+                    style="@style/RunInfo"
+                    android:text="4:34" />
+            </TableRow>
         </LinearLayout>
-
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/activityTime"
-        		style="@style/RunInfo"
-                android:text="32:57"/>
-
-            <TextView
-                android:id="@+id/activityDistance"
-        		style="@style/RunInfo"
-                android:text="8.34" />
-
-            <TextView
-                android:id="@+id/activityPace"
-        		style="@style/RunInfo"
-                android:text="4:34" />
-        </TableRow>
-		</LinearLayout>
 
         <LinearLayout
             android:id="@+id/tableRowInterval"
@@ -102,7 +103,8 @@
 
                 <TextView
                     android:id="@+id/TextView01"
-	        		style="@style/RunHeader"
+                    style="@style/RunHeader"
+                    android:layout_marginLeft="10dp"
                     android:text="Interval" />
             </LinearLayout>
 
@@ -113,61 +115,61 @@
 
                 <TextView
                     android:id="@+id/intervalTime"
-	        		style="@style/RunInfo"
+                    style="@style/RunInfo"
                     android:text="20:34" />
 
                 <TextView
                     android:id="@+id/intervallDistance"
-	        		style="@style/RunInfo"
+                    style="@style/RunInfo"
                     android:text="5.67" />
 
                 <TextView
                     android:id="@+id/intervalPace"
-	        		style="@style/RunInfo"
+                    style="@style/RunInfo"
                     android:text="4:24" />
             </TableRow>
         </LinearLayout>
 
         <LinearLayout
-			android:orientation="vertical"
-			android:layout_width="fill_parent"
-            android:layout_height="wrap_content" 
-            android:background="@drawable/countdown_background"
-            >
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/TextView01"
-	      		style="@style/RunHeader"
-                android:text="Lap" />
-        </LinearLayout>
-
-        <TableRow
-            android:id="@+id/tableRow2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-             >
+            android:background="@drawable/countdown_background"
+            android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/lapTime"
-        		style="@style/RunInfo"
-                android:text="2:34" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/lapDistance"
-        		style="@style/RunInfo"
-                android:text="0.67" />
+                <TextView
+                    android:id="@+id/TextView01"
+                    style="@style/RunHeader"
+                    android:layout_marginLeft="10dp"
+                    android:text="Lap" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/lapPace"
-        		style="@style/RunInfo"
-                android:text="4:14" />
-        </TableRow>
-    	</LinearLayout>
-	</TableLayout>
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right" >
+
+                <TextView
+                    android:id="@+id/lapTime"
+                    style="@style/RunInfo"
+                    android:text="2:34" />
+
+                <TextView
+                    android:id="@+id/lapDistance"
+                    style="@style/RunInfo"
+                    android:text="0.67" />
+
+                <TextView
+                    android:id="@+id/lapPace"
+                    style="@style/RunInfo"
+                    android:text="4:14" />
+            </TableRow>
+        </LinearLayout>
+    </TableLayout>
         
     <LinearLayout
         android:id="@+id/countdownLayout"
