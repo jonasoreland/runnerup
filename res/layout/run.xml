@@ -47,6 +47,7 @@
             <TextView
                 android:id="@+id/activitySpeedPace"
                 style="@style/RunHeader"
+                android:layout_marginRight="3dp"
                 android:gravity="right"
                 android:text="Pace" />
         </TableRow>
@@ -86,6 +87,7 @@
                 <TextView
                     android:id="@+id/activityPace"
                     style="@style/RunInfo"
+                    android:layout_marginRight="3dp"
                     android:text="4:34" />
             </TableRow>
         </LinearLayout>
@@ -126,6 +128,7 @@
                 <TextView
                     android:id="@+id/intervalPace"
                     style="@style/RunInfo"
+                    android:layout_marginRight="3dp"
                     android:text="4:24" />
             </TableRow>
         </LinearLayout>
@@ -166,6 +169,7 @@
                 <TextView
                     android:id="@+id/lapPace"
                     style="@style/RunInfo"
+                    android:layout_marginRight="3dp"
                     android:text="4:14" />
             </TableRow>
         </LinearLayout>

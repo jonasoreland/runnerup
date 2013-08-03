@@ -44,6 +44,7 @@
         <TextView
             android:id="@+id/totalPace"
             style="@style/RunHeader"
+            android:layout_marginRight="3dp"
             android:gravity="right"
             android:text="Pace" />
     </LinearLayout>
@@ -87,6 +88,7 @@
             <TextView
                 android:id="@+id/activityPace"
                 style="@style/RunInfo"
+                android:layout_marginRight="3dp"
                 android:text="4:34" />
         </LinearLayout>
     </LinearLayout>
