@@ -80,7 +80,6 @@ public class StartActivity extends Activity implements TickListener {
 	
 	GpsTracker mGpsTracker = null;
 	org.runnerup.gpstracker.GpsStatus mGpsStatus = null;
-	TextToSpeech mSpeech = null;
 
 	TabHost tabHost = null;
 	Button startButton = null;
@@ -139,7 +138,6 @@ public class StartActivity extends Activity implements TickListener {
 		
 		bindGpsTracker();
 		mGpsStatus = new org.runnerup.gpstracker.GpsStatus(this);
-		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
 
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		setContentView(R.layout.start);
@@ -281,10 +279,6 @@ public class StartActivity extends Activity implements TickListener {
 		super.onDestroy();
 		unbindGpsTracker();
 
-		if (mSpeech != null) {
-			mSpeech.shutdown();
-			mSpeech = null;
-		}
 		if (mGpsStatus != null) {
 			mGpsStatus.stop(this);
 			mGpsStatus = null;
@@ -443,17 +437,6 @@ public class StartActivity extends Activity implements TickListener {
 			mIsBound = false;
 		}
 	}
-
-	TextToSpeech.OnInitListener mTTSOnInitListener = new TextToSpeech.OnInitListener() {
-
-		@Override
-		public void onInit(int status) {
-			if (status != TextToSpeech.SUCCESS) {
-				mSpeech = null;
-			} else {
-			}
-		}
-	};
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
