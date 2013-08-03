@@ -912,7 +912,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			System.err.println("graph: " + paceList.size() + " points");
 			
 			boolean smoothData = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this).getBoolean(getResources().getString(R.string.pref_pace_graph_smoothing), true); 
-			if (smoothData) {
+			if (paceList.size() > 0 && smoothData) {
 				GraphFilter f = new GraphFilter(paceList);
 				final String defaultFilterList = "mm(31);kz(5,13);sg(5)";
 				final String filterList = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this).getString(getResources().getString(R.string.pref_pace_graph_smoothing_filters), defaultFilterList);
