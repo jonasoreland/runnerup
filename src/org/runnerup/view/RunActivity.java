@@ -90,7 +90,6 @@ public class RunActivity extends Activity implements TickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.run);
-		bindGpsTracker();
 		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
 		formatter = new Formatter(this);
 		
@@ -395,9 +394,9 @@ public class RunActivity extends Activity implements TickListener {
 		@Override
 		public void onInit(int status) {
 			if (status != TextToSpeech.SUCCESS) {
-				mSpeech = null;
 			} else {
 			}
+			bindGpsTracker();
 		}
 	};
 
