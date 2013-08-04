@@ -52,7 +52,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 public class RunActivity extends Activity implements TickListener {
