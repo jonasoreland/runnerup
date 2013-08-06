@@ -723,7 +723,7 @@ public class UploadManager {
 	public void uploadWorkouts(Callback uploadCallback, String uploader, ArrayList<Long> list,
 			final StringBuffer cancel) {
 
-		mSpinner.setTitle("Uploading " + list.size() + " workouts to " + uploader);
+		mSpinner.setTitle("Uploading activities to " + uploader);
 		mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -806,7 +806,7 @@ public class UploadManager {
 		final ProgressDialog copySpinner = mSpinner;
 		final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
-		copySpinner.setMessage("Uploading...");
+		copySpinner.setMessage(Long.toString(1 + uploadActivities.size()) + " remaining");
 		new AsyncTask<Uploader, String, Uploader.Status>() {
 
 			@Override
