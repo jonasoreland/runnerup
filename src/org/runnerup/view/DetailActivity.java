@@ -419,6 +419,11 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			case WARMUP:
 				tv0.setText("(warmup)");
 				break;
+			case REPEAT:
+				tv0.setText("(repeat)");
+				break;
+			default:
+				break;
 			
 			}
 			TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
