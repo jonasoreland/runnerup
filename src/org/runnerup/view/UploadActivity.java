@@ -132,6 +132,7 @@ public class UploadActivity extends ListActivity implements Constants {
 			cancelUploading.append("1");
 			return;
 		}
+		super.onBackPressed();
 	}
 	
 	@Override
