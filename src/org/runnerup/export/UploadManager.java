@@ -100,7 +100,7 @@ public class UploadManager {
 	}
 
 	public long load(String uploaderName) {
-		String from[] = new String[] { "_id", DB.ACCOUNT.AUTH_CONFIG };
+		String from[] = new String[] { "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG };
 		String args[] = { uploaderName };
 		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
 				args, null, null, null, null);
@@ -714,31 +714,119 @@ public class UploadManager {
 	}
 
 	/**
-	 * Uploads all the workouts that has not been uploaded for a specific uploader
+	 * Upload set of activities for a specific uploader
 	 */
-	public void uploadWorkouts(Callback callback, String uploader) {
-		final StringBuffer doCancel = new StringBuffer();
-		long uploaderId = load(uploader);
-		String sql = new String(
-					"SELECT count(_id) "
-					+ (" FROM " + DB.ACTIVITY.TABLE + " a ")
-					+ (" WHERE a.deleted = 0 " )
-					+ (" AND NOT EXISTS (SELECT 1 FROM " + DB.EXPORT.TABLE + " b ")
-					+ ("     WHERE a._id = b." + DB.EXPORT.ACTIVITY )
-					+ ("       AND b." + DB.EXPORT.ACCOUNT + " = " + uploaderId + ")"));
+	ArrayList<Long> uploadActivities = null;
+	Callback uploadWorkoutsCallback = null;
+	StringBuffer cancelUploading = null;
+	
+	public void uploadWorkouts(Callback uploadCallback, String uploader, ArrayList<Long> list,
+			final StringBuffer cancel) {
 
-		Cursor c = mDB.rawQuery(sql, null);
-		c.moveToFirst();
-		long count = c.getLong(0);
-		c.close();
-		mSpinner.setTitle("Uploading " + count + " workouts...");
-		mSpinner.setButton("Cancel", new DialogInterface.OnClickListener() {
+		mSpinner.setTitle("Uploading " + list.size() + " workouts to " + uploader);
+		mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				doCancel.append(true);
-				mSpinner.setMessage("cancelling");
+				synchronized (cancel) {
+					cancel.append('t');
+				}
+				mSpinner.setMessage("Cancelling...please wait");
 			}
 		});
+		mSpinner.setCancelable(false);
+		mSpinner.setCanceledOnTouchOutside(false);
+		mSpinner.setMax(list.size());
+		
+		load(uploader);
+		currentUploader = uploaders.get(uploader);
+		if (currentUploader == null) {
+			uploadCallback.run(uploader, Status.INCORRECT_USAGE);
+			return;
+		}
+		cancelUploading = cancel;
+		uploadWorkoutsCallback = uploadCallback;
+		uploadActivities = list;
 		mSpinner.show();
+		
+		mSpinner.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				synchronized (cancel) {
+					cancel.append('t');
+				}
+				mSpinner.setMessage("Cancelling...please wait");
+			}
+		});
+		
+		doLogin(new Callback() {
+			@Override
+			public void run(String uploader, Status status) {
+				if (checkCancel(cancelUploading)) {
+					mSpinner.cancel();
+					uploadWorkoutsCallback.run(uploader, Uploader.Status.CANCEL);
+					return;
+				}
+				
+				if (status != Status.OK) {
+					mSpinner.cancel();
+					uploadWorkoutsCallback.run(uploader, status);
+					return;
+				}
+				uploadNextActivity(uploader);
+			}
+		});
+	}
+
+	protected boolean checkCancel(StringBuffer cancel) {
+		synchronized(cancel) {
+			return cancel.length() > 0;
+		}
+	}
+
+	void uploadNextActivity(final String uploader) {
+		if (checkCancel(cancelUploading)) {
+			mSpinner.cancel();
+			uploadWorkoutsCallback.run(uploader, Uploader.Status.CANCEL);
+			return;
+		}
+
+		if (uploadActivities.size() == 0) {
+			mSpinner.cancel();
+			uploadWorkoutsCallback.run(uploader, Uploader.Status.OK);
+			return;
+		}
+
+		mSpinner.setProgress(uploadActivities.size());
+		long id = uploadActivities.get(0);
+		uploadActivities.remove(0);
+		doUploadMulti(id);
+	}
+
+	private void doUploadMulti(final long id) {
+		final ProgressDialog copySpinner = mSpinner;
+		final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
+
+		copySpinner.setMessage("Uploading...");
+		new AsyncTask<Uploader, String, Uploader.Status>() {
+
+			@Override
+			protected Uploader.Status doInBackground(Uploader... params) {
+				try {
+					return params[0].upload(copyDB, id);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return Uploader.Status.ERROR;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Uploader.Status result) {
+				if (result == Uploader.Status.OK) {
+					uploadOK(copySpinner, copyDB);
+				}
+				copyDB.close();
+				uploadNextActivity(currentUploader.getName());
+			}
+		}.execute(currentUploader);
 	}
 }

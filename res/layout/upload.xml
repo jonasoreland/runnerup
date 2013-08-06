@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -14,12 +14,11 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
+  -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
+    android:id="@+id/tab1Layout"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_horizontal"
+    android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -30,7 +29,7 @@
         android:gravity="center|center_horizontal|center_vertical" >
 
         <TextView
-            android:id="@+id/accountList_name"
+            android:id="@+id/accountUploadList_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -39,54 +38,57 @@
             android:text="FunBeat" />
 
         <ImageView
-            android:id="@+id/accountList_icon"
+            android:id="@+id/accountUploadList_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/accountList_name"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/accountList_name"
+            android:layout_toRightOf="@+id/accountUploadList_name"
             android:scaleType="center" />
     </LinearLayout>
-
-   	<TableLayout
-		android:id="@+id/accountTable"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/name" >
-
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
-
-    </TableLayout>
     
-    <Button
-        android:id="@+id/disconnectAccountButton"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_red"
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/accountUploadButtons"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/name"
+        android:scrollbarAlwaysDrawVerticalTrack="true" >
+
+    </ListView>
+    
+    <LinearLayout
+        android:id="@+id/accountUploadButtons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/accountUploadButton"
-        android:text="Disconnect" />
+        android:layout_above="@id/accountUploadButton"
+        android:orientation="horizontal" >
 
-    <Button
+        android:layout_above="@+id/accountUploadButton"
+        >
+
+        <Button
+            android:id="@+id/accountUploadSetAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Select all" />
+
+        <Button
+            android:id="@+id/accountUploadClearAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Clear all" />
+    </LinearLayout>
+
+	<Button
         android:id="@+id/accountUploadButton"
         style="@style/ButtonText"
         android:background="@drawable/btn_blue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/okAccountButton"
+		android:layout_alignParentBottom="true"
         android:text="Upload" />
-    
-    <Button
-        android:id="@+id/okAccountButton"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_green"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="OK" />
     
 </RelativeLayout>

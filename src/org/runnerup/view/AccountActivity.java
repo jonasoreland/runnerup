@@ -50,7 +50,10 @@ import android.widget.TextView;
 
 public class AccountActivity extends Activity implements Constants {
 
+	long uploaderID = -1;
 	String uploader = null;
+	Integer uploaderIcon = null;
+	
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
@@ -77,6 +80,11 @@ public class AccountActivity extends Activity implements Constants {
 		{
 			Button btn = (Button) findViewById(R.id.okAccountButton);
 			btn.setOnClickListener(okButtonClick);
+		}
+
+		{
+			Button btn = (Button) findViewById(R.id.accountUploadButton);
+			btn.setOnClickListener(uploadButtonClick);
 		}
 
 		{
@@ -116,6 +124,7 @@ public class AccountActivity extends Activity implements Constants {
 		
 		if (c.moveToFirst()) {
 			ContentValues tmp = DBHelper.get(c);
+			uploaderID = tmp.getAsLong("_id");
 			uploadManager.add(tmp);
 			
 			{
@@ -129,6 +138,7 @@ public class AccountActivity extends Activity implements Constants {
 					im.setVisibility(View.VISIBLE);
 					tv.setVisibility(View.GONE);
 					im.setBackgroundResource(tmp.getAsInteger(DB.ACCOUNT.ICON));
+					uploaderIcon = tmp.getAsInteger(DB.ACCOUNT.ICON);
 				}
 			}
 
@@ -212,10 +222,15 @@ public class AccountActivity extends Activity implements Constants {
 		}
 	};
 	
-	OnClickListener uploadWorkoutsButtonClick = new OnClickListener() {
+	OnClickListener uploadButtonClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			uploadManager.uploadWorkouts(callback, uploader);
+			final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
+			intent.putExtra("uploader", uploader);
+			intent.putExtra("uploaderID", uploaderID);
+			if (uploaderIcon != null)
+				intent.putExtra("uploaderIcon", uploaderIcon.intValue());
+			AccountActivity.this.startActivityForResult(intent, 113);
 		}
 	};
 
