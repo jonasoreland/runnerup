@@ -105,6 +105,8 @@ public class PauseStep extends Step {
 		case STEP:
 		case LAP:
 			return elapsedTime / 1000;
+		case WORKOUT:
+			break;
 		}
 		return super.getTime(w, s);
 	}
