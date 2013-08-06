@@ -421,7 +421,7 @@ public class UploadManager {
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
 				if (result == Uploader.Status.OK) {
-					uploadOK(copySpinner, copyDB);
+					uploadOK(copySpinner, copyDB, mID);
 				}
 				copyDB.close();
 				nextUploader();
@@ -429,11 +429,11 @@ public class UploadManager {
 		}.execute(currentUploader);
 	}
 
-	private void uploadOK(ProgressDialog copySpinner, SQLiteDatabase copyDB) {
+	private void uploadOK(ProgressDialog copySpinner, SQLiteDatabase copyDB, long id) {
 		copySpinner.setMessage("Saving");
 		ContentValues tmp = new ContentValues();
 		tmp.put(DB.EXPORT.ACCOUNT, currentUploader.getId());
-		tmp.put(DB.EXPORT.ACTIVITY, mID);
+		tmp.put(DB.EXPORT.ACTIVITY, id);
 		tmp.put(DB.EXPORT.STATUS, 0);
 		copyDB.insert(DB.EXPORT.TABLE, null, tmp);
 	}
@@ -822,7 +822,7 @@ public class UploadManager {
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
 				if (result == Uploader.Status.OK) {
-					uploadOK(copySpinner, copyDB);
+					uploadOK(copySpinner, copyDB, id);
 				}
 				copyDB.close();
 				uploadNextActivity(currentUploader.getName());
