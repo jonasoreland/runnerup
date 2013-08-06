@@ -378,6 +378,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 			return formatRemainingDistance(target, value);
 		case TIME:
 			return formatRemainingTime(target, value);
+		case PACE:
+		case SPEED:
+			break;
 		}
 		return "";
 	}
