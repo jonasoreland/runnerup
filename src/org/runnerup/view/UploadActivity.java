@@ -139,6 +139,7 @@ public class UploadActivity extends ListActivity implements Constants {
 		super.onDestroy();
 		mDB.close();
 		mDBHelper.close();
+		uploadManager.close();
 	}
 
 	void fillData() {
