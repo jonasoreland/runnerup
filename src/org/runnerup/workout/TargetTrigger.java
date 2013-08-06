@@ -160,6 +160,11 @@ public class TargetTrigger extends Trigger {
 				measure_time[0] = time_now;
 				measure_distance[0] = distance_now;
 			}
+			break;
+		case DISTANCE:
+			break;
+		case TIME:
+			break;
 		}
 	}
 
@@ -186,7 +191,12 @@ public class TargetTrigger extends Trigger {
 				assert(dimension == Dimension.SPEED);
 				return delta_distance / delta_time;
 			}
+		case DISTANCE:
+			break;
+		case TIME:
+			break;
 		}
+		
 		return 0;
 	}
 
