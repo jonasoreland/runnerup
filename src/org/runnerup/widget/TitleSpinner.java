@@ -134,10 +134,8 @@ public class TitleSpinner extends LinearLayout {
 			mType = Type.TS_NUMBERPICKER;
 			setupNumberPicker(context, arr, defaultValue);
 		} else {
-			String s = null;
-			s.charAt(8);
+			arr = null; // force null pointer exception
 		}
-
 		
 		CharSequence key = arr.getString(R.styleable.TitleSpinner_android_key);
 		if (key != null) {
@@ -503,6 +501,8 @@ public class TitleSpinner extends LinearLayout {
 		case TS_DURATIONPICKER:
 		case TS_DISTANCEPICKER:
 		case TS_NUMBERPICKER:
+		case TS_DATEPICKER:
+		case TS_TIMEPICKER:
 			final String val = pref.getString(mKey, defaultValue == null ? "" : defaultValue);
 			setValue(val);
 			break;
