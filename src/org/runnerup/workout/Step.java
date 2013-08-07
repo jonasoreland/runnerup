@@ -210,6 +210,9 @@ public class Step implements TickComponent {
 				case DISTANCE:
 					tmp.put(DB.LAP.PLANNED_DISTANCE, (long) durationValue);
 					break;
+				case PACE:
+				case SPEED:
+					break;
 				}
 			}
 			if (targetType != null) {
@@ -221,6 +224,10 @@ public class Step implements TickComponent {
 					if (targetValue.maxValue != 0) {
 						tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue.maxValue);
 					}
+					break;
+				case DISTANCE:
+				case TIME:
+					break;
 				}
 			}
 			s.newLap(tmp);
