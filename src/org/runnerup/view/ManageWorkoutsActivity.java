@@ -16,7 +16,15 @@
  */
 package org.runnerup.view;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,10 +38,12 @@ import org.runnerup.export.UploadManager.WorkoutRef;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants;
+import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -41,8 +51,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,6 +112,120 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		
 		requery();
 		listLocal();
+
+		Uri data = getIntent().getData();
+		if (data != null) {
+			getIntent().setData(null);
+			String fileName = getFilename(data);
+			if (fileName == null)
+				fileName = "<noname>";
+			
+			try {
+				importData(fileName, data);
+			} catch (Exception e) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("Problem");
+				builder.setMessage("Failed to import: " + fileName);
+				builder.setPositiveButton("OK, darn!",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+								ManageWorkoutsActivity.this.finish();
+								return;
+							}
+						});
+				builder.show();
+				return;
+			}
+			return;
+		}
+		// launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
+	}
+
+	private String getFilename(Uri data) {
+		String name = null;
+		Cursor c = getContentResolver().query(data, null, null, null, null);
+		c.moveToFirst();
+		final int fileNameColumnId = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+		if (fileNameColumnId >= 0)
+			name = c.getString(fileNameColumnId);
+		c.close();
+		
+		return name;
+	}
+	
+	private void importData(final String fileName, final Uri data) throws Exception {
+		final String scheme = data.getScheme();
+
+		if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+			final ContentResolver cr = getContentResolver();
+			InputStream is = cr.openInputStream(data);
+			if (is == null) {
+				throw new Exception("Failed to get imnput stream"); 
+			}
+
+			Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)));
+			is.close();
+			if (w == null)
+				throw new Exception("Failed to parse content");
+
+			System.err.println("all OK");
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Import workout");
+			builder.setMessage("Do you want to import workout: " + fileName);
+			builder.setPositiveButton("Yes!",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							try {
+								saveImport(fileName, cr.openInputStream(data));
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							launchMain(fileName);
+							return;
+						}
+					});
+			builder.setNegativeButton("No way",
+					new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					// Do nothing but close the dialog
+					dialog.dismiss();
+					finish();
+					return;
+				}
+			});
+			builder.show();
+			return;
+		}
+		
+		throw new Exception("Failed to importData");
+	}
+
+	private void saveImport(String file, InputStream is) throws IOException {
+		File f = WorkoutSerializer.getFile(this, file);
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(f));
+		BufferedInputStream in = new BufferedInputStream(is);
+		byte buf[] = new byte[1024];
+		while (in.read(buf) > 0) {
+			out.write(buf);
+		}
+		in.close();
+		out.close();
+	}
+	
+	protected void launchMain(String fileName) {
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		pref.edit().putString("advancedWorkout", fileName).commit();
+
+		Intent intent = new Intent(this, MainLayout.class);
+		intent.putExtra("mode", StartActivity.TAB_ADVANCED);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
+		finish();
+		return;
 	}
 
 	private void handleButtons() {
@@ -308,7 +434,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		f.delete();
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 		if (selected.workoutName.contentEquals(pref.getString("advancedWorkout", ""))) {
-			pref.edit().putString("advancedWorkout", "");
+			pref.edit().putString("advancedWorkout", "").commit();
 		}
 		listLocal();
 		

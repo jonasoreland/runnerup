@@ -54,7 +54,7 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-		</activity>
+  		</activity>
 	
 		<activity android:name=".view.StartActivity"
 		    android:screenOrientation="portrait" >
@@ -103,6 +103,12 @@
 		
 		<activity android:name=".view.ManageWorkoutsActivity"
 		    android:screenOrientation="portrait" >
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+  				<action android:name="android.intent.action.EDIT" />
+  				<category android:name="android.intent.category.DEFAULT" />
+  				<data android:mimeType="application/vnd.garmin.workout+json"/>
+			</intent-filter>
 		</activity>
 		
 		<activity android:name=".export.oauth2client.OAuth2Activity"

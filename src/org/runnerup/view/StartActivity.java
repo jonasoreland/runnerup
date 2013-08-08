@@ -170,7 +170,7 @@ public class StartActivity extends Activity implements TickListener {
 		
 		tabHost.setOnTabChangedListener(onTabChangeListener);
 		tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
-		
+
 		CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
 		goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
 		simpleType = (TitleSpinner)findViewById(R.id.basicType);
@@ -253,6 +253,16 @@ public class StartActivity extends Activity implements TickListener {
 		manualPace = (TitleSpinner)findViewById(R.id.manualPace);
 		manualPace.setVisibility(View.GONE);
 		manualNotes = (EditText)findViewById(R.id.manualNotes);
+
+		if (getParent().getIntent() != null) {
+			Intent i = getParent().getIntent();
+			if (i.hasExtra("mode")) {
+				if (i.getStringExtra("mode").equals(TAB_ADVANCED)) {
+					tabHost.setCurrentTab(2);
+					i.removeExtra("mode");
+				}
+			}
+		}
 	}
 
 	@Override
