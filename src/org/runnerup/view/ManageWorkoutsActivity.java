@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.runnerup.R;
+import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.UploadManager.Callback;
@@ -88,6 +89,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 	CompoundButton currentlySelectedWorkout = null;
 	Button downloadButton = null;
 	Button deleteButton = null;
+	Button shareButton = null;
 	
 	UploadManager uploadManager = null;
 	
@@ -107,6 +109,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		downloadButton.setOnClickListener(downloadButtonClick);
 		deleteButton = (Button) findViewById(R.id.deleteWorkoutButton);
 		deleteButton.setOnClickListener(deleteButtonClick);
+		shareButton = (Button) findViewById(R.id.shareWorkoutButton);
+		shareButton.setOnClickListener(shareButtonClick);
 		
 		handleButtons();
 		
@@ -231,6 +235,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		if (currentlySelectedWorkout == null) {
 			downloadButton.setEnabled(false);
 			deleteButton.setEnabled(false);
+			shareButton.setEnabled(false);
 			return;
 		}
 
@@ -238,9 +243,11 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		if (PHONE_STRING.contentEquals(selected.uploader)) {
 			downloadButton.setEnabled(false);
 			deleteButton.setEnabled(true);
+			shareButton.setEnabled(true);
 		} else {
 			downloadButton.setEnabled(true);
 			deleteButton.setEnabled(false);
+			shareButton.setEnabled(false);
 		}
 	}
 
@@ -464,6 +471,28 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 					uploading = false;
 					listLocal();
 				}});
+		}
+	};
+
+	private OnClickListener shareButtonClick = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			if (currentlySelectedWorkout == null)
+				return;
+
+			final Activity context = ManageWorkoutsActivity.this;
+			final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+		    final String name = selected.workoutName;
+	    	final Intent intent = new Intent(Intent.ACTION_SEND);
+		 
+	    	intent.putExtra(Intent.EXTRA_SUBJECT, "RunnerUp workout: " + name);
+	    	intent.putExtra(Intent.EXTRA_TEXT, "Hi\nHere is a workout I think you might like.");
+
+	    	intent.setType(WorkoutFileProvider.MIME);
+	    	Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name);
+	    	intent.putExtra(Intent.EXTRA_STREAM, uri);
+			context.startActivity(Intent.createChooser(intent, "Share workout..."));
 		}
 	};
 
