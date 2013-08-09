@@ -109,6 +109,13 @@
   				<category android:name="android.intent.category.DEFAULT" />
   				<data android:mimeType="application/vnd.garmin.workout+json"/>
 			</intent-filter>
+<!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+  				<action android:name="android.intent.action.EDIT" />
+  				<category android:name="android.intent.category.DEFAULT" />
+  				<data android:mimeType="application/json"/>
+			</intent-filter>
 		</activity>
 		
 		<activity android:name=".export.oauth2client.OAuth2Activity"
