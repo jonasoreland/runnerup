@@ -435,8 +435,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		if (selected.workoutName.contentEquals(pref.getString("advancedWorkout", ""))) {
 			pref.edit().putString("advancedWorkout", "").commit();
 		}
+		currentlySelectedWorkout = null;
 		listLocal();
-		
 	}
 	
 	public OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
