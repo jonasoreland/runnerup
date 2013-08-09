@@ -50,6 +50,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -69,6 +70,7 @@ import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
@@ -176,21 +178,43 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 		if (w == null)
 			throw new Exception("Failed to parse content");
 
+		final boolean exists = WorkoutSerializer.getFile(this,  fileName).exists();
+		final boolean selected[] = { false } ;
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Import workout");
-		builder.setMessage("Do you want to import workout: " + fileName);
+		builder.setTitle("Import workout: " + fileName);
 		builder.setPositiveButton("Yes!",
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
+				String saveName = fileName;
 				try {
-					saveImport(fileName, cr.openInputStream(data));
+					if (exists && selected[0] == false) {
+						String name = new String();
+						String tmp[] = fileName.split("\\.");
+						if (tmp.length > 0) {
+							for (int i = 0; i < tmp.length - 1; i++)
+								name = name.concat(tmp[i]);
+						} else {
+							name = fileName;
+						}
+						String ending = tmp.length > 0 ? ("." + tmp[tmp.length - 1]) : "";
+						String newName = fileName;
+						for (int i = 1; i < 25; i++) {
+							newName = name + "-" + i + ending;
+							if (!WorkoutSerializer.getFile(ManageWorkoutsActivity.this, newName).exists())
+								break;
+						}
+						saveName = newName;
+						Toast.makeText(ManageWorkoutsActivity.this, "Saving as " + saveName, Toast.LENGTH_SHORT).show();
+					}
+					saveImport(saveName, cr.openInputStream(data));
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				launchMain(fileName);
+				launchMain(saveName);
 				return;
 			}
 		});
@@ -203,6 +227,19 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 				return;
 			}
 		});
+
+		if (exists) {
+			String items[] = { "Overwrite existing" };
+			builder.setMultiChoiceItems(items, selected,
+				new OnMultiChoiceClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1,
+							boolean arg2) {
+						selected[arg1] = arg2;
+					}
+				});
+		}
+		
 		builder.show();
 		return;
 	}
