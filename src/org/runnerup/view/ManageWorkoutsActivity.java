@@ -118,7 +118,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 			getIntent().setData(null);
 			String fileName = getFilename(data);
 			if (fileName == null)
-				fileName = "<noname>";
+				fileName = "noname";
 			
 			try {
 				importData(fileName, data);
@@ -143,65 +143,64 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 	}
 
 	private String getFilename(Uri data) {
+		System.out.println("scheme: " + data.toString());
 		String name = null;
-		Cursor c = getContentResolver().query(data, null, null, null, null);
-		c.moveToFirst();
-		final int fileNameColumnId = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
-		if (fileNameColumnId >= 0)
-			name = c.getString(fileNameColumnId);
-		c.close();
-		
+		if (ContentResolver.SCHEME_FILE.contentEquals(data.getScheme())) {
+			name = data.getLastPathSegment();
+		} else if (ContentResolver.SCHEME_CONTENT.contentEquals(data.getScheme())){
+			String projection[] = { MediaStore.MediaColumns.DISPLAY_NAME };
+			Cursor c = getContentResolver().query(data, projection, null, null, null);
+			if (c != null) {
+				c.moveToFirst();
+				final int fileNameColumnId = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
+				if (fileNameColumnId >= 0)
+					name = c.getString(fileNameColumnId);
+				c.close();
+			}
+		}
 		return name;
 	}
 	
 	private void importData(final String fileName, final Uri data) throws Exception {
-		final String scheme = data.getScheme();
-
-		if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
-			final ContentResolver cr = getContentResolver();
-			InputStream is = cr.openInputStream(data);
-			if (is == null) {
-				throw new Exception("Failed to get imnput stream"); 
-			}
-
-			Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)));
-			is.close();
-			if (w == null)
-				throw new Exception("Failed to parse content");
-
-			System.err.println("all OK");
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Import workout");
-			builder.setMessage("Do you want to import workout: " + fileName);
-			builder.setPositiveButton("Yes!",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							dialog.dismiss();
-							try {
-								saveImport(fileName, cr.openInputStream(data));
-							} catch (FileNotFoundException e) {
-								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							launchMain(fileName);
-							return;
-						}
-					});
-			builder.setNegativeButton("No way",
-					new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					// Do nothing but close the dialog
-					dialog.dismiss();
-					finish();
-					return;
-				}
-			});
-			builder.show();
-			return;
+		final ContentResolver cr = getContentResolver();
+		InputStream is = cr.openInputStream(data);
+		if (is == null) {
+			throw new Exception("Failed to get input stream"); 
 		}
-		
-		throw new Exception("Failed to importData");
+		Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)));
+		is.close();
+		if (w == null)
+			throw new Exception("Failed to parse content");
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Import workout");
+		builder.setMessage("Do you want to import workout: " + fileName);
+		builder.setPositiveButton("Yes!",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				try {
+					saveImport(fileName, cr.openInputStream(data));
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				launchMain(fileName);
+				return;
+			}
+		});
+		builder.setNegativeButton("No way",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				// Do nothing but close the dialog
+				dialog.dismiss();
+				finish();
+				return;
+			}
+		});
+		builder.show();
+		return;
 	}
 
 	private void saveImport(String file, InputStream is) throws IOException {
