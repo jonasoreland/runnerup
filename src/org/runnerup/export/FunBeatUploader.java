@@ -16,20 +16,27 @@
  */
 package org.runnerup.export;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.List;
+import java.util.Scanner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Encryption;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -51,11 +58,27 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	public static final String UPLOAD_URL = BASE_URL
 			+ "/importexport/upload.aspx";
 
+	public static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
+	
+	private static String APP_ID = null;
+	private static String APP_SECRET = null;
+
 	long id = 0;
 	private String username = null;
 	private String password = null;
-
+	private String loginID = null;
+	private String loginSecretHashed = null;
+	
 	FunBeatUploader(UploadManager uploadManager) {
+		if (APP_ID == null || APP_SECRET == null) {
+			try {
+				final JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+				APP_ID = tmp.getString("APP_ID");
+				APP_SECRET = tmp.getString("APP_SECRET");
+			} catch (final Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -83,6 +106,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 				tmp = new JSONObject(authToken);
 				username = tmp.getString("username");
 				password = tmp.getString("password");
+				loginID = tmp.optString("loginId", null);
+				loginSecretHashed = tmp.optString("loginSecretHashed", null);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -105,6 +130,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	public void reset() {
 		username = null;
 		password = null;
+		loginID = null;
+		loginSecretHashed = null;
 	}
 
 	@Override
@@ -113,6 +140,35 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 		HttpURLConnection conn = null;
 		cookies.clear();
 		formValues.clear();
+
+		if (_config != null) {
+			if (loginID == null || loginSecretHashed == null) {
+				if (validateAndCreateSecrets(username, password)) {
+					String authToken = _config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+					JSONObject tmp = null;
+					if (authToken != null) {
+						try {
+							tmp = new JSONObject(authToken);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+					if (tmp == null)
+						tmp = new JSONObject();
+					try {
+						tmp.put("username",  username);
+						tmp.put("password",  password);
+						tmp.put("loginId", loginID);
+						tmp.put("loginSecretHashed", loginSecretHashed);
+						_config.remove(DB.ACCOUNT.AUTH_CONFIG);
+						_config.put(DB.ACCOUNT.AUTH_CONFIG, tmp.toString());
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
 		try {
 
 			/**
@@ -201,6 +257,65 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 		return s;
 	}
 
+	private boolean validateAndCreateSecrets(String username, String password) {
+		try {
+			JSONObject req = new JSONObject();
+			req.put("username", username);
+			req.put("passwordHashed", Encryption.toHex(Encryption.SHA1(password)));
+			JSONObject reply = makeRequest("ValidateAndCreateSecrets", req).getJSONObject("d");
+			loginID = reply.getString("LoginID");
+			String loginSecret = reply.getString("LoginSecret");
+			loginSecretHashed = Encryption.calculateRFC2104HMAC(loginSecret, APP_SECRET);
+			return true;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (SignatureException e) {
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private JSONObject makeRequest(String function, JSONObject arg) {
+		HttpURLConnection conn = null;
+		try {
+			arg.put("applicationID", APP_ID);
+			if (loginID != null && loginSecretHashed != null) {
+				arg.put("loginID", loginID);
+				arg.put("loginSecret", loginSecretHashed);
+			}
+			conn = (HttpURLConnection) new URL(API_URL+function).openConnection();
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+		
+			OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+			out.write(arg.toString().getBytes("UTF-8"));
+			out.flush();
+			out.close();
+			
+			InputStream in = new BufferedInputStream(conn.getInputStream());
+			JSONObject ret = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			conn.disconnect();
+			return ret;
+		} catch (JSONException ex) {
+			ex.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (conn != null)
+			conn.disconnect();
+		return null;
+	}
+	
 	@Override
 	public Status upload(SQLiteDatabase db, long mID) {
 		TCX tcx = new TCX(db);
