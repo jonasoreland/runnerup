@@ -20,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.Random;
 
@@ -168,4 +171,18 @@ public class Encryption {
 			}
 		} 
 	}
+
+	public static byte[] SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		final MessageDigest digest = MessageDigest.getInstance("SHA-1");
+		return digest.digest(text.getBytes("UTF-8"));
+	}
+
+	public static String toHex(byte bytes[]) {
+		StringBuilder sb = new StringBuilder();
+		for (byte b : bytes) {
+		    sb.append(String.format("%02X", b));
+		}
+
+		return sb.toString();
+	} 
 }
