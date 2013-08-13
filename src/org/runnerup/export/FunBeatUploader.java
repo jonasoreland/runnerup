@@ -181,6 +181,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 				String amsg = conn.getResponseMessage();
 				getCookies(conn);
 				getFormValues(conn);
+				System.out.println("FunBeat.START_URL => code: " + responseCode + "(" + amsg + "), cookies: " + cookies.size() + ", values: " + formValues.size());
 			}
 			conn.disconnect();
 

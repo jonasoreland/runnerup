@@ -147,6 +147,13 @@ public class FormCrawler {
 
 	protected void getCookies(HttpURLConnection conn) {
 		List<String> connCookies = conn.getHeaderFields().get("Set-Cookie");
+		/**
+		 * work-around for weird android 2.2 bug
+		 * ref http://stackoverflow.com/questions/9134657/nullpointer-exception-with-cookie-on-android-2-2-works-fine-on-2-3-and-above
+		 */
+		if (connCookies == null)
+			connCookies = conn.getHeaderFields().get("set-cookie");
+
 		if (connCookies != null) {
 			cookies.addAll(connCookies);
 		}
