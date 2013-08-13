@@ -25,6 +25,7 @@ import org.runnerup.R;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -83,7 +84,7 @@ public class SettingsActivity extends PreferenceActivity {
 		@Override
 		public boolean onPreferenceClick(Preference preference) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-			String dstdir = "/mnt/sdcard";
+			String dstdir = Environment.getExternalStorageDirectory().getPath();
 			builder.setTitle("Export runnerup.db to " + dstdir);
 			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 				@Override
@@ -112,7 +113,7 @@ public class SettingsActivity extends PreferenceActivity {
 		@Override
 		public boolean onPreferenceClick(Preference preference) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-			String srcdir = "/mnt/sdcard";
+			String srcdir = Environment.getExternalStorageDirectory().getPath();
 			builder.setTitle("Import runnerup.db from " + srcdir);
 			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 				@Override
