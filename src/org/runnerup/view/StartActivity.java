@@ -268,8 +268,15 @@ public class StartActivity extends Activity implements TickListener {
 	@Override
 	public void onPause() {
 		super.onPause();
-	}
 
+		if (getAutoStartGps()) {
+			/**
+			 * If autoStartGps, then stop it during pause
+			 */
+			stopGps();
+		}
+	}
+	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -281,32 +288,56 @@ public class StartActivity extends Activity implements TickListener {
 			loadAdvanced(null);
 		}
 
+		if (mIsBound == false || mGpsTracker == null) {
+			bindGpsTracker();
+		} else {
+			onGpsTrackerBound();
+		}
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		stopGps();
 		unbindGpsTracker();
-
-		if (mGpsStatus != null) {
-			mGpsStatus.stop(this);
-			mGpsStatus = null;
-		}
+		mGpsStatus = null;
+		mGpsTracker = null;
+		
 		mDB.close();
 		mDBHelper.close();
 	}
 
 	void onGpsTrackerBound() {
-		Context ctx = getApplicationContext();
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
-		if (pref.getBoolean("pref_startgps", false) == true) {
-			mGpsStatus.start(this);
-			mGpsTracker.startLogging();
+		if (getAutoStartGps()) {
+			startGps();
 		} else {
 		}
 		updateView();
 	}
 
+	boolean getAutoStartGps() {
+		Context ctx = getApplicationContext();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
+		return pref.getBoolean("pref_startgps", false);
+	}
+
+	private void startGps() {
+		System.err.println("StartActivity.startGps()");
+		if (mGpsStatus != null && !mGpsStatus.isLogging())
+			mGpsStatus.start(this);
+		if (mGpsTracker != null && !mGpsTracker.isLogging())
+			mGpsTracker.startLogging();
+	}
+
+	private void stopGps() {
+		System.err.println("StartActivity.stopGps()");
+		if (mGpsStatus != null)
+			mGpsStatus.stop(this);
+
+		if (mGpsTracker != null)
+			mGpsTracker.stopLogging();
+	}
+	
 	OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
 
 		@Override
@@ -333,8 +364,7 @@ public class StartActivity extends Activity implements TickListener {
 			} else if (mGpsStatus.isEnabled() == false) {
 				startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 			} else if (mGpsTracker.isLogging() == false) {
-				mGpsTracker.startLogging();
-				mGpsStatus.start(StartActivity.this);
+				startGps();
 			} else if (mGpsStatus.isFixed()) {
 				Context ctx = getApplicationContext();
 				SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);

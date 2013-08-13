@@ -286,7 +286,7 @@ public class GpsTracker extends android.app.Service implements
 		}
 	}
 
-	private void stopLogging() {
+	public void stopLogging() {
 		assert (state == State.PAUSED || state == State.LOGGING);
 		wakelock(false);
 		if (state != State.INIT) {
