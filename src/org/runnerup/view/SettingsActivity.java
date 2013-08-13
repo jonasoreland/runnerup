@@ -78,6 +78,11 @@ public class SettingsActivity extends PreferenceActivity {
 			}
 		}
 	}
+
+	private String getDbFile() {
+		String from = getFilesDir().getPath()+"/../databases/runnerup.db";
+		return from;
+	}
 	
 	OnPreferenceClickListener onExportClick = new OnPreferenceClickListener() {
 
@@ -93,7 +98,7 @@ public class SettingsActivity extends PreferenceActivity {
 				}
 				
 			};
-			String from = "/data/data/org.runnerup/databases/runnerup.db";
+			String from = getDbFile();
 			String to = dstdir + "/runnerup.db.export";
 			try {
 				int cnt = copyFile(to, from);
@@ -122,7 +127,7 @@ public class SettingsActivity extends PreferenceActivity {
 				}
 				
 			};
-			String to = "/data/data/org.runnerup/databases/runnerup.db";
+			String to = getDbFile();
 			String from = srcdir + "/runnerup.db.export";
 			try {
 				int cnt = copyFile(to, from);
