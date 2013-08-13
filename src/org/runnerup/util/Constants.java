@@ -46,6 +46,7 @@ public interface Constants {
 			public static final String ALTITUDE = "altitude";
 			public static final String SPEED = "speed";
 			public static final String BEARING = "bearing";
+			public static final String HR = "hr";
 
 			public static final int TYPE_START = 1;
 			public static final int TYPE_END = 2;

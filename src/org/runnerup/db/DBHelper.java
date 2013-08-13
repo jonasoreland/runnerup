@@ -37,7 +37,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 15;
+	private static final int DBVERSION = 16;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -64,7 +64,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.LOCATION.ACCURANCY + " real, " )
 			+ ( DB.LOCATION.ALTITUDE + " real, " )
 			+ ( DB.LOCATION.SPEED + " real, " )
-			+ ( DB.LOCATION.BEARING	+ " real " )
+			+ ( DB.LOCATION.BEARING	+ " real, " )
+			+ ( DB.LOCATION.HR	+ " int " )
 			+ ");";
 
 	private static final String CREATE_TABLE_LAP = "create table "
@@ -136,6 +137,10 @@ public class DBHelper extends SQLiteOpenHelper implements
 			arg0.execSQL(CREATE_TABLE_AUDIO_SCHEMES);
 		}
 
+		if (oldVersion > 0 && oldVersion < 16 && newVersion >= 16) {
+			arg0.execSQL("alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.HR + " int");
+		}
+		
 		if (oldVersion > 0 && oldVersion < 10 && newVersion >= 10) {
 			recreateAccount(arg0);
 		}
