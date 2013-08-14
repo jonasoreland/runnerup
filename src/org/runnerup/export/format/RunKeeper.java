@@ -115,8 +115,7 @@ public class RunKeeper {
 		if (cursor.moveToFirst()) {
 			startTime = cursor.getLong(0);
 			do {
-				if(!cursor.isNull(1))
-				{
+				if (!cursor.isNull(1)) {
 					w.beginObject();
 					w.name("timestamp").value(
 							(cursor.getLong(0) - startTime) / 1000);

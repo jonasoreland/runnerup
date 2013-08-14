@@ -152,8 +152,8 @@ public class EndomondoTrack {
 						writer.write(Double.toString(c.getDouble(4)));
 					}
 					writer.write(';');
-					//hr
-					if(!c.isNull(6)){
+					// hr
+					if (!c.isNull(6)) {
 						writer.write(Integer.toString(c.getInt(6)));
 					}
 					writer.write(';');

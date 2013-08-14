@@ -159,8 +159,7 @@ public class GPX {
 							mXML.text(formatTime(time));
 							mXML.endTag("", "time");
 							
-							if(!cLocation.isNull(6))
-							{
+							if (!cLocation.isNull(6)) {
 								mXML.startTag("", "extensions");
 								mXML.startTag("", "gpxtpx:TrackPointExtension");
 								mXML.startTag("", "gpxtpx:hr");

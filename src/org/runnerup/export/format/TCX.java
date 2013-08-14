@@ -205,8 +205,7 @@ public class TCX {
 							mXML.startTag("", "DistanceMeters");
 							mXML.text("" + totalDistance);
 							mXML.endTag("", "DistanceMeters");
-							if(!cLocation.isNull(6))
-							{
+							if (!cLocation.isNull(6)) {
 								mXML.startTag("", "HeartRateBpm");
 								mXML.startTag("", "Value");
 								String bpm = Integer.toString(cLocation.getInt(6));
