@@ -77,6 +77,7 @@ public class StartActivity extends Activity implements TickListener {
 	final static String TAB_ADVANCED = "advanced";
 	final static String TAB_MANUAL   = "manual";
 	
+	boolean skipStopGps = false;
 	GpsTracker mGpsTracker = null;
 	org.runnerup.gpstracker.GpsStatus mGpsStatus = null;
 
@@ -330,7 +331,10 @@ public class StartActivity extends Activity implements TickListener {
 	}
 
 	private void stopGps() {
-		System.err.println("StartActivity.stopGps()");
+		System.err.println("StartActivity.stopGps() skipStop: " + this.skipStopGps);
+		if (skipStopGps == true)
+			return;
+		
 		if (mGpsStatus != null)
 			mGpsStatus.stop(this);
 
@@ -382,6 +386,7 @@ public class StartActivity extends Activity implements TickListener {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
 					w = advancedWorkout;
 				}
+				skipStopGps = true;
 				WorkoutBuilder.prepareWorkout(getResources(), pref, w, TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
 				WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
 				mGpsStatus.stop(StartActivity.this);
@@ -488,6 +493,7 @@ public class StartActivity extends Activity implements TickListener {
 				System.err.println("data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
 		}
 		if (requestCode == 112) {
+			skipStopGps = false;
 			if (mIsBound == false || mGpsTracker == null) {
 				bindGpsTracker();
 			} else {
