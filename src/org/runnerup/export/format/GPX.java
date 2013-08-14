@@ -81,7 +81,7 @@ public class GPX {
 			mXML.attribute("", "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			mXML.attribute("", "xmlns", "http://www.topografix.com/GPX/1/1");
 			mXML.attribute("", "xsi:schemaLocation", "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
-//			mXML.attribute("", "xmlns:gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v1");
+			mXML.attribute("", "xmlns:gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v1");
 
 			mXML.startTag("", "metadata");
 			mXML.startTag("", "time");
@@ -124,7 +124,7 @@ public class GPX {
 				+ DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
 		String[] pColumns = { DB.LOCATION.LAP, DB.LOCATION.TIME,
 				DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
-				DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE };
+				DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR };
 		Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
 				DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
 				null);
@@ -158,6 +158,19 @@ public class GPX {
 							mXML.startTag("", "time");
 							mXML.text(formatTime(time));
 							mXML.endTag("", "time");
+							
+							if(!cLocation.isNull(6))
+							{
+								mXML.startTag("", "extensions");
+								mXML.startTag("", "gpxtpx:TrackPointExtension");
+								mXML.startTag("", "gpxtpx:hr");
+								String bpm = Integer.toString(cLocation.getInt(6));
+								mXML.text(bpm);
+								mXML.endTag("", "gpxtpx:hr");
+								mXML.endTag("", "gpxtpx:TrackPointExtension");
+								mXML.endTag("", "extensions");
+							}
+							
 							mXML.endTag("", "trkpt");
 							last_time = time;
 							last_lat = lat;
