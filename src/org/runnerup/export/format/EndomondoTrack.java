@@ -90,7 +90,8 @@ public class EndomondoTrack {
 				DB.LOCATION.LATITUDE, // 2
 				DB.LOCATION.LONGITUDE, // 3
 				DB.LOCATION.ALTITUDE, // 4
-				DB.LOCATION.TYPE }; // 5
+				DB.LOCATION.TYPE,	// 5
+				DB.LOCATION.HR }; // 6
 
 		final Cursor c = mDB.query(DB.LOCATION.TABLE, pColumns, DB.LOCATION.ACTIVITY
 				+ " = " + activityId, null, null, null, null);
@@ -151,7 +152,10 @@ public class EndomondoTrack {
 						writer.write(Double.toString(c.getDouble(4)));
 					}
 					writer.write(';');
-					// hr
+					//hr
+					if(!c.isNull(6)){
+						writer.write(c.getString(6));
+					}
 					writer.write(';');
 					writer.append('\n');
 				} while (c.moveToNext());

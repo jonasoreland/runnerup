@@ -134,7 +134,7 @@ public class TCX {
 				+ DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
 		String[] pColumns = { DB.LOCATION.LAP, DB.LOCATION.TIME,
 				DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
-				DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE };
+				DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR };
 		Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
 				DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
 				null);
@@ -205,6 +205,12 @@ public class TCX {
 							mXML.startTag("", "DistanceMeters");
 							mXML.text("" + totalDistance);
 							mXML.endTag("", "DistanceMeters");
+							mXML.startTag("", "HeartRateBpm");
+							mXML.startTag("", "Value");
+							String bpm = cLocation.getString(6);
+							mXML.text(bpm);
+							mXML.endTag("", "Value");
+							mXML.endTag("", "HeartRateBpm");
 							mXML.endTag("", "Trackpoint");
 							last_time = time;
 							last_lat = lat;
