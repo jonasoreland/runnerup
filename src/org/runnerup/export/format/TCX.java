@@ -205,12 +205,15 @@ public class TCX {
 							mXML.startTag("", "DistanceMeters");
 							mXML.text("" + totalDistance);
 							mXML.endTag("", "DistanceMeters");
-							mXML.startTag("", "HeartRateBpm");
-							mXML.startTag("", "Value");
-							String bpm = cLocation.getString(6);
-							mXML.text(bpm);
-							mXML.endTag("", "Value");
-							mXML.endTag("", "HeartRateBpm");
+							if(!cLocation.isNull(6))
+							{
+								mXML.startTag("", "HeartRateBpm");
+								mXML.startTag("", "Value");
+								String bpm = Integer.toString(cLocation.getInt(6));
+								mXML.text(bpm);
+								mXML.endTag("", "Value");
+								mXML.endTag("", "HeartRateBpm");
+							}
 							mXML.endTag("", "Trackpoint");
 							last_time = time;
 							last_lat = lat;

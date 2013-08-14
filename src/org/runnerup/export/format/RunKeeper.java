@@ -91,7 +91,7 @@ public class RunKeeper {
 				w.name("notes").value(comment);
 			w.name("heart_rate");
 			w.beginArray();
-			exportHeart_Rate(activityId, startTime, w);
+			exportHeartRate(activityId, startTime, w);
 			w.endArray();
 			w.name("path");
 			w.beginArray();
@@ -106,7 +106,7 @@ public class RunKeeper {
 		cursor.close();
 	}
 
-	private void exportHeart_Rate(long activityId, long startTime, JsonWriter w) 
+	private void exportHeartRate(long activityId, long startTime, JsonWriter w) 
 			throws IOException {
 		String[] pColumns = { DB.LOCATION.TIME, DB.LOCATION.HR };
 		Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
@@ -115,11 +115,14 @@ public class RunKeeper {
 		if (cursor.moveToFirst()) {
 			startTime = cursor.getLong(0);
 			do {
-				w.beginObject();
-				w.name("timestamp").value(
-						(cursor.getLong(0) - startTime) / 1000);
-				w.name("heart_rate").value(cursor.getString(1));
-				w.endObject();
+				if(!cursor.isNull(1))
+				{
+					w.beginObject();
+					w.name("timestamp").value(
+							(cursor.getLong(0) - startTime) / 1000);
+					w.name("heart_rate").value(Integer.toString(cursor.getInt(1)));
+					w.endObject();
+				}
 			} while (cursor.moveToNext());
 		}
 		cursor.close();

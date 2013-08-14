@@ -159,14 +159,17 @@ public class GPX {
 							mXML.text(formatTime(time));
 							mXML.endTag("", "time");
 							
-							mXML.startTag("", "extensions");
-							mXML.startTag("", "gpxtpx:TrackPointExtension");
-							mXML.startTag("", "gpxtpx:hr");
-							String bpm = cLocation.getString(6);
-							mXML.text(bpm);
-							mXML.endTag("", "gpxtpx:hr");
-							mXML.endTag("", "gpxtpx:TrackPointExtension");
-							mXML.endTag("", "extensions");
+							if(!cLocation.isNull(6))
+							{
+								mXML.startTag("", "extensions");
+								mXML.startTag("", "gpxtpx:TrackPointExtension");
+								mXML.startTag("", "gpxtpx:hr");
+								String bpm = Integer.toString(cLocation.getInt(6));
+								mXML.text(bpm);
+								mXML.endTag("", "gpxtpx:hr");
+								mXML.endTag("", "gpxtpx:TrackPointExtension");
+								mXML.endTag("", "extensions");
+							}
 							
 							mXML.endTag("", "trkpt");
 							last_time = time;
