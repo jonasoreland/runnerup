@@ -4,7 +4,8 @@
 - map view                         (DONE)
 - pace graph                       (DONE)
 - workout wizard ala Garmin 410    (DONE)
-- advancved workouts               (DONE)
+- advanced workouts                (DONE)
+- share workouts                   (DONE)
 - download workouts from Garmin    (DONE)
 - text fragment for audio cues (currently translates word by word)
 - post to facebook
@@ -16,9 +17,10 @@
 - upload to Endmondo               (DONE)
 - upload to runtastic
 - upload to jogg.se                (DONE, but their GPX import isn't perfect)
-- upload to www.sports-tracker.com
 - upload to Nike+                  (DONE)
 - upload to RunningAHEAD           (DONE)
+- upload to www.sports-tracker.com
+- upload to strava
 - upload from End of activity view (DONE)
 - upload list of activities        (DONE)
 - Name/comment to activity         (DONE)
