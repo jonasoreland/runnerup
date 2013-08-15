@@ -36,4 +36,14 @@
         android:id="@+id/menu_settings"
         android:orderInCategory="100"
         android:title="Settings" />
+
+    <item
+        android:id="@+id/menu_whatsnew"
+        android:orderInCategory="110"
+        android:title="What's new" />
+    
+    <item
+        android:id="@+id/menu_rate"
+        android:orderInCategory="110"
+        android:title="Rate RunnerUp" />
 </menu>

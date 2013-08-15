@@ -19,7 +19,10 @@ package org.runnerup.view;
 import org.runnerup.R;
 import org.runnerup.util.Formatter;
 
+import android.app.AlertDialog;
+import android.app.Service;
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -27,10 +30,16 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.TabHost;
 
 public class MainLayout extends TabActivity {
@@ -101,6 +110,10 @@ public class MainLayout extends TabActivity {
 		tabHost.setBackgroundColor(Color.BLACK);
 		tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
 		tabHost.setCurrentTab(0);
+
+		if (upgradeState == UpgradeState.UPGRADE) {
+			whatsNew();
+		}
 	}
 	
 	@Override
@@ -125,10 +138,52 @@ public class MainLayout extends TabActivity {
 		case R.id.menu_settings:
 			getTabHost().setCurrentTab(3);
 			return true;
+		case R.id.menu_rate:
+			onRateClick.onClick(null);
+			break;
+		case R.id.menu_whatsnew:
+			whatsNew();
+			break;
 		}
 		if (i != null) {
 			startActivity(i);
 		}
 		return true;
+	}
+	
+	public OnClickListener onRateClick = new OnClickListener() {
+		@Override
+		public void onClick(View arg0) {
+			try {
+			Uri uri = Uri.parse("market://details?id=" + getPackageName());
+		    startActivity(new Intent(Intent.ACTION_VIEW, uri));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	};
+	
+	public void whatsNew() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+		View view = inflater.inflate(R.layout.whatsnew, null);
+		WebView wv = (WebView) view.findViewById(R.id.webView1);
+		builder.setTitle("What's new");
+		builder.setView(view);
+		builder.setPositiveButton("Rate RunnerUp", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				onRateClick.onClick(null);
+			}
+			
+		});
+		builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.show();
+		wv.loadUrl("file:///android_asset/changes.html");
 	}
 }
