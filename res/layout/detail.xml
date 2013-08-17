@@ -161,24 +161,8 @@
 	                    android:id="@+id/tabGraph"
 	                    android:layout_width="match_parent"
 	                    android:layout_height="wrap_content"
+	                    android:weightSum="1"
 	                    android:orientation="vertical" >
-	
-	                    <LinearLayout
-	                        android:id="@+id/graphLayout"
-	                        android:layout_width="match_parent"
-	                        android:layout_height="0dp"
-	                        android:orientation="horizontal"
-	                        android:layout_weight="1" >
-	                    </LinearLayout>
-	                    
-	                    <LinearLayout
-	                        android:id="@+id/graphLayout2"
-	                        android:layout_width="match_parent"
-	                        android:layout_height="0dp"
-	                        android:layout_weight="1"
-	                        android:orientation="horizontal" >
-	                    </LinearLayout>
-	                    
 	                </LinearLayout>
 				
                 <LinearLayout
