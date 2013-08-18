@@ -57,6 +57,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -109,7 +110,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	View mapView = null;
 	LatLngBounds mapBounds = null;
 	AsyncTask<String, String, Route> loadRouteTask = null;
+	LinearLayout graphTab = null;
 	GraphView graphView;
+	GraphView graphView2;
 	
 	UploadManager uploadManager = null;
 	Formatter formatter = null;
@@ -207,7 +210,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 		th.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
-		
 		{
 			ListView lv = (ListView) findViewById(R.id.laplist);
 			LapListAdapter adapter = new LapListAdapter();
@@ -220,7 +222,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			adapters.add(adapter);
 			lv.setAdapter(adapter);
 		}
-
+		graphTab = (LinearLayout) findViewById(R.id.tabGraph);
 		{
 			graphView = new LineGraphView(this, "Pace") {
 				@Override
@@ -231,8 +233,18 @@ public class DetailActivity extends FragmentActivity implements Constants {
 						return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
 				}
 			};
-			LinearLayout layout = (LinearLayout) findViewById(R.id.graphLayout);
-			layout.addView(graphView);
+
+			graphView2 = new LineGraphView(this, "HRM") {
+				@Override
+				protected String formatLabel(double value, boolean isValueX) {
+					if (!isValueX) {
+						return Integer.toString((int) Math.round(value));
+					} else {
+						return formatter.formatDistance(Formatter.TXT_SHORT,
+								(long) value);
+					}
+				}
+			};
 		}
 	}
 
@@ -701,11 +713,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		double sum_distance = 0;
 		double acc_time = 0;
 
+		int[] hr = null;
+		
+		double tot_avg_hr = 0;
+		int min_hr = Integer.MAX_VALUE;
+		int max_hr = 0;
+		
 		double avg_pace = 0;
 		double min_pace = Double.MAX_VALUE;
 		double max_pace = Double.MIN_VALUE;
 		List<GraphViewData> paceList = null;
-
+		List<GraphViewData> hrList = null;
+		
+		Boolean showHR = false;
+		
 		GraphProducer() {
 			this(GRAPH_INTERVAL_SECONDS, GRAPH_AVERAGE_SECONDS);
 		}
@@ -715,6 +736,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			this.interval = graphIntervalSeconds;
 			this.time = new double[graphAverageSeconds];
 			this.distance = new double[graphAverageSeconds];
+			
+			this.hrList = new ArrayList<GraphViewData>();
+			this.hr = new int[graphAverageSeconds];
+			
 			clear(0);
 		}
 
@@ -726,6 +751,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			for (int i = 0; i < this.distance.length; i++) {
 				time[i] = 0;
 				distance[i] = 0;
+				hr[i] = 0;
 			}
 			pos = 0;
 			sum_time = 0;
@@ -733,18 +759,21 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			acc_time = 0;
 		}
 		
-		void addObservation(double delta_time, double delta_distance, double tot_distance) {
+		void addObservation(double delta_time, double delta_distance, double tot_distance, int hr) {
 			if (delta_time < 500)
 				return;
+			if(hr > 0)
+				showHR = true;
 			
 			int p = pos % this.time.length;
 			sum_time -= this.time[p];
 			sum_distance -= this.distance[p];
 			sum_time += delta_time;
 			sum_distance += delta_distance;
-
+			
 			this.time[p] = delta_time;
 			this.distance[p] = delta_distance;
+			this.hr[p] = hr;
 			pos = (pos + 1);
 			
 			acc_time += delta_time;
@@ -757,6 +786,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		void emit(double tot_distance) {
 			double avg_time = sum_time;
 			double avg_dist = sum_distance;
+			double avg_hr = calculateAverage(hr);
 			if (true) {
 				// remove max/min pace to (maybe) get smoother graph
 				double max_pace[] = { 0, 0, 0 };
@@ -780,8 +810,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			if (avg_dist > 0) {
 				double pace = avg_time / avg_dist / 1000.0;
 				paceList.add(new GraphViewData(tot_distance, pace));
+				hrList.add(new GraphViewData(tot_distance, Math.round(avg_hr)));
 				acc_time = 0;
 				
+				tot_avg_hr += avg_hr;
 				avg_pace += pace;
 				min_pace = Math.min(min_pace,  pace);
 				max_pace = Math.max(max_pace,  pace);
@@ -956,6 +988,11 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			GraphViewSeries graphViewData = new GraphViewSeries(paceList.toArray(new GraphViewData[paceList.size()]));
 			graphView.addSeries(graphViewData); // data
 			graphView.redrawAll();
+			if(showHR)
+			{
+				GraphViewSeries graphViewData2 = new GraphViewSeries(hrList.toArray(new GraphViewData[hrList.size()]));  
+				graphView2.addSeries(graphViewData2); // data
+			}
 		}
 
 		private int[] getArgs(String s) {
@@ -973,7 +1010,33 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				return new int[0];
 			}
 		}
+
+		public boolean HasHRInfo() {
+			return showHR;
+		}
 	};
+	
+	private double calculateAverage(List<Integer> marks) {
+		Integer sum = 0;
+		if(!marks.isEmpty()) {
+			for (Integer mark : marks) {
+				sum += mark;
+			}
+			return sum.doubleValue() / marks.size();
+		}
+		return sum;
+	}
+	
+	public double calculateAverage(int[] data) {  
+	    int sum = 0;
+	    double average;
+
+	    for(int i=0; i < data.length; i++){
+	        sum = sum + data[i];
+	    }
+	    average = (double)sum/data.length;
+	    return average;    
+	}
 	
 	private void loadRoute() {
 		final GraphProducer graphData = new GraphProducer();
@@ -983,7 +1046,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				DB.LOCATION.LONGITUDE,
 				DB.LOCATION.TYPE,
 				DB.LOCATION.TIME,
-				DB.LOCATION.LAP };
+				DB.LOCATION.LAP,
+				DB.LOCATION.HR};
 		
 		loadRouteTask = new AsyncTask<String,String,Route>() {
 
@@ -1000,9 +1064,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 					double tot_distance = 0;
 					int cnt_distance = 0;
 					LatLng lastLocation = null;
-
 					long lastTime = 0;
 					int lastLap = -1;
+					int hr = 0;
 					do {
 						cnt++;
 						LatLng point = new LatLng(c.getDouble(0), c.getDouble(1));
@@ -1011,6 +1075,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 						int type = c.getInt(2);
 						long time = c.getLong(3);
 						int lap = c.getInt(4);
+						if(!c.isNull(5))
+							hr = c.getInt(5);
 						MarkerOptions m;
 						switch (type) {
 						case DB.LOCATION.TYPE_START:
@@ -1024,7 +1090,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 								} else if (lastTime != 0 && lastLocation != null) {
 									float res[] = { 0 };
 									Location.distanceBetween(lastLocation.latitude, lastLocation.longitude, point.latitude, point.longitude, res);
-									graphData.addObservation(time - lastTime, res[0], tot_distance);
+									graphData.addObservation(time - lastTime, res[0], tot_distance, hr);
+									//hrList.clear();
 									graphData.clear(tot_distance);
 								}
 								lastLap = lap;
@@ -1054,7 +1121,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 							if (lap != lastLap) {
 								graphData.clear(tot_distance);
 							} else if (lastTime != 0) {
-								graphData.addObservation(time - lastTime, res[0], tot_distance);
+								graphData.addObservation(time - lastTime, res[0], tot_distance, hr);
 							}
 							lastLap = lap;
 							lastTime = time;
@@ -1084,6 +1151,16 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				
 				if (route != null) {
 					graphData.complete(graphView);
+					if (!graphData.HasHRInfo()) {
+						graphTab.addView(graphView);
+					} else {
+						graphTab.addView(graphView,
+								new LinearLayout.LayoutParams(
+										LayoutParams.FILL_PARENT, 0, 0.5f));
+						graphTab.addView(graphView2,
+								new LinearLayout.LayoutParams(
+										LayoutParams.FILL_PARENT, 0, 0.5f));
+					}
 					if (map != null) {
 						map.addPolyline(route.path);
 						mapBounds = route.bounds.build();
