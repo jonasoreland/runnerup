@@ -725,7 +725,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		List<GraphViewData> paceList = null;
 		List<GraphViewData> hrList = null;
 		
-		Boolean showHR = false;
+		boolean showHR = false;
 		
 		GraphProducer() {
 			this(GRAPH_INTERVAL_SECONDS, GRAPH_AVERAGE_SECONDS);
@@ -988,9 +988,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			GraphViewSeries graphViewData = new GraphViewSeries(paceList.toArray(new GraphViewData[paceList.size()]));
 			graphView.addSeries(graphViewData); // data
 			graphView.redrawAll();
-			if(showHR)
-			{
-				GraphViewSeries graphViewData2 = new GraphViewSeries(hrList.toArray(new GraphViewData[hrList.size()]));  
+			if (showHR) {
+				GraphViewSeries graphViewData2 = new GraphViewSeries(
+						hrList.toArray(new GraphViewData[hrList.size()]));
 				graphView2.addSeries(graphViewData2); // data
 			}
 		}
@@ -1016,26 +1016,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		}
 	};
 	
-	private double calculateAverage(List<Integer> marks) {
-		Integer sum = 0;
-		if(!marks.isEmpty()) {
-			for (Integer mark : marks) {
-				sum += mark;
-			}
-			return sum.doubleValue() / marks.size();
-		}
-		return sum;
-	}
-	
-	public double calculateAverage(int[] data) {  
-	    int sum = 0;
-	    double average;
+	public double calculateAverage(int[] data) {
+		int sum = 0;
 
-	    for(int i=0; i < data.length; i++){
-	        sum = sum + data[i];
-	    }
-	    average = (double)sum/data.length;
-	    return average;    
+		for (int i = 0; i < data.length; i++) {
+			sum = sum + data[i];
+		}
+		double average = (double) sum / data.length;
+		return average;
 	}
 	
 	private void loadRoute() {
