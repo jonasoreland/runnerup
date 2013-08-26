@@ -472,7 +472,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			final int code = conn.getResponseCode();
 			conn.disconnect();
 			if (code == 200) {
-				parseFeedReply(feedUpdater, reply);
+				parseFeed(feedUpdater, reply);
 				return Status.OK;
 			}
 		} catch (final MalformedURLException e) {
@@ -493,46 +493,51 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 		return s;
 	}
 
-	private void parseFeedReply(final FeedUpdater feedUpdater, final JSONObject reply) throws JSONException {
+	private void parseFeed(final FeedUpdater feedUpdater, final JSONObject reply) throws JSONException {
 		final JSONArray arr = reply.getJSONArray("d");
 		for (int i = 0; i < arr.length(); i++) {
 			final JSONObject o = arr.getJSONObject(i);
-			final ContentValues c = new ContentValues();
-			c.put(FEED.ACCOUNT_ID, getId());
-			c.put(FEED.EXTERNAL_ID, o.getLong("ID"));
-			c.put(FEED.FLAGS, "brokenStartTime"); // BUH!!
-			final String t = o.getString("What");
-			if ("training".contentEquals(t)) {
-				c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-				setTrainingType(c, o.getInt("TrainingTypeID"), o.getString("TrainingTypeName"));
-				
-				c.put(FEED.START_TIME, parseDateTime(o.getString("DateTime")));
-				if (!o.isNull("Distance"))
-					c.put(FEED.DISTANCE, 1000 * o.getDouble("Distance"));
-				if (!o.isNull("Duration"))
-					c.put(FEED.DURATION, getDuration(o.getJSONObject("Duration")));
-				if (!o.isNull("PersonID"))
-					c.put(FEED.USER_ID, o.getInt("PersonID"));
-				if (!o.isNull("Firstname"))
-					c.put(FEED.USER_FIRST_NAME, o.getString("Firstname"));
-				if (!o.isNull("Lastname"))
-					c.put(FEED.USER_LAST_NAME, o.getString("Lastname"));
-				if (!o.isNull("PictureURL"))
-					c.put(FEED.USER_IMAGE_URL, o.getString("PictureURL").replace("~/", "http://www.funbeat.se/"));
-				if (!o.isNull("Description"))
-					c.put(FEED.NOTES, o.getString("Description"));
-				c.put(FEED.URL,
-						"http://www.funbeat.se/training/show.aspx?TrainingID="
-								+ Long.toString(o.getLong("ID")));
-
-				//TODO FEED.COMMENTS
-			} else {
-				continue;
+			try {
+				final String t = o.getString("What");
+				if ("training".contentEquals(t)) {
+					ContentValues c = parseWorkout(o);
+					feedUpdater.add(c);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			feedUpdater.add(c);
 		}
 	}
 
+	private ContentValues parseWorkout(JSONObject o) throws JSONException {
+		final ContentValues c = new ContentValues();
+		c.put(FEED.ACCOUNT_ID, getId());
+		c.put(FEED.EXTERNAL_ID, o.getLong("ID"));
+		c.put(FEED.FLAGS, "brokenStartTime"); // BUH!!
+		c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+		setTrainingType(c, o.getInt("TrainingTypeID"), o.getString("TrainingTypeName"));
+			
+		c.put(FEED.START_TIME, parseDateTime(o.getString("DateTime")));
+		if (!o.isNull("Distance"))
+			c.put(FEED.DISTANCE, 1000 * o.getDouble("Distance"));
+		if (!o.isNull("Duration"))
+			c.put(FEED.DURATION, getDuration(o.getJSONObject("Duration")));
+		if (!o.isNull("PersonID"))
+			c.put(FEED.USER_ID, o.getInt("PersonID"));
+		if (!o.isNull("Firstname"))
+			c.put(FEED.USER_FIRST_NAME, o.getString("Firstname"));
+		if (!o.isNull("Lastname"))
+			c.put(FEED.USER_LAST_NAME, o.getString("Lastname"));
+		if (!o.isNull("PictureURL"))
+			c.put(FEED.USER_IMAGE_URL, o.getString("PictureURL").replace("~/", "http://www.funbeat.se/"));
+		if (!o.isNull("Description"))
+			c.put(FEED.NOTES, o.getString("Description"));
+		c.put(FEED.URL,
+				"http://www.funbeat.se/training/show.aspx?TrainingID=" + Long.toString(o.getLong("ID")));
+		//TODO FEED.COMMENTS
+		return c;
+	}
+	
 	private void setTrainingType(ContentValues c, int TypeID, String typeString) {
 		if (TypeID == 25) {
 			c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);			

@@ -346,25 +346,31 @@ public class NikePlus extends FormCrawler implements Uploader {
 			JSONArray arr = feed.getJSONArray("events");
 			for (int i = 0; i < arr.length(); i++) {
 				JSONObject e = arr.getJSONObject(i);
-				String type = e.getString("eventType");
-				if (!"APPLICATION.SYNC.RUN".contentEquals(type))
-					continue;
-				
-				ContentValues c = new ContentValues();
-				c.put(FEED.ACCOUNT_ID,  getId());
-				c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
-				c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-				c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); //TODO
-				c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
-				if (e.has("payload")) {
-					JSONObject p = e.getJSONObject("payload");
-					c.put(FEED.DURATION, Long.parseLong(p.getString("duration")) / 1000);
-					c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p.getString("distance")));
+				try {
+					String type = e.getString("eventType");
+					if (!"APPLICATION.SYNC.RUN".contentEquals(type))
+						continue;
+
+					ContentValues c = new ContentValues();
+					c.put(FEED.ACCOUNT_ID, getId());
+					c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
+					c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+					c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); // TODO
+					c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
+					if (e.has("payload")) {
+						JSONObject p = e.getJSONObject("payload");
+						c.put(FEED.DURATION,
+								Long.parseLong(p.getString("duration")) / 1000);
+						c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p
+								.getString("distance")));
+					}
+					c.put(FEED.USER_FIRST_NAME, first);
+					c.put(FEED.USER_LAST_NAME, last);
+					c.put(FEED.USER_IMAGE_URL, userUrl);
+					result.add(c);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-				c.put(FEED.USER_FIRST_NAME, first);
-				c.put(FEED.USER_LAST_NAME, last);
-				c.put(FEED.USER_IMAGE_URL, userUrl);
-				result.add(c);
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -372,8 +378,6 @@ public class NikePlus extends FormCrawler implements Uploader {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
-		} catch (ParseException e1) {
-			e1.printStackTrace();
 		}
 	}
 
@@ -383,25 +387,29 @@ public class NikePlus extends FormCrawler implements Uploader {
 			JSONArray arr = feed.getJSONArray("friends");
 			for (int i = 0; i < arr.length(); i++) {
 				JSONObject e = arr.getJSONObject(i).getJSONObject("event");
-				String type = e.getString("eventType");
-				if (!"APPLICATION.SYNC.RUN".contentEquals(type))
-					continue;
+				try {
+					String type = e.getString("eventType");
+					if (!"APPLICATION.SYNC.RUN".contentEquals(type))
+						continue;
 
-				ContentValues c = new ContentValues();
-				c.put(FEED.ACCOUNT_ID,  getId());
-				c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
-				c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-				c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); //TODO
-				c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
-				if (e.has("payload")) {
-					JSONObject p = e.getJSONObject("payload");
-					c.put(FEED.DURATION, Long.parseLong(p.getString("duration")) / 1000);
-					c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p.getString("distance")));
-					c.put(FEED.USER_FIRST_NAME, p.getString("userFirstName"));
-					c.put(FEED.USER_LAST_NAME, p.getString("userLastName"));
+					ContentValues c = new ContentValues();
+					c.put(FEED.ACCOUNT_ID,  getId());
+					c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
+					c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+					c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); //TODO
+					c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
+					if (e.has("payload")) {
+						JSONObject p = e.getJSONObject("payload");
+						c.put(FEED.DURATION, Long.parseLong(p.getString("duration")) / 1000);
+						c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p.getString("distance")));
+						c.put(FEED.USER_FIRST_NAME, p.getString("userFirstName"));
+						c.put(FEED.USER_LAST_NAME, p.getString("userLastName"));
+					}
+					c.put(FEED.USER_IMAGE_URL, e.getString("avatar"));
+					result.add(c);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-				c.put(FEED.USER_IMAGE_URL, e.getString("avatar"));
-				result.add(c);
 			}
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -409,8 +417,6 @@ public class NikePlus extends FormCrawler implements Uploader {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
-		} catch (ParseException e1) {
-			e1.printStackTrace();
 		}
 	}
 };

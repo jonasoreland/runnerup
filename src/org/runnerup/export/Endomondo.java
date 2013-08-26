@@ -334,10 +334,8 @@ public class Endomondo extends FormCrawler implements Uploader {
 			ex = e;
 		} catch (JSONException e) {
 			ex = e;
-		} catch (ParseException e) {
-			ex = e;
 		}
-
+		
 		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
@@ -358,37 +356,44 @@ public class Endomondo extends FormCrawler implements Uploader {
  "name":"Jonas Oreland"},
  "type":"workout"},
 */
-	private void parseFeed(FeedUpdater feedUpdater, JSONObject reply) throws JSONException, ParseException {
+	private void parseFeed(FeedUpdater feedUpdater, JSONObject reply) throws JSONException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss z");
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		JSONArray arr = reply.getJSONArray("data");
 		for (int i = 0; i < arr.length(); i++) {
 			JSONObject o = arr.getJSONObject(i);
-			if (!"workout".contentEquals(o.getString("type"))) {
-				continue;
+			try {
+				if ("workout".contentEquals(o.getString("type"))) {
+					final ContentValues c = parseWorkout(df, o);
+					feedUpdater.add(c);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
-			final ContentValues c = new ContentValues();
-			c.put(FEED.ACCOUNT_ID, getId());
-			c.put(FEED.EXTERNAL_ID, o.getLong("id"));
-			c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-			setName(c, o.getJSONObject("from").getString("name"));
-			final String IMAGE_URL = "http://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
-			c.put(FEED.USER_IMAGE_URL, String.format(IMAGE_URL, o.getJSONObject("from").getLong("picture")));
-			c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
-
-			final JSONObject m = o.getJSONObject("message");
-			setTrainingType(c, m.getJSONArray("actions").getJSONObject(0), m.getString("short"));
-			setDistanceDuration(c, m.getString("text.win"));
-
-			final String WORKOUT_URL = "http://www.endomondo.com/workouts/%d/%d";
-			c.put(DB.FEED.URL,  String.format(WORKOUT_URL,
-					m.getJSONArray("actions").getJSONObject(0).getLong("id"),
-					o.getJSONObject("from").getLong("id")));
-			feedUpdater.add(c);
 		}
 	}
 
+	private ContentValues parseWorkout(SimpleDateFormat df, JSONObject o) throws JSONException, ParseException {
+		final ContentValues c = new ContentValues();
+		c.put(FEED.ACCOUNT_ID, getId());
+		c.put(FEED.EXTERNAL_ID, o.getLong("id"));
+		c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+		setName(c, o.getJSONObject("from").getString("name"));
+		final String IMAGE_URL = "http://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
+		c.put(FEED.USER_IMAGE_URL, String.format(IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+		c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
+
+		final JSONObject m = o.getJSONObject("message");
+		setTrainingType(c, m.getJSONArray("actions").getJSONObject(0), m.getString("short"));
+		setDistanceDuration(c, m.getString("text.win"));
+
+		final String WORKOUT_URL = "http://www.endomondo.com/workouts/%d/%d";
+		c.put(DB.FEED.URL,  String.format(WORKOUT_URL,
+				m.getJSONArray("actions").getJSONObject(0).getLong("id"),
+				o.getJSONObject("from").getLong("id")));
+		return c;
+	}
+	
 	private void setDistanceDuration(ContentValues c, String string) {
 		// 6.64 km in 28m:56s
 		String arr[] = string.split(" in ");

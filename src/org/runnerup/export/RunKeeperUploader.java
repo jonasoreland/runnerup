@@ -379,55 +379,59 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
 		List<ContentValues> reply = new ArrayList<ContentValues>();
 		long from = System.currentTimeMillis();
-		for (int iter = 0; iter < 5 && reply.size() < 25; iter++) {
+		final int MAX_ITER = 5;
+		for (int iter = 0; iter < MAX_ITER && reply.size() < 25; iter++) {
 			try {
 				JSONObject feed = requestFeed(from);
 				JSONArray arr = feed.getJSONArray("feedItems");
 				for (int i = 0; i < arr.length(); i++) {
 					JSONObject e = arr.getJSONObject(i);
-					if (e.getInt("type") != 0)
-						continue;
+					try {
+						if (e.getInt("type") != 0)
+							continue;
 
-					ContentValues c = new ContentValues();
-					c.put(FEED.ACCOUNT_ID,  getId());
-					c.put(FEED.EXTERNAL_ID, e.getString("id"));
-					c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-					JSONObject d = e.getJSONObject("data");
-					switch (d.getInt("activityType")) {
-					case 0:
-						c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);
-						break;
-					case 1:
-						c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_BIKING);
-						break;
-					default:
-						c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
-						break;
-					}
-					c.put(FEED.START_TIME, e.getLong("posttime"));
-					c.put(FEED.FLAGS, "brokenStartTime"); // BUH!!
-					if (e.has("data")) {
-						JSONObject p = e.getJSONObject("data");
-						if (p.has("duration"))
-							c.put(FEED.DURATION, p.getLong("duration"));
-						if (p.has("distance"))
-							c.put(FEED.DISTANCE, p.getDouble("distance"));
-						if (p.has("notes") && p.getString("notes") != null && p.getString("notes") != "null")
-							c.put(FEED.NOTES, p.getString("notes"));
-					}
-					
-					setName(c, e.getString("sourceUserDisplayName"));
-					c.put(FEED.USER_IMAGE_URL, e.getString("sourceUserAvatarUrl"));
+						ContentValues c = new ContentValues();
+						c.put(FEED.ACCOUNT_ID,  getId());
+						c.put(FEED.EXTERNAL_ID, e.getString("id"));
+						c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+						JSONObject d = e.getJSONObject("data");
+						switch (d.getInt("activityType")) {
+						case 0:
+							c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);
+							break;
+						case 1:
+							c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_BIKING);
+							break;
+						default:
+							c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
+							break;
+						}
+						c.put(FEED.START_TIME, e.getLong("posttime"));
+						c.put(FEED.FLAGS, "brokenStartTime"); // BUH!!
+						if (e.has("data")) {
+							JSONObject p = e.getJSONObject("data");
+							if (p.has("duration"))
+								c.put(FEED.DURATION, p.getLong("duration"));
+							if (p.has("distance"))
+								c.put(FEED.DISTANCE, p.getDouble("distance"));
+							if (p.has("notes") && p.getString("notes") != null && p.getString("notes") != "null")
+								c.put(FEED.NOTES, p.getString("notes"));
+						}
+						
+						setName(c, e.getString("sourceUserDisplayName"));
+						c.put(FEED.USER_IMAGE_URL, e.getString("sourceUserAvatarUrl"));
 
-					reply.add(c);
-					from = e.getLong("posttime");
+						reply.add(c);
+						from = e.getLong("posttime");
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						iter = MAX_ITER;
+					}
 				}
 			} catch (IOException e) {
-				System.err.print("iter: " + iter);
 				e.printStackTrace();
 				break;
 			} catch (JSONException e) {
-				System.err.print("iter: " + iter);
 				e.printStackTrace();
 				break;
 			}
