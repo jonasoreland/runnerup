@@ -155,6 +155,7 @@ public class AccountListActivity extends ListActivity implements Constants {
 				
 			});
 			Button b = (Button) view.findViewById(R.id.accountList_configureButton);
+			boolean configured = uploadManager.isConfigured(id);
 			if (!tabFormat) {
 				{
 					if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
@@ -175,14 +176,14 @@ public class AccountListActivity extends ListActivity implements Constants {
 				tv.setVisibility(View.VISIBLE);
 				tv.setText(id);
 				boolean supportsSend = true; // TODO, when we have uploaders that don't support upload
-				if (supportsSend) {
+				if (configured && supportsSend) {
 					cbSend.setEnabled(true);
 					cbSend.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_SEND));
 					cbSend.setVisibility(View.VISIBLE);
 				} else {
 					cbSend.setVisibility(View.INVISIBLE);
 				}
-				if (uploader.checkSupport(Uploader.Feature.FEED)) {
+				if (configured && uploader.checkSupport(Uploader.Feature.FEED)) {
 					cbFeed.setEnabled(true);
 					cbFeed.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
 					cbFeed.setVisibility(View.VISIBLE);
@@ -191,7 +192,6 @@ public class AccountListActivity extends ListActivity implements Constants {
 				}
 			}
 
-			boolean configured = uploadManager.isConfigured(id);
 			{
 				b.setTag(id);
 				b.setOnClickListener(configureButtonClick);
