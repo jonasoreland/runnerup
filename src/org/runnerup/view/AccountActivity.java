@@ -196,9 +196,9 @@ public class AccountActivity extends Activity implements Constants {
 		case R.id.menu_clear_uploads:
 			clearUploadsButtonClick.onClick(null);
 			break;
-//		case R.id.menu_upload_workouts:
-//			uploadWorkoutsButtonClick.onClick(null);
-//			break;
+		case R.id.menu_upload_workouts:
+			uploadButtonClick.onClick(null);
+			break;
 		case R.id.menu_disconnect_account:
 			disconnectButtonClick.onClick(null);
 			break;
