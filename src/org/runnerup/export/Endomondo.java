@@ -396,27 +396,52 @@ public class Endomondo extends FormCrawler implements Uploader {
 	
 	private void setDistanceDuration(ContentValues c, String string) {
 		// 6.64 km in 28m:56s
-		String arr[] = string.split(" in ");
-		if (arr.length >= 1) {
-			String dist[] = arr[0].split(" ", 2);
-			if (dist.length == 2) {
-				double d = Double.valueOf(dist[0]);
-				if (dist[1].contains("km"))
-					d *= Formatter.km_meters;
-				else if (dist[1].contains("mi"))
-					d *= Formatter.mi_meters;
-				c.put(DB.FEED.DISTANCE, d);
+		
+		if (!string.contains(" in ")) {
+			// either time or distance specified
+			String time[] = string.replaceAll("[hms]", "").split(":");
+			if (time.length == 3) {
+				long duration = 0;
+				long mul = 1;
+				for (int i = 0; i < time.length; i++) {
+					duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+					mul = mul * 60;
+				}
+				c.put(DB.FEED.DURATION, duration);
+			} else if (string.contains("km") || string.contains("mi")) {
+				String dist[] = string.split(" ", 2);
+				if (dist.length == 2) {
+					double d = Double.valueOf(dist[0]);
+					if (dist[1].contains("km"))
+						d *= Formatter.km_meters;
+					else if (dist[1].contains("mi"))
+						d *= Formatter.mi_meters;
+					c.put(DB.FEED.DISTANCE, d);
+				}
 			}
-		}
-		if (arr.length >= 2) {
-			String time[] = arr[1].replaceAll("[hms]", "").split(":");
-			long duration = 0;
-			long mul = 1;
-			for (int i = 0; i < time.length; i++) {
-				duration += (mul * Long.valueOf(time[time.length - 1 - i]));
-				mul = mul * 60;
+		} else {
+			String arr[] = string.split(" in ");
+			if (arr.length >= 1) {
+				String dist[] = arr[0].split(" ", 2);
+				if (dist.length == 2) {
+					double d = Double.valueOf(dist[0]);
+					if (dist[1].contains("km"))
+						d *= Formatter.km_meters;
+					else if (dist[1].contains("mi"))
+						d *= Formatter.mi_meters;
+					c.put(DB.FEED.DISTANCE, d);
+				}
 			}
-			c.put(DB.FEED.DURATION, duration);
+			if (arr.length >= 2) {
+				String time[] = arr[1].replaceAll("[hms]", "").split(":");
+				long duration = 0;
+				long mul = 1;
+				for (int i = 0; i < time.length; i++) {
+					duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+					mul = mul * 60;
+				}
+				c.put(DB.FEED.DURATION, duration);
+			}
 		}
 	}
 
