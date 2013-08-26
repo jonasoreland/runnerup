@@ -379,16 +379,22 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
 			d = tmp.getAsFloat(DB.ACTIVITY.DISTANCE);
 			activityDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) d));
+		} else {
+			activityDistance.setText("");
 		}
 
 		float t = 0;
 		if (tmp.containsKey(DB.ACTIVITY.TIME)) {
 			t = tmp.getAsFloat(DB.ACTIVITY.TIME);
 			activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, (long)t));
+		} else {
+			activityTime.setText("");
 		}
 
 		if (d != 0 && t != 0) {
 			activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+		} else {
+			activityPace.setText("");
 		}
 
 		if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
