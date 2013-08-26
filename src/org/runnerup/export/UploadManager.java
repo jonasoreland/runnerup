@@ -392,22 +392,18 @@ public class UploadManager {
 			protected void onPostExecute(Uploader.Status result) {
 				switch(result) {
 				case CANCEL:
-					copyDB.close();
 					disableUploader(disableUploaderCallback, uploader, false);
 					return;
 				case SKIP:
 				case ERROR:
 				case INCORRECT_USAGE:
-					copyDB.close();
 					nextUploader();
 					return;
 				case OK:
 					uploadOK(uploader, copySpinner, copyDB, mID);
-					copyDB.close();
 					nextUploader();
 					return;
 				case NEED_AUTH: // should be handled inside connect "loop"
-					copyDB.close();
 					handleAuth(new Callback() {
 						@Override
 						public void run(String uploaderName, org.runnerup.export.Uploader.Status status) {
@@ -814,7 +810,6 @@ public class UploadManager {
 					uploadOK(uploader, copySpinner, copyDB, id);
 					break;
 				case NEED_AUTH:
-					copyDB.close();
 					handleAuth(new Callback() {
 						@Override
 						public void run(String uploaderName, org.runnerup.export.Uploader.Status status) {
@@ -835,7 +830,6 @@ public class UploadManager {
 
 					break;
 				}
-				copyDB.close();
 				uploadNextActivity(uploader);
 			}
 		}.execute(uploader);
