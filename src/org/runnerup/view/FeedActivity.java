@@ -258,7 +258,7 @@ public class FeedActivity extends Activity implements Constants {
 						p.append(", ");
 						p.append(formatter.formatPace(Formatter.TXT_LONG, pace));
 					}
-					if (distance != 0 && duration != 0)
+					if (p.length() > 0)
 						tv2.setText(p.toString());
 					else
 						tv2.setVisibility(View.GONE);
