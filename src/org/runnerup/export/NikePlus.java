@@ -335,6 +335,21 @@ public class NikePlus extends FormCrawler implements Uploader {
 		return new JSONObject();
 	}
 	
+	private boolean parsePayload(ContentValues c, JSONObject p) throws NumberFormatException, JSONException {
+		long duration = Long.parseLong(p.getString("duration")) / 1000;
+		double distance = 1000 * Double.parseDouble(p.getString("distance"));
+		if (duration < 0 || distance < 0) {
+			return false;
+		}
+			
+		if (duration > 0)
+			c.put(FEED.DURATION, duration);
+		if (distance > 0)
+			c.put(FEED.DISTANCE, distance);
+		
+		return true;
+	}
+	
 	private void getOwnFeed(SimpleDateFormat df, List<ContentValues> result) {
 		try {
 			JSONObject profile = makeGetRequest(String.format(PROFILE_URL, access_token));
@@ -358,10 +373,8 @@ public class NikePlus extends FormCrawler implements Uploader {
 					c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
 					if (e.has("payload")) {
 						JSONObject p = e.getJSONObject("payload");
-						c.put(FEED.DURATION,
-								Long.parseLong(p.getString("duration")) / 1000);
-						c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p
-								.getString("distance")));
+						if (!parsePayload(c, p))
+							continue; // skip this
 					}
 					c.put(FEED.USER_FIRST_NAME, first);
 					c.put(FEED.USER_LAST_NAME, last);
@@ -399,10 +412,8 @@ public class NikePlus extends FormCrawler implements Uploader {
 					c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
 					if (e.has("payload")) {
 						JSONObject p = e.getJSONObject("payload");
-						c.put(FEED.DURATION, Long.parseLong(p.getString("duration")) / 1000);
-						c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p.getString("distance")));
-						c.put(FEED.USER_FIRST_NAME, p.getString("userFirstName"));
-						c.put(FEED.USER_LAST_NAME, p.getString("userLastName"));
+						if (!parsePayload(c, p))
+							continue; // skip this
 					}
 					c.put(FEED.USER_IMAGE_URL, e.getString("avatar"));
 					result.add(c);
