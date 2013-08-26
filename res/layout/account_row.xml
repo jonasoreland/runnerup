@@ -29,10 +29,10 @@
 
         <TextView
             android:id="@+id/accountList_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="FunBeat"
-            />
+            android:layout_weight="3" />
 
         <ImageView
             android:id="@+id/accountList_icon"
@@ -40,6 +40,18 @@
             android:layout_height="wrap_content"
             android:scaleType="center"
             />
+        
+        <CheckBox
+            android:id="@+id/accountList_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="upload" />
+        
+        <CheckBox
+            android:id="@+id/accountList_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:text="feed" />
         
         <View
             android:layout_width="0dp"
