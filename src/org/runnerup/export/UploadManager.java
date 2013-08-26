@@ -25,12 +25,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.Uploader.AuthMethod;
 import org.runnerup.export.Uploader.Status;
+import org.runnerup.feed.FeedList;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.WorkoutSerializer;
@@ -62,6 +65,7 @@ public class UploadManager {
 	private SQLiteDatabase mDB = null;
 	private Activity activity = null;
 	private Map<String, Uploader> uploaders = new HashMap<String, Uploader>();
+	private Map<Long, Uploader> uploadersById = new HashMap<Long, Uploader>();
 	private ProgressDialog mSpinner = null;
 
 	public interface Callback {
@@ -92,11 +96,16 @@ public class UploadManager {
 	}
 	
 	public void remove(String uploaderName) {
+		Uploader u = uploaders.get(uploaderName);
 		uploaders.remove(uploaderName);
+		if (u != null) {
+			this.uploadersById.remove(u.getId());
+		}
 	}
 	
 	public void clear() {
 		uploaders.clear();
+		uploadersById.clear();
 	}
 
 	public long load(String uploaderName) {
@@ -151,6 +160,7 @@ public class UploadManager {
 		if (uploader != null) {
 			uploader.init(config);
 			uploaders.put(uploaderName, uploader);
+			uploadersById.put(uploader.getId(),  uploader);
 		}
 		return uploader;
 	}
@@ -163,104 +173,93 @@ public class UploadManager {
 		return l.isConfigured();
 	}
 
-	public boolean isEnabled(String name) {
-		Uploader l = uploaders.get(name);
-		if (l == null) {
-			return false;
-		}
-		return l.isConfigured();
+	public Uploader getUploader(long id) {
+		return uploadersById.get(id);
 	}
-
-	private Callback configureCallback = null;
-	public void configure(final Callback callback, final String name, final boolean uploading) {
+	
+	public void connect(final Callback callback, final String name, final boolean uploading) {
 		Uploader l = uploaders.get(name);
 		if (l == null) {
 			callback.run(name,  Uploader.Status.INCORRECT_USAGE);
 			return;
 		}
-		currentUploader = l;
-		configureCallback = callback;
-		switch (l.getAuthMethod()) {
+		Status s = l.connect();
+		switch(s){
+		case OK:
+			callback.run(name,  s);
+			return;
+		case CANCEL:
+		case SKIP:
+		case INCORRECT_USAGE:
+		case ERROR:
+			l.reset();
+			callback.run(name,  s);
+			return;
+		case NEED_AUTH:
+			mSpinner.show();
+			handleAuth(new Callback() {
+				@Override
+				public void run(String uploader, Status status) {
+					mSpinner.dismiss();
+					callback.run(uploader, status);
+				}
+			}, l, s.authMethod);
+			return;
+		}
+	}
+
+	Uploader authUploader = null;
+	Callback authCallback = null;
+	private void handleAuth(Callback callback, Uploader l, AuthMethod authMethod) {
+		authUploader = l;
+		authCallback = callback;
+		switch (authMethod) {
 		case OAUTH2:
-			Intent i = l.configure(activity);
-			activity.startActivityForResult(i, CONFIGURE_REQUEST);
+			activity.startActivityForResult(l.getAuthIntent(activity), CONFIGURE_REQUEST);
 			return;
-		case POST:
-			askUsernamePassword(callback, l, "", "", false, uploading);
+		case USER_PASS:
+			askUsernamePassword(l, false);
 			return;
 		}
 	}
 
-	private long mID = 0;
-	private Uploader currentUploader = null;
-	private Callback uploadCallback = null;
-	private HashSet<String> pendingUploaders = null;
-	
-	public void startUploading(Callback callback, HashSet<String> uploaders, long id) {
-		mID = id;
-		uploadCallback = callback;
-		pendingUploaders = uploaders;
-		mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
-		mSpinner.show();
-		nextUploader();
-	}
-
-	private void nextUploader() {
-		if (pendingUploaders.isEmpty()) {
-			doneUploading();
+	private void handleAuthComplete(Uploader uploader, Status s) {
+		Callback cb = authCallback;
+		authCallback = null;
+		authUploader = null;
+		switch(s){
+		case CANCEL:
+		case ERROR:
+		case INCORRECT_USAGE:
+		case SKIP:
+			uploader.reset();
+			cb.run(uploader.getName(),  s);
+			return;
+		case OK: {
+			ContentValues tmp = new ContentValues();
+			tmp.put("_id", uploader.getId());
+			tmp.put(DB.ACCOUNT.AUTH_CONFIG, uploader.getAuthConfig());
+			String args[] = { Long.toString(uploader.getId()) };
+			mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
+			cb.run(uploader.getName(),  s);
 			return;
 		}
-
-		mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
-		currentUploader = uploaders.get(pendingUploaders.iterator().next());
-		pendingUploaders.remove(currentUploader.getName());
-		mSpinner.setMessage("Configure " + currentUploader.getName());
-		if (!currentUploader.isConfigured()) {
-			configure(usernamePasswordCallback, currentUploader.getName(), true);
+		case NEED_AUTH:
+			handleAuth(cb, uploader, s.authMethod);
 			return;
 		}
-		doLogin(doLoginUploaderCallback);
 	}
 	
-	private Callback doLoginUploaderCallback = new Callback() {
-		@Override
-		public void run(String uploader, Status status) {
-			if (status == Uploader.Status.OK) {
-				doUpload();
-				return;
-			}
-			nextUploader();
+	private JSONObject newObj(String str) {
+		try {
+			return new JSONObject(str);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-	};
+		return null;
+	}
 	
-	private Callback usernamePasswordCallback = new Callback() {
-		@Override
-		public void run(String uploader, Status status) {
-			switch(status) {
-			case CANCEL:
-				disableUploader(disableUploaderCallback, currentUploader.getName(), false);
-				return;
-			case SKIP:
-			case ERROR:
-			case INCORRECT_USAGE:
-				nextUploader();
-				break;
-			case OK:
-				doLogin(doLoginUploaderCallback);
-				break;
-			}
-		}
-	};
-	
-	private Callback disableUploaderCallback = new Callback() {
-		@Override
-		public void run(String uploader, Status status) {
-			nextUploader();
-		}
-	};
-	
-	private void askUsernamePassword(final Callback callback, final Uploader l, String username, String password,
-			boolean showPassword, final boolean uploading) {
+	private void askUsernamePassword(final Uploader l, boolean showPassword) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 		builder.setTitle(l.getName());
 		// Get the layout inflater
@@ -269,6 +268,10 @@ public class UploadManager {
 		final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
 		final TextView tv1 = (TextView) view.findViewById(R.id.username);
 		final TextView tv2 = (TextView) view.findViewById(R.id.passwordInput);
+		String authConfigStr = l.getAuthConfig();
+		final JSONObject authConfig = newObj(authConfigStr);
+		String username = authConfig.optString("username",  "");
+		String password = authConfig.optString("password",  "");
 		tv1.setText(username);
 		tv2.setText(password);
 		cb.setChecked(showPassword);
@@ -290,62 +293,45 @@ public class UploadManager {
 		builder.setPositiveButton("OK", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				testUserPass(callback, l, tv1.getText().toString(),
-						tv2.getText().toString(), cb.isChecked(), uploading);
-			}
-		});
-		if (uploading) {
-			builder.setNeutralButton("Skip", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				callback.run(l.getName(), Status.SKIP);
-			}
-		});
-		builder.setNegativeButton("Disable", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				callback.run(l.getName(), Status.CANCEL);
-			}
-		});
-		} else {
-			builder.setNegativeButton("Cancel", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					callback.run(l.getName(), Status.CANCEL);
+				try {
+					authConfig.put("username", tv1.getText());
+					authConfig.put("password", tv2.getText());
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-			});
-		}
+				testUserPass(l, authConfig, cb.isChecked());
+			}
+		});
+		builder.setNeutralButton("Skip", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				handleAuthComplete(l, Status.SKIP);
+			}
+		});
+		builder.setNegativeButton("Cancel", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				handleAuthComplete(l, Status.SKIP);
+			}
+		});
 		final AlertDialog dialog = builder.create();
 		dialog.show();
 	}
 
-	private void testUserPass(final Callback callback, final Uploader l, final String username, final String password,
-			final boolean showPassword, final boolean uploading) {
-		if (uploading) {
-			mSpinner.setMessage("Login " + l.getName());
-		} else {
-			mSpinner.setTitle("Testing login " + l.getName());
-			mSpinner.show();
-		}
+	private void testUserPass(final Uploader l, final JSONObject authConfig, final boolean showPassword) {
+		mSpinner.setTitle("Testing login " + l.getName());
+
 		new AsyncTask<Uploader, String, Uploader.Status>() {
 
 			ContentValues config = new ContentValues();
 
 			@Override
 			protected Uploader.Status doInBackground(Uploader... params) {
-				JSONObject obj = new JSONObject();
-				try {
-					obj.put("username", username);
-					obj.put("password", password);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					return Uploader.Status.ERROR;
-				}
-				config.put(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
+				config.put(DB.ACCOUNT.AUTH_CONFIG, authConfig.toString());
 				config.put("_id", l.getId());
 				l.init(config);
 				try {
-					return params[0].login(config);
+					return params[0].connect();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					return Uploader.Status.ERROR;
@@ -353,58 +339,42 @@ public class UploadManager {
 			}
 
 			@Override
-			protected void onPostExecute(Uploader.Status result) {
-				if (!uploading) {
-					mSpinner.dismiss();
-				}
-				
-				if (result == Uploader.Status.OK) {
-					String args[] = { Long.toString(l.getId()) };
-					mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
-					callback.run(l.getName(), Uploader.Status.OK);
-					return;
-				}
-				l.reset();
-				if (result == Uploader.Status.CANCEL) {
-					askUsernamePassword(callback, l, username, password, showPassword, uploading);
-					return;
-				}
-				callback.run(l.getName(), Uploader.Status.ERROR);
+			protected void onPostExecute(Uploader.Status result) {				
+				handleAuthComplete(l, result);
 			}
 		}.execute(l);
-
+	}
+	
+	
+	private long mID = 0;
+	private Callback uploadCallback = null;
+	private HashSet<String> pendingUploaders = null;
+	public void startUploading(Callback callback, HashSet<String> uploaders, long id) {
+		mID = id;
+		uploadCallback = callback;
+		pendingUploaders = uploaders;
+		mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
+		mSpinner.show();
+		nextUploader();
 	}
 
-	private void doLogin(final Callback callback) {
-		mSpinner.setMessage("Login " + currentUploader.getName());
-		new AsyncTask<Uploader, String, Uploader.Status>() {
+	private void nextUploader() {
+		if (pendingUploaders.isEmpty()) {
+			doneUploading();
+			return;
+		}
 
-			@Override
-			protected Uploader.Status doInBackground(Uploader... params) {
-				try {
-					return params[0].login(null);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-					return Uploader.Status.ERROR;
-				}
-			}
-
-			@Override
-			protected void onPostExecute(Uploader.Status result) {
-				if (isClosed()) {
-					return;
-				}
-				
-				callback.run(currentUploader.getName(), result);
-			}
-		}.execute(currentUploader);
+		mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
+		final Uploader uploader = uploaders.get(pendingUploaders.iterator().next());
+		pendingUploaders.remove(uploader.getName());
+		doUpload(uploader);
 	}
-
-	private void doUpload() {
+	
+	private void doUpload(final Uploader uploader) {
 		final ProgressDialog copySpinner = mSpinner;
 		final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
-		copySpinner.setMessage("Uploading " + currentUploader.getName());
+		copySpinner.setMessage("Uploading " + uploader.getName());
 
 		new AsyncTask<Uploader, String, Uploader.Status>() {
 
@@ -420,19 +390,59 @@ public class UploadManager {
 
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
-				if (result == Uploader.Status.OK) {
-					uploadOK(copySpinner, copyDB, mID);
+				switch(result) {
+				case CANCEL:
+					copyDB.close();
+					disableUploader(disableUploaderCallback, uploader, false);
+					return;
+				case SKIP:
+				case ERROR:
+				case INCORRECT_USAGE:
+					copyDB.close();
+					nextUploader();
+					return;
+				case OK:
+					uploadOK(uploader, copySpinner, copyDB, mID);
+					copyDB.close();
+					nextUploader();
+					return;
+				case NEED_AUTH: // should be handled inside connect "loop"
+					copyDB.close();
+					handleAuth(new Callback() {
+						@Override
+						public void run(String uploaderName, org.runnerup.export.Uploader.Status status) {
+							switch(status) {
+							case CANCEL:
+								disableUploader(disableUploaderCallback, uploader, false);
+								return;
+							case SKIP:
+							case ERROR:
+							case INCORRECT_USAGE:
+							case NEED_AUTH: // should be handled inside connect "loop"
+								nextUploader();
+								return;
+							case OK:
+								doUpload(uploader);
+								return;
+							}
+						}}, uploader, result.authMethod);
+					return;
 				}
-				copyDB.close();
-				nextUploader();
 			}
-		}.execute(currentUploader);
+		}.execute(uploader);
 	}
 
-	private void uploadOK(ProgressDialog copySpinner, SQLiteDatabase copyDB, long id) {
+	private Callback disableUploaderCallback = new Callback() {
+		@Override
+		public void run(String uploader, Status status) {
+			nextUploader();
+		}
+	};
+
+	private void uploadOK(Uploader uploader, ProgressDialog copySpinner, SQLiteDatabase copyDB, long id) {
 		copySpinner.setMessage("Saving");
 		ContentValues tmp = new ContentValues();
-		tmp.put(DB.EXPORT.ACCOUNT, currentUploader.getId());
+		tmp.put(DB.EXPORT.ACCOUNT, uploader.getId());
 		tmp.put(DB.EXPORT.ACTIVITY, id);
 		tmp.put(DB.EXPORT.STATUS, 0);
 		copyDB.insert(DB.EXPORT.TABLE, null, tmp);
@@ -451,42 +461,19 @@ public class UploadManager {
 		if (requestCode != CONFIGURE_REQUEST)
 			return;
 
-		if (resultCode == Activity.RESULT_OK) {
-			String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
-			ContentValues tmp = new ContentValues();
-			tmp.put(DB.ACCOUNT.AUTH_CONFIG, authConfig);
-			String args[] = { Long.toString(currentUploader.getId()) };
-			mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-			tmp.put("_id", currentUploader.getId());
-			currentUploader.init(tmp);
-			configureCallback.run(currentUploader.getName(), Uploader.Status.OK);
-		} else {
-			configureCallback.run(currentUploader.getName(), Uploader.Status.ERROR);
-		}
+		handleAuthComplete(authUploader, authUploader.getAuthResult(resultCode, data));
 	}
 
-	private Callback disableCallback = null;
-	public void disableUploader(Callback callback, String name, boolean clearUploads) {
-		disableCallback = callback;
-		Uploader l = uploaders.get(name);
-		if (l == null) {
-			disableCallback = null;
-			callback.run(name, Uploader.Status.SKIP);
-			return;
-		}
-		switch (l.getAuthMethod()) {
-		case OAUTH2:
-			resetDB(name, clearUploads);
-			return;
-		case POST:
-			resetDB(name, clearUploads);
-			return;
-		}
+	public void disableUploader(Callback disconnectCallback, String uploader, boolean clearUploads) {
+		disableUploader(disconnectCallback, uploaders.get(uploader), clearUploads);
 	}
 
-	void resetDB(final String name, final boolean clearUploads) {
-		Uploader l = uploaders.get(name);
-		final String args[] = { Long.toString(l.getId()) };
+	public void disableUploader(Callback callback, Uploader uploader, boolean clearUploads) {
+		resetDB(callback, uploader, clearUploads);
+	}
+
+	void resetDB(final Callback callback, final Uploader uploader, final boolean clearUploads) {
+		final String args[] = { Long.toString(uploader.getId()) };
 		ContentValues config = new ContentValues();
 		config.putNull(DB.ACCOUNT.AUTH_CONFIG);
 		mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
@@ -495,11 +482,8 @@ public class UploadManager {
 			mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?",  args);
 		}
 		
-		l.reset();
-		
-		Callback callback = disableCallback;
-		disableCallback = null;
-		callback.run(name, Uploader.Status.OK);
+		uploader.reset();
+		callback.run(uploader.getName(), Uploader.Status.OK);
 	}
 
 	public void clearUploads(Callback callback, String uploader) {
@@ -541,43 +525,28 @@ public class UploadManager {
 		}
 
 		mSpinner.setTitle("Loading workout list (" + pendingListWorkout.size() + ")");
-		currentUploader = uploaders.get(pendingListWorkout.iterator().next());
-		pendingListWorkout.remove(currentUploader.getName());
-		mSpinner.setMessage("Configure " + currentUploader.getName());
-		if (!currentUploader.isConfigured()) {
+		Uploader uploader = uploaders.get(pendingListWorkout.iterator().next());
+		pendingListWorkout.remove(uploader.getName());
+		mSpinner.setMessage("Configure " + uploader.getName());
+		if (!uploader.isConfigured()) {
 			nextListWorkout();
 			return;
 		}
-		doLogin(new Callback() {
-			@Override
-			public void run(String uploader, Status status) {
-				if (status == Uploader.Status.OK) {
-					doListWorkout();
-				} else {
-					nextListWorkout();
-				}
-			}
-		});
+		doListWorkout(uploader);
 	}
 
-	protected void doListWorkout() {
+	protected void doListWorkout(final Uploader uploader) {
 		final ProgressDialog copySpinner = mSpinner;
 
-		copySpinner.setMessage("Listing from " + currentUploader.getName());
+		copySpinner.setMessage("Listing from " + uploader.getName());
+		final ArrayList<Pair<String,String>> list = new ArrayList<Pair<String,String>>();
 
 		new AsyncTask<Uploader, String, Uploader.Status>() {
 
 			@Override
 			protected Uploader.Status doInBackground(Uploader... params) {
 				try {
-					ArrayList<Pair<String,String>> list = new ArrayList<Pair<String,String>>();
-					Uploader.Status ret = params[0].listWorkouts(list);
-					if (ret == Uploader.Status.OK) {
-						for (Pair<String,String> w : list) {
-							workoutRef.add(new WorkoutRef(params[0].getName(), w.first, w.second));
-						}
-					}
-					return ret;
+					return params[0].listWorkouts(list);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					return Uploader.Status.ERROR;
@@ -586,9 +555,39 @@ public class UploadManager {
 
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
+				switch(result) {
+				case CANCEL:
+				case ERROR:
+				case INCORRECT_USAGE:
+				case SKIP:
+					break;
+				case OK:
+					for (Pair<String,String> w : list) {
+						workoutRef.add(new WorkoutRef(uploader.getName(), w.first, w.second));
+					}
+					break;
+				case NEED_AUTH:
+					handleAuth(new Callback() {
+						@Override
+						public void run(String uploaderName, org.runnerup.export.Uploader.Status status) {
+							switch(status) {
+							case CANCEL:
+							case SKIP:
+							case ERROR:
+							case INCORRECT_USAGE:
+							case NEED_AUTH: // should be handled inside connect "loop"
+								nextListWorkout();
+								break;
+							case OK:
+								doListWorkout(uploader);
+								break;
+							}
+						}}, uploader, result.authMethod);
+					return;
+				}
 				nextListWorkout();
 			}
-		}.execute(currentUploader);
+		}.execute(uploader);
 	}
 
 	private void doneListing() {
@@ -603,7 +602,7 @@ public class UploadManager {
 		int cnt = pendingWorkouts.size();
 		mSpinner.setTitle("Downloading workouts (" + cnt + ")");
 		mSpinner.show();
-		new AsyncTask<Uploader, String, Uploader.Status>() {
+		new AsyncTask<String, String, Uploader.Status>() {
 
 
 			@Override
@@ -612,7 +611,7 @@ public class UploadManager {
 			}
 
 			@Override
-			protected Uploader.Status doInBackground(Uploader... params) {
+			protected Uploader.Status doInBackground(String... params0) {
 				for (WorkoutRef ref : pendingWorkouts) {
 					publishProgress(ref.workoutName, ref.uploader);
 					Uploader uploader = uploaders.get(ref.uploader);
@@ -649,7 +648,7 @@ public class UploadManager {
 					callback.run(null,  Uploader.Status.OK);
 				}
 			}
-		}.execute(currentUploader);
+		}.execute("string");
 	}
 
 	public static boolean compareFiles(File w, File f) {
@@ -720,10 +719,10 @@ public class UploadManager {
 	Callback uploadWorkoutsCallback = null;
 	StringBuffer cancelUploading = null;
 	
-	public void uploadWorkouts(Callback uploadCallback, String uploader, ArrayList<Long> list,
+	public void uploadWorkouts(Callback uploadCallback, String uploaderName, ArrayList<Long> list,
 			final StringBuffer cancel) {
 
-		mSpinner.setTitle("Uploading activities to " + uploader);
+		mSpinner.setTitle("Uploading activities to " + uploaderName);
 		mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -737,10 +736,10 @@ public class UploadManager {
 		mSpinner.setCanceledOnTouchOutside(false);
 		mSpinner.setMax(list.size());
 		
-		load(uploader);
-		currentUploader = uploaders.get(uploader);
-		if (currentUploader == null) {
-			uploadCallback.run(uploader, Status.INCORRECT_USAGE);
+		load(uploaderName);
+		final Uploader uploader = uploaders.get(uploaderName);
+		if (uploader == null) {
+			uploadCallback.run(uploaderName, Status.INCORRECT_USAGE);
 			return;
 		}
 		cancelUploading = cancel;
@@ -758,23 +757,7 @@ public class UploadManager {
 			}
 		});
 		
-		doLogin(new Callback() {
-			@Override
-			public void run(String uploader, Status status) {
-				if (checkCancel(cancelUploading)) {
-					mSpinner.cancel();
-					uploadWorkoutsCallback.run(uploader, Uploader.Status.CANCEL);
-					return;
-				}
-				
-				if (status != Status.OK) {
-					mSpinner.cancel();
-					uploadWorkoutsCallback.run(uploader, status);
-					return;
-				}
-				uploadNextActivity(uploader);
-			}
-		});
+		uploadNextActivity(uploader);
 	}
 
 	protected boolean checkCancel(StringBuffer cancel) {
@@ -783,26 +766,26 @@ public class UploadManager {
 		}
 	}
 
-	void uploadNextActivity(final String uploader) {
+	void uploadNextActivity(final Uploader uploader) {
 		if (checkCancel(cancelUploading)) {
 			mSpinner.cancel();
-			uploadWorkoutsCallback.run(uploader, Uploader.Status.CANCEL);
+			uploadWorkoutsCallback.run(uploader.getName(), Uploader.Status.CANCEL);
 			return;
 		}
 
 		if (uploadActivities.size() == 0) {
 			mSpinner.cancel();
-			uploadWorkoutsCallback.run(uploader, Uploader.Status.OK);
+			uploadWorkoutsCallback.run(uploader.getName(), Uploader.Status.OK);
 			return;
 		}
 
 		mSpinner.setProgress(uploadActivities.size());
 		long id = uploadActivities.get(0);
 		uploadActivities.remove(0);
-		doUploadMulti(id);
+		doUploadMulti(uploader, id);
 	}
 
-	private void doUploadMulti(final long id) {
+	private void doUploadMulti(final Uploader uploader, final long id) {
 		final ProgressDialog copySpinner = mSpinner;
 		final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
@@ -812,7 +795,96 @@ public class UploadManager {
 			@Override
 			protected Uploader.Status doInBackground(Uploader... params) {
 				try {
-					return params[0].upload(copyDB, id);
+					return uploader.upload(copyDB, id);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					return Uploader.Status.ERROR;
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Uploader.Status result) {
+				switch(result) {
+				case CANCEL:
+				case ERROR:
+				case INCORRECT_USAGE:
+				case SKIP:
+					break;
+				case OK:
+					uploadOK(uploader, copySpinner, copyDB, id);
+					break;
+				case NEED_AUTH:
+					copyDB.close();
+					handleAuth(new Callback() {
+						@Override
+						public void run(String uploaderName, org.runnerup.export.Uploader.Status status) {
+							switch(status) {
+							case CANCEL:
+							case SKIP:
+							case ERROR:
+							case INCORRECT_USAGE:
+							case NEED_AUTH: // should be handled inside connect "loop"
+								uploadActivities.clear();
+								uploadNextActivity(uploader);
+								break;
+							case OK:
+								doUploadMulti(uploader, id);
+								break;
+							}
+						}}, uploader, result.authMethod);
+
+					break;
+				}
+				copyDB.close();
+				uploadNextActivity(uploader);
+			}
+		}.execute(uploader);
+	}
+
+	Callback feedCallback = null;
+	Set<String> feedUploaders = null;
+	FeedList feedList = null;
+	StringBuffer feedCancel = null;
+	public void syncronizeFeed(Callback cb, Set<String> uploaders, FeedList dst, StringBuffer cancel) {
+		feedCallback = cb;
+		feedUploaders = uploaders;
+		feedList = dst;
+		feedCancel = cancel;
+		nextSyncFeed();
+	}
+
+	void nextSyncFeed() {
+		if (checkCancel(feedCancel)) {
+			feedUploaders.clear();
+		}
+		
+		if (feedUploaders.isEmpty()) {
+			Callback cb = feedCallback;
+			feedCallback = null;
+			cb.run(null,  Uploader.Status.OK);
+			return;
+		}
+		
+		final String uploaderName = feedUploaders.iterator().next();
+		feedUploaders.remove(uploaderName);
+		final Uploader uploader = uploaders.get(uploaderName);
+		syncFeed(uploader);
+	}
+	
+	void syncFeed(final Uploader uploader) {
+		if (uploader == null) {
+			nextSyncFeed();
+			return;
+		}
+
+		final FeedList.FeedUpdater feedUpdater = feedList.getUpdater();
+		feedUpdater.start(uploader.getName());
+		new AsyncTask<Uploader, String, Uploader.Status>() {
+
+			@Override
+			protected Uploader.Status doInBackground(Uploader... params) {
+				try {
+					return params[0].getFeed(feedUpdater);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					return Uploader.Status.ERROR;
@@ -822,11 +894,24 @@ public class UploadManager {
 			@Override
 			protected void onPostExecute(Uploader.Status result) {
 				if (result == Uploader.Status.OK) {
-					uploadOK(copySpinner, copyDB, id);
+					feedUpdater.complete();
+				} else if (result == Uploader.Status.NEED_AUTH) {
+					handleAuth(new Callback(){
+						@Override
+						public void run(String uploaderName, Uploader.Status s2) {
+							if (s2 == Uploader.Status.OK) {
+								syncFeed(uploader);
+							} else {
+								nextSyncFeed();
+							}
+						}}, uploader, result.authMethod);
+					return;
+				} else {
+					if (result.ex != null)
+						result.ex.printStackTrace();
 				}
-				copyDB.close();
-				uploadNextActivity(currentUploader.getName());
+				nextSyncFeed();
 			}
-		}.execute(currentUploader);
+		}.execute(uploader);
 	}
 }

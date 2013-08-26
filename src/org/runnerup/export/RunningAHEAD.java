@@ -18,14 +18,12 @@ package org.runnerup.export;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 import java.util.Scanner;
 import java.util.zip.GZIPOutputStream;
 
@@ -40,7 +38,6 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
 
 public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server {
 
@@ -60,7 +57,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 	public static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";
 	
 	private long id = 0;
-	private String authToken = null;
+	private String access_token = null;
 
 	RunningAHEAD(UploadManager uploadManager) {
 		if (CLIENT_ID == null || CLIENT_SECRET == null) {
@@ -115,45 +112,81 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 	}
 
 	@Override
-	public AuthMethod getAuthMethod() {
-		return Uploader.AuthMethod.OAUTH2;
-	}
-
-	@Override
 	public void init(ContentValues config) {
-		authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+		String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+		if (authConfig != null) {
+			try {
+				JSONObject tmp = new JSONObject(authConfig);
+				access_token = tmp.optString("access_token", null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		id = config.getAsLong("_id");
 	}
+	
+	@Override
+	public String getAuthConfig() {
+		JSONObject tmp = new JSONObject();
+		try {
+			tmp.put("access_token", access_token);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return tmp.toString();
 
+	}
+	
+	@Override
+	public Intent getAuthIntent(Activity activity) {
+		return OAuth2Activity.getIntent(activity, this);
+	}
+	
+	@Override
+	public Status getAuthResult(int resultCode, Intent data) {
+		if (resultCode == Activity.RESULT_OK) {
+			String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
+			try {
+				access_token = new JSONObject(authConfig).getString("access_token");
+				return Status.OK;
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		return Status.ERROR;
+	}
+	
 	@Override
 	public boolean isConfigured() {
-		if (authToken == null)
+		if (access_token == null)
 			return false;
 		return true;
 	}
 
 	@Override
-	public Intent configure(Activity activity) {
-		return OAuth2Activity.getIntent(activity, this);
-	}
-
-	@Override
 	public void reset() {
-		authToken = null;
+		access_token = null;
 	}
 
 	@Override
-	public Uploader.Status login(ContentValues _config) {
-		if (isConfigured()) {
-				return Uploader.Status.OK;
-		}
-		
-		return Uploader.Status.INCORRECT_USAGE;
+	public Status connect() {
+		Status s = Status.NEED_AUTH;
+		s.authMethod = AuthMethod.OAUTH2;
+		if (access_token == null)
+			return s;
+
+		return Uploader.Status.OK;
 	}
 
 	@Override
 	public Uploader.Status upload(SQLiteDatabase db, final long mID) {
-		String URL = IMPORT_URL + "?access_token=" + authToken;
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+		
+		String URL = IMPORT_URL + "?access_token=" + access_token;
 		TCX tcx = new TCX(db);
 		HttpURLConnection conn = null;
 		Exception ex = null;
@@ -174,7 +207,6 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
-			System.err.println("obj: " + obj);
 			
 			if (responseCode == 200 && obj.getJSONObject("data").getJSONArray("workoutIds").length() == 1) {
 				conn.disconnect();
@@ -187,7 +219,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 			ex = e;
 		}
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -198,15 +230,6 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 	@Override
 	public boolean checkSupport(Uploader.Feature f) {
 		return false;
-	}
-	
-	@Override
-	public Status listWorkouts(List<Pair<String, String>> list) {
-		return Status.OK;
-	}
-
-	@Override
-	public void downloadWorkout(File dst, String key) {
 	}
 	
 	@Override

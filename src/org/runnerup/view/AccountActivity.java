@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants;
@@ -125,7 +126,7 @@ public class AccountActivity extends Activity implements Constants {
 		if (c.moveToFirst()) {
 			ContentValues tmp = DBHelper.get(c);
 			uploaderID = tmp.getAsLong("_id");
-			uploadManager.add(tmp);
+			Uploader uploader = uploadManager.add(tmp);
 			
 			{
 				ImageView im = (ImageView) findViewById(R.id.accountList_icon);
@@ -155,9 +156,18 @@ public class AccountActivity extends Activity implements Constants {
 			flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
 			{
 				CheckBox cb = new CheckBox(this);
+				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_SEND));
 				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_SEND)); 
 				cb.setOnCheckedChangeListener(sendCBChecked);
 				addRow("Automatic upload", cb);
+			}
+
+			if (uploader.checkSupport(Uploader.Feature.FEED)) {
+				CheckBox cb = new CheckBox(this);
+				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_FEED));
+				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED)); 
+				cb.setOnCheckedChangeListener(sendCBChecked);
+				addRow("Feed", cb);
 			}
 		}
 		mCursors.add(c);
@@ -246,7 +256,8 @@ public class AccountActivity extends Activity implements Constants {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			ContentValues tmp = new ContentValues();
-			flags = Bitfield.set(flags, DB.ACCOUNT.FLAG_SEND, isChecked);
+			int flag = ((Integer)buttonView.getTag()).intValue();
+			flags = Bitfield.set(flags, flag, isChecked);
 			tmp.put(DB.ACCOUNT.FLAGS, flags);
 			String args[] = { uploader };
 			mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);

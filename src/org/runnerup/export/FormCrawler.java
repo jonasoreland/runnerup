@@ -18,6 +18,7 @@ package org.runnerup.export;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -31,6 +32,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.Constants.DB;
+
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.util.Pair;
+
 public class FormCrawler {
 
 	protected Set<String> cookies = new HashSet<String>();
@@ -41,7 +51,7 @@ public class FormCrawler {
 		logout();
 	}
 
-	protected void logout() {
+	public void logout() {
 		cookies.clear();
 		formValues.clear();
 	}
@@ -219,5 +229,39 @@ public class FormCrawler {
 				return k;
 		}
 		return null;
+	}
+
+	/** Below are default empty methods from Uploader */ 
+	public Status getAuthResult(int resultCode, Intent data) {
+		return Status.OK;
+	}
+
+	public Intent getAuthIntent(Activity a) {
+		return null;
+	}
+	
+	public Status listWorkouts(List<Pair<String, String>> list) {
+		return Status.OK;
+	}
+
+	public void downloadWorkout(File dst, String key) throws Exception {
+	}
+	
+	public Status getFeed(FeedUpdater feedUpdater) {
+		return Status.OK;
+	}
+
+	/**
+	 * For feed generation...
+	 */
+	public static void setName(ContentValues c, String string) {
+		// Jonas Oreland
+		if (string.contains(" ")) {
+			int index = string.indexOf(' ');
+			c.put(DB.FEED.USER_FIRST_NAME, string.substring(0, index).trim());
+			c.put(DB.FEED.USER_LAST_NAME, string.substring(index).trim());
+		} else {
+			c.put(DB.FEED.USER_FIRST_NAME, string);
+		}
 	}
 }

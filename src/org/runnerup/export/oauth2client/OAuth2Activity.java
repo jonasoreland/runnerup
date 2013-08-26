@@ -174,11 +174,7 @@ public class OAuth2Activity extends Activity {
 								.getInputStream());
 						obj = new JSONObject(new Scanner(in)
 								.useDelimiter("\\A").next());
-						res.putExtra("obj", obj.toString());
-						res.putExtra(DB.ACCOUNT.AUTH_CONFIG,
-								obj.getString("access_token"));
-						if (obj.has("expires"))
-							res.putExtra("expires", obj.getString("expires"));
+						res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
 					} catch (Exception ex) {
 						ex.printStackTrace(System.err);
 						res.putExtra("ex", ex.toString());

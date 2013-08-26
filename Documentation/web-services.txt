@@ -8,6 +8,7 @@ https://github.com/tiegz/RunHacker/
 
 Nike+:
 https://github.com/angusws/tcx2nikeplus
+http://184.72.37.8/api-overview/Multi%2520Sports%2520Platform
 
 jogg.se:
 http://jogg.se/iphoneservice/iphoneservice.asmx
@@ -20,6 +21,10 @@ http://api.mapmyfitness.com/3.1/
 
 Endomondo:
 https://github.com/isoteemu/sports-tracker-liberator/
+https://github.com/vovka667/libendomondo-perl
+
+Garmin:
+http://sergeykrasnov.ru/subsites/dev/garmin-connect-statisics/
 
 Misc/Multi:
 https://github.com/cpfair/tapiriik/tree/master/tapiriik/services

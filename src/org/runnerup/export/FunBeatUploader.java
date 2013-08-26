@@ -18,7 +18,6 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,20 +28,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.List;
 import java.util.Scanner;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Constants.DB.FEED;
 import org.runnerup.util.Encryption;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
 
 /**
  * TODO:
@@ -59,6 +57,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			+ "/importexport/upload.aspx";
 
 	public static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
+	public static final String FEED_URL = API_URL + "GetMyNewsFeed";
 	
 	private static String APP_ID = null;
 	private static String APP_SECRET = null;
@@ -92,38 +91,27 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public AuthMethod getAuthMethod() {
-		return Uploader.AuthMethod.POST;
-	}
-
-	@Override
 	public void init(ContentValues config) {
 		id = config.getAsLong("_id");
 		String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
 		if (authToken != null) {
-			JSONObject tmp;
 			try {
-				tmp = new JSONObject(authToken);
-				username = tmp.getString("username");
-				password = tmp.getString("password");
-				loginID = tmp.optString("loginId", null);
+				JSONObject tmp = new JSONObject(authToken);
+				username = tmp.optString("username", null);
+				password = tmp.optString("password", null);
+				loginID = tmp.optString("loginID", null);
 				loginSecretHashed = tmp.optString("loginSecretHashed", null);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
+	
 	@Override
 	public boolean isConfigured() {
 		if (username != null && password != null)
 			return true;
 		return false;
-	}
-
-	@Override
-	public Intent configure(Activity activity) {
-		return null;
 	}
 
 	@Override
@@ -135,42 +123,38 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Status login(ContentValues _config) {
+	public String getAuthConfig() {
+		JSONObject tmp = new JSONObject();
+		try {
+			tmp.put("username", username);
+			tmp.put("password", password);
+			tmp.put("loginID", loginID);
+			tmp.put("loginSecretHashed", loginSecretHashed);
+		} catch (final JSONException e) {
+			e.printStackTrace();
+		}
+		return tmp.toString();
+	}
+	
+	@Override
+	public Status connect() {
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		cookies.clear();
 		formValues.clear();
 
-		if (_config != null) {
-			if (loginID == null || loginSecretHashed == null) {
-				if (validateAndCreateSecrets(username, password)) {
-					String authToken = _config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-					JSONObject tmp = null;
-					if (authToken != null) {
-						try {
-							tmp = new JSONObject(authToken);
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-					}
-					if (tmp == null)
-						tmp = new JSONObject();
-					try {
-						tmp.put("username",  username);
-						tmp.put("password",  password);
-						tmp.put("loginId", loginID);
-						tmp.put("loginSecretHashed", loginSecretHashed);
-						_config.remove(DB.ACCOUNT.AUTH_CONFIG);
-						_config.put(DB.ACCOUNT.AUTH_CONFIG, tmp.toString());
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+		Status s = Status.NEED_AUTH;
+		s.authMethod = AuthMethod.USER_PASS;
+		if (username == null || password == null) {
+			return s;
+		}
+		
+		if (loginID == null || loginSecretHashed == null) {
+			if (!validateAndCreateSecrets(username, password))
+				return s;
 		}
 		
 		try {
-
 			/**
 			 * connect to START_URL to get cookies/formValues
 			 */
@@ -239,7 +223,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			if (ok) {
 				return Uploader.Status.OK;
 			} else {
-				return Uploader.Status.CANCEL;
+				return s;
 			}
 		} catch (MalformedURLException e) {
 			ex = e;
@@ -250,7 +234,6 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 		if (conn != null)
 			conn.disconnect();
 
-		Uploader.Status s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -319,6 +302,11 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	
 	@Override
 	public Status upload(SQLiteDatabase db, long mID) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+
 		TCX tcx = new TCX(db);
 		HttpURLConnection conn = null;
 		Exception ex = null;
@@ -431,7 +419,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			ex = e;
 		}
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -441,22 +429,138 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 
 	@Override
 	public boolean checkSupport(Uploader.Feature f) {
+		switch(f) {
+		case FEED:
+			return true;
+		case GET_WORKOUT:
+		case WORKOUT_LIST:
+			break;
+		}
+
 		return false;
 	}
-
-	@Override
-	public Status listWorkouts(List<Pair<String, String>> list) {
-		return Status.OK;
-	}
-
-	@Override
-	public void downloadWorkout(File dst, String key) {
-	}
-	
 
 	@Override
 	public void logout() {
 		cookies.clear();
 		formValues.clear();
+	}
+
+	@Override
+	public Status getFeed(FeedUpdater feedUpdater) {
+		Status s = Status.NEED_AUTH;
+		s.authMethod = AuthMethod.USER_PASS;
+		if (loginID == null || loginSecretHashed == null) {
+			System.err.println("loginID: " + loginID + ", loginSecretHashed: " + loginSecretHashed);
+			return s;
+		}
+
+		HttpURLConnection conn = null;
+		try {
+			conn = (HttpURLConnection) new URL(FEED_URL).openConnection();
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.addRequestProperty("Content-Type", "application/json; charset=utf-8");
+			final JSONObject req = getRequestObject();
+			final OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+			out.write(req.toString().getBytes());
+			out.flush();
+			out.close();
+			final InputStream in = new BufferedInputStream(conn.getInputStream());
+			final JSONObject reply = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			final int code = conn.getResponseCode();
+			conn.disconnect();
+			if (code == 200) {
+				parseFeedReply(feedUpdater, reply);
+				return Status.OK;
+			}
+		} catch (final MalformedURLException e) {
+			e.printStackTrace();
+			s.ex = e;
+		} catch (final IOException e) {
+			e.printStackTrace();
+			s.ex = e;
+		} catch (final JSONException e) {
+			e.printStackTrace();
+			s.ex = e;
+		}
+		
+		s = Status.ERROR;
+		if (conn != null)
+			conn.disconnect();
+		
+		return s;
+	}
+
+	private void parseFeedReply(final FeedUpdater feedUpdater, final JSONObject reply) throws JSONException {
+		final JSONArray arr = reply.getJSONArray("d");
+		for (int i = 0; i < arr.length(); i++) {
+			final JSONObject o = arr.getJSONObject(i);
+			final ContentValues c = new ContentValues();
+			c.put(FEED.ACCOUNT_ID, getId());
+			c.put(FEED.EXTERNAL_ID, o.getLong("ID"));
+			c.put(FEED.FLAGS, "brokenStartTime"); // BUH!!
+			final String t = o.getString("What");
+			if ("training".contentEquals(t)) {
+				c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+				setTrainingType(c, o.getInt("TrainingTypeID"), o.getString("TrainingTypeName"));
+				
+				c.put(FEED.START_TIME, parseDateTime(o.getString("DateTime")));
+				if (!o.isNull("Distance"))
+					c.put(FEED.DISTANCE, 1000 * o.getDouble("Distance"));
+				if (!o.isNull("Duration"))
+					c.put(FEED.DURATION, getDuration(o.getJSONObject("Duration")));
+				if (!o.isNull("PersonID"))
+					c.put(FEED.USER_ID, o.getInt("PersonID"));
+				if (!o.isNull("Firstname"))
+					c.put(FEED.USER_FIRST_NAME, o.getString("Firstname"));
+				if (!o.isNull("Lastname"))
+					c.put(FEED.USER_LAST_NAME, o.getString("Lastname"));
+				if (!o.isNull("PictureURL"))
+					c.put(FEED.USER_IMAGE_URL, o.getString("PictureURL").replace("~/", "http://www.funbeat.se/"));
+				if (!o.isNull("Description"))
+					c.put(FEED.NOTES, o.getString("Description"));
+				c.put(FEED.URL,
+						"http://www.funbeat.se/training/show.aspx?TrainingID="
+								+ Long.toString(o.getLong("ID")));
+
+				//TODO FEED.COMMENTS
+			} else {
+				continue;
+			}
+			feedUpdater.add(c);
+		}
+	}
+
+	private void setTrainingType(ContentValues c, int TypeID, String typeString) {
+		if (TypeID == 25) {
+			c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);			
+		} else {
+			c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
+			c.put(FEED.FEED_TYPE_STRING, typeString);
+		}
+	}
+
+	private int getDuration(final JSONObject obj) {
+		final int hours = obj.optInt("Hours", 0);
+		final int minutes = obj.optInt("Minutes", 0);
+		final int seconds = obj.optInt("Seconds", 0);
+		return seconds + 60 * (minutes + 60 * hours);
+	}
+
+	
+	private long parseDateTime(final String s) {
+		final String s2 = s.substring(s.indexOf('(') + 1);
+		final String s3 = s2.substring(0,  s2.indexOf(')'));
+		return Long.valueOf(s3);
+	}
+
+	private JSONObject getRequestObject() throws JSONException {
+		final JSONObject req = new JSONObject();
+		req.put("applicationID", APP_ID);
+		req.put("loginID", loginID);
+		req.put("loginSecret", loginSecretHashed);
+		return req;
 	}
 };

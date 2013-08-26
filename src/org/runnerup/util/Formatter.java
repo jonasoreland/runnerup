@@ -392,4 +392,18 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	public String formatRemainingDistance(int target, double value) {
 		return formatDistance(target, Math.round(value));
 	}
+
+	public String formatName(String first, String last) {
+		if (first != null && last != null)
+			return first + " " + last;
+		else if (first == null && last != null)
+			return last;
+		else if (first != null && last == null)
+			return first;
+		return "";
+	}
+
+	public String formatTime(int target, long seconds_since_epoch) {
+		return timeFormat.format(seconds_since_epoch * 1000);
+	}
 }

@@ -32,6 +32,7 @@ public interface Constants {
 
 			public static final int SPORT_RUNNING = 0;
 			public static final int SPORT_BIKING = 1;
+			public static final int SPORT_OTHER = 2; // unknown
 		};
 
 		public interface LOCATION {
@@ -88,6 +89,8 @@ public interface Constants {
 			public static final String ICON = "icon";
 
 			public static final int FLAG_SEND = 0; // stored in DEFAULT
+			public static final int FLAG_FEED = 1;
+			public static final long DEFAULT_FLAGS = (1 << FLAG_SEND) + (1 << FLAG_FEED);
 		};
 
 		public interface EXPORT {
@@ -103,6 +106,31 @@ public interface Constants {
 			public static final String TABLE = "audio_schemes";
 			public static final String NAME = "name";
 			public static final String SORT_ORDER = "sort_order";
+		}
+
+		public interface FEED {
+			public static final String TABLE = "feed";
+			public static final String ACCOUNT_ID = "account_id";
+			public static final String EXTERNAL_ID = "ext_id";  // ID per account
+			public static final String FEED_TYPE = "entry_type";
+			public static final String FEED_SUBTYPE = "type";
+			public static final String FEED_TYPE_STRING = "type_string";
+			public static final String START_TIME = "start_time";
+			public static final String DURATION = "duration";
+			public static final String DISTANCE = "distance";
+			public static final String USER_ID = "user_id";
+			public static final String USER_FIRST_NAME = "user_first_name";
+			public static final String USER_LAST_NAME = "user_last_name";
+			public static final String USER_IMAGE_URL = "user_image_url";
+			public static final String NOTES = "notes";
+			public static final String COMMENTS = "comments";
+			public static final String URL = "url";
+			public static final String FLAGS = "flags";
+
+			public static final int FEED_TYPE_ACTIVITY = 0; // FEED_SUBTYPE contains activity.type
+			public static final int FEED_TYPE_EVENT = 1;
+			
+			public static final int FEED_TYPE_EVENT_DATE_HEADER = 0;
 		}
 	};
 };

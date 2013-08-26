@@ -18,7 +18,6 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,20 +25,25 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.TimeZone;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.NikeXML;
+import org.runnerup.feed.FeedList;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Constants.DB.FEED;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
 
 public class NikePlus extends FormCrawler implements Uploader {
 
@@ -48,12 +52,16 @@ public class NikePlus extends FormCrawler implements Uploader {
 	private static String CLIENT_SECRET = null;
 	private static String APP_ID = null;
 	
-	private static final String LOGIN_URL = "https://api.nike.com/nsl/v2.0/user/login?client_id=%s&client_secret=%s&app=%s";
-	private static final String SYNC_URL = "https://api.nike.com/v2.0/me/sync?access_token=%s";
-	private static final String SYNC_COMPLETE_URL = "https://api.nike.com/v2.0/me/sync/complete?access_token=%s";
+	private static final String BASE_URL = "https://api.nike.com";
+	private static final String LOGIN_URL = BASE_URL + "/nsl/v2.0/user/login?client_id=%s&client_secret=%s&app=%s";
+	private static final String SYNC_URL = BASE_URL + "/v2.0/me/sync?access_token=%s";
+	private static final String SYNC_COMPLETE_URL = BASE_URL + "/v2.0/me/sync/complete?access_token=%s";
 
 	private static final String USER_AGENT = "NPConnect";
 	
+	private static final String PROFILE_URL = BASE_URL + "/v1.0/me/profile?access_token=%s";
+	private static final String MY_FEED_URL = BASE_URL + "/v1.0/me/home/feed?access_token=%s&start=%d&count=%d";
+	private static final String FRIEND_FEED_URL = BASE_URL + "/v1.0/me/friends/feed?access_token=%s&startIndex=%d&count=%d";
 	long id = 0;
 	private String username = null;
 	private String password = null;
@@ -84,28 +92,14 @@ public class NikePlus extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public AuthMethod getAuthMethod() {
-		return Uploader.AuthMethod.POST;
-	}
-
-	static public String getString(JSONObject obj, String key) {
-		try {
-			return obj.getString(key);
-		} catch (JSONException e) {
-		}
-		return null;
-	}
-	
-	@Override
 	public void init(ContentValues config) {
 		id = config.getAsLong("_id");
 		String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
 		if (authToken != null) {
-			JSONObject tmp;
 			try {
-				tmp = new JSONObject(authToken);
-				username = getString(tmp, "username");
-				password = getString(tmp, "password");
+				JSONObject tmp = new JSONObject(authToken);
+				username = tmp.optString("username", null);
+				password = tmp.optString("password", null);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -121,8 +115,16 @@ public class NikePlus extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Intent configure(Activity activity) {
-		return null;
+	public String getAuthConfig() {
+		JSONObject tmp = new JSONObject();
+		try {
+			tmp.put("username",  username);
+			tmp.put("password", password);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return tmp.toString();
 	}
 
 	@Override
@@ -137,13 +139,21 @@ public class NikePlus extends FormCrawler implements Uploader {
 	}
 	
 	@Override
-	public Status login(ContentValues config) {
+	public Status connect() {
+		if (now() > expires_timeout) {
+			access_token = null;
+		}
+		
 		if (access_token != null) {
-			if (now() > expires_timeout)
-				access_token = null;
 			return Status.OK;
 		}
 
+		Status s = Status.NEED_AUTH;
+		s.authMethod = Uploader.AuthMethod.USER_PASS;
+		if (username == null || password == null) {
+			return s;
+		}
+		
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		try {
@@ -187,7 +197,6 @@ public class NikePlus extends FormCrawler implements Uploader {
 		if (conn != null)
 			conn.disconnect();
 
-		Uploader.Status s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -197,6 +206,11 @@ public class NikePlus extends FormCrawler implements Uploader {
 
 	@Override
 	public Status upload(SQLiteDatabase db, long mID) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+		
 		NikeXML nikeXML = new NikeXML(db);
 		GPX nikeGPX = new GPX(db);
 		HttpURLConnection conn = null;
@@ -255,7 +269,7 @@ public class NikePlus extends FormCrawler implements Uploader {
 			ex = e;
 		}
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -265,20 +279,138 @@ public class NikePlus extends FormCrawler implements Uploader {
 
 	@Override
 	public boolean checkSupport(Uploader.Feature f) {
+		switch(f) {
+		case FEED:
+			return true;
+		case GET_WORKOUT:
+		case WORKOUT_LIST:
+			break;
+		}
 		return false;
 	}
 
 	@Override
-	public Status listWorkouts(List<Pair<String, String>> list) {
-		return Status.OK;
+	public void logout() {
+		super.logout();
 	}
 
 	@Override
-	public void downloadWorkout(File dst, String key) {
+	public Status getFeed(FeedUpdater feedUpdater) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			List<ContentValues> result = new ArrayList<ContentValues>();
+			getOwnFeed(df, result);
+			getFriendsFeed(df, result);
+			FeedList.sort(result);
+			feedUpdater.addAll(result);
+			return Status.OK;
+		} finally {
+
+		}
+	}
+
+	JSONObject makeGetRequest(String url) throws MalformedURLException, IOException, JSONException {
+		HttpURLConnection conn = null;
+		try {
+			conn = (HttpURLConnection) new URL(url).openConnection();
+			conn.setRequestMethod("GET");
+			conn.addRequestProperty("Accept", "application/json");
+			conn.addRequestProperty("User-Agent", USER_AGENT);
+			conn.addRequestProperty("appid", APP_ID);
+			final InputStream in = new BufferedInputStream(conn.getInputStream());
+			final JSONObject reply = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			final int code = conn.getResponseCode();
+			conn.disconnect();
+			if (code == 200)
+				return reply;
+		} finally {
+			if (conn != null)
+				conn.disconnect();
+		}
+		return new JSONObject();
 	}
 	
-	@Override
-	public void logout() {
-		super.logout();
+	private void getOwnFeed(SimpleDateFormat df, List<ContentValues> result) {
+		try {
+			JSONObject profile = makeGetRequest(String.format(PROFILE_URL, access_token));
+			String first = profile.getString("firstName");
+			String last = profile.getString("lastName");
+			String userUrl = profile.getString("avatarFullUrl");
+			JSONObject feed = makeGetRequest(String.format(MY_FEED_URL, access_token, 1, 25));
+			JSONArray arr = feed.getJSONArray("events");
+			for (int i = 0; i < arr.length(); i++) {
+				JSONObject e = arr.getJSONObject(i);
+				String type = e.getString("eventType");
+				if (!"APPLICATION.SYNC.RUN".contentEquals(type))
+					continue;
+				
+				ContentValues c = new ContentValues();
+				c.put(FEED.ACCOUNT_ID,  getId());
+				c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
+				c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+				c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); //TODO
+				c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
+				if (e.has("payload")) {
+					JSONObject p = e.getJSONObject("payload");
+					c.put(FEED.DURATION, Long.parseLong(p.getString("duration")) / 1000);
+					c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p.getString("distance")));
+				}
+				c.put(FEED.USER_FIRST_NAME, first);
+				c.put(FEED.USER_LAST_NAME, last);
+				c.put(FEED.USER_IMAGE_URL, userUrl);
+				result.add(c);
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void getFriendsFeed(SimpleDateFormat df, List<ContentValues> result) {
+		try {
+			JSONObject feed = makeGetRequest(String.format(FRIEND_FEED_URL, access_token, 1, 25));
+			JSONArray arr = feed.getJSONArray("friends");
+			for (int i = 0; i < arr.length(); i++) {
+				JSONObject e = arr.getJSONObject(i).getJSONObject("event");
+				String type = e.getString("eventType");
+				if (!"APPLICATION.SYNC.RUN".contentEquals(type))
+					continue;
+
+				ContentValues c = new ContentValues();
+				c.put(FEED.ACCOUNT_ID,  getId());
+				c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
+				c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+				c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); //TODO
+				c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
+				if (e.has("payload")) {
+					JSONObject p = e.getJSONObject("payload");
+					c.put(FEED.DURATION, Long.parseLong(p.getString("duration")) / 1000);
+					c.put(FEED.DISTANCE, 1000 * Double.parseDouble(p.getString("distance")));
+					c.put(FEED.USER_FIRST_NAME, p.getString("userFirstName"));
+					c.put(FEED.USER_LAST_NAME, p.getString("userLastName"));
+				}
+				c.put(FEED.USER_IMAGE_URL, e.getString("avatar"));
+				result.add(c);
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
 	}
 };

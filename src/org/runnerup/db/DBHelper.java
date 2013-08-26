@@ -37,7 +37,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 16;
+	private static final int DBVERSION = 18;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -79,14 +79,16 @@ public class DBHelper extends SQLiteOpenHelper implements
 
 	private static final String CREATE_TABLE_ACCOUNT = "create table "
 			+ DB.ACCOUNT.TABLE + " ( "
-			+ "_id integer primary key autoincrement, " + DB.ACCOUNT.NAME
-			+ " text not null, " + DB.ACCOUNT.DESCRIPTION + " text, "
-			+ DB.ACCOUNT.URL + " text, " + DB.ACCOUNT.FORMAT
-			+ " text not null, " + DB.ACCOUNT.FLAGS
-			+ " int not null default 1, " + DB.ACCOUNT.ENABLED
-			+ " int not null default 1," + DB.ACCOUNT.AUTH_METHOD
-			+ " text not null, " + DB.ACCOUNT.AUTH_CONFIG + " text, "
-			+ DB.ACCOUNT.ICON + " int null, "
+			+ ( "_id integer primary key autoincrement, " ) 
+			+ ( DB.ACCOUNT.NAME + " text not null, " )
+			+ ( DB.ACCOUNT.DESCRIPTION + " text, " )
+			+ ( DB.ACCOUNT.URL + " text, " ) 
+			+ ( DB.ACCOUNT.FORMAT + " text not null, " )
+			+ ( DB.ACCOUNT.FLAGS + " int not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", " )
+			+ ( DB.ACCOUNT.ENABLED + " int not null default 1," )
+			+ ( DB.ACCOUNT.AUTH_METHOD + " text not null, " )
+			+ ( DB.ACCOUNT.AUTH_CONFIG + " text, " )
+			+ ( DB.ACCOUNT.ICON + " int null, " )
 			+ "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
 
 	private static final String CREATE_TABLE_REPORT = "create table "
@@ -104,6 +106,31 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( "unique (" + DB.AUDIO_SCHEMES.NAME + ")" )
 			+ ");";
 
+	private static final String CREATE_TABLE_FEED = "create table "
+			+ DB.FEED.TABLE + " ( "
+			+ ( "_id integer primary key autoincrement, " )
+			+ ( DB.FEED.ACCOUNT_ID + " int not null, " )
+			+ ( DB.FEED.EXTERNAL_ID + " text, " )
+			+ ( DB.FEED.FEED_TYPE + " int not null, " )
+			+ ( DB.FEED.FEED_SUBTYPE + " int, " )
+			+ ( DB.FEED.FEED_TYPE_STRING + " text, " )
+			+ ( DB.FEED.START_TIME + " int not null, " )
+			+ ( DB.FEED.DURATION + " int, ")
+			+ ( DB.FEED.DISTANCE + " double, ")
+			+ ( DB.FEED.USER_ID + " text, " )
+			+ ( DB.FEED.USER_FIRST_NAME + " text, " )
+			+ ( DB.FEED.USER_LAST_NAME + " text, " )
+			+ ( DB.FEED.USER_IMAGE_URL + " text, " )
+			+ ( DB.FEED.NOTES + " text, " )
+			+ ( DB.FEED.COMMENTS + " text, " )
+			+ ( DB.FEED.URL + " text, " )
+			+ ( DB.FEED.FLAGS + " text ")
+			+ ");";
+
+	private static final String CREATE_INDEX_FEED = "create index if not exists FEED_START_TIME " + 
+			( " on " + DB.FEED.TABLE + " (" +  DB.FEED.START_TIME + ")" );
+
+	
 	public DBHelper(Context context) {
 		super(context, DBNAME, null, DBVERSION);
 	}
@@ -116,6 +143,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 		arg0.execSQL(CREATE_TABLE_ACCOUNT);
 		arg0.execSQL(CREATE_TABLE_REPORT);
 		arg0.execSQL(CREATE_TABLE_AUDIO_SCHEMES);
+		arg0.execSQL(CREATE_TABLE_FEED);
+		arg0.execSQL(CREATE_INDEX_FEED);
 		
 		onUpgrade(arg0, 0, DBVERSION);
 	}
@@ -138,12 +167,24 @@ public class DBHelper extends SQLiteOpenHelper implements
 		}
 
 		if (oldVersion > 0 && oldVersion < 16 && newVersion >= 16) {
-			arg0.execSQL("alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.HR + " int");
+			echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.HR + " int");
 		}
 		
 		if (oldVersion > 0 && oldVersion < 10 && newVersion >= 10) {
 			recreateAccount(arg0);
 		}
+
+		if (oldVersion > 0 && oldVersion < 17 && newVersion >= 17) {
+			arg0.execSQL(CREATE_TABLE_FEED);
+			arg0.execSQL(CREATE_INDEX_FEED);
+			echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS + " + " + (1 << DB.ACCOUNT.FLAG_FEED));
+		}
+
+		if (oldVersion > 0 && oldVersion < 18 && newVersion >= 18) {
+			echoDo(arg0, "alter table " + DB.FEED.TABLE + " add column " + DB.FEED.FLAGS + " text");
+			echoDo(arg0, "update account set auth_config = '{ \"access_token\":\"' || auth_config || '\" }' where auth_config is not null and auth_method='oauth2';");
+		}
+
 		
 		insertAccounts(arg0);
 	}

@@ -18,7 +18,6 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -27,7 +26,6 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,12 +43,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlSerializer;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
-import android.util.Pair;
 import android.util.Xml;
 
 public class JoggSE extends FormCrawler implements Uploader {
@@ -64,7 +59,8 @@ public class JoggSE extends FormCrawler implements Uploader {
 	long id = 0;
 	private String username = null;
 	private String password = null;
-
+	private boolean isConnected = false;
+	
 	JoggSE(final UploadManager uploadManager) {
 		if (MASTER_USER == null || MASTER_KEY == null) {
 			try {
@@ -88,20 +84,14 @@ public class JoggSE extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public AuthMethod getAuthMethod() {
-		return Uploader.AuthMethod.POST;
-	}
-
-	@Override
 	public void init(final ContentValues config) {
 		id = config.getAsLong("_id");
 		final String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
 		if (authToken != null) {
-			JSONObject tmp;
 			try {
-				tmp = new JSONObject(authToken);
-				username = tmp.getString("username");
-				password = tmp.getString("password");
+				JSONObject tmp = new JSONObject(authToken);
+				username = tmp.optString("username", null);
+				password = tmp.optString("password", null);
 			} catch (final JSONException e) {
 				e.printStackTrace();
 			}
@@ -116,25 +106,37 @@ public class JoggSE extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Intent configure(final Activity activity) {
-		return null;
-	}
+	public String getAuthConfig() {
+		JSONObject tmp = new JSONObject();
+		try {
+			tmp.put("username",  username);
+			tmp.put("password",  password);
+		} catch (final JSONException e) {
+			e.printStackTrace();
+		}
 
+		return tmp.toString();
+	}
+	
 	@Override
 	public void reset() {
 		username = null;
 		password = null;
+		isConnected = false;
 	}
 
 	@Override
-	public Status login(final ContentValues _config) {
-		if (_config == null) {
-			if (isConfigured())
-				return Status.OK;
-			else
-				return Status.INCORRECT_USAGE;
+	public Status connect() {
+		if (isConnected) {
+			return Status.OK;
 		}
-		
+
+		Status s = Status.NEED_AUTH;
+		s.authMethod = Uploader.AuthMethod.USER_PASS;
+		if (username == null || password == null) {
+			return s;
+		}
+
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		try {
@@ -170,10 +172,11 @@ public class JoggSE extends FormCrawler implements Uploader {
 			final Node e = navigate(doc, path);
 			System.err.println("reply: " + e.getTextContent());
 			if (e != null && e.getTextContent() != null && LOGIN_OK.contentEquals(e.getTextContent())) {
+				isConnected = true;
 				return Uploader.Status.OK;
 			}
 			
-			return Uploader.Status.CANCEL;
+			return s;
 		} catch (final MalformedURLException e) {
 			ex = e;
 		} catch (final IOException e) {
@@ -187,7 +190,7 @@ public class JoggSE extends FormCrawler implements Uploader {
 		if (conn != null)
 			conn.disconnect();
 
-		final Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -246,8 +249,9 @@ public class JoggSE extends FormCrawler implements Uploader {
 
 	@Override
 	public Status upload(final SQLiteDatabase db, final long mID) {
-		if (!isConfigured()) {
-			return Status.INCORRECT_USAGE;
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
 		}
 		
 		Exception ex = null;
@@ -306,7 +310,7 @@ public class JoggSE extends FormCrawler implements Uploader {
 		if (conn != null)
 			conn.disconnect();
 
-		final Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -319,16 +323,6 @@ public class JoggSE extends FormCrawler implements Uploader {
 	public boolean checkSupport(final Uploader.Feature f) {
 		return false;
 	}
-
-	@Override
-	public Status listWorkouts(final List<Pair<String, String>> list) {
-		return Status.OK;
-	}
-
-	@Override
-	public void downloadWorkout(final File dst, final String key) {
-	}
-	
 
 	@Override
 	public void logout() {

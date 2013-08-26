@@ -18,7 +18,6 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,21 +25,17 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Scanner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Encryption;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
 
 public class MapMyRunUploader extends FormCrawler implements Uploader {
 
@@ -80,31 +75,17 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public AuthMethod getAuthMethod() {
-		return Uploader.AuthMethod.POST;
-	}
-
-	static public String getString(JSONObject obj, String key) {
-		try {
-			return obj.getString(key);
-		} catch (JSONException e) {
-		}
-		return null;
-	}
-	
-	@Override
 	public void init(ContentValues config) {
 		id = config.getAsLong("_id");
 		String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
 		if (authToken != null) {
-			JSONObject tmp;
 			try {
-				tmp = new JSONObject(authToken);
-				username = getString(tmp, "username");
-				password = getString(tmp, "password");
-				md5pass = getString(tmp, "md5pass");
-				user_id = getString(tmp, "user_id");
-				user_key = getString(tmp, "user_key");
+				JSONObject tmp = new JSONObject(authToken);
+				username = tmp.optString("username", null);
+				password = tmp.optString("password", null);
+				md5pass = tmp.optString("md5pass", null);
+				user_id = tmp.optString("user_id", null);
+				user_key = tmp.optString("user_key", null);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -121,10 +102,21 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Intent configure(Activity activity) {
-		return null;
+	public String getAuthConfig() {
+		JSONObject tmp = new JSONObject();
+		try {
+			tmp.put("username", username);
+			tmp.put("password", password);
+			tmp.put("md5pass", md5pass);
+			tmp.put("user_id", user_id);
+			tmp.put("user_key", user_key);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return tmp.toString();
 	}
-
+	
 	@Override
 	public void reset() {
 		username = null;
@@ -135,23 +127,22 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Status login(ContentValues config) {
+	public Status connect() {
 		if (isConfigured()) {
 			return Status.OK;
 		}
-		if (username == null) {
-			return Status.INCORRECT_USAGE;
+
+		Status s = Status.NEED_AUTH;
+		s.authMethod = Uploader.AuthMethod.USER_PASS;
+		if (username == null || password == null) {
+			return s;
 		}
+
 		Exception ex = null;
 		HttpURLConnection conn = null;
-		logout();
 		try {
-			if (md5pass == null && password == null) {
-				return Status.INCORRECT_USAGE;
-			}
-
 			if (md5pass == null) {
-				md5pass = md5(password);
+				md5pass = Encryption.toHex(Encryption.md5(password));
 			}
 			
 			/**
@@ -180,17 +171,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 				JSONObject user = obj.getJSONObject("result").getJSONObject("output").getJSONObject("user");
 				user_id = user.getString("user_id");
 				user_key = user.getString("user_key");
-				if (isConfigured()) {
-					JSONObject save = new JSONObject();
-					save.put("username", username);
-					save.put("md5pass", md5pass);
-					save.put("user_id", user_id);
-					save.put("user_key", user_key);
-					config.remove(DB.ACCOUNT.AUTH_CONFIG);
-					config.put(DB.ACCOUNT.AUTH_CONFIG, save.toString());
-					
-					return Uploader.Status.OK;
-				}
+				return Uploader.Status.OK;
 			}
 		} catch (MalformedURLException e) {
 			ex = e;
@@ -198,12 +179,13 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 			ex = e;
 		} catch (JSONException e) {
 			ex = e;
+		} catch (NoSuchAlgorithmException e) {
+			ex = e;
 		}
 
 		if (conn != null)
 			conn.disconnect();
 
-		Uploader.Status s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -211,32 +193,13 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 		return s;
 	}
 
-	public static String md5(String s) {
-	    try {
-	        // Create MD5 Hash
-	        MessageDigest digest = java.security.MessageDigest
-	                .getInstance("MD5");
-	        digest.update(s.getBytes());
-	        byte messageDigest[] = digest.digest();
-	 
-	        // Create Hex String
-	        StringBuffer hexString = new StringBuffer();
-	        for (int i = 0; i < messageDigest.length; i++) {
-	            String h = Integer.toHexString(0xFF & messageDigest[i]);
-	            while (h.length() < 2)
-	                h = "0" + h;
-	            hexString.append(h);
-	        }
-	        return hexString.toString();
-	 
-	    } catch (NoSuchAlgorithmException e) {
-	        e.printStackTrace();
-	    }
-	    return "";
-	}
-
 	@Override
 	public Status upload(SQLiteDatabase db, long mID) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+
 		TCX tcx = new TCX(db);
 		HttpURLConnection conn = null;
 		Exception ex = null;
@@ -307,7 +270,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 			ex = e;
 		}
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -320,15 +283,6 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 		return false;
 	}
 
-	@Override
-	public Status listWorkouts(List<Pair<String, String>> list) {
-		return Status.OK;
-	}
-
-	@Override
-	public void downloadWorkout(File dst, String key) {
-	}
-	
 	@Override
 	public void logout() {
 		super.logout();

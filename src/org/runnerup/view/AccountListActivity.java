@@ -122,14 +122,13 @@ public class AccountListActivity extends ListActivity implements Constants {
 				}
 			}
 			
-			boolean enabled = uploadManager.isEnabled(id);
 			boolean configured = uploadManager.isConfigured(id);
 			
 			{
 				Button b = (Button) view.findViewById(R.id.accountList_configureButton);
 				b.setTag(id);
 				b.setOnClickListener(configureButtonClick);
-				if (configured && enabled) {
+				if (configured) {
 					b.setText("Edit");
 					b.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_blue));
 				} else {
@@ -151,7 +150,7 @@ public class AccountListActivity extends ListActivity implements Constants {
 			if (uploadManager.isConfigured(uploader)) {
 				startActivity(uploader, true);
 			} else {
-				uploadManager.configure(callback, uploader, false);
+				uploadManager.connect(callback, uploader, false);
 			}
 		}
 	};

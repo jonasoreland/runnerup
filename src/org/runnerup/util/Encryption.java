@@ -177,6 +177,11 @@ public class Encryption {
 		return digest.digest(text.getBytes("UTF-8"));
 	}
 
+	public static byte[] md5(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+	        final MessageDigest digest = MessageDigest.getInstance("MD5");
+	        return digest.digest(text.getBytes("UTF-8"));
+	}
+
 	public static String toHex(byte bytes[]) {
 		StringBuilder sb = new StringBuilder();
 		for (byte b : bytes) {

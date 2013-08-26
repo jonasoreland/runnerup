@@ -37,9 +37,7 @@ import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
@@ -56,6 +54,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 	long id = 0;
 	private String username = null;
 	private String password = null;
+	private boolean isConnected = false;
 
 	GarminUploader(UploadManager uploadManager) {
 	}
@@ -71,20 +70,14 @@ public class GarminUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public AuthMethod getAuthMethod() {
-		return Uploader.AuthMethod.POST;
-	}
-
-	@Override
 	public void init(ContentValues config) {
 		id = config.getAsLong("_id");
 		String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
 		if (authToken != null) {
-			JSONObject tmp;
 			try {
-				tmp = new JSONObject(authToken);
-				username = tmp.getString("username");
-				password = tmp.getString("password");
+				JSONObject tmp = new JSONObject(authToken);
+				username = tmp.optString("username", null);
+				password = tmp.optString("password", null);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -99,22 +92,41 @@ public class GarminUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Intent configure(Activity activity) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getAuthConfig() {
+		JSONObject tmp = new JSONObject();
+		try {
+			tmp.put("username", username);
+			tmp.put("password",  password);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return tmp.toString();
 	}
 
 	@Override
 	public void reset() {
 		username = null;
 		password = null;
+		isConnected = false;
 	}
 
 	@Override
-	public Status login(ContentValues _config) {
+	public Status connect() {
+		Status s = Status.NEED_AUTH;
+		s.authMethod = Uploader.AuthMethod.USER_PASS;
+		if (username == null || password == null) {
+			return s;
+		}
+
+		if (isConnected) {
+			return Status.OK;
+		}
+		
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		logout();
+
 		try {
 
 			/**
@@ -174,10 +186,10 @@ public class GarminUploader extends FormCrawler implements Uploader {
 				System.err.println("obj: " + obj.toString());
 				// Returns username(which is actually Displayname from profile) if logged in
 				if (obj.getString("username").length() > 0) {
+					isConnected = true;
 					return Uploader.Status.OK;
-				} else {
-					return Uploader.Status.CANCEL;
 				}
+				return s;
 			}
 		} catch (MalformedURLException e) {
 			ex = e;
@@ -190,7 +202,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 		if (conn != null)
 			conn.disconnect();
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -200,6 +212,11 @@ public class GarminUploader extends FormCrawler implements Uploader {
 
 	@Override
 	public Status upload(SQLiteDatabase db, long mID) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+		
 		TCX tcx = new TCX(db);
 		HttpURLConnection conn = null;
 		Exception ex = null;
@@ -229,7 +246,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			ex = e;
 		}
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -240,15 +257,21 @@ public class GarminUploader extends FormCrawler implements Uploader {
 	public boolean checkSupport(Uploader.Feature f) {
 		switch(f) {
 		case WORKOUT_LIST:
-			return true;
 		case GET_WORKOUT:
 			return true;
+		case FEED:
+			break;
 		}
 		return false;
 	}
 
 	@Override
 	public Status listWorkouts(List<Pair<String, String>> list) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+
 		HttpURLConnection conn = null;
 		Exception ex = null;
 		try {
@@ -277,11 +300,10 @@ public class GarminUploader extends FormCrawler implements Uploader {
 		} catch (IOException e) {
 			ex = e;
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			ex = e;
 		}
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();

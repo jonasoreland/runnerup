@@ -16,30 +16,35 @@
  */
 package org.runnerup.export;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Scanner;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.EndomondoTrack;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.util.Formatter;
 
-import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
 
 /**
  * 
@@ -52,6 +57,7 @@ public class Endomondo extends FormCrawler implements Uploader {
 	public static final String NAME = "Endomondo";
 	public static String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
 	public static String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
+	public static String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
 	
 	long id = 0;
 	private String username = null;
@@ -73,18 +79,12 @@ public class Endomondo extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public AuthMethod getAuthMethod() {
-		return Uploader.AuthMethod.POST;
-	}
-
-	@Override
 	public void init(ContentValues config) {
 		id = config.getAsLong("_id");
 		String auth = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
 		if (auth != null) {
-			JSONObject tmp;
 			try {
-				tmp = new JSONObject(auth);
+				JSONObject tmp = new JSONObject(auth);
 				username = tmp.optString("username", null);
 				password = tmp.optString("password", null);
 				deviceId = tmp.optString("deviceId", null);
@@ -104,10 +104,22 @@ public class Endomondo extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Intent configure(Activity activity) {
-		return null;
+	public String getAuthConfig() {
+		JSONObject tmp = new JSONObject();
+		try {
+			tmp.put("username", username);
+			tmp.put("password", password);
+			tmp.put("deviceId", deviceId);
+			tmp.put("authToken", authToken);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return tmp.toString();
 	}
 
+
+	
 	@Override
 	public void reset() {
 		username = null;
@@ -117,14 +129,17 @@ public class Endomondo extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public Status login(ContentValues _config) {
-		if (_config == null) {
-			if (isConfigured())
-				return Status.OK;
-			else
-				return Status.INCORRECT_USAGE;
+	public Status connect() {
+		if (isConfigured()) {
+			return Status.OK;
 		}
-
+		
+		Status s = Status.NEED_AUTH;
+		s.authMethod = Uploader.AuthMethod.USER_PASS;
+		if (username == null || password == null) {
+			return s;
+		}
+		
 		/**
 		 * Generate deviceId
 		 */
@@ -167,17 +182,10 @@ public class Endomondo extends FormCrawler implements Uploader {
 				"OK".contentEquals(res.getString("_0")) &&
 				res.has("authToken")){
 				authToken = res.getString("authToken");
-				
-				JSONObject save = new JSONObject();
-				save.put("username", username);
-				save.put("password", password);
-				save.put("deviceId", deviceId);
-				save.put("authToken", authToken);
-				_config.remove(DB.ACCOUNT.AUTH_CONFIG);
-				_config.put(DB.ACCOUNT.AUTH_CONFIG, save.toString());
 				return Status.OK;
 			}
 			System.err.println("FAIL: code: " + responseCode + ", msg=" + amsg + ", res=" + res.toString());
+			return s;
 		} catch (MalformedURLException e) {
 			ex = e;
 		} catch (IOException e) {
@@ -189,7 +197,7 @@ public class Endomondo extends FormCrawler implements Uploader {
 		if (conn != null)
 			conn.disconnect();
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -215,6 +223,11 @@ public class Endomondo extends FormCrawler implements Uploader {
 
 	@Override
 	public Status upload(SQLiteDatabase db, long mID) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+			
 		EndomondoTrack tcx = new EndomondoTrack(db);
 		HttpURLConnection conn = null;
 		Exception ex = null;
@@ -263,7 +276,7 @@ public class Endomondo extends FormCrawler implements Uploader {
 			ex = e;
 		}
 
-		Uploader.Status s = Uploader.Status.ERROR;
+		s = Uploader.Status.ERROR;
 		s.ex = ex;
 		if (ex != null) {
 			ex.printStackTrace();
@@ -273,20 +286,151 @@ public class Endomondo extends FormCrawler implements Uploader {
 
 	@Override
 	public boolean checkSupport(Uploader.Feature f) {
+		switch (f) {
+		case FEED:
+			return true;
+		case GET_WORKOUT:
+		case WORKOUT_LIST:
+			break;
+		}
+
 		return false;
 	}
 
 	@Override
-	public Status listWorkouts(List<Pair<String, String>> list) {
-		return Status.OK;
+	public void logout() {
+		super.logout();
 	}
 
 	@Override
-	public void downloadWorkout(File dst, String key) {
+	public Status getFeed(FeedUpdater feedUpdater) {
+		Status s;
+		if ((s = connect()) != Status.OK) {
+			return s;
+		}
+
+		StringBuffer url = new StringBuffer();
+		url.append(FEED_URL + "?authToken="+authToken);
+		url.append("&maxResults=25");
+		
+		HttpURLConnection conn = null;
+		Exception ex = null;
+		try {
+			conn = (HttpURLConnection) new URL(url.toString()).openConnection();
+			conn.setRequestMethod("GET");
+			final InputStream in = new BufferedInputStream(conn.getInputStream());
+			final JSONObject reply = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+
+			conn.disconnect();
+
+			if (responseCode == 200) {
+				parseFeed(feedUpdater, reply);
+				return Status.OK;
+			}
+			ex = new Exception(amsg);
+		} catch (IOException e) {
+			ex = e;
+		} catch (JSONException e) {
+			ex = e;
+		} catch (ParseException e) {
+			ex = e;
+		}
+
+		s = Uploader.Status.ERROR;
+		s.ex = ex;
+		if (ex != null) {
+			ex.printStackTrace();
+		}
+		return s;
 	}
 	
-	@Override
-	public void logout() {
-		super.logout();
+/*
+{"message":{"short":"was out <0>running<\/0>.",
+            "text":"was out <0>running<\/0>. He tracked 6.64 km in 28m:56s.",
+            "date":"Yesterday at 10:31",
+            "actions":[ {"id":233354212,"sport":0,"type":"workout","sport2":0}],
+            "text.win":"6.64 km in 28m:56s"},
+ "id":200472103,
+ "order_time":"2013-08-20 08:31:52 UTC",
+ "from":{"id":6408321,"picture":5521936,
+ "name":"Jonas Oreland"},
+ "type":"workout"},
+*/
+	private void parseFeed(FeedUpdater feedUpdater, JSONObject reply) throws JSONException, ParseException {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss z");
+		df.setTimeZone(TimeZone.getTimeZone("UTC"));
+		JSONArray arr = reply.getJSONArray("data");
+		for (int i = 0; i < arr.length(); i++) {
+			JSONObject o = arr.getJSONObject(i);
+			if (!"workout".contentEquals(o.getString("type"))) {
+				continue;
+			}
+
+			final ContentValues c = new ContentValues();
+			c.put(FEED.ACCOUNT_ID, getId());
+			c.put(FEED.EXTERNAL_ID, o.getLong("id"));
+			c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
+			setName(c, o.getJSONObject("from").getString("name"));
+			final String IMAGE_URL = "http://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
+			c.put(FEED.USER_IMAGE_URL, String.format(IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+			c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
+
+			final JSONObject m = o.getJSONObject("message");
+			setTrainingType(c, m.getJSONArray("actions").getJSONObject(0), m.getString("short"));
+			setDistanceDuration(c, m.getString("text.win"));
+
+			final String WORKOUT_URL = "http://www.endomondo.com/workouts/%d/%d";
+			c.put(DB.FEED.URL,  String.format(WORKOUT_URL,
+					m.getJSONArray("actions").getJSONObject(0).getLong("id"),
+					o.getJSONObject("from").getLong("id")));
+			feedUpdater.add(c);
+		}
+	}
+
+	private void setDistanceDuration(ContentValues c, String string) {
+		// 6.64 km in 28m:56s
+		String arr[] = string.split(" in ");
+		if (arr.length >= 1) {
+			String dist[] = arr[0].split(" ", 2);
+			if (dist.length == 2) {
+				double d = Double.valueOf(dist[0]);
+				if (dist[1].contains("km"))
+					d *= Formatter.km_meters;
+				else if (dist[1].contains("mi"))
+					d *= Formatter.mi_meters;
+				c.put(DB.FEED.DISTANCE, d);
+			}
+		}
+		if (arr.length >= 2) {
+			String time[] = arr[1].replaceAll("[hms]", "").split(":");
+			long duration = 0;
+			long mul = 1;
+			for (int i = 0; i < time.length; i++) {
+				duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+				mul = mul * 60;
+			}
+			c.put(DB.FEED.DURATION, duration);
+		}
+	}
+
+	private void setTrainingType(ContentValues c, JSONObject obj, String txt) throws JSONException {
+		if (obj.getInt("sport") == 0 &&
+				obj.getInt("sport2") == 0 &&
+				"workout".contentEquals(obj.getString("type"))) {
+			c.put(DB.FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);
+			return;
+		}
+		String sportTxt = "something";
+		// <0>running<\/0>
+		if (txt.matches(".*<0>.*<\\/0>.*")) {
+			int start = txt.indexOf('>');
+			int end = txt.indexOf('<', start);
+			sportTxt = txt.substring(start, end);
+		}
+		// put in string instead...
+		c.put(DB.FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
+		c.put(DB.FEED.FEED_TYPE_STRING, sportTxt);
 	}
 };

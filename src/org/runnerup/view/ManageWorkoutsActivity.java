@@ -48,9 +48,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -647,7 +647,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 			saveGroupPosition = groupPosition;
 
 			if (!uploadManager.isConfigured(provider)) {
-				uploadManager.configure(onUploaderConfiguredCallback, provider, false);
+				uploadManager.connect(onUploaderConfiguredCallback, provider, false);
 			}
 			else {
 				onUploaderConfiguredCallback.run(provider,  Uploader.Status.OK);

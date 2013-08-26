@@ -59,4 +59,19 @@
     <item name="android:textSize">20sp</item>
     <item name="android:textStyle">bold</item>
 </style>
+<style name="FeedDateHeader">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_margin">10dp</item>
+    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textSize">20sp</item>
+    <item name="android:textStyle">bold</item>
+</style>
+<style name="FeedActivitySource">
+    <item name="android:layout_width">fill_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginLeft">5dp</item>
+    <item name="android:textSize">8sp</item>
+    <item name="android:textStyle">italic</item>
+</style>
 </resources>

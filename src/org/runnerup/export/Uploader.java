@@ -19,6 +19,8 @@ package org.runnerup.export;
 import java.io.File;
 import java.util.List;
 
+import org.runnerup.feed.FeedList.FeedUpdater;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -27,19 +29,21 @@ import android.util.Pair;
 
 public interface Uploader {
 
+	enum AuthMethod {
+		OAUTH2, USER_PASS
+	}
+
 	enum Status {
-		OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP;
+		OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP, NEED_AUTH;
 
 		public Exception ex = null;
+		public AuthMethod authMethod = null;
 	};
-
-	enum AuthMethod {
-		OAUTH2, POST
-	}
 
 	enum Feature {
 		WORKOUT_LIST,
-		GET_WORKOUT
+		GET_WORKOUT,
+		FEED
 	};
 
 	/**
@@ -55,12 +59,6 @@ public interface Uploader {
 	public String getName();
 
 	/**
-	 * 
-	 * @return
-	 */
-	public AuthMethod getAuthMethod();
-
-	/**
 	 * Init uploader
 	 * 
 	 * @param config
@@ -68,14 +66,19 @@ public interface Uploader {
 	public void init(ContentValues config);
 
 	/**
+	 * 
+	 */
+	public String getAuthConfig();
+	
+	/**
+	 * 
+	 */
+	public Intent getAuthIntent(Activity activity);
+
+	/**
 	 * Is uploader configured
 	 */
 	public boolean isConfigured();
-
-	/**
-	 * Configure (i.e password, oauth...)
-	 */
-	public Intent configure(Activity activity);
 
 	/**
 	 * Reset configuration (i.e password, oauth-token...)
@@ -83,11 +86,16 @@ public interface Uploader {
 	public void reset();
 
 	/**
-	 * Login
+	 * Connect
 	 * 
 	 * @return true ok false cancel/fail
 	 */
-	public Status login(ContentValues config);
+	public Status connect();
+
+	/**
+	 * handle result from authIntent
+	 */
+	public Status getAuthResult(int resultCode, Intent data);
 
 	/**
 	 * 
@@ -124,4 +132,10 @@ public interface Uploader {
 	 */
 	public void logout();
 
+	/**
+	 * 
+	 * @param feedUpdater
+	 * @return
+	 */
+	public Status getFeed(FeedUpdater feedUpdater);
 }
