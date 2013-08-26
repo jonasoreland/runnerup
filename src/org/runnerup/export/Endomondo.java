@@ -399,16 +399,7 @@ public class Endomondo extends FormCrawler implements Uploader {
 		
 		if (!string.contains(" in ")) {
 			// either time or distance specified
-			String time[] = string.replaceAll("[hms]", "").split(":");
-			if (time.length == 3) {
-				long duration = 0;
-				long mul = 1;
-				for (int i = 0; i < time.length; i++) {
-					duration += (mul * Long.valueOf(time[time.length - 1 - i]));
-					mul = mul * 60;
-				}
-				c.put(DB.FEED.DURATION, duration);
-			} else if (string.contains("km") || string.contains("mi")) {
+			if (string.contains("km") || string.contains("mi")) {
 				String dist[] = string.split(" ", 2);
 				if (dist.length == 2) {
 					double d = Double.valueOf(dist[0]);
@@ -417,6 +408,18 @@ public class Endomondo extends FormCrawler implements Uploader {
 					else if (dist[1].contains("mi"))
 						d *= Formatter.mi_meters;
 					c.put(DB.FEED.DISTANCE, d);
+				}
+			} else {
+				boolean hms = string.matches("([0-9]+h:)?([0-9]{2}m:)?([0-9]{2}s)");
+				String time[] = string.replaceAll("[hms]", "").split(":");
+				if (hms) {
+					long duration = 0;
+					long mul = 1;
+					for (int i = 0; i < time.length; i++) {
+						duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+						mul = mul * 60;
+					}
+					c.put(DB.FEED.DURATION, duration);
 				}
 			}
 		} else {
