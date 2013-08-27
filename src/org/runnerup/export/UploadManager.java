@@ -155,6 +155,8 @@ public class UploadManager {
 			uploader = new Endomondo(this);
 		} else if (uploaderName.contentEquals(RunningAHEAD.NAME)) {
 			uploader = new RunningAHEAD(this);
+		} else if (uploaderName.contentEquals(Facebook.NAME)) {
+			uploader = new Facebook(this);
 		}
 		
 		if (uploader != null) {

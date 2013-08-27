@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.runnerup.R;
 import org.runnerup.export.Endomondo;
+import org.runnerup.export.Facebook;
 import org.runnerup.export.FunBeatUploader;
 import org.runnerup.export.GarminUploader;
 import org.runnerup.export.JoggSE;
@@ -37,7 +38,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 18;
+	private static final int DBVERSION = 19;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -333,7 +334,17 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.URL, "http://www.runningahead.com");
 			insertAccount(arg0, values);
 		}
-	}
+
+		if (yet) {
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, Facebook.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
+			values.put(DB.ACCOUNT.URL, "http://www.facebook.com");
+			insertAccount(arg0, values);
+		}
+}
 
 	void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
 		String cols[] = { "_id" };
