@@ -16,19 +16,18 @@
  */
 package org.runnerup.export.oauth2client;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Scanner;
 
-import org.json.JSONObject;
 import org.runnerup.export.FormCrawler.FormValues;
 import org.runnerup.util.Constants.DB;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -42,6 +41,7 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+@SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Activity extends Activity {
 
 	/**
@@ -60,6 +60,7 @@ public class OAuth2Activity extends Activity {
 		public static final String CLIENT_ID = "client_id";
 		public static final String CLIENT_SECRET = "client_secret";
 		public static final String AUTH_URL = "auth_url";
+		public static final String AUTH_EXTRA = "auth_extra";
 		public static final String TOKEN_URL = "token_url";
 		public static final String REDIRECT_URI = "redirect_uri";
 		public static final String REVOKE_URL = "revoke_url";
@@ -81,7 +82,10 @@ public class OAuth2Activity extends Activity {
 		String auth_url = b.getString(OAuth2ServerCredentials.AUTH_URL);
 		String client_id = b.getString(OAuth2ServerCredentials.CLIENT_ID);
 		mRedirectUri = b.getString(OAuth2ServerCredentials.REDIRECT_URI);
-
+		String auth_extra = null;
+		if (b.containsKey(OAuth2ServerCredentials.AUTH_EXTRA))
+			auth_extra = b.getString(OAuth2ServerCredentials.AUTH_EXTRA);
+		
 		mSpinner = new ProgressDialog(this);
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading...");
@@ -95,6 +99,9 @@ public class OAuth2Activity extends Activity {
 		String url = auth_url + "?client_id=" + URLEncoder.encode(client_id)
 				+ "&response_type=code" + "&redirect_uri="
 				+ URLEncoder.encode(mRedirectUri);
+		if (auth_extra != null) {
+			url = url + "&" + auth_extra;
+		}
 		CookieSyncManager.createInstance(this);
 		CookieManager.getInstance().removeAllCookie();
 		wv.loadUrl(url);
@@ -118,8 +125,6 @@ public class OAuth2Activity extends Activity {
 
 				}
 
-				System.err.println("onPageFinished: >" + url + "<");
-				
 				if (url.startsWith(mRedirectUri)) {
 					Uri u = Uri.parse(url);
 					String e = null;
@@ -151,7 +156,6 @@ public class OAuth2Activity extends Activity {
 					fv.put("redirect_uri", b.getString(OAuth2ServerCredentials.REDIRECT_URI));
 					fv.put("code", code);
 
-					JSONObject obj = null;
 					HttpURLConnection conn = null;
 
 					Intent res = new Intent();
@@ -170,10 +174,14 @@ public class OAuth2Activity extends Activity {
 							wr.flush();
 							wr.close();
 						}
-						InputStream in = new BufferedInputStream(conn
-								.getInputStream());
-						obj = new JSONObject(new Scanner(in)
-								.useDelimiter("\\A").next());
+						StringBuilder obj = new StringBuilder();
+						BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+						char buf[] = new char[1024];
+						int len;
+						while ((len = in.read(buf)) != -1) {
+							obj.append(buf,  0,  len);
+						}
+						
 						res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
 					} catch (Exception ex) {
 						ex.printStackTrace(System.err);
