@@ -90,23 +90,42 @@ public class OAuth2Activity extends Activity {
 		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mSpinner.setMessage("Loading...");
 
-		WebView wv = new WebView(this);
+		final WebView wv = new WebView(this);
 		wv.setVerticalScrollBarEnabled(false);
 		wv.setHorizontalScrollBarEnabled(false);
 		wv.getSettings().setJavaScriptEnabled(true);
 		wv.getSettings().setSavePassword(false);
 
-		String url = auth_url + "?client_id=" + URLEncoder.encode(client_id)
-				+ "&response_type=code" + "&redirect_uri="
-				+ URLEncoder.encode(mRedirectUri);
+		StringBuilder tmp = new StringBuilder();
+		tmp.append(auth_url);
+		tmp.append("?client_id=").append(URLEncoder.encode(client_id));
+		tmp.append("&response_type=code");
+		tmp.append("&redirect_uri=" + URLEncoder.encode(mRedirectUri));
 		if (auth_extra != null) {
-			url = url + "&" + auth_extra;
+			tmp.append("&").append(auth_extra);
 		}
+		final String url = tmp.toString();
+		
 		CookieSyncManager.createInstance(this);
 		CookieManager.getInstance().removeAllCookie();
 		wv.loadUrl(url);
 
 		wv.setWebViewClient(new WebViewClient() {
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String loadurl) {
+				if (loadurl.startsWith("http://runkeeper.com/jsp/widgets/streetTeamWidgetClose.jsp") ||
+					loadurl.startsWith("http://runkeeper.com/jsp/widgets/friendWidgetClose.jsp")) {
+						wv.loadUrl("http://runkeeper.com/facebookSignIn");
+					return true;
+				}
+				if (loadurl.startsWith("http://runkeeper.com/home")) {
+					wv.loadUrl(url);
+					return true;
+				}
+				
+				return super.shouldOverrideUrlLoading(view, loadurl);
+			}
+
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 				super.onPageStarted(view, url, favicon);
