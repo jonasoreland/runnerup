@@ -340,7 +340,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.NAME, Facebook.NAME);
 			values.put(DB.ACCOUNT.FORMAT, "");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-			values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
+			values.put(DB.ACCOUNT.ICON, R.drawable.a8_facebook);
 			values.put(DB.ACCOUNT.URL, "http://www.facebook.com");
 			insertAccount(arg0, values);
 		}
