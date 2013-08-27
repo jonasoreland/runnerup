@@ -42,6 +42,7 @@ import org.runnerup.util.Formatter;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -73,7 +74,9 @@ public class FeedActivity extends Activity implements Constants {
 	LinearLayout feedHeader = null;
 	TextView feedStatus = null;
 	ProgressBar feedProgressBar = null;
-	
+
+	Button feedAccountButton = null;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,6 +105,16 @@ public class FeedActivity extends Activity implements Constants {
 				startSync();
 			}});
 		
+		feedAccountButton = (Button) findViewById(R.id.feedAccountButton);
+		feedAccountButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(FeedActivity.this,
+						AccountListActivity.class);
+				startActivityForResult(i, 0);
+			}
+		});
+		
 		feedHeader = (LinearLayout) findViewById(R.id.feedHeader);
 		feedStatus = (TextView) findViewById(R.id.feedStatus);
 		startSync();
@@ -109,10 +122,7 @@ public class FeedActivity extends Activity implements Constants {
 
 	StringBuffer cancelSync = null;
 	void startSync() {
-		refreshButton.setEnabled(false);
-		feedHeader.setVisibility(View.VISIBLE);
-		feedStatus.setText("Synchronizing feed");
-		cancelSync = new StringBuffer();
+		uploadManager.clear();
 		HashSet<String> set = new HashSet<String>();
 		String[] from = new String[] { "_id", 
 				DB.ACCOUNT.NAME,
@@ -138,7 +148,20 @@ public class FeedActivity extends Activity implements Constants {
 		}
 		c.close();
 		db.close();
-		uploadManager.syncronizeFeed(syncDone, set, feed, cancelSync);
+		if (!set.isEmpty()) {
+			feedAccountButton.setVisibility(View.GONE);
+			refreshButton.setVisibility(View.VISIBLE);
+			feedHeader.setVisibility(View.VISIBLE);
+
+			refreshButton.setEnabled(false);
+			feedStatus.setText("Synchronizing feed");
+			cancelSync = new StringBuffer();
+			uploadManager.syncronizeFeed(syncDone, set, feed, cancelSync);
+		} else {
+			feedHeader.setVisibility(View.GONE);
+			refreshButton.setVisibility(View.GONE);
+			feedAccountButton.setVisibility(View.VISIBLE);
+		}
 	}
 	
 	Callback syncDone = new Callback() {
@@ -160,6 +183,11 @@ public class FeedActivity extends Activity implements Constants {
 		mDBHelper.close();
 		uploadManager.close();
 		feedAdapter.close();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		startSync();
 	}
 
 	class FeedListAdapter extends BaseAdapter implements Observer {
