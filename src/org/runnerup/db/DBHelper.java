@@ -181,7 +181,6 @@ public class DBHelper extends SQLiteOpenHelper implements
 		}
 
 		if (oldVersion > 0 && oldVersion < 18 && newVersion >= 18) {
-			echoDo(arg0, "alter table " + DB.FEED.TABLE + " add column " + DB.FEED.FLAGS + " text");
 			echoDo(arg0, "update account set auth_config = '{ \"access_token\":\"' || auth_config || '\" }' where auth_config is not null and auth_method='oauth2';");
 		}
 
