@@ -65,7 +65,13 @@ public class WebserviceLogger
 				context).getString("pref_runneruplive_serveradress", "http://weide.devsparkles.se/api/Resource/");
 		active = PreferenceManager.getDefaultSharedPreferences(
 				context).getBoolean("pref_runneruplive_active", true);
+		
+		accountName = PreferenceManager.getDefaultSharedPreferences(
+				context).getString("pref_runneruplive_username", "");
 				
+		if(accountName != "")
+			return;
+		
 		String[] from = new String[] { "_id", 
 				DB.ACCOUNT.NAME,
 				DB.ACCOUNT.URL,

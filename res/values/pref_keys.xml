@@ -61,4 +61,5 @@
     
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
+    <string name="pref_runneruplive_username">pref_runneruplive_username</string>
 </resources>
