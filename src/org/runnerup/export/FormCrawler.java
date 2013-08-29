@@ -38,8 +38,10 @@ import org.runnerup.util.Constants.DB;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.util.Pair;
 
 public class FormCrawler {
@@ -268,6 +270,9 @@ public class FormCrawler {
 		return Status.OK;
 	}
 
+	public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis) {
+	}
+	
 	/**
 	 * For feed generation...
 	 */

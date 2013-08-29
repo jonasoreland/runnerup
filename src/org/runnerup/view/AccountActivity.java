@@ -160,6 +160,9 @@ public class AccountActivity extends Activity implements Constants {
 				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD)); 
 				cb.setOnCheckedChangeListener(sendCBChecked);
 				addRow("Automatic upload", cb);
+			} else {
+				Button btn = (Button) findViewById(R.id.accountUploadButton);
+				btn.setVisibility(View.GONE);
 			}
 
 			if (uploader.checkSupport(Uploader.Feature.FEED)) {
@@ -168,6 +171,14 @@ public class AccountActivity extends Activity implements Constants {
 				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED)); 
 				cb.setOnCheckedChangeListener(sendCBChecked);
 				addRow("Feed", cb);
+			}
+
+			if (uploader.checkSupport(Uploader.Feature.LIVE)) {
+				CheckBox cb = new CheckBox(this);
+				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_LIVE));
+				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE)); 
+				cb.setOnCheckedChangeListener(sendCBChecked);
+				addRow("Live", cb);
 			}
 		}
 		mCursors.add(c);

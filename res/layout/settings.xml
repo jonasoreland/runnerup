@@ -66,17 +66,8 @@
         android:defaultValue="false"
         android:key="@string/pref_runneruplive_active"
         android:persistent="true"
-        android:title="RunnerUp Live" />
+        android:title="Enable RunnerUpLive" />
 	
-	<org.runnerup.widget.TextPreference
-        android:defaultValue=""
-        android:dependency="@string/pref_runneruplive_active"
-        android:inputType="text"
-        android:key="@string/pref_runneruplive_username"
-        android:persistent="true"
-        android:summary="username that will be visible on RunnerUp Live web page"
-        android:title="RunnerUp Live Username" />
-        
     <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"

@@ -23,8 +23,10 @@ import org.runnerup.feed.FeedList.FeedUpdater;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.util.Pair;
 
 public interface Uploader {
@@ -140,4 +142,9 @@ public interface Uploader {
 	 * @return
 	 */
 	public Status getFeed(FeedUpdater feedUpdater);
+	
+	/**
+	 * 
+	 */
+	public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis);
 }

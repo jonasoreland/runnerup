@@ -128,7 +128,7 @@
 		    android:name=".gpstracker.GpsTracker" >
 		</service>
 		<service
-                android:name=".gpstracker.LiveService">
+                android:name=".export.RunnerUpLive$LiveService">
  		</service>
 	</application>
 

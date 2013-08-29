@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,6 +48,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -67,6 +69,7 @@ public class UploadManager {
 	private DBHelper mDBHelper = null;
 	private SQLiteDatabase mDB = null;
 	private Activity activity = null;
+	private Context context = null;
 	private Map<String, Uploader> uploaders = new HashMap<String, Uploader>();
 	private Map<Long, Uploader> uploadersById = new HashMap<Long, Uploader>();
 	private ProgressDialog mSpinner = null;
@@ -77,9 +80,19 @@ public class UploadManager {
 	
 	public UploadManager(Activity activity) {
 		this.activity = activity;
+		this.context = activity;
 		mDBHelper = new DBHelper(activity);
 		mDB = mDBHelper.getWritableDatabase();
 		mSpinner = new ProgressDialog(activity);
+		mSpinner.setCancelable(false);
+	}
+
+	public UploadManager(Context context) {
+		this.activity = null;
+		this.context = context;
+		mDBHelper = new DBHelper(context);
+		mDB = mDBHelper.getWritableDatabase();
+		mSpinner = new ProgressDialog(context);
 		mSpinner.setCancelable(false);
 	}
 
@@ -158,6 +171,8 @@ public class UploadManager {
 			uploader = new Endomondo(this);
 		} else if (uploaderName.contentEquals(RunningAHEAD.NAME)) {
 			uploader = new RunningAHEAD(this);
+		} else if (uploaderName.contentEquals(RunnerUpLive.NAME)) {
+			uploader = new RunnerUpLive(this);
 		}
 		
 		if (uploader != null) {
@@ -614,10 +629,10 @@ public class UploadManager {
 				for (WorkoutRef ref : pendingWorkouts) {
 					publishProgress(ref.workoutName, ref.uploader);
 					Uploader uploader = uploaders.get(ref.uploader);
-					File f = WorkoutSerializer.getFile(activity, ref.workoutName);
+					File f = WorkoutSerializer.getFile(context, ref.workoutName);
 					File w = f;
 					if (f.exists()) {
-						w = WorkoutSerializer.getFile(activity, ref.workoutName + ".tmp");
+						w = WorkoutSerializer.getFile(context, ref.workoutName + ".tmp");
 					}
 					try {
 						uploader.downloadWorkout(w, ref.workoutKey);
@@ -702,7 +717,7 @@ public class UploadManager {
 	 * @throws Exception
 	 */
 	String loadData(Uploader uploader) throws Exception {
-		InputStream in = activity.getAssets()
+		InputStream in = context.getAssets()
 				.open(uploader.getName() + ".data");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		String key = Encryption.calculateRFC2104HMAC("RunnerUp",
@@ -718,11 +733,19 @@ public class UploadManager {
 	 */
 	public SharedPreferences getPreferences(Uploader uploader) {
 		if (uploader == null)
-			return PreferenceManager.getDefaultSharedPreferences(activity);
+			return PreferenceManager.getDefaultSharedPreferences(context);
 		else
-			return activity.getSharedPreferences(uploader.getName(), Context.MODE_PRIVATE);
+			return context.getSharedPreferences(uploader.getName(), Context.MODE_PRIVATE);
 	}
 	
+	public Resources getResources() {
+		return context.getResources();
+	}
+
+	public Context getContext() {
+		return context;
+	}
+
 	/**
 	 * Upload set of activities for a specific uploader
 	 */
@@ -922,5 +945,29 @@ public class UploadManager {
 				nextSyncFeed();
 			}
 		}.execute(uploader);
+	}
+
+	public void loadLiveLoggers(List<Uploader> liveLoggers) {
+		liveLoggers.clear();
+		Resources res = getResources();
+		String key = res.getString(R.string.pref_runneruplive_active);
+		if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, false) == false) {
+			return;
+		}
+
+		String from[] = new String[] { "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG };
+		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, 
+				"( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
+				null, null, null, null, null);
+		if (c.moveToFirst()) {
+			do {
+				ContentValues config = DBHelper.get(c);
+				Uploader u = add(config);
+				if (u.checkSupport(Uploader.Feature.LIVE)) {
+					liveLoggers.add(u);
+				}
+			} while (c.moveToNext());
+		}
+		c.close();
 	}
 }
