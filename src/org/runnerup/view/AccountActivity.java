@@ -154,10 +154,10 @@ public class AccountActivity extends Activity implements Constants {
 			}
 
 			flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-			{
+			if (uploader.checkSupport(Uploader.Feature.UPLOAD)) {
 				CheckBox cb = new CheckBox(this);
-				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_SEND));
-				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_SEND)); 
+				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_UPLOAD));
+				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD)); 
 				cb.setOnCheckedChangeListener(sendCBChecked);
 				addRow("Automatic upload", cb);
 			}

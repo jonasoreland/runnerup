@@ -37,7 +37,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 18;
+	private static final int DBVERSION = 19;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -184,6 +184,9 @@ public class DBHelper extends SQLiteOpenHelper implements
 			echoDo(arg0, "update account set auth_config = '{ \"access_token\":\"' || auth_config || '\" }' where auth_config is not null and auth_method='oauth2';");
 		}
 
+		if (oldVersion > 0 && oldVersion < 19 && newVersion >= 19) {
+			echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS + " + " + (1 << DB.ACCOUNT.FLAG_LIVE));
+		}
 		
 		insertAccounts(arg0);
 	}

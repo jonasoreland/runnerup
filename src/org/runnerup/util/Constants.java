@@ -88,9 +88,10 @@ public interface Constants {
 			public static final String AUTH_CONFIG = "auth_config";
 			public static final String ICON = "icon";
 
-			public static final int FLAG_SEND = 0; // stored in DEFAULT
+			public static final int FLAG_UPLOAD = 0;
 			public static final int FLAG_FEED = 1;
-			public static final long DEFAULT_FLAGS = (1 << FLAG_SEND) + (1 << FLAG_FEED);
+			public static final int FLAG_LIVE = 2;
+			public static final long DEFAULT_FLAGS = 7;
 		};
 
 		public interface EXPORT {

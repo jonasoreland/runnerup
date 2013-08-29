@@ -143,7 +143,7 @@ public class AccountListActivity extends ListActivity implements Constants {
 			cbSend.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
 				@Override
 				public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-					setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_SEND, arg1);
+					setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
 				}
 			});
 			cbFeed.setTag(id);
@@ -175,10 +175,9 @@ public class AccountListActivity extends ListActivity implements Constants {
 				im.setVisibility(View.GONE);
 				tv.setVisibility(View.VISIBLE);
 				tv.setText(id);
-				boolean supportsSend = true; // TODO, when we have uploaders that don't support upload
-				if (configured && supportsSend) {
+				if (configured && uploader.checkSupport(Uploader.Feature.UPLOAD)) {
 					cbSend.setEnabled(true);
-					cbSend.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_SEND));
+					cbSend.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
 					cbSend.setVisibility(View.VISIBLE);
 				} else {
 					cbSend.setVisibility(View.INVISIBLE);

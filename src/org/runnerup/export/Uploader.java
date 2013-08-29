@@ -43,7 +43,9 @@ public interface Uploader {
 	enum Feature {
 		WORKOUT_LIST,
 		GET_WORKOUT,
-		FEED
+		FEED,
+		UPLOAD,
+		LIVE
 	};
 
 	/**
