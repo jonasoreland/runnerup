@@ -39,6 +39,7 @@ import org.runnerup.util.Constants.DB;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
 public class FormCrawler {
@@ -260,6 +261,10 @@ public class FormCrawler {
 	}
 	
 	public Status getFeed(FeedUpdater feedUpdater) {
+		return Status.OK;
+	}
+
+	public Status upload(SQLiteDatabase db, long mID) {
 		return Status.OK;
 	}
 

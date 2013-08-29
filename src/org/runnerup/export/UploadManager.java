@@ -42,12 +42,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -708,6 +711,18 @@ public class UploadManager {
 		return out.toString();
 	}
 
+	/**
+	 * Get preferences
+	 * 
+	 * @return
+	 */
+	public SharedPreferences getPreferences(Uploader uploader) {
+		if (uploader == null)
+			return PreferenceManager.getDefaultSharedPreferences(activity);
+		else
+			return activity.getSharedPreferences(uploader.getName(), Context.MODE_PRIVATE);
+	}
+	
 	/**
 	 * Upload set of activities for a specific uploader
 	 */
