@@ -62,6 +62,21 @@
         android:title="Autolap (m)"
         android:enabled="true" />
 
+	<CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/pref_runneruplive_active"
+        android:persistent="true"
+        android:title="RunnerUp Live" />
+	
+	<org.runnerup.widget.TextPreference
+        android:defaultValue=""
+        android:dependency="@string/pref_runneruplive_active"
+        android:inputType="text"
+        android:key="@string/pref_runneruplive_username"
+        android:persistent="true"
+        android:summary="username that will be visible on RunnerUp Live web page"
+        android:title="RunnerUp Live Username" />
+        
     <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"
@@ -93,6 +108,17 @@
 	<PreferenceScreen 
             android:key="second_preferencescreen"
             android:title="Advanced options">
+			
+	    <org.runnerup.widget.TextPreference
+	        android:defaultValue="http://weide.devsparkles.se/api/Resource/"
+	        android:dependency="@string/pref_runneruplive_active"
+	        android:inputType="text"
+	        android:key="@string/pref_runneruplive_serveradress"
+	        android:persistent="true"
+	        android:summary="asdf"
+	        android:title="RunnerUp live adress"
+	        android:enabled="true" />
+	
             
 	    <org.runnerup.widget.TextPreference
             android:inputType="number"

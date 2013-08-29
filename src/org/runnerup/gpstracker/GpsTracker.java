@@ -60,7 +60,7 @@ public class GpsTracker extends android.app.Service implements
 	long mActivityId = 0;
 	double mElapsedTimeMillis = 0;
 	double mElapsedDistance = 0;
-
+	double mElapsedTimeMillisSinceLogToServer = 0;
 	enum State {
 		INIT, LOGGING, STARTED, PAUSED,
 		ERROR /* Failed to init GPS */
@@ -83,6 +83,7 @@ public class GpsTracker extends android.app.Service implements
 	SQLiteDatabase mDB = null;
 	PersistentGpsLoggerListener mDBWriter = null;
 	PowerManager.WakeLock mWakeLock = null;
+	WebserviceLogger mWebserviceLogger = null;
 
 	private Workout workout = null;
 
@@ -91,6 +92,7 @@ public class GpsTracker extends android.app.Service implements
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getWritableDatabase();
 		wakelock(false);
+		mWebserviceLogger = new WebserviceLogger(this);
 	}
 
 	@Override
@@ -377,21 +379,30 @@ public class GpsTracker extends android.app.Service implements
 				}
 				mElapsedTimeMillis += timeDiff;
 				mElapsedDistance += distDiff;
+				mElapsedTimeMillisSinceLogToServer += timeDiff;
 			}
 			mActivityLastLocation = arg0;
 
 			mDBWriter.onLocationChanged(arg0);
-
+			
 			switch (mLocationType) {
 			case DB.LOCATION.TYPE_START:
 			case DB.LOCATION.TYPE_RESUME:
 				setNextLocationType(DB.LOCATION.TYPE_GPS);
+				mWebserviceLogger.Log(arg0, 0, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_GPS:
+				if(mElapsedTimeMillisSinceLogToServer > 5000)
+				{
+					mWebserviceLogger.Log(arg0, 1, mElapsedDistance, mElapsedTimeMillis);
+					mElapsedTimeMillisSinceLogToServer = 0;
+				}
 				break;
 			case DB.LOCATION.TYPE_PAUSE:
+				mWebserviceLogger.Log(arg0, 2, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_END:
+				mWebserviceLogger.Log(arg0, 2, mElapsedDistance, mElapsedTimeMillis);
 				assert (false);
 			}
 		}
