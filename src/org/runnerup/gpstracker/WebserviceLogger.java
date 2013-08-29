@@ -16,37 +16,20 @@
  */
 package org.runnerup.gpstracker;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.db.DBHelper;
-import org.runnerup.util.Formatter;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Formatter;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-public class WebserviceLogger
-{
+public class WebserviceLogger {
 	private Formatter _formatter;
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
@@ -54,75 +37,70 @@ public class WebserviceLogger
 	String serverAdress;
 	boolean active = false;
 	Context context;
-	
-	public WebserviceLogger(Context context)
-	{
+
+	public WebserviceLogger(Context context) {
 		this.context = context;
 		_formatter = new Formatter(context);
 		mDBHelper = new DBHelper(context);
 		mDB = mDBHelper.getReadableDatabase();
-		serverAdress = PreferenceManager.getDefaultSharedPreferences(
-				context).getString("pref_runneruplive_serveradress", "http://weide.devsparkles.se/api/Resource/");
-		active = PreferenceManager.getDefaultSharedPreferences(
-				context).getBoolean("pref_runneruplive_active", true);
-		
-		accountName = PreferenceManager.getDefaultSharedPreferences(
-				context).getString("pref_runneruplive_username", "");
-				
-		if(accountName != "")
-			return;
-		
-		String[] from = new String[] { "_id", 
-				DB.ACCOUNT.NAME,
-				DB.ACCOUNT.URL,
-				DB.ACCOUNT.DESCRIPTION,
-				DB.ACCOUNT.ENABLED,
-				DB.ACCOUNT.FLAGS,
-				DB.ACCOUNT.ICON,
-				DB.ACCOUNT.AUTH_CONFIG
-		};
+		serverAdress = PreferenceManager.getDefaultSharedPreferences(context)
+				.getString("pref_runneruplive_serveradress",
+						"http://weide.devsparkles.se/api/Resource/");
+		active = PreferenceManager.getDefaultSharedPreferences(context)
+				.getBoolean("pref_runneruplive_active", true);
 
-		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, null, null,
-				null, null, DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
-		while(c.moveToNext())
-		{
+		accountName = PreferenceManager.getDefaultSharedPreferences(context)
+				.getString("pref_runneruplive_username", "");
+
+		if (accountName != "")
+			return;
+
+		String[] from = new String[] { "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.URL,
+				DB.ACCOUNT.DESCRIPTION, DB.ACCOUNT.ENABLED, DB.ACCOUNT.FLAGS,
+				DB.ACCOUNT.ICON, DB.ACCOUNT.AUTH_CONFIG };
+
+		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, null, null, null, null,
+				DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
+		while (c.moveToNext()) {
 			final String authToken = c.getString(7);
 			if (authToken != null) {
 				JSONObject tmp;
 				try {
 					tmp = new JSONObject(authToken);
 					accountName = tmp.getString("username");
-					if(accountName != "")
+					if (accountName != "")
 						return;
 				} catch (final JSONException e) {
 					e.printStackTrace();
 				}
 			}
-			
+
 		}
 	}
-	
-	public void Log(Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis)
-	{
-		if(!active)
+
+	public void Log(Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis) {
+		
+		if (!active)
 			return;
+		
 		long elapsedDistanceMeter = Math.round(mElapsedDistanceMeter);
 		Intent msgIntent = new Intent(context, LiveService.class);
 		msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
 		msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
 		msgIntent.putExtra(LiveService.PARAM_IN_TYPE, type);
-		msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, _formatter.formatDistance(Formatter.TXT_LONG,elapsedDistanceMeter));
-		msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_TIME, _formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(mElapsedTimeMillis/1000)));
-		msgIntent.putExtra(LiveService.PARAM_IN_PACE, _formatter.formatPace(Formatter.TXT_SHORT, mElapsedTimeMillis/(1000*mElapsedDistanceMeter)));
+		msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, _formatter
+				.formatDistance(Formatter.TXT_LONG, elapsedDistanceMeter));
+		msgIntent.putExtra(
+				LiveService.PARAM_IN_ELAPSED_TIME,
+				_formatter.formatElapsedTime(Formatter.TXT_LONG,
+						Math.round(mElapsedTimeMillis / 1000)));
+		msgIntent.putExtra(
+				LiveService.PARAM_IN_PACE,
+				_formatter.formatPace(Formatter.TXT_SHORT, mElapsedTimeMillis
+						/ (1000 * mElapsedDistanceMeter)));
 		msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, accountName);
 		msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, serverAdress);
-		
-		
-		context.startService(msgIntent);
-		
-		
-		
-	}
-	
-}
 
+		context.startService(msgIntent);
+	}
+}

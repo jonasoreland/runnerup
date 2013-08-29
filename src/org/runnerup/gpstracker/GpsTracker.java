@@ -392,8 +392,7 @@ public class GpsTracker extends android.app.Service implements
 				mWebserviceLogger.Log(arg0, 0, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_GPS:
-				if(mElapsedTimeMillisSinceLogToServer > 5000)
-				{
+				if (mElapsedTimeMillisSinceLogToServer > 5000) {
 					mWebserviceLogger.Log(arg0, 1, mElapsedDistance, mElapsedTimeMillis);
 					mElapsedTimeMillisSinceLogToServer = 0;
 				}
