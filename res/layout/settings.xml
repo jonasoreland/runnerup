@@ -63,7 +63,7 @@
         android:enabled="true" />
 
 	<CheckBoxPreference
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="@string/pref_runneruplive_active"
         android:persistent="true"
         android:title="Enable RunnerUpLive" />
