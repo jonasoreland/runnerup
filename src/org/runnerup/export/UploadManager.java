@@ -963,7 +963,7 @@ public class UploadManager {
 			do {
 				ContentValues config = DBHelper.get(c);
 				Uploader u = add(config);
-				if (u.checkSupport(Uploader.Feature.LIVE)) {
+				if (u.isConfigured() && u.checkSupport(Uploader.Feature.LIVE)) {
 					liveLoggers.add(u);
 				}
 			} while (c.moveToNext());
