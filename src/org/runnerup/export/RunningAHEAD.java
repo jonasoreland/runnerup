@@ -228,11 +228,6 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 	}
 
 	@Override
-	public boolean checkSupport(Uploader.Feature f) {
-		return false;
-	}
-	
-	@Override
 	public void logout() {
 	}
 };

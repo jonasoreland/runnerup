@@ -279,11 +279,6 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public boolean checkSupport(Uploader.Feature f) {
-		return false;
-	}
-
-	@Override
 	public void logout() {
 		super.logout();
 	}

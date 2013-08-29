@@ -38,7 +38,10 @@ import org.runnerup.util.Constants.DB;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.util.Pair;
 
 public class FormCrawler {
@@ -239,6 +242,18 @@ public class FormCrawler {
 	public Intent getAuthIntent(Activity a) {
 		return null;
 	}
+
+	public boolean checkSupport(Uploader.Feature f) {
+		switch(f){
+		case UPLOAD:
+			return true;
+		case FEED:
+		case GET_WORKOUT:
+		case LIVE:
+		case WORKOUT_LIST:
+		}
+		return false;
+	}
 	
 	public Status listWorkouts(List<Pair<String, String>> list) {
 		return Status.OK;
@@ -251,6 +266,13 @@ public class FormCrawler {
 		return Status.OK;
 	}
 
+	public Status upload(SQLiteDatabase db, long mID) {
+		return Status.OK;
+	}
+
+	public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis) {
+	}
+	
 	/**
 	 * For feed generation...
 	 */

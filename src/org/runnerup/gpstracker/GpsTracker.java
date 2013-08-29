@@ -16,8 +16,13 @@
  */
 package org.runnerup.gpstracker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
@@ -60,7 +65,6 @@ public class GpsTracker extends android.app.Service implements
 	long mActivityId = 0;
 	double mElapsedTimeMillis = 0;
 	double mElapsedDistance = 0;
-
 	enum State {
 		INIT, LOGGING, STARTED, PAUSED,
 		ERROR /* Failed to init GPS */
@@ -83,8 +87,12 @@ public class GpsTracker extends android.app.Service implements
 	SQLiteDatabase mDB = null;
 	PersistentGpsLoggerListener mDBWriter = null;
 	PowerManager.WakeLock mWakeLock = null;
-
+	List<Uploader> liveLoggers = new ArrayList<Uploader>();
+	
 	private Workout workout = null;
+
+	private double mMinLiveLogDelayMillis = 5000;
+	private double mElapsedTimeMillisSinceLiveLog = 0;
 
 	@Override
 	public void onCreate() {
@@ -132,6 +140,10 @@ public class GpsTracker extends android.app.Service implements
 		String frequency_meters = PreferenceManager
 				.getDefaultSharedPreferences(this).getString(
 						"pref_pollDistance", "5");
+		//TODO add preference
+		mMinLiveLogDelayMillis = PreferenceManager
+				.getDefaultSharedPreferences(this).getInt("pref_min_livelog_delay_millis", (int)mMinLiveLogDelayMillis);
+
 		LocationManager lm = (LocationManager) this
 				.getSystemService(LOCATION_SERVICE);
 		try {
@@ -142,6 +154,10 @@ public class GpsTracker extends android.app.Service implements
 		} catch (Exception ex) {
 			state = State.ERROR;
 		}
+		
+		UploadManager u = new UploadManager(this);
+		u.loadLiveLoggers(liveLoggers);
+		u.close();
 	}
 	
 	public boolean isLogging() {
@@ -295,6 +311,7 @@ public class GpsTracker extends android.app.Service implements
 			lm.removeUpdates(this);
 			state = State.INIT;
 		}
+		liveLoggers.clear();
 	}
 
 	public void completeActivity(boolean save) {
@@ -377,25 +394,43 @@ public class GpsTracker extends android.app.Service implements
 				}
 				mElapsedTimeMillis += timeDiff;
 				mElapsedDistance += distDiff;
+				mElapsedTimeMillisSinceLiveLog += timeDiff;
 			}
 			mActivityLastLocation = arg0;
 
 			mDBWriter.onLocationChanged(arg0);
-
+			
 			switch (mLocationType) {
 			case DB.LOCATION.TYPE_START:
 			case DB.LOCATION.TYPE_RESUME:
 				setNextLocationType(DB.LOCATION.TYPE_GPS);
+				liveLog(arg0, 0, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_GPS:
+				liveLog(arg0, 1, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_PAUSE:
+				liveLog(arg0, 2, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_END:
+				liveLog(arg0, 2, mElapsedDistance, mElapsedTimeMillis);
 				assert (false);
 			}
 		}
 		mLastLocation = arg0;
+	}
+
+	private void liveLog(Location arg0, int type, double distance, double time) {
+		if (type == 1) {
+			if (mElapsedTimeMillisSinceLiveLog < mMinLiveLogDelayMillis) {
+				return;
+			}
+			mElapsedTimeMillisSinceLiveLog = 0;
+		}
+		
+		for (Uploader l : liveLoggers) {
+			l.liveLog(this, arg0, type, distance, time);
+		}
 	}
 
 	@Override

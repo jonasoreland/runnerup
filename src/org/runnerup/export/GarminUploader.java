@@ -258,8 +258,10 @@ public class GarminUploader extends FormCrawler implements Uploader {
 		switch(f) {
 		case WORKOUT_LIST:
 		case GET_WORKOUT:
+		case UPLOAD:
 			return true;
 		case FEED:
+		case LIVE:
 			break;
 		}
 		return false;

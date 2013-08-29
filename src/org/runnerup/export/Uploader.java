@@ -23,8 +23,10 @@ import org.runnerup.feed.FeedList.FeedUpdater;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.util.Pair;
 
 public interface Uploader {
@@ -43,7 +45,9 @@ public interface Uploader {
 	enum Feature {
 		WORKOUT_LIST,
 		GET_WORKOUT,
-		FEED
+		FEED,
+		UPLOAD,
+		LIVE
 	};
 
 	/**
@@ -138,4 +142,9 @@ public interface Uploader {
 	 * @return
 	 */
 	public Status getFeed(FeedUpdater feedUpdater);
+	
+	/**
+	 * 
+	 */
+	public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis);
 }

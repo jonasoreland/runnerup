@@ -320,11 +320,6 @@ public class JoggSE extends FormCrawler implements Uploader {
 	}
 
 	@Override
-	public boolean checkSupport(final Uploader.Feature f) {
-		return false;
-	}
-
-	@Override
 	public void logout() {
 		cookies.clear();
 		formValues.clear();

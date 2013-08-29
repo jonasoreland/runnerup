@@ -309,9 +309,11 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	public boolean checkSupport(Uploader.Feature f) {
 		switch(f) {
 		case FEED:
+		case UPLOAD:
 			return true;
 		case GET_WORKOUT:
 		case WORKOUT_LIST:
+		case LIVE:
 			break;
 		}
 		return false;

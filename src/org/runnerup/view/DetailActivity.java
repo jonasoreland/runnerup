@@ -26,6 +26,7 @@ import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
+import org.runnerup.export.Uploader.Feature;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
@@ -339,10 +340,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		alreadyUploadedUploaders.clear();
 		pendingUploaders.clear();
 		for (ContentValues tmp : reports) {
-			uploadManager.add(tmp);
-			if (tmp.containsKey("repid")) {
+			Uploader uploader = uploadManager.add(tmp);
+			if (!uploader.checkSupport(Feature.UPLOAD)) {
+				continue;
+			} if (tmp.containsKey("repid")) {
 				alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
-			} else if (tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_SEND)) {
+			} else if (tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD)) {
 				pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
 			}
 		}
@@ -521,7 +524,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				cb.setChecked(true);
 				cb.setEnabled(false);
 				cb.setText("Uploaded");
-			} else if ((tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_SEND)) ||
+			} else if ((tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD)) ||
 					    pendingUploaders.contains(name)) {
 				cb.setChecked(true);
 			} else {

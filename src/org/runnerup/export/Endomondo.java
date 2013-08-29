@@ -287,10 +287,12 @@ public class Endomondo extends FormCrawler implements Uploader {
 	@Override
 	public boolean checkSupport(Uploader.Feature f) {
 		switch (f) {
+		case UPLOAD:
 		case FEED:
 			return true;
 		case GET_WORKOUT:
 		case WORKOUT_LIST:
+		case LIVE:
 			break;
 		}
 
