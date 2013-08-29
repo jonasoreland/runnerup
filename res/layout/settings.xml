@@ -77,6 +77,12 @@
         android:summary="username that will be visible on RunnerUp Live web page"
         android:title="RunnerUp Live Username" />
         
+	<CheckBoxPreference
+        android:defaultValue="true"
+        android:persistent="true"
+        android:key="@string/pref_keystartstop_active"
+        android:title="Headset key start/stop" />
+	
     <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"

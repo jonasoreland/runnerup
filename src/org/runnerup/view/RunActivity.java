@@ -33,10 +33,12 @@ import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -44,6 +46,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,12 +79,14 @@ public class RunActivity extends Activity implements TickListener {
 	View tableRowInterval = null;
 	org.runnerup.workout.Step currentStep = null;
 	Formatter formatter = null;
+	BroadcastReceiver catchButtonEvent = null;
 	
 	class WorkoutRow { org.runnerup.workout.Step step = null; ContentValues lap = null;
 	public int level;};
 	ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 	boolean simpleWorkout;
+	boolean allowHardwareKey = false;
 
 	/** Called when the activity is first created. */
 
@@ -111,12 +116,40 @@ public class RunActivity extends Activity implements TickListener {
 		workoutList = (ListView) findViewById(R.id.workoutList);
 		WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
 		workoutList.setAdapter(adapter);
+		
+		allowHardwareKey = getAllowStartStopFromHeadsetKey();
+		if (allowHardwareKey) {
+			catchButtonEvent = new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					pauseButton.performClick();
+				}
+			};
+		}
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		System.err.println("onConfigurationChange => do NOTHING!!");
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (allowHardwareKey)
+			unregisterReceiver(catchButtonEvent);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (allowHardwareKey) {
+			IntentFilter intentFilter = new IntentFilter();
+			intentFilter.setPriority(2147483647);
+			intentFilter.addAction("org.runnerup.START_STOP");
+			registerReceiver(catchButtonEvent, intentFilter);
+		}
 	}
 
 	@Override
@@ -130,6 +163,12 @@ public class RunActivity extends Activity implements TickListener {
 		stopTimer();
 	}
 
+	boolean getAllowStartStopFromHeadsetKey() {
+		Context ctx = getApplicationContext();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
+		return pref.getBoolean("pref_keystartstop_active", true);
+	}
+	
 	void onGpsTrackerBound() {
 		workout = mGpsTracker.getWorkout();
 		mGpsTracker.createActivity(workout.getSport());

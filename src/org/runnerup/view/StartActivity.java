@@ -33,6 +33,7 @@ import org.runnerup.widget.StepButton;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
@@ -40,20 +41,24 @@ import org.runnerup.workout.WorkoutSerializer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.method.KeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -125,7 +130,8 @@ public class StartActivity extends Activity implements TickListener {
 	SQLiteDatabase mDB = null;
 	
 	Formatter formatter = null;
-
+	BroadcastReceiver catchButtonEvent = null;
+	boolean allowHardwareKey = false;
 	/** Called when the activity is first created. */
 
 	@Override
@@ -264,6 +270,21 @@ public class StartActivity extends Activity implements TickListener {
 				}
 			}
 		}
+		allowHardwareKey = getAllowStartStopFromHeadsetKey();
+		if (allowHardwareKey) {
+			ComponentName mMediaReceiverCompName = new ComponentName(
+					getPackageName(), HeadsetButtonReceiver.class.getName());
+			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			mAudioManager
+					.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+
+			catchButtonEvent = new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					startButton.performClick();
+				}
+			};
+		}
 	}
 
 	@Override
@@ -276,6 +297,8 @@ public class StartActivity extends Activity implements TickListener {
 			 */
 			stopGps();
 		}
+		if (allowHardwareKey)
+			unregisterReceiver(catchButtonEvent);
 	}
 	
 	@Override
@@ -294,6 +317,12 @@ public class StartActivity extends Activity implements TickListener {
 		} else {
 			onGpsTrackerBound();
 		}
+		if (allowHardwareKey) {
+			IntentFilter intentFilter = new IntentFilter();
+			intentFilter.setPriority(2147483647);
+			intentFilter.addAction("org.runnerup.START_STOP");
+			registerReceiver(catchButtonEvent, intentFilter);
+		}
 	}
 
 	@Override
@@ -306,6 +335,14 @@ public class StartActivity extends Activity implements TickListener {
 		
 		mDB.close();
 		mDBHelper.close();
+		
+		if (allowHardwareKey) {
+			ComponentName mMediaReceiverCompName = new ComponentName(
+					getPackageName(), HeadsetButtonReceiver.class.getName());
+			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			mAudioManager
+					.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+		}
 	}
 
 	void onGpsTrackerBound() {
@@ -320,6 +357,12 @@ public class StartActivity extends Activity implements TickListener {
 		Context ctx = getApplicationContext();
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
 		return pref.getBoolean("pref_startgps", false);
+	}
+	
+	boolean getAllowStartStopFromHeadsetKey() {
+		Context ctx = getApplicationContext();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
+		return pref.getBoolean("pref_keystartstop_active", true);
 	}
 
 	private void startGps() {
