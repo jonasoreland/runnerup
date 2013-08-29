@@ -248,8 +248,6 @@ public class FeedActivity extends Activity implements Constants {
 				TextView tv2 = (TextView) v.findViewById(R.id.feedActivitySummary);
 				TextView tv3 = (TextView) v.findViewById(R.id.feedActivityNotes);
 
-				iv.setMinimumWidth(120);
-				iv.setMinimumHeight(120);
 				if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {
 					loadImage(iv, tmp.getAsString(DB.FEED.USER_IMAGE_URL));
 				} else {

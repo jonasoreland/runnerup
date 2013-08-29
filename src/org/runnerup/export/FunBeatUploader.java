@@ -451,8 +451,9 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 		Status s = Status.NEED_AUTH;
 		s.authMethod = AuthMethod.USER_PASS;
 		if (loginID == null || loginSecretHashed == null) {
-			System.err.println("loginID: " + loginID + ", loginSecretHashed: " + loginSecretHashed);
-			return s;
+			if ((s = connect()) != Status.OK) {
+				return s;
+			}
 		}
 
 		HttpURLConnection conn = null;
