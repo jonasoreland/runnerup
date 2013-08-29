@@ -66,7 +66,8 @@
         android:defaultValue="true"
         android:key="@string/pref_runneruplive_active"
         android:persistent="true"
-        android:title="Enable RunnerUpLive" />
+        android:title="Enable RunnerUpLive"
+        android:summary="Note, you need to connect to the account too" />
 	
     <CheckBoxPreference
         android:defaultValue="false"
