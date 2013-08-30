@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.view.KeyEvent;
 
 public class HeadsetButtonReceiver extends BroadcastReceiver {
-	private static final String TAG = "RunnerUpHeadsetListener";
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
