@@ -130,6 +130,14 @@
 		<service
                 android:name=".export.RunnerUpLive$LiveService">
  		</service>
-	</application>
+ 		
+		<receiver
+		    android:name=".workout.HeadsetButtonReceiver"
+		    android:enabled="true" >
+		    <intent-filter>
+		        <action android:name="android.intent.action.MEDIA_BUTTON" />
+		    </intent-filter>
+		</receiver>
+</application>
 
 </manifest> 

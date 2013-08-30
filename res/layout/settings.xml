@@ -69,6 +69,13 @@
         android:title="Enable RunnerUpLive"
         android:summary="Note, you need to connect to the account too" />
 	
+	<CheckBoxPreference
+        android:defaultValue="false"
+        android:persistent="true"
+        android:key="@string/pref_keystartstop_active"
+        android:title="Headset key start/stop"
+        android:summary="Use your headset to start/pause/resume RunnerUp" />
+	
     <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"
