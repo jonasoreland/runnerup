@@ -58,7 +58,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.text.method.KeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -270,21 +269,13 @@ public class StartActivity extends Activity implements TickListener {
 				}
 			}
 		}
-		allowHardwareKey = getAllowStartStopFromHeadsetKey();
-		if (allowHardwareKey) {
-			ComponentName mMediaReceiverCompName = new ComponentName(
-					getPackageName(), HeadsetButtonReceiver.class.getName());
-			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-			mAudioManager
-					.registerMediaButtonEventReceiver(mMediaReceiverCompName);
-
-			catchButtonEvent = new BroadcastReceiver() {
-				@Override
-				public void onReceive(Context context, Intent intent) {
-					startButton.performClick();
-				}
-			};
-		}
+		
+		catchButtonEvent = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				startButton.performClick();
+			}
+		};
 	}
 
 	@Override
@@ -297,8 +288,15 @@ public class StartActivity extends Activity implements TickListener {
 			 */
 			stopGps();
 		}
-		if (allowHardwareKey)
+		if (getAllowStartStopFromHeadsetKey()){
+			ComponentName mMediaReceiverCompName = new ComponentName(
+					getPackageName(), HeadsetButtonReceiver.class.getName());
+			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			mAudioManager
+					.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+			
 			unregisterReceiver(catchButtonEvent);
+		}
 	}
 	
 	@Override
@@ -317,7 +315,13 @@ public class StartActivity extends Activity implements TickListener {
 		} else {
 			onGpsTrackerBound();
 		}
-		if (allowHardwareKey) {
+		if (getAllowStartStopFromHeadsetKey()) {
+			ComponentName mMediaReceiverCompName = new ComponentName(
+					getPackageName(), HeadsetButtonReceiver.class.getName());
+			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			mAudioManager
+					.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+			
 			IntentFilter intentFilter = new IntentFilter();
 			intentFilter.setPriority(2147483647);
 			intentFilter.addAction("org.runnerup.START_STOP");
@@ -335,14 +339,6 @@ public class StartActivity extends Activity implements TickListener {
 		
 		mDB.close();
 		mDBHelper.close();
-		
-		if (allowHardwareKey) {
-			ComponentName mMediaReceiverCompName = new ComponentName(
-					getPackageName(), HeadsetButtonReceiver.class.getName());
-			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-			mAudioManager
-					.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
-		}
 	}
 
 	void onGpsTrackerBound() {

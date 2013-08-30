@@ -26,6 +26,7 @@ import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
+import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
@@ -43,6 +44,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -116,16 +118,13 @@ public class RunActivity extends Activity implements TickListener {
 		workoutList = (ListView) findViewById(R.id.workoutList);
 		WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
 		workoutList.setAdapter(adapter);
-		
-		allowHardwareKey = getAllowStartStopFromHeadsetKey();
-		if (allowHardwareKey) {
-			catchButtonEvent = new BroadcastReceiver() {
-				@Override
-				public void onReceive(Context context, Intent intent) {
-					pauseButton.performClick();
-				}
-			};
-		}
+
+		catchButtonEvent = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				pauseButton.performClick();
+			}
+		};
 	}
 
 	@Override
@@ -137,14 +136,27 @@ public class RunActivity extends Activity implements TickListener {
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (allowHardwareKey)
+		if (getAllowStartStopFromHeadsetKey()){
+			ComponentName mMediaReceiverCompName = new ComponentName(
+					getPackageName(), HeadsetButtonReceiver.class.getName());
+			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			mAudioManager
+					.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+			
 			unregisterReceiver(catchButtonEvent);
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (allowHardwareKey) {
+		if (getAllowStartStopFromHeadsetKey()) {
+			ComponentName mMediaReceiverCompName = new ComponentName(
+					getPackageName(), HeadsetButtonReceiver.class.getName());
+			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			mAudioManager
+					.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+			
 			IntentFilter intentFilter = new IntentFilter();
 			intentFilter.setPriority(2147483647);
 			intentFilter.addAction("org.runnerup.START_STOP");
