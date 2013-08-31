@@ -213,6 +213,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 					responseCode = conn.getResponseCode();
 					amsg = conn.getResponseMessage();
 					getCookies(conn);
+				} else if (responseCode != 200) {
+					System.err.println("FunBeatUploader::connect() - got " + responseCode + ", msg: " + amsg);
 				}
 				String html = getFormValues(conn);
 				ok = html.indexOf("Logga ut") > 0;
@@ -246,7 +248,11 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			JSONObject req = new JSONObject();
 			req.put("username", username);
 			req.put("passwordHashed", Encryption.toHex(Encryption.SHA1(password)));
-			JSONObject reply = makeRequest("ValidateAndCreateSecrets", req).getJSONObject("d");
+			JSONObject reply = makeRequest("ValidateAndCreateSecrets", req);
+			if (reply == null || !reply.has("d")) {
+				return false;
+			}
+			reply = reply.getJSONObject("d");
 			loginID = reply.getString("LoginID");
 			String loginSecret = reply.getString("LoginSecret");
 			loginSecretHashed = Encryption.calculateRFC2104HMAC(loginSecret, APP_SECRET);
@@ -360,6 +366,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 				responseCode = conn.getResponseCode();
 				amsg = conn.getResponseMessage();
 				getCookies(conn);
+			} else if (responseCode != 200){
+				System.err.println("FunBeatUploader::upload() - got " + responseCode + ", msg: " + amsg);
 			}
 			getFormValues(conn);
 			conn.disconnect();

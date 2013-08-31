@@ -137,6 +137,9 @@ public class GarminUploader extends FormCrawler implements Uploader {
 				int responseCode = conn.getResponseCode();
 				String amsg = conn.getResponseMessage();
 				getCookies(conn);
+				if (responseCode != 200) {
+					System.err.println("GarminUploader::connect() - got " + responseCode + ", msg: " + amsg);
+				}
 			}
 			conn.disconnect();
 
@@ -158,7 +161,6 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			addCookies(conn);
 
 			{
-				kv.write(System.err);
 				OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
 				kv.write(wr);
 				wr.flush();
@@ -183,11 +185,12 @@ public class GarminUploader extends FormCrawler implements Uploader {
 				conn.disconnect();
 				int responseCode = conn.getResponseCode();
 				String amsg = conn.getResponseMessage();
-				System.err.println("obj: " + obj.toString());
 				// Returns username(which is actually Displayname from profile) if logged in
-				if (obj.getString("username").length() > 0) {
+				if (obj.optString("username", "").length() > 0) {
 					isConnected = true;
 					return Uploader.Status.OK;
+				} else {
+					System.err.println("GarminUploader::connect() missing username, obj: " + obj.toString() + ", code: " + responseCode + ", msg: " + amsg);
 				}
 				return s;
 			}
