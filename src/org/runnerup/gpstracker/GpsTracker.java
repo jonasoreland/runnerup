@@ -27,7 +27,6 @@ import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,6 +39,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -222,16 +222,17 @@ public class GpsTracker extends android.app.Service implements
 	}
 	
 	public void setForeground(Class<?> client) {
-		Notification note = new Notification(R.drawable.icon,
-				"RunnerUp activity started", System.currentTimeMillis());
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		Intent i = new Intent(this, client);
 		i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
-
-		note.setLatestEventInfo(this, "RunnerUp", "Tracking", pi);
-		note.flags |= Notification.FLAG_NO_CLEAR;
-
-		startForeground(NOTIFICATION_ID, note);
+		builder.setTicker("RunnerUp activity started");
+		builder.setContentIntent(pi);
+		builder.setContentTitle("RunnerUp");
+		builder.setContentText("Tracking");
+		builder.setSmallIcon(R.drawable.icon);
+		builder.setOngoing(true);
+		startForeground(NOTIFICATION_ID, builder.build());
 	}
 
 	public void newLap(ContentValues tmp) {
