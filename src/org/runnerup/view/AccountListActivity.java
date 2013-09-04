@@ -123,7 +123,7 @@ public class AccountListActivity extends ListActivity implements Constants {
 		LayoutInflater inflater;
 
 		public AccountListAdapter(Context context, Cursor c) {
-			super(context, c);
+			super(context, c, true);
 			inflater = LayoutInflater.from(context);
 		}
 

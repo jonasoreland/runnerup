@@ -101,7 +101,7 @@ public class HistoryActivity extends ListActivity implements Constants {
 		LayoutInflater inflater;
 
 		public HistoryListAdapter(Context context, Cursor c) {
-			super(context, c);
+			super(context, c, true);
 			inflater = LayoutInflater.from(context);
 		}
 
