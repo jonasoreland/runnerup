@@ -22,8 +22,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
+import org.runnerup.export.FormCrawler;
 import org.runnerup.export.FormCrawler.FormValues;
 import org.runnerup.util.Constants.DB;
 
@@ -98,9 +98,9 @@ public class OAuth2Activity extends Activity {
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(auth_url);
-		tmp.append("?client_id=").append(URLEncoder.encode(client_id));
+		tmp.append("?client_id=").append(FormCrawler.URLEncode(client_id));
 		tmp.append("&response_type=code");
-		tmp.append("&redirect_uri=" + URLEncoder.encode(mRedirectUri));
+		tmp.append("&redirect_uri=" + FormCrawler.URLEncode(mRedirectUri));
 		if (auth_extra != null) {
 			tmp.append("&").append(auth_extra);
 		}

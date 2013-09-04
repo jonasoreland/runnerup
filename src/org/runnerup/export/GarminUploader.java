@@ -27,7 +27,6 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Scanner;
 
@@ -231,7 +230,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			conn.setRequestMethod("POST");
 			addCookies(conn);
 			Part<StringWritable> part1 = new Part<StringWritable>("responseContentType",
-					new StringWritable(URLEncoder.encode("text/html")));
+					new StringWritable(FormCrawler.URLEncode("text/html")));
 			Part<StringWritable> part2 = new Part<StringWritable>("data",
 					new StringWritable(writer.toString()));
 			part2.filename = "RunnerUp.tcx";

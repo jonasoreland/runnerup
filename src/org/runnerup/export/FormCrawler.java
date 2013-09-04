@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -87,6 +88,15 @@ public class FormCrawler {
 		String contentTransferEncoding = null;
 		Value value = null;
 	};
+
+	public static String URLEncode(String s) {
+		try {
+			return URLEncoder.encode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return s;
+		}
+	}
 	
 	public static class FormValues extends HashMap<String,String> implements Writable {
 		/**
@@ -105,9 +115,9 @@ public class FormCrawler {
 			for (String k : keySet()) {
 				if (!first)
 					out.writeByte('&');
-				out.writeBytes(URLEncoder.encode(k));
+				out.writeBytes(URLEncode(k));
 				out.writeByte('=');
-				out.writeBytes(URLEncoder.encode(get(k)));
+				out.writeBytes(URLEncode(get(k)));
 				first = false;
 			}
 		}
