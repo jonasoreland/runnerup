@@ -235,7 +235,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 			} catch (MalformedURLException e) {
 				ex = e;
 			} catch (IOException e) {
-				if (e.toString().contains("SSLException") && REST_URL.contains("https")) {
+				if (REST_URL.contains("https")) {
 					REST_URL = REST_URL.replace("https", "http");
 					e.printStackTrace();
 					System.err.println(" => retry with REST_URL: " + REST_URL);
