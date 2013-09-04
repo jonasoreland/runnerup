@@ -61,7 +61,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	public static final String TOKEN_URL = "https://runkeeper.com/apps/token";
 	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runkeeper";
 
-	public static final String REST_URL = "https://api.runkeeper.com";
+	public static String REST_URL = "https://api.runkeeper.com";
 
 	public static final String FEED_TOKEN_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/login";
 	public static final String FEED_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/getFeedItems";
@@ -223,21 +223,31 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 		String uri = null;
 		HttpURLConnection conn = null;
 		Exception ex = null;
-		try {
-			URL newurl = new URL(REST_URL + "/user");
-			conn = (HttpURLConnection) newurl.openConnection();
-			conn.setRequestProperty("Authorization", "Bearer " + access_token);
-			InputStream in = new BufferedInputStream(conn.getInputStream());
-			uri = new JSONObject(new Scanner(in).useDelimiter("\\A").next())
-					.getString("fitness_activities");
-		} catch (MalformedURLException e) {
-			ex = e;
-		} catch (IOException e) {
-			ex = e;
-		} catch (JSONException e) {
-			ex = e;
-		}
-
+		do {
+			try {
+				URL newurl = new URL(REST_URL + "/user");
+				conn = (HttpURLConnection) newurl.openConnection();
+				conn.setRequestProperty("Authorization", "Bearer "
+						+ access_token);
+				InputStream in = new BufferedInputStream(conn.getInputStream());
+				uri = new JSONObject(new Scanner(in).useDelimiter("\\A").next())
+						.getString("fitness_activities");
+			} catch (MalformedURLException e) {
+				ex = e;
+			} catch (IOException e) {
+				if (e.toString().contains("SSLException") && REST_URL.contains("https")) {
+					REST_URL = REST_URL.replace("https", "http");
+					e.printStackTrace();
+					System.err.println(" => retry with REST_URL: " + REST_URL);
+					continue; // retry
+				}
+				ex = e;
+			} catch (JSONException e) {
+				ex = e;
+			}
+			break;
+		} while (true);
+		
 		if (conn != null) {
 			conn.disconnect();
 		}
