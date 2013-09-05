@@ -26,6 +26,7 @@ import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
+import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
@@ -329,11 +330,11 @@ public class RunActivity extends Activity implements TickListener {
 			if (workout.isPaused()) {
 				workout.onResume(workout);
 				pauseButton.setText("Pause");
-				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_blue));
+				WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_blue));
 			} else {
 				workout.onPause(workout);
 				pauseButton.setText("Resume");
-				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_green));
+				WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_green));
 			}
 		}
 	};

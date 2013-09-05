@@ -1157,10 +1157,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 					} else {
 						graphTab.addView(graphView,
 								new LinearLayout.LayoutParams(
-										LayoutParams.FILL_PARENT, 0, 0.5f));
+										LayoutParams.MATCH_PARENT, 0, 0.5f));
 						graphTab.addView(graphView2,
 								new LinearLayout.LayoutParams(
-										LayoutParams.FILL_PARENT, 0, 0.5f));
+										LayoutParams.MATCH_PARENT, 0, 0.5f));
 					}
 					if (map != null) {
 						map.addPolyline(route.path);

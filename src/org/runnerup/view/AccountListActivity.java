@@ -25,6 +25,7 @@ import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants;
+import org.runnerup.widget.WidgetUtil;
 
 import android.app.ListActivity;
 import android.content.ContentValues;
@@ -196,11 +197,11 @@ public class AccountListActivity extends ListActivity implements Constants {
 				b.setOnClickListener(configureButtonClick);
 				if (configured) {
 					b.setText("Edit");
-					b.setBackgroundDrawable(getResources().getDrawable(
+					WidgetUtil.setBackground(b, getResources().getDrawable(
 							R.drawable.btn_blue));
 				} else {
 					b.setText("Connect");
-					b.setBackgroundDrawable(getResources().getDrawable(
+					WidgetUtil.setBackground(b, getResources().getDrawable(
 							R.drawable.btn_green));
 				}
 			}
