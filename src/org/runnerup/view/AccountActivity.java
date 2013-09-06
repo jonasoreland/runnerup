@@ -319,9 +319,6 @@ public class AccountActivity extends Activity implements Constants {
 	UploadManager.Callback callback = new UploadManager.Callback() {
 		@Override
 		public void run(String uploader, Status status) {
-			for (Cursor c : mCursors) {
-				c.requery();
-			}
 		}
 	};
 
