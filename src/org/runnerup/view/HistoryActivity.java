@@ -16,53 +16,56 @@
  */
 package org.runnerup.view;
 
-import java.util.ArrayList;
-
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.SimpleCursorLoader;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class HistoryActivity extends ListActivity implements Constants {
+public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
+	LoaderCallbacks<Cursor> {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
 	Formatter formatter = null;
-	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 
+	ListView listView = null;
+	CursorAdapter cursorAdapter = null;
+	
 	/** Called when the activity is first created. */
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history);
-
+		listView = (ListView) findViewById(R.id.historyList);
+		
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();
 		formatter = new Formatter(this);
-		this.getListView().setDividerHeight(2);
-		fillData();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		for (Cursor c : mCursors) {
-			c.requery();
-		}
+		listView.setDividerHeight(2);
+		listView.setOnItemClickListener(this);
+		cursorAdapter = new HistoryListAdapter(this, null);
+		listView.setAdapter(cursorAdapter);
+		
+		this.getSupportLoaderManager().initLoader(0,  null,  this);
 	}
 
 	@Override
@@ -70,31 +73,39 @@ public class HistoryActivity extends ListActivity implements Constants {
 		super.onDestroy();
 		mDB.close();
 		mDBHelper.close();
-		for (Cursor c : mCursors) {
-			c.close();
-		}
-		mCursors.clear();
-	}
-
-	void fillData() {
-		// Fields from the database (projection)
-		// Must include the _id column for the adapter to work
-		String[] from = new String[] { "_id", DB.ACTIVITY.START_TIME,
-				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT };
-
-		Cursor c = mDB.query(DB.ACTIVITY.TABLE, from, "deleted == 0", null,
-				null, null, "_id desc", null);
-		CursorAdapter adapter = new HistoryListAdapter(this, c);
-		setListAdapter(adapter);
-		mCursors.add(c);
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		String[] from = new String[] { "_id", DB.ACTIVITY.START_TIME,
+				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT };
+
+		return new SimpleCursorLoader(this, mDB, DB.ACTIVITY.TABLE, from, "deleted == 0", null,
+				"_id desc");
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		cursorAdapter.swapCursor(arg1);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		cursorAdapter.swapCursor(null);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
 		Intent intent = new Intent(this, DetailActivity.class);
 		intent.putExtra("ID", id);
 		intent.putExtra("mode", "details");
-		startActivity(intent);
+		startActivityForResult(intent, 0);
+	}
+
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+		this.getSupportLoaderManager().restartLoader(0,  null,  this);
 	}
 
 	public class HistoryListAdapter extends CursorAdapter {
@@ -190,5 +201,5 @@ public class HistoryActivity extends ListActivity implements Constants {
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
 			return inflater.inflate(R.layout.history_row, parent, false);
 		}
-	};
+	}
 }
