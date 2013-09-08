@@ -220,7 +220,9 @@ public class SamsungBLEHRProvider {
 		@Override
 		public void onDescriptorRead(BluetoothGattDescriptor arg0, int arg1) {
             BluetoothGattCharacteristic mHRMcharac = arg0.getCharacteristic();
-            enableNotification(true, mHRMcharac);
+            if (!enableNotification(true, mHRMcharac)) {
+            	reportConnectFailed("Failed to enable notification in onDescriptorRead");
+            }
 		}
 
 		@Override
@@ -247,7 +249,7 @@ public class SamsungBLEHRProvider {
             	onScanResultHandler.post(new Runnable(){
 					@Override
 					public void run() {
-						if (mIsScanning) { //NOTE: Check mIsScanning in user-thread
+						if (mIsScanning) { //NOTE: mIsScanning in user-thread
 							onScanResultCallback.onScanResult(arg0);
 						}
 					}});
@@ -431,7 +433,8 @@ public class SamsungBLEHRProvider {
 
 	private void reportConnectFailed(String string) {
 		System.err.println("reportConnectFailed("+string+")");
-		//TODO teardown (half) connection
+		btGatt.cancelConnection(btDevice);
+		btDevice = null;
 		reportConnected(false);
 	}
 
