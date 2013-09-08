@@ -35,6 +35,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunnerUpLive extends FormCrawler implements Uploader {
 
 	public static final String NAME = "RunnerUp LIVE";

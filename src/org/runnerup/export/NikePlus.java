@@ -44,6 +44,10 @@ import org.runnerup.util.Constants.DB.FEED;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class NikePlus extends FormCrawler implements Uploader {
 
 	public static final String NAME = "Nike+";

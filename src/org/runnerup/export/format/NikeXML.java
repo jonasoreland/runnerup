@@ -35,6 +35,10 @@ import android.util.Xml;
  * @author jonas.oreland@gmail.com
  * 
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class NikeXML {
 
 	private static final String DEVICE = "iPod";

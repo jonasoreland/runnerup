@@ -36,6 +36,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import android.util.Base64;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Encryption {
 	private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 

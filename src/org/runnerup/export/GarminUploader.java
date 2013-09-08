@@ -40,6 +40,10 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class GarminUploader extends FormCrawler implements Uploader {
 
 	public static final String NAME = "Garmin";

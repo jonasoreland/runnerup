@@ -47,6 +47,10 @@ import android.support.v4.app.NotificationCompat;
  * @author jonas.oreland@gmail.com
  * 
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
 		LocationListener, Constants {
 

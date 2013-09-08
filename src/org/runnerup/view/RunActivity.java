@@ -60,6 +60,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunActivity extends Activity implements TickListener {
 	Workout workout = null;
 	GpsTracker mGpsTracker = null;

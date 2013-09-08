@@ -30,6 +30,10 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class SettingsActivity extends PreferenceActivity {
 
 	public void onCreate(Bundle savedInstanceState) {

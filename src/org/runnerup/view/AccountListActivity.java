@@ -49,6 +49,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountListActivity extends FragmentActivity implements Constants, LoaderCallbacks<Cursor> {
 
 	DBHelper mDBHelper = null;

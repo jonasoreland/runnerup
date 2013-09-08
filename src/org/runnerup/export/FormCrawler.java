@@ -45,6 +45,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.util.Pair;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class FormCrawler {
 
 	protected Set<String> cookies = new HashSet<String>();

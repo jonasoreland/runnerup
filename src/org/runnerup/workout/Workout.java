@@ -32,6 +32,10 @@ import android.content.SharedPreferences;
  * This class is the top level object for a workout, it is being called by
  * RunActivity, and by the Workout components
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Workout implements WorkoutComponent {
 
 	long lap = 0;

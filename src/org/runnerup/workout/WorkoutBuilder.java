@@ -36,6 +36,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.text.format.DateUtils;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutBuilder {
 
 	/**

@@ -47,6 +47,10 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class TitleSpinner extends LinearLayout {
 
 	private enum Type {

@@ -47,6 +47,10 @@ import android.database.sqlite.SQLiteDatabase;
  * 1) serious cleanup needed
  * 2) maybe reverse engineer 1.0.0.api.funbeat.se that I found...
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class FunBeatUploader extends FormCrawler implements Uploader {
 
 	public static final String NAME = "FunBeat";

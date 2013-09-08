@@ -18,6 +18,7 @@ package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
@@ -25,6 +26,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.speech.tts.UtteranceProgressListener;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RUTextToSpeech {
 
 	private static final String UTTERANCE_ID = "RUTextTospeech";

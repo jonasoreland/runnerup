@@ -28,6 +28,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
  
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutFileProvider extends ContentProvider {
  
     // The authority is the symbolic name for the provider class

@@ -32,6 +32,10 @@ import android.database.sqlite.SQLiteDatabase;
  * @author jonas.oreland@gmail.com
  * 
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunKeeper {
 
 	long mID = 0;

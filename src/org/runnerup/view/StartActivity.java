@@ -74,6 +74,10 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class StartActivity extends Activity implements TickListener {
 
 	final static String TAB_BASIC    = "basic";

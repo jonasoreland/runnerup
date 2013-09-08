@@ -27,6 +27,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class NumberPicker extends LinearLayout {
 
     public interface OnChangedListener {

@@ -30,6 +30,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.speech.tts.TextToSpeech;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioFeedback extends Feedback {
 
 	Event event = Event.STARTED;

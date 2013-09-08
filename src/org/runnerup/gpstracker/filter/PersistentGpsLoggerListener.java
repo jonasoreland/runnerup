@@ -23,6 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class PersistentGpsLoggerListener extends LocationListenerBase implements
 		org.runnerup.util.Constants {
 	private java.lang.Object mLock;

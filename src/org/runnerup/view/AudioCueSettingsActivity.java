@@ -55,6 +55,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCueSettingsActivity extends PreferenceActivity {
 
 	boolean started = false;

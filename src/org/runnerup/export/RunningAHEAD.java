@@ -39,6 +39,10 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server {
 
 	public static final String NAME = "RunningAHEAD";

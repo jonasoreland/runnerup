@@ -33,6 +33,10 @@ import android.location.Location;
  * @author jonas.oreland@gmail.com
  * 
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class EndomondoTrack {
 
 	long mID = 0;

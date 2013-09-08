@@ -29,6 +29,10 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Formatter implements OnSharedPreferenceChangeListener {
 
 	Context context = null;

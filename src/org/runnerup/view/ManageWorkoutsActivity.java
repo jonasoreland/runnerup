@@ -72,6 +72,10 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
 	DBHelper mDBHelper = null;

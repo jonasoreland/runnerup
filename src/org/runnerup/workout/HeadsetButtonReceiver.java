@@ -21,6 +21,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.KeyEvent;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class HeadsetButtonReceiver extends BroadcastReceiver {
 
 	@Override

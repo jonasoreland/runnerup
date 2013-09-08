@@ -16,6 +16,10 @@
  */
 package org.runnerup.util;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Bitfield {
 
 	public static boolean test(long flags, int bit) {

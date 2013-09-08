@@ -41,6 +41,10 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 @SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Activity extends Activity {
 

@@ -18,6 +18,7 @@ package org.runnerup.widget;
 
 import org.runnerup.R;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class WidgetUtil {
 
 	public static void setEditable(EditText editText, boolean onoff) {

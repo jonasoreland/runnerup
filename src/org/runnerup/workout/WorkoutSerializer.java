@@ -33,6 +33,10 @@ import org.runnerup.util.SafeParse;
 import android.content.Context;
 import android.util.Pair;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutSerializer {
 
 	public static final String WORKOUTS_DIR = "workouts";

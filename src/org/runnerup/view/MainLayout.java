@@ -41,6 +41,10 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.TabHost;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class MainLayout extends TabActivity {
 
 	private Drawable getDrawable(int resId) {

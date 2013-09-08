@@ -52,6 +52,10 @@ import android.database.sqlite.SQLiteDatabase;
  * Based on https://github.com/cpfair/tapiriik
  */
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Endomondo extends FormCrawler implements Uploader {
 
 	public static final String NAME = "Endomondo";

@@ -32,6 +32,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedList extends Observable implements Constants {
 
 	static final int MAX_ITEMS = 50;
