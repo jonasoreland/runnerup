@@ -23,7 +23,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.speech.tts.UtteranceProgressListener;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -56,7 +55,7 @@ public class RUTextToSpeech {
 	private void handleUtteranceComplete(final AudioManager am, final String utId) {
 		if (Build.VERSION.SDK_INT < 15) {
 			textToSpeech
-			.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
+			.setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
 				@Override
 				public void onUtteranceCompleted(String utteranceId) {
 					if (utId.equalsIgnoreCase(utteranceId)) {

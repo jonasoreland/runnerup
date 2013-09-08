@@ -77,6 +77,11 @@ public class OAuth2Activity extends Activity {
 	ProgressDialog mSpinner = null;
 	Bundle mArgs = null;
 
+	@SuppressWarnings("deprecation")
+	private void setSavedPassword(WebView wv, boolean val) {
+		wv.getSettings().setSavePassword(false);
+	} 
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,7 +103,7 @@ public class OAuth2Activity extends Activity {
 		wv.setVerticalScrollBarEnabled(false);
 		wv.setHorizontalScrollBarEnabled(false);
 		wv.getSettings().setJavaScriptEnabled(true);
-		wv.getSettings().setSavePassword(false);
+		setSavedPassword(wv, false);
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(auth_url);
