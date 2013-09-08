@@ -449,7 +449,6 @@ public class GpsTracker extends android.app.Service implements
 	/**
 	 * Service interface stuff...
 	 */
-
 	public class LocalBinder extends android.os.Binder {
 		public GpsTracker getService() {
 			return GpsTracker.this;

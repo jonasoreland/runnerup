@@ -129,7 +129,7 @@ public class AccountListActivity extends FragmentActivity implements Constants, 
 		cursorAdapter.swapCursor(null);
 	}
 
-	public class AccountListAdapter extends CursorAdapter {
+	class AccountListAdapter extends CursorAdapter {
 		LayoutInflater inflater;
 
 		public AccountListAdapter(Context context, Cursor c) {

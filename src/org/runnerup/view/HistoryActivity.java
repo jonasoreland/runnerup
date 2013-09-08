@@ -108,7 +108,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 		this.getSupportLoaderManager().restartLoader(0,  null,  this);
 	}
 
-	public class HistoryListAdapter extends CursorAdapter {
+	class HistoryListAdapter extends CursorAdapter {
 		LayoutInflater inflater;
 
 		public HistoryListAdapter(Context context, Cursor c) {

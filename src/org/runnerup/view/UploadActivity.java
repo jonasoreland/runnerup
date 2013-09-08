@@ -189,7 +189,7 @@ public class UploadActivity extends ListActivity implements Constants {
 		}
 	};
 	
-	public class UploadListAdapter extends BaseAdapter {
+	class UploadListAdapter extends BaseAdapter {
 		LayoutInflater inflater;
 
 		public UploadListAdapter(Context context) {
