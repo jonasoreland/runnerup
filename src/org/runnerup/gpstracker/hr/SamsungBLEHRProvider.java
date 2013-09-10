@@ -37,6 +37,20 @@ import com.samsung.android.sdk.bt.gatt.BluetoothGattService;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SamsungBLEHRProvider {
 
+	public static boolean checkLibrary() {
+		try {
+			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGatt");
+			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattAdapter");
+			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCallback");
+			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCharacteristic");
+			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor");
+			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattService");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}	
+	
     static final UUID HRP_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
 	static final UUID FIRMWARE_REVISON_UUID = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
 	static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
