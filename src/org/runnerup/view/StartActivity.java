@@ -280,6 +280,10 @@ public class StartActivity extends Activity implements TickListener {
 				startButton.performClick();
 			}
 		};
+		
+//		if (getAllowStartStopFromHeadsetKey()) {
+//			registerHeadsetListener();
+//		}
 	}
 
 	@Override
@@ -292,16 +296,8 @@ public class StartActivity extends Activity implements TickListener {
 			 */
 			stopGps();
 		}
-		if (getAllowStartStopFromHeadsetKey()){
-			ComponentName mMediaReceiverCompName = new ComponentName(
-					getPackageName(), HeadsetButtonReceiver.class.getName());
-			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-			mAudioManager
-					.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
-			
-			unregisterReceiver(catchButtonEvent);
-		}
 	}
+
 	
 	@Override
 	public void onResume() {
@@ -320,19 +316,41 @@ public class StartActivity extends Activity implements TickListener {
 			onGpsTrackerBound();
 		}
 		if (getAllowStartStopFromHeadsetKey()) {
-			ComponentName mMediaReceiverCompName = new ComponentName(
-					getPackageName(), HeadsetButtonReceiver.class.getName());
-			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-			mAudioManager
-					.registerMediaButtonEventReceiver(mMediaReceiverCompName);
-			
-			IntentFilter intentFilter = new IntentFilter();
-			intentFilter.setPriority(2147483647);
-			intentFilter.addAction("org.runnerup.START_STOP");
-			registerReceiver(catchButtonEvent, intentFilter);
+			unregisterHeadsetListener();
+			registerHeadsetListener();
 		}
 	}
 
+	private void registerHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.setPriority(2147483647);
+		intentFilter.addAction("org.runnerup.START_STOP");
+		registerReceiver(catchButtonEvent, intentFilter);
+	}
+
+	private void unregisterHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+		try {
+			unregisterReceiver(catchButtonEvent);
+		} catch (IllegalArgumentException e) {
+			if (e.getMessage().contains("Receiver not registered")) {
+			} else {
+				// unexpected, re-throw
+				throw e;
+			}
+		}
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -405,6 +423,8 @@ public class StartActivity extends Activity implements TickListener {
 
 	OnClickListener startButtonClick = new OnClickListener() {
 		public void onClick(View v) {
+			
+			
 			if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
 				manualSaveButtonClick.onClick(v);
 				return;
@@ -434,9 +454,13 @@ public class StartActivity extends Activity implements TickListener {
 				WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
 				mGpsStatus.stop(StartActivity.this);
 				mGpsTracker.setWorkout(w);
+				
 				Intent intent = new Intent(StartActivity.this,
 						RunActivity.class);
 				StartActivity.this.startActivityForResult(intent, 112);
+				if (getAllowStartStopFromHeadsetKey()){
+					unregisterHeadsetListener();
+				}
 				return;
 			}
 			updateView();
