@@ -39,6 +39,7 @@ import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.WorkoutSerializer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -54,6 +55,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -68,14 +70,13 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StartActivity extends Activity implements TickListener {
@@ -94,6 +95,10 @@ public class StartActivity extends Activity implements TickListener {
 	TextView gpsInfoView1 = null;
 	TextView gpsInfoView2 = null;
 	View gpsInfoLayout = null;
+
+	ImageButton hrButton = null; 
+	TextView hrValueText = null;
+	FrameLayout hrLayout = null;
 	
 	TitleSpinner simpleType = null;
 	TitleSpinner simpleTime = null;
@@ -155,6 +160,11 @@ public class StartActivity extends Activity implements TickListener {
 		gpsInfoLayout = findViewById(R.id.GPSINFO);
 		gpsInfoView1 = (TextView) findViewById(R.id.gpsInfo1);
 		gpsInfoView2 = (TextView) findViewById(R.id.gpsInfo2);
+
+		hrButton = (ImageButton) findViewById(R.id.hrButton);
+		hrButton.setOnClickListener(hrButtonClick);
+		hrValueText = (TextView) findViewById(R.id.hrValueText);
+		hrLayout = (FrameLayout) findViewById(R.id.hrLayout);
 		
 		tabHost = (TabHost)findViewById(R.id.tabhostStart);
 		tabHost.setup();
@@ -443,6 +453,13 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	};
 
+	OnClickListener hrButtonClick = new OnClickListener() {
+		@Override
+		public void onClick(View arg0) {
+
+		}
+	};
+	
 	private void updateView() {
 		{
 			int cnt0 = mGpsStatus.getSatellitesFixed();
@@ -483,8 +500,22 @@ public class StartActivity extends Activity implements TickListener {
 			}
 		}
 		gpsInfoLayout.setVisibility(View.VISIBLE);
+		
+		if (mGpsTracker != null && mGpsTracker.isHRConfigured()) {
+			hrLayout.setVisibility(View.VISIBLE);
+			if (mGpsTracker.isHRConnected()) {
+				hrButton.setEnabled(false);
+				hrValueText.setText(Integer.toString(mGpsTracker.getLatestHRValue()));
+			} else {
+				hrButton.setEnabled(true);
+				hrValueText.setText("?");
+			}
+		}
+		else {
+			hrLayout.setVisibility(View.GONE);
+		}
 	}
-
+	
 	private boolean mIsBound = false;
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {

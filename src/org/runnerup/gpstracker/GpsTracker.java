@@ -483,4 +483,16 @@ public class GpsTracker extends android.app.Service implements
 			}
 		}
 	}
+
+	public boolean isHRConfigured() {
+		return false;
+	}
+
+	public boolean isHRConnected() {
+		return false;
+	}
+
+	public int getLatestHRValue() {
+		return (int) (100 + (50 * (Math.random() - 0.5)));
+	}
 }
