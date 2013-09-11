@@ -35,7 +35,7 @@ import com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor;
 import com.samsung.android.sdk.bt.gatt.BluetoothGattService;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class SamsungBLEHRProvider {
+public class SamsungBLEHRProvider implements HRProvider {
 
 	public static boolean checkLibrary() {
 		try {
@@ -45,30 +45,20 @@ public class SamsungBLEHRProvider {
 			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCharacteristic");
 			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor");
 			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattService");
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
 	}	
 	
+	static final String SRC = "SamsungBLE";
     static final UUID HRP_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
 	static final UUID FIRMWARE_REVISON_UUID = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
 	static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
     static final UUID HEART_RATE_MEASUREMENT_CHARAC = UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb");
     static final UUID CCC = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
-	public interface OnOpenCallback {
-		public void onInitResult(boolean ok);
-	}
-
-	public interface OnScanResultCallback {
-		public void onScanResult(BluetoothDevice device);
-	}
-
-	public interface OnConnectCallback {
-		public void onConnectResult(boolean connectOK);
-	}
-	
 	private Context context;
 	private BluetoothAdapter btAdapter = null;
 	private BluetoothGatt btGatt = null;
@@ -82,6 +72,7 @@ public class SamsungBLEHRProvider {
 
 	private OnOpenCallback onOpenCallback;
 	
+	@Override
 	public void open(OnOpenCallback cb) {
 		if (btAdapter == null) {
 			btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -95,6 +86,7 @@ public class SamsungBLEHRProvider {
 		BluetoothGattAdapter.getProfileProxy(context, profileServiceListener, BluetoothGattAdapter.GATT);
 	}
 	
+	@Override
 	public void close() {
 		if (btAdapter == null)
 			return;
@@ -264,7 +256,7 @@ public class SamsungBLEHRProvider {
 					@Override
 					public void run() {
 						if (mIsScanning) { //NOTE: mIsScanning in user-thread
-							onScanResultCallback.onScanResult(arg0);
+							onScanResultCallback.onScanResult(SRC, arg0);
 						}
 					}});
             } else {
@@ -375,10 +367,12 @@ public class SamsungBLEHRProvider {
 	private Handler onScanResultHandler = null;
 	private OnScanResultCallback onScanResultCallback = null;
 
+	@Override
 	public boolean isScanning() {
 		return mIsScanning;
 	}
 
+	@Override
 	public void startScan(Handler handler, OnScanResultCallback callback) {
         if (btGatt == null)
             return;
@@ -392,6 +386,7 @@ public class SamsungBLEHRProvider {
        	btGatt.startScan();
 	}
 
+	@Override
 	public void stopScan() {
 		if (mIsScanning) {
 			mIsScanning = false;
@@ -404,14 +399,17 @@ public class SamsungBLEHRProvider {
 	private Handler onConnectHandler = null;
 	private OnConnectCallback onConnectCallback;
 
+	@Override
 	public boolean isConnected() {
 		return mIsConnected;
 	}
 
+	@Override
 	public boolean isConnecting() {
 		return mIsConnecting;
 	}
 
+	@Override
 	public void connect(Handler handler, String _btDevice, OnConnectCallback connectCallback) {
 		stopScan();
 
@@ -452,6 +450,7 @@ public class SamsungBLEHRProvider {
 		reportConnected(false);
 	}
 
+	@Override
 	public void disconnect() {
 		if (btGatt == null)
 			return;
@@ -496,10 +495,12 @@ public class SamsungBLEHRProvider {
 	private void reportDisconnected() {
 	}
 
+	@Override
 	public int getHRValue() {
 		return this.hrValue;
 	}
 
+	@Override
 	public long getHRValueTimestamp() {
 		return this.hrTimestamp;
 	}
