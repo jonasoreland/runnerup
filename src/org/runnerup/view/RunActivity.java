@@ -130,6 +130,9 @@ public class RunActivity extends Activity implements TickListener {
 				pauseButton.performClick();
 			}
 		};
+		if (getAllowStartStopFromHeadsetKey()) {
+			registerHeadsetListener();
+		}
 	}
 
 	@Override
@@ -141,32 +144,36 @@ public class RunActivity extends Activity implements TickListener {
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (getAllowStartStopFromHeadsetKey()){
-			ComponentName mMediaReceiverCompName = new ComponentName(
-					getPackageName(), HeadsetButtonReceiver.class.getName());
-			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-			mAudioManager
-					.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
-			
-			unregisterReceiver(catchButtonEvent);
-		}
+		
+	}
+
+	private void unregisterHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+		
+		unregisterReceiver(catchButtonEvent);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (getAllowStartStopFromHeadsetKey()) {
-			ComponentName mMediaReceiverCompName = new ComponentName(
-					getPackageName(), HeadsetButtonReceiver.class.getName());
-			AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-			mAudioManager
-					.registerMediaButtonEventReceiver(mMediaReceiverCompName);
-			
-			IntentFilter intentFilter = new IntentFilter();
-			intentFilter.setPriority(2147483647);
-			intentFilter.addAction("org.runnerup.START_STOP");
-			registerReceiver(catchButtonEvent, intentFilter);
-		}
+		
+	}
+
+	private void registerHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.setPriority(2147483647);
+		intentFilter.addAction("org.runnerup.START_STOP");
+		registerReceiver(catchButtonEvent, intentFilter);
 	}
 
 	@Override
@@ -178,6 +185,7 @@ public class RunActivity extends Activity implements TickListener {
 			mSpeech = null;
 		}
 		stopTimer();
+		
 	}
 
 	boolean getAllowStartStopFromHeadsetKey() {
@@ -306,6 +314,9 @@ public class RunActivity extends Activity implements TickListener {
 			workout.onComplete(Scope.WORKOUT, workout);
 			workout.onSave();
 			mGpsTracker = null;
+			if (getAllowStartStopFromHeadsetKey()){
+				unregisterHeadsetListener();
+			}
 			finish();
 			return;
 		} else if (resultCode == Activity.RESULT_CANCELED) {
@@ -315,6 +326,9 @@ public class RunActivity extends Activity implements TickListener {
 			workout.onComplete(Scope.WORKOUT, workout);
 			workout.onDiscard();
 			mGpsTracker = null;
+			if (getAllowStartStopFromHeadsetKey()){
+				unregisterHeadsetListener();
+			}
 			finish();
 			return;
 		} else if (resultCode == Activity.RESULT_FIRST_USER) {
