@@ -21,6 +21,11 @@ public class HRManager {
 		if (SamsungBLEHRProvider.checkLibrary()) {
 			providers.add(new SamsungBLEHRProvider(ctx));
 		}
+		
+		if (providers.isEmpty()) {
+			providers.add(new MockHRProvider());
+		}
+		
 		return providers;
 	}
 }
