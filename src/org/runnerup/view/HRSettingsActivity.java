@@ -27,7 +27,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRSettingsActivity extends Activity {
