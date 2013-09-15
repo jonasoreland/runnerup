@@ -1,5 +1,8 @@
 package org.runnerup.gpstracker.hr;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -11,5 +14,13 @@ public class HRManager {
 		if (!SamsungBLEHRProvider.checkLibrary())
 			return null;
 		return new SamsungBLEHRProvider(ctx);
+	}
+
+	public static List<HRProvider> getHRProviderList(Context ctx) {
+		List<HRProvider> providers = new ArrayList<HRProvider>();
+		if (SamsungBLEHRProvider.checkLibrary()) {
+			providers.add(new SamsungBLEHRProvider(ctx));
+		}
+		return providers;
 	}
 }

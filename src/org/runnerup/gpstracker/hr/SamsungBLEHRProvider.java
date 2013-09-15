@@ -52,7 +52,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 		return false;
 	}	
 	
-	static final String SRC = "SamsungBLE";
+	static final String NAME = "SamsungBLE";
     static final UUID HRP_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
 	static final UUID FIRMWARE_REVISON_UUID = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
 	static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
@@ -70,6 +70,10 @@ public class SamsungBLEHRProvider implements HRProvider {
 		context = ctx;
 	}
 
+	public String getProviderName() {
+		return NAME;
+	}
+	
 	private OnOpenCallback onOpenCallback;
 	
 	@Override
@@ -256,7 +260,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 					@Override
 					public void run() {
 						if (mIsScanning) { //NOTE: mIsScanning in user-thread
-							onScanResultCallback.onScanResult(SRC, arg0);
+							onScanResultCallback.onScanResult(NAME, arg0);
 						}
 					}});
             } else {

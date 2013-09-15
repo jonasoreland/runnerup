@@ -10,12 +10,14 @@ public interface HRProvider {
 	}
 
 	public interface OnScanResultCallback {
-		public void onScanResult(String src, BluetoothDevice device);
+		public void onScanResult(String name, BluetoothDevice device);
 	}
 
 	public interface OnConnectCallback {
 		public void onConnectResult(boolean connectOK);
 	}
+	
+	public abstract String getProviderName();
 	
 	public abstract void open(OnOpenCallback cb);
 
