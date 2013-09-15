@@ -75,7 +75,15 @@
         android:key="@string/pref_keystartstop_active"
         android:title="Headset key start/stop"
         android:summary="Use your headset to start/pause/resume RunnerUp" />
-	
+
+	<Preference
+        android:key="cue_configure_hr"
+        android:title="Configure Heart Rate Monitor">
+			<intent
+			    android:targetPackage="org.runnerup"
+			    android:targetClass="org.runnerup.view.HRSettingsActivity" />
+    </Preference>
+		
     <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"

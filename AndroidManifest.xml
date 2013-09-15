@@ -123,7 +123,11 @@
 		<activity android:name=".export.oauth2client.OAuth2Activity"
 		    android:screenOrientation="portrait" >
 		</activity>
-		
+
+		<activity android:name=".view.HRSettingsActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+				
 		<service 
 		    android:name=".gpstracker.GpsTracker" >
 		</service>
@@ -142,6 +146,6 @@
 		<uses-library
 		    android:name="com.samsung.android.sdk.bt"
 			android:required="false" />
-</application>
+	</application>
 
 </manifest> 

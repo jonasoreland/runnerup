@@ -19,10 +19,11 @@ public class HRManager {
 	public static List<HRProvider> getHRProviderList(Context ctx) {
 		List<HRProvider> providers = new ArrayList<HRProvider>();
 		if (SamsungBLEHRProvider.checkLibrary()) {
+			System.err.println("Samsung OK");
 			providers.add(new SamsungBLEHRProvider(ctx));
 		}
 		
-		if (providers.isEmpty()) {
+		if (false && providers.isEmpty()) {
 			providers.add(new MockHRProvider());
 		}
 		
