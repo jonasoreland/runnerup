@@ -78,6 +78,10 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
 	@Override
 	public void onLocationChanged(Location arg0) {
 		super.onLocationChanged(arg0);
+		onLocationChanged(arg0, null);
+	}
+
+	public void onLocationChanged(Location arg0, Integer hrValue) {
 		ContentValues values;
 		synchronized (mLock) {
 			if (mKey == null)
@@ -101,7 +105,9 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
 		if (arg0.hasBearing()) {
 			values.put(DB.LOCATION.BEARING, arg0.getBearing());
 		}
-
+		if (hrValue != null) {
+			values.put(DB.LOCATION.HR, hrValue.intValue());
+		}
 		if (mDB != null) {
 			mDB.insert(mTable, null, values);
 		}

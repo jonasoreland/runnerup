@@ -24,6 +24,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
+import org.runnerup.gpstracker.hr.HRProvider;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
@@ -56,6 +57,8 @@ public class GpsTracker extends android.app.Service implements
 
 	private static final int NOTIFICATION_ID = 1;
 
+	public static final int MAX_HR_AGE = 3000; // 3s
+	
 	/**
 	 * Work-around for http://code.google.com/p/android/issues/detail?id=23937
 	 */
@@ -368,9 +371,10 @@ public class GpsTracker extends android.app.Service implements
 	
 	@Override
 	public void onLocationChanged(Location arg0) {
+		long now = System.currentTimeMillis();
 		if (mBug23937Checked == false) {
 			long gpsTime = arg0.getTime();
-			long utcTime = System.currentTimeMillis();
+			long utcTime = now;
 			if (gpsTime > utcTime + 3 * 1000) {
 				mBug23937Delta = utcTime - gpsTime;
 			} else {
@@ -403,7 +407,7 @@ public class GpsTracker extends android.app.Service implements
 			}
 			mActivityLastLocation = arg0;
 
-			mDBWriter.onLocationChanged(arg0);
+			mDBWriter.onLocationChanged(arg0, getLatestHRValue(now, MAX_HR_AGE));
 			
 			switch (mLocationType) {
 			case DB.LOCATION.TYPE_START:
@@ -484,15 +488,32 @@ public class GpsTracker extends android.app.Service implements
 		}
 	}
 
+	HRProvider hrProvider = null;
 	public boolean isHRConfigured() {
+		if (hrProvider != null) {
+			return true;
+		}
 		return false;
 	}
 
 	public boolean isHRConnected() {
-		return false;
+		if (hrProvider == null)
+			return false;
+		
+		return hrProvider.isConnected();
 	}
 
-	public int getLatestHRValue() {
-		return (int) (100 + (50 * (Math.random() - 0.5)));
+	public Integer getLatestHRValue(long now, long maxAge) {
+		if (hrProvider == null || !hrProvider.isConnected())
+			return null;
+		
+		if (now > hrProvider.getHRValueTimestamp() + maxAge)
+			return null;
+
+		return hrProvider.getHRValue();
+	}
+		
+	public Integer getLatestHRValue() {
+		return getLatestHRValue(System.currentTimeMillis(), 3000);
 	}
 }
