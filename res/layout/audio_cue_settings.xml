@@ -151,5 +151,7 @@
 			<Preference android:title="Push"
                 android:key="test_cueinfo"
                 android:summary="Test audio cue"/>
-   		</PreferenceCategory>	    
+			<Preference android:title="Android text to speech settings"
+                android:key="tts_settings" />
+		</PreferenceCategory>	    
 </PreferenceScreen>

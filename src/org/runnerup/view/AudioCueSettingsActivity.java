@@ -102,6 +102,20 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			}
 		}
 
+		{
+			Preference btn = (Preference)findPreference("tts_settings");
+			btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					Intent intent = new Intent();
+					intent.setAction("com.android.settings.TTS_SETTINGS");
+					startActivity(intent);
+					return false;
+				}
+				
+			});
+		}
+
 		final boolean createNewItem = true;
 		adapter = new AudioSchemeListAdapter(mDB, (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE),
 				createNewItem);
