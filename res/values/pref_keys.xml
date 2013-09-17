@@ -64,4 +64,8 @@
     <string name="pref_runneruplive_username">pref_runneruplive_username</string>
     
     <string name="pref_keystartstop_active">pref_keystartstop_active</string>
+    
+    <string name="pref_bt_name">pref_bt_name</string>
+    <string name="pref_bt_address">pref_bt_address</string>
+    <string name="pref_bt_provider">pref_bt_provider</string>
 </resources>

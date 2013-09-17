@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.HRSettingsActivity" >
+
+    <Button
+        android:id="@+id/connectButton"
+        style="@style/ButtonText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/btn_grey"
+        android:text="Connect" />
+    
+    <LinearLayout
+        android:id="@+id/deviceName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/connectButton" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Device"
+            style="@style/ButtonText"
+             />
+
+        <TextView
+            android:id="@+id/btDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="none selected"
+            style="@style/ButtonText"
+             />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/hrLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/deviceName"
+        android:layout_above="@+id/scanButton"
+        >
+
+        <ImageButton
+            android:id="@+id/hrButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/heart" />
+
+        <TextView
+            android:id="@+id/hrValueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="150"
+            android:textColor="@color/black"
+            android:textSize="25sp" />
+
+    </FrameLayout>
+
+	<Button
+        android:id="@+id/scanButton"
+        style="@style/ButtonText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_green"
+        android:text="Scan" />
+
+</RelativeLayout>

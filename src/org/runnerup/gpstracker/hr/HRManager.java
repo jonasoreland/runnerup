@@ -10,10 +10,13 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRManager {
 
-	public static HRProvider getHRProvider(String src, Context ctx) {
-		if (!SamsungBLEHRProvider.checkLibrary())
-			return null;
-		return new SamsungBLEHRProvider(ctx);
+	public static HRProvider getHRProvider(Context ctx, String src) {
+		if (src.contentEquals(SamsungBLEHRProvider.NAME)) {
+			if (!SamsungBLEHRProvider.checkLibrary())
+				return null;
+			return new SamsungBLEHRProvider(ctx);
+		}
+		return null;
 	}
 
 	public static List<HRProvider> getHRProviderList(Context ctx) {
@@ -23,7 +26,7 @@ public class HRManager {
 			providers.add(new SamsungBLEHRProvider(ctx));
 		}
 		
-		if (false && providers.isEmpty()) {
+		if (providers.isEmpty()) {
 			providers.add(new MockHRProvider());
 		}
 		

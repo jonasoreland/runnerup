@@ -47,7 +47,6 @@ public class SamsungBLEHRProvider implements HRProvider {
 			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattService");
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return false;
 	}	
@@ -74,10 +73,11 @@ public class SamsungBLEHRProvider implements HRProvider {
 		return NAME;
 	}
 	
+	private Handler onOpenHandler;
 	private OnOpenCallback onOpenCallback;
 	
 	@Override
-	public void open(OnOpenCallback cb) {
+	public void open(Handler handler, OnOpenCallback cb) {
 		if (btAdapter == null) {
 			btAdapter = BluetoothAdapter.getDefaultAdapter();
 		}
@@ -87,6 +87,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 		}
 
 		onOpenCallback = cb;
+		onOpenHandler = handler;
 		BluetoothGattAdapter.getProfileProxy(context, profileServiceListener, BluetoothGattAdapter.GATT);
 	}
 	
@@ -128,14 +129,19 @@ public class SamsungBLEHRProvider implements HRProvider {
 	private BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
 
 		@Override
-		public void onAppRegistered(int arg0) {
-			OnOpenCallback cb = onOpenCallback;
+		public void onAppRegistered(final int arg0) {
+			final OnOpenCallback cb = onOpenCallback;
 			onOpenCallback = null;
-			if (arg0 == BluetoothGatt.GATT_SUCCESS) {
-				cb.onInitResult(true);
-			} else {
-				cb.onInitResult(false);
-			}
+			onOpenHandler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					if (arg0 == BluetoothGatt.GATT_SUCCESS) {
+						cb.onInitResult(true);
+					} else {
+						cb.onInitResult(false);
+					}
+				}});
 		}
 
 		@Override
@@ -414,7 +420,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(Handler handler, String _btDevice, OnConnectCallback connectCallback) {
+	public void connect(Handler handler, BluetoothDevice dev, OnConnectCallback connectCallback) {
 		stopScan();
 
 		if (mIsConnected)
@@ -426,7 +432,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 		mIsConnecting = true;
 		onConnectHandler = handler;
 		onConnectCallback = connectCallback;
-		btDevice = btAdapter.getRemoteDevice(_btDevice);
+		btDevice = dev;
 		btGatt.connect(btDevice, false);
 	}
 

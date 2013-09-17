@@ -1,11 +1,15 @@
 package org.runnerup.gpstracker.hr;
 
 import android.annotation.TargetApi;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.Build;
 import android.os.Handler;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MockHRProvider implements HRProvider {
+
+	protected static final String NAME = "MockHR";
 
 	@Override
 	public String getProviderName() {
@@ -13,7 +17,7 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void open(OnOpenCallback cb) {
+	public void open(Handler handler, OnOpenCallback cb) {
 		cb.onInitResult(true);
 	}
 
@@ -30,11 +34,23 @@ public class MockHRProvider implements HRProvider {
 		return mIsScanning;
 	}
 
+	Runnable fakeScanResult = new Runnable() {
+		@Override
+		public void run() {
+			if (mIsScanning) {
+				String dev = "00:43:A8:23:10:"+String.format("%02X", System.currentTimeMillis() % 256);
+				onScanResultCallback.onScanResult(NAME, BluetoothAdapter.getDefaultAdapter().getRemoteDevice(dev));
+				scanHandler.postDelayed(fakeScanResult, 3000);
+			}
+		}
+	};
+	
 	@Override
 	public void startScan(Handler handler, OnScanResultCallback callback) {
 		mIsScanning = true;
 		scanHandler = handler;
 		onScanResultCallback  = callback;
+		scanHandler.postDelayed(fakeScanResult, 3000);
 	}
 
 	@Override
@@ -60,7 +76,7 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(Handler handler, String _btDevice,
+	public void connect(Handler handler, BluetoothDevice _btDevice,
 			OnConnectCallback connectCallback) {
 		connectHandler = handler;
 		onConnectCallback = connectCallback;

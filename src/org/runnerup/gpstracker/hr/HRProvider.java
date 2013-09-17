@@ -19,7 +19,7 @@ public interface HRProvider {
 	
 	public abstract String getProviderName();
 	
-	public abstract void open(OnOpenCallback cb);
+	public abstract void open(Handler handler, OnOpenCallback cb);
 
 	public abstract void close();
 
@@ -34,7 +34,7 @@ public interface HRProvider {
 
 	public abstract boolean isConnecting();
 
-	public abstract void connect(Handler handler, String _btDevice,
+	public abstract void connect(Handler handler, BluetoothDevice _btDevice,
 			OnConnectCallback connectCallback);
 
 	public abstract void disconnect();
