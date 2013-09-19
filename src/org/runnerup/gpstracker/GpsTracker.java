@@ -24,7 +24,10 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
+import org.runnerup.gpstracker.hr.HRManager;
 import org.runnerup.gpstracker.hr.HRProvider;
+import org.runnerup.gpstracker.hr.HRProvider.OnConnectCallback;
+import org.runnerup.gpstracker.hr.HRProvider.OnOpenCallback;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
@@ -32,15 +35,19 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -50,6 +57,8 @@ import android.support.v4.app.NotificationCompat;
  */
 import android.os.Build;
 import android.annotation.TargetApi;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
@@ -58,6 +67,8 @@ public class GpsTracker extends android.app.Service implements
 	private static final int NOTIFICATION_ID = 1;
 
 	public static final int MAX_HR_AGE = 3000; // 3s
+	
+	private Handler handler = new Handler();
 	
 	/**
 	 * Work-around for http://code.google.com/p/android/issues/detail?id=23937
@@ -161,6 +172,8 @@ public class GpsTracker extends android.app.Service implements
 		} catch (Exception ex) {
 			state = State.ERROR;
 		}
+		
+		startHRMonitor();
 		
 		UploadManager u = new UploadManager(this);
 		u.loadLiveLoggers(liveLoggers);
@@ -320,6 +333,7 @@ public class GpsTracker extends android.app.Service implements
 			state = State.INIT;
 		}
 		liveLoggers.clear();
+		stopHRMonitor();
 	}
 
 	public void completeActivity(boolean save) {
@@ -435,7 +449,8 @@ public class GpsTracker extends android.app.Service implements
 				return;
 			}
 			mElapsedTimeMillisSinceLiveLog = 0;
-		}
+		}		
+
 		
 		for (Uploader l : liveLoggers) {
 			l.liveLog(this, arg0, type, distance, time);
@@ -489,6 +504,61 @@ public class GpsTracker extends android.app.Service implements
 	}
 
 	HRProvider hrProvider = null;
+	boolean btDisabled = true;
+	
+	private void startHRMonitor() {
+		Resources res = getResources();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+		final String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+		if (btAddress == null || btProviderName == null)
+			return;
+		
+	    btDisabled = true;
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		if (adapter == null) {
+			return;
+		}
+		
+		if (!adapter.isEnabled()) {
+		    return;
+		}
+		
+		final BluetoothDevice btDevice = adapter.getRemoteDevice(btAddress);
+		if (btDevice == null) {
+			return;
+		}
+		btDisabled = false;
+
+		hrProvider = HRManager.getHRProvider(this, btProviderName);
+		if (hrProvider != null) {
+			hrProvider.open(handler, new OnOpenCallback(){
+				@Override
+				public void onInitResult(boolean ok) {
+					if (!ok) {
+						hrProvider = null;
+						return;
+					}
+					hrProvider.connect(handler, btDevice, new OnConnectCallback(){
+
+						@Override
+						public void onConnectResult(boolean connectOK) {
+							if (connectOK) {
+								Toast.makeText(GpsTracker.this,  "Connected to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+							}
+						}});
+				}});
+		}
+	}
+	
+	private void stopHRMonitor() {
+		if (hrProvider != null) {
+			hrProvider.disconnect();
+		}
+	}
+	
 	public boolean isHRConfigured() {
 		if (hrProvider != null) {
 			return true;

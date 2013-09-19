@@ -18,6 +18,8 @@ package org.runnerup.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.runnerup.R;
 import org.runnerup.gpstracker.hr.HRManager;
@@ -29,10 +31,13 @@ import org.runnerup.gpstracker.hr.HRProvider.OnScanResultCallback;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,7 +50,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +64,7 @@ public class HRSettingsActivity extends Activity {
 	String btProviderName;
 	HRProvider hrProvider = null;
 	BluetoothDevice hrDevice = null;
+	BluetoothAdapter mAdapter = null;
 	
 	Button connectButton = null;
 	Button scanButton = null;
@@ -75,32 +80,15 @@ public class HRSettingsActivity extends Activity {
 
 		providers = HRManager.getHRProviderList(this);
 		deviceAdapter = new DeviceAdapter(this);
+
 		
 		if (providers.isEmpty()) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Heart rate monitor is not supported for your device...try again later");
-			DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					finish();
-				}
-			};
-			builder.setNegativeButton("ok, rats",  listener);
-			builder.show();
+			notSupported();
 			return;
 		}
 
-		Resources res = getResources();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		btName = prefs.getString(res.getString(R.string.pref_bt_name), null);
-		btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
-		btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
-		
-		if (btProviderName != null) {
-			hrProvider = HRManager.getHRProvider(this, btProviderName);
-		}
-
+		tvBTName = (TextView) findViewById(R.id.btDevice);
+		tvHR = (TextView) findViewById(R.id.hrValueText); 
 		scanButton = (Button) findViewById(R.id.scanButton);
 		scanButton.setOnClickListener(scanButtonClick);
 		connectButton = (Button) findViewById(R.id.connectButton);
@@ -109,8 +97,72 @@ public class HRSettingsActivity extends Activity {
 			public void onClick(View arg0) {
 				connect();
 			}});
-		tvBTName = (TextView) findViewById(R.id.btDevice);
-		tvHR = (TextView) findViewById(R.id.hrValueText); 
+
+		Resources res = getResources();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		btName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+		btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+		btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+
+		System.err.println("btName: " + btName);
+		System.err.println("btAddress: " + btAddress);
+		System.err.println("btProviderName: " + btProviderName);
+
+		
+		mAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (mAdapter == null) {
+		    notSupported();
+		} else {
+		    if (!mAdapter.isEnabled()) {
+		    	Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+	            startActivityForResult(enableIntent, 0);
+	            return;
+		    }
+		}		
+
+		btEnabled();
+	}
+
+	private void btEnabled() {
+		if (btProviderName != null) {
+			hrProvider = HRManager.getHRProvider(this, btProviderName);
+		}
+
+		if (hrProvider != null) {
+			hrProvider.open(handler, new OnOpenCallback() {
+				@Override
+				public void onInitResult(boolean ok) {
+					if (ok) {
+						if (btAddress != null) {
+							hrDevice = mAdapter.getRemoteDevice(btAddress);
+							System.err.println("hrDevice.getName(): "
+									+ hrDevice.getName() + ", btName: "
+									+ btName);
+							if (hrDevice.getName() != null
+									&& hrDevice.getName().contentEquals(btName)) {
+								connect();
+							}
+
+						}
+					}
+				}
+			});
+		}
+	}
+	
+	public void notSupported() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Heart rate monitor is not supported for your device...try again later");
+		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				finish();
+			}
+		};
+		builder.setNegativeButton("ok, rats",  listener);
+		builder.show();
+		return;
 	}
 	
 	@Override
@@ -126,6 +178,8 @@ public class HRSettingsActivity extends Activity {
 			hrProvider.disconnect();
 			hrProvider.close();
 		}
+
+		stopTimer();
 	}
 	
 	HRProvider scanProvider = null;
@@ -300,6 +354,7 @@ public class HRSettingsActivity extends Activity {
 		@Override
 		public void onConnectResult(boolean connectOK) {
 			if (connectOK) {
+				save();
 				connectButton.setText("Disconnect");
 				startTimer();
 			} else {
@@ -309,14 +364,55 @@ public class HRSettingsActivity extends Activity {
 		
 	};
 	
+	private void save() {
+		btName = hrDevice.getName();
+		btAddress = hrDevice.getAddress();
+		
+		Resources res = getResources();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		Editor ed = prefs.edit();
+		ed.putString(res.getString(R.string.pref_bt_name), btName);
+		ed.putString(res.getString(R.string.pref_bt_address), btAddress);
+		ed.putString(res.getString(R.string.pref_bt_provider), hrProvider.getProviderName());
+		ed.commit();
+	}
+	
 	private CharSequence getName(BluetoothDevice dev) {
 		if (dev.getName() != null && dev.getName().length() > 0)
 			return dev.getName();
 		return dev.getAddress();
 	}
 
-	protected void startTimer() {
-		// TODO Auto-generated method stub
-		
+	Timer hrReader = null;
+	void startTimer() {
+		hrReader = new Timer();
+		hrReader.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					public void run() {
+						readHR();
+					}
+				});
+			}
+		}, 0, 500);
 	}
+	
+	void stopTimer() {
+		if (hrReader == null)
+			return;
+		
+		hrReader.cancel();
+		hrReader.purge();
+		hrReader = null;
+	}
+
+	protected void readHR() {
+		if (hrProvider != null) {
+			long now = System.currentTimeMillis();
+			long age = hrProvider.getHRValueTimestamp();
+			tvHR.setText("HR: " + hrProvider.getHRValue() + ", age: " + (now - age) + "ms");
+		}
+	}
+
 }
