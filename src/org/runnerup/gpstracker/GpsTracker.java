@@ -421,7 +421,7 @@ public class GpsTracker extends android.app.Service implements
 			}
 			mActivityLastLocation = arg0;
 
-			mDBWriter.onLocationChanged(arg0, getLatestHRValue(now, MAX_HR_AGE));
+			mDBWriter.onLocationChanged(arg0, getCurrentHRValue(now, MAX_HR_AGE));
 			
 			switch (mLocationType) {
 			case DB.LOCATION.TYPE_START:
@@ -573,7 +573,7 @@ public class GpsTracker extends android.app.Service implements
 		return hrProvider.isConnected();
 	}
 
-	public Integer getLatestHRValue(long now, long maxAge) {
+	public Integer getCurrentHRValue(long now, long maxAge) {
 		if (hrProvider == null || !hrProvider.isConnected())
 			return null;
 		
@@ -583,7 +583,21 @@ public class GpsTracker extends android.app.Service implements
 		return hrProvider.getHRValue();
 	}
 		
-	public Integer getLatestHRValue() {
-		return getLatestHRValue(System.currentTimeMillis(), 3000);
+	public Integer getCurrentHRValue() {
+		return getCurrentHRValue(System.currentTimeMillis(), 3000);
+	}
+
+	public Double getCurrentSpeed() {
+		return getCurrentSpeed(System.currentTimeMillis(), 3000);
+	}
+
+	private Double getCurrentSpeed(long now, long maxAge) {
+		if (mLastLocation == null)
+			return null;
+		if (!mLastLocation.hasSpeed())
+			return null;
+		if (now > mLastLocation.getTime() + maxAge)
+			return null;
+		return (double) mLastLocation.getSpeed();
 	}
 }

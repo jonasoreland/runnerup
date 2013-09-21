@@ -247,36 +247,57 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public double getDistance(Scope scope) {
-		if (scope == Scope.WORKOUT)
+		switch (scope) {
+		case WORKOUT:
 			return gpsTracker.getDistance();
-		else if (currentStep != null) {
-			return currentStep.getDistance(this, scope);
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getDistance(this, scope);
+			assert (false);
+			break;
+		case CURRENT:
+			break;
 		}
-		assert (false);
 		return 0;
 	}
 
 	public double getTime(Scope scope) {
-		if (scope == Scope.WORKOUT)
+		switch (scope) {
+		case WORKOUT:
 			return gpsTracker.getTime();
-		else if (currentStep != null) {
-			return currentStep.getTime(this, scope);
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getTime(this, scope);
+			assert (false);
+			break;
+		case CURRENT:
+			return System.currentTimeMillis() / 1000; // now
 		}
-		assert (false);
 		return 0;
 	}
 
 	public double getSpeed(Scope scope) {
-		if (scope == Scope.WORKOUT) {
+		switch (scope) {
+		case WORKOUT:
 			double d = getDistance(scope);
 			double t = getTime(scope);
 			if (t == 0)
 				return 0;
 			return d / t;
-		} else if (currentStep != null) {
-			return currentStep.getSpeed(this, scope);
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getSpeed(this, scope);
+			assert (false);
+			break;
+		case CURRENT:
+			Double s = gpsTracker.getCurrentSpeed();
+			if (s != null)
+				return s.doubleValue();
+
 		}
-		assert (false);
 		return 0;
 	}
 
@@ -386,6 +407,8 @@ public class Workout implements WorkoutComponent {
 				return (300 + 700 * Math.random());
 			case LAP:
 				return (300 + 700 * Math.random());
+			case CURRENT:
+				return 0;
 			}
 			return 0;
 		}
@@ -398,6 +421,8 @@ public class Workout implements WorkoutComponent {
 				return (1 * 60 + 5 * 60 * Math.random());
 			case LAP:
 				return (1 * 60 + 5 * 60 * Math.random());
+			case CURRENT:
+				return System.currentTimeMillis() / 1000;
 			}
 			return 0;
 		}
