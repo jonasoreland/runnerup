@@ -1,4 +1,4 @@
-package org.runnerup.gpstracker.hr;
+package org.runnerup.hr;
 
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;

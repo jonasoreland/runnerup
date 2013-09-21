@@ -1,4 +1,4 @@
-package org.runnerup.gpstracker.hr;
+package org.runnerup.hr;
 
 import java.util.ArrayList;
 import java.util.List;

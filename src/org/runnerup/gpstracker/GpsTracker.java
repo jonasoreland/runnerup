@@ -24,10 +24,10 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
-import org.runnerup.gpstracker.hr.HRManager;
-import org.runnerup.gpstracker.hr.HRProvider;
-import org.runnerup.gpstracker.hr.HRProvider.OnConnectCallback;
-import org.runnerup.gpstracker.hr.HRProvider.OnOpenCallback;
+import org.runnerup.hr.HRManager;
+import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.HRProvider.OnConnectCallback;
+import org.runnerup.hr.HRProvider.OnOpenCallback;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 

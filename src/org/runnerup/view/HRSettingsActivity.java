@@ -22,11 +22,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.runnerup.R;
-import org.runnerup.gpstracker.hr.HRManager;
-import org.runnerup.gpstracker.hr.HRProvider;
-import org.runnerup.gpstracker.hr.HRProvider.OnConnectCallback;
-import org.runnerup.gpstracker.hr.HRProvider.OnOpenCallback;
-import org.runnerup.gpstracker.hr.HRProvider.OnScanResultCallback;
+import org.runnerup.hr.HRManager;
+import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.HRProvider.OnConnectCallback;
+import org.runnerup.hr.HRProvider.OnOpenCallback;
+import org.runnerup.hr.HRProvider.OnScanResultCallback;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
