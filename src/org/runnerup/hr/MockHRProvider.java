@@ -10,6 +10,7 @@ import android.os.Handler;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MockHRProvider implements HRProvider {
 
+	Handler handler = new Handler();
 	protected static final String NAME = "MockHR";
 
 	public MockHRProvider(Context ctx) {
@@ -39,13 +40,18 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	Runnable fakeScanResult = new Runnable() {
+		int count = 0;
 		@Override
 		public void run() {
 			if (mIsScanning) {
 				String dev = "00:43:A8:23:10:"+String.format("%02X", System.currentTimeMillis() % 256);
 				onScanResultCallback.onScanResult(NAME, BluetoothAdapter.getDefaultAdapter().getRemoteDevice(dev));
-				scanHandler.postDelayed(fakeScanResult, 3000);
+				if (++count < 3) {
+					scanHandler.postDelayed(fakeScanResult, 3000);
+					return;
+				}
 			}
+			count = 0;
 		}
 	};
 	
@@ -80,9 +86,9 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(Handler handler, BluetoothDevice _btDevice,
+	public void connect(final Handler cHandler, BluetoothDevice _btDevice,
 			OnConnectCallback connectCallback) {
-		connectHandler = handler;
+		connectHandler = cHandler;
 		onConnectCallback = connectCallback;
 
 		if (mIsConnected)
@@ -92,8 +98,29 @@ public class MockHRProvider implements HRProvider {
 			return;
 		
 		mIsConnecting = true;
+		connectHandler.postDelayed(new Runnable(){
+			@Override
+			public void run() {
+				if (mIsConnecting) {
+					mIsConnected = true;
+					mIsConnecting = false;
+					onConnectCallback.onConnectResult(true);
+					handler.postDelayed(hrUpdate, 750);
+				}
+			}}, 3000);
 	}
 
+	Runnable hrUpdate = new Runnable() {
+		@Override
+		public void run() {
+			hrValue = (int) (150 + 40 * Math.random());
+			hrTimestamp = System.currentTimeMillis();
+			if (mIsConnected == true) {
+				handler.postDelayed(hrUpdate, 750);
+			}
+		}
+	};
+	
 	@Override
 	public void disconnect() {
 		mIsConnecting = false;
@@ -102,14 +129,16 @@ public class MockHRProvider implements HRProvider {
 		onConnectCallback = null;
 	}
 
+	int hrValue = 0;
+	long hrTimestamp = 0;
+	
 	@Override
 	public int getHRValue() {
-		return 0;
+		return hrValue;
 	}
 
 	@Override
 	public long getHRValueTimestamp() {
-		// TODO Auto-generated method stub
-		return 0;
+		return hrTimestamp;
 	}
 }
