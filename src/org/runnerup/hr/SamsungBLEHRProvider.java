@@ -38,6 +38,12 @@ import com.samsung.android.sdk.bt.gatt.BluetoothGattService;
 public class SamsungBLEHRProvider implements HRProvider {
 
 	public static boolean checkLibrary() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+			return false;
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+			return false;
+		
 		try {
 			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGatt");
 			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattAdapter");

@@ -3,6 +3,7 @@ package org.runnerup.hr;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 
@@ -10,6 +11,9 @@ import android.os.Handler;
 public class MockHRProvider implements HRProvider {
 
 	protected static final String NAME = "MockHR";
+
+	public MockHRProvider(Context ctx) {
+	}
 
 	@Override
 	public String getProviderName() {

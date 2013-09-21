@@ -16,6 +16,14 @@ public class HRManager {
 				return null;
 			return new SamsungBLEHRProvider(ctx);
 		}
+		if (src.contentEquals(AndroidBLEHRProvider.NAME)) {
+			if (!AndroidBLEHRProvider.checkLibrary(ctx))
+				return null;
+			return new AndroidBLEHRProvider(ctx);
+		}
+		if (src.contentEquals(MockHRProvider.NAME)) {
+			return new MockHRProvider(ctx);
+		}
 		return null;
 	}
 
@@ -26,8 +34,13 @@ public class HRManager {
 			providers.add(new SamsungBLEHRProvider(ctx));
 		}
 		
+		if (AndroidBLEHRProvider.checkLibrary(ctx)) {
+			System.err.println("AndroidBLE OK");
+			providers.add(new AndroidBLEHRProvider(ctx));
+		}
+		
 		if (providers.isEmpty()) {
-			providers.add(new MockHRProvider());
+			providers.add(new MockHRProvider(ctx));
 		}
 		
 		return providers;
