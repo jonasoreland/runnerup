@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.runnerup.R;
+import org.runnerup.content.WorkoutFileProvider;
+import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
@@ -33,6 +35,8 @@ import org.runnerup.util.Formatter;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -41,7 +45,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -77,9 +83,6 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DetailActivity extends FragmentActivity implements Constants {
@@ -282,6 +285,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		case R.id.menu_recompute_activity:
 			ActivityCleaner.recompute(mDB, mID);
 			requery();
+			break;
+		case R.id.menu_share_activity:
+			shareActivity();
 			break;
 		}
 		return true;
@@ -1182,5 +1188,46 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				}
 			}
 		}.execute("kalle");
+	}
+
+	private void shareActivity() {
+		final int which[] = { -1 };
+		final CharSequence items[] = { "gpx", "tcx" };
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Share activity");
+		builder.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int w) {
+						if (which[0] == -1) {
+							dialog.dismiss();
+							return;
+						}
+							
+						final Activity context = DetailActivity.this;
+					    final CharSequence fmt = items[which[0]];
+				    	final Intent intent = new Intent(Intent.ACTION_SEND);
+					 
+				    	intent.setType(WorkoutFileProvider.MIME);
+				    	Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt + "/" + mID 
+				    			+ "/" + "activity." + fmt);
+				    	intent.putExtra(Intent.EXTRA_STREAM, uri);
+						context.startActivity(Intent.createChooser(intent, "Share workout..."));
+						
+					}
+				});
+		builder.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing but close the dialog
+						dialog.dismiss();
+					}
+
+				});
+		builder.setSingleChoiceItems(items, which[0], new DialogInterface.OnClickListener(){
+			@Override
+			public void onClick(DialogInterface dialog, int w) {
+				which[0] = w;
+			}});
+		builder.show();
 	}
 }

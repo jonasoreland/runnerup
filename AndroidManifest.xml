@@ -121,7 +121,8 @@
 		</activity>
 
 		<provider android:name=".content.WorkoutFileProvider" android:authorities="org.runnerup.workout.file.provider" tools:ignore="ExportedContentProvider"></provider>
-		
+		<provider android:name=".content.ActivityProvider" android:authorities="org.runnerup.activity.provider" tools:ignore="ExportedContentProvider"></provider>
+				
 		<activity android:name=".export.oauth2client.OAuth2Activity"
 		    android:screenOrientation="portrait" >
 		</activity>
