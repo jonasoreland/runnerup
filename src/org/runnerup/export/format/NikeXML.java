@@ -16,6 +16,7 @@
  */
 package org.runnerup.export.format;
 
+import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,7 +64,8 @@ public class NikeXML {
 		DISTANCE,
 		LAP,
 		TIME,
-		SPEED
+		SPEED,
+		HR
 	};
 	
 	public void export(final long activityId, final Writer writer) throws Exception {
@@ -102,6 +104,7 @@ public class NikeXML {
 			mXML.endTag("", "calories");
 			mXML.startTag("", "battery");
 			mXML.endTag("", "battery");
+			final boolean hasHR = emitHeartrateStats();
 			mXML.endTag("", "runSummary");
 
 			mXML.startTag("", "template");
@@ -176,6 +179,20 @@ public class NikeXML {
 				mXML.endTag("", "extendedData");
 			}
 
+			if (hasHR)
+			{
+				mXML.startTag("", "extendedData");
+				mXML.attribute("", "dataType", "heartRate");
+				mXML.attribute("", "intervalType", "time");
+				mXML.attribute("", "intervalUnit", "s");
+				mXML.attribute("", "intervalValue", "10");
+				final ExtendedData e = new ExtendedData(Dim.HR);
+				e.buf.append("0");
+				emitList(activityId, Dim.TIME, 10 * 1000d, e);
+				mXML.text(e.buf.toString());
+				mXML.endTag("", "extendedData");
+			}
+
 			mXML.endTag("", "extendedDataList");
 
 			mXML.endTag("", "sportsData");
@@ -185,6 +202,108 @@ public class NikeXML {
 			throw e;
 		}
 		cursor.close();
+	}
+
+	private boolean emitHeartrateStats() throws IllegalArgumentException, IllegalStateException, IOException {
+		String args[] = { Long.toString(mID) };
+		Cursor c = mDB.rawQuery("select min(hr), max(hr), avg(hr) from location where activity_id = ?", args);
+		while (c.moveToFirst()) {
+			if (c.isNull(0) || c.isNull(1) || c.isNull(3))
+				break;
+
+			int minHR = c.getInt(0);
+			int maxHR = c.getInt(1);
+			int avgHR = c.getInt(2);
+			c.close();
+
+			mXML.startTag("", "heartrate");
+			mXML.startTag("",  "average");
+			mXML.text(Integer.toString(avgHR));
+			mXML.endTag("",  "average");
+			
+			emitHRPosition("minumum", minHR);
+			emitHRPosition("maximum", maxHR);
+			
+			return true;
+		} 
+		c.close();
+		return false;
+	}
+
+	private void emitHRPosition(String string, int hrVal) throws IllegalArgumentException, IllegalStateException, IOException {
+		long _id = 0;
+		{		// 1 find a point with specified value 
+			String args[] = { Long.toString(mID), Integer.toString(hrVal) };
+			Cursor c = mDB.rawQuery("select max(_id) from location where activity_id = ? and hr = ? limit 1", args);
+			if (!c.moveToFirst()) {
+				c.close();
+				return;
+			}
+			_id = c.getLong(0);
+			c.close();
+		}
+		
+		// 2 iterate to that position from start...
+		String cols[] = { DB.LOCATION.TYPE, DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.TIME, DB.LOCATION.SPEED };
+		String args[] = { Long.toString(mID), Long.toString(_id) };
+		Cursor c = mDB.query(DB.LOCATION.TABLE, cols,
+				DB.LOCATION.ACTIVITY + " ? AND _id <= ?", args, null, null, "_id");
+
+		if (c.moveToFirst()) {
+			Location last = null;
+			double sumDist = 0;
+			long sumTime = 0;
+			do {
+				switch (c.getInt(0)){
+				case DB.LOCATION.TYPE_START:
+				case DB.LOCATION.TYPE_RESUME:
+					last = new Location("Dill");
+					last.setLatitude(c.getDouble(1));
+					last.setLongitude(c.getDouble(2));
+					break;
+				case DB.LOCATION.TYPE_PAUSE:
+				case DB.LOCATION.TYPE_END:
+					last = null;
+					break;
+				case DB.LOCATION.TYPE_GPS:
+					Location l = new Location("Sill");
+					l.setLatitude(c.getDouble(1));
+					l.setLongitude(c.getDouble(2));
+					l.setTime(c.getLong(3));
+					if (!c.isNull(4))
+						l.setSpeed(c.getFloat(4));
+					sumDist += l.distanceTo(last);
+					sumTime += l.getTime() - last.getTime();
+					last = l;
+				}
+			} while (c.moveToNext());
+			mXML.startTag("",  string);
+			mXML.startTag("", "duration");
+			mXML.text(Long.toString(1000 * sumTime)); // ms
+			mXML.endTag("", "duration");
+
+			mXML.startTag("", "distance");
+			mXML.text(Double.toString(sumDist / 1000.0d)); // km
+			mXML.endTag("", "distance");
+			
+			mXML.startTag("", "pace");
+			double pace = 0;
+			if (last.hasSpeed() && last.getSpeed() != 0) {
+				pace = 1.0d / last.getSpeed();
+			} else {
+				if (sumDist != 0)
+					pace = sumTime / sumDist;
+			}
+			mXML.text(Long.toString(Math.round(1000.0d * pace)));
+			mXML.endTag("", "pace");
+
+			mXML.startTag("", "bpm");
+			mXML.text(Integer.toString(hrVal));
+			mXML.endTag("", "bpm");
+			
+			mXML.endTag("",  string);
+		}
+		c.close();
 	}
 
 	abstract class Emitter {
@@ -219,9 +338,11 @@ public class NikeXML {
 			mXML.startTag("", "pace");
 			double deltaTime = p.sumTime;
 			double deltaDist = p.sumDistance;
+			double deltaHR = p.sumHR;
 			if (!posHist.isEmpty()) {
 				deltaTime -= posHist.lastElement().sumTime;
 				deltaDist -= posHist.lastElement().sumDistance;
+				deltaHR -= posHist.lastElement().sumHR;
 			}
 			double pace = 0;
 			if (deltaDist != 0) {
@@ -229,6 +350,14 @@ public class NikeXML {
 			}
 			mXML.text(Long.toString(Math.round(pace)));
 			mXML.endTag("", "pace");
+
+			if (deltaHR > 0 && deltaTime > 0) {
+				double avgHR = deltaHR / deltaTime;
+				mXML.startTag("", "bpm");
+				mXML.text(Long.toString(Math.round(avgHR)));
+				mXML.endTag("", "bpm");
+			}
+			
 			mXML.endTag("", "snapShot");
 		}
 	};
@@ -260,6 +389,18 @@ public class NikeXML {
 				}
 				buf.append(' ');
 				buf.append(Double.toString(speed));
+			} else if (d == Dim.HR) {
+				double deltaTime = p.sumTime;
+				double deltaHR = p.sumHR;
+				if (!posHist.isEmpty()) {
+					deltaTime -= posHist.lastElement().sumTime;
+					deltaHR -= posHist.lastElement().sumHR;
+				}
+				double avgHR = 0;
+				if (deltaTime != 0)
+					avgHR = deltaHR / deltaTime;
+				buf.append(' ');
+				buf.append(Long.toString(Math.round(avgHR)));
 			}
 		}
 	};
@@ -270,21 +411,23 @@ public class NikeXML {
 		public Pos(final Pos p) {
 			sumTime = p.sumTime;
 			sumDistance = p.sumDistance;
+			sumHR = p.sumHR;
 		}
 		long sumTime = 0;
 		double sumDistance = 0;
+		long sumHR = 0;
 	};
 	
 	private void emitList(final long activityId, final Dim d, final double add, final Emitter out)
 			throws Exception {
 		double first = add;
-
 		final String[] pColumns = { DB.LOCATION.LAP, // 0
-				DB.LOCATION.TIME, // 1
+				DB.LOCATION.TIME,     // 1
 				DB.LOCATION.LATITUDE, // 2
-				DB.LOCATION.LONGITUDE, // 3
+				DB.LOCATION.LONGITUDE,// 3
 				DB.LOCATION.ALTITUDE, // 4
-				DB.LOCATION.TYPE }; // 5
+				DB.LOCATION.TYPE,     // 5
+				DB.LOCATION.HR };     // 6
 
 		final Cursor c = mDB.query(DB.LOCATION.TABLE, pColumns, DB.LOCATION.ACTIVITY
 				+ " = " + activityId, null, null, null, null);
@@ -308,7 +451,12 @@ public class NikeXML {
 					l.setLatitude(c.getDouble(2));
 					l.setLongitude(c.getDouble(3));
 					l.setProvider("" + c.getLong(3));
-
+					
+					long hr = 0;
+					if (!c.isNull(6)) {
+						hr = c.getLong(6);
+					}
+					
 					long deltaTime = 0;
 					double deltaDist = 0;
 					double bearing = 0;
@@ -344,6 +492,7 @@ public class NikeXML {
 
 						p.sumDistance += diffDist;
 						p.sumTime += diffTime;
+						p.sumHR += diffTime * hr; 
 						out.emit(p, posHist, locHist);
 						posHist.add(new Pos(p));
 
@@ -372,6 +521,7 @@ public class NikeXML {
 					}
 					p.sumTime += deltaTime;
 					p.sumDistance += deltaDist;
+					p.sumHR = deltaTime * hr;
 				} while (c.moveToNext());
 			}
 		} finally {
