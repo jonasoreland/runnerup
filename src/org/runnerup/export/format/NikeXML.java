@@ -507,7 +507,7 @@ public class NikeXML {
 					if (d == Dim.LAP && lastLap != lap) {
 						lastLap = lap;
 						if ((posHist.isEmpty() && p.sumTime > 0 && p.sumDistance > 0)
-								|| (p.sumTime > posHist.lastElement().sumTime && p.sumDistance > posHist
+								|| (!posHist.isEmpty() && p.sumTime > posHist.lastElement().sumTime && p.sumDistance > posHist
 										.lastElement().sumDistance)) {
 							out.emit(p, posHist, locHist);
 							posHist.add(new Pos(p));
