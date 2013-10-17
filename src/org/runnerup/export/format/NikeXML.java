@@ -44,7 +44,6 @@ public class NikeXML {
 
 	private static final String DEVICE = "iPod";
 
-	long mID = 0;
 	SQLiteDatabase mDB = null;
 	XmlSerializer mXML = null;
 	SimpleDateFormat simpleDateFormat = null;
@@ -104,7 +103,7 @@ public class NikeXML {
 			mXML.endTag("", "calories");
 			mXML.startTag("", "battery");
 			mXML.endTag("", "battery");
-			final boolean hasHR = emitHeartrateStats();
+			final boolean hasHR = emitHeartrateStats(activityId);
 			mXML.endTag("", "runSummary");
 
 			mXML.startTag("", "template");
@@ -194,7 +193,6 @@ public class NikeXML {
 			}
 
 			mXML.endTag("", "extendedDataList");
-
 			mXML.endTag("", "sportsData");
 			mXML.endDocument();
 			mXML.flush();
@@ -204,11 +202,11 @@ public class NikeXML {
 		cursor.close();
 	}
 
-	private boolean emitHeartrateStats() throws IllegalArgumentException, IllegalStateException, IOException {
+	private boolean emitHeartrateStats(long mID) throws IllegalArgumentException, IllegalStateException, IOException {
 		String args[] = { Long.toString(mID) };
-		Cursor c = mDB.rawQuery("select min(hr), max(hr), avg(hr) from location where activity_id = ?", args);
+		Cursor c = mDB.rawQuery("select min("+DB.LOCATION.HR+"), max("+DB.LOCATION.HR+"), avg("+DB.LOCATION.HR+") FROM " + DB.LOCATION.TABLE + " WHERE " + DB.LOCATION.ACTIVITY + " = ?", args);
 		while (c.moveToFirst()) {
-			if (c.isNull(0) || c.isNull(1) || c.isNull(3))
+			if (c.isNull(0) || c.isNull(1) || c.isNull(2))
 				break;
 
 			int minHR = c.getInt(0);
@@ -221,8 +219,9 @@ public class NikeXML {
 			mXML.text(Integer.toString(avgHR));
 			mXML.endTag("",  "average");
 			
-			emitHRPosition("minumum", minHR);
-			emitHRPosition("maximum", maxHR);
+			emitHRPosition(mID, "minimum", minHR);
+			emitHRPosition(mID, "maximum", maxHR);
+			mXML.endTag("", "heartrate");
 			
 			return true;
 		} 
@@ -230,7 +229,7 @@ public class NikeXML {
 		return false;
 	}
 
-	private void emitHRPosition(String string, int hrVal) throws IllegalArgumentException, IllegalStateException, IOException {
+	private void emitHRPosition(long mID, String string, int hrVal) throws IllegalArgumentException, IllegalStateException, IOException {
 		long _id = 0;
 		{		// 1 find a point with specified value 
 			String args[] = { Long.toString(mID), Integer.toString(hrVal) };
@@ -247,7 +246,7 @@ public class NikeXML {
 		String cols[] = { DB.LOCATION.TYPE, DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.TIME, DB.LOCATION.SPEED };
 		String args[] = { Long.toString(mID), Long.toString(_id) };
 		Cursor c = mDB.query(DB.LOCATION.TABLE, cols,
-				DB.LOCATION.ACTIVITY + " ? AND _id <= ?", args, null, null, "_id");
+				DB.LOCATION.ACTIVITY + " = ? AND _id <= ?", args, null, null, "_id");
 
 		if (c.moveToFirst()) {
 			Location last = null;
@@ -260,6 +259,7 @@ public class NikeXML {
 					last = new Location("Dill");
 					last.setLatitude(c.getDouble(1));
 					last.setLongitude(c.getDouble(2));
+					last.setTime(c.getLong(3));
 					break;
 				case DB.LOCATION.TYPE_PAUSE:
 				case DB.LOCATION.TYPE_END:
@@ -279,7 +279,7 @@ public class NikeXML {
 			} while (c.moveToNext());
 			mXML.startTag("",  string);
 			mXML.startTag("", "duration");
-			mXML.text(Long.toString(1000 * sumTime)); // ms
+			mXML.text(Long.toString(sumTime)); // ms
 			mXML.endTag("", "duration");
 
 			mXML.startTag("", "distance");
@@ -289,7 +289,7 @@ public class NikeXML {
 			mXML.startTag("", "pace");
 			double pace = 0;
 			if (last.hasSpeed() && last.getSpeed() != 0) {
-				pace = 1.0d / last.getSpeed();
+				pace = 1000.0d / last.getSpeed();
 			} else {
 				if (sumDist != 0)
 					pace = sumTime / sumDist;
@@ -397,8 +397,9 @@ public class NikeXML {
 					deltaHR -= posHist.lastElement().sumHR;
 				}
 				double avgHR = 0;
-				if (deltaTime != 0)
+				if (deltaTime != 0) {
 					avgHR = deltaHR / deltaTime;
+				}
 				buf.append(' ');
 				buf.append(Long.toString(Math.round(avgHR)));
 			}
@@ -492,7 +493,7 @@ public class NikeXML {
 
 						p.sumDistance += diffDist;
 						p.sumTime += diffTime;
-						p.sumHR += diffTime * hr; 
+						p.sumHR += diffTime * hr;
 						out.emit(p, posHist, locHist);
 						posHist.add(new Pos(p));
 
@@ -521,7 +522,7 @@ public class NikeXML {
 					}
 					p.sumTime += deltaTime;
 					p.sumDistance += deltaDist;
-					p.sumHR = deltaTime * hr;
+					p.sumHR += hr * deltaTime;
 				} while (c.moveToNext());
 			}
 		} finally {
