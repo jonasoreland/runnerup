@@ -56,6 +56,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -537,8 +538,15 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			cb.setTag(name);
 			if (alreadyUploadedUploaders.contains(name)) {
 				cb.setChecked(true);
-				cb.setEnabled(false);
 				cb.setText("Uploaded");
+				if (edit)
+				{
+					cb.setOnLongClickListener(clearUploadClick);
+				}
+				else
+				{
+					cb.setEnabled(false);
+				}
 			} else if ((tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD)) ||
 					    pendingUploaders.contains(name)) {
 				cb.setChecked(true);
@@ -548,7 +556,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			if (mode == MODE_DETAILS && !alreadyUploadedUploaders.contains(name)) {
 				cb.setEnabled(edit);
 			}
-			cb.setOnCheckedChangeListener(DetailActivity.this.onSendChecked);
+			cb.setOnCheckedChangeListener(onSendChecked);
 
 			tv0.setText(tmp.getAsString("_id"));
 			tv1.setText(name);
@@ -563,6 +571,36 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
 	}
 	
+	OnLongClickListener clearUploadClick = new OnLongClickListener() {
+
+		@Override
+		public boolean onLongClick(View arg0) {
+			final String name = (String) arg0.getTag();
+			AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+			builder.setTitle("Clear upload for " + name);
+			builder.setMessage("Are you sure?");
+			builder.setPositiveButton("Yes",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							uploadManager.clearUpload(name, mID);
+							requery();
+						}
+					});
+			builder.setNegativeButton("No",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							// Do nothing but close the dialog
+							dialog.dismiss();
+						}
+
+					});
+			builder.show();
+			return false;
+		}
+		
+	};
+
 	OnClickListener saveButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			saveActivity();
@@ -651,20 +689,25 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 		@Override
 		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-			if (arg1 == true) {
-				boolean empty = pendingUploaders.isEmpty();
-				pendingUploaders.add((String) arg0.getTag());
-				if (empty) {
-					resumeButton.setVisibility(View.VISIBLE);
-				}
+			final String name = (String) arg0.getTag();
+			if (alreadyUploadedUploaders.contains(name)) {
+				// Only accept long clicks
+				arg0.setChecked(true);
 			} else {
-				pendingUploaders.remove((String) arg0.getTag());
-				if (pendingUploaders.isEmpty()) {
-					resumeButton.setVisibility(View.GONE);
+				if (arg1 == true) {
+					boolean empty = pendingUploaders.isEmpty();
+					pendingUploaders.add((String) arg0.getTag());
+					if (empty) {
+						resumeButton.setVisibility(View.VISIBLE);
+					}
+				} else {
+					pendingUploaders.remove((String) arg0.getTag());
+					if (pendingUploaders.isEmpty()) {
+						resumeButton.setVisibility(View.GONE);
+					}
 				}
 			}
 		}
-
 	};
 
 	OnClickListener deleteButtonClick = new OnClickListener() {
@@ -1192,7 +1235,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 	private void shareActivity() {
 		final int which[] = { -1 };
-		final CharSequence items[] = { "gpx", "tcx" };
+		final CharSequence items[] = { "gpx", "tcx" /* "nike+xml" */ };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Share activity");
 		builder.setPositiveButton("OK",

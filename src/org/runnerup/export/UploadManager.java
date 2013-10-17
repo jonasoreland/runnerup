@@ -509,6 +509,14 @@ public class UploadManager {
 		mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?",  args);
 		callback.run(uploader,  Uploader.Status.OK);
 	}
+
+	public void clearUpload(String name, long id) {
+		Uploader uploader = uploaders.get(name);
+		if (uploader != null) {
+			final String args[] = { Long.toString(uploader.getId()), Long.toString(id) };
+			mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ? AND " + DB.EXPORT.ACTIVITY + " = ?", args);
+		}
+	}
 	
 	public static class WorkoutRef {
 		public WorkoutRef(String uploader, String key, String name) {
