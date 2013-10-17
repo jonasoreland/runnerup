@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.format.GPX;
+import org.runnerup.export.format.NikeXML;
 import org.runnerup.export.format.TCX;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -50,10 +51,12 @@ public class ActivityProvider extends ContentProvider {
     public static final String AUTHORITY = "org.runnerup.activity.provider";
     public static final String GPX_MIME = "application/gpx+xml";
     public static final String TCX_MIME = "application/tcx+xml";
+    public static final String NIKE_MIME = "application/nike+xml";
     
     // UriMatcher used to match against incoming requests
     static final int GPX = 1;
     static final int TCX = 2;
+    static final int NIKE = 3;
     private UriMatcher uriMatcher;
  
     @Override
@@ -61,6 +64,7 @@ public class ActivityProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, "gpx/#/*", GPX);
         uriMatcher.addURI(AUTHORITY, "tcx/#/*", TCX);
+        uriMatcher.addURI(AUTHORITY, "nike+xml/#/*", NIKE);
         return true;
     }
  
@@ -79,6 +83,7 @@ public class ActivityProvider extends ContentProvider {
 		switch(res) {
 		case GPX:
 		case TCX:
+		case NIKE:
 	    	final List<String> list = uri.getPathSegments();
 	    	final String id = list.get(list.size() - 2);
 			final long activityId = Long.parseLong(id);
@@ -97,10 +102,16 @@ public class ActivityProvider extends ContentProvider {
 					GPX gpx = new GPX(mDB);
 					gpx.export(activityId, new OutputStreamWriter(out));
 					System.err.println("export gpx");
+				} else if (res == NIKE) {
+					NikeXML xml = new NikeXML(mDB);
+					xml.export(activityId, new OutputStreamWriter(out));
 				}
 				out.flush();
 				out.close();
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			mDB.close();
