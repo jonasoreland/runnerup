@@ -21,9 +21,20 @@ public class HRManager {
 				return null;
 			return new AndroidBLEHRProvider(ctx);
 		}
+		if (src.contentEquals(Bt20Base.ZephyrHRM.NAME)) {
+			if (!Bt20Base.checkLibrary(ctx))
+				return null;
+			return new Bt20Base.ZephyrHRM(ctx);
+		}
+		if (src.contentEquals(Bt20Base.PolarHRM.NAME)) {
+			if (!Bt20Base.checkLibrary(ctx))
+				return null;
+			return new Bt20Base.PolarHRM(ctx);
+		}
 		if (src.contentEquals(MockHRProvider.NAME)) {
 			return new MockHRProvider(ctx);
 		}
+
 		return null;
 	}
 
@@ -39,7 +50,13 @@ public class HRManager {
 			providers.add(new AndroidBLEHRProvider(ctx));
 		}
 		
-		if (providers.isEmpty()) {
+		if (Bt20Base.checkLibrary(ctx)) {
+			providers.add(new Bt20Base.ZephyrHRM(ctx));
+			providers.add(new Bt20Base.PolarHRM(ctx));
+		}
+
+		boolean mockProvider = true;
+		if (mockProvider || providers.isEmpty()) {
 			providers.add(new MockHRProvider(ctx));
 		}
 		

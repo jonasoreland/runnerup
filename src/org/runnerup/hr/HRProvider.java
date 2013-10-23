@@ -1,8 +1,11 @@
 package org.runnerup.hr;
 
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothDevice;
+import android.os.Build;
 import android.os.Handler;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public interface HRProvider {
 
 	public interface OnOpenCallback {
