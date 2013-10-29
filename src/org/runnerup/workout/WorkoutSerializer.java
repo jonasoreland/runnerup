@@ -219,8 +219,10 @@ public class WorkoutSerializer {
 					          SafeParse.parseDouble(getString(obj, "targetValueTwo"), 0));
 			scale(range, dim, obj, "targetValueUnitKey");
 		} else if (targetTypeKey.equalsIgnoreCase("heart.rate.zone")) {
-			// Not implemented
-			return NullTargetPair;
+			dim = Dimension.HR;
+			range = new Range(SafeParse.parseDouble(getString(obj, "targetValueOne"), 0),
+					          SafeParse.parseDouble(getString(obj, "targetValueTwo"), 0));
+			scale(range, dim, obj, "targetValueUnitKey");
 		} else if (targetTypeKey.equalsIgnoreCase("cadence")) {
 			// Not implemented
 			return NullTargetPair;
