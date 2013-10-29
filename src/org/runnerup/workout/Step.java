@@ -186,17 +186,21 @@ public class Step implements TickComponent {
 
 	double stepStartTime = 0;
 	double stepStartDistance = 0;
+	double stepStartHeartbeats = 0;
 	double lapStartTime = 0;
 	double lapStartDistance = 0;
+	double lapStartHeartbeats = 0;
 
 	@Override
 	public void onStart(Scope what, Workout s) {
 		double time = s.getTime(Scope.WORKOUT);
 		double dist = s.getDistance(Scope.WORKOUT);
+		double beats = s.getHeartbeats(Scope.WORKOUT);
 		
 		if (what == Scope.STEP) {
 			stepStartTime = time;
 			stepStartDistance = dist;
+			stepStartHeartbeats = beats;
 			if (s.isPaused())
 				s.gpsTracker.stopOrPause();
 			else
@@ -204,6 +208,7 @@ public class Step implements TickComponent {
 		} else if (what == Scope.LAP) {
 			lapStartTime = time;
 			lapStartDistance = dist;
+			lapStartHeartbeats = beats;
 			ContentValues tmp = new ContentValues();
 			tmp.put(DB.LAP.INTENSITY, intensity.getValue());
 			if (durationType != null) {
@@ -364,6 +369,16 @@ public class Step implements TickComponent {
 		return 0;
 	}
 
+	public double getHeartbeats(Workout w, Scope s) {
+		double t = w.getHeartbeats(Scope.WORKOUT);
+		if (s == Scope.STEP) {
+			return t - stepStartHeartbeats;
+		} else if (s == Scope.LAP) {
+			return t - lapStartHeartbeats;
+		}
+		return 0;
+	}
+	
 	public double getDuration(Dimension dimension) {
 		if (durationType == dimension)
 			return durationValue;

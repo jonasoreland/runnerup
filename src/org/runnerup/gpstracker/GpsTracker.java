@@ -83,6 +83,8 @@ public class GpsTracker extends android.app.Service implements
 	long mActivityId = 0;
 	double mElapsedTimeMillis = 0;
 	double mElapsedDistance = 0;
+	double mHeartbeats = 0;
+
 	enum State {
 		INIT, LOGGING, STARTED, PAUSED,
 		ERROR /* Failed to init GPS */
@@ -218,6 +220,7 @@ public class GpsTracker extends android.app.Service implements
 		state = State.STARTED;
 		mElapsedTimeMillis = 0;
 		mElapsedDistance = 0;
+		mHeartbeats = 0;
 		// TODO: check if mLastLocation is recent enough
 		mActivityLastLocation = null;
 		setNextLocationType(DB.LOCATION.TYPE_START); // New location update will
@@ -402,6 +405,7 @@ public class GpsTracker extends android.app.Service implements
 		}
 		
 		if (state == State.STARTED) {
+			Integer hrValue = getCurrentHRValue(now, MAX_HR_AGE);
 			if (mActivityLastLocation != null) {
 				double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
 						.getTime());
@@ -418,10 +422,13 @@ public class GpsTracker extends android.app.Service implements
 				mElapsedTimeMillis += timeDiff;
 				mElapsedDistance += distDiff;
 				mElapsedTimeMillisSinceLiveLog += timeDiff;
+				if (hrValue != null) {
+					mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
+				}
 			}
 			mActivityLastLocation = arg0;
 
-			mDBWriter.onLocationChanged(arg0, getCurrentHRValue(now, MAX_HR_AGE));
+			mDBWriter.onLocationChanged(arg0, hrValue);
 			
 			switch (mLocationType) {
 			case DB.LOCATION.TYPE_START:
@@ -599,5 +606,9 @@ public class GpsTracker extends android.app.Service implements
 		if (now > mLastLocation.getTime() + maxAge)
 			return null;
 		return (double) mLastLocation.getSpeed();
+	}
+
+	public double getHeartbeats() {
+		return mHeartbeats;
 	}
 }

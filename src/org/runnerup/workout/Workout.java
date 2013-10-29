@@ -242,6 +242,8 @@ public class Workout implements WorkoutComponent {
 			return getSpeed(scope);
 		case PACE:
 			return getPace(scope);
+		case HR:
+			return getHeartRate(scope);
 		}
 		return 0;
 	}
@@ -324,6 +326,40 @@ public class Workout implements WorkoutComponent {
 			return 0;
 		}
 		
+	}
+
+	public double getHeartRate(Scope scope) {
+		switch(scope) {
+		case CURRENT:
+			return this.gpsTracker.getCurrentHRValue();
+		case LAP:
+		case STEP:
+		case WORKOUT:
+			break;
+		}
+
+		double t = getTime(scope);       // in seconds
+		double b = getHeartbeats(scope); // total (estimated) beats during workout
+		
+		if (t != 0) {
+			return (60 * b) / t; // bpm
+		}
+		return 0;
+	}
+
+	double getHeartbeats(Scope scope) {
+		switch (scope) {
+		case WORKOUT:
+			return gpsTracker.getHeartbeats();
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getHeartbeats(this, scope);
+			return 0;
+		case CURRENT:
+			return 0;
+		}
+		return 0;
 	}
 	
 	public int getSport() {
