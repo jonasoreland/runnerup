@@ -35,6 +35,7 @@
 	<string name="txt_dimension_distance">distance</string>
 	<string name="txt_dimension_speed">speed</string>
 	<string name="txt_dimension_pace">pace</string>
+	<string name="txt_dimension_heartrate">heart rate</string>
 	
 	<string name="txt_distance_kilometer">kilometer</string>
 	<string name="txt_distance_kilometers">kilometers</string>
