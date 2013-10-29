@@ -142,6 +142,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 			return formatElapsedTime(target, Math.round(value));
 		case PACE:
 			return formatPace(target, value);
+		case HR:
+			return formatHeartRate(target, value);
 		case SPEED:
 			//TODO
 			return "";
@@ -231,6 +233,25 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		return s.toString();
 	}
 
+	/**
+	 * Format heart rate
+	 * 
+	 * @param target
+	 * @param bpm
+	 * @return
+	 */
+	public String formatHeartRate(int target, double heart_rate) {
+		switch(target) {
+		case CUE:
+		case CUE_SHORT:
+		case CUE_LONG:
+		case TXT:
+		case TXT_SHORT:
+		case TXT_LONG:
+			return Double.toString(Math.round(heart_rate));
+		}
+		return "";
+	}
 	
 	/**
 	 * Format pace
