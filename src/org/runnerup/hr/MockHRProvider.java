@@ -10,7 +10,8 @@ import android.os.Handler;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MockHRProvider implements HRProvider {
 
-	Handler handler = new Handler();
+	private HRClient hrClient = null;
+	private Handler hrClientHandler = null;
 	protected static final String NAME = "MockHR";
 
 	public MockHRProvider(Context ctx) {
@@ -22,8 +23,10 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void open(Handler handler, OnOpenCallback cb) {
-		cb.onInitResult(true);
+	public void open(Handler handler, HRClient hrClient) {
+		this.hrClient = hrClient;
+		this.hrClientHandler = handler;
+		hrClient.onOpenResult(true);
 	}
 
 	@Override
@@ -31,8 +34,6 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	boolean mIsScanning = false;
-	Handler scanHandler = null;
-	OnScanResultCallback onScanResultCallback = null;
 
 	@Override
 	public boolean isScanning() {
@@ -45,9 +46,9 @@ public class MockHRProvider implements HRProvider {
 		public void run() {
 			if (mIsScanning) {
 				String dev = "00:43:A8:23:10:"+String.format("%02X", System.currentTimeMillis() % 256);
-				onScanResultCallback.onScanResult(NAME, BluetoothAdapter.getDefaultAdapter().getRemoteDevice(dev));
+				hrClient.onScanResult(NAME, BluetoothAdapter.getDefaultAdapter().getRemoteDevice(dev));
 				if (++count < 3) {
-					scanHandler.postDelayed(fakeScanResult, 3000);
+					hrClientHandler.postDelayed(fakeScanResult, 3000);
 					return;
 				}
 			}
@@ -56,24 +57,18 @@ public class MockHRProvider implements HRProvider {
 	};
 	
 	@Override
-	public void startScan(Handler handler, OnScanResultCallback callback) {
+	public void startScan() {
 		mIsScanning = true;
-		scanHandler = handler;
-		onScanResultCallback  = callback;
-		scanHandler.postDelayed(fakeScanResult, 3000);
+		hrClientHandler.postDelayed(fakeScanResult, 3000);
 	}
 
 	@Override
 	public void stopScan() {
 		mIsScanning = false;
-		scanHandler = null;
-		onScanResultCallback = null;
 	}
 
 	boolean mIsConnecting = false;
 	boolean mIsConnected = false;
-	Handler connectHandler = null;
-	OnConnectCallback onConnectCallback = null;
 	
 	@Override
 	public boolean isConnected() {
@@ -86,11 +81,7 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(final Handler cHandler, BluetoothDevice _btDevice,
-			String btDeviceName, OnConnectCallback connectCallback) {
-		connectHandler = cHandler;
-		onConnectCallback = connectCallback;
-
+	public void connect(BluetoothDevice _btDevice, String btDeviceName) {
 		if (mIsConnected)
 			return;
 		
@@ -98,14 +89,14 @@ public class MockHRProvider implements HRProvider {
 			return;
 		
 		mIsConnecting = true;
-		connectHandler.postDelayed(new Runnable(){
+		hrClientHandler.postDelayed(new Runnable(){
 			@Override
 			public void run() {
 				if (mIsConnecting) {
 					mIsConnected = true;
 					mIsConnecting = false;
-					onConnectCallback.onConnectResult(true);
-					handler.postDelayed(hrUpdate, 750);
+					hrClient.onConnectResult(true);
+					hrClientHandler.postDelayed(hrUpdate, 750);
 				}
 			}}, 3000);
 	}
@@ -116,7 +107,7 @@ public class MockHRProvider implements HRProvider {
 			hrValue = (int) (150 + 40 * Math.random());
 			hrTimestamp = System.currentTimeMillis();
 			if (mIsConnected == true) {
-				handler.postDelayed(hrUpdate, 750);
+				hrClientHandler.postDelayed(hrUpdate, 750);
 			}
 		}
 	};
@@ -125,8 +116,6 @@ public class MockHRProvider implements HRProvider {
 	public void disconnect() {
 		mIsConnecting = false;
 		mIsConnected = false;
-		connectHandler = null;
-		onConnectCallback = null;
 	}
 
 	int hrValue = 0;

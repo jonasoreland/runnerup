@@ -24,9 +24,7 @@ import java.util.TimerTask;
 import org.runnerup.R;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
-import org.runnerup.hr.HRProvider.OnConnectCallback;
-import org.runnerup.hr.HRProvider.OnOpenCallback;
-import org.runnerup.hr.HRProvider.OnScanResultCallback;
+import org.runnerup.hr.HRProvider.HRClient;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -51,10 +49,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HRSettingsActivity extends Activity {
+public class HRSettingsActivity extends Activity implements HRClient {
 
 	private Handler handler = new Handler();
 	
@@ -80,7 +77,6 @@ public class HRSettingsActivity extends Activity {
 
 		providers = HRManager.getHRProviderList(this);
 		deviceAdapter = new DeviceAdapter(this);
-
 		
 		if (providers.isEmpty()) {
 			notSupported();
@@ -128,28 +124,15 @@ public class HRSettingsActivity extends Activity {
 			hrProvider = HRManager.getHRProvider(this, btProviderName);
 		}
 
-		if (hrProvider != null) {
-			hrProvider.open(handler, new OnOpenCallback() {
-				@Override
-				public void onInitResult(boolean ok) {
-					if (ok) {
-						if (btAddress != null) {
-							hrDevice = mAdapter.getRemoteDevice(btAddress);
-							System.err.println("hrDevice.getName(): "
-									+ hrDevice.getName() + ", btName: "
-									+ btName);
-							if (hrDevice.getName() != null
-									&& hrDevice.getName().contentEquals(btName)) {
-								connect();
-							}
-
-						}
-					}
-				}
-			});
-		}
+		open();
 	}
 	
+	private void open() {
+		if (hrProvider != null) {
+			hrProvider.open(handler, this);
+		}
+	}
+
 	public void notSupported() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Heart rate monitor is not supported for your device...try again later");
@@ -169,38 +152,33 @@ public class HRSettingsActivity extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		
-		if (scanProvider != null) {
-			scanProvider.stopScan();
-			scanProvider.close();
-		}
-		
 		if (hrProvider != null) {
-			hrProvider.disconnect();
 			hrProvider.close();
 		}
 
 		stopTimer();
 	}
 	
-	HRProvider scanProvider = null;
-	BluetoothDevice scanBtDevice;
-
+	private void clear() {
+		btAddress = null;
+		btName = null;
+		btProviderName = null;
+		hrDevice = null;
+	}
+	
 	OnClickListener scanButtonClick = new OnClickListener() {
 		public void onClick(View v) {
+			clear();
+			
+			if (hrProvider != null) {
+				hrProvider.close();
+				hrProvider = null;
+			}
+			
 			if (providers.size() > 1) {
 				selectProvider();
 			} else {
-				scanProvider = providers.get(0);
-				scanProvider.open(handler, new OnOpenCallback(){
-					@Override
-					public void onInitResult(boolean ok) {
-						if (ok) {
-							startScan();
-						} else {
-							scanProvider = null;
-							Toast.makeText(HRSettingsActivity.this, "Failed to init HRM", Toast.LENGTH_SHORT).show();
-						}
-					}});
+				startScan();
 			}
 		}
 	};
@@ -214,19 +192,7 @@ public class HRSettingsActivity extends Activity {
 		builder.setPositiveButton("OK",
 				new DialogInterface.OnClickListener() {
 					public void onClick(final DialogInterface dialog, int which) {
-						if (scanProvider != null) {
-							scanProvider.open(handler, new OnOpenCallback(){
-								@Override
-								public void onInitResult(boolean ok) {
-									if (ok) {
-										startScan();
-									} else {
-										scanProvider = null;
-										Toast.makeText(HRSettingsActivity.this, "Failed to init HRM", Toast.LENGTH_SHORT).show();
-									}
-									dialog.dismiss();
-								}});
-						}
+						open();
 					}
 				});
 		builder.setNegativeButton("Cancel",
@@ -240,7 +206,7 @@ public class HRSettingsActivity extends Activity {
 				new  DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
-						scanProvider = HRManager.getHRProvider(HRSettingsActivity.this, items[arg1].toString());
+						hrProvider = HRManager.getHRProvider(HRSettingsActivity.this, items[arg1].toString());
 					}
 				});
 		builder.show();
@@ -294,35 +260,21 @@ public class HRSettingsActivity extends Activity {
 	
 	private void startScan() {
 		deviceAdapter.deviceList.clear();
-		scanProvider.startScan(handler, new OnScanResultCallback(){
-   			@Override
-			public void onScanResult(String name, BluetoothDevice device) {
-   				deviceAdapter.deviceList.add(device);
-   				deviceAdapter.notifyDataSetChanged();
-			}});
+		hrProvider.startScan();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Scanning");
 		builder.setPositiveButton("Select",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						scanProvider.stopScan();
-						if (scanBtDevice != null) {
-							if (hrProvider != null) {
-								hrProvider.disconnect();
-							}
-							hrProvider = scanProvider;
-							hrDevice = scanBtDevice;
-							connect();
-						}
-						scanProvider = null;
+						hrProvider.stopScan();
+						connect();
 						dialog.dismiss();
 					}
 				});
 		builder.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						scanProvider.stopScan();
-						scanProvider = null;
+						hrProvider.stopScan();
 						dialog.dismiss();
 					}
 
@@ -331,7 +283,7 @@ public class HRSettingsActivity extends Activity {
 				new  DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
-						scanBtDevice = deviceAdapter.deviceList.get(arg1);
+						hrDevice = deviceAdapter.deviceList.get(arg1);
 					}
 				});
 		builder.show();
@@ -345,25 +297,10 @@ public class HRSettingsActivity extends Activity {
 		}
 		tvBTName.setText(getName(hrDevice));
 		tvHR.setText("?");
-		hrProvider.connect(handler, hrDevice, hrDevice.getName(), connectCallback);
+		hrProvider.connect(hrDevice, hrDevice.getName());
 		connectButton.setText("Connecting");
 	}
 
-	private OnConnectCallback connectCallback = new OnConnectCallback() {
-
-		@Override
-		public void onConnectResult(boolean connectOK) {
-			if (connectOK) {
-				save();
-				connectButton.setText("Disconnect");
-				startTimer();
-			} else {
-				
-			}
-		}
-		
-	};
-	
 	private void save() {
 		btName = hrDevice.getName();
 		btAddress = hrDevice.getAddress();
@@ -415,4 +352,41 @@ public class HRSettingsActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onOpenResult(boolean ok) {
+		if (btAddress != null) {
+			hrDevice = mAdapter.getRemoteDevice(btAddress);
+			System.err.println("hrDevice.getName(): "
+				+ hrDevice.getName() + ", btName: "
+				+ btName);
+			connect();
+		} else {
+			startScan();
+		}
+	}
+
+	@Override
+	public void onScanResult(String name, BluetoothDevice device) {
+		deviceAdapter.deviceList.add(device);
+		deviceAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onConnectResult(boolean connectOK) {
+		if (connectOK) {
+			save();
+			connectButton.setText("Disconnect");
+			startTimer();
+		} else {
+			
+		}
+	}
+
+	@Override
+	public void onDisconnectResult(boolean disconnectOK) {
+	}
+
+	@Override
+	public void onCloseResult(boolean closeOK) {
+	}
 }

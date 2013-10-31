@@ -49,20 +49,23 @@ public abstract class Bt20Base implements HRProvider {
 		//context = ctx;
 	}
 
-	private Handler onConnectHandler;
-	private OnConnectCallback onConnectCallback;
+	private HRClient hrClient;
+	private Handler hrClientHandler;
 
 	@Override
-	public void open(Handler handler, OnOpenCallback cb) {
+	public void open(Handler handler, HRClient hrClient) {
+		this.hrClient = hrClient;
+		this.hrClientHandler = handler;
+		
 		if (btAdapter == null) {
 			btAdapter = BluetoothAdapter.getDefaultAdapter();
 		}
 		if (btAdapter == null) {
-			cb.onInitResult(false);
+			hrClient.onOpenResult(false);
 			return;
 		}
 
-		cb.onInitResult(true);
+		hrClient.onOpenResult(true);
 	}
 
 	@Override
@@ -125,19 +128,14 @@ public abstract class Bt20Base implements HRProvider {
 		}
 	}
 
-	private Handler scanHandler;
-	private OnScanResultCallback onScanResultCallback;
-
 	@Override
-	public void startScan(Handler handler, OnScanResultCallback callback) {
+	public void startScan() {
 		if (btAdapter == null)
 			return;
 
 		mIsScanning = true;
-		scanHandler = handler;
-		onScanResultCallback = callback;
 
-		scanHandler.post(new Runnable() {
+		hrClientHandler.post(new Runnable() {
 			@Override
 			public void run() {
 				publishDevice(btAdapter.getBondedDevices());
@@ -154,8 +152,8 @@ public abstract class Bt20Base implements HRProvider {
 		if (mIsScanning) {
 			BluetoothDevice dev = list.iterator().next();
 			list.remove(dev);
-			onScanResultCallback.onScanResult(getProviderName(), dev);
-			scanHandler.post(new Runnable() {
+			hrClient.onScanResult(getProviderName(), dev);
+			hrClientHandler.post(new Runnable() {
 
 				@Override
 				public void run() {
@@ -168,38 +166,29 @@ public abstract class Bt20Base implements HRProvider {
 	@Override
 	public void stopScan() {
 		mIsScanning = false;
-		scanHandler = null;
-		onScanResultCallback = null;
 	}
 
 	@Override
-	public void connect(Handler handler, BluetoothDevice bluetoothDevice,
-			String btDeviceName, OnConnectCallback connectCallback) {
+	public void connect(BluetoothDevice bluetoothDevice, String btDeviceName) {
 		cancelThreads();
 
 		connectThread = new ConnectThread(bluetoothDevice);
 		connectThread.start();
-
-		onConnectHandler = handler;
-		onConnectCallback = connectCallback;
 	}
 
 	private synchronized void connected(final BluetoothSocket bluetoothSocket,
 			BluetoothDevice bluetoothDevice) {
 		cancelThreads();
 
-		final OnConnectCallback cb = onConnectCallback;
-		this.onConnectCallback = null;
-
-		if (cb != null) {
-			onConnectHandler.post(new Runnable() {
+		if (hrClient != null) {
+			hrClientHandler.post(new Runnable() {
 
 				@Override
 				public void run() {
-					if (mIsConnecting) {
+					if (mIsConnecting && hrClient != null) {
 						mIsConnected = true;
 						mIsConnecting = false;
-						cb.onConnectResult(true);
+						hrClient.onConnectResult(true);
 
 						// Start connected thread...
 						connectedThread = new ConnectedThread(bluetoothSocket);

@@ -79,21 +79,22 @@ public class SamsungBLEHRProvider implements HRProvider {
 		return NAME;
 	}
 	
-	private Handler onOpenHandler;
-	private OnOpenCallback onOpenCallback;
+	private HRClient hrClient;
+	private Handler hrClientHandler;
 	
 	@Override
-	public void open(Handler handler, OnOpenCallback cb) {
+	public void open(Handler handler, HRClient hrClient) {
+		this.hrClient = hrClient;
+		this.hrClientHandler = handler;
+		
 		if (btAdapter == null) {
 			btAdapter = BluetoothAdapter.getDefaultAdapter();
 		}
 		if (btAdapter == null) {
-			cb.onInitResult(false);
+			hrClient.onOpenResult(false);
 			return;
 		}
 
-		onOpenCallback = cb;
-		onOpenHandler = handler;
 		BluetoothGattAdapter.getProfileProxy(context, profileServiceListener, BluetoothGattAdapter.GATT);
 	}
 	
@@ -136,16 +137,16 @@ public class SamsungBLEHRProvider implements HRProvider {
 
 		@Override
 		public void onAppRegistered(final int arg0) {
-			final OnOpenCallback cb = onOpenCallback;
-			onOpenCallback = null;
-			onOpenHandler.post(new Runnable() {
+			hrClientHandler.post(new Runnable() {
 
 				@Override
 				public void run() {
+					if (hrClient == null)
+						return;
 					if (arg0 == BluetoothGatt.GATT_SUCCESS) {
-						cb.onInitResult(true);
+						hrClient.onOpenResult(true);
 					} else {
-						cb.onInitResult(false);
+						hrClient.onOpenResult(false);
 					}
 				}});
 		}
@@ -261,18 +262,15 @@ public class SamsungBLEHRProvider implements HRProvider {
 
 		@Override
 		public void onScanResult(final BluetoothDevice arg0, int arg1, byte[] scanRecord) {
-			if (onScanResultHandler == null)
-				return;
-			
-			if (onScanResultCallback == null)
+			if (hrClient == null)
 				return;
 			
             if (!checkIfBroadcastMode(scanRecord)) {
-            	onScanResultHandler.post(new Runnable(){
+            	hrClientHandler.post(new Runnable(){
 					@Override
 					public void run() {
 						if (mIsScanning) { //NOTE: mIsScanning in user-thread
-							onScanResultCallback.onScanResult(NAME, arg0);
+							hrClient.onScanResult(NAME, arg0);
 						}
 					}});
             } else {
@@ -380,8 +378,6 @@ public class SamsungBLEHRProvider implements HRProvider {
     }
 
 	private boolean mIsScanning = false;
-	private Handler onScanResultHandler = null;
-	private OnScanResultCallback onScanResultCallback = null;
 
 	@Override
 	public boolean isScanning() {
@@ -389,7 +385,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void startScan(Handler handler, OnScanResultCallback callback) {
+	public void startScan() {
         if (btGatt == null)
             return;
 
@@ -397,8 +393,6 @@ public class SamsungBLEHRProvider implements HRProvider {
        		return;
         
        	mIsScanning = true;
-       	onScanResultHandler = handler;
-       	onScanResultCallback = callback;
        	btGatt.startScan();
 	}
 
@@ -412,8 +406,6 @@ public class SamsungBLEHRProvider implements HRProvider {
 
 	private boolean mIsConnected = false;
 	private boolean mIsConnecting = false;
-	private Handler onConnectHandler = null;
-	private OnConnectCallback onConnectCallback;
 
 	@Override
 	public boolean isConnected() {
@@ -426,7 +418,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(Handler handler, BluetoothDevice dev, String btDeviceName, OnConnectCallback connectCallback) {
+	public void connect(BluetoothDevice dev, String btDeviceName) {
 		stopScan();
 
 		if (mIsConnected)
@@ -436,27 +428,21 @@ public class SamsungBLEHRProvider implements HRProvider {
 			return;
 		
 		mIsConnecting = true;
-		onConnectHandler = handler;
-		onConnectCallback = connectCallback;
 		btDevice = dev;
 		btGatt.connect(btDevice, false);
 	}
 
 	private void reportConnected(final boolean b) {
-		final OnConnectCallback cb = onConnectCallback;
-		this.onConnectCallback = null;
-		
-		if (cb != null) {
-			onConnectHandler.post(new Runnable(){
-				@Override
-				public void run() {
-					if (mIsConnecting) {
-						mIsConnected = b;
-						mIsConnecting = false;
-						cb.onConnectResult(b);
-					}
-				}});
-		}
+		hrClientHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				if (mIsConnecting) {
+					mIsConnected = b;
+					mIsConnecting = false;
+					hrClient.onConnectResult(b);
+				}
+			}
+		});
 	}
 
 	private void reportConnectFailed(String string) {

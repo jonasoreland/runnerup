@@ -63,6 +63,9 @@ public class AndroidBLEHRProvider implements HRProvider {
 	private int hrValue = 0;
 	private long hrTimestamp = 0;
 	
+	private HRClient hrClient;
+	private Handler hrClientHandler;
+	
 	public AndroidBLEHRProvider(Context ctx) {
 		context = ctx;
 	}
@@ -72,16 +75,19 @@ public class AndroidBLEHRProvider implements HRProvider {
 	}
 	
 	@Override
-	public void open(Handler handler, OnOpenCallback cb) {
+	public void open(Handler handler, HRClient hrClient) {
+		this.hrClient =  hrClient;
+		this.hrClientHandler = handler;
+		
 		if (btAdapter == null) {
 			btAdapter = BluetoothAdapter.getDefaultAdapter();
 		}
 		if (btAdapter == null) {
-			cb.onInitResult(false);
+			hrClient.onOpenResult(false);
 			return;
 		}
 
-		cb.onInitResult(true);
+		hrClient.onOpenResult(true);
 	}
 	
 	@Override
@@ -295,8 +301,6 @@ public class AndroidBLEHRProvider implements HRProvider {
     }
 
 	private boolean mIsScanning = false;
-	private Handler onScanResultHandler = null;
-	private OnScanResultCallback onScanResultCallback = null;
 
 	@Override
 	public boolean isScanning() {
@@ -304,31 +308,28 @@ public class AndroidBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void startScan(Handler handler, OnScanResultCallback callback) {
+	public void startScan() {
        	if (mIsScanning)
        		return;
 
        	mIsScanning = true;
-       	onScanResultHandler = handler;
-       	onScanResultCallback = callback;
 		btAdapter.startLeScan(SCAN_UUIDS,
 				new BluetoothAdapter.LeScanCallback() {
 					@Override
 					public void onLeScan(final BluetoothDevice device,
 							int rssi, byte[] scanRecord) {
 
-						if (onScanResultHandler == null)
+						if (hrClient == null)
 							return;
 
-						if (onScanResultCallback == null)
+						if (hrClientHandler == null)
 							return;
 
-						onScanResultHandler.post(new Runnable() {
+						hrClientHandler.post(new Runnable() {
 							@Override
 							public void run() {
 								if (mIsScanning) { // NOTE: mIsScanning in user-thread
-									onScanResultCallback.onScanResult(NAME,
-											device);
+									hrClient.onScanResult(NAME, device);
 								}
 							}
 						});
@@ -351,8 +352,6 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 	private boolean mIsConnected = false;
 	private boolean mIsConnecting = false;
-	private Handler onConnectHandler = null;
-	private OnConnectCallback onConnectCallback;
 
 	@Override
 	public boolean isConnected() {
@@ -365,7 +364,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(Handler handler, BluetoothDevice dev, String btDeviceName, OnConnectCallback connectCallback) {
+	public void connect(BluetoothDevice dev, String btDeviceName) {
 		stopScan();
 
 		if (mIsConnected)
@@ -376,8 +375,6 @@ public class AndroidBLEHRProvider implements HRProvider {
 		
 		mIsConnecting = true;
 		btDevice = dev;
-		onConnectHandler = handler;
-		onConnectCallback = connectCallback;
 		btGatt = btDevice.connectGatt(context, true, btGattCallbacks);
 		if (btGatt == null) {
 			reportConnectFailed("connectGatt returned null");
@@ -385,17 +382,14 @@ public class AndroidBLEHRProvider implements HRProvider {
 	}
 
 	private void reportConnected(final boolean b) {
-		final OnConnectCallback cb = onConnectCallback;
-		this.onConnectCallback = null;
-		
-		if (cb != null) {
-			onConnectHandler.post(new Runnable(){
+		if (hrClientHandler != null) {
+			hrClientHandler.post(new Runnable(){
 				@Override
 				public void run() {
-					if (mIsConnecting) {
+					if (mIsConnecting && hrClient != null) {
 						mIsConnected = b;
 						mIsConnecting = false;
-						cb.onConnectResult(b);
+						hrClient.onConnectResult(b);
 					}
 				}});
 		}

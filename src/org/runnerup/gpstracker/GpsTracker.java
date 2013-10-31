@@ -26,8 +26,7 @@ import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
-import org.runnerup.hr.HRProvider.OnConnectCallback;
-import org.runnerup.hr.HRProvider.OnOpenCallback;
+import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
@@ -540,24 +539,41 @@ public class GpsTracker extends android.app.Service implements
 
 		hrProvider = HRManager.getHRProvider(this, btProviderName);
 		if (hrProvider != null) {
-			hrProvider.open(handler, new OnOpenCallback(){
+			hrProvider.open(handler, new HRClient() {
 				@Override
-				public void onInitResult(boolean ok) {
+				public void onOpenResult(boolean ok) {
 					if (!ok) {
 						hrProvider = null;
 						return;
 					}
-					hrProvider.connect(handler, btDevice, btDeviceName, new OnConnectCallback(){
+					hrProvider.connect(btDevice, btDeviceName);
+				}
 
-						@Override
-						public void onConnectResult(boolean connectOK) {
-							if (connectOK) {
-								Toast.makeText(GpsTracker.this,  "Connected to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
-							} else {
-								Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
-							}
-						}});
-				}});
+				@Override
+				public void onScanResult(String name, BluetoothDevice device) {
+				}
+
+				@Override
+				public void onConnectResult(boolean connectOK) {
+					if (connectOK) {
+						Toast.makeText(GpsTracker.this,  "Connected to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+					}
+				}
+
+				@Override
+				public void onDisconnectResult(boolean disconnectOK) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onCloseResult(boolean closeOK) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 		}
 	}
 	
