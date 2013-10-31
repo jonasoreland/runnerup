@@ -2,6 +2,7 @@ package org.runnerup.hr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -138,7 +139,9 @@ public abstract class Bt20Base implements HRProvider {
 		hrClientHandler.post(new Runnable() {
 			@Override
 			public void run() {
-				publishDevice(btAdapter.getBondedDevices());
+				Set<BluetoothDevice> list = new HashSet<BluetoothDevice>();
+				list.addAll(btAdapter.getBondedDevices());
+				publishDevice(list);
 			}
 		});
 	}
