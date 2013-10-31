@@ -81,7 +81,11 @@ public class SamsungBLEHRProvider implements HRProvider {
 	
 	private HRClient hrClient;
 	private Handler hrClientHandler;
-	
+
+	private boolean mIsScanning = false;
+	private boolean mIsConnected = false;
+	private boolean mIsConnecting = false;
+
 	@Override
 	public void open(Handler handler, HRClient hrClient) {
 		this.hrClient = hrClient;
@@ -266,6 +270,16 @@ public class SamsungBLEHRProvider implements HRProvider {
 				return;
 			
             if (!checkIfBroadcastMode(scanRecord)) {
+            	/**
+            	 * If connect was called and btDevice was unknown,
+            	 *   we scan for it before btGatt.connect()
+            	 */
+            	System.err.println("mIsConnecting: " + mIsConnecting + " onScanResult("+arg0.getAddress()+"), btDevice.getAddress(): " + btDevice.getAddress());
+            	if (mIsConnecting && arg0.getAddress().equals(btDevice.getAddress())) {
+            		btGatt.stopScan();
+            		btGatt.connect(btDevice, false);
+            		return;
+            	}
             	hrClientHandler.post(new Runnable(){
 					@Override
 					public void run() {
@@ -377,8 +391,6 @@ public class SamsungBLEHRProvider implements HRProvider {
         return btGatt.writeDescriptor(clientConfig);
     }
 
-	private boolean mIsScanning = false;
-
 	@Override
 	public boolean isScanning() {
 		return mIsScanning;
@@ -404,9 +416,6 @@ public class SamsungBLEHRProvider implements HRProvider {
 		}
 	}
 
-	private boolean mIsConnected = false;
-	private boolean mIsConnecting = false;
-
 	@Override
 	public boolean isConnected() {
 		return mIsConnected;
@@ -429,6 +438,15 @@ public class SamsungBLEHRProvider implements HRProvider {
 		
 		mIsConnecting = true;
 		btDevice = dev;
+		if (btDeviceName == null || dev.getName() == null ||
+			!btDeviceName.contentEquals(dev.getName())) {
+			/**
+			 * If device doesn't match name, scan for before connecting
+			 */
+			System.err.println("Scan before connect");
+			startScan();
+			return;
+		}
 		btGatt.connect(btDevice, false);
 	}
 
