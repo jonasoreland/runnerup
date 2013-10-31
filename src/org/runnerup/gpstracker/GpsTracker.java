@@ -563,7 +563,7 @@ public class GpsTracker extends android.app.Service implements
 	
 	private void stopHRMonitor() {
 		if (hrProvider != null) {
-			hrProvider.disconnect();
+			hrProvider.close();
 		}
 	}
 	
