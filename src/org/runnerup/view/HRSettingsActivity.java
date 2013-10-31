@@ -345,7 +345,7 @@ public class HRSettingsActivity extends Activity {
 		}
 		tvBTName.setText(getName(hrDevice));
 		tvHR.setText("?");
-		hrProvider.connect(handler, hrDevice, connectCallback);
+		hrProvider.connect(handler, hrDevice, hrDevice.getName(), connectCallback);
 		connectButton.setText("Connecting");
 	}
 

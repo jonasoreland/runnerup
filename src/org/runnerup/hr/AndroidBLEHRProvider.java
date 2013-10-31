@@ -133,12 +133,14 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 		@Override
 		public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic arg0, int status) {
+			System.out.println("onCharacteristicRead(): " + gatt + ", char: " + arg0 + ", status: " + status);
 			
 			if (gatt != btGatt)
 				return;
 			
 			UUID charUuid = arg0.getUuid();
             if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
+    			System.out.println(" => startHR()");
             	// triggered from DummyReadForSecLevelCheck
             	startHR();
             	return;
@@ -154,11 +156,14 @@ public class AndroidBLEHRProvider implements HRProvider {
 		@Override
 		public void onConnectionStateChange(BluetoothGatt gatt, int status,
 				int newState) {
-				
+
+			System.err.println("onConnectionStateChange: " + gatt + ", status: " + status + ", newState: " + newState);
+			
 			if (gatt != btGatt)
 				return;
 
 			if (newState == BluetoothProfile.STATE_CONNECTED) {
+				System.err.println("discoverServices()");
 				btGatt.discoverServices();
 			}
 			
@@ -195,14 +200,18 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 		@Override
 		public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+			System.out.println("onServicesDiscoverd(): " + gatt + ", status: " + status);
+			
 			if (gatt != btGatt)
 				return;
 			
+			System.out.println(" => DummyRead");
 			if (status == BluetoothGatt.GATT_SUCCESS) {
 				DummyReadForSecLevelCheck(gatt);
 				// continue in onCharacteristicRead
 			} else {
-				reportConnectFailed("onServicesDiscovered(" + gatt + ", " + status + ")");
+				DummyReadForSecLevelCheck(gatt); 
+//				reportConnectFailed("onServicesDiscovered(" + gatt + ", " + status + ")");
 			}
 		}
 
@@ -266,13 +275,17 @@ public class AndroidBLEHRProvider implements HRProvider {
 		if (btGatt == null)
 			return false;
 
-		if (!btGatt.setCharacteristicNotification(charac,  onoff))
+		if (!btGatt.setCharacteristicNotification(charac,  onoff)) {
+			System.err.println("btGatt.setCharacteristicNotification() failed");
 			return false;
-
+		}
+		
         BluetoothGattDescriptor clientConfig = charac.getDescriptor(CCC);
-        if (clientConfig == null)
+        if (clientConfig == null) {
+			System.err.println("clientConfig == null");
             return false;
-
+        }
+        
         if (onoff) {
             clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         } else {
@@ -352,7 +365,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(Handler handler, BluetoothDevice dev, OnConnectCallback connectCallback) {
+	public void connect(Handler handler, BluetoothDevice dev, String btDeviceName, OnConnectCallback connectCallback) {
 		stopScan();
 
 		if (mIsConnected)

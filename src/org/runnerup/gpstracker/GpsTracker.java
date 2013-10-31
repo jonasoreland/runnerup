@@ -518,6 +518,7 @@ public class GpsTracker extends android.app.Service implements
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
 		final String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+		final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
 		if (btAddress == null || btProviderName == null)
 			return;
 		
@@ -546,7 +547,7 @@ public class GpsTracker extends android.app.Service implements
 						hrProvider = null;
 						return;
 					}
-					hrProvider.connect(handler, btDevice, new OnConnectCallback(){
+					hrProvider.connect(handler, btDevice, btDeviceName, new OnConnectCallback(){
 
 						@Override
 						public void onConnectResult(boolean connectOK) {

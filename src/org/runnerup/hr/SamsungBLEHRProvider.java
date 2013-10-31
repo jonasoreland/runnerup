@@ -426,7 +426,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(Handler handler, BluetoothDevice dev, OnConnectCallback connectCallback) {
+	public void connect(Handler handler, BluetoothDevice dev, String btDeviceName, OnConnectCallback connectCallback) {
 		stopScan();
 
 		if (mIsConnected)

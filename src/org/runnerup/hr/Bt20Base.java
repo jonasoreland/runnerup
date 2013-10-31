@@ -174,7 +174,7 @@ public abstract class Bt20Base implements HRProvider {
 
 	@Override
 	public void connect(Handler handler, BluetoothDevice bluetoothDevice,
-			OnConnectCallback connectCallback) {
+			String btDeviceName, OnConnectCallback connectCallback) {
 		cancelThreads();
 
 		connectThread = new ConnectThread(bluetoothDevice);

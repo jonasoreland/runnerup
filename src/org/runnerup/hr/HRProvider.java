@@ -38,7 +38,7 @@ public interface HRProvider {
 	public abstract boolean isConnecting();
 
 	public abstract void connect(Handler handler, BluetoothDevice _btDevice,
-			OnConnectCallback connectCallback);
+			String btDeviceName, OnConnectCallback connectCallback);
 
 	public abstract void disconnect();
 

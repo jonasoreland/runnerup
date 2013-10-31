@@ -87,7 +87,7 @@ public class MockHRProvider implements HRProvider {
 
 	@Override
 	public void connect(final Handler cHandler, BluetoothDevice _btDevice,
-			OnConnectCallback connectCallback) {
+			String btDeviceName, OnConnectCallback connectCallback) {
 		connectHandler = cHandler;
 		onConnectCallback = connectCallback;
 
