@@ -266,15 +266,15 @@ public class SamsungBLEHRProvider implements HRProvider {
 
 		@Override
 		public void onScanResult(final BluetoothDevice arg0, int arg1, byte[] scanRecord) {
-			if (hrClient == null)
-				return;
+			final boolean broadcast = checkIfBroadcastMode(scanRecord);
+			System.err.println("onScanResult(" + arg0.getName() + "), hrClient:" + hrClient + ", broadcast: " + broadcast +
+					", mIsConnecting: " + mIsConnecting + ", mIsScanning: " + mIsScanning);
 			
-            if (!checkIfBroadcastMode(scanRecord)) {
+            if (!broadcast) {
             	/**
             	 * If connect was called and btDevice was unknown,
             	 *   we scan for it before btGatt.connect()
             	 */
-            	System.err.println("mIsConnecting: " + mIsConnecting + " onScanResult("+arg0.getAddress()+"), btDevice.getAddress(): " + btDevice.getAddress());
             	if (mIsConnecting && arg0.getAddress().equals(btDevice.getAddress())) {
             		btGatt.stopScan();
             		btGatt.connect(btDevice, false);
@@ -283,7 +283,7 @@ public class SamsungBLEHRProvider implements HRProvider {
             	hrClientHandler.post(new Runnable(){
 					@Override
 					public void run() {
-						if (mIsScanning) { //NOTE: mIsScanning in user-thread
+						if (mIsScanning && hrClient != null) { //NOTE: mIsScanning in user-thread
 							hrClient.onScanResult(NAME, arg0);
 						}
 					}});
