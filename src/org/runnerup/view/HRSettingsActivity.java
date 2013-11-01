@@ -25,6 +25,12 @@ import org.runnerup.R;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
+import org.runnerup.util.Formatter;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -47,13 +53,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRSettingsActivity extends Activity implements HRClient {
 
 	private Handler handler = new Handler();
+	private StringBuffer logBuffer = new StringBuffer();
 	
 	List<HRProvider> providers = null;
 	String btName;
@@ -67,9 +74,17 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	Button scanButton = null;
 	TextView tvBTName = null;
 	TextView tvHR = null;
-	FrameLayout flHR = null;
-
+	TextView tvLog = null;
+	
+	Formatter formatter = null;
+	GraphView graphView = null;
+	GraphViewSeries graphViewSeries = null;
+	ArrayList<GraphViewData> graphViewListData = new ArrayList<GraphViewData>();
+	GraphViewData graphViewArrayData[] = new GraphViewData[0];
+	static final int GRAPH_HISTORY_SECONDS = 180;
+	
 	DeviceAdapter deviceAdapter = null;
+	boolean mIsScanning = false;
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,8 +98,9 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			return;
 		}
 
-		tvBTName = (TextView) findViewById(R.id.btDevice);
-		tvHR = (TextView) findViewById(R.id.hrValueText); 
+		tvLog = (TextView) findViewById(R.id.hrLog);
+		tvBTName = (TextView) findViewById(R.id.hrDevice);
+		tvHR = (TextView) findViewById(R.id.hrValue); 
 		scanButton = (Button) findViewById(R.id.scanButton);
 		scanButton.setOnClickListener(scanButtonClick);
 		connectButton = (Button) findViewById(R.id.connectButton);
@@ -93,23 +109,39 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			public void onClick(View arg0) {
 				connect();
 			}});
-
+		
+		formatter = new Formatter(this);
+		{
+			LinearLayout graphLayout = (LinearLayout) findViewById(R.id.hrGraphLayout);
+			graphView = new LineGraphView(this, "Heart rate") {
+				@Override
+				protected String formatLabel(double value, boolean isValueX) {
+					if (!isValueX) {
+						return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
+					} else
+						return formatter.formatElapsedTime(Formatter.TXT_SHORT, (long) value);
+				}
+			};
+			graphLayout.addView(graphView);
+		}
+		
 		Resources res = getResources();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		btName = prefs.getString(res.getString(R.string.pref_bt_name), null);
 		btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
 		btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
-
+		tvBTName.setText(btName);
+		
 		System.err.println("btName: " + btName);
 		System.err.println("btAddress: " + btAddress);
 		System.err.println("btProviderName: " + btProviderName);
-
 		
 		mAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (mAdapter == null) {
 		    notSupported();
 		} else {
 		    if (!mAdapter.isEnabled()) {
+		    	log("Enable Bluetooth");
 		    	Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 	            startActivityForResult(enableIntent, 0);
 	            return;
@@ -119,8 +151,18 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		btEnabled();
 	}
 
+	int lineNo = 0;
+	private void log(String msg) {
+		logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
+		if (logBuffer.length() > 500) {
+			logBuffer.setLength(500);
+		}
+		tvLog.setText(logBuffer.toString());
+	}
+
 	private void btEnabled() {
 		if (btProviderName != null) {
+			log("HRManager.get(" + btProviderName + ")");
 			hrProvider = HRManager.getHRProvider(this, btProviderName);
 		}
 
@@ -129,7 +171,10 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	
 	private void open() {
 		if (hrProvider != null) {
+			log(hrProvider.getProviderName() + ".open(this)");
 			hrProvider.open(handler, this);
+		} else {
+			updateView();
 		}
 	}
 
@@ -153,6 +198,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		super.onDestroy();
 		
 		if (hrProvider != null) {
+			log(hrProvider.getProviderName() + ".close()");
 			hrProvider.close();
 		}
 
@@ -164,21 +210,64 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		btName = null;
 		btProviderName = null;
 		hrDevice = null;
+		clearGraph();
+	}
+
+	private void clearGraph() {
+		graphView.removeAllSeries();
+		graphViewSeries = null;
+		graphViewListData.clear();
+		graphViewArrayData = new GraphViewData[0];
+	}
+	
+	private void updateView() {
+		if (hrProvider == null) {
+			scanButton.setEnabled(true);
+			connectButton.setEnabled(false);
+			connectButton.setText("Connect");
+			tvBTName.setText("");
+			tvHR.setText("");
+			return;
+		}
+		
+		if (btName != null) {
+			tvBTName.setText(btName);
+		} else {
+			tvBTName.setText("");
+			tvHR.setText("");
+		}
+
+		if (hrProvider.isConnected()) {
+			connectButton.setText("Disconnect");
+			connectButton.setEnabled(true);
+		} else if (hrProvider.isConnecting()) {
+			connectButton.setEnabled(false);
+			connectButton.setText("Connecting");
+		} else {
+			connectButton.setEnabled(btName == null ? false : true);
+			connectButton.setText("Connect");
+		}
 	}
 	
 	OnClickListener scanButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			clear();
+			stopTimer();
 			
 			if (hrProvider != null) {
+				log(hrProvider.getProviderName() + ".close()");
 				hrProvider.close();
 				hrProvider = null;
 			}
 			
+			mIsScanning = true;
 			if (providers.size() > 1) {
+				log("select HR-provider");
 				selectProvider();
 			} else {
-				startScan();
+				hrProvider = providers.get(0);
+				log("hrProvider = " + hrProvider.getProviderName());
+				open();
 			}
 		}
 	};
@@ -259,25 +348,30 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	};
 	
 	private void startScan() {
+		log(hrProvider.getProviderName() + ".startScan()");
+		updateView();
 		deviceAdapter.deviceList.clear();
 		hrProvider.startScan();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Scanning");
-		builder.setPositiveButton("Select",
+		builder.setPositiveButton("Connect",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
+						log(hrProvider.getProviderName() + ".stopScan()");
 						hrProvider.stopScan();
 						connect();
+						updateView();
 						dialog.dismiss();
 					}
 				});
 		builder.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
+						log(hrProvider.getProviderName() + ".stopScan()");
 						hrProvider.stopScan();
 						dialog.dismiss();
+						updateView();
 					}
-
 				});
 		builder.setSingleChoiceItems(deviceAdapter, -1, 
 				new  DialogInterface.OnClickListener() {
@@ -290,15 +384,22 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	}
 	
 	void connect() {
-		connectButton.setEnabled(false);
-		if (hrDevice == null) {
-			tvBTName.setText("");
+		stopTimer();
+		if (hrProvider == null || hrDevice == null) {
+			updateView();
+			return;
+		}
+		if (hrProvider.isConnecting() || hrProvider.isConnected()) {
+			log(hrProvider.getProviderName() + ".disconnect()");
+			hrProvider.disconnect();
+			updateView();
 			return;
 		}
 		tvBTName.setText(getName(hrDevice));
 		tvHR.setText("?");
+		log(hrProvider.getProviderName() + ".connect(" + hrDevice.getName() + ")");
 		hrProvider.connect(hrDevice, hrDevice.getName());
-		connectButton.setText("Connecting");
+		updateView();
 	}
 
 	private void save() {
@@ -321,6 +422,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	}
 
 	Timer hrReader = null;
+	
 	void startTimer() {
 		hrReader = new Timer();
 		hrReader.scheduleAtFixedRate(new TimerTask() {
@@ -344,49 +446,72 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		hrReader = null;
 	}
 
+	long lastTimestamp = 0;
+	long timerStartTime = 0;
 	protected void readHR() {
 		if (hrProvider != null) {
-			long now = System.currentTimeMillis();
 			long age = hrProvider.getHRValueTimestamp();
-			tvHR.setText("HR: " + hrProvider.getHRValue() + ", age: " + (now - age) + "ms");
+			int hrValue = hrProvider.getHRValue();
+			tvHR.setText(Integer.toString(hrValue));
+
+			if (age != lastTimestamp) {
+				if (graphViewSeries == null) {
+					timerStartTime = System.currentTimeMillis();
+					GraphViewData empty[] = {};
+					graphViewSeries = new GraphViewSeries(empty);
+					graphView.addSeries(graphViewSeries);
+				}
+				
+				graphViewListData.add(new GraphViewData((age - timerStartTime) / 1000, hrValue));
+				while (graphViewListData.size() > GRAPH_HISTORY_SECONDS) {
+					graphViewListData.remove(0);
+				}
+				graphViewArrayData = graphViewListData.toArray(graphViewArrayData);
+				graphViewSeries.resetData(graphViewArrayData);
+				lastTimestamp = age;
+			}
 		}
 	}
 
 	@Override
 	public void onOpenResult(boolean ok) {
-		if (btAddress != null) {
-			hrDevice = mAdapter.getRemoteDevice(btAddress);
-			System.err.println("hrDevice.getName(): "
-				+ hrDevice.getName() + ", btName: "
-				+ btName);
-			connect();
-		} else {
+		log(hrProvider.getProviderName() + "::onOpenResult(" + ok + ")");
+		if (mIsScanning) {
+			mIsScanning = false;
 			startScan();
+			return;
+		}
+		
+		if (btAddress != null) {
+			hrDevice = this.mAdapter.getRemoteDevice(btAddress);
 		}
 	}
 
 	@Override
 	public void onScanResult(String name, BluetoothDevice device) {
+		log(hrProvider.getProviderName() + "::onScanResult(" + device.getAddress() + ", " + device.getName() + ")");
 		deviceAdapter.deviceList.add(device);
 		deviceAdapter.notifyDataSetChanged();
 	}
 
 	@Override
 	public void onConnectResult(boolean connectOK) {
+		log(hrProvider.getProviderName() + "::onConnectResult(" + connectOK + ")");
 		if (connectOK) {
 			save();
-			connectButton.setText("Disconnect");
 			startTimer();
 		} else {
-			
 		}
+		updateView();
 	}
 
 	@Override
 	public void onDisconnectResult(boolean disconnectOK) {
+		log(hrProvider.getProviderName() + "::onDisconnectResult(" + disconnectOK + ")");
 	}
 
 	@Override
 	public void onCloseResult(boolean closeOK) {
+		log(hrProvider.getProviderName() + "::onCloseResult(" + closeOK + ")");
 	}
 }
