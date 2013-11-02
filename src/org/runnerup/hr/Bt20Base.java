@@ -406,7 +406,7 @@ public abstract class Bt20Base implements HRProvider {
 
 	public static class PolarHRM extends Bt20Base {
 
-		public static final String NAME = "Polar";
+		public static final String NAME = "Polar WearLink";
 		
 		public PolarHRM(Context ctx) {
 			super(ctx);
