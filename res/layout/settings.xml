@@ -198,7 +198,20 @@
         <Preference android:title="Import"
             android:key="importdb"
             android:summary="Import database from sdcard (e.g after upgrade)" />
-   	</PreferenceScreen>
+    	
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="@string/pref_bt_experimental"
+        	android:title="Experimental HRM devices" />
+
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="@string/pref_bt_mock"
+        	android:title="Mock HRM devices" />
+    
+    	</PreferenceScreen>
 
 	<PreferenceCategory android:title="About">
 		<org.runnerup.widget.AboutPreference

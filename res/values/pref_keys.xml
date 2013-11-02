@@ -68,4 +68,8 @@
     <string name="pref_bt_name">pref_bt_name</string>
     <string name="pref_bt_address">pref_bt_address</string>
     <string name="pref_bt_provider">pref_bt_provider</string>
+
+    <string name="pref_bt_experimental">pref_bt_experimental</string>
+    <string name="pref_bt_mock">pref_bt_mock</string>
+        
 </resources>
