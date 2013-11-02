@@ -80,6 +80,13 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/gpsInfo1"
         android:text="0" />
+    <TextView
+        android:id="@+id/hrInfo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/gpsInfo2"
+        android:gravity="center"
+        android:text="" />
     </RelativeLayout>
     
     <LinearLayout

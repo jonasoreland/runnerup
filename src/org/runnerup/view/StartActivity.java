@@ -51,6 +51,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
@@ -95,7 +96,8 @@ public class StartActivity extends Activity implements TickListener {
 	TextView gpsInfoView1 = null;
 	TextView gpsInfoView2 = null;
 	View gpsInfoLayout = null;
-
+	TextView hrInfo = null;
+	
 	ImageButton hrButton = null; 
 	TextView hrValueText = null;
 	FrameLayout hrLayout = null;
@@ -160,7 +162,8 @@ public class StartActivity extends Activity implements TickListener {
 		gpsInfoLayout = findViewById(R.id.GPSINFO);
 		gpsInfoView1 = (TextView) findViewById(R.id.gpsInfo1);
 		gpsInfoView2 = (TextView) findViewById(R.id.gpsInfo2);
-
+		hrInfo = (TextView) findViewById(R.id.hrInfo);
+		
 		hrButton = (ImageButton) findViewById(R.id.hrButton);
 		hrButton.setOnClickListener(hrButtonClick);
 		hrValueText = (TextView) findViewById(R.id.hrValueText);
@@ -524,6 +527,17 @@ public class StartActivity extends Activity implements TickListener {
 			}
 		}
 		gpsInfoLayout.setVisibility(View.VISIBLE);
+		
+		{
+			Resources res = getResources();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+			if (btDeviceName != null) {
+				hrInfo.setText(btDeviceName);
+			} else {
+				hrInfo.setText("");
+			}
+		}
 		
 		if (mGpsTracker != null && mGpsTracker.isHRConfigured()) {
 			hrLayout.setVisibility(View.VISIBLE);
