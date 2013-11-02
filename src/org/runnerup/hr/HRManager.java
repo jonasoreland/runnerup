@@ -41,12 +41,10 @@ public class HRManager {
 	public static List<HRProvider> getHRProviderList(Context ctx) {
 		List<HRProvider> providers = new ArrayList<HRProvider>();
 		if (SamsungBLEHRProvider.checkLibrary()) {
-			System.err.println("Samsung OK");
 			providers.add(new SamsungBLEHRProvider(ctx));
 		}
 		
 		if (AndroidBLEHRProvider.checkLibrary(ctx)) {
-			System.err.println("AndroidBLE OK");
 			providers.add(new AndroidBLEHRProvider(ctx));
 		}
 		
@@ -55,7 +53,7 @@ public class HRManager {
 			providers.add(new Bt20Base.PolarHRM(ctx));
 		}
 
-		boolean mockProvider = true;
+		boolean mockProvider = false;
 		if (mockProvider || providers.isEmpty()) {
 			providers.add(new MockHRProvider(ctx));
 		}
