@@ -178,6 +178,14 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		}
 	}
 
+	private void close() {
+		if (hrProvider != null) {
+			log(hrProvider.getProviderName() + ".close()");
+			hrProvider.close();
+			hrProvider = null;
+		}
+	}
+
 	public void notSupported() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Heart rate monitor is not supported for your device...try again later");
@@ -197,11 +205,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	public void onDestroy() {
 		super.onDestroy();
 		
-		if (hrProvider != null) {
-			log(hrProvider.getProviderName() + ".close()");
-			hrProvider.close();
-		}
-
+		close();
 		stopTimer();
 	}
 	
@@ -254,12 +258,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			clear();
 			stopTimer();
 			
-			if (hrProvider != null) {
-				log(hrProvider.getProviderName() + ".close()");
-				hrProvider.close();
-				hrProvider = null;
-			}
-			
+			close();
 			mIsScanning = true;
 			if (providers.size() > 1) {
 				log("select HR-provider");
@@ -290,6 +289,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		builder.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
+						mIsScanning = false;
+						open();
 						dialog.dismiss();
 					}
 
@@ -299,6 +300,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
 						hrProvider = HRManager.getHRProvider(HRSettingsActivity.this, items[arg1].toString());
+						log("hrProvider = " + hrProvider.getProviderName());
 					}
 				});
 		builder.show();
