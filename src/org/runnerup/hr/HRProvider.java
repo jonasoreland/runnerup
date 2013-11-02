@@ -16,7 +16,8 @@ public interface HRProvider {
 		public void onCloseResult(boolean closeOK);
 	};
 	
-	public abstract String getProviderName();
+	public abstract String getName();         // For display
+	public abstract String getProviderName(); // For internal usage
 	
 	public abstract void open(Handler handler, HRClient hrClient);
 	public abstract void close();

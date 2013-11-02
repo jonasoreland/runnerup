@@ -58,6 +58,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 	}	
 	
 	static final String NAME = "SamsungBLE";
+	static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
     static final UUID HRP_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
 	static final UUID FIRMWARE_REVISON_UUID = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
 	static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
@@ -75,10 +76,16 @@ public class SamsungBLEHRProvider implements HRProvider {
 		context = ctx;
 	}
 
+	@Override
+	public String getName() {
+		return DISPLAY_NAME;
+	}
+
+	@Override
 	public String getProviderName() {
 		return NAME;
 	}
-	
+
 	private HRClient hrClient;
 	private Handler hrClientHandler;
 

@@ -369,6 +369,11 @@ public abstract class Bt20Base implements HRProvider {
 		}
 
 		@Override
+		public String getName() {
+			return NAME;
+		}
+
+		@Override
 		public String getProviderName() {
 			return NAME;
 		}
@@ -410,6 +415,11 @@ public abstract class Bt20Base implements HRProvider {
 		
 		public PolarHRM(Context ctx) {
 			super(ctx);
+		}
+
+		@Override
+		public String getName() {
+			return NAME;
 		}
 
 		@Override

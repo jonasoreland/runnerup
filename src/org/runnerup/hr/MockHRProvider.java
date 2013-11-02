@@ -18,6 +18,11 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	@Override
+	public String getName() {
+		return "MockHR";
+	}
+
+	@Override
 	public String getProviderName() {
 		return "MockHR";
 	}

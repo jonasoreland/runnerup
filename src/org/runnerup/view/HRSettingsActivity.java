@@ -274,8 +274,11 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
 	private void selectProvider() {
 		final CharSequence items[] = new CharSequence[providers.size()];
-		for (int i = 0; i < items.length; i++)
+		final CharSequence itemNames[] = new CharSequence[providers.size()];
+		for (int i = 0; i < items.length; i++) {
 			items[i] = providers.get(i).getProviderName();
+			itemNames[i] = providers.get(i).getName();
+		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Select type of Bluetooth device");
 		builder.setPositiveButton("OK",
@@ -291,7 +294,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 					}
 
 				});
-		builder.setSingleChoiceItems(items, -1, 
+		builder.setSingleChoiceItems(itemNames, -1, 
 				new  DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
@@ -397,7 +400,11 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		}
 		tvBTName.setText(getName(hrDevice));
 		tvHR.setText("?");
-		log(hrProvider.getProviderName() + ".connect(" + hrDevice.getName() + ")");
+		String name = hrDevice.getName();
+		if (name == null) {
+			name = hrDevice.getAddress();
+		}
+		log(hrProvider.getProviderName() + ".connect(" + name + ")");
 		hrProvider.connect(hrDevice, hrDevice.getName());
 		updateView();
 	}
@@ -513,5 +520,16 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	@Override
 	public void onCloseResult(boolean closeOK) {
 		log(hrProvider.getProviderName() + "::onCloseResult(" + closeOK + ")");
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    if (!mAdapter.isEnabled()) {
+	    	log("Bluetooth not enabled!");
+	    	scanButton.setEnabled(false);
+	    	connectButton.setEnabled(false);
+	    	return;
+	    }
+	    btEnabled();
 	}
 }
