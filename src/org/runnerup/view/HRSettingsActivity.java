@@ -260,14 +260,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			
 			close();
 			mIsScanning = true;
-			if (providers.size() > 1) {
-				log("select HR-provider");
-				selectProvider();
-			} else {
-				hrProvider = providers.get(0);
-				log("hrProvider = " + hrProvider.getProviderName());
-				open();
-			}
+			log("select HR-provider");
+			selectProvider();
 		}
 	};
 
