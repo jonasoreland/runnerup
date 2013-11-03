@@ -185,7 +185,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
 	public void notSupported() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Heart rate monitor is not supported for your device...try again later");
+		builder.setTitle("Heart rate monitor is not supported for your device");
+		builder.setMessage("try again later!");
 		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
