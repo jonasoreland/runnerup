@@ -125,17 +125,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			graphLayout.addView(graphView);
 		}
 		
-		Resources res = getResources();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		btName = prefs.getString(res.getString(R.string.pref_bt_name), null);
-		btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
-		btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
-		tvBTName.setText(btName);
-		
-		System.err.println("btName: " + btName);
-		System.err.println("btAddress: " + btAddress);
-		System.err.println("btProviderName: " + btProviderName);
-		
 		mAdapter = BluetoothAdapter.getDefaultAdapter();
 		if (mAdapter == null) {
 		    notSupported();
@@ -148,7 +137,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		    }
 		}		
 
-		btEnabled();
+		load();
+		open();
 	}
 
 	int lineNo = 0;
@@ -160,13 +150,20 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		tvLog.setText(logBuffer.toString());
 	}
 
-	private void btEnabled() {
+	private void load() {
+		Resources res = getResources();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		btName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+		btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+		btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+		System.err.println("btName: " + btName);
+		System.err.println("btAddress: " + btAddress);
+		System.err.println("btProviderName: " + btProviderName);
+
 		if (btProviderName != null) {
 			log("HRManager.get(" + btProviderName + ")");
 			hrProvider = HRManager.getHRProvider(this, btProviderName);
 		}
-
-		open();
 	}
 	
 	private void open() {
@@ -284,6 +281,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						mIsScanning = false;
+						load();
 						open();
 						dialog.dismiss();
 					}
@@ -368,6 +366,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 					public void onClick(DialogInterface dialog, int which) {
 						log(hrProvider.getProviderName() + ".stopScan()");
 						hrProvider.stopScan();
+						load();
+						open();
 						dialog.dismiss();
 						updateView();
 					}
@@ -488,6 +488,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		if (btAddress != null) {
 			hrDevice = this.mAdapter.getRemoteDevice(btAddress);
 		}
+		updateView();
 	}
 
 	@Override
@@ -526,6 +527,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	    	connectButton.setEnabled(false);
 	    	return;
 	    }
-	    btEnabled();
+	    load();
+	    open();
 	}
 }
