@@ -30,19 +30,16 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.NikeXML;
 import org.runnerup.export.format.TCX;
-import org.runnerup.workout.WorkoutSerializer;
 
 import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-import android.os.ParcelFileDescriptor.AutoCloseOutputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityProvider extends ContentProvider {
@@ -68,12 +65,6 @@ public class ActivityProvider extends ContentProvider {
         return true;
     }
  
-    private long parseActivityId(Uri uri) throws NumberFormatException {
-    	List<String> l = uri.getPathSegments();
-    	String id = l.get(l.size() - 2);
-    	return Long.parseLong(id);
-	}
-
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode)
             throws FileNotFoundException {

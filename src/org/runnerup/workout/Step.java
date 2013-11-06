@@ -221,6 +221,7 @@ public class Step implements TickComponent {
 					break;
 				case PACE:
 				case SPEED:
+				case HR:
 					break;
 				}
 			}
@@ -236,6 +237,7 @@ public class Step implements TickComponent {
 					break;
 				case DISTANCE:
 				case TIME:
+				case HR:
 					break;
 				}
 			}

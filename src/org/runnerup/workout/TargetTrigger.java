@@ -169,6 +169,8 @@ public class TargetTrigger extends Trigger {
 			break;
 		case TIME:
 			break;
+		case HR:
+			break;
 		}
 	}
 
@@ -198,6 +200,8 @@ public class TargetTrigger extends Trigger {
 		case DISTANCE:
 			break;
 		case TIME:
+			break;
+		case HR:
 			break;
 		}
 		

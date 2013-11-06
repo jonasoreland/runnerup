@@ -406,6 +406,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		case PACE:
 		case SPEED:
 			break;
+		case HR:
+			break;
+		default:
+			break;
 		}
 		return "";
 	}
