@@ -73,7 +73,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-	        convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, null);
+	        convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
 		}
 
 		TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
