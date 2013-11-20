@@ -28,7 +28,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,16 +38,15 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 import org.runnerup.util.Encryption;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-
+import android.os.Build;
 /**
  * TODO:
  * 1) serious cleanup needed
  * 2) maybe reverse engineer 1.0.0.api.funbeat.se that I found...
  */
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FunBeatUploader extends FormCrawler implements Uploader {
@@ -295,7 +293,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			out.close();
 			
 			InputStream in = new BufferedInputStream(conn.getInputStream());
-			JSONObject ret = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			JSONObject ret = parse(in);
 			conn.disconnect();
 			return ret;
 		} catch (JSONException ex) {
@@ -483,7 +481,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			out.flush();
 			out.close();
 			final InputStream in = new BufferedInputStream(conn.getInputStream());
-			final JSONObject reply = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			final JSONObject reply = parse(in);
 			final int code = conn.getResponseCode();
 			conn.disconnect();
 			if (code == 200) {

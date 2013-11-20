@@ -28,6 +28,7 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.FormCrawler;
 import org.runnerup.util.SafeParse;
 
 import android.content.Context;
@@ -67,7 +68,7 @@ public class WorkoutSerializer {
 	};
 	
 	public static Workout readJSON(Reader in) throws JSONException {
-		JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+		JSONObject obj = FormCrawler.parse(in);
 		obj = obj.getJSONObject("com.garmin.connect.workout.json.UserWorkoutJson");
 		Workout w = new Workout();
 		JSONArray steps = obj.getJSONArray("workoutSteps");

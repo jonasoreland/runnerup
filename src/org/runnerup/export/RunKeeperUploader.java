@@ -29,7 +29,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,13 +40,12 @@ import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-
 import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Server {
@@ -234,8 +232,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 				conn.setRequestProperty("Authorization", "Bearer "
 						+ access_token);
 				InputStream in = new BufferedInputStream(conn.getInputStream());
-				uri = new JSONObject(new Scanner(in).useDelimiter("\\A").next())
-						.getString("fitness_activities");
+				uri = parse(in).getString("fitness_activities");
 			} catch (MalformedURLException e) {
 				ex = e;
 			} catch (IOException e) {
@@ -359,7 +356,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 			}
 
 			InputStream in = new BufferedInputStream(conn.getInputStream());
-			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			JSONObject obj = parse(in);
 			conn.disconnect();
 			feed_access_token = obj.getString("accessToken");
 			return s;
@@ -477,7 +474,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 		int responseCode = conn.getResponseCode();
 		String amsg = conn.getResponseMessage();
 		InputStream in = new BufferedInputStream(conn.getInputStream());
-		JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+		JSONObject obj = parse(in);
 
 		conn.disconnect();
 		if (responseCode == 200) {

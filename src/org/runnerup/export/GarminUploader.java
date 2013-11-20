@@ -28,7 +28,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,12 +35,11 @@ import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
-
 import android.os.Build;
-import android.annotation.TargetApi;
+import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GarminUploader extends FormCrawler implements Uploader {
@@ -184,7 +182,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 				conn.connect();
 				getCookies(conn);
 				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+				JSONObject obj = parse(in);
 				conn.disconnect();
 				int responseCode = conn.getResponseCode();
 				String amsg = conn.getResponseMessage();
@@ -289,7 +287,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			conn.connect();
 			getCookies(conn);
 			InputStream in = new BufferedInputStream(conn.getInputStream());
-			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			JSONObject obj = parse(in);
 			conn.disconnect();
 			int responseCode = conn.getResponseCode();
 			String amsg = conn.getResponseMessage();

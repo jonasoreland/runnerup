@@ -39,6 +39,7 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.WorkoutSerializer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -52,6 +53,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Pair;
@@ -61,9 +63,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class UploadManager {

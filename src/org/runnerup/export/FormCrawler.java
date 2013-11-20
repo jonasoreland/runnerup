@@ -20,8 +20,10 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -29,24 +31,26 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.util.Pair;
-
 import android.os.Build;
-import android.annotation.TargetApi;
+import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FormCrawler {
@@ -299,5 +303,18 @@ public class FormCrawler {
 		} else {
 			c.put(DB.FEED.USER_FIRST_NAME, string);
 		}
+	}
+
+	public static JSONObject parse(InputStream in) throws JSONException {
+		final Scanner s = new Scanner(in);
+		final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
+		s.close();
+		return o;
+	}
+	public static JSONObject parse(Reader in) throws JSONException {
+		final Scanner s = new Scanner(in);
+		final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
+		s.close();
+		return o;
 	}
 }

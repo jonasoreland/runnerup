@@ -29,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
@@ -43,17 +42,15 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 import org.runnerup.util.Formatter;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-
+import android.os.Build;
 /**
  * 
  * @author jonas
  * Based on https://github.com/cpfair/tapiriik
  */
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Endomondo extends FormCrawler implements Uploader {
@@ -325,7 +322,7 @@ public class Endomondo extends FormCrawler implements Uploader {
 			conn = (HttpURLConnection) new URL(url.toString()).openConnection();
 			conn.setRequestMethod("GET");
 			final InputStream in = new BufferedInputStream(conn.getInputStream());
-			final JSONObject reply = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			final JSONObject reply = parse(in);
 			int responseCode = conn.getResponseCode();
 			String amsg = conn.getResponseMessage();
 

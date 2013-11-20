@@ -27,6 +27,7 @@ import org.runnerup.R;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Context;
@@ -34,9 +35,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
-
 import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunnerUpLive extends FormCrawler implements Uploader {
