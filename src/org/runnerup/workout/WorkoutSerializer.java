@@ -23,7 +23,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,11 +30,10 @@ import org.json.JSONObject;
 import org.runnerup.export.FormCrawler;
 import org.runnerup.util.SafeParse;
 
-import android.content.Context;
-import android.util.Pair;
-
-import android.os.Build;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutSerializer {
