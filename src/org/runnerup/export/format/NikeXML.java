@@ -233,7 +233,7 @@ public class NikeXML {
 		long _id = 0;
 		{		// 1 find a point with specified value 
 			String args[] = { Long.toString(mID), Integer.toString(hrVal) };
-			Cursor c = mDB.rawQuery("select max(_id) from location where activity_id = ? and hr = ? limit 1", args);
+			Cursor c = mDB.rawQuery("select min(_id) from location where activity_id = ? and hr = ? limit 1", args);
 			if (!c.moveToFirst()) {
 				c.close();
 				return;
@@ -288,7 +288,7 @@ public class NikeXML {
 			
 			mXML.startTag("", "pace");
 			double pace = 0;
-			if (last.hasSpeed() && last.getSpeed() != 0) {
+			if (last != null && last.hasSpeed() && last.getSpeed() != 0) {
 				pace = 1000.0d / last.getSpeed();
 			} else {
 				if (sumDist != 0)
