@@ -52,4 +52,10 @@
 	<string name="txt_elapsed_m">m</string>
 	<string name="txt_elapsed_min">min</string>
 	<string name="txt_elapsed_s">s</string>
+
+	<string name="sex">Sex</string>
+	<string-array name="sexes">
+	    <item>Male</item>
+	    <item>Female</item>
+   	</string-array>
 </resources>

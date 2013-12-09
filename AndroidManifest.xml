@@ -131,6 +131,10 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 				
+		<activity android:name=".view.HRZonesActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
 		<service 
 		    android:name=".gpstracker.GpsTracker" >
 		</service>

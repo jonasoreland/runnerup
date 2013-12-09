@@ -54,7 +54,15 @@
 			    android:targetClass="org.runnerup.view.HRSettingsActivity" />
     </Preference>
 		
-    <CheckBoxPreference
+	<Preference
+        android:key="cue_configure_hrzones"
+        android:title="Configure Heart Rate Zones">
+			<intent
+			    android:targetPackage="org.runnerup"
+			    android:targetClass="org.runnerup.view.HRZonesActivity" />
+    </Preference>
+	
+	<CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_autolap_active"
         android:persistent="true"
