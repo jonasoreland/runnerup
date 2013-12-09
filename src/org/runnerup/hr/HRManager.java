@@ -62,7 +62,7 @@ public class HRManager {
 			providers.add(new Bt20Base.ZephyrHRM(ctx));
 		}
 
-		if (experimental && Bt20Base.checkLibrary(ctx)) {
+		if (Bt20Base.checkLibrary(ctx)) {
 			providers.add(new Bt20Base.PolarHRM(ctx));
 		}
 		
