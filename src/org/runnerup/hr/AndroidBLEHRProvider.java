@@ -458,7 +458,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 		}
 		System.err.println("connectGatt");
-		btGatt = btDevice.connectGatt(context, true, btGattCallbacks);
+		btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
 		if (btGatt == null) {
 			reportConnectFailed("connectGatt returned null");
 		}
