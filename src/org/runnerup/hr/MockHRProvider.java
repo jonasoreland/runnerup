@@ -135,4 +135,9 @@ public class MockHRProvider implements HRProvider {
 	public long getHRValueTimestamp() {
 		return hrTimestamp;
 	}
+
+	@Override
+	public boolean isBondingDevice() {
+		return false;
+	}
 }

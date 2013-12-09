@@ -22,6 +22,8 @@ public interface HRProvider {
 	public abstract void open(Handler handler, HRClient hrClient);
 	public abstract void close();
 
+	public abstract boolean isBondingDevice();
+	
 	public abstract boolean isScanning();
 	public abstract boolean isConnected();
 	public abstract boolean isConnecting();

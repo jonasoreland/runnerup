@@ -131,6 +131,11 @@ public abstract class Bt20Base implements HRProvider {
 	}
 
 	@Override
+	public boolean isBondingDevice() {
+		return true;
+	}
+	
+	@Override
 	public void startScan() {
 		if (btAdapter == null)
 			return;
@@ -277,7 +282,6 @@ public abstract class Bt20Base implements HRProvider {
 					bluetoothSocket = tryConnect(bluetoothDevice, i);
 					break;
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}

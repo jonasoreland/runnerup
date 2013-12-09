@@ -579,4 +579,9 @@ public class AndroidBLEHRProvider implements HRProvider {
 	public long getHRValueTimestamp() {
 		return this.hrTimestamp;
 	}
+
+	@Override
+	public boolean isBondingDevice() {
+		return false;
+	}
 }
