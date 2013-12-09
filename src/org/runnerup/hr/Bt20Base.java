@@ -2,6 +2,8 @@ package org.runnerup.hr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -35,8 +37,7 @@ public abstract class Bt20Base implements HRProvider {
 
 	// UUID
 	public static final UUID MY_UUID = UUID
-			.fromString("00001101-0000-1000-8000-10805F9B34FB");
-
+			.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	private ConnectThread connectThread;
 	private ConnectedThread connectedThread;
 
@@ -175,7 +176,8 @@ public abstract class Bt20Base implements HRProvider {
 	public void connect(BluetoothDevice bluetoothDevice, String btDeviceName) {
 		cancelThreads();
 
-		connectThread = new ConnectThread(bluetoothDevice);
+		mIsConnecting = true;
+		connectThread = new ConnectThread(btAdapter.getRemoteDevice(bluetoothDevice.getAddress()));
 		connectThread.start();
 	}
 
@@ -207,41 +209,87 @@ public abstract class Bt20Base implements HRProvider {
 	 * A thread to connect to a bluetooth device.
 	 */
 	private class ConnectThread extends Thread {
-		private final BluetoothSocket bluetoothSocket;
+		private BluetoothSocket bluetoothSocket;
 		private final BluetoothDevice bluetoothDevice;
 
 		public ConnectThread(BluetoothDevice device) {
 			setName("ConnectThread-" + device.getName());
 			this.bluetoothDevice = device;
-			BluetoothSocket tmp = null;
-			try {
-				tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
-			} catch (IOException e) {
-			}
-			bluetoothSocket = tmp;
 		}
 
+		BluetoothSocket tryConnect(final BluetoothDevice device, int i) throws IOException {
+			BluetoothSocket sock = null;
+			System.err.println("tryConnect(method: " + i + ")");
+			
+			switch(i) {
+			case 0:
+				sock = device.createRfcommSocketToServiceRecord(MY_UUID);
+				break;
+			case 1:
+				sock = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+				break;
+			case 2: {
+				Method m;
+				try {
+					m = device.getClass().getMethod(
+							"createInsecureRfcommSocket",
+							new Class[] { int.class });
+					m.setAccessible(true);
+					sock = (BluetoothSocket) m.invoke(device, 1);
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+			}
+				
+			if (sock == null) {
+				throw new IOException("Create socket failed!");
+			}
+
+			try {
+				sock.connect();
+				return sock;
+			} catch (IOException ex) {
+				try {
+					sock.close();
+				} catch (IOException ex2) {
+				}
+
+				throw ex;
+			}
+ 		}
+		
 		@Override
 		public void run() {
 			if (btAdapter == null) {
 				Bt20Base.this.reset();
 				return;
 			}
+			
+			for (int i = 0; i < 3; i++) {
+				try {
+					bluetoothSocket = tryConnect(bluetoothDevice, i);
+					break;
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
 			// Cancel discovery to prevent slow down
 			btAdapter.cancelDiscovery();
 
-			try {
-				bluetoothSocket.connect();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-				try {
-					bluetoothSocket.close();
-				} catch (IOException e) {
-					ex.printStackTrace();
-				}
-
+			if (bluetoothSocket == null) {
+				System.err.println("connect failed!");
 				Bt20Base.this.reset();
 				return;
+				
 			}
 
 			// Reset the ConnectThread since we are done
@@ -258,7 +306,8 @@ public abstract class Bt20Base implements HRProvider {
 		 */
 		public void cancel() {
 			try {
-				bluetoothSocket.close();
+				if (bluetoothSocket != null)
+					bluetoothSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -355,13 +404,13 @@ public abstract class Bt20Base implements HRProvider {
 
 	public static class ZephyrHRM extends Bt20Base {
 
-		static final int ZEPHYR_HXM_BYTE_STX = 0;
-		static final int ZEPHYR_HXM_BYTE_HR = 12;
-		static final int ZEPHYR_HXM_BYTE_CRC = 58;
-		static final int ZEPHYR_HXM_BYTE_ETX = 59;
+		static final byte ZEPHYR_HXM_BYTE_STX = 0;
+		static final byte ZEPHYR_HXM_BYTE_HR = 12;
+		static final byte ZEPHYR_HXM_BYTE_CRC = 58;
+		static final byte ZEPHYR_HXM_BYTE_ETX = 59;
 
-		static final int ZEPHYR_START_BYTE = 0x02;
-		static final int ZEPHYR_END_BYTE = 0x03;
+		static final byte ZEPHYR_START_BYTE = 0x02;
+		static final byte ZEPHYR_END_BYTE = 0x03;
 		public static final String NAME = "Zephyr";
 		
 		public ZephyrHRM(Context ctx) {
@@ -387,21 +436,21 @@ public abstract class Bt20Base implements HRProvider {
 		public int parseBuffer(byte[] buffer) {
 			// Check STX (Start of Text), ETX (End of Text) and CRC Checksum
 		    boolean ok = buffer.length > ZEPHYR_HXM_BYTE_ETX
-		        && buffer[ZEPHYR_HXM_BYTE_STX] == ZEPHYR_START_BYTE
-		        && buffer[ZEPHYR_HXM_BYTE_ETX] == ZEPHYR_END_BYTE
-		        && CalcCrc8(buffer, 3, 55) == buffer[ZEPHYR_HXM_BYTE_CRC];
+		        && getByte(buffer[ZEPHYR_HXM_BYTE_STX]) == ZEPHYR_START_BYTE
+		        && getByte(buffer[ZEPHYR_HXM_BYTE_ETX]) == ZEPHYR_END_BYTE
+		        && CalcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
 
 		    if (!ok)
 		    	return -1;
 		    
-		    return buffer[ZEPHYR_HXM_BYTE_HR]; 
+		    return getByte(buffer[ZEPHYR_HXM_BYTE_HR]); 
 		}
 
 		@Override
 		public int findNextAlignment(byte[] buffer) {
 			for (int i = 0; i < buffer.length - 1; i++) {
-				if (buffer[i] == ZEPHYR_END_BYTE &&
-					buffer[i + 1] == ZEPHYR_START_BYTE) {
+				if (getByte(buffer[i]) == ZEPHYR_END_BYTE &&
+					getByte(buffer[i + 1]) == ZEPHYR_START_BYTE) {
 					return i;
 				}
 			}
@@ -433,17 +482,24 @@ public abstract class Bt20Base implements HRProvider {
 		}
 
 		private boolean startOfMessage(byte buffer[], int pos) {
-			if (buffer.length < pos + 3)
+			if (buffer.length < pos + 4)
 				return false;
 
-			if (buffer[pos] != 0xFE)
+			int b0 = getByte(buffer[pos + 0]);
+			int b1 = getByte(buffer[pos + 1]);
+			int b2 = getByte(buffer[pos + 2]);
+			int b3 = getByte(buffer[pos + 3]);
+			if (b0 != 0xFE) {
 				return false;
+			}
+
+			if ((0xFF - b1) != b2) {
+				return false;
+			}
 		
-			if ((0xFF - buffer[pos+1]) != buffer[pos+2])
+			if (b3 >= 16) {
 				return false;
-			
-			if (buffer[pos+3] >= 16)
-				return false;
+			}
 			
 			return true;
 		}
@@ -453,7 +509,7 @@ public abstract class Bt20Base implements HRProvider {
 			int val = -1;
 			for (int i = 0; i < buffer.length - 8; i++) {
 				if (startOfMessage(buffer, i)) {
-					val = buffer[i + 5];
+					val = getByte(buffer[i + 5]);
 				}
 			}
 			return val;
@@ -466,7 +522,6 @@ public abstract class Bt20Base implements HRProvider {
 					return i;
 			return -1;
 		}
-		
 	};
 	
 	public static byte CalcCrc8(byte buffer[], int start, int length) {
@@ -476,5 +531,9 @@ public abstract class Bt20Base implements HRProvider {
 	      crc = (byte) (crc ^ buffer[i]);
 	    }
 	    return crc;
+	}
+
+	static public int getByte(byte b) {
+		return b & 0xFF;
 	}
 }
