@@ -47,7 +47,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -150,6 +153,43 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		tvLog.setText(logBuffer.toString());
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.hrsettings_menu, menu);
+		return true;
+	}
+
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_hrsettings_clear:
+			clearHRSettings();
+			break;
+		}
+		return true;
+	}
+
+	void clearHRSettings() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Clear HR settings");
+		builder.setMessage("Are you sure");
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				doClear();
+			}
+		});
+
+		builder.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing but close the dialog
+						dialog.dismiss();
+					}
+
+				});
+		builder.show();
+	}
+	
 	private void load() {
 		Resources res = getResources();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -362,6 +402,17 @@ public class HRSettingsActivity extends Activity implements HRClient {
 						dialog.dismiss();
 					}
 				});
+		if (hrProvider.isBondingDevice()) {
+			builder.setNeutralButton("Pairing", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+					Intent i = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+					startActivityForResult(i, 123);
+				}
+			});
+		}
 		builder.setNegativeButton("Cancel",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
@@ -373,6 +424,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 						updateView();
 					}
 				});
+		
 		builder.setSingleChoiceItems(deviceAdapter, -1, 
 				new  DialogInterface.OnClickListener() {
 					@Override
@@ -382,7 +434,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 				});
 		builder.show();
 	}
-	
+		
 	void connect() {
 		stopTimer();
 		if (hrProvider == null || hrDevice == null) {
@@ -418,7 +470,17 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		ed.putString(res.getString(R.string.pref_bt_provider), hrProvider.getProviderName());
 		ed.commit();
 	}
-	
+
+	private void doClear() {
+		Resources res = getResources();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		Editor ed = prefs.edit();
+		ed.remove(res.getString(R.string.pref_bt_name));
+		ed.remove(res.getString(R.string.pref_bt_address));
+		ed.remove(res.getString(R.string.pref_bt_provider));
+		ed.commit();
+	}
+
 	private CharSequence getName(BluetoothDevice dev) {
 		if (dev.getName() != null && dev.getName().length() > 0)
 			return dev.getName();
@@ -522,13 +584,20 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    if (!mAdapter.isEnabled()) {
-	    	log("Bluetooth not enabled!");
-	    	scanButton.setEnabled(false);
-	    	connectButton.setEnabled(false);
-	    	return;
-	    }
-	    load();
-	    open();
+		if (requestCode == 0) {
+			if (!mAdapter.isEnabled()) {
+				log("Bluetooth not enabled!");
+				scanButton.setEnabled(false);
+				connectButton.setEnabled(false);
+				return;
+			}
+			load();
+			open();
+			return;
+		}
+		if (requestCode == 123) {
+			startScan();
+			return;
+		}
 	}
 }
