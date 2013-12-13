@@ -23,12 +23,14 @@ import java.util.Date;
 import org.runnerup.R;
 import org.runnerup.util.SafeParse;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
@@ -46,9 +48,6 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TitleSpinner extends LinearLayout {
@@ -113,6 +112,7 @@ public class TitleSpinner extends LinearLayout {
 
 		CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
 		CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
+		
 		if (type == null || "spinner".contentEquals(type)) {
 			mType = Type.TS_SPINNER;
 			setupSpinner(context, arr, defaultValue);
@@ -429,7 +429,11 @@ public class TitleSpinner extends LinearLayout {
 		} else {
 			mValue.setText("");
 		}
-		
+
+		final NumberPicker numberPicker = new NumberPicker(context, null);
+		numberPicker.processAttributes(arr);
+		numberPicker.setOrientation(VERTICAL);
+
 		LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
 		layout.setOnClickListener(new OnClickListener() {
 			@Override
@@ -441,8 +445,6 @@ public class TitleSpinner extends LinearLayout {
 					alert.setMessage(mPrompt);
 				}
 
-				final NumberPicker numberPicker = new NumberPicker(context, null);
-				numberPicker.setOrientation(VERTICAL);
 				numberPicker.setValue(SafeParse.parseInt(mValue.getText().toString(), 0));
 
 				final LinearLayout layout = new LinearLayout(context);
@@ -454,6 +456,7 @@ public class TitleSpinner extends LinearLayout {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						setValue(getValue(numberPicker));
 						dialog.dismiss();
+						layout.removeView(numberPicker);
 					}
 
 					private String getValue(NumberPicker dp) {
@@ -463,6 +466,7 @@ public class TitleSpinner extends LinearLayout {
 				alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						dialog.dismiss();
+						layout.removeView(numberPicker);
 					}
 				});
 				AlertDialog dialog = alert.create();

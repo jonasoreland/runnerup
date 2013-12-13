@@ -16,7 +16,12 @@
  */
 package org.runnerup.widget;
 
+import org.runnerup.R;
+
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Handler;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -26,9 +31,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class NumberPicker extends LinearLayout {
@@ -43,9 +45,13 @@ public class NumberPicker extends LinearLayout {
     
 	int prevValue;
 	int currValue;
-	int minValue = 0;
-	int maxValue = 59;
+	int minValue = MIN_VAL;
+	int maxValue = MAX_VAL;
 	boolean wrapValue = true;
+	
+	final static int DIGITS = 2;
+	final static int MIN_VAL = 0;
+	final static int MAX_VAL = 59;
 	
 	EditText valueText;
 	OnChangedListener listener;
@@ -58,12 +64,18 @@ public class NumberPicker extends LinearLayout {
 	Handler longHandler = new Handler();
 	long longSpeed = 300;
 	int textSize = 25;
-	int digits = 2;
+	int digits = DIGITS;
 	String fmtString = "%0"+digits+"d";
 	
 	public NumberPicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	
+		if (attrs != null) {
+			TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
+			processAttributes(arr);
+			arr.recycle();
+		}
+		
 		createValueText(context);
 		createButton(context, '+');
 		createButton(context, '-');
@@ -72,6 +84,21 @@ public class NumberPicker extends LinearLayout {
 		setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		addViews();
 		updateView();
+	}
+	
+	public void processAttributes(TypedArray arr) {
+		if (arr == null)
+			return;
+		
+		if (arr.hasValue(R.styleable.TitleSpinner_digits)) {
+			setDigits(arr.getInt(R.styleable.TitleSpinner_digits, digits));
+		}
+		if (arr.hasValue(R.styleable.TitleSpinner_min_val)) {
+			minValue = arr.getInt(R.styleable.TitleSpinner_min_val, minValue);
+		}
+		if (arr.hasValue(R.styleable.TitleSpinner_max_val)) {
+			maxValue = arr.getInt(R.styleable.TitleSpinner_max_val, maxValue);
+		}
 	}
 	
 	private void addViews() {
