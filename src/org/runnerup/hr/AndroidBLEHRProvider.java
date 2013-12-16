@@ -16,6 +16,7 @@
  */
 package org.runnerup.hr;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -389,12 +390,18 @@ public class AndroidBLEHRProvider implements HRProvider {
 			if (hrClientHandler == null)
 				return;
 
+			String address = device.getAddress();
 			if (mIsConnecting
-					&& device.getAddress().equals(btDevice.getAddress())) {
+					&& address.equals(btDevice.getAddress())) {
 				stopScan();
 				btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
 				return;
 			}
+
+			if (mScanDevices.contains(address))
+				return;
+			
+			mScanDevices.add(address);
 
 			hrClientHandler.post(new Runnable() {
 				@Override
@@ -408,12 +415,15 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 	};
 
+	HashSet<String> mScanDevices = new HashSet<String>();
+	
 	@Override
 	public void startScan() {
 		if (mIsScanning)
 			return;
 
 		mIsScanning = true;
+		mScanDevices.clear();
 		btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
 	}
 
