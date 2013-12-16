@@ -54,7 +54,7 @@ public class HRManager {
 			providers.add(new SamsungBLEHRProvider(ctx));
 		}
 		
-		if (experimental && AndroidBLEHRProvider.checkLibrary(ctx)) {
+		if (AndroidBLEHRProvider.checkLibrary(ctx)) {
 			providers.add(new AndroidBLEHRProvider(ctx));
 		}
 		
