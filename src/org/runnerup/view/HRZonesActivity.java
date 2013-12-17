@@ -18,12 +18,16 @@ package org.runnerup.view;
 
 import org.runnerup.R;
 import org.runnerup.util.Constants;
+import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Pair;
 import android.widget.EditText;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -32,13 +36,16 @@ public class HRZonesActivity extends Activity implements Constants {
 	TitleSpinner ageSpinner;
 	TitleSpinner sexSpinner;
 	TitleSpinner maxHRSpinner;
-	EditText	 zone1lo, zone1hi;
-	EditText	 zone2lo, zone2hi;
-	EditText	 zone3lo, zone3hi;
-	EditText	 zone4lo, zone4hi;
-	EditText	 zone5lo, zone5hi;
-	EditText	 zone6lo, zone6hi;
 
+	EditText zones[] = {
+			null, null,
+			null, null,
+			null, null,
+			null, null,
+			null, null,
+			null, null
+	};
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,18 +54,108 @@ public class HRZonesActivity extends Activity implements Constants {
 		ageSpinner = (TitleSpinner) findViewById(R.id.hrzAge);
 		sexSpinner = (TitleSpinner) findViewById(R.id.hrzSex);
 		maxHRSpinner = (TitleSpinner) findViewById(R.id.hrzMHR);
-		zone1lo = (EditText) findViewById(R.id.zone1lo);
-		zone1hi = (EditText) findViewById(R.id.zone1hi);
-		zone2lo = (EditText) findViewById(R.id.zone2lo);
-		zone2hi = (EditText) findViewById(R.id.zone2hi);
-		zone3lo = (EditText) findViewById(R.id.zone3lo);
-		zone3hi = (EditText) findViewById(R.id.zone3hi);
-		zone4lo = (EditText) findViewById(R.id.zone4lo);
-		zone4hi = (EditText) findViewById(R.id.zone4hi);
-		zone5lo = (EditText) findViewById(R.id.zone5lo);
-		zone5hi = (EditText) findViewById(R.id.zone5hi);
-		zone6lo = (EditText) findViewById(R.id.zone6lo);
-		zone6hi = (EditText) findViewById(R.id.zone6hi);
+		zones[0] = (EditText) findViewById(R.id.zone1lo);
+		zones[1] = (EditText) findViewById(R.id.zone1hi);
+		zones[2] = (EditText) findViewById(R.id.zone2lo);
+		zones[3] = (EditText) findViewById(R.id.zone2hi);
+		zones[4] = (EditText) findViewById(R.id.zone3lo);
+		zones[5] = (EditText) findViewById(R.id.zone3hi);
+		zones[6] = (EditText) findViewById(R.id.zone4lo);
+		zones[7] = (EditText) findViewById(R.id.zone4hi);
+		zones[8] = (EditText) findViewById(R.id.zone5lo);
+		zones[9] = (EditText) findViewById(R.id.zone5hi);
+		zones[10] = (EditText) findViewById(R.id.zone6lo);
+		zones[11] = (EditText) findViewById(R.id.zone6hi);
+
+		ageSpinner.setOnSetValueListener(new OnSetValueListener(){
+
+			@Override
+			public String preSetValue(String newValue)
+					throws IllegalArgumentException {
+				recomputeMaxHR();
+				return newValue;
+			}
+
+			@Override
+			public int preSetValue(int newValue)
+					throws IllegalArgumentException {
+				recomputeMaxHR();
+				return newValue;
+			}});
+		
+		sexSpinner.setOnSetValueListener(new OnSetValueListener(){
+
+			@Override
+			public String preSetValue(String newValue)
+					throws IllegalArgumentException {
+				recomputeMaxHR();
+				return newValue;
+			}
+
+			@Override
+			public int preSetValue(int newValue)
+					throws IllegalArgumentException {
+				recomputeMaxHR();
+				return newValue;
+			}});
+
+		maxHRSpinner.setOnSetValueListener(new OnSetValueListener(){
+
+			@Override
+			public String preSetValue(String newValue)
+					throws IllegalArgumentException {
+				recomputeZones();
+				return newValue;
+			}
+
+			@Override
+			public int preSetValue(int newValue)
+					throws IllegalArgumentException {
+				recomputeZones();
+				return newValue;
+			}});
+
+		recomputeZones();
+	}
+
+	protected void recomputeMaxHR() {
+		new Handler().post(new Runnable(){
+
+			@Override
+			public void run() {
+				try {
+					int age = Integer
+							.parseInt(ageSpinner.getValue().toString());
+					int maxHR = HRZoneCalculator.computeMaxHR(age, "Male".contentEquals(sexSpinner.getValue()));
+					maxHRSpinner.setValue(Integer.toString(maxHR));
+					maxHRSpinner.setValue(maxHR);
+					recomputeZones();
+				} catch (NumberFormatException ex) {
+
+				}
+			}});
+	}
+
+	protected void recomputeZones() {
+		new Handler().post(new Runnable(){
+
+			@Override
+			public void run() {
+				try {
+					int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+					for (int i = 0; i < 6; i++) {
+						Pair<Integer,Integer> val = HRZoneCalculator.computeHRZone(i, maxHR);
+						zones[2*i+0].setText(Integer.toString(val.first));
+						zones[2*i+1].setText(Integer.toString(val.second));
+					}
+					saveHR();
+				} catch (NumberFormatException ex) {
+				}
+			}
+		});
+	}
+
+	protected void saveHR() {
 	}
 
 	@Override

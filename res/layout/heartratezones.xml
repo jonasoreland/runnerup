@@ -26,7 +26,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Age"
-        app:type="numberpicker" >
+        app:type="numberpicker"
+        app:digits="3"
+        app:min_val="0"
+        app:max_val="300">
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
@@ -44,7 +47,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Maximum heart rate (MHR)"
-        app:type="numberpicker" >
+        app:type="numberpicker"
+        app:digits="3"
+        app:min_val="0"
+        app:max_val="300">
     </org.runnerup.widget.TitleSpinner>
     
     <TableLayout

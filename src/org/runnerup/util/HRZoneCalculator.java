@@ -31,6 +31,14 @@ public class HRZoneCalculator {
 		0.89, 0.94,
 		0.94, 1.00
 	};
+
+	public static int computeMaxHR(int age, boolean male) {
+		if (male) {
+			return Math.round(214 - age * 0.8f);
+		} else {
+			return Math.round(209 - age * 0.7f);
+		}
+	}
 	
 	public static Pair<Integer, Integer> computeHRZone(int zone, int maxHR) {
 		if (zone < 0)
