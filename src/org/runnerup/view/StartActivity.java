@@ -541,9 +541,13 @@ public class StartActivity extends Activity implements TickListener {
 		
 		if (mGpsTracker != null && mGpsTracker.isHRConfigured()) {
 			hrLayout.setVisibility(View.VISIBLE);
+			Integer hrVal = null;
 			if (mGpsTracker.isHRConnected()) {
+				hrVal = mGpsTracker.getCurrentHRValue();
+			}
+			if (hrVal != null) {
 				hrButton.setEnabled(false);
-				hrValueText.setText(Integer.toString(mGpsTracker.getCurrentHRValue()));
+				hrValueText.setText(Integer.toString(hrVal));
 			} else {
 				hrButton.setEnabled(true);
 				hrValueText.setText("?");
