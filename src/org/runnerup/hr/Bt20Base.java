@@ -196,10 +196,6 @@ public abstract class Bt20Base implements HRProvider {
 				@Override
 				public void run() {
 					if (mIsConnecting && hrClient != null) {
-						mIsConnected = true;
-						mIsConnecting = false;
-						hrClient.onConnectResult(true);
-
 						// Start connected thread...
 						connectedThread = new ConnectedThread(bluetoothSocket);
 						connectedThread.start();
@@ -207,9 +203,72 @@ public abstract class Bt20Base implements HRProvider {
 				}
 			});
 		}
-
 	}
 
+	private void reportConnected() {
+		if (hrClient != null) {
+			hrClientHandler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					if (mIsConnecting && hrClient != null) {
+						mIsConnected = true;
+						mIsConnecting = false;
+						hrClient.onConnectResult(true);
+					}
+				}
+			});
+		}
+	}
+	
+	static BluetoothSocket tryConnect(final BluetoothDevice device, int i)
+			throws IOException {
+		BluetoothSocket sock = null;
+		System.err.println("tryConnect(method: " + i + ")");
+
+		switch (i) {
+		case 0:
+			sock = device.createRfcommSocketToServiceRecord(MY_UUID);
+			break;
+		case 1:
+			sock = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+			break;
+		case 2: {
+			Method m;
+			try {
+				m = device.getClass().getMethod("createInsecureRfcommSocket",
+						new Class[] { int.class });
+				m.setAccessible(true);
+				sock = (BluetoothSocket) m.invoke(device, 1);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+		}
+
+		if (sock == null) {
+			throw new IOException("Create socket failed!");
+		}
+
+		try {
+			sock.connect();
+			return sock;
+		} catch (IOException ex) {
+			try {
+				sock.close();
+			} catch (IOException ex2) {
+			}
+
+			throw ex;
+		}
+	}
+	
 	/**
 	 * A thread to connect to a bluetooth device.
 	 */
@@ -222,53 +281,6 @@ public abstract class Bt20Base implements HRProvider {
 			this.bluetoothDevice = device;
 		}
 
-		BluetoothSocket tryConnect(final BluetoothDevice device, int i) throws IOException {
-			BluetoothSocket sock = null;
-			System.err.println("tryConnect(method: " + i + ")");
-			
-			switch(i) {
-			case 0:
-				sock = device.createRfcommSocketToServiceRecord(MY_UUID);
-				break;
-			case 1:
-				sock = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
-				break;
-			case 2: {
-				Method m;
-				try {
-					m = device.getClass().getMethod(
-							"createInsecureRfcommSocket",
-							new Class[] { int.class });
-					m.setAccessible(true);
-					sock = (BluetoothSocket) m.invoke(device, 1);
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
-			}
-			}
-				
-			if (sock == null) {
-				throw new IOException("Create socket failed!");
-			}
-
-			try {
-				sock.connect();
-				return sock;
-			} catch (IOException ex) {
-				try {
-					sock.close();
-				} catch (IOException ex2) {
-				}
-
-				throw ex;
-			}
- 		}
 		
 		@Override
 		public void run() {
@@ -322,11 +334,11 @@ public abstract class Bt20Base implements HRProvider {
 	 * This thread handles data transmission when connected.
 	 */
 	private class ConnectedThread extends Thread {
-		private final BluetoothSocket bluetoothSSocket;
+		private final BluetoothSocket bluetoothSocket;
 		private final InputStream inputStream;
 
 		public ConnectedThread(BluetoothSocket bluetoothSocket) {
-			this.bluetoothSSocket = bluetoothSocket;
+			this.bluetoothSocket = bluetoothSocket;
 			InputStream tmp = null;
 
 			try {
@@ -339,46 +351,43 @@ public abstract class Bt20Base implements HRProvider {
 
 		@Override
 		public void run() {
+			readHR();
+		}
+		
+		private void readHR() {
+			Integer hr[] = new Integer[1];
 			final int frameSize = getFrameSize();
-			byte[] buffer = new byte[frameSize];
-			int bytes; // bytes read
-			int offset = 0;
+			byte[] buffer = new byte[2 * frameSize];
+			int bytesInBuffer = 0;
 
 			// Keep listening to the inputStream while connected
 			while (true) {
 				try {
 					// Read from the inputStream
-					bytes = inputStream
-							.read(buffer, offset, frameSize - offset);
+					int bytesRead = inputStream.read(buffer, bytesInBuffer, buffer.length - bytesInBuffer);
 
-					if (bytes == -1) {
+					if (bytesRead == -1) {
 						throw new IOException("EOF reached.");
 					}
 
-					offset += bytes;
+					bytesInBuffer += bytesRead;
+					int bytesUsed = parseBuffer(buffer, bytesInBuffer, hr);
+					if (hr[0] != null) {
+						hrValue = hr[0].intValue();
+						hrTimestamp = System.currentTimeMillis();
 
-					if (offset < frameSize) {
-						// Partial frame received. Call read again to receive
-						// the rest.
-						continue;
-					}
-
-					int hr = parseBuffer(buffer);
-					if (hr < 0) {
-						int index = findNextAlignment(buffer);
-						if (index == -1) {
-							offset = 0;
-							continue;
+						if (hrValue > 0 && mIsConnecting) {
+							reportConnected();
 						}
-						offset = frameSize - index;
-						System.arraycopy(buffer, index, buffer, 0, offset);
-						continue;
 					}
 
-					hrValue = hr;
-					hrTimestamp = System.currentTimeMillis();
-
-					offset = 0;
+					if (bytesUsed > 0) {
+						System.arraycopy(buffer, bytesUsed, buffer, 0, bytesInBuffer - bytesUsed);
+						bytesInBuffer -= bytesUsed;
+					} else if (bytesUsed == 0 && bytesInBuffer == buffer.length) {
+						System.err.println("reset");
+						bytesInBuffer = 0;
+					}
 				} catch (IOException e) {
 					reportDisconnected(e);
 					break;
@@ -391,7 +400,7 @@ public abstract class Bt20Base implements HRProvider {
 		 */
 		public void cancel() {
 			try {
-				bluetoothSSocket.close();
+				bluetoothSocket.close();
 			} catch (IOException e) {
 			}
 		}
@@ -400,13 +409,41 @@ public abstract class Bt20Base implements HRProvider {
 	public void reportDisconnected(IOException e) {
 	}
 
+	abstract static class Bt20BaseOld extends Bt20Base {
+
+		public Bt20BaseOld(Context ctx) {
+			super(ctx);
+		}
+
+		@Override
+		public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr) {
+			hr[0] = null;
+			if (bytesInBuffer < getFrameSize())
+				return 0;
+
+			int hrValue = parseBuffer(buffer);
+			if (hrValue > 0) {
+				hr[0] = Integer.valueOf(hrValue);
+				return bytesInBuffer; // use all of buffer
+			} else {
+				int index = findNextAlignment(buffer);
+				if (index < 0)
+					return bytesInBuffer;
+				return index;
+			}
+		}
+
+		public abstract int getFrameSize();
+
+		public abstract int parseBuffer(byte[] buffer);
+
+		public abstract int findNextAlignment(byte buffer[]);
+	}
+
 	public abstract int getFrameSize();
+	public abstract int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr);
 
-	public abstract int parseBuffer(byte[] buffer);
-
-	public abstract int findNextAlignment(byte[] buffer);
-
-	public static class ZephyrHRM extends Bt20Base {
+	public static class ZephyrHRM extends Bt20BaseOld {
 
 		static final byte ZEPHYR_HXM_BYTE_STX = 0;
 		static final byte ZEPHYR_HXM_BYTE_HR = 12;
@@ -485,12 +522,12 @@ public abstract class Bt20Base implements HRProvider {
 			return 16;
 		}
 
-		private boolean startOfMessage(byte buffer[], int pos) {
-			if (buffer.length < pos + 4)
+		private boolean startOfMessage(byte buffer[], int bytesInBuffer, int pos) {
+			if (bytesInBuffer < pos + 4)
 				return false;
 
 			int b0 = getByte(buffer[pos + 0]);
-			int b1 = getByte(buffer[pos + 1]);
+			int b1 = getByte(buffer[pos + 1]); // len
 			int b2 = getByte(buffer[pos + 2]);
 			int b3 = getByte(buffer[pos + 3]);
 			if (b0 != 0xFE) {
@@ -505,26 +542,23 @@ public abstract class Bt20Base implements HRProvider {
 				return false;
 			}
 			
+			if (bytesInBuffer < pos + b1)
+				return false;
+			
 			return true;
 		}
 		
 		@Override
-		public int parseBuffer(byte[] buffer) {
-			int val = -1;
-			for (int i = 0; i < buffer.length - 8; i++) {
-				if (startOfMessage(buffer, i)) {
-					val = getByte(buffer[i + 5]);
+		public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer hrVal[]) {
+			hrVal[0] = null;
+			for (int i = 0; i < bytesInBuffer; i++) {
+				if (startOfMessage(buffer, bytesInBuffer, i)) {
+					int bytesUsed = getByte(buffer[i + 1]);
+					hrVal[0] = Integer.valueOf(getByte(buffer[i + 5]));
+					return bytesUsed;
 				}
 			}
-			return val;
-		}
-
-		@Override
-		public int findNextAlignment(byte[] buffer) {
-			for (int i = 0; i < buffer.length; i++)
-				if (startOfMessage(buffer, i))
-					return i;
-			return -1;
+			return 0;
 		}
 	};
 	
