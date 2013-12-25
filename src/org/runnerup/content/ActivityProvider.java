@@ -40,6 +40,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityProvider extends ContentProvider {
@@ -64,7 +65,34 @@ public class ActivityProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, "nike+xml/#/*", NIKE);
         return true;
     }
- 
+
+    private Pair<File, OutputStream> openCacheFile(String name) {
+    	for (int i = 0; i < 3; i++) {
+    		try {
+    			File path = null;
+    			switch(i) {
+    			case 0:
+   				default:
+    				path = getContext().getExternalCacheDir();
+    				break;
+    			case 1:
+    				path = getContext().getExternalFilesDir("tcx");
+    				break;
+    			case 2:
+    				path = getContext().getCacheDir();
+    				break;
+    			}
+    			final File file = new File(path.getAbsolutePath() + File.separator + name);
+    			final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+    			System.err.println(Integer.toString(i) + ": putting cache file in: " + file.getAbsolutePath());
+    			return new Pair<File, OutputStream>(file, out);
+    		} catch (IOException ex) {
+    		}
+    	}
+    	
+		return null;
+    }
+    
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode)
             throws FileNotFoundException {
@@ -78,37 +106,38 @@ public class ActivityProvider extends ContentProvider {
 	    	final List<String> list = uri.getPathSegments();
 	    	final String id = list.get(list.size() - 2);
 			final long activityId = Long.parseLong(id);
-			final String path = getContext().getExternalCacheDir().getAbsolutePath() + File.pathSeparator;
-			final File file = new File(path + "activity." + list.get(list.size() - 3));
-			System.err.println("activity: " + activityId + ", file: " + file.getAbsolutePath());
+			final Pair<File, OutputStream> out = openCacheFile("activity." + list.get(list.size() - 3));
+			if (out == null) {
+				System.err.println("Failed to open cacheFile(" + "activity." + list.get(list.size() - 3) + ")");
+				return null;
+			}
+			
+			System.err.println("activity: " + activityId + ", file: " + out.first.getAbsolutePath());
 			DBHelper mDBHelper = new DBHelper(getContext());
 			SQLiteDatabase mDB = mDBHelper.getReadableDatabase();
 			try {
-				final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-				if (res == GPX) {
+				if (res == TCX) {
 					TCX tcx = new TCX(mDB);
-					tcx.export(activityId, new OutputStreamWriter(out));
+					tcx.export(activityId, new OutputStreamWriter(out.second));
 					System.err.println("export tcx");
 				} else if (res == GPX) {
 					GPX gpx = new GPX(mDB);
-					gpx.export(activityId, new OutputStreamWriter(out));
+					gpx.export(activityId, new OutputStreamWriter(out.second));
 					System.err.println("export gpx");
 				} else if (res == NIKE) {
 					NikeXML xml = new NikeXML(mDB);
-					xml.export(activityId, new OutputStreamWriter(out));
+					xml.export(activityId, new OutputStreamWriter(out.second));
 				}
-				out.flush();
-				out.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+				out.second.flush();
+				out.second.close();
+				System.err.println("wrote " + out.first.length() + " bytes...");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			mDB.close();
 			mDBHelper.close();
             
-            ParcelFileDescriptor pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+            ParcelFileDescriptor pfd = ParcelFileDescriptor.open(out.first, ParcelFileDescriptor.MODE_READ_ONLY);
             return pfd;
 		}
 
