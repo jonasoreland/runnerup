@@ -26,6 +26,7 @@ import org.runnerup.export.GarminUploader;
 import org.runnerup.export.JoggSE;
 import org.runnerup.export.MapMyRunUploader;
 import org.runnerup.export.NikePlus;
+import org.runnerup.export.RunKeeperUploader;
 import org.runnerup.export.RunnerUpLive;
 import org.runnerup.export.RunningAHEAD;
 
@@ -270,16 +271,16 @@ public class DBHelper extends SQLiteOpenHelper implements
 			insertAccount(arg0, values);
 		}
 
-//		if (yet)
-//		{
-//			ContentValues values = new ContentValues();
-//			values.put(DB.ACCOUNT.NAME, RunKeeperUploader.NAME);
-//			values.put(DB.ACCOUNT.FORMAT, "runkeeper");
-//			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-//			values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
-//			values.put(DB.ACCOUNT.URL, "http://runkeeper.com/");
-//			insertAccount(arg0, values);
-//		}
+		if (yet)
+		{
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, RunKeeperUploader.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "runkeeper");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
+			values.put(DB.ACCOUNT.URL, "http://runkeeper.com/");
+			insertAccount(arg0, values);
+		}
 
 		if (yet) {
 			ContentValues values = new ContentValues();
