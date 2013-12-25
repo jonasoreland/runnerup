@@ -57,9 +57,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
 public class DigifitUploader extends FormCrawler implements Uploader {
-	public static final String NAME = "Digifit";
-
 	public static String DIGIFIT_URL = "http://my.digifit.com";
+
+	public static final String NAME = "Digifit";
 
 	public static void main(String args[]) throws Exception {
 		if (args.length < 2) {
@@ -76,12 +76,44 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		System.err.println(du.connect());
 	}
 
-	private String _password;
-	private String _username;
 	private boolean _configured;
 	private long _id;
+	private String _password;
+	private String _username;
 
 	DigifitUploader(UploadManager unused) {
+	}
+
+	private JSONObject buildRequest(String root, Map<String, String> requestParameters) throws JSONException {
+		JSONObject json = new JSONObject();
+		JSONObject request = new JSONObject(requestParameters);
+		json.put(root, request);
+		return json;
+	}
+
+	private JSONObject callDigifitEndpoint(String url, JSONObject request) throws IOException, MalformedURLException,
+			ProtocolException, JSONException {
+		HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+		conn.setDoOutput(true);
+		conn.setRequestMethod("POST");
+		conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		addCookies(conn);
+
+		OutputStream out = conn.getOutputStream();
+		out.write(request.toString().getBytes());
+		out.flush();
+		out.close();
+
+		JSONObject response = null;
+		if (conn.getResponseCode() == 200) {
+			try {
+				response = parse(conn.getInputStream());
+			} finally {
+				conn.disconnect();
+			}
+		}
+
+		return response;
 	}
 
 	@Override
@@ -116,12 +148,10 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 		Status errorStatus = Status.ERROR;
 		try {
-			HttpURLConnection conn = (HttpURLConnection) new URL(DIGIFIT_URL
-					+ "/site/authenticate").openConnection();
+			HttpURLConnection conn = (HttpURLConnection) new URL(DIGIFIT_URL + "/site/authenticate").openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Content-Type",
-					"application/x-www-form-urlencoded");
+			conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			OutputStream out = conn.getOutputStream();
 			out.write(credentials.toString().getBytes());
@@ -139,8 +169,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 			 * We'll simply look for a few key tokens and hope that's good
 			 * enough.
 			 */
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					conn.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String line = in.readLine();
 
 			if (conn.getResponseCode() == 200) {
@@ -163,6 +192,19 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 			ex.printStackTrace();
 		}
 		return errorStatus;
+	}
+
+	private void deleteFile(long fileId, String fileType) {
+		try {
+			String deleteUrl = DIGIFIT_URL + "/rpc/json/userfile/delete_workout?file_id=" + fileId + "&file_type="
+					+ fileType;
+			HttpURLConnection conn = (HttpURLConnection) new URL(deleteUrl).openConnection();
+			conn.setRequestMethod("GET");
+			conn.addRequestProperty("Referer", DIGIFIT_URL + "/site/workoutimport");
+			addCookies(conn);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override
@@ -209,8 +251,8 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 				out.write(buf, 0, readLen);
 				cnt += readLen;
 			}
-			System.err.println("Expected " + fileSize + " bytes, got " + cnt
-					+ " bytes: " + (fileSize == cnt ? "OK" : "ERROR"));
+			System.err.println("Expected " + fileSize + " bytes, got " + cnt + " bytes: "
+					+ (fileSize == cnt ? "OK" : "ERROR"));
 
 			in.close();
 			out.close();
@@ -223,44 +265,6 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 				deleteFile(fileId, "export");
 			}
 		}
-	}
-
-	private void deleteFile(long fileId, String fileType) {
-		try {
-			String deleteUrl = DIGIFIT_URL
-					+ "/rpc/json/userfile/delete_workout?file_id=" + fileId
-					+ "&file_type=" + fileType;
-			HttpURLConnection conn = (HttpURLConnection) new URL(deleteUrl)
-					.openConnection();
-			conn.setRequestMethod("GET");
-			conn.addRequestProperty("Referer", DIGIFIT_URL
-					+ "/site/workoutimport");
-			addCookies(conn);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private JSONObject getWorkoutFileId(String key) throws IOException,
-			MalformedURLException, ProtocolException, JSONException {
-		JSONObject exportListResponse = callDigifitEndpoint(DIGIFIT_URL
-				+ "/rpc/json/workout/export_workouts_list", new JSONObject());
-		System.err.println(exportListResponse);
-
-		JSONArray exportList = exportListResponse.getJSONObject("response")
-				.getJSONArray("export_list");
-
-		for (int idx = 0;; idx++) {
-			JSONObject export = exportList.optJSONObject(idx);
-			if (export == null) {
-				break;
-			}
-			long workoutId = export.getLong("workoutid");
-			if (("" + workoutId).equals(key)) {
-				return export;
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -285,6 +289,35 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 	@Override
 	public String getName() {
 		return NAME;
+	}
+
+	private String getUploadUrl() throws IOException, MalformedURLException, ProtocolException, JSONException {
+		String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";
+		JSONObject response = callDigifitEndpoint(getUploadUrl, new JSONObject());
+
+		String uploadUrl = response.getJSONObject("response").getJSONObject("upload_url").getString("URL");
+		return uploadUrl;
+	}
+
+	private JSONObject getWorkoutFileId(String key) throws IOException, MalformedURLException, ProtocolException,
+			JSONException {
+		JSONObject exportListResponse = callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/export_workouts_list",
+				new JSONObject());
+		System.err.println(exportListResponse);
+
+		JSONArray exportList = exportListResponse.getJSONObject("response").getJSONArray("export_list");
+
+		for (int idx = 0;; idx++) {
+			JSONObject export = exportList.optJSONObject(idx);
+			if (export == null) {
+				break;
+			}
+			long workoutId = export.getLong("workoutid");
+			if (("" + workoutId).equals(key)) {
+				return export;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -319,8 +352,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 	public Status listWorkouts(List<Pair<String, String>> list) {
 		Status errorStatus = Status.ERROR;
 		Map<String, String> requestParameters = new HashMap<String, String>();
-		DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss",
-				Locale.US);
+		DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US);
 		Date now = new Date();
 
 		/*
@@ -342,30 +374,24 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 		try {
 			JSONObject request = buildRequest("workout", requestParameters);
-			JSONObject response = callDigifitEndpoint(DIGIFIT_URL
-					+ "/rpc/json/workout/list", request);
+			JSONObject response = callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/list", request);
 
 			if (response == null)
 				return errorStatus;
 
-			JSONArray workouts = response.getJSONObject("response")
-					.getJSONArray("workouts");
+			JSONArray workouts = response.getJSONObject("response").getJSONArray("workouts");
 			for (int idx = 0;; idx++) {
 				JSONObject workout = workouts.optJSONObject(idx);
 				if (workout == null) {
 					break;
 				}
-				StringBuffer title = new StringBuffer(workout.getJSONObject(
-						"description").getString("title"));
+				StringBuffer title = new StringBuffer(workout.getJSONObject("description").getString("title"));
 				String id = "" + workout.getLong("id");
-				String startTime = workout.getJSONObject("summary").getString(
-						"startTime");
+				String startTime = workout.getJSONObject("summary").getString("startTime");
 
 				// startTime is rfc3339, instead of parsing it, just strip
 				// everything but the date.
-				title.append(" (")
-						.append(startTime.substring(0, startTime.indexOf("T")))
-						.append(")");
+				title.append(" (").append(startTime.substring(0, startTime.indexOf("T"))).append(")");
 
 				list.add(new Pair<String, String>(id, title.toString()));
 			}
@@ -376,42 +402,6 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 			errorStatus.ex = ex;
 		}
 		return errorStatus;
-	}
-
-	private JSONObject buildRequest(String root,
-			Map<String, String> requestParameters) throws JSONException {
-		JSONObject json = new JSONObject();
-		JSONObject request = new JSONObject(requestParameters);
-		json.put(root, request);
-		return json;
-	}
-
-	private JSONObject callDigifitEndpoint(String url, JSONObject request)
-			throws IOException, MalformedURLException, ProtocolException,
-			JSONException {
-		HttpURLConnection conn = (HttpURLConnection) new URL(url)
-				.openConnection();
-		conn.setDoOutput(true);
-		conn.setRequestMethod("POST");
-		conn.addRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
-		addCookies(conn);
-
-		OutputStream out = conn.getOutputStream();
-		out.write(request.toString().getBytes());
-		out.flush();
-		out.close();
-
-		JSONObject response = null;
-		if (conn.getResponseCode() == 200) {
-			try {
-				response = parse(conn.getInputStream());
-			} finally {
-				conn.disconnect();
-			}
-		}
-
-		return response;
 	}
 
 	@Override
@@ -431,7 +421,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		Status errorStatus = Status.ERROR;
 		TCX tcx = new TCX(db);
 		tcx.setAddGratuitousTrack(true);
-		
+
 		try {
 			// I wonder why there's an API for getting a special upload path.
 			// This seems obtuse.
@@ -457,32 +447,17 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		return errorStatus;
 	}
 
-	private String getUploadUrl() throws IOException, MalformedURLException,
-			ProtocolException, JSONException {
-		String getUploadUrl = DIGIFIT_URL
-				+ "/rpc/json/workout/import_workouts_url";
-		JSONObject response = callDigifitEndpoint(getUploadUrl,
-				new JSONObject());
-
-		String uploadUrl = response.getJSONObject("response")
-				.getJSONObject("upload_url").getString("URL");
-		return uploadUrl;
-	}
-
-	private void uploadFileToDigifit(String payload, String uploadUrl)
-			throws Exception {		
-		HttpURLConnection conn = (HttpURLConnection) new URL(uploadUrl)
-				.openConnection();
+	private void uploadFileToDigifit(String payload, String uploadUrl) throws Exception {
+		HttpURLConnection conn = (HttpURLConnection) new URL(uploadUrl).openConnection();
 		conn.setDoOutput(true);
 		conn.setRequestMethod("POST");
 		addCookies(conn);
 
 		String filename = "RunnerUp.tcx";
 
-		Part<StringWritable> themePart = new Part<StringWritable>("theme",
-				new StringWritable(FormCrawler.URLEncode("site")));
-		Part<StringWritable> payloadPart = new Part<StringWritable>("userFiles",
-				new StringWritable(payload));
+		Part<StringWritable> themePart = new Part<StringWritable>("theme", new StringWritable(
+				FormCrawler.URLEncode("site")));
+		Part<StringWritable> payloadPart = new Part<StringWritable>("userFiles", new StringWritable(payload));
 		payloadPart.filename = filename;
 		payloadPart.contentType = "application/octet-stream";
 		Part<?> parts[] = { themePart, payloadPart };
@@ -491,17 +466,15 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		if (conn.getResponseCode() != 200) {
 			throw new Exception("got a non-200 response code from upload");
 		}
-		
+
 		try {
 			// Digifit takes a little while to process an import -- that is,
 			// the import we just did above won't show up in this list. In the
 			// general case, this will remove *old* imports from Digifit only
 			// leaving the user with ~1ish file of import cruft.
-			JSONObject response = callDigifitEndpoint(DIGIFIT_URL
-					+ "/rpc/json/workout/import_workouts_list",
+			JSONObject response = callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/import_workouts_list",
 					new JSONObject());
-			JSONArray uploadList = response.getJSONObject("response")
-					.getJSONArray("upload_list");
+			JSONArray uploadList = response.getJSONObject("response").getJSONArray("upload_list");
 			for (int idx = 0;; idx++) {
 				JSONObject upload = uploadList.optJSONObject(idx);
 				if (upload == null) {
