@@ -441,7 +441,8 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 		Status errorStatus = Status.ERROR;
 		TCX tcx = new TCX(db);
-
+		tcx.setAddGratuitousTrack(true);
+		
 		try {
 			// I wonder why there's an API for getting a special upload path.
 			// This seems obtuse.
@@ -481,11 +482,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 	}
 
 	private void uploadFileToDigifit(String payload, String uploadUrl)
-			throws Exception {
-		System.err.println("Uploading to " + uploadUrl);
-		
-		uploadUrl = "http://192.168.10.109:12345";
-		
+			throws Exception {		
 		HttpURLConnection conn = (HttpURLConnection) new URL(uploadUrl)
 				.openConnection();
 		conn.setDoOutput(true);
@@ -505,15 +502,6 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 		if (conn.getResponseCode() != 200) {
 			throw new Exception("got a non-200 response code from upload");
-		}
-		System.err.println("method = " + conn.getRequestMethod());
-
-		System.err.println("payloadPart.filename = " + payloadPart.filename);
-		
-		System.err.println("Got" + conn.getResponseMessage() + " from Digifit");
-
-		for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
-			System.err.println(entry.getKey() + " = " + entry.getValue());
 		}
 		
 		try {

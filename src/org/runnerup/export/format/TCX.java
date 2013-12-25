@@ -52,6 +52,8 @@ public class TCX {
 	String notes = null;
 	SimpleDateFormat simpleDateFormat = null;
 	
+	private boolean addGratuitousTrack = false;
+	
 	public TCX(SQLiteDatabase mDB) {
 		this.mDB = mDB;
 		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'", Locale.US);
@@ -176,6 +178,8 @@ public class TCX {
 				int maxHR = 0;
 				long sumHR = 0;
 				long cntHR = 0;
+				int cntTrackpoints = 0;
+
 				if (pok && cLocation.getLong(0) == lap) {
 					mXML.startTag("", "Track");
 					float last_lat = 0;
@@ -186,6 +190,8 @@ public class TCX {
 						float lat = cLocation.getFloat(2);
 						float longi = cLocation.getFloat(3);
 						if (!(time == last_time && lat == last_lat && longi != last_longi)) {
+							cntTrackpoints++;
+							
 							mXML.startTag("", "Trackpoint");
 							mXML.startTag("", "Time");
 							mXML.text(formatTime(time));
@@ -234,6 +240,18 @@ public class TCX {
 					}
 					mXML.endTag("", "Track");
 				}
+				// Digifit chokes if there isn't at least *1* trackpoint, but is ok
+				// even if it's empty.
+				if (cntTrackpoints == 0 && addGratuitousTrack) {
+					mXML.startTag("", "Track");
+					mXML.startTag("", "Trackpoint");
+					mXML.startTag("", "Time");
+					mXML.text(formatTime(startTime));
+					mXML.endTag("",  "Time");
+					mXML.endTag("",  "Trackpoint");
+					mXML.endTag("", "Track");
+				}
+				
 				if (cntHR > 0) {
 					mXML.startTag("", "AverageHeartRateBpm");
 					mXML.startTag("", "Value");
@@ -257,5 +275,9 @@ public class TCX {
 
 	public String getNotes() {
 		return notes;
+	}
+
+	public void setAddGratuitousTrack(boolean addGratuitousTrack) {
+		this.addGratuitousTrack = addGratuitousTrack;
 	}
 }
