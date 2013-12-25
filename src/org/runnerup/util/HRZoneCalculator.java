@@ -19,18 +19,10 @@ package org.runnerup.util;
 import android.os.Build;
 import android.util.Pair;
 import android.annotation.TargetApi;
+import android.content.Context;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZoneCalculator {
-
-	static final double zoneLimits[] = {
-		0.60, 0.65,
-		0.65, 0.75,
-		0.75, 0.82,
-		0.82, 0.89,
-		0.89, 0.94,
-		0.94, 1.00
-	};
 
 	public static int computeMaxHR(int age, boolean male) {
 		if (male) {
@@ -39,21 +31,45 @@ public class HRZoneCalculator {
 			return Math.round(209 - age * 0.7f);
 		}
 	}
+
+	public HRZoneCalculator(Context ctx) {
+		// TODO load from preferences...
+	}
 	
-	public static Pair<Integer, Integer> computeHRZone(int zone, int maxHR) {
+	int zoneLimits[] = { 		
+		60, // 1
+		65, // 2
+		75, // 3
+		82, // 4
+		89, // 5
+		94, // 6
+	};
+
+	public int getZoneCount() {
+		return zoneLimits.length;
+	}
+
+	public Pair<Integer, Integer> getZoneLimits(int zone) {
+		zone--; // 1-base => 0-based
 		if (zone < 0)
 			return null;
-		
-		if (zone == 0) {
-			return new Pair<Integer, Integer>(0, (int) Math.round(maxHR * zoneLimits[0]));
-		}
-		
-		zone--; // 1-base => 0-based
 
-		if (2 * zone + 1 >= zoneLimits.length)
+		if (zone >= zoneLimits.length)
 			return null;
 
-		return new Pair<Integer,Integer>((int)Math.round(maxHR * zoneLimits[2*zone+0]),
-                          				 (int)Math.round(maxHR * zoneLimits[2*zone+1]));
+		if (zone + 1 < zoneLimits.length)
+			return new Pair<Integer, Integer>(zoneLimits[zone],
+					zoneLimits[zone + 1]);
+		else
+			return new Pair<Integer, Integer>(zoneLimits[zone], 100);
+	}
+
+	public Pair<Integer, Integer> computeHRZone(int zone, int maxHR) {
+		Pair<Integer, Integer> limits = getZoneLimits(zone);
+		if (limits == null)
+			return null;
+
+		return new Pair<Integer, Integer>((limits.first * maxHR + 50) / 100,
+				(limits.second * maxHR + 50) / 100);
 	}
 }

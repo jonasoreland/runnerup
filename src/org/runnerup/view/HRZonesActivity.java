@@ -16,6 +16,8 @@
  */
 package org.runnerup.view;
 
+import java.util.Vector;
+
 import org.runnerup.R;
 import org.runnerup.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
@@ -24,11 +26,20 @@ import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Pair;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZonesActivity extends Activity implements Constants {
@@ -36,37 +47,51 @@ public class HRZonesActivity extends Activity implements Constants {
 	TitleSpinner ageSpinner;
 	TitleSpinner sexSpinner;
 	TitleSpinner maxHRSpinner;
+	HRZoneCalculator hrZoneCalculator;
+	
+	Vector<EditText> zones = new Vector<EditText>();
 
-	EditText zones[] = {
-			null, null,
-			null, null,
-			null, null,
-			null, null,
-			null, null,
-			null, null
-	};
+	View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
+		TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
+		TextView tv = (TextView) row.findViewById(R.id.zonetext);
+		EditText lo = (EditText) row.findViewById(R.id.zonelo);
+		EditText hi = (EditText) row.findViewById(R.id.zonehi);
+		Pair<Integer,Integer> lim = hrZoneCalculator.getZoneLimits(zone);
+		tv.setText("Zone " + zone + " " + lim.first + " - " + lim.second);
+		lo.setTag("zone"+zone+"lo");
+		hi.setTag("zone"+zone+"hi");
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		if (pref.contains((String) lo.getTag())) {
+			lo.setText(Integer.toString(pref.getInt((String) lo.getTag(), 0)));
+		}
+		if (pref.contains((String) hi.getTag())) {
+			hi.setText(Integer.toString(pref.getInt((String) hi.getTag(), 0)));
+		}
+		zones.add(lo);
+		zones.add(hi);
+		
+		return row;
+	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.heartratezones);
 
+		hrZoneCalculator = new HRZoneCalculator(this);
 		ageSpinner = (TitleSpinner) findViewById(R.id.hrzAge);
 		sexSpinner = (TitleSpinner) findViewById(R.id.hrzSex);
 		maxHRSpinner = (TitleSpinner) findViewById(R.id.hrzMHR);
-		zones[0] = (EditText) findViewById(R.id.zone1lo);
-		zones[1] = (EditText) findViewById(R.id.zone1hi);
-		zones[2] = (EditText) findViewById(R.id.zone2lo);
-		zones[3] = (EditText) findViewById(R.id.zone2hi);
-		zones[4] = (EditText) findViewById(R.id.zone3lo);
-		zones[5] = (EditText) findViewById(R.id.zone3hi);
-		zones[6] = (EditText) findViewById(R.id.zone4lo);
-		zones[7] = (EditText) findViewById(R.id.zone4hi);
-		zones[8] = (EditText) findViewById(R.id.zone5lo);
-		zones[9] = (EditText) findViewById(R.id.zone5hi);
-		zones[10] = (EditText) findViewById(R.id.zone6lo);
-		zones[11] = (EditText) findViewById(R.id.zone6hi);
-
+		TableLayout zonesTable = (TableLayout) findViewById(R.id.zonesTable);
+		{
+			int zoneCount = hrZoneCalculator.getZoneCount();
+			LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			zones.clear();
+			for (int i = 0; i < zoneCount ; i++ ) {
+				View row = addZoneRow(inflator, zonesTable, i + 1);
+				zonesTable.addView(row);
+			}
+		}
 		ageSpinner.setOnSetValueListener(new OnSetValueListener(){
 
 			@Override
@@ -124,8 +149,7 @@ public class HRZonesActivity extends Activity implements Constants {
 			@Override
 			public void run() {
 				try {
-					int age = Integer
-							.parseInt(ageSpinner.getValue().toString());
+					int age = Integer.parseInt(ageSpinner.getValue().toString());
 					int maxHR = HRZoneCalculator.computeMaxHR(age, "Male".contentEquals(sexSpinner.getValue()));
 					maxHRSpinner.setValue(Integer.toString(maxHR));
 					maxHRSpinner.setValue(maxHR);
@@ -142,11 +166,12 @@ public class HRZonesActivity extends Activity implements Constants {
 			@Override
 			public void run() {
 				try {
+					int zoneCount = hrZoneCalculator.getZoneCount();
 					int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
-					for (int i = 0; i < 6; i++) {
-						Pair<Integer,Integer> val = HRZoneCalculator.computeHRZone(i, maxHR);
-						zones[2*i+0].setText(Integer.toString(val.first));
-						zones[2*i+1].setText(Integer.toString(val.second));
+					for (int i = 0; i < zoneCount; i++) {
+						Pair<Integer,Integer> val = hrZoneCalculator.computeHRZone(i + 1, maxHR);
+						zones.get(2*i+0).setText(Integer.toString(val.first));
+						zones.get(2*i+1).setText(Integer.toString(val.second));
 					}
 					saveHR();
 				} catch (NumberFormatException ex) {
