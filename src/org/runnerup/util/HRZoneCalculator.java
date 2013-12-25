@@ -18,6 +18,7 @@ package org.runnerup.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Pair;
 
@@ -36,6 +37,10 @@ public class HRZoneCalculator {
 		// TODO load from preferences...
 	}
 	
+	public HRZoneCalculator(SharedPreferences prefs) {
+		// TODO Auto-generated constructor stub
+	}
+
 	int zoneLimitsPct[] = { 		
 		60, // 1
 		65, // 2
@@ -75,5 +80,9 @@ public class HRZoneCalculator {
 
 	public double getZone(double value) {
 		return 1;
+	}
+
+	public Pair<Integer, Integer> getHRValues(int zone) {
+		return null;
 	}
 }

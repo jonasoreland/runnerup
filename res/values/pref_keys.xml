@@ -34,18 +34,24 @@
     <string name="cueinfo_total_time">cueinfo_total_time</string>
     <string name="cueinfo_total_pace">cueinfo_total_pace</string>
     <string name="cueinfo_total_speed">cueinfo_total_speed</string>
-
+    <string name="cueinfo_total_hr">cueinfo_total_hr</string>
+    <string name="cueinfo_total_hrz">cueinfo_total_hrz</string>
+    
     <!-- TODO configurable step cues -->
     <string name="cueinfo_step_distance">cueinfo_step_distance</string>
     <string name="cueinfo_step_time">cueinfo_step_time</string>
     <string name="cueinfo_step_pace">cueinfo_step_pace</string>
     <string name="cueinfo_step_speed">cueinfo_step_speed</string>
+    <string name="cueinfo_step_hr">cueinfo_step_hr</string>
+    <string name="cueinfo_step_hrz">cueinfo_step_hrz</string>
     
     <string name="cueinfo_lap_distance">cueinfo_lap_distance</string>
     <string name="cueinfo_lap_time">cueinfo_lap_time</string>
     <string name="cueinfo_lap_pace">cueinfo_lap_pace</string>
     <string name="cueinfo_lap_speed">cueinfo_lap_speed</string>
-
+    <string name="cueinfo_lap_hr">cueinfo_lap_hr</string>
+    <string name="cueinfo_lap_hrz">cueinfo_lap_hrz</string>
+    
     <string name="cueinfo_target_coaching">cueinfo_target_coaching</string>
     <string name="cueinfo_skip_startstop">cueinfo_skip_startstop</string>
 

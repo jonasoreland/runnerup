@@ -33,6 +33,7 @@ import org.runnerup.widget.StepButton;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.Dimension;
 import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.Workout.StepListEntry;
@@ -452,7 +453,10 @@ public class StartActivity extends Activity implements TickListener {
 				Workout w = null;
 				if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
-					w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, simpleTargetPace.isChecked());
+					Dimension target = null;
+					if (simpleTargetPace.isChecked())
+						target = Dimension.PACE;
+					w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
