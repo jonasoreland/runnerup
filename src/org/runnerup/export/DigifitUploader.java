@@ -193,20 +193,20 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 			}
 
 			if (fileId == 0) {
-				System.err
-						.println("export file not ready on Digifit within deadline");
+				System.err.println("export file not ready on Digifit within deadline");
 				return;
 			}
 
 			String downloadUrl = DIGIFIT_URL + "/workout/download/" + fileId;
 			System.err.println("downloadUrl = " + downloadUrl);
 
-			HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl)
-					.openConnection();
-			conn.setDoOutput(true);
+			HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
 			conn.setRequestMethod("GET");
 			addCookies(conn);
 
+			System.err.println("Response code = " + conn.getResponseCode());
+			System.err.println("Request method = " + conn.getRequestMethod());
+			
 			InputStream in = new BufferedInputStream(conn.getInputStream());
 			OutputStream out = new FileOutputStream(dst);
 			int cnt = 0, readLen = 0;
@@ -267,7 +267,6 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 				break;
 			}
 			long workoutId = export.getLong("workoutid");
-			deleteFile(export.getLong("file_id"), "export");
 			if (("" + workoutId).equals(key)) {
 				return export;
 			}
@@ -301,7 +300,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 	@Override
 	public void init(ContentValues config) {
-		_id = config.getAsLong("id");
+		_id = config.getAsLong("_id");
 
 		String auth = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
 		if (auth != null) {
@@ -374,12 +373,12 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 						"startTime");
 
 				// startTime is rfc3339, instead of parsing it, just strip
-				// everything but the datestamp.
+				// everything but the date.
 				title.append(" (")
 						.append(startTime.substring(0, startTime.indexOf("T")))
 						.append(")");
 
-				list.add(new Pair<String, String>(title.toString(), id));
+				list.add(new Pair<String, String>(id, title.toString()));
 			}
 
 			return Status.OK;
@@ -392,9 +391,10 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 	private JSONObject buildRequest(String root,
 			Map<String, String> requestParameters) throws JSONException {
-		JSONObject request = new JSONObject();
-		request.put(root, requestParameters);
-		return request;
+		JSONObject json = new JSONObject();
+		JSONObject request = new JSONObject(requestParameters);
+		json.put(root, request);
+		return json;
 	}
 
 	private JSONObject callDigifitEndpoint(String url, JSONObject request)
@@ -454,10 +454,8 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 			uploadFileToDigifit(wr.toString(), uploadUrl);
 
 			// We're using the form endpoint for the browser rather than what
-			// the API does so
-			// we don't have reliable error information. The site returns 200 on
-			// both success
-			// and failure.
+			// the API does so we don't have reliable error information. The
+			// site returns 200 on both success and failure.
 			//
 			// TODO: capture traffic from the app in order to use a better API
 			// endpoint.
@@ -484,32 +482,40 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 	private void uploadFileToDigifit(String payload, String uploadUrl)
 			throws Exception {
+		System.err.println("Uploading to " + uploadUrl);
+		
+		uploadUrl = "http://192.168.10.109:12345";
+		
 		HttpURLConnection conn = (HttpURLConnection) new URL(uploadUrl)
 				.openConnection();
 		conn.setDoOutput(true);
 		conn.setRequestMethod("POST");
-		conn.addRequestProperty("Content-Type",
-				"application/x-www-form-urlencoded");
 		addCookies(conn);
 
 		String filename = "RunnerUp.tcx";
 
-		Part<StringWritable> part1 = new Part<StringWritable>("theme",
+		Part<StringWritable> themePart = new Part<StringWritable>("theme",
 				new StringWritable(FormCrawler.URLEncode("site")));
-		Part<StringWritable> part2 = new Part<StringWritable>("userFiles",
+		Part<StringWritable> payloadPart = new Part<StringWritable>("userFiles",
 				new StringWritable(payload));
-		part2.filename = filename;
-		part2.contentType = "application/octet-stream";
-		Part<?> parts[] = { part1, part2 };
+		payloadPart.filename = filename;
+		payloadPart.contentType = "application/octet-stream";
+		Part<?> parts[] = { themePart, payloadPart };
 		postMulti(conn, parts);
-
-		conn.getOutputStream().flush();
-		conn.getOutputStream().close();
 
 		if (conn.getResponseCode() != 200) {
 			throw new Exception("got a non-200 response code from upload");
 		}
+		System.err.println("method = " + conn.getRequestMethod());
 
+		System.err.println("payloadPart.filename = " + payloadPart.filename);
+		
+		System.err.println("Got" + conn.getResponseMessage() + " from Digifit");
+
+		for (Map.Entry<String, List<String>> entry : conn.getHeaderFields().entrySet()) {
+			System.err.println(entry.getKey() + " = " + entry.getValue());
+		}
+		
 		try {
 			// Digifit takes a little while to process an import; about ~1
 			// second is about all we should
@@ -522,7 +528,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 					new JSONObject());
 			JSONArray uploadList = response.getJSONObject("response")
 					.getJSONArray("upload_list");
-			System.out.println("uploadlist = " + uploadList);
+			System.err.println("uploadList = " + uploadList);
 			for (int idx = 0;; idx++) {
 				JSONObject upload = uploadList.optJSONObject(idx);
 				if (upload == null) {

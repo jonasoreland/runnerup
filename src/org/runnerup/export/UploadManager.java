@@ -158,9 +158,10 @@ public class UploadManager {
 			return uploaders.get(uploaderName);
 		}
 		Uploader uploader = null;
-		if (uploaderName.contentEquals(RunKeeperUploader.NAME)) {
-			uploader = new RunKeeperUploader(this);
-		} else if (uploaderName.contentEquals(GarminUploader.NAME)) {
+//		if (uploaderName.contentEquals(RunKeeperUploader.NAME)) {
+//			uploader = new RunKeeperUploader(this);
+//		} else 
+		if (uploaderName.contentEquals(GarminUploader.NAME)) {
 			uploader = new GarminUploader(this);
 		} else if (uploaderName.contentEquals(FunBeatUploader.NAME)) {
 			uploader = new FunBeatUploader(this);
@@ -176,6 +177,8 @@ public class UploadManager {
 			uploader = new RunningAHEAD(this);
 		} else if (uploaderName.contentEquals(RunnerUpLive.NAME)) {
 			uploader = new RunnerUpLive(this);
+		} else if (uploaderName.contentEquals(DigifitUploader.NAME)) {
+			uploader = new DigifitUploader(this);
 		}
 		
 		if (uploader != null) {
