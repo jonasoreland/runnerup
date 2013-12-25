@@ -176,9 +176,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 		try {
 			JSONObject exportRequest = buildRequest("workout", exportParameters);
-			JSONObject exportResponse = callDigifitEndpoint(DIGIFIT_URL
-					+ "/rpc/json/workout/export_web", exportRequest);
-			System.err.println(exportResponse);
+			callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/export_web", exportRequest);
 
 			// I have observed Digifit taking >15 seconds to generate a file.
 			for (int i = 0; i < 60; i++) {
@@ -198,15 +196,11 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 			}
 
 			String downloadUrl = DIGIFIT_URL + "/workout/download/" + fileId;
-			System.err.println("downloadUrl = " + downloadUrl);
 
 			HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
 			conn.setRequestMethod("GET");
 			addCookies(conn);
 
-			System.err.println("Response code = " + conn.getResponseCode());
-			System.err.println("Request method = " + conn.getRequestMethod());
-			
 			InputStream in = new BufferedInputStream(conn.getInputStream());
 			OutputStream out = new FileOutputStream(dst);
 			int cnt = 0, readLen = 0;
@@ -239,14 +233,9 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 			HttpURLConnection conn = (HttpURLConnection) new URL(deleteUrl)
 					.openConnection();
 			conn.setRequestMethod("GET");
-			conn.setDoOutput(true);
 			conn.addRequestProperty("Referer", DIGIFIT_URL
 					+ "/site/workoutimport");
 			addCookies(conn);
-
-			System.err.println("deleteUrl = " + deleteUrl);
-			System.err.println("Delete of " + fileId + " got "
-					+ conn.getResponseCode());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -477,7 +466,6 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 		String uploadUrl = response.getJSONObject("response")
 				.getJSONObject("upload_url").getString("URL");
-		System.err.println("uploadUrl = " + uploadUrl);
 		return uploadUrl;
 	}
 
@@ -505,18 +493,15 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		}
 		
 		try {
-			// Digifit takes a little while to process an import; about ~1
-			// second is about all we should
-			// wait. If it doesn't show up in the import list by then, we'll
-			// clean it up in the next pass.
-			Thread.sleep(1000);
-
+			// Digifit takes a little while to process an import -- that is,
+			// the import we just did above won't show up in this list. In the
+			// general case, this will remove *old* imports from Digifit only
+			// leaving the user with ~1ish file of import cruft.
 			JSONObject response = callDigifitEndpoint(DIGIFIT_URL
 					+ "/rpc/json/workout/import_workouts_list",
 					new JSONObject());
 			JSONArray uploadList = response.getJSONObject("response")
 					.getJSONArray("upload_list");
-			System.err.println("uploadList = " + uploadList);
 			for (int idx = 0;; idx++) {
 				JSONObject upload = uploadList.optJSONObject(idx);
 				if (upload == null) {
