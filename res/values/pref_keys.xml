@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="pref_autolap_active">pref_autolap_active</string>
     <string name="pref_autolap">pref_autolap</string>
     <string name="pref_countdown_active">pref_countdown_active</string>

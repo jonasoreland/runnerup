@@ -19,6 +19,7 @@ package org.runnerup.db;
 import java.util.ArrayList;
 
 import org.runnerup.R;
+import org.runnerup.export.DigifitUploader;
 import org.runnerup.export.Endomondo;
 import org.runnerup.export.FunBeatUploader;
 import org.runnerup.export.GarminUploader;
@@ -29,14 +30,13 @@ import org.runnerup.export.RunKeeperUploader;
 import org.runnerup.export.RunnerUpLive;
 import org.runnerup.export.RunningAHEAD;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
@@ -339,6 +339,16 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
 			values.put(DB.ACCOUNT.URL, "http://www.runningahead.com");
+			insertAccount(arg0, values);
+		}
+		
+		if (yet) {
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, DigifitUploader.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "tcx");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a9_digifit);
+			values.put(DB.ACCOUNT.URL, "http://www.digifit.com");
 			insertAccount(arg0, values);
 		}
 
