@@ -284,13 +284,13 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
-	public double getSpeed(Scope scope) {
+	public Double getSpeed(Scope scope) {
 		switch (scope) {
 		case WORKOUT:
 			double d = getDistance(scope);
 			double t = getTime(scope);
 			if (t == 0)
-				return 0;
+				return Double.valueOf(0);
 			return d / t;
 		case STEP:
 		case LAP:
@@ -302,9 +302,9 @@ public class Workout implements WorkoutComponent {
 			Double s = gpsTracker.getCurrentSpeed();
 			if (s != null)
 				return s.doubleValue();
-
+			return null;
 		}
-		return 0;
+		return Double.valueOf(0);
 	}
 
 	public double getPace(Scope scope) {
@@ -347,10 +347,14 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
-	public double getHeartRate(Scope scope) {
+	public Double getHeartRate(Scope scope) {
 		switch(scope) {
-		case CURRENT:
-			return this.gpsTracker.getCurrentHRValue();
+		case CURRENT: {
+			Integer val = gpsTracker.getCurrentHRValue();
+			if (val == null)
+				return null;
+			return Double.valueOf(val.intValue());
+		}
 		case LAP:
 		case STEP:
 		case WORKOUT:
@@ -363,7 +367,7 @@ public class Workout implements WorkoutComponent {
 		if (t != 0) {
 			return (60 * b) / t; // bpm
 		}
-		return 0;
+		return 0.0;
 	}
 
 	private double getHeartRateZone(Scope scope) {
@@ -472,11 +476,11 @@ public class Workout implements WorkoutComponent {
 			return 0;
 		}
 
-		public double getSpeed(Scope scope) {
+		public Double getSpeed(Scope scope) {
 			double d = getDistance(scope);
 			double t = getTime(scope);
 			if (t == 0)
-				return 0;
+				return Double.valueOf(0);
 			return d / t;
 		}
 	};

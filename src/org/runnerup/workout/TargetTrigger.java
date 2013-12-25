@@ -49,7 +49,8 @@ public class TargetTrigger extends Trigger {
 	double lastVal = 0;
 	int lastValCnt = 0;
 
-	public TargetTrigger(int movingAverageSeconds, int graceSeconds) {
+	public TargetTrigger(Dimension dim, int movingAverageSeconds, int graceSeconds) {
+		dimension = dim;
 		measure = new double[movingAverageSeconds];
 		sort_measure = new double[movingAverageSeconds];
 
@@ -57,6 +58,9 @@ public class TargetTrigger extends Trigger {
 			measure_time = new double[movingAverageSeconds];
 			measure_distance = new double[movingAverageSeconds];
 		}
+		if (dimension == Dimension.HRZ)
+			dimension = Dimension.HR;
+
 		minGraceCount = graceSeconds;
 		skip_values = (5 * movingAverageSeconds) / 100; // ignore 5% lowest and 5% higest values
 
@@ -180,19 +184,28 @@ public class TargetTrigger extends Trigger {
 		switch(dimension) {
 		case PACE:
 		case SPEED:
-			double distance_now = w.get(scope,  Dimension.DISTANCE);
+			Double s = w.getSpeed(Scope.CURRENT);
+			if (s != null) {
+				double val = s.doubleValue();
+				if (dimension == Dimension.PACE && val != 0)
+					return 1/s;
+				else if (dimension == Dimension.SPEED)
+					return s;
+			}
 
+			// If current speed isn't available...do moving average
 			int oldpos = 0;
 			int newpos = (cntMeasures + 1) % measure_time.length;
 			if (cntMeasures >= measure_time.length) {
 				oldpos = newpos;
 			}
+
+			double distance_now = w.get(scope,  Dimension.DISTANCE);
 			double delta_distance = distance_now - measure_distance[oldpos];
 			double delta_time = time_now - measure_time[oldpos];
 
 			measure_time[newpos] = time_now;
 			measure_distance[newpos] = distance_now;
-			
 			if (dimension == Dimension.PACE) {
 				return delta_time / delta_distance;
 			} else {
@@ -208,8 +221,8 @@ public class TargetTrigger extends Trigger {
 		case HRZ:
 			break;
 		}
-		
-		return 0;
+
+		return w.get(Scope.CURRENT, dimension);
 	}
 
 	@Override
