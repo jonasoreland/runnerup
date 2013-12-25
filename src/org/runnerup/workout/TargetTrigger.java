@@ -171,6 +171,8 @@ public class TargetTrigger extends Trigger {
 			break;
 		case HR:
 			break;
+		case HRZ:
+			break;
 		}
 	}
 
@@ -202,6 +204,8 @@ public class TargetTrigger extends Trigger {
 		case TIME:
 			break;
 		case HR:
+			break;
+		case HRZ:
 			break;
 		}
 		

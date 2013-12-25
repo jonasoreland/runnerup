@@ -16,10 +16,10 @@
  */
 package org.runnerup.util;
 
-import android.os.Build;
-import android.util.Pair;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
+import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZoneCalculator {
@@ -36,7 +36,7 @@ public class HRZoneCalculator {
 		// TODO load from preferences...
 	}
 	
-	int zoneLimits[] = { 		
+	int zoneLimitsPct[] = { 		
 		60, // 1
 		65, // 2
 		75, // 3
@@ -46,7 +46,7 @@ public class HRZoneCalculator {
 	};
 
 	public int getZoneCount() {
-		return zoneLimits.length;
+		return zoneLimitsPct.length;
 	}
 
 	public Pair<Integer, Integer> getZoneLimits(int zone) {
@@ -54,14 +54,14 @@ public class HRZoneCalculator {
 		if (zone < 0)
 			return null;
 
-		if (zone >= zoneLimits.length)
+		if (zone >= zoneLimitsPct.length)
 			return null;
 
-		if (zone + 1 < zoneLimits.length)
-			return new Pair<Integer, Integer>(zoneLimits[zone],
-					zoneLimits[zone + 1]);
+		if (zone + 1 < zoneLimitsPct.length)
+			return new Pair<Integer, Integer>(zoneLimitsPct[zone],
+					zoneLimitsPct[zone + 1]);
 		else
-			return new Pair<Integer, Integer>(zoneLimits[zone], 100);
+			return new Pair<Integer, Integer>(zoneLimitsPct[zone], 100);
 	}
 
 	public Pair<Integer, Integer> computeHRZone(int zone, int maxHR) {
@@ -71,5 +71,9 @@ public class HRZoneCalculator {
 
 		return new Pair<Integer, Integer>((limits.first * maxHR + 50) / 100,
 				(limits.second * maxHR + 50) / 100);
+	}
+
+	public double getZone(double value) {
+		return 1;
 	}
 }

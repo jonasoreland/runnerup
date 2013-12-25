@@ -40,7 +40,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	SharedPreferences sharedPreferences = null;
 	java.text.DateFormat dateFormat = null;
 	java.text.DateFormat timeFormat = null;
-
+	HRZoneCalculator hrZoneCalculator = null;
+	
 	boolean km = true;
 	String base_unit = "km";
 	double base_meters = km_meters;
@@ -67,6 +68,13 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		setUnit();
 	}
 
+	HRZoneCalculator getHRZoneCalculator() {
+		if (hrZoneCalculator == null) {
+			hrZoneCalculator = new HRZoneCalculator(context);
+		}
+		return hrZoneCalculator;
+	}
+	
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
@@ -144,6 +152,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 			return formatPace(target, value);
 		case HR:
 			return formatHeartRate(target, value);
+		case HRZ:
+			return formatHeartRateZone(target, value);
 		case SPEED:
 			//TODO
 			return "";
@@ -245,6 +255,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		case CUE:
 		case CUE_SHORT:
 		case CUE_LONG:
+			return Double.toString(Math.round(heart_rate)) + " " + resources.getString(R.string.txt_heartrate_bpm);
 		case TXT:
 		case TXT_SHORT:
 		case TXT_LONG:
@@ -252,7 +263,24 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		}
 		return "";
 	}
-	
+
+	private String formatHeartRateZone(int target, double value) {
+		double hrZone = getHRZoneCalculator().getZone(value);
+		switch(target) {
+		case TXT:
+		case TXT_SHORT:
+			return Double.toString(Math.round(hrZone));
+		case TXT_LONG:
+			return Double.toString(Math.round(10.0 * hrZone)/10.0);
+		case CUE_SHORT:
+			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.round(hrZone));
+		case CUE:
+		case CUE_LONG:
+			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.round(10.0 * hrZone)/10.0);
+		}
+		return "";
+	}
+
 	/**
 	 * Format pace
 	 * 

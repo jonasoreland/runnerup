@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.HRZoneCalculator;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -82,6 +83,7 @@ public class Workout implements WorkoutComponent {
 
 	GpsTracker gpsTracker = null;
 	SharedPreferences audioCuePrefs;
+	HRZoneCalculator hrZoneCalculator = null;
 
 	public static final String KEY_TTS = "tts";
 	public static final String KEY_COUNTER_VIEW = "CountdownView";
@@ -244,6 +246,8 @@ public class Workout implements WorkoutComponent {
 			return getPace(scope);
 		case HR:
 			return getHeartRate(scope);
+		case HRZ:
+			return getHeartRateZone(scope);
 		}
 		return 0;
 	}
@@ -328,6 +332,21 @@ public class Workout implements WorkoutComponent {
 		
 	}
 
+	double getHeartbeats(Scope scope) {
+		switch (scope) {
+		case WORKOUT:
+			return gpsTracker.getHeartbeats();
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getHeartbeats(this, scope);
+			return 0;
+		case CURRENT:
+			return 0;
+		}
+		return 0;
+	}
+
 	public double getHeartRate(Scope scope) {
 		switch(scope) {
 		case CURRENT:
@@ -347,21 +366,11 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
-	double getHeartbeats(Scope scope) {
-		switch (scope) {
-		case WORKOUT:
-			return gpsTracker.getHeartbeats();
-		case STEP:
-		case LAP:
-			if (currentStep != null)
-				return currentStep.getHeartbeats(this, scope);
-			return 0;
-		case CURRENT:
-			return 0;
-		}
-		return 0;
+	private double getHeartRateZone(Scope scope) {
+		return hrZoneCalculator.getZone(getHeartRate(scope));
 	}
-	
+
+
 	public int getSport() {
 		return sport;
 	}
