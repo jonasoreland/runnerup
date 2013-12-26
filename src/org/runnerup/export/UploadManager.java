@@ -176,6 +176,8 @@ public class UploadManager {
 			uploader = new RunningAHEAD(this);
 		} else if (uploaderName.contentEquals(RunnerUpLive.NAME)) {
 			uploader = new RunnerUpLive(this);
+		} else if (uploaderName.contentEquals(DigifitUploader.NAME)) {
+			uploader = new DigifitUploader(this);
 		}
 		
 		if (uploader != null) {
