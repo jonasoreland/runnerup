@@ -24,6 +24,7 @@ import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.workout.Dimension;
@@ -356,6 +357,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
 				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute, getApplicationContext()));
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
+				bindValues.put(Workout.KEY_HRZONES, new HRZoneCalculator(AudioCueSettingsActivity.this));
 				for (Feedback f : feedback) {
 					f.onInit(w);
 					f.onBind(w, bindValues);

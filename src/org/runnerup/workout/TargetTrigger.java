@@ -68,6 +68,11 @@ public class TargetTrigger extends Trigger {
 			return false;
 		}
 
+		if (!w.isEnabled(dimension)) {
+			inited = false;
+			return false;
+		}
+		
 		double time_now = w.get(Scope.STEP, Dimension.TIME);
 
 		if (time_now < lastTimestamp) {
@@ -78,6 +83,7 @@ public class TargetTrigger extends Trigger {
 
 		if (inited == false) {
 			System.out.println("inited == false");
+			reset();
 			lastTimestamp = time_now;
 			movingAverage.init(w, time_now);
 			inited = true;
@@ -96,15 +102,15 @@ public class TargetTrigger extends Trigger {
 			for (int i = 0; i < elapsed_seconds; i++) {
 				addObservation(val_now);
 			}
-			System.err.println("val_now: " + val_now + " elapsed: " + elapsed_seconds);
+			// System.err.println("val_now: " + val_now + " elapsed: " + elapsed_seconds);
 		
 			if (graceCount > 0) { // only emit coaching ever so often
-				System.err.println("graceCount: " + graceCount);
+				// System.err.println("graceCount: " + graceCount);
 				graceCount -= elapsed_seconds;
 			} else {
 				double avg = getValue();
 				double cmp = range.compare(avg);
-				System.err.println(" => avg: " + avg + " => cmp: " + cmp);
+				// System.err.println(" => avg: " + avg + " => cmp: " + cmp);
 				if (cmp == 0) {
 					return false;
 				}

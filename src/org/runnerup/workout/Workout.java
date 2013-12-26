@@ -88,6 +88,7 @@ public class Workout implements WorkoutComponent {
 	public static final String KEY_TTS = "tts";
 	public static final String KEY_COUNTER_VIEW = "CountdownView";
 	public static final String KEY_FORMATTER = "Formatter";
+	public static final String KEY_HRZONES = "HrZones";
 	
 	public Workout() {
 	}
@@ -96,6 +97,16 @@ public class Workout implements WorkoutComponent {
 		this.gpsTracker = gpsTracker;
 	}
 
+	public boolean isEnabled(Dimension dim) {
+		/**
+		 * Currently this is only reasonable for HR(Z)
+		 *   all other dimensions are always on...
+		 */
+		if (dim == Dimension.HR || dim == Dimension.HRZ)
+			return gpsTracker.isHRConnected();
+		return true;
+	}
+	
 	public void onInit(Workout w) {
 		assert (w == this);
 		for (Step a : steps) {
@@ -104,6 +115,7 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public void onBind(Workout w, HashMap<String, Object> bindValues) {
+		hrZoneCalculator = (HRZoneCalculator) bindValues.get(Workout.KEY_HRZONES);
 		for (Step a : steps) {
 			a.onBind(w, bindValues);
 		}
@@ -328,8 +340,7 @@ public class Workout implements WorkoutComponent {
 			return duration - curr;
 		} else {
 			return 0;
-		}
-		
+		}	
 	}
 
 	double getHeartbeats(Scope scope) {
@@ -373,7 +384,6 @@ public class Workout implements WorkoutComponent {
 	private double getHeartRateZone(Scope scope) {
 		return hrZoneCalculator.getZone(getHeartRate(scope));
 	}
-
 
 	public int getSport() {
 		return sport;
@@ -448,6 +458,11 @@ public class Workout implements WorkoutComponent {
 			super();
 		}
 		
+		@Override
+		public boolean isEnabled(Dimension dim) {
+			return true;
+		}
+
 		public double getDistance(Scope scope) {
 			switch(scope) {
 			case WORKOUT:
@@ -482,6 +497,10 @@ public class Workout implements WorkoutComponent {
 			if (t == 0)
 				return Double.valueOf(0);
 			return d / t;
+		}
+
+		public Double getHeartRate(Scope scope) {
+			return 150 + 25 * Math.random();
 		}
 	};
 	

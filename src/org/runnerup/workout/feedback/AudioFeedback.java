@@ -97,7 +97,7 @@ public class AudioFeedback extends Feedback {
 		} else if (event != null && intensity != null) {
 			Resources res = ctx.getResources();
 			msg = res.getString(intensity.getCueId(), "") + " " + event.getCue(ctx);
-		} else if (dimension != null && scope != null) {
+		} else if (dimension != null && scope != null && w.isEnabled(dimension)) {
 			double val = w.get(scope, dimension); // SI
 			msg = scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
 		}
@@ -107,6 +107,8 @@ public class AudioFeedback extends Feedback {
 	@Override
 	public void emit(Workout w, Context ctx) {
 		String msg = getCue(w, ctx);
-		textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
+		if (msg != null) {
+			textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
+		}
 	}
 }

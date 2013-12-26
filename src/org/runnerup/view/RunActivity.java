@@ -25,6 +25,7 @@ import java.util.TimerTask;
 import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.HeadsetButtonReceiver;
@@ -94,6 +95,7 @@ public class RunActivity extends Activity implements TickListener {
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 	boolean simpleWorkout;
 	boolean allowHardwareKey = false;
+	HRZoneCalculator hrZoneCalculator = null;
 
 	/** Called when the activity is first created. */
 
@@ -103,6 +105,7 @@ public class RunActivity extends Activity implements TickListener {
 		setContentView(R.layout.run);
 		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
 		formatter = new Formatter(this);
+		hrZoneCalculator = new HRZoneCalculator(this);
 		
 		stopButton = (Button) findViewById(R.id.stopButton);
 		stopButton.setOnClickListener(stopButtonClick);
@@ -207,6 +210,7 @@ public class RunActivity extends Activity implements TickListener {
 		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute, getApplicationContext()));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
+		bindValues.put(Workout.KEY_HRZONES, hrZoneCalculator);
 		workout.onBind(workout, bindValues);
 		startTimer();
 
