@@ -119,12 +119,12 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 	@Override
 	public boolean checkSupport(Feature f) {
 		switch (f) {
-		case WORKOUT_LIST:
-		case GET_WORKOUT:
 		case UPLOAD:
 			return true;
 		case FEED:
 		case LIVE:
+		case WORKOUT_LIST: // list of prepared work outs (e.g an interval program)
+		case GET_WORKOUT:  // download a prepared work out (e.g an interval program)
 			return false;
 		}
 
@@ -214,8 +214,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		}
 	}
 
-	@Override
-	public void downloadWorkout(File dst, String key) throws Exception {
+	public void downloadActivity(File dst, String key) throws Exception {
 		Map<String, String> exportParameters = new HashMap<String, String>();
 		exportParameters.put("id", key);
 		exportParameters.put("format", "tcx");
@@ -355,8 +354,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		return _username != null && _password != null;
 	}
 
-	@Override
-	public Status listWorkouts(List<Pair<String, String>> list) {
+	public Status listActivities(List<Pair<String, String>> list) {
 		Status errorStatus = Status.ERROR;
 		Map<String, String> requestParameters = new HashMap<String, String>();
 		DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US);

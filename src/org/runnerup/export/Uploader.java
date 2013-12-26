@@ -43,11 +43,11 @@ public interface Uploader {
 	};
 
 	enum Feature {
-		WORKOUT_LIST,
-		GET_WORKOUT,
-		FEED,
-		UPLOAD,
-		LIVE
+		WORKOUT_LIST, // list prepared workouts (e.g a interval program)
+		GET_WORKOUT,  // download prepared workout
+		FEED,         // list of activities by others (and self)
+		UPLOAD,       // upload activity
+		LIVE          // live feed of activity
 	};
 
 	/**
@@ -117,12 +117,14 @@ public interface Uploader {
 	
 	/**
 	 * List workouts
+	 * NOTE: this is not list of activities!
 	 * @return list of Pair<Uploader,Workout>
 	 */
 	public Status listWorkouts(List<Pair<String,String>> list);
 	
 	/**
 	 * Download workout with key and store it in dst
+	 * NOTE: this is download activity
 	 * @param dst
 	 * @param key
 	 * @return
