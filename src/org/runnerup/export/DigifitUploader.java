@@ -76,8 +76,8 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		System.err.println(du.connect());
 	}
 
-	private boolean _configured;
 	private long _id;
+	private boolean _loggedin;
 	private String _password;
 	private String _username;
 
@@ -133,7 +133,14 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 	@Override
 	public Status connect() {
-		if (isConfigured()) {
+		if (!isConfigured()) {
+			// user/pass needed
+			Status s = Status.NEED_AUTH;
+			s.authMethod = Uploader.AuthMethod.USER_PASS;
+			return s;
+		}
+		
+		if (_loggedin) {
 			return Uploader.Status.OK;
 		}
 
@@ -176,7 +183,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 				if (line.contains("<result>success</result>")) {
 					// Store the authentication token.
 					getCookies(conn);
-					_configured = true;
+					_loggedin = true;
 					return Status.OK;
 				} else {
 					Status s = Status.NEED_AUTH;
@@ -345,7 +352,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
 	@Override
 	public boolean isConfigured() {
-		return _configured;
+		return _username != null && _password != null;
 	}
 
 	@Override
@@ -408,7 +415,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 	public void reset() {
 		init(null, null);
 		_id = 0L;
-		_configured = false;
+		_loggedin = false;
 	}
 
 	@Override
