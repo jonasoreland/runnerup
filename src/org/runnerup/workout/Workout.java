@@ -97,13 +97,13 @@ public class Workout implements WorkoutComponent {
 		this.gpsTracker = gpsTracker;
 	}
 
-	public boolean isEnabled(Dimension dim) {
-		/**
-		 * Currently this is only reasonable for HR(Z)
-		 *   all other dimensions are always on...
-		 */
-		if (dim == Dimension.HR || dim == Dimension.HRZ)
+	public boolean isEnabled(Dimension dim, Scope scope) {
+		if (dim == Dimension.HR || dim == Dimension.HRZ) {
 			return gpsTracker.isHRConnected();
+		} else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
+				 scope == Scope.CURRENT) {
+			return gpsTracker.getCurrentSpeed() != null;
+		}
 		return true;
 	}
 	
@@ -296,7 +296,7 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
-	public Double getSpeed(Scope scope) {
+	public double getSpeed(Scope scope) {
 		switch (scope) {
 		case WORKOUT:
 			double d = getDistance(scope);
@@ -314,9 +314,9 @@ public class Workout implements WorkoutComponent {
 			Double s = gpsTracker.getCurrentSpeed();
 			if (s != null)
 				return s.doubleValue();
-			return null;
+			return 0;
 		}
-		return Double.valueOf(0);
+		return 0;
 	}
 
 	public double getPace(Scope scope) {
@@ -358,13 +358,13 @@ public class Workout implements WorkoutComponent {
 		return 0;
 	}
 
-	public Double getHeartRate(Scope scope) {
+	public double getHeartRate(Scope scope) {
 		switch(scope) {
 		case CURRENT: {
 			Integer val = gpsTracker.getCurrentHRValue();
 			if (val == null)
-				return null;
-			return Double.valueOf(val.intValue());
+				return 0;
+			return val.intValue();
 		}
 		case LAP:
 		case STEP:
@@ -459,7 +459,7 @@ public class Workout implements WorkoutComponent {
 		}
 		
 		@Override
-		public boolean isEnabled(Dimension dim) {
+		public boolean isEnabled(Dimension dim, Scope scope) {
 			return true;
 		}
 
@@ -491,15 +491,15 @@ public class Workout implements WorkoutComponent {
 			return 0;
 		}
 
-		public Double getSpeed(Scope scope) {
+		public double getSpeed(Scope scope) {
 			double d = getDistance(scope);
 			double t = getTime(scope);
 			if (t == 0)
-				return Double.valueOf(0);
+				return 0;
 			return d / t;
 		}
 
-		public Double getHeartRate(Scope scope) {
+		public double getHeartRate(Scope scope) {
 			return 150 + 25 * Math.random();
 		}
 	};

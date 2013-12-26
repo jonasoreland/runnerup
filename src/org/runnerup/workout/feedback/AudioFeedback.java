@@ -97,7 +97,7 @@ public class AudioFeedback extends Feedback {
 		} else if (event != null && intensity != null) {
 			Resources res = ctx.getResources();
 			msg = res.getString(intensity.getCueId(), "") + " " + event.getCue(ctx);
-		} else if (dimension != null && scope != null && w.isEnabled(dimension)) {
+		} else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
 			double val = w.get(scope, dimension); // SI
 			msg = scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
 		}

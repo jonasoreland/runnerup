@@ -68,7 +68,7 @@ public class TargetTrigger extends Trigger {
 			return false;
 		}
 
-		if (!w.isEnabled(dimension)) {
+		if (!w.isEnabled(dimension, Scope.STEP)) {
 			inited = false;
 			return false;
 		}
@@ -179,15 +179,13 @@ public class TargetTrigger extends Trigger {
 		switch(dimension) {
 		case PACE:
 		case SPEED:
-			Double s = w.getSpeed(Scope.CURRENT);
-			if (s != null) {
-				double val = s.doubleValue();
+			if (w.isEnabled(Dimension.SPEED, Scope.CURRENT)) {
+				double val = w.getSpeed(Scope.CURRENT);
 				if (dimension == Dimension.PACE && val != 0)
-					return 1/s;
+					return 1/val;
 				else if (dimension == Dimension.SPEED)
-					return s;
+					return val;
 			}
-
 			movingAverage.addMeasurement(w, time_now);
 			return movingAverage.getValue();
 		case DISTANCE:
