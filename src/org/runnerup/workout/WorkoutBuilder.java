@@ -360,11 +360,11 @@ public class WorkoutBuilder {
 		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
 			feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
 		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
-			feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_hr), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.HR));
 		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
-			feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_hrz), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.HRZ));
 		}
 
 		/**** LAP ****/ 
