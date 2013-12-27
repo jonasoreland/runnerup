@@ -25,7 +25,7 @@ import java.util.TimerTask;
 import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZoneCalculator;
+import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.HeadsetButtonReceiver;
@@ -35,6 +35,7 @@ import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -47,6 +48,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -60,9 +62,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunActivity extends Activity implements TickListener {
@@ -95,7 +94,7 @@ public class RunActivity extends Activity implements TickListener {
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 	boolean simpleWorkout;
 	boolean allowHardwareKey = false;
-	HRZoneCalculator hrZoneCalculator = null;
+	HRZones hrZones = null;
 
 	/** Called when the activity is first created. */
 
@@ -105,7 +104,7 @@ public class RunActivity extends Activity implements TickListener {
 		setContentView(R.layout.run);
 		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
 		formatter = new Formatter(this);
-		hrZoneCalculator = new HRZoneCalculator(this);
+		hrZones = new HRZones(this);
 		
 		stopButton = (Button) findViewById(R.id.stopButton);
 		stopButton.setOnClickListener(stopButtonClick);
@@ -210,7 +209,7 @@ public class RunActivity extends Activity implements TickListener {
 		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute, getApplicationContext()));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
-		bindValues.put(Workout.KEY_HRZONES, hrZoneCalculator);
+		bindValues.put(Workout.KEY_HRZONES, hrZones);
 		workout.onBind(workout, bindValues);
 		startTimer();
 

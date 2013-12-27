@@ -23,7 +23,7 @@ import java.util.List;
 import org.runnerup.R;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZoneCalculator;
+import org.runnerup.util.HRZones;
 import org.runnerup.util.SafeParse;
 import org.runnerup.view.AudioCueSettingsActivity;
 import org.runnerup.workout.Workout.StepListEntry;
@@ -32,14 +32,13 @@ import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CoachFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.text.format.DateUtils;
 import android.util.Pair;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutBuilder {
@@ -89,7 +88,7 @@ public class WorkoutBuilder {
 			step.targetType = Dimension.PACE;
 			step.targetValue = range;
 		} else if (target == Dimension.HRZ) {
-			HRZoneCalculator hrCalc = new HRZoneCalculator(prefs);
+			HRZones hrCalc = new HRZones(res, prefs);
 			int zone = prefs.getInt("basic_target_hrz", 0);
 			if (zone > 0) {
 				Pair<Integer,Integer> vals = hrCalc.getHRValues(zone);

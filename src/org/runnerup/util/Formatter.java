@@ -40,7 +40,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	SharedPreferences sharedPreferences = null;
 	java.text.DateFormat dateFormat = null;
 	java.text.DateFormat timeFormat = null;
-	HRZoneCalculator hrZoneCalculator = null;
+	HRZones hrZones = null;
 	
 	boolean km = true;
 	String base_unit = "km";
@@ -64,15 +64,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		
 		dateFormat = android.text.format.DateFormat.getDateFormat(ctx);
 		timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
+		hrZones = new HRZones(context);
 
 		setUnit();
-	}
-
-	HRZoneCalculator getHRZoneCalculator() {
-		if (hrZoneCalculator == null) {
-			hrZoneCalculator = new HRZoneCalculator(context);
-		}
-		return hrZoneCalculator;
 	}
 	
 	@Override
@@ -265,7 +259,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	}
 
 	private String formatHeartRateZone(int target, double value) {
-		double hrZone = getHRZoneCalculator().getZone(value);
+		double hrZone = hrZones.getZone(value);
 		switch(target) {
 		case TXT:
 		case TXT_SHORT:
@@ -273,7 +267,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		case TXT_LONG:
 			return Double.toString(Math.round(10.0 * hrZone)/10.0);
 		case CUE_SHORT:
-			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.round(hrZone));
+			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.floor(hrZone));
 		case CUE:
 		case CUE_LONG:
 			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.round(10.0 * hrZone)/10.0);

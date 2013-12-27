@@ -24,7 +24,7 @@ import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZoneCalculator;
+import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.workout.Dimension;
@@ -34,6 +34,7 @@ import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -43,6 +44,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -55,9 +57,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCueSettingsActivity extends PreferenceActivity {
@@ -357,7 +356,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
 				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute, getApplicationContext()));
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
-				bindValues.put(Workout.KEY_HRZONES, new HRZoneCalculator(AudioCueSettingsActivity.this));
+				bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
 				for (Feedback f : feedback) {
 					f.onInit(w);
 					f.onBind(w, bindValues);

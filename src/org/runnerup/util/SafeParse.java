@@ -66,4 +66,27 @@ public class SafeParse {
 		}
 		return defaultValue;
 	}
+
+	public static int[] parseIntList(final String str) {
+		try {
+			String[] split = str.split(",");
+			int res[] = new int[split.length];
+			for (int i = 0; i < split.length; i++) {
+				res[i] = Integer.parseInt(split[i]);
+			}
+			return res;
+		} catch (Exception ex) {
+			
+		}
+		return null;
+	}
+	
+	public static String storeIntList(int list[]) {
+		StringBuffer buf = new StringBuffer();
+		buf.append(Integer.toString(list[0]));
+		for (int i = 1; i < list.length; i++) {
+			buf.append(',').append(Integer.toString(list[i]));
+		}
+		return buf.toString();
+	}
 }

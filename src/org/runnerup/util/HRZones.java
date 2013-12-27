@@ -27,64 +27,52 @@ import android.preference.PreferenceManager;
 import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HRZoneCalculator {
+public class HRZones {
 
-	public static int computeMaxHR(int age, boolean male) {
-		if (male) {
-			return Math.round(214 - age * 0.8f);
-		} else {
-			return Math.round(209 - age * 0.7f);
-		}
-	}
+	int zones[] = null;
 
-	public HRZoneCalculator(Context ctx) {
+	public HRZones(Context ctx) {
 		this(ctx.getResources(), PreferenceManager.getDefaultSharedPreferences(ctx));
 	}
 	
-	public HRZoneCalculator(Resources res, SharedPreferences prefs) {
-		final String pct = res.getString(R.string.pref_hrz_thresholds);
+	public HRZones(Resources res, SharedPreferences prefs) {
+		final String pct = res.getString(R.string.pref_hrz_values);
 		if (prefs.contains(pct)) {
 			int limits[] = SafeParse.parseIntList(prefs.getString(pct, ""));
 			if (limits != null) {
-				zoneLimitsPct = limits;
+				zones = limits;
 			}
 		}
 	}
 
-	int zoneLimitsPct[] = {
-			60, // 1
-			65, // 2
-			75, // 3
-			82, // 4
-			89, // 5
-			94, // 6
-	};
-
-	public int getZoneCount() {
-		return zoneLimitsPct.length;
+	public boolean isConfigured() {
+		return zones != null;
 	}
 
-	public Pair<Integer, Integer> getZoneLimits(int zone) {
-		zone--; // 1-base => 0-based
-		if (zone < 0)
-			return null;
+	public double getZone(double value) {
+		if (zones != null) {
+			int z = 0;
+			for (z = 0; z < zones.length; z++) {
+				if (zones[z] >= value)
+					break;
+			}
 
-		if (zone >= zoneLimitsPct.length)
-			return null;
-
-		if (zone + 1 < zoneLimitsPct.length)
-			return new Pair<Integer, Integer>(zoneLimitsPct[zone],
-					zoneLimitsPct[zone + 1]);
-		else
-			return new Pair<Integer, Integer>(zoneLimitsPct[zone], 100);
+			double lo = (z == 0) ? 0 : zones[z-1];
+			double hi = (z == zones.length) ? Math.ceil(value) : zones[z];
+			double add = (value - lo) / (hi - lo);
+			return z + add;
+		}
+		return 0;
 	}
 
-	public Pair<Integer, Integer> computeHRZone(int zone, int maxHR) {
-		Pair<Integer, Integer> limits = getZoneLimits(zone);
-		if (limits == null)
-			return null;
-
-		return new Pair<Integer, Integer>((limits.first * maxHR + 50) / 100,
-				(limits.second * maxHR + 50) / 100);
+	public Pair<Integer, Integer> getHRValues(int zone) {
+		if (zones != null && zone + 1 < zones.length) {
+			if (zone == 0) {
+				return new Pair<Integer,Integer>(0, zones[1]);
+			} else {
+				return new Pair<Integer,Integer>(zones[zone], zones[zone+1]);
+			}
+		}
+		return null;
 	}
 }

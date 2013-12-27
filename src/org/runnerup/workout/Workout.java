@@ -23,18 +23,17 @@ import java.util.List;
 
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
-import org.runnerup.util.HRZoneCalculator;
+import org.runnerup.util.HRZones;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-
+import android.os.Build;
 /**
  * This class is the top level object for a workout, it is being called by
  * RunActivity, and by the Workout components
  */
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Workout implements WorkoutComponent {
@@ -83,7 +82,7 @@ public class Workout implements WorkoutComponent {
 
 	GpsTracker gpsTracker = null;
 	SharedPreferences audioCuePrefs;
-	HRZoneCalculator hrZoneCalculator = null;
+	HRZones hrZones = null;
 
 	public static final String KEY_TTS = "tts";
 	public static final String KEY_COUNTER_VIEW = "CountdownView";
@@ -98,9 +97,12 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public boolean isEnabled(Dimension dim, Scope scope) {
-		if (dim == Dimension.HR || dim == Dimension.HRZ) {
+		if (dim == Dimension.HR) {
 			return gpsTracker.isHRConnected();
-		} else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
+		} else if (dim == Dimension.HRZ) {
+			if (hrZones == null || !hrZones.isConfigured() || gpsTracker.isHRConnected())
+				return false;
+		}else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
 				 scope == Scope.CURRENT) {
 			return gpsTracker.getCurrentSpeed() != null;
 		}
@@ -115,7 +117,7 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public void onBind(Workout w, HashMap<String, Object> bindValues) {
-		hrZoneCalculator = (HRZoneCalculator) bindValues.get(Workout.KEY_HRZONES);
+		hrZones = (HRZones) bindValues.get(Workout.KEY_HRZONES);
 		for (Step a : steps) {
 			a.onBind(w, bindValues);
 		}
@@ -382,7 +384,7 @@ public class Workout implements WorkoutComponent {
 	}
 
 	private double getHeartRateZone(Scope scope) {
-		return hrZoneCalculator.getZone(getHeartRate(scope));
+		return hrZones.getZone(getHeartRate(scope));
 	}
 
 	public int getSport() {

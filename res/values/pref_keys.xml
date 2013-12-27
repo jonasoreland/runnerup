@@ -78,4 +78,6 @@
     <string name="pref_bt_experimental">pref_bt_experimental</string>
     <string name="pref_bt_mock">pref_bt_mock</string>
         
+    <string name="pref_hrz_values">pref_hrz_values</string>
+    <string name="pref_hrz_thresholds">pref_hrz_thresholds</string>
 </resources>
