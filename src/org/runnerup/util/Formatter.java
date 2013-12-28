@@ -249,25 +249,24 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		case CUE:
 		case CUE_SHORT:
 		case CUE_LONG:
-			return Double.toString(Math.round(heart_rate)) + " " + resources.getString(R.string.txt_heartrate_bpm);
+			return Integer.toString((int) Math.round(heart_rate)) + " " + resources.getString(R.string.txt_heartrate_bpm);
 		case TXT:
 		case TXT_SHORT:
 		case TXT_LONG:
-			return Double.toString(Math.round(heart_rate));
+			return Integer.toString((int) Math.round(heart_rate));
 		}
 		return "";
 	}
 
-	private String formatHeartRateZone(int target, double value) {
-		double hrZone = hrZones.getZone(value);
+	private String formatHeartRateZone(int target, double hrZone) {
 		switch(target) {
 		case TXT:
 		case TXT_SHORT:
-			return Double.toString(Math.round(hrZone));
+			return Integer.toString((int) Math.round(hrZone));
 		case TXT_LONG:
 			return Double.toString(Math.round(10.0 * hrZone)/10.0);
 		case CUE_SHORT:
-			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.floor(hrZone));
+			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Integer.toString((int) Math.floor(hrZone));
 		case CUE:
 		case CUE_LONG:
 			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.round(10.0 * hrZone)/10.0);

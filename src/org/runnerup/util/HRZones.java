@@ -43,11 +43,19 @@ public class HRZones {
 	public HRZones(Resources res, SharedPreferences p) {
 		key = res.getString(R.string.pref_hrz_values);
 		prefs = p;
-		if (prefs.contains(key)) {
-			int limits[] = SafeParse.parseIntList(prefs.getString(key, ""));
+		String str = prefs.getString(key, null);
+		if (str != null) {
+			int limits[] = SafeParse.parseIntList(str);
 			if (limits != null) {
 				zones = limits;
 			}
+		}
+		if (zones != null) {
+			System.err.print("loaded: (" + str + ")");
+			for (int i = 0; i < zones.length; i++) {
+				System.err.print(" " + zones[i]);
+			}
+			System.err.println("");
 		}
 	}
 
@@ -69,6 +77,7 @@ public class HRZones {
 			double lo = (z == 0) ? 0 : zones[z - 1];
 			double hi = zones[z];
 			double add = (value - lo) / (hi - lo);
+			System.err.println("value: " + value + ", z: " + z + ", lo: " + lo + ", hi: " + hi + ", add: " + add);
 			return z + add;
 		}
 		return 0;
