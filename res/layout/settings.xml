@@ -48,7 +48,7 @@
     
 	<Preference
         android:key="cue_configure_hr"
-        android:title="Configure Heart Rate Monitor">
+        android:title="Heart Rate Monitor">
 			<intent
 			    android:targetPackage="org.runnerup"
 			    android:targetClass="org.runnerup.view.HRSettingsActivity" />
@@ -56,7 +56,7 @@
 		
 	<Preference
         android:key="cue_configure_hrzones"
-        android:title="Configure Heart Rate Zones">
+        android:title="Heart Rate Zones">
 			<intent
 			    android:targetPackage="org.runnerup"
 			    android:targetClass="org.runnerup.view.HRZonesActivity" />

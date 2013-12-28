@@ -29,7 +29,8 @@
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
-        app:max_val="300">
+        app:max_val="300"
+        android:key="hrzAge" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
@@ -39,7 +40,8 @@
         android:entries="@array/sexes"
         android:prompt="@string/sex"
         android:text="Sex"
-        app:type="spinner" >
+        app:type="spinner"
+        android:key="hrzSex" >
     </org.runnerup.widget.TitleSpinner>
     
     <org.runnerup.widget.TitleSpinner
@@ -50,7 +52,8 @@
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
-        app:max_val="300">
+        app:max_val="300"
+        android:key="hrzMHR" >
     </org.runnerup.widget.TitleSpinner>
     
     <TableLayout

@@ -18,12 +18,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_hrzones"
+        android:id="@+id/menu_hrzonessettings_clear"
         android:orderInCategory="100"
-        android:title="Configure heart rate zones"/>
-    
-    <item
-        android:id="@+id/menu_hrsettings_clear"
-        android:orderInCategory="100"
-        android:title="Clear HR settings"/>
+        android:title="Clear heart rate zone settings"/>
 </menu>

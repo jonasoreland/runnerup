@@ -30,33 +30,35 @@
         android:id="@+id/zonefiller1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="000000"
+        android:text="0000"
         android:visibility="invisible" />
 
     <EditText
         android:id="@+id/zonelo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:inputType="number" />
 
     <TextView
         android:id="@+id/zonefiller2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="000000"
+        android:text="0000"
         android:visibility="invisible" />
 
     <EditText
         android:id="@+id/zonehi"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+		android:inputType="number" />
 
     <TextView
         android:id="@+id/zonefiller3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="000000"
+        android:text="0000"
         android:visibility="invisible" />
 
 </TableRow>

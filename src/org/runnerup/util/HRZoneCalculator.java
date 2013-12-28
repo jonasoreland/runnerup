@@ -38,9 +38,10 @@ public class HRZoneCalculator {
 	}
 
 	public HRZoneCalculator(Context ctx) {
-		this(ctx.getResources(), PreferenceManager.getDefaultSharedPreferences(ctx));
+		this(ctx.getResources(), PreferenceManager
+				.getDefaultSharedPreferences(ctx));
 	}
-	
+
 	public HRZoneCalculator(Resources res, SharedPreferences prefs) {
 		final String pct = res.getString(R.string.pref_hrz_thresholds);
 		if (prefs.contains(pct)) {
@@ -51,8 +52,7 @@ public class HRZoneCalculator {
 		}
 	}
 
-	int zoneLimitsPct[] = {
-			60, // 1
+	int zoneLimitsPct[] = { 60, // 1
 			65, // 2
 			75, // 3
 			82, // 4

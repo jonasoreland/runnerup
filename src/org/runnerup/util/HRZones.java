@@ -16,6 +16,8 @@
  */
 package org.runnerup.util;
 
+import java.util.Vector;
+
 import org.runnerup.R;
 
 import android.annotation.TargetApi;
@@ -30,15 +32,19 @@ import android.util.Pair;
 public class HRZones {
 
 	int zones[] = null;
+	final String key;
+	final SharedPreferences prefs;
 
 	public HRZones(Context ctx) {
-		this(ctx.getResources(), PreferenceManager.getDefaultSharedPreferences(ctx));
+		this(ctx.getResources(), PreferenceManager
+				.getDefaultSharedPreferences(ctx));
 	}
-	
-	public HRZones(Resources res, SharedPreferences prefs) {
-		final String pct = res.getString(R.string.pref_hrz_values);
-		if (prefs.contains(pct)) {
-			int limits[] = SafeParse.parseIntList(prefs.getString(pct, ""));
+
+	public HRZones(Resources res, SharedPreferences p) {
+		key = res.getString(R.string.pref_hrz_values);
+		prefs = p;
+		if (prefs.contains(key)) {
+			int limits[] = SafeParse.parseIntList(prefs.getString(key, ""));
 			if (limits != null) {
 				zones = limits;
 			}
@@ -56,9 +62,12 @@ public class HRZones {
 				if (zones[z] >= value)
 					break;
 			}
-
-			double lo = (z == 0) ? 0 : zones[z-1];
-			double hi = (z == zones.length) ? Math.ceil(value) : zones[z];
+			
+			if (z == zones.length) {
+				return z - 1;
+			}
+			double lo = (z == 0) ? 0 : zones[z - 1];
+			double hi = zones[z];
 			double add = (value - lo) / (hi - lo);
 			return z + add;
 		}
@@ -66,13 +75,26 @@ public class HRZones {
 	}
 
 	public Pair<Integer, Integer> getHRValues(int zone) {
-		if (zones != null && zone + 1 < zones.length) {
+		if (zones != null && zone < zones.length) {
 			if (zone == 0) {
-				return new Pair<Integer,Integer>(0, zones[1]);
+				return new Pair<Integer, Integer>(0, zones[0]);
 			} else {
-				return new Pair<Integer,Integer>(zones[zone], zones[zone+1]);
+				return new Pair<Integer, Integer>(zones[zone - 1], zones[zone]);
 			}
 		}
 		return null;
+	}
+
+	public void save(Vector<Integer> vals) {
+		zones = new int[vals.size()];
+		for (int i = 0; i < zones.length; i++)
+			zones[i] = vals.get(i);
+
+		prefs.edit().putString(key, SafeParse.storeIntList(zones)).commit();
+	}
+
+	public void clear() {
+		zones = null;
+		prefs.edit().remove(key).commit();
 	}
 }

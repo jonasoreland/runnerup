@@ -165,10 +165,20 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		case R.id.menu_hrsettings_clear:
 			clearHRSettings();
 			break;
+		case R.id.menu_hrzones:
+			hrZonesClick.onClick(null);
+			break;
 		}
 		return true;
 	}
 
+	OnClickListener hrZonesClick = new OnClickListener() {
+		@Override
+		public void onClick(View arg0) {
+			startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
+		}
+	};
+	
 	void clearHRSettings() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Clear HR settings");

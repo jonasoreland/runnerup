@@ -21,19 +21,21 @@ import java.util.Vector;
 import org.runnerup.R;
 import org.runnerup.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
+import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
-import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -47,9 +49,11 @@ public class HRZonesActivity extends Activity implements Constants {
 	TitleSpinner ageSpinner;
 	TitleSpinner sexSpinner;
 	TitleSpinner maxHRSpinner;
+	HRZones hrZones;
 	HRZoneCalculator hrZoneCalculator;
 	
 	Vector<EditText> zones = new Vector<EditText>();
+	boolean skipSave = false;
 
 	View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
 		TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
@@ -57,16 +61,9 @@ public class HRZonesActivity extends Activity implements Constants {
 		EditText lo = (EditText) row.findViewById(R.id.zonelo);
 		EditText hi = (EditText) row.findViewById(R.id.zonehi);
 		Pair<Integer,Integer> lim = hrZoneCalculator.getZoneLimits(zone);
-		tv.setText("Zone " + zone + " " + lim.first + " - " + lim.second);
+		tv.setText("Zone " + zone + " " + lim.first + "% - " + lim.second + "%");
 		lo.setTag("zone"+zone+"lo");
 		hi.setTag("zone"+zone+"hi");
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-		if (pref.contains((String) lo.getTag())) {
-			lo.setText(Integer.toString(pref.getInt((String) lo.getTag(), 0)));
-		}
-		if (pref.contains((String) hi.getTag())) {
-			hi.setText(Integer.toString(pref.getInt((String) hi.getTag(), 0)));
-		}
 		zones.add(lo);
 		zones.add(hi);
 		
@@ -78,6 +75,7 @@ public class HRZonesActivity extends Activity implements Constants {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.heartratezones);
 
+		hrZones = new HRZones(this);
 		hrZoneCalculator = new HRZoneCalculator(this);
 		ageSpinner = (TitleSpinner) findViewById(R.id.hrzAge);
 		sexSpinner = (TitleSpinner) findViewById(R.id.hrzSex);
@@ -92,55 +90,75 @@ public class HRZonesActivity extends Activity implements Constants {
 				zonesTable.addView(row);
 			}
 		}
-		ageSpinner.setOnSetValueListener(new OnSetValueListener(){
-
+		ageSpinner.setOnCloseDialogListener(new TitleSpinner.OnCloseDialogListener() {
+			
 			@Override
-			public String preSetValue(String newValue)
-					throws IllegalArgumentException {
-				recomputeMaxHR();
-				return newValue;
+			public void onClose(TitleSpinner spinner, boolean ok) {
+				if (ok) {
+					recomputeMaxHR();
+				}				
 			}
-
-			@Override
-			public int preSetValue(int newValue)
-					throws IllegalArgumentException {
-				recomputeMaxHR();
-				return newValue;
-			}});
+		});
 		
-		sexSpinner.setOnSetValueListener(new OnSetValueListener(){
-
+		sexSpinner.setOnCloseDialogListener(new TitleSpinner.OnCloseDialogListener() {
+			
 			@Override
-			public String preSetValue(String newValue)
-					throws IllegalArgumentException {
-				recomputeMaxHR();
-				return newValue;
+			public void onClose(TitleSpinner spinner, boolean ok) {
+				if (ok) {
+					recomputeMaxHR();
+				}
 			}
-
+		});
+		
+		maxHRSpinner.setOnCloseDialogListener(new TitleSpinner.OnCloseDialogListener() {
+			
 			@Override
-			public int preSetValue(int newValue)
-					throws IllegalArgumentException {
-				recomputeMaxHR();
-				return newValue;
-			}});
-
-		maxHRSpinner.setOnSetValueListener(new OnSetValueListener(){
-
-			@Override
-			public String preSetValue(String newValue)
-					throws IllegalArgumentException {
-				recomputeZones();
-				return newValue;
+			public void onClose(TitleSpinner spinner, boolean ok) {
+				if (ok) {
+					recomputeZones();
+				}
 			}
+		});
+	}
 
-			@Override
-			public int preSetValue(int newValue)
-					throws IllegalArgumentException {
-				recomputeZones();
-				return newValue;
-			}});
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.hrzonessettings_menu, menu);
+		return true;
+	}
 
-		recomputeZones();
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_hrzonessettings_clear:
+			clearHRSettings();
+			break;
+		}
+		return true;
+	}
+
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (hrZones.isConfigured()) {
+			load();
+		} else {
+			recomputeZones();
+		}
+	}
+
+	private void load() {
+		for (int zone = 0; zone < zones.size() / 2; zone ++) {
+			Pair<Integer,Integer> values = hrZones.getHRValues(zone + 1);
+			if (values != null) {
+				EditText lo = zones.get(2 * zone + 0);
+				EditText hi = zones.get(2 * zone + 1); 
+				lo.setText(Integer.toString(values.first));
+				hi.setText(Integer.toString(values.second));
+				System.err.println("loaded " + (zone + 1) + " " + values.first + "-" + values.second);
+			}
+		}
 	}
 
 	protected void recomputeMaxHR() {
@@ -152,7 +170,6 @@ public class HRZonesActivity extends Activity implements Constants {
 					int age = Integer.parseInt(ageSpinner.getValue().toString());
 					int maxHR = HRZoneCalculator.computeMaxHR(age, "Male".contentEquals(sexSpinner.getValue()));
 					maxHRSpinner.setValue(Integer.toString(maxHR));
-					maxHRSpinner.setValue(maxHR);
 					recomputeZones();
 				} catch (NumberFormatException ex) {
 
@@ -173,7 +190,6 @@ public class HRZonesActivity extends Activity implements Constants {
 						zones.get(2*i+0).setText(Integer.toString(val.first));
 						zones.get(2*i+1).setText(Integer.toString(val.second));
 					}
-					saveHR();
 				} catch (NumberFormatException ex) {
 				}
 			}
@@ -181,6 +197,54 @@ public class HRZonesActivity extends Activity implements Constants {
 	}
 
 	protected void saveHR() {
+		try {
+			Vector<Integer> vals = new Vector<Integer>();
+			System.err.print("saving: ");
+			for (int i = 0; i < zones.size(); i += 2) {
+				vals.add(Integer.valueOf(zones.get(i).getText().toString()));
+				System.err.print(" " + vals.lastElement());
+			}
+			vals.add(Integer.valueOf(zones.lastElement().getText().toString()));
+			System.err.println(" " + vals.lastElement());
+			hrZones.save(vals);
+		} catch (Exception ex) {
+		}
+	}
+	
+	void clearHRSettings() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Clear heart rate zone settings");
+		builder.setMessage("Are you sure");
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				ageSpinner.clear();
+				sexSpinner.clear();
+				maxHRSpinner.clear();
+				hrZones.clear();
+				dialog.dismiss();
+				skipSave = true;
+				finish();
+			}
+		});
+
+		builder.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing but close the dialog
+						dialog.dismiss();
+					}
+
+				});
+		builder.show();
+	}
+	
+	@Override
+	protected void onPause() {
+		if (!skipSave) {
+			saveHR();
+		}
+		skipSave = false;
+		super.onPause();
 	}
 
 	@Override

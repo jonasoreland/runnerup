@@ -49,7 +49,9 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.view.LayoutInflater;
@@ -102,6 +104,28 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			}
 		}
 
+		HRZones hrZones = new HRZones(this);
+		boolean hasHR = SettingsActivity.hasHR(this);
+		boolean hasHRZones = hrZones.isConfigured();
+
+		if (!hasHR || !hasHRZones) {
+			final int remove[] = {
+					R.string.cueinfo_total_hrz,
+					R.string.cueinfo_step_hrz,
+					R.string.cueinfo_lap_hrz
+			};
+			removePrefs(remove);
+		}
+		
+		if (!hasHR) {
+			final int remove[] = {
+					R.string.cueinfo_total_hr,
+					R.string.cueinfo_step_hr,
+					R.string.cueinfo_lap_hr
+			};
+			removePrefs(remove);
+		}
+		
 		{
 			Preference btn = (Preference)findPreference("tts_settings");
 			btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -133,6 +157,18 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				spinner.setValue(idx);
 			}
 			spinner.setOnSetValueListener(onSetValueListener);
+		}
+	}
+
+	private void removePrefs(int[] remove) {
+		Resources res = getResources();
+		PreferenceGroup group = (PreferenceGroup) findPreference("cueinfo");
+		if (group == null)
+			return;
+		for (int i = 0; i < remove.length; i++) {
+			String s = res.getString(remove[i]);
+			Preference pref = findPreference(s);
+			group.removePreference(pref);
 		}
 	}
 

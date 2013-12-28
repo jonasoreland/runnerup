@@ -54,8 +54,7 @@ public class SettingsActivity extends PreferenceActivity {
 			btn.setOnPreferenceClickListener(onImportClick);
 		}
 
-		if (true || !hasHR(this))
-		{
+		if (!hasHR(this)) {
 			Preference pref = findPreference("cue_configure_hrzones");
 			getPreferenceScreen().removePreference(pref);
 		}
