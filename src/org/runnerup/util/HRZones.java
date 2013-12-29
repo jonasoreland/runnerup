@@ -43,12 +43,15 @@ public class HRZones {
 	public HRZones(Resources res, SharedPreferences p) {
 		key = res.getString(R.string.pref_hrz_values);
 		prefs = p;
+		reload();
+	}
+
+	public void reload() {
 		String str = prefs.getString(key, null);
 		if (str != null) {
-			int limits[] = SafeParse.parseIntList(str);
-			if (limits != null) {
-				zones = limits;
-			}
+			zones = SafeParse.parseIntList(str);
+		} else {
+			zones = null;
 		}
 		if (zones != null) {
 			System.err.print("loaded: (" + str + ")");
@@ -61,6 +64,12 @@ public class HRZones {
 
 	public boolean isConfigured() {
 		return zones != null;
+	}
+
+	public int getCount() {
+		if (zones != null)
+			return zones.length - 1;
+		return 0;
 	}
 
 	public double getZone(double value) {
