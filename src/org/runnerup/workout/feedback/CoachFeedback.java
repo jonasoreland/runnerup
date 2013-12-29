@@ -34,6 +34,7 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CoachFeedback extends AudioFeedback {
 
+	int sign = 1;
 	Range range = null;
 	TargetTrigger trigger = null;
 	
@@ -41,6 +42,24 @@ public class CoachFeedback extends AudioFeedback {
 		super(scope, dimension);
 		this.range = range;
 		this.trigger = trigger;
+
+		switch(dimension) {
+		case PACE:
+			sign = -1; // pace is "inverse"
+			break;
+		case DISTANCE:
+			break;
+		case HR:
+			break;
+		case HRZ:
+			break;
+		case SPEED:
+			break;
+		case TIME:
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
@@ -69,11 +88,11 @@ public class CoachFeedback extends AudioFeedback {
 		else
 			val = s.get(scope, dimension);
 
-		int cmp = range.compare(val);
+		int cmp = sign * range.compare(val);
 		String msg = "";
-		if (cmp > 0) {
+		if (cmp < 0) {
 			msg = " " + ctx.getResources().getString(R.string.cue_speedup);
-		} else if (cmp < 0) {
+		} else if (cmp > 0) {
 			msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
 		}
 		if (! "".contentEquals(msg)) {

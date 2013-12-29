@@ -110,7 +110,7 @@ public class TargetTrigger extends Trigger {
 			} else {
 				double avg = getValue();
 				double cmp = range.compare(avg);
-				// System.err.println(" => avg: " + avg + " => cmp: " + cmp);
+				// System.err.println(" => avg: " + avg + " => cmp: " + cmp + "(" + range.minValue + ", " + range.maxValue + ")");
 				if (cmp == 0) {
 					return false;
 				}

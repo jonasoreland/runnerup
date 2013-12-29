@@ -35,8 +35,8 @@
 	<string name="txt_dimension_distance">distance</string>
 	<string name="txt_dimension_speed">speed</string>
 	<string name="txt_dimension_pace">pace</string>
-	<string name="txt_dimension_heartrate">heart rate</string>
-	<string name="txt_dimension_heartratezone">heart rate zone</string>
+	<string name="txt_dimension_heartrate">heartrate</string>
+	<string name="txt_dimension_heartratezone">heartrate zone</string>
 		
 	<string name="txt_distance_kilometer">kilometer</string>
 	<string name="txt_distance_kilometers">kilometers</string>
@@ -61,4 +61,11 @@
 	    <item>Male</item>
 	    <item>Female</item>
    	</string-array>
+
+	<string-array name="targetEntries">
+	    <item>None</item>
+	    <item>Pace</item>
+	    <item>Heart rate zone</item>
+	</string-array>
+	
 </resources>
