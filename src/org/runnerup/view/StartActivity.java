@@ -25,6 +25,7 @@ import java.util.List;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.hr.MockHRProvider;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
@@ -540,6 +541,10 @@ public class StartActivity extends Activity implements TickListener {
 				hrInfo.setText(btDeviceName);
 			} else {
 				hrInfo.setText("");
+				if (MockHRProvider.NAME.contentEquals(prefs.getString(res.getString(R.string.pref_bt_provider), ""))) {
+					final String btAddress = "mock: " + prefs.getString(res.getString(R.string.pref_bt_address), "???");
+					hrInfo.setText(btAddress);
+				}
 			}
 		}
 		

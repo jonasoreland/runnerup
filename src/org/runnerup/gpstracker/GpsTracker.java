@@ -26,6 +26,7 @@ import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.MockHRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
@@ -527,8 +528,8 @@ public class GpsTracker extends android.app.Service implements
 			return;
 		}
 		
-		if (!adapter.isEnabled()) {
-		    return;
+		if (!adapter.isEnabled() && !MockHRProvider.NAME.contentEquals(btProviderName)) {
+			return;
 		}
 		
 		final BluetoothDevice btDevice = adapter.getRemoteDevice(btAddress);

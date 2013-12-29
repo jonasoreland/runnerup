@@ -12,7 +12,7 @@ public class MockHRProvider implements HRProvider {
 
 	private HRClient hrClient = null;
 	private Handler hrClientHandler = null;
-	protected static final String NAME = "MockHR";
+	public static final String NAME = "MockHR";
 
 	public MockHRProvider(Context ctx) {
 	}

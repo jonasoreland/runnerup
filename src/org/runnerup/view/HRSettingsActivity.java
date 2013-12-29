@@ -595,7 +595,11 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 0) {
-			if (!mAdapter.isEnabled()) {
+			Resources res = getResources();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
+			
+			if (!mAdapter.isEnabled() && !mock) {
 				log("Bluetooth not enabled!");
 				scanButton.setEnabled(false);
 				connectButton.setEnabled(false);
