@@ -111,6 +111,7 @@ public class StartActivity extends Activity implements TickListener {
 	AudioSchemeListAdapter simpleAudioListAdapter = null;
 	CheckBox simpleTargetPace = null;
 	TitleSpinner simpleTargetPaceValue = null;
+	TitleSpinner simpleTargetHrz;
 
 	TitleSpinner intervalType = null;
 	TitleSpinner intervalTime = null;
@@ -129,6 +130,8 @@ public class StartActivity extends Activity implements TickListener {
 	Workout      advancedWorkout = null;
 	ListView     advancedStepList = null;
 	WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
+	
+	HRZonesListAdapter hrZonesAdapter = null;
 	
 	boolean manualSetValue = false;
 	TitleSpinner manualDate = null;
@@ -217,6 +220,9 @@ public class StartActivity extends Activity implements TickListener {
 			}
 		});
 		simpleTargetPaceValue.setEnabled(simpleTargetPace.isChecked());
+		hrZonesAdapter = new HRZonesListAdapter(this, inflater);
+		simpleTargetHrz = (TitleSpinner)findViewById(R.id.tabBasicTargetHrz);
+		simpleTargetHrz.setAdapter(hrZonesAdapter);
 		
 		intervalType = (TitleSpinner)findViewById(R.id.intervalType);
 		intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
@@ -321,6 +327,8 @@ public class StartActivity extends Activity implements TickListener {
 		intervalAudioListAdapter.reload();
 		advancedAudioListAdapter.reload();
 		advancedWorkoutListAdapter.reload();
+		hrZonesAdapter.reload();
+		simpleTargetHrz.setAdapter(hrZonesAdapter);
 		if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
 			loadAdvanced(null);
 		}

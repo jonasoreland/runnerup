@@ -91,6 +91,15 @@
         android:text="Target pace" />
     
     <org.runnerup.widget.TitleSpinner
+        android:id="@+id/tabBasicTargetType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="basic_target"
+        android:prompt="@string/simple_type"
+        android:entries="@array/targetEntries"
+        android:text="Target" />
+    
+    <org.runnerup.widget.TitleSpinner
         android:id="@+id/tabBasicTargetPaceMax"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -101,4 +110,11 @@
         android:text="Target pace (HH:MM:SS)"
         runnerup:type="durationpicker" />
 
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/tabBasicTargetHrz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="basic_target_hrz"
+        android:prompt="@string/simple_type"
+        android:text="Target heart rate zone" />
 </LinearLayout>

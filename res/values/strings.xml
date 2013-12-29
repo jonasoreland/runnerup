@@ -63,9 +63,9 @@
    	</string-array>
 
 	<string-array name="targetEntries">
-	    <item>None</item>
-	    <item>Pace</item>
-	    <item>Heart rate zone</item>
+	    <item>none</item>
+	    <item>pace</item>
+	    <item>heart rate zone</item>
 	</string-array>
 	
 </resources>
