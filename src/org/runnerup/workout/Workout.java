@@ -100,7 +100,7 @@ public class Workout implements WorkoutComponent {
 		if (dim == Dimension.HR) {
 			return gpsTracker.isHRConnected();
 		} else if (dim == Dimension.HRZ) {
-			if (hrZones == null || !hrZones.isConfigured() || gpsTracker.isHRConnected())
+			if (hrZones == null || !hrZones.isConfigured() || !gpsTracker.isHRConnected())
 				return false;
 		}else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
 				 scope == Scope.CURRENT) {
