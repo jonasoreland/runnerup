@@ -384,9 +384,7 @@ public class Workout implements WorkoutComponent {
 	}
 
 	private double getHeartRateZone(Scope scope) {
-		double hr = getHeartRate(scope);
-		System.err.println("hr: " + hr);
-		return hrZones.getZone(hr);
+		return hrZones.getZone(getHeartRate(scope));
 	}
 
 	public int getSport() {
