@@ -621,6 +621,10 @@ public class TitleSpinner extends LinearLayout {
 		return mValue.getText();
 	}
 
+	public int getValueInt() {
+		return mValueInt;
+	}
+	
 	public void clear() {
 		if (mKey != null) {
 			PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove(mKey).commit();
