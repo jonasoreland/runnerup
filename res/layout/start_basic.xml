@@ -82,19 +82,10 @@
         android:text="Goal time (HH:MM:SS)"
         runnerup:type="durationpicker" />
 
-
-    <CheckBox
-        android:id="@+id/tabBasicTargetPace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"
-        android:text="Target pace" />
-    
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/tabBasicTargetType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:key="basic_target"
         android:prompt="@string/simple_type"
         android:entries="@array/targetEntries"
         android:text="Target" />
@@ -116,5 +107,6 @@
         android:layout_height="wrap_content"
         android:key="basic_target_hrz"
         android:prompt="@string/simple_type"
-        android:text="Target heart rate zone" />
+        android:text="Target heart rate zone"
+        android:visibility="gone" />
 </LinearLayout>

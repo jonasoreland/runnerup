@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.runnerup.R;
@@ -32,6 +33,7 @@ import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.StepButton;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.TitleSpinner.OnCloseDialogListener;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Dimension;
@@ -109,9 +111,11 @@ public class StartActivity extends Activity implements TickListener {
 	TitleSpinner simpleDistance = null;
 	TitleSpinner simpleAudioSpinner = null;
 	AudioSchemeListAdapter simpleAudioListAdapter = null;
-	CheckBox simpleTargetPace = null;
+	TitleSpinner simpleTargetType = null;
+	TargetEntriesAdapter targetEntriesAdapter = null;
 	TitleSpinner simpleTargetPaceValue = null;
 	TitleSpinner simpleTargetHrz;
+	HRZonesListAdapter hrZonesAdapter = null;
 
 	TitleSpinner intervalType = null;
 	TitleSpinner intervalTime = null;
@@ -130,9 +134,7 @@ public class StartActivity extends Activity implements TickListener {
 	Workout      advancedWorkout = null;
 	ListView     advancedStepList = null;
 	WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
-	
-	HRZonesListAdapter hrZonesAdapter = null;
-	
+		
 	boolean manualSetValue = false;
 	TitleSpinner manualDate = null;
 	TitleSpinner manualTime = null;
@@ -210,19 +212,13 @@ public class StartActivity extends Activity implements TickListener {
 		simpleAudioListAdapter.reload();
 		simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basicAudioCueSpinner);
 		simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
-		simpleTargetPace = (CheckBox)findViewById(R.id.tabBasicTargetPace);
+		simpleTargetType = (TitleSpinner) findViewById(R.id.tabBasicTargetType);
 		simpleTargetPaceValue = (TitleSpinner)findViewById(R.id.tabBasicTargetPaceMax);
-		simpleTargetPace.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				simpleTargetPaceValue.setEnabled(isChecked);
-			}
-		});
-		simpleTargetPaceValue.setEnabled(simpleTargetPace.isChecked());
 		hrZonesAdapter = new HRZonesListAdapter(this, inflater);
 		simpleTargetHrz = (TitleSpinner)findViewById(R.id.tabBasicTargetHrz);
 		simpleTargetHrz.setAdapter(hrZonesAdapter);
+		simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
+		targetEntriesAdapter = new TargetEntriesAdapter(this);
 		
 		intervalType = (TitleSpinner)findViewById(R.id.intervalType);
 		intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
@@ -305,6 +301,8 @@ public class StartActivity extends Activity implements TickListener {
 //		if (getAllowStartStopFromHeadsetKey()) {
 //			registerHeadsetListener();
 //		}
+
+		updateTargetView();
 	}
 
 	@Override
@@ -329,6 +327,13 @@ public class StartActivity extends Activity implements TickListener {
 		advancedWorkoutListAdapter.reload();
 		hrZonesAdapter.reload();
 		simpleTargetHrz.setAdapter(hrZonesAdapter);
+		if (!hrZonesAdapter.hrZones.isConfigured()) {
+			targetEntriesAdapter.addDisabled(2);
+		} else if (targetEntriesAdapter.disabled != null){
+			targetEntriesAdapter.disabled.clear();
+		}
+		simpleTargetType.setAdapter(targetEntriesAdapter);
+
 		if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
 			loadAdvanced(null);
 		}
@@ -463,8 +468,16 @@ public class StartActivity extends Activity implements TickListener {
 				if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
 					Dimension target = null;
-					if (simpleTargetPace.isChecked())
+					switch(simpleTargetType.getValueInt()) {
+					case 0: // none
+						break;
+					case 1:
 						target = Dimension.PACE;
+						break;
+					case 2:
+						target = Dimension.HRZ;
+						break;
+					}
 					w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
@@ -670,6 +683,35 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	};
 
+	OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
+
+		@Override
+		public void onClose(TitleSpinner spinner, boolean ok) {
+			if (ok) {
+				updateTargetView();
+			}
+		}
+	};
+
+	void updateTargetView() {
+		switch(simpleTargetType.getValueInt()) {
+		case 0:
+		default:
+			simpleTargetPaceValue.setEnabled(false);
+			simpleTargetHrz.setEnabled(false);
+			break;
+		case 1:
+			simpleTargetPaceValue.setEnabled(true);
+			simpleTargetPaceValue.setVisibility(View.VISIBLE);
+			simpleTargetHrz.setVisibility(View.GONE);
+			break;
+		case 2:
+			simpleTargetPaceValue.setVisibility(View.GONE);
+			simpleTargetHrz.setEnabled(true);
+			simpleTargetHrz.setVisibility(View.VISIBLE);
+		}
+	}
+	
 	OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
 
 		@Override
@@ -916,3 +958,76 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	};
 }
+
+class TargetEntriesAdapter extends BaseAdapter {
+
+	String[] entries;
+	LayoutInflater inflator;
+	HashSet<String> disabled;
+	
+	TargetEntriesAdapter(Context ctx) {
+		inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		entries = ctx.getResources().getStringArray(R.array.targetEntries);
+	}
+	
+	void addDisabled(int i) {
+		if (disabled == null)
+			disabled = new HashSet<String>();
+		if (i < entries.length)
+			disabled.add(entries[i]);
+	}
+	
+	@Override
+	public int getCount() {
+		return entries.length;
+	}
+
+	@Override
+	public Object getItem(int position) {
+		if (position < entries.length)
+			return entries[position];
+		return null;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return 0;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		String str = (String) getItem(position);
+		if (convertView == null) {
+	        convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+		}
+		TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+		ret.setText(str);
+
+		if (disabled != null && disabled.contains(str))
+			convertView.setEnabled(false);
+		else
+			convertView.setEnabled(true);
+		
+		return convertView;
+	}
+
+	@Override
+	public boolean areAllItemsEnabled() {
+		return disabled == null || disabled.size() == 0;
+	}
+
+	@Override
+	public boolean isEnabled(int position) {
+		if (disabled == null)
+			return true;
+		
+		String str = (String) getItem(position);
+		if (str == null)
+			return true;
+		
+		if (disabled.contains(str))
+			return false;
+
+		return true;
+	}
+};
