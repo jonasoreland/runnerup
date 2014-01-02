@@ -41,6 +41,8 @@ public class TargetTrigger extends Trigger {
 	double lastTimestamp = 0;
 	MovingAverage movingAverage = null;
 
+	boolean useGpsForPaceTrigger = false;
+	
 	/**
 	 * cache computing of median
 	 */
@@ -179,7 +181,7 @@ public class TargetTrigger extends Trigger {
 		switch(dimension) {
 		case PACE:
 		case SPEED:
-			if (w.isEnabled(Dimension.SPEED, Scope.CURRENT)) {
+			if (useGpsForPaceTrigger && w.isEnabled(Dimension.SPEED, Scope.CURRENT)) {
 				double val = w.getSpeed(Scope.CURRENT);
 				if (dimension == Dimension.PACE && val != 0)
 					return 1/val;
