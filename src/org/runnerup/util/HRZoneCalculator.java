@@ -52,12 +52,12 @@ public class HRZoneCalculator {
 		}
 	}
 
-	int zoneLimitsPct[] = { 60, // 1
-			65, // 2
-			75, // 3
-			82, // 4
-			89, // 5
-			94, // 6
+	int zoneLimitsPct[] = {
+			63, // 1
+			71, // 2
+			78, // 3
+			85, // 4
+			92  // 5
 	};
 
 	public int getZoneCount() {
@@ -84,7 +84,7 @@ public class HRZoneCalculator {
 		if (limits == null)
 			return null;
 
-		return new Pair<Integer, Integer>((limits.first * maxHR + 50) / 100,
-				(limits.second * maxHR + 50) / 100);
+		return new Pair<Integer, Integer>((int)Math.round(limits.first * maxHR / 100.0),
+				(int)Math.round(limits.second * maxHR / 100.0d));
 	}
 }
