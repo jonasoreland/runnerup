@@ -16,15 +16,12 @@
  */
 package org.runnerup.export;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.zip.GZIPOutputStream;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,9 +38,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server {
+public class Strava extends FormCrawler implements Uploader, OAuth2Server {
 
-	public static final String NAME = "RunningAHEAD";
+	public static final String NAME = "Strava";
 
 	/**
 	 * @todo register OAuth2Server
@@ -51,17 +48,16 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 	public static String CLIENT_ID = null;
 	public static String CLIENT_SECRET = null;
 
-	public static final String AUTH_URL = "https://www.runningahead.com/oauth2/authorize";
-	public static final String TOKEN_URL = "https://api.runningahead.com/oauth2/token";
-	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runningahead";
+	public static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
+	public static final String TOKEN_URL = "https://www.strava.com/oauth/token";
+	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
 
-	public static final String REST_URL = "https://api.runningahead.com/rest";
-	public static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";
+	public static final String REST_URL = "https://www.strava.com/api/v3/uploads";
 	
 	private long id = 0;
 	private String access_token = null;
 
-	RunningAHEAD(UploadManager uploadManager) {
+	Strava(UploadManager uploadManager) {
 		if (CLIENT_ID == null || CLIENT_SECRET == null) {
 			try {
 				JSONObject tmp = new JSONObject(uploadManager.loadData(this));
@@ -95,7 +91,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 
 	@Override
 	public String getAuthExtra() {
-		return null;
+		return "scope=write";
 	}
 
 	@Override
@@ -193,7 +189,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 			return s;
 		}
 		
-		String URL = IMPORT_URL + "?access_token=" + access_token;
+		String URL = REST_URL;
 		TCX tcx = new TCX(db);
 		HttpURLConnection conn = null;
 		Exception ex = null;
@@ -203,11 +199,18 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 			conn = (HttpURLConnection) new URL(URL).openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Content-Encoding", "gzip");
-			OutputStream out = new GZIPOutputStream(new BufferedOutputStream(conn.getOutputStream()));
-			out.write(writer.toString().getBytes());
-			out.flush();
-			out.close();
+			
+			Part<StringWritable> part0 = new Part<StringWritable>("access_token",
+					new StringWritable(access_token));
+			Part<StringWritable> part1 = new Part<StringWritable>("data_type",
+					new StringWritable("tcx"));
+			Part<StringWritable> part2 = new Part<StringWritable>("file",
+					new StringWritable(writer.toString()));
+			part2.filename = "RunnerUp.tcx";
+			part2.contentType = "application/octet-stream";
+			Part<?> parts[] = { part0, part1, part2 };
+			postMulti(conn, parts);
+			
 			int responseCode = conn.getResponseCode();
 			String amsg = conn.getResponseMessage();
 			System.err.println("code: " + responseCode + ", amsg: " + amsg);
@@ -215,7 +218,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			JSONObject obj = parse(in);
 			
-			if (responseCode == 200 && obj.getJSONObject("data").getJSONArray("workoutIds").length() == 1) {
+			if (responseCode == 201 && obj.getLong("id") > 0) {
 				conn.disconnect();
 				return Status.OK;
 			}

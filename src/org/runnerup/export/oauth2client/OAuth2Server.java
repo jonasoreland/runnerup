@@ -32,6 +32,8 @@ public interface OAuth2Server {
 
 	public String getAuthUrl();
 
+	public String getAuthExtra();
+
 	public String getTokenUrl();
 
 	public String getRevokeUrl();

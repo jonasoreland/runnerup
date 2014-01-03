@@ -109,6 +109,11 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	}
 
 	@Override
+	public String getAuthExtra() {
+		return null;
+	}
+
+	@Override
 	public String getTokenUrl() {
 		return TOKEN_URL;
 	}

@@ -256,6 +256,10 @@ public class OAuth2Activity extends Activity {
 		b.putString(OAuth2ServerCredentials.TOKEN_URL, server.getTokenUrl());
 		b.putString(OAuth2ServerCredentials.REDIRECT_URI,
 				server.getRedirectUri());
+		String extra = server.getAuthExtra();
+		if (extra != null) {
+			b.putString(OAuth2ServerCredentials.AUTH_EXTRA, extra);
+		}
 		args.putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
 		return args;
 	}

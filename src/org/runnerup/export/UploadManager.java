@@ -178,6 +178,8 @@ public class UploadManager {
 			uploader = new RunnerUpLive(this);
 		} else if (uploaderName.contentEquals(DigifitUploader.NAME)) {
 			uploader = new DigifitUploader(this);
+		} else if (uploaderName.contentEquals(Strava.NAME)) {
+			uploader = new Strava(this);
 		}
 		
 		if (uploader != null) {
