@@ -58,7 +58,6 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	public static String CLIENT_ID = null;
 	public static String CLIENT_SECRET = null;
 
-	// TODO: I get ssl error when using https
 	public static final String AUTH_URL = "https://runkeeper.com/apps/authorize";
 	public static final String TOKEN_URL = "https://runkeeper.com/apps/token";
 	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runkeeper";
@@ -67,6 +66,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
 	public static final String FEED_TOKEN_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/login";
 	public static final String FEED_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/getFeedItems";
+	public static final String FEED_ITEM_TYPES = "[ 0 ]"; // JSON array
 	
 	private long id = 0;
 	private String access_token  = null;
@@ -468,7 +468,8 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
 		FormValues kv = new FormValues();
 		kv.put("lastPostTime", Long.toString(from));
-
+		kv.put("feedItemTypes", FEED_ITEM_TYPES);
+		
 		{
 			OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
 			kv.write(wr);
