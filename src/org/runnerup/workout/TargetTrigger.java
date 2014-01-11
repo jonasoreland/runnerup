@@ -39,10 +39,10 @@ public class TargetTrigger extends Trigger {
 	int skip_values = 1;
 	double sort_measure[] = null;
 	double lastTimestamp = 0;
-	MovingAverage movingAverage = null;
-
-	boolean useGpsForPaceTrigger = false;
 	
+	double measure_time[] = null;
+	double measure_distance[] = null;
+
 	/**
 	 * cache computing of median
 	 */
@@ -54,9 +54,11 @@ public class TargetTrigger extends Trigger {
 		measure = new double[movingAverageSeconds];
 		sort_measure = new double[movingAverageSeconds];
 
-		movingAverage = new MovingAverage(movingAverageSeconds);
 		if (dimension == Dimension.HRZ)
 			dimension = Dimension.HR;
+
+		measure_time = new double[movingAverageSeconds];
+		measure_distance = new double[movingAverageSeconds];
 
 		minGraceCount = graceSeconds;
 		skip_values = (5 * movingAverageSeconds) / 100; // ignore 5% lowest and 5% higest values
@@ -85,9 +87,8 @@ public class TargetTrigger extends Trigger {
 
 		if (inited == false) {
 			System.out.println("inited == false");
-			reset();
 			lastTimestamp = time_now;
-			movingAverage.init(w, time_now);
+			initMeasurement(w, time_now);
 			inited = true;
 			return false;
 		}
@@ -104,15 +105,15 @@ public class TargetTrigger extends Trigger {
 			for (int i = 0; i < elapsed_seconds; i++) {
 				addObservation(val_now);
 			}
-			// System.err.println("val_now: " + val_now + " elapsed: " + elapsed_seconds);
+//			System.err.println("val_now: " + val_now + " elapsed: " + elapsed_seconds);
 		
 			if (graceCount > 0) { // only emit coaching ever so often
-				// System.err.println("graceCount: " + graceCount);
+//				System.err.println("graceCount: " + graceCount);
 				graceCount -= elapsed_seconds;
 			} else {
 				double avg = getValue();
 				double cmp = range.compare(avg);
-				// System.err.println(" => avg: " + avg + " => cmp: " + cmp + "(" + range.minValue + ", " + range.maxValue + ")");
+//				System.err.println(" => avg: " + avg + " => cmp: " + cmp);
 				if (cmp == 0) {
 					return false;
 				}
@@ -135,30 +136,15 @@ public class TargetTrigger extends Trigger {
 		if (cntMeasures == lastValCnt)
 			return lastVal;
 		
-		int len = cntMeasures >= measure.length ? measure.length : cntMeasures;
-		int zeros = measure.length - len;
-		System.arraycopy(measure,  0, sort_measure, 0, len);
-		if (zeros > 0) {
-			// fill end of array with values that will sort to the left of array
-			double minVal = sort_measure[0];
-			for (int i = 1; i < len; i++)
-				minVal = Math.min(minVal,  sort_measure[i]);
-			for (int i = 0; i < zeros; i++)
-				sort_measure[len+i] = minVal - 1;
-		}
+		System.arraycopy(measure,  0, sort_measure, 0, measure.length);
 		java.util.Arrays.sort(sort_measure);
 		double cnt = 0;
 		double val = 0;
-		for (int i = zeros + skip_values; i < sort_measure.length - skip_values; i++) {
+		for (int i = skip_values; i < sort_measure.length - skip_values; i++) {
 			val += sort_measure[i];
 			cnt++;
 		}
-		if (cnt > 0) {
-			lastVal = val / cnt; 
-		} else {
-			int mid = zeros + (sort_measure.length - zeros) / 2;
-			lastVal = sort_measure[mid];
-		}
+		lastVal = val / cnt; 
 		lastValCnt = cntMeasures;
 		return lastVal;
 	}
@@ -173,33 +159,65 @@ public class TargetTrigger extends Trigger {
 		lastTimestamp = 0;
 		
 		lastVal = 0;
-		lastValCnt = 1;
-		movingAverage.reset();
+		lastValCnt = 0;
+	}
+
+	private void initMeasurement(Workout w, double time_now) {
+		switch(dimension) {
+		case PACE:
+		case SPEED:
+			double distance_now = w.get(scope,  Dimension.DISTANCE);
+			if (lastTimestamp == 0) {
+				measure_time[0] = time_now;
+				measure_distance[0] = distance_now;
+			}
+		case DISTANCE:
+			break;
+		case HR:
+			break;
+		case HRZ:
+			break;
+		case TIME:
+			break;
+		default:
+			break;
+		}
 	}
 
 	private double getMeasurement(Workout w, double time_now) {
 		switch(dimension) {
 		case PACE:
 		case SPEED:
-			if (useGpsForPaceTrigger && w.isEnabled(Dimension.SPEED, Scope.CURRENT)) {
-				double val = w.getSpeed(Scope.CURRENT);
-				if (dimension == Dimension.PACE && val != 0)
-					return 1/val;
-				else if (dimension == Dimension.SPEED)
-					return val;
+			double distance_now = w.get(scope,  Dimension.DISTANCE);
+
+			int oldpos = 0;
+			int newpos = (cntMeasures + 1) % measure_time.length;
+			if (cntMeasures >= measure_time.length) {
+				oldpos = newpos;
 			}
-			movingAverage.addMeasurement(w, time_now);
-			return movingAverage.getValue();
+			double delta_distance = distance_now - measure_distance[oldpos];
+			double delta_time = time_now - measure_time[oldpos];
+
+			measure_time[newpos] = time_now;
+			measure_distance[newpos] = distance_now;
+			
+			if (dimension == Dimension.PACE) {
+				return delta_time / delta_distance;
+			} else {
+				assert(dimension == Dimension.SPEED);
+				return delta_distance / delta_time;
+			}
 		case DISTANCE:
-			break;
-		case TIME:
 			break;
 		case HR:
 			break;
 		case HRZ:
 			break;
+		case TIME:
+			break;
+		default:
+			break;
 		}
-
 		return w.get(Scope.CURRENT, dimension);
 	}
 
@@ -236,72 +254,4 @@ public class TargetTrigger extends Trigger {
 	@Override
 	public void onComplete(Scope what, Workout s) {
 	}
-
-	class MovingAverage {
-		int cnt;
-		double measure_time[] = null;
-		double measure_value[] = null;
-		MovingAverage(int movingAverageSeconds) {
-			measure_time = new double[movingAverageSeconds];
-			measure_value = new double[movingAverageSeconds];
-		}
-		public void reset() {
-			cnt = 0;
-		}
-		public void init(Workout w, double time_now) {
-			reset();
-			addMeasurement(w, time_now);
-		}
-		public void addMeasurement(Workout w, double time_now) {
-			int pos = cnt % measure_time.length;
-			switch(dimension) {
-			case PACE:
-			case SPEED:
-				double distance_now = w.get(scope,  Dimension.DISTANCE);
-				measure_time[pos] = time_now;
-				measure_value[pos] = distance_now;
-				cnt++;
-				break;
-			case DISTANCE:
-				break;
-			case TIME:
-				break;
-			case HR:
-				break;
-			case HRZ:
-				break;
-			}
-		}
-		public double getValue() {
-			assert(cnt > 1);
-			int lo = 0;
-			int hi = cnt - 1;
-			if (cnt >= measure_time.length) {
-				lo = (cnt - 2) % measure_time.length;
-				hi = (cnt - 1) % measure_time.length;
-			}
-			double delta_val = measure_value[hi] - measure_value[lo];
-			double delta_time = measure_time[hi] - measure_time[lo];
-
-			switch(dimension) {
-			case PACE:
-				if (delta_val == 0)
-					return 0;
-				return delta_time / delta_val;
-			case SPEED:
-				if (delta_time == 0)
-					return 0;
-				return delta_val / delta_time;
-			case DISTANCE:
-				break;
-			case TIME:
-				break;
-			case HR:
-				break;
-			case HRZ:
-				break;
-			}
-			return 0;
-		}
-	};
 }
