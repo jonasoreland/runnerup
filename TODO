@@ -47,7 +47,13 @@
 - BUG: pause during rest step confuses audio countdown
                                    (DONE)
 - routes ??
-- feed
+- feed                             (DONE)
+  runkeeper                        (DONE)
+  nike+                            (DONE)
+  funbeat                          (DONE)
+  endmondo                         (DONE)
+  strava
+
 - edit advanced workouts
 - advanced audio cue editor
 
