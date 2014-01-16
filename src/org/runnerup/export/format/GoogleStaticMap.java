@@ -74,7 +74,7 @@ public class GoogleStaticMap {
 	public long countLocations(long activityId) {
 		long count = 0;
 		String[] args = { Long.toString(activityId) };
-		Cursor c = mDB.rawQuery("SELECT COUNT (DISTINCT round(" + DB.LOCATION.LATITUDE + "* 10000000000 " + DB.LOCATION.LONGITUDE + "*100000)) FROM " + DB.LOCATION.TABLE + " WHERE " + DB.LOCATION.ACTIVITY + " = ?", args);
+		Cursor c = mDB.rawQuery("SELECT COUNT (DISTINCT round(" + DB.LOCATION.LATITUDE + "* 10000000000 + " + DB.LOCATION.LONGITUDE + "*100000)) FROM " + DB.LOCATION.TABLE + " WHERE " + DB.LOCATION.ACTIVITY + " = ?", args);
 		if (c.moveToFirst()) {
 			count = c.getLong(0);
 		}
