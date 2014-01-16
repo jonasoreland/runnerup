@@ -138,7 +138,8 @@ public class OAuth2Activity extends Activity {
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 				super.onPageStarted(view, url, favicon);
-				mSpinner.show();
+				if (!isFinishing())
+					mSpinner.show();
 			}
 
 			@Override
