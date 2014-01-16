@@ -89,7 +89,7 @@ public class GoogleStaticMap {
 	public String export(long activityId, final int maxLen) {
 
 		long count = countLocations(activityId);
-		int avgLen = 9;  // in this encoding 1 location "normally" takes 9 chars
+		int avgLen = 6;  // in this encoding 1 location "normally" takes 9 chars
 		StringBuffer dst = null;
 		do {
 			dst = new StringBuffer();
@@ -117,6 +117,7 @@ public class GoogleStaticMap {
 			String res;
 			try {
 				res = URLEncoder.encode(dst.toString(), "UTF-8");
+				System.err.println("count: " + count + ", avgLen: " + avgLen + ", points: " + points + ", res.length(): " + res.length());
 				if (res.length() < maxLen)
 					return res;
 
