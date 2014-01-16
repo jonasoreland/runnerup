@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.format.GPX;
+import org.runnerup.export.format.GoogleStaticMap;
 import org.runnerup.export.format.NikeXML;
 import org.runnerup.export.format.TCX;
 
@@ -50,11 +51,13 @@ public class ActivityProvider extends ContentProvider {
     public static final String GPX_MIME = "application/gpx+xml";
     public static final String TCX_MIME = "application/tcx+xml";
     public static final String NIKE_MIME = "application/nike+xml";
+    public static final String MAPS_MIME = "application/maps";
     
     // UriMatcher used to match against incoming requests
     static final int GPX = 1;
     static final int TCX = 2;
     static final int NIKE = 3;
+    static final int MAPS = 4;
     private UriMatcher uriMatcher;
  
     @Override
@@ -63,6 +66,7 @@ public class ActivityProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, "gpx/#/*", GPX);
         uriMatcher.addURI(AUTHORITY, "tcx/#/*", TCX);
         uriMatcher.addURI(AUTHORITY, "nike+xml/#/*", NIKE);
+        uriMatcher.addURI(AUTHORITY, "maps/#/*", MAPS);
         return true;
     }
 
@@ -103,6 +107,7 @@ public class ActivityProvider extends ContentProvider {
 		case GPX:
 		case TCX:
 		case NIKE:
+		case MAPS:
 	    	final List<String> list = uri.getPathSegments();
 	    	final String id = list.get(list.size() - 2);
 			final long activityId = Long.parseLong(id);
@@ -127,6 +132,10 @@ public class ActivityProvider extends ContentProvider {
 				} else if (res == NIKE) {
 					NikeXML xml = new NikeXML(mDB);
 					xml.export(activityId, new OutputStreamWriter(out.second));
+				} else if (res == MAPS) {
+					GoogleStaticMap map = new GoogleStaticMap(mDB);
+					String str = map.export(activityId, 2000);
+					out.second.write(str.getBytes());
 				}
 				out.second.flush();
 				out.second.close();
@@ -167,6 +176,10 @@ public class ActivityProvider extends ContentProvider {
     		return GPX_MIME;
     	case TCX:
     		return TCX_MIME;
+    	case NIKE:
+    		return NIKE_MIME;
+    	case MAPS:
+    		return MAPS_MIME;
     	}
     	return null;
     }
