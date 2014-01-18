@@ -83,6 +83,7 @@
         runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
+        android:key="basicTargetType"
         android:id="@+id/tabBasicTargetType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
