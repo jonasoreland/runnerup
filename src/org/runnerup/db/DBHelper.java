@@ -44,7 +44,7 @@ import android.os.Build;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 22;
+	private static final int DBVERSION = 23;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
