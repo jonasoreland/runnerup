@@ -25,25 +25,34 @@ import java.util.TimerTask;
 import org.runnerup.R;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;
+import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +63,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunActivity extends Activity implements TickListener {
 	Workout workout = null;
 	GpsTracker mGpsTracker = null;
@@ -76,12 +86,15 @@ public class RunActivity extends Activity implements TickListener {
 	View tableRowInterval = null;
 	org.runnerup.workout.Step currentStep = null;
 	Formatter formatter = null;
+	BroadcastReceiver catchButtonEvent = null;
 	
 	class WorkoutRow { org.runnerup.workout.Step step = null; ContentValues lap = null;
 	public int level;};
 	ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 	boolean simpleWorkout;
+	boolean allowHardwareKey = false;
+	HRZones hrZones = null;
 
 	/** Called when the activity is first created. */
 
@@ -91,6 +104,7 @@ public class RunActivity extends Activity implements TickListener {
 		setContentView(R.layout.run);
 		mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
 		formatter = new Formatter(this);
+		hrZones = new HRZones(this);
 		
 		stopButton = (Button) findViewById(R.id.stopButton);
 		stopButton.setOnClickListener(stopButtonClick);
@@ -111,12 +125,57 @@ public class RunActivity extends Activity implements TickListener {
 		workoutList = (ListView) findViewById(R.id.workoutList);
 		WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
 		workoutList.setAdapter(adapter);
+
+		catchButtonEvent = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				pauseButton.performClick();
+			}
+		};
+		if (getAllowStartStopFromHeadsetKey()) {
+			registerHeadsetListener();
+		}
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		System.err.println("onConfigurationChange => do NOTHING!!");
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		
+	}
+
+	private void unregisterHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+		
+		unregisterReceiver(catchButtonEvent);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+	}
+
+	private void registerHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.setPriority(2147483647);
+		intentFilter.addAction("org.runnerup.START_STOP");
+		registerReceiver(catchButtonEvent, intentFilter);
 	}
 
 	@Override
@@ -128,8 +187,15 @@ public class RunActivity extends Activity implements TickListener {
 			mSpeech = null;
 		}
 		stopTimer();
+		
 	}
 
+	boolean getAllowStartStopFromHeadsetKey() {
+		Context ctx = getApplicationContext();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
+		return pref.getBoolean("pref_keystartstop_active", true);
+	}
+	
 	void onGpsTrackerBound() {
 		workout = mGpsTracker.getWorkout();
 		mGpsTracker.createActivity(workout.getSport());
@@ -143,6 +209,7 @@ public class RunActivity extends Activity implements TickListener {
 		bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute, getApplicationContext()));
 		bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
 		bindValues.put(Workout.KEY_FORMATTER, formatter);
+		bindValues.put(Workout.KEY_HRZONES, hrZones);
 		workout.onBind(workout, bindValues);
 		startTimer();
 
@@ -250,6 +317,9 @@ public class RunActivity extends Activity implements TickListener {
 			workout.onComplete(Scope.WORKOUT, workout);
 			workout.onSave();
 			mGpsTracker = null;
+			if (getAllowStartStopFromHeadsetKey()){
+				unregisterHeadsetListener();
+			}
 			finish();
 			return;
 		} else if (resultCode == Activity.RESULT_CANCELED) {
@@ -259,6 +329,9 @@ public class RunActivity extends Activity implements TickListener {
 			workout.onComplete(Scope.WORKOUT, workout);
 			workout.onDiscard();
 			mGpsTracker = null;
+			if (getAllowStartStopFromHeadsetKey()){
+				unregisterHeadsetListener();
+			}
 			finish();
 			return;
 		} else if (resultCode == Activity.RESULT_FIRST_USER) {
@@ -278,11 +351,11 @@ public class RunActivity extends Activity implements TickListener {
 			if (workout.isPaused()) {
 				workout.onResume(workout);
 				pauseButton.setText("Pause");
-				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_blue));
+				WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_blue));
 			} else {
 				workout.onPause(workout);
 				pauseButton.setText("Resume");
-				pauseButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_green));
+				WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_green));
 			}
 		}
 	};

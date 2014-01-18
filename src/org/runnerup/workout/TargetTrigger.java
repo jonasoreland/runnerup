@@ -16,6 +16,10 @@
  */
 package org.runnerup.workout;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class TargetTrigger extends Trigger {
 
 	boolean inited = false;
@@ -45,14 +49,17 @@ public class TargetTrigger extends Trigger {
 	double lastVal = 0;
 	int lastValCnt = 0;
 
-	public TargetTrigger(int movingAverageSeconds, int graceSeconds) {
+	public TargetTrigger(Dimension dim, int movingAverageSeconds, int graceSeconds) {
+		dimension = dim;
 		measure = new double[movingAverageSeconds];
 		sort_measure = new double[movingAverageSeconds];
 
-		if (dimension == Dimension.SPEED || dimension == Dimension.PACE) {
-			measure_time = new double[movingAverageSeconds];
-			measure_distance = new double[movingAverageSeconds];
-		}
+		if (dimension == Dimension.HRZ)
+			dimension = Dimension.HR;
+
+		measure_time = new double[movingAverageSeconds];
+		measure_distance = new double[movingAverageSeconds];
+
 		minGraceCount = graceSeconds;
 		skip_values = (5 * movingAverageSeconds) / 100; // ignore 5% lowest and 5% higest values
 
@@ -61,11 +68,15 @@ public class TargetTrigger extends Trigger {
 
 	@Override
 	public boolean onTick(Workout w) {
-		if (paused)
-		{
+		if (paused) {
 			return false;
 		}
 
+		if (!w.isEnabled(dimension, Scope.STEP)) {
+			inited = false;
+			return false;
+		}
+		
 		double time_now = w.get(Scope.STEP, Dimension.TIME);
 
 		if (time_now < lastTimestamp) {
@@ -116,7 +127,7 @@ public class TargetTrigger extends Trigger {
 	}
 
 	private void addObservation (double val_now) {
-		int pos = cntMeasures % measure_time.length;
+		int pos = cntMeasures % measure.length;
 		measure[pos] = val_now;
 		cntMeasures ++;
 	}
@@ -160,10 +171,15 @@ public class TargetTrigger extends Trigger {
 				measure_time[0] = time_now;
 				measure_distance[0] = distance_now;
 			}
-			break;
 		case DISTANCE:
 			break;
+		case HR:
+			break;
+		case HRZ:
+			break;
 		case TIME:
+			break;
+		default:
 			break;
 		}
 	}
@@ -193,11 +209,16 @@ public class TargetTrigger extends Trigger {
 			}
 		case DISTANCE:
 			break;
+		case HR:
+			break;
+		case HRZ:
+			break;
 		case TIME:
 			break;
+		default:
+			break;
 		}
-		
-		return 0;
+		return w.get(Scope.CURRENT, dimension);
 	}
 
 	@Override

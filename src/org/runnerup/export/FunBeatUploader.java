@@ -28,7 +28,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,14 +38,17 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 import org.runnerup.util.Encryption;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-
+import android.os.Build;
 /**
  * TODO:
  * 1) serious cleanup needed
  * 2) maybe reverse engineer 1.0.0.api.funbeat.se that I found...
  */
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class FunBeatUploader extends FormCrawler implements Uploader {
 
 	public static final String NAME = "FunBeat";
@@ -213,6 +215,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 					responseCode = conn.getResponseCode();
 					amsg = conn.getResponseMessage();
 					getCookies(conn);
+				} else if (responseCode != 200) {
+					System.err.println("FunBeatUploader::connect() - got " + responseCode + ", msg: " + amsg);
 				}
 				String html = getFormValues(conn);
 				ok = html.indexOf("Logga ut") > 0;
@@ -246,7 +250,11 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			JSONObject req = new JSONObject();
 			req.put("username", username);
 			req.put("passwordHashed", Encryption.toHex(Encryption.SHA1(password)));
-			JSONObject reply = makeRequest("ValidateAndCreateSecrets", req).getJSONObject("d");
+			JSONObject reply = makeRequest("ValidateAndCreateSecrets", req);
+			if (reply == null || !reply.has("d")) {
+				return false;
+			}
+			reply = reply.getJSONObject("d");
 			loginID = reply.getString("LoginID");
 			String loginSecret = reply.getString("LoginSecret");
 			loginSecretHashed = Encryption.calculateRFC2104HMAC(loginSecret, APP_SECRET);
@@ -285,7 +293,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			out.close();
 			
 			InputStream in = new BufferedInputStream(conn.getInputStream());
-			JSONObject ret = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			JSONObject ret = parse(in);
 			conn.disconnect();
 			return ret;
 		} catch (JSONException ex) {
@@ -360,6 +368,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 				responseCode = conn.getResponseCode();
 				amsg = conn.getResponseMessage();
 				getCookies(conn);
+			} else if (responseCode != 200){
+				System.err.println("FunBeatUploader::upload() - got " + responseCode + ", msg: " + amsg);
 			}
 			getFormValues(conn);
 			conn.disconnect();
@@ -471,7 +481,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 			out.flush();
 			out.close();
 			final InputStream in = new BufferedInputStream(conn.getInputStream());
-			final JSONObject reply = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			final JSONObject reply = parse(in);
 			final int code = conn.getResponseCode();
 			conn.disconnect();
 			if (code == 200) {

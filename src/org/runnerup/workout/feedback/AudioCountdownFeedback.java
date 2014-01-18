@@ -27,6 +27,10 @@ import org.runnerup.workout.Workout;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCountdownFeedback extends Feedback {
 
 	boolean emitScope = false;

@@ -19,6 +19,7 @@ package org.runnerup.view;
 import org.runnerup.R;
 import org.runnerup.util.Formatter;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
@@ -31,6 +32,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -41,6 +43,7 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.TabHost;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class MainLayout extends TabActivity {
 
 	private Drawable getDrawable(int resId) {
@@ -81,6 +84,9 @@ public class MainLayout extends TabActivity {
 					Double.toString(km ? Formatter.km_meters : Formatter.mi_meters));
 		}
 		editor.commit();
+		
+		// clear basicTargetType between application startup/shutdown
+		pref.edit().remove("basicTargetType").commit();
 		
 		System.err.println("app-version: " + versionCode + ", upgradeState: " + upgradeState + ", km: " + km);
 		

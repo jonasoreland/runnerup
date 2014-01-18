@@ -40,6 +40,10 @@ import android.util.Xml;
  * @author jonas.oreland@gmail.com
  * 
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class TCX {
 
 	long mID = 0;
@@ -47,6 +51,8 @@ public class TCX {
 	XmlSerializer mXML = null;
 	String notes = null;
 	SimpleDateFormat simpleDateFormat = null;
+	
+	private boolean addGratuitousTrack = false;
 	
 	public TCX(SQLiteDatabase mDB) {
 		this.mDB = mDB;
@@ -169,6 +175,11 @@ public class TCX {
 				mXML.startTag("", "TriggerMethod");
 				mXML.text("Manual");
 				mXML.endTag("", "TriggerMethod");
+				int maxHR = 0;
+				long sumHR = 0;
+				long cntHR = 0;
+				int cntTrackpoints = 0;
+
 				if (pok && cLocation.getLong(0) == lap) {
 					mXML.startTag("", "Track");
 					float last_lat = 0;
@@ -179,6 +190,8 @@ public class TCX {
 						float lat = cLocation.getFloat(2);
 						float longi = cLocation.getFloat(3);
 						if (!(time == last_time && lat == last_lat && longi != last_longi)) {
+							cntTrackpoints++;
+							
 							mXML.startTag("", "Trackpoint");
 							mXML.startTag("", "Time");
 							mXML.text(formatTime(time));
@@ -206,9 +219,14 @@ public class TCX {
 							mXML.text("" + totalDistance);
 							mXML.endTag("", "DistanceMeters");
 							if (!cLocation.isNull(6)) {
+								int hr = cLocation.getInt(6);
+								maxHR = hr > maxHR ? hr : maxHR;
+								sumHR += hr;
+								cntHR ++;
+								
 								mXML.startTag("", "HeartRateBpm");
 								mXML.startTag("", "Value");
-								String bpm = Integer.toString(cLocation.getInt(6));
+								String bpm = Integer.toString(hr);
 								mXML.text(bpm);
 								mXML.endTag("", "Value");
 								mXML.endTag("", "HeartRateBpm");
@@ -222,6 +240,31 @@ public class TCX {
 					}
 					mXML.endTag("", "Track");
 				}
+				// Digifit chokes if there isn't at least *1* trackpoint, but is ok
+				// even if it's empty.
+				if (cntTrackpoints == 0 && addGratuitousTrack) {
+					mXML.startTag("", "Track");
+					mXML.startTag("", "Trackpoint");
+					mXML.startTag("", "Time");
+					mXML.text(formatTime(startTime));
+					mXML.endTag("",  "Time");
+					mXML.endTag("",  "Trackpoint");
+					mXML.endTag("", "Track");
+				}
+				
+				if (cntHR > 0) {
+					mXML.startTag("", "AverageHeartRateBpm");
+					mXML.startTag("", "Value");
+					mXML.text(Integer.toString((int) (sumHR / cntHR)));
+					mXML.endTag("", "Value");
+					mXML.endTag("", "AverageHeartRateBpm");
+
+					mXML.startTag("", "MaximumHeartRateBpm");
+					mXML.startTag("", "Value");
+					mXML.text(Integer.toString(maxHR));
+					mXML.endTag("", "Value");
+					mXML.endTag("", "MaximumHeartRateBpm");
+				}
 				mXML.endTag("", "Lap");
 			}
 			lok = cLap.moveToNext();
@@ -232,5 +275,9 @@ public class TCX {
 
 	public String getNotes() {
 		return notes;
+	}
+
+	public void setAddGratuitousTrack(boolean addGratuitousTrack) {
+		this.addGratuitousTrack = addGratuitousTrack;
 	}
 }

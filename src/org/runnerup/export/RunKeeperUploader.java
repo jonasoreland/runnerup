@@ -29,7 +29,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,11 +40,14 @@ import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Server {
 
 	public static final String NAME = "RunKeeper";
@@ -56,15 +58,15 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	public static String CLIENT_ID = null;
 	public static String CLIENT_SECRET = null;
 
-	// TODO: I get ssl error when using https
 	public static final String AUTH_URL = "https://runkeeper.com/apps/authorize";
 	public static final String TOKEN_URL = "https://runkeeper.com/apps/token";
 	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runkeeper";
 
-	public static final String REST_URL = "https://api.runkeeper.com";
+	public static String REST_URL = "https://api.runkeeper.com";
 
 	public static final String FEED_TOKEN_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/login";
 	public static final String FEED_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/getFeedItems";
+	public static final String FEED_ITEM_TYPES = "[ 0 ]"; // JSON array
 	
 	private long id = 0;
 	private String access_token  = null;
@@ -104,6 +106,11 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	@Override
 	public String getAuthUrl() {
 		return AUTH_URL;
+	}
+
+	@Override
+	public String getAuthExtra() {
+		return null;
 	}
 
 	@Override
@@ -223,21 +230,30 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 		String uri = null;
 		HttpURLConnection conn = null;
 		Exception ex = null;
-		try {
-			URL newurl = new URL(REST_URL + "/user");
-			conn = (HttpURLConnection) newurl.openConnection();
-			conn.setRequestProperty("Authorization", "Bearer " + access_token);
-			InputStream in = new BufferedInputStream(conn.getInputStream());
-			uri = new JSONObject(new Scanner(in).useDelimiter("\\A").next())
-					.getString("fitness_activities");
-		} catch (MalformedURLException e) {
-			ex = e;
-		} catch (IOException e) {
-			ex = e;
-		} catch (JSONException e) {
-			ex = e;
-		}
-
+		do {
+			try {
+				URL newurl = new URL(REST_URL + "/user");
+				conn = (HttpURLConnection) newurl.openConnection();
+				conn.setRequestProperty("Authorization", "Bearer "
+						+ access_token);
+				InputStream in = new BufferedInputStream(conn.getInputStream());
+				uri = parse(in).getString("fitness_activities");
+			} catch (MalformedURLException e) {
+				ex = e;
+			} catch (IOException e) {
+				if (REST_URL.contains("https")) {
+					REST_URL = REST_URL.replace("https", "http");
+					e.printStackTrace();
+					System.err.println(" => retry with REST_URL: " + REST_URL);
+					continue; // retry
+				}
+				ex = e;
+			} catch (JSONException e) {
+				ex = e;
+			}
+			break;
+		} while (true);
+		
 		if (conn != null) {
 			conn.disconnect();
 		}
@@ -345,7 +361,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 			}
 
 			InputStream in = new BufferedInputStream(conn.getInputStream());
-			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			JSONObject obj = parse(in);
 			conn.disconnect();
 			feed_access_token = obj.getString("accessToken");
 			return s;
@@ -452,7 +468,8 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
 		FormValues kv = new FormValues();
 		kv.put("lastPostTime", Long.toString(from));
-
+		kv.put("feedItemTypes", FEED_ITEM_TYPES);
+		
 		{
 			OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
 			kv.write(wr);
@@ -463,7 +480,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 		int responseCode = conn.getResponseCode();
 		String amsg = conn.getResponseMessage();
 		InputStream in = new BufferedInputStream(conn.getInputStream());
-		JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+		JSONObject obj = parse(in);
 
 		conn.disconnect();
 		if (responseCode == 200) {

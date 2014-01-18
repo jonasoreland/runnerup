@@ -18,6 +18,10 @@ package org.runnerup.workout;
 
 import java.util.ArrayList;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class ListTrigger extends Trigger {
 
 	boolean remaining = false;

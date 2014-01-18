@@ -67,7 +67,7 @@
         	android:persistent="true"
         	android:title="Mute music during audio cues" />
 
-		<PreferenceCategory android:title="Cue information">
+		<PreferenceCategory android:key="cueinfo" android:title="Cue information">
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
@@ -83,7 +83,17 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_total_pace"
         		android:title="Total pace" />
-
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_total_hr"
+        		android:title="Total heart rate" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_total_hrz"
+        		android:title="Total heart rate zone" />
+    				
     		<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
@@ -106,6 +116,16 @@
         		android:key="@string/cueinfo_total_speed"
         		android:title="Total speed" />
 -->
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_step_hr"
+        		android:title="Interval heart rate" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_step_hrz"
+        		android:title="Interval heart rate zone" />
  
     		<CheckBoxPreference
         		android:defaultValue="false"
@@ -129,7 +149,18 @@
         		android:key="cueinfo_lap_speed"
         		android:title="Lap speed" />
 -->
-   		</PreferenceCategory>
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_lap_hr"
+        		android:title="Lap heart rate" />
+    		<CheckBoxPreference
+        		android:defaultValue="false"
+        		android:persistent="true"
+        		android:key="@string/cueinfo_lap_hrz"
+        		android:title="Lap heart rate zone" />
+
+    		</PreferenceCategory>
     	<PreferenceCategory android:title="Misc cues">
 			<CheckBoxPreference
         		android:defaultValue="true"
@@ -151,5 +182,7 @@
 			<Preference android:title="Push"
                 android:key="test_cueinfo"
                 android:summary="Test audio cue"/>
-   		</PreferenceCategory>	    
+			<Preference android:title="Android text to speech settings"
+                android:key="tts_settings" />
+		</PreferenceCategory>	    
 </PreferenceScreen>

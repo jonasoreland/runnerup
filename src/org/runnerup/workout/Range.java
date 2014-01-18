@@ -16,6 +16,10 @@
  */
 package org.runnerup.workout;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Range {
 	
 	public double minValue;

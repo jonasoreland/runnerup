@@ -27,9 +27,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,10 +35,13 @@ import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Pair;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class GarminUploader extends FormCrawler implements Uploader {
 
 	public static final String NAME = "Garmin";
@@ -137,6 +138,9 @@ public class GarminUploader extends FormCrawler implements Uploader {
 				int responseCode = conn.getResponseCode();
 				String amsg = conn.getResponseMessage();
 				getCookies(conn);
+				if (responseCode != 200) {
+					System.err.println("GarminUploader::connect() - got " + responseCode + ", msg: " + amsg);
+				}
 			}
 			conn.disconnect();
 
@@ -158,7 +162,6 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			addCookies(conn);
 
 			{
-				kv.write(System.err);
 				OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
 				kv.write(wr);
 				wr.flush();
@@ -179,15 +182,16 @@ public class GarminUploader extends FormCrawler implements Uploader {
 				conn.connect();
 				getCookies(conn);
 				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+				JSONObject obj = parse(in);
 				conn.disconnect();
 				int responseCode = conn.getResponseCode();
 				String amsg = conn.getResponseMessage();
-				System.err.println("obj: " + obj.toString());
 				// Returns username(which is actually Displayname from profile) if logged in
-				if (obj.getString("username").length() > 0) {
+				if (obj.optString("username", "").length() > 0) {
 					isConnected = true;
 					return Uploader.Status.OK;
+				} else {
+					System.err.println("GarminUploader::connect() missing username, obj: " + obj.toString() + ", code: " + responseCode + ", msg: " + amsg);
 				}
 				return s;
 			}
@@ -228,7 +232,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			conn.setRequestMethod("POST");
 			addCookies(conn);
 			Part<StringWritable> part1 = new Part<StringWritable>("responseContentType",
-					new StringWritable(URLEncoder.encode("text/html")));
+					new StringWritable(FormCrawler.URLEncode("text/html")));
 			Part<StringWritable> part2 = new Part<StringWritable>("data",
 					new StringWritable(writer.toString()));
 			part2.filename = "RunnerUp.tcx";
@@ -283,7 +287,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			conn.connect();
 			getCookies(conn);
 			InputStream in = new BufferedInputStream(conn.getInputStream());
-			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			JSONObject obj = parse(in);
 			conn.disconnect();
 			int responseCode = conn.getResponseCode();
 			String amsg = conn.getResponseMessage();

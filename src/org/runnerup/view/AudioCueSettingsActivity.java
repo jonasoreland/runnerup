@@ -24,15 +24,18 @@ import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -42,10 +45,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -55,6 +60,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCueSettingsActivity extends PreferenceActivity {
 
 	boolean started = false;
@@ -98,6 +104,42 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			}
 		}
 
+		HRZones hrZones = new HRZones(this);
+		boolean hasHR = SettingsActivity.hasHR(this);
+		boolean hasHRZones = hrZones.isConfigured();
+
+		if (!hasHR || !hasHRZones) {
+			final int remove[] = {
+					R.string.cueinfo_total_hrz,
+					R.string.cueinfo_step_hrz,
+					R.string.cueinfo_lap_hrz
+			};
+			removePrefs(remove);
+		}
+		
+		if (!hasHR) {
+			final int remove[] = {
+					R.string.cueinfo_total_hr,
+					R.string.cueinfo_step_hr,
+					R.string.cueinfo_lap_hr
+			};
+			removePrefs(remove);
+		}
+		
+		{
+			Preference btn = (Preference)findPreference("tts_settings");
+			btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					Intent intent = new Intent();
+					intent.setAction("com.android.settings.TTS_SETTINGS");
+					startActivity(intent);
+					return false;
+				}
+				
+			});
+		}
+
 		final boolean createNewItem = true;
 		adapter = new AudioSchemeListAdapter(mDB, (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE),
 				createNewItem);
@@ -115,6 +157,18 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				spinner.setValue(idx);
 			}
 			spinner.setOnSetValueListener(onSetValueListener);
+		}
+	}
+
+	private void removePrefs(int[] remove) {
+		Resources res = getResources();
+		PreferenceGroup group = (PreferenceGroup) findPreference("cueinfo");
+		if (group == null)
+			return;
+		for (int i = 0; i < remove.length; i++) {
+			String s = res.getString(remove[i]);
+			Preference pref = findPreference(s);
+			group.removePreference(pref);
 		}
 	}
 
@@ -338,6 +392,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
 				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute, getApplicationContext()));
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
+				bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
+				w.onBind(w,  bindValues);
 				for (Feedback f : feedback) {
 					f.onInit(w);
 					f.onBind(w, bindValues);
@@ -358,44 +414,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 			else
 				prefs = ctx.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
 
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
-				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
-			}
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_total_time), false)) {
-				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
-			}
-			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_total_speed), false)) {
-				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
-			}
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
-				feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
-			}
-
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_step_distance), false)) {
-				feedback.add(new AudioFeedback(Scope.STEP, Dimension.DISTANCE));
-			}
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_step_time), false)) {
-				feedback.add(new AudioFeedback(Scope.STEP, Dimension.TIME));
-			}
-			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_step_speed), false)) {
-				feedback.add(new AudioFeedback(Scope.STEP, Dimension.SPEED));
-			}
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
-				feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
-			}
-			
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_distance), false)) {
-				feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
-			}
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_time), false)) {
-				feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
-			}
-			if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_lap_speed), false)) {
-				feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
-			}
-			if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_pace), false)) {
-				feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
-			}
+			WorkoutBuilder.addFeedbackFromPreferences(prefs, res, feedback);
 			
 			if (tts != null) {
 				mTTSOnInitListener.onInit(0);

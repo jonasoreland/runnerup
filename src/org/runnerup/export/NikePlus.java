@@ -28,7 +28,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
@@ -41,9 +40,12 @@ import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class NikePlus extends FormCrawler implements Uploader {
 
 	public static final String NAME = "Nike+";
@@ -177,7 +179,7 @@ public class NikePlus extends FormCrawler implements Uploader {
 				wr.close();
 
 				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+				JSONObject obj = parse(in);
 				conn.disconnect();
 
 				access_token = obj.getString("access_token");
@@ -325,7 +327,7 @@ public class NikePlus extends FormCrawler implements Uploader {
 			conn.addRequestProperty("User-Agent", USER_AGENT);
 			conn.addRequestProperty("appid", APP_ID);
 			final InputStream in = new BufferedInputStream(conn.getInputStream());
-			final JSONObject reply = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			final JSONObject reply = parse(in);
 			final int code = conn.getResponseCode();
 			conn.disconnect();
 			if (code == 200)

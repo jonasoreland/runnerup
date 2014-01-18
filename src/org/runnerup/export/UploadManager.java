@@ -39,6 +39,7 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.WorkoutSerializer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -52,6 +53,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Pair;
@@ -62,6 +64,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class UploadManager {
 
 	public static final int CONFIGURE_REQUEST = 1;
@@ -175,6 +178,10 @@ public class UploadManager {
 			uploader = new RunnerUpLive(this);
 		}  else if (uploaderName.contentEquals(Facebook.NAME)) {
 			uploader = new Facebook(this);
+		} else if (uploaderName.contentEquals(DigifitUploader.NAME)) {
+			uploader = new DigifitUploader(this);
+		} else if (uploaderName.contentEquals(Strava.NAME)) {
+			uploader = new Strava(this);
 		}
 		
 		if (uploader != null) {
@@ -506,6 +513,14 @@ public class UploadManager {
 		final String args[] = { uploader };
 		mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?",  args);
 		callback.run(uploader,  Uploader.Status.OK);
+	}
+
+	public void clearUpload(String name, long id) {
+		Uploader uploader = uploaders.get(name);
+		if (uploader != null) {
+			final String args[] = { Long.toString(uploader.getId()), Long.toString(id) };
+			mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ? AND " + DB.EXPORT.ACTIVITY + " = ?", args);
+		}
 	}
 	
 	public static class WorkoutRef {

@@ -29,6 +29,10 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Formatter implements OnSharedPreferenceChangeListener {
 
 	Context context = null;
@@ -36,7 +40,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	SharedPreferences sharedPreferences = null;
 	java.text.DateFormat dateFormat = null;
 	java.text.DateFormat timeFormat = null;
-
+	HRZones hrZones = null;
+	
 	boolean km = true;
 	String base_unit = "km";
 	double base_meters = km_meters;
@@ -59,10 +64,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		
 		dateFormat = android.text.format.DateFormat.getDateFormat(ctx);
 		timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
+		hrZones = new HRZones(context);
 
 		setUnit();
 	}
-
+	
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
@@ -138,6 +144,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 			return formatElapsedTime(target, Math.round(value));
 		case PACE:
 			return formatPace(target, value);
+		case HR:
+			return formatHeartRate(target, value);
+		case HRZ:
+			return formatHeartRateZone(target, value);
 		case SPEED:
 			//TODO
 			return "";
@@ -227,7 +237,43 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		return s.toString();
 	}
 
-	
+	/**
+	 * Format heart rate
+	 * 
+	 * @param target
+	 * @param bpm
+	 * @return
+	 */
+	public String formatHeartRate(int target, double heart_rate) {
+		switch(target) {
+		case CUE:
+		case CUE_SHORT:
+		case CUE_LONG:
+			return Integer.toString((int) Math.round(heart_rate)) + " " + resources.getString(R.string.txt_heartrate_bpm);
+		case TXT:
+		case TXT_SHORT:
+		case TXT_LONG:
+			return Integer.toString((int) Math.round(heart_rate));
+		}
+		return "";
+	}
+
+	private String formatHeartRateZone(int target, double hrZone) {
+		switch(target) {
+		case TXT:
+		case TXT_SHORT:
+			return Integer.toString((int) Math.round(hrZone));
+		case TXT_LONG:
+			return Double.toString(Math.round(10.0 * hrZone)/10.0);
+		case CUE_SHORT:
+			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Integer.toString((int) Math.floor(hrZone));
+		case CUE:
+		case CUE_LONG:
+			return resources.getString(R.string.txt_dimension_heartratezone) + " " + Double.toString(Math.floor(10.0 * hrZone)/10.0);
+		}
+		return "";
+	}
+
 	/**
 	 * Format pace
 	 * 
@@ -380,6 +426,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 			return formatRemainingTime(target, value);
 		case PACE:
 		case SPEED:
+			break;
+		case HR:
+			break;
+		default:
 			break;
 		}
 		return "";

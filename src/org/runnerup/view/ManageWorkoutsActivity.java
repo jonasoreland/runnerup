@@ -72,6 +72,10 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
 	DBHelper mDBHelper = null;
@@ -569,7 +573,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
 			if (view == null || !(view instanceof LinearLayout)) {
 				LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				view = infalInflater.inflate(R.layout.manage_workouts_list_row, null);
+				view = infalInflater.inflate(R.layout.manage_workouts_list_row, parent, false);
 			}
 
 			WorkoutRef workout = workouts.get(getProvider(groupPosition)).get(childPosition);

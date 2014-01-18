@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="pref_autolap_active">pref_autolap_active</string>
     <string name="pref_autolap">pref_autolap</string>
     <string name="pref_countdown_active">pref_countdown_active</string>
@@ -34,18 +34,24 @@
     <string name="cueinfo_total_time">cueinfo_total_time</string>
     <string name="cueinfo_total_pace">cueinfo_total_pace</string>
     <string name="cueinfo_total_speed">cueinfo_total_speed</string>
-
+    <string name="cueinfo_total_hr">cueinfo_total_hr</string>
+    <string name="cueinfo_total_hrz">cueinfo_total_hrz</string>
+    
     <!-- TODO configurable step cues -->
     <string name="cueinfo_step_distance">cueinfo_step_distance</string>
     <string name="cueinfo_step_time">cueinfo_step_time</string>
     <string name="cueinfo_step_pace">cueinfo_step_pace</string>
     <string name="cueinfo_step_speed">cueinfo_step_speed</string>
+    <string name="cueinfo_step_hr">cueinfo_step_hr</string>
+    <string name="cueinfo_step_hrz">cueinfo_step_hrz</string>
     
     <string name="cueinfo_lap_distance">cueinfo_lap_distance</string>
     <string name="cueinfo_lap_time">cueinfo_lap_time</string>
     <string name="cueinfo_lap_pace">cueinfo_lap_pace</string>
     <string name="cueinfo_lap_speed">cueinfo_lap_speed</string>
-
+    <string name="cueinfo_lap_hr">cueinfo_lap_hr</string>
+    <string name="cueinfo_lap_hrz">cueinfo_lap_hrz</string>
+    
     <string name="cueinfo_target_coaching">cueinfo_target_coaching</string>
     <string name="cueinfo_skip_startstop">cueinfo_skip_startstop</string>
 
@@ -62,4 +68,16 @@
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
     <string name="pref_runneruplive_username">pref_runneruplive_username</string>
+    
+    <string name="pref_keystartstop_active">pref_keystartstop_active</string>
+    
+    <string name="pref_bt_name">pref_bt_name</string>
+    <string name="pref_bt_address">pref_bt_address</string>
+    <string name="pref_bt_provider">pref_bt_provider</string>
+
+    <string name="pref_bt_experimental">pref_bt_experimental</string>
+    <string name="pref_bt_mock">pref_bt_mock</string>
+        
+    <string name="pref_hrz_values">pref_hrz_values</string>
+    <string name="pref_hrz_thresholds">pref_hrz_thresholds</string>
 </resources>

@@ -18,11 +18,14 @@ package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
+import android.os.Build;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
+import android.speech.tts.UtteranceProgressListener;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RUTextToSpeech {
 
 	private static final String UTTERANCE_ID = "RUTextTospeech";
@@ -48,6 +51,38 @@ public class RUTextToSpeech {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	private void handleUtteranceComplete(final AudioManager am, final String utId) {
+		if (Build.VERSION.SDK_INT < 15) {
+			textToSpeech
+			.setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
+				@Override
+				public void onUtteranceCompleted(String utteranceId) {
+					if (utId.equalsIgnoreCase(utteranceId)) {
+						am.abandonAudioFocus(null);
+					}
+				}
+			});
+		} else {
+			textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener(){
+				@Override
+				public void onDone(String utteranceId) {
+					if (utId.equalsIgnoreCase(utteranceId)) {
+						am.abandonAudioFocus(null);
+					}
+				}
+				@Override
+				public void onError(String utteranceId) {
+					if (utId.equalsIgnoreCase(utteranceId)) {
+						am.abandonAudioFocus(null);
+					}
+				}
+				@Override
+				public void onStart(String utteranceId) {
+				}});
+		}
+	}
+	
 	/**
 	 * Requests audio focus before speaking, if no focus is given nothing is
 	 * said.
@@ -67,17 +102,9 @@ public class RUTextToSpeech {
 				AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 			final String utId = UTTERANCE_ID + text.hashCode();
-			// Should use setOnUtteranceProgressListener, if target is API
-			// version newer than 15.
-			textToSpeech
-					.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
-						@Override
-						public void onUtteranceCompleted(String utteranceId) {
-							if (utId.equalsIgnoreCase(utteranceId)) {
-								am.abandonAudioFocus(null);
-							}
-						}
-					});
+
+			handleUtteranceComplete(am, utId);
+			
 			if (params == null) {
 				params = new HashMap<String, String>();
 			}

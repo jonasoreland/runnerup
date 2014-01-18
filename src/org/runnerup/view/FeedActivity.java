@@ -60,6 +60,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedActivity extends Activity implements Constants {
 
 	DBHelper mDBHelper = null;
@@ -232,16 +236,16 @@ public class FeedActivity extends Activity implements Constants {
 		}
 
 		@Override
-		public View getView(int arg0, View arg1, ViewGroup arg2) {
+		public View getView(int arg0, View arg1, ViewGroup parent) {
 			ContentValues tmp = feed.get(arg0);
 			if (FeedList.isHeaderDate(tmp)) {
-				View v = layoutInflator.inflate(R.layout.feed_row_date_header, null);
+				View v = layoutInflator.inflate(R.layout.feed_row_date_header, parent, false);
 				TextView tv = (TextView) v.findViewById(R.id.feedActivityDateHeader);
 				DateFormat a = android.text.format.DateFormat.getLongDateFormat(context);
 				tv.setText(a.format(tmp.getAsLong(DB.FEED.START_TIME)));
 				return v;
 			} else if (FeedList.isActivity(tmp)) {
-				View v = layoutInflator.inflate(R.layout.feed_row_activity, null);
+				View v = layoutInflator.inflate(R.layout.feed_row_activity, parent, false);
 				ImageView iv = (ImageView) v.findViewById(R.id.feedImage);
 				TextView tv0 = (TextView) v.findViewById(R.id.feedActivitySource);
 				TextView tv1 = (TextView) v.findViewById(R.id.feedActivityHeader);

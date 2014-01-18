@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">RunnerUp</string>
     <string name="Google_Play_Services_Legal_Notices">Google Play Services Legal Notices</string>
 
@@ -35,7 +35,9 @@
 	<string name="txt_dimension_distance">distance</string>
 	<string name="txt_dimension_speed">speed</string>
 	<string name="txt_dimension_pace">pace</string>
-	
+	<string name="txt_dimension_heartrate">heartrate</string>
+	<string name="txt_dimension_heartratezone">heartrate zone</string>
+		
 	<string name="txt_distance_kilometer">kilometer</string>
 	<string name="txt_distance_kilometers">kilometers</string>
 	<string name="txt_distance_mile">mile</string>
@@ -51,4 +53,19 @@
 	<string name="txt_elapsed_m">m</string>
 	<string name="txt_elapsed_min">min</string>
 	<string name="txt_elapsed_s">s</string>
+
+	<string name="txt_heartrate_bpm">bpm</string>
+	
+	<string name="sex">Sex</string>
+	<string-array name="sexes">
+	    <item>Male</item>
+	    <item>Female</item>
+   	</string-array>
+
+	<string-array name="targetEntries">
+	    <item>none</item>
+	    <item>pace</item>
+	    <item>heart rate zone</item>
+	</string-array>
+	
 </resources>

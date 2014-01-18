@@ -32,6 +32,10 @@ import android.os.Bundle;
  * enough (isFixed())
  * 
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsStatus implements LocationListener,
 		android.location.GpsStatus.Listener {
 

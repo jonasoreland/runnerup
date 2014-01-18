@@ -16,6 +16,10 @@
  */
 package org.runnerup.workout;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class IntervalTrigger extends Trigger {
 
 	Scope scope = Scope.WORKOUT;

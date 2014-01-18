@@ -23,15 +23,19 @@ import java.util.List;
 
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.util.HRZones;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-
+import android.os.Build;
 /**
  * This class is the top level object for a workout, it is being called by
  * RunActivity, and by the Workout components
  */
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Workout implements WorkoutComponent {
 
 	long lap = 0;
@@ -78,10 +82,12 @@ public class Workout implements WorkoutComponent {
 
 	GpsTracker gpsTracker = null;
 	SharedPreferences audioCuePrefs;
+	HRZones hrZones = null;
 
 	public static final String KEY_TTS = "tts";
 	public static final String KEY_COUNTER_VIEW = "CountdownView";
 	public static final String KEY_FORMATTER = "Formatter";
+	public static final String KEY_HRZONES = "HrZones";
 	
 	public Workout() {
 	}
@@ -90,6 +96,19 @@ public class Workout implements WorkoutComponent {
 		this.gpsTracker = gpsTracker;
 	}
 
+	public boolean isEnabled(Dimension dim, Scope scope) {
+		if (dim == Dimension.HR) {
+			return gpsTracker.isHRConnected();
+		} else if (dim == Dimension.HRZ) {
+			if (hrZones == null || !hrZones.isConfigured() || !gpsTracker.isHRConnected())
+				return false;
+		}else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
+				 scope == Scope.CURRENT) {
+			return gpsTracker.getCurrentSpeed() != null;
+		}
+		return true;
+	}
+	
 	public void onInit(Workout w) {
 		assert (w == this);
 		for (Step a : steps) {
@@ -98,6 +117,7 @@ public class Workout implements WorkoutComponent {
 	}
 
 	public void onBind(Workout w, HashMap<String, Object> bindValues) {
+		hrZones = (HRZones) bindValues.get(Workout.KEY_HRZONES);
 		for (Step a : steps) {
 			a.onBind(w, bindValues);
 		}
@@ -238,41 +258,66 @@ public class Workout implements WorkoutComponent {
 			return getSpeed(scope);
 		case PACE:
 			return getPace(scope);
+		case HR:
+			return getHeartRate(scope);
+		case HRZ:
+			return getHeartRateZone(scope);
 		}
 		return 0;
 	}
 
 	public double getDistance(Scope scope) {
-		if (scope == Scope.WORKOUT)
+		switch (scope) {
+		case WORKOUT:
 			return gpsTracker.getDistance();
-		else if (currentStep != null) {
-			return currentStep.getDistance(this, scope);
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getDistance(this, scope);
+			assert (false);
+			break;
+		case CURRENT:
+			break;
 		}
-		assert (false);
 		return 0;
 	}
 
 	public double getTime(Scope scope) {
-		if (scope == Scope.WORKOUT)
+		switch (scope) {
+		case WORKOUT:
 			return gpsTracker.getTime();
-		else if (currentStep != null) {
-			return currentStep.getTime(this, scope);
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getTime(this, scope);
+			assert (false);
+			break;
+		case CURRENT:
+			return System.currentTimeMillis() / 1000; // now
 		}
-		assert (false);
 		return 0;
 	}
 
 	public double getSpeed(Scope scope) {
-		if (scope == Scope.WORKOUT) {
+		switch (scope) {
+		case WORKOUT:
 			double d = getDistance(scope);
 			double t = getTime(scope);
 			if (t == 0)
-				return 0;
+				return Double.valueOf(0);
 			return d / t;
-		} else if (currentStep != null) {
-			return currentStep.getSpeed(this, scope);
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getSpeed(this, scope);
+			assert (false);
+			break;
+		case CURRENT:
+			Double s = gpsTracker.getCurrentSpeed();
+			if (s != null)
+				return s.doubleValue();
+			return 0;
 		}
-		assert (false);
 		return 0;
 	}
 
@@ -297,10 +342,51 @@ public class Workout implements WorkoutComponent {
 			return duration - curr;
 		} else {
 			return 0;
-		}
-		
+		}	
 	}
-	
+
+	double getHeartbeats(Scope scope) {
+		switch (scope) {
+		case WORKOUT:
+			return gpsTracker.getHeartbeats();
+		case STEP:
+		case LAP:
+			if (currentStep != null)
+				return currentStep.getHeartbeats(this, scope);
+			return 0;
+		case CURRENT:
+			return 0;
+		}
+		return 0;
+	}
+
+	public double getHeartRate(Scope scope) {
+		switch(scope) {
+		case CURRENT: {
+			Integer val = gpsTracker.getCurrentHRValue();
+			if (val == null)
+				return 0;
+			return val.intValue();
+		}
+		case LAP:
+		case STEP:
+		case WORKOUT:
+			break;
+		}
+
+		double t = getTime(scope);       // in seconds
+		double b = getHeartbeats(scope); // total (estimated) beats during workout
+		
+		if (t != 0) {
+			return (60 * b) / t; // bpm
+		}
+		return 0.0;
+	}
+
+	private double getHeartRateZone(Scope scope) {
+		return hrZones.getZone(getHeartRate(scope));
+	}
+
 	public int getSport() {
 		return sport;
 	}
@@ -374,6 +460,11 @@ public class Workout implements WorkoutComponent {
 			super();
 		}
 		
+		@Override
+		public boolean isEnabled(Dimension dim, Scope scope) {
+			return true;
+		}
+
 		public double getDistance(Scope scope) {
 			switch(scope) {
 			case WORKOUT:
@@ -382,6 +473,8 @@ public class Workout implements WorkoutComponent {
 				return (300 + 700 * Math.random());
 			case LAP:
 				return (300 + 700 * Math.random());
+			case CURRENT:
+				return 0;
 			}
 			return 0;
 		}
@@ -394,6 +487,8 @@ public class Workout implements WorkoutComponent {
 				return (1 * 60 + 5 * 60 * Math.random());
 			case LAP:
 				return (1 * 60 + 5 * 60 * Math.random());
+			case CURRENT:
+				return System.currentTimeMillis() / 1000;
 			}
 			return 0;
 		}
@@ -404,6 +499,10 @@ public class Workout implements WorkoutComponent {
 			if (t == 0)
 				return 0;
 			return d / t;
+		}
+
+		public double getHeartRate(Scope scope) {
+			return 150 + 25 * Math.random();
 		}
 	};
 	

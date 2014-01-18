@@ -28,6 +28,10 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class CountdownFeedback extends Feedback {
 
 	Scope scope = Scope.STEP;

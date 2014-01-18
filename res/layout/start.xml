@@ -16,7 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab1Layout"
     android:layout_width="fill_parent"
@@ -60,7 +59,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_above="@+id/startButton" >
+        android:layout_above="@+id/startButtons" >
 
 	<TextView
         android:id="@+id/gpsInfoText"
@@ -81,16 +80,51 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/gpsInfo1"
         android:text="0" />
+    <TextView
+        android:id="@+id/hrInfo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/gpsInfo2"
+        android:gravity="center"
+        android:text="" />
     </RelativeLayout>
     
+    <LinearLayout
+        android:id="@+id/startButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        >
    	<Button
         android:id="@+id/startButton"
         style="@style/ButtonText"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_green"
         android:enabled="true"
         android:text="Start GPS"
-        android:layout_alignParentBottom="true" />
+        android:layout_weight="0.8" />
+   	
+   	<FrameLayout
+   	    android:id="@+id/hrLayout"
+   	    android:layout_width="0dp"
+   	    android:layout_weight="0.15"
+   	    android:layout_height="match_parent" >
 
+            <ImageButton
+                android:id="@+id/hrButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/heart" />
+
+            <TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+                android:id="@+id/hrValueText" />
+        </FrameLayout>
+	</LinearLayout>
 </RelativeLayout>

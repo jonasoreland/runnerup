@@ -23,13 +23,21 @@ import java.io.IOException;
 import org.runnerup.R;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class SettingsActivity extends PreferenceActivity {
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,8 +53,24 @@ public class SettingsActivity extends PreferenceActivity {
 			Preference btn = (Preference)findPreference("importdb");
 			btn.setOnPreferenceClickListener(onImportClick);
 		}
+
+		if (!hasHR(this)) {
+			Preference pref = findPreference("cue_configure_hrzones");
+			getPreferenceScreen().removePreference(pref);
+		}
+	
 	}
 	
+	public static boolean hasHR(Context ctx) {
+		Resources res = ctx.getResources();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+		String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+		String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+		if (btProviderName != null && btAddress != null)
+			return true;
+		return false;
+	}
+
 	static int copyFile(String to, String from) throws IOException {
 		FileInputStream input = null;
 		FileOutputStream output = null;

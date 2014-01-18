@@ -49,6 +49,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountActivity extends Activity implements Constants {
 
 	long uploaderID = -1;
@@ -319,9 +323,6 @@ public class AccountActivity extends Activity implements Constants {
 	UploadManager.Callback callback = new UploadManager.Callback() {
 		@Override
 		public void run(String uploader, Status status) {
-			for (Cursor c : mCursors) {
-				c.requery();
-			}
 		}
 	};
 

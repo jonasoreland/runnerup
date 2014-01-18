@@ -21,6 +21,10 @@ import org.runnerup.workout.Workout;
 
 import android.content.Context;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class VibrationFeedback extends Feedback {
 
 	@Override

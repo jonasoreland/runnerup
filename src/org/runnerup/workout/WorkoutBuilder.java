@@ -23,6 +23,7 @@ import java.util.List;
 import org.runnerup.R;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
 import org.runnerup.util.SafeParse;
 import org.runnerup.view.AudioCueSettingsActivity;
 import org.runnerup.workout.Workout.StepListEntry;
@@ -31,18 +32,22 @@ import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CoachFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.text.format.DateUtils;
+import android.util.Pair;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutBuilder {
 
 	/**
 	 * @return workout based on SharedPreferences
 	 */
 	public static Workout createDefaultWorkout(Resources res, SharedPreferences prefs,
-			boolean targetPace) {
+			Dimension target) {
 		Workout w = new Workout();
 		w.sport = prefs.getInt("basicSport", DB.ACTIVITY.SPORT_RUNNING);
 
@@ -73,8 +78,7 @@ public class WorkoutBuilder {
 
 		w.steps.add(step);
 
-		if (targetPace)
-		{
+		if (target == Dimension.PACE) {
 			double unitMeters = Formatter.getUnitMeters(prefs);
 			double seconds_per_unit = (double)SafeParse.parseSeconds(prefs.getString("basic_target_pace_max", "00:05:00"), 5*60);
 			int targetPaceRange = prefs.getInt("basic_target_pace_min_range", 15);
@@ -83,8 +87,18 @@ public class WorkoutBuilder {
 			Range range = new Range(targetPaceMin, targetPaceMax);
 			step.targetType = Dimension.PACE;
 			step.targetValue = range;
+		} else if (target == Dimension.HRZ) {
+			HRZones hrCalc = new HRZones(res, prefs);
+			int zone = prefs.getInt("basic_target_hrz", 0);
+			if (zone > 0) {
+				Pair<Integer,Integer> vals = hrCalc.getHRValues(zone + 1);
+				if (vals != null) {
+					step.targetType = Dimension.HR;
+					step.targetValue = new Range(vals.first, vals.second);
+				}
+			}
 		}
-		
+			
 		/**
 		 *
 		 */
@@ -265,9 +279,8 @@ public class WorkoutBuilder {
 				Range range = step.getTargetValue();
 				int averageSeconds = SafeParse.parseInt(prefs.getString(res.getString(R.string.target_pace_moving_average_seconds), "20"), 20);
 				int graceSeconds = SafeParse.parseInt(prefs.getString(res.getString(R.string.target_pace_grace_seconds), "30"), 30);
-				TargetTrigger tr = new TargetTrigger(averageSeconds, graceSeconds);
+				TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds, graceSeconds);
 				tr.scope = Scope.STEP;
-				tr.dimension = step.getTargetType();
 				tr.range = range;
 				tr.triggerAction.add(new CoachFeedback(Scope.WORKOUT, step.getTargetType(), range, tr));
 				step.triggers.add(tr);
@@ -313,42 +326,7 @@ public class WorkoutBuilder {
 			}
 		}
 
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
-			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_time), false)) {
-			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
-		}
-		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_total_speed), false)) {
-			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
-			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_distance), false)) {
-			feedback.add(new AudioFeedback(Scope.STEP, Dimension.DISTANCE));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_time), false)) {
-			feedback.add(new AudioFeedback(Scope.STEP, Dimension.TIME));
-		}
-		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_step_speed), false)) {
-			feedback.add(new AudioFeedback(Scope.STEP, Dimension.SPEED));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
-			feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_distance), false)) {
-			feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_time), false)) {
-			feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
-		}
-		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_lap_speed), false)) {
-			feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
-		}
-		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_pace), false)) {
-			feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
-		}
+		addFeedbackFromPreferences(prefs, res, feedback);
 
 		for (Trigger t : triggers) {
 			t.triggerAction = feedback;
@@ -529,6 +507,70 @@ public class WorkoutBuilder {
 					}
 				}
 			}
+		}
+	}
+
+	public static void addFeedbackFromPreferences(SharedPreferences prefs,
+			Resources res, ArrayList<Feedback> feedback) {
+
+		/**** TOTAL ****/
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
+			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_time), false)) {
+			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
+		}
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_total_speed), false)) {
+			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
+			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_hr), false)) {
+			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.HR));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_total_hrz), false)) {
+			feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.HRZ));
+		}
+		
+		/**** STEP ****/ 
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_distance), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.DISTANCE));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_time), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.TIME));
+		}
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_step_speed), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.SPEED));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_hr), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.HR));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_step_hrz), false)) {
+			feedback.add(new AudioFeedback(Scope.STEP, Dimension.HRZ));
+		}
+
+		/**** LAP ****/ 
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_distance), false)) {
+			feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_time), false)) {
+			feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
+		}
+		if (Dimension.SPEED_CUE_ENABLED && prefs.getBoolean(res.getString(R.string.cueinfo_lap_speed), false)) {
+			feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_pace), false)) {
+			feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_hr), false)) {
+			feedback.add(new AudioFeedback(Scope.LAP, Dimension.HR));
+		}
+		if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_hrz), false)) {
+			feedback.add(new AudioFeedback(Scope.LAP, Dimension.HRZ));
 		}
 	}
 }

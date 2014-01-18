@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.runnerup.R;
+import org.runnerup.content.WorkoutFileProvider;
+import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
@@ -33,6 +35,8 @@ import org.runnerup.util.Formatter;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -41,7 +45,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -50,6 +56,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -78,6 +85,7 @@ import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class DetailActivity extends FragmentActivity implements Constants {
 
 	long mID = 0;
@@ -87,7 +95,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
 	
 	ContentValues laps[] = null;
-	ContentValues reports[] = null;
+	ArrayList<ContentValues> reports = new ArrayList<ContentValues>();
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 	
 	int mode; // 0 == save 1 == details
@@ -279,6 +287,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			ActivityCleaner.recompute(mDB, mID);
 			requery();
 			break;
+		case R.id.menu_share_activity:
+			shareActivity();
+			break;
 		}
 		return true;
 	}
@@ -333,21 +344,26 @@ public class DetailActivity extends FragmentActivity implements Constants {
 							+ ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null"));
 
 			Cursor c = mDB.rawQuery(sql, null);
-			reports = DBHelper.toArray(c);
-			c.close();
-		}
-
-		alreadyUploadedUploaders.clear();
-		pendingUploaders.clear();
-		for (ContentValues tmp : reports) {
-			Uploader uploader = uploadManager.add(tmp);
-			if (!uploader.checkSupport(Feature.UPLOAD)) {
-				continue;
-			} if (tmp.containsKey("repid")) {
-				alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
-			} else if (tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD)) {
-				pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
+			alreadyUploadedUploaders.clear();
+			pendingUploaders.clear();
+			reports.clear();
+			if (c.moveToFirst()) {
+				do {
+					ContentValues tmp = DBHelper.get(c);
+					Uploader uploader = uploadManager.add(tmp);
+					if (!uploader.checkSupport(Feature.UPLOAD)) {
+						continue;
+					}
+					
+					reports.add(tmp);	
+					if (tmp.containsKey("repid")) {
+						alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
+					} else if (tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD)) {
+						pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
+					}
+				} while (c.moveToNext());
 			}
+			c.close();
 		}
 
 		if (this.mode == MODE_DETAILS && pendingUploaders.isEmpty()) {
@@ -472,27 +488,27 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 		@Override
 		public int getCount() {
-			return reports.length + 1;
+			return reports.size() + 1;
 		}
 
 		@Override
 		public Object getItem(int position) {
-			if (position < reports.length)
-				return reports[position];
+			if (position < reports.size())
+				return reports.get(position);
 			return this;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			if (position < reports.length)
-				return reports[position].getAsLong("_id");
+			if (position < reports.size())
+				return reports.get(position).getAsLong("_id");
 
 			return 0;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			if (position == reports.length) {
+			if (position == reports.size()) {
 				Button b = new Button(DetailActivity.this);
 				b.setText("Configure accounts");
 				b.setBackgroundResource(R.drawable.btn_blue);
@@ -516,14 +532,21 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			CheckBox cb = (CheckBox) view.findViewById(R.id.reportSent);
 			TextView tv1 = (TextView) view.findViewById(R.id.accountName);
 
-			ContentValues tmp = reports[position];
+			ContentValues tmp = reports.get(position);
 
 			String name = tmp.getAsString("name");
 			cb.setTag(name);
 			if (alreadyUploadedUploaders.contains(name)) {
 				cb.setChecked(true);
-				cb.setEnabled(false);
 				cb.setText("Uploaded");
+				if (edit)
+				{
+					cb.setOnLongClickListener(clearUploadClick);
+				}
+				else
+				{
+					cb.setEnabled(false);
+				}
 			} else if ((tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD)) ||
 					    pendingUploaders.contains(name)) {
 				cb.setChecked(true);
@@ -533,13 +556,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			if (mode == MODE_DETAILS && !alreadyUploadedUploaders.contains(name)) {
 				cb.setEnabled(edit);
 			}
-			cb.setOnCheckedChangeListener(DetailActivity.this.onSendChecked);
+			cb.setOnCheckedChangeListener(onSendChecked);
 
 			tv0.setText(tmp.getAsString("_id"));
 			tv1.setText(name);
 			return view;
 		}
-		
 	};
 	
 	void saveActivity() {
@@ -549,6 +571,36 @@ public class DetailActivity extends FragmentActivity implements Constants {
 		mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
 	}
 	
+	OnLongClickListener clearUploadClick = new OnLongClickListener() {
+
+		@Override
+		public boolean onLongClick(View arg0) {
+			final String name = (String) arg0.getTag();
+			AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
+			builder.setTitle("Clear upload for " + name);
+			builder.setMessage("Are you sure?");
+			builder.setPositiveButton("Yes",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							uploadManager.clearUpload(name, mID);
+							requery();
+						}
+					});
+			builder.setNegativeButton("No",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							// Do nothing but close the dialog
+							dialog.dismiss();
+						}
+
+					});
+			builder.show();
+			return false;
+		}
+		
+	};
+
 	OnClickListener saveButtonClick = new OnClickListener() {
 		public void onClick(View v) {
 			saveActivity();
@@ -637,20 +689,25 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 		@Override
 		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-			if (arg1 == true) {
-				boolean empty = pendingUploaders.isEmpty();
-				pendingUploaders.add((String) arg0.getTag());
-				if (empty) {
-					resumeButton.setVisibility(View.VISIBLE);
-				}
+			final String name = (String) arg0.getTag();
+			if (alreadyUploadedUploaders.contains(name)) {
+				// Only accept long clicks
+				arg0.setChecked(true);
 			} else {
-				pendingUploaders.remove((String) arg0.getTag());
-				if (pendingUploaders.isEmpty()) {
-					resumeButton.setVisibility(View.GONE);
+				if (arg1 == true) {
+					boolean empty = pendingUploaders.isEmpty();
+					pendingUploaders.add((String) arg0.getTag());
+					if (empty) {
+						resumeButton.setVisibility(View.VISIBLE);
+					}
+				} else {
+					pendingUploaders.remove((String) arg0.getTag());
+					if (pendingUploaders.isEmpty()) {
+						resumeButton.setVisibility(View.GONE);
+					}
 				}
 			}
 		}
-
 	};
 
 	OnClickListener deleteButtonClick = new OnClickListener() {
@@ -1153,10 +1210,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 					} else {
 						graphTab.addView(graphView,
 								new LinearLayout.LayoutParams(
-										LayoutParams.FILL_PARENT, 0, 0.5f));
+										LayoutParams.MATCH_PARENT, 0, 0.5f));
 						graphTab.addView(graphView2,
 								new LinearLayout.LayoutParams(
-										LayoutParams.FILL_PARENT, 0, 0.5f));
+										LayoutParams.MATCH_PARENT, 0, 0.5f));
 					}
 					if (map != null) {
 						map.addPolyline(route.path);
@@ -1174,5 +1231,46 @@ public class DetailActivity extends FragmentActivity implements Constants {
 				}
 			}
 		}.execute("kalle");
+	}
+
+	private void shareActivity() {
+		final int which[] = { -1 };
+		final CharSequence items[] = { "gpx", "tcx" /* "nike+xml" */ };
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Share activity");
+		builder.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int w) {
+						if (which[0] == -1) {
+							dialog.dismiss();
+							return;
+						}
+							
+						final Activity context = DetailActivity.this;
+					    final CharSequence fmt = items[which[0]];
+				    	final Intent intent = new Intent(Intent.ACTION_SEND);
+					 
+				    	intent.setType(WorkoutFileProvider.MIME);
+				    	Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt + "/" + mID 
+				    			+ "/" + "activity." + fmt);
+				    	intent.putExtra(Intent.EXTRA_STREAM, uri);
+						context.startActivity(Intent.createChooser(intent, "Share workout..."));
+						
+					}
+				});
+		builder.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						// Do nothing but close the dialog
+						dialog.dismiss();
+					}
+
+				});
+		builder.setSingleChoiceItems(items, which[0], new DialogInterface.OnClickListener(){
+			@Override
+			public void onClick(DialogInterface dialog, int w) {
+				which[0] = w;
+			}});
+		builder.show();
 	}
 }

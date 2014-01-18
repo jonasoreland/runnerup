@@ -43,11 +43,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlSerializer;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Base64;
 import android.util.Xml;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class JoggSE extends FormCrawler implements Uploader {
 
 	public static final String NAME = "jogg.se";

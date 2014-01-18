@@ -18,15 +18,18 @@ package org.runnerup.widget;
 
 import org.runnerup.R;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class WidgetUtil {
 
 	public static void setEditable(EditText editText, boolean onoff) {
@@ -47,7 +50,7 @@ public class WidgetUtil {
         txtTab.setTextColor(Color.WHITE);
         txtTab.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_HORIZONTAL);
         Drawable drawable = res.getDrawable(R.drawable.tab_indicator_holo);
-        txtTab.setBackgroundDrawable(drawable); // R.drawable.tab_indicator_holo);
+        WidgetUtil.setBackground(txtTab,  drawable); // R.drawable.tab_indicator_holo);
 
         int h = (25 * drawable.getIntrinsicHeight()) / 10;
         txtTab.setPadding(0, h, 0, h);
@@ -55,4 +58,13 @@ public class WidgetUtil {
 //        txtTab.setLineSpacing(1 + 5 * drawable.getIntrinsicHeight(), 1);
         return txtTab;
     }
+	
+	@SuppressWarnings("deprecation")
+	public static void setBackground(View v, Drawable d) {
+		if (Build.VERSION.SDK_INT < 16) {
+			v.setBackgroundDrawable(d);
+		} else {
+			v.setBackground(d);
+		}
+	}
 }

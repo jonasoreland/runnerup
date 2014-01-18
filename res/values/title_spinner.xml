@@ -18,7 +18,10 @@
 <resources>
 <declare-styleable name="TitleSpinner">
 	<attr name="type" format="string" />
-    <attr name="android:text" />
+	<attr name="digits" format="string" />
+	<attr name="min_val" format="string" />
+	<attr name="max_val" format="string" />
+	<attr name="android:text" />
     <attr name="android:prompt" />
     <attr name="android:entries" />
     <attr name="android:inputType" />

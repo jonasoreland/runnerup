@@ -19,6 +19,7 @@ package org.runnerup.db;
 import java.util.ArrayList;
 
 import org.runnerup.R;
+import org.runnerup.export.DigifitUploader;
 import org.runnerup.export.Endomondo;
 import org.runnerup.export.Facebook;
 import org.runnerup.export.FunBeatUploader;
@@ -29,17 +30,21 @@ import org.runnerup.export.NikePlus;
 import org.runnerup.export.RunKeeperUploader;
 import org.runnerup.export.RunnerUpLive;
 import org.runnerup.export.RunningAHEAD;
+import org.runnerup.export.Strava;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 21;
+	private static final int DBVERSION = 22;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -336,6 +341,26 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
 			values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
 			values.put(DB.ACCOUNT.URL, "http://www.runningahead.com");
+			insertAccount(arg0, values);
+		}
+		
+		if (yet) {
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, DigifitUploader.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "tcx");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a9_digifit);
+			values.put(DB.ACCOUNT.URL, "http://www.digifit.com");
+			insertAccount(arg0, values);
+		}
+
+		if (yet) {
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, Strava.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "tcx");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a10_strava);
+			values.put(DB.ACCOUNT.URL, "http://www.strava.com");
 			insertAccount(arg0, values);
 		}
 

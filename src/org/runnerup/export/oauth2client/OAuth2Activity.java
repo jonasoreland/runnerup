@@ -22,8 +22,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
+import org.runnerup.export.FormCrawler;
 import org.runnerup.export.FormCrawler.FormValues;
 import org.runnerup.util.Constants.DB;
 
@@ -41,6 +41,10 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 @SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Activity extends Activity {
 
@@ -73,6 +77,11 @@ public class OAuth2Activity extends Activity {
 	ProgressDialog mSpinner = null;
 	Bundle mArgs = null;
 
+	@SuppressWarnings("deprecation")
+	private void setSavedPassword(WebView wv, boolean val) {
+		wv.getSettings().setSavePassword(false);
+	} 
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -94,13 +103,13 @@ public class OAuth2Activity extends Activity {
 		wv.setVerticalScrollBarEnabled(false);
 		wv.setHorizontalScrollBarEnabled(false);
 		wv.getSettings().setJavaScriptEnabled(true);
-		wv.getSettings().setSavePassword(false);
+		setSavedPassword(wv, false);
 
 		StringBuilder tmp = new StringBuilder();
 		tmp.append(auth_url);
-		tmp.append("?client_id=").append(URLEncoder.encode(client_id));
+		tmp.append("?client_id=").append(FormCrawler.URLEncode(client_id));
 		tmp.append("&response_type=code");
-		tmp.append("&redirect_uri=" + URLEncoder.encode(mRedirectUri));
+		tmp.append("&redirect_uri=" + FormCrawler.URLEncode(mRedirectUri));
 		if (auth_extra != null) {
 			tmp.append("&").append(auth_extra);
 		}
@@ -129,7 +138,8 @@ public class OAuth2Activity extends Activity {
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
 				super.onPageStarted(view, url, favicon);
-				mSpinner.show();
+				if (!isFinishing())
+					mSpinner.show();
 			}
 
 			@Override
@@ -247,6 +257,10 @@ public class OAuth2Activity extends Activity {
 		b.putString(OAuth2ServerCredentials.TOKEN_URL, server.getTokenUrl());
 		b.putString(OAuth2ServerCredentials.REDIRECT_URI,
 				server.getRedirectUri());
+		String extra = server.getAuthExtra();
+		if (extra != null) {
+			b.putString(OAuth2ServerCredentials.AUTH_EXTRA, extra);
+		}
 		args.putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
 		return args;
 	}

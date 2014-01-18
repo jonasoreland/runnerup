@@ -20,7 +20,8 @@
 - upload to Nike+                  (DONE)
 - upload to RunningAHEAD           (DONE)
 - upload to www.sports-tracker.com
-- upload to strava
+- upload to strava                 (DONE)
+- upload to digifit                (DONE)
 - upload from End of activity view (DONE)
 - upload list of activities        (DONE)
 - Name/comment to activity         (DONE)
@@ -46,7 +47,13 @@
 - BUG: pause during rest step confuses audio countdown
                                    (DONE)
 - routes ??
-- feed
+- feed                             (DONE)
+  runkeeper                        (DONE)
+  nike+                            (DONE)
+  funbeat                          (DONE)
+  endmondo                         (DONE)
+  strava
+
 - edit advanced workouts
 - advanced audio cue editor
 

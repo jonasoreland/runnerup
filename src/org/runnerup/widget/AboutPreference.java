@@ -27,6 +27,10 @@ import android.util.AttributeSet;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AboutPreference extends DialogPreference {
 
 	public AboutPreference(Context context, AttributeSet attrs) {

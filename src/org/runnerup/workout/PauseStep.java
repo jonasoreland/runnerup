@@ -18,6 +18,10 @@ package org.runnerup.workout;
 
 import java.util.HashMap;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class PauseStep extends Step {
 
 	long elapsedTime = 0;
@@ -106,6 +110,7 @@ public class PauseStep extends Step {
 		case LAP:
 			return elapsedTime / 1000;
 		case WORKOUT:
+		case CURRENT:
 			break;
 		}
 		return super.getTime(w, s);

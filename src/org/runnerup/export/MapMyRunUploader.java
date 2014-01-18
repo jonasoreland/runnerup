@@ -26,7 +26,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.Scanner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,9 +33,12 @@ import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Encryption;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class MapMyRunUploader extends FormCrawler implements Uploader {
 
 	public static final String NAME = "MapMyRun";
@@ -165,7 +167,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 				wr.close();
 
 				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+				JSONObject obj = parse(in);
 				conn.disconnect();
 
 				JSONObject user = obj.getJSONObject("result").getJSONObject("output").getJSONObject("user");
@@ -227,7 +229,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 				wr.close();
 
 				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+				JSONObject obj = parse(in);
 				conn.disconnect();
 
 				JSONObject result = obj.getJSONObject("result").getJSONObject("output").getJSONObject("result");
@@ -259,7 +261,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 				wr.close();
 
 				in = new BufferedInputStream(conn.getInputStream());
-				obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+				obj = parse(in);
 				conn.disconnect();
 				
 				return Uploader.Status.OK;

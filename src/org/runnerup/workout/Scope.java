@@ -26,7 +26,7 @@ import android.content.res.Resources;
  */
 public enum Scope {
 
-	WORKOUT(1), STEP(2), LAP(3);
+	WORKOUT(1), STEP(2), LAP(3), CURRENT(4);
 
 	int value = 0;
 
@@ -56,6 +56,8 @@ public enum Scope {
 			return res.getString(R.string.activity);
 		case LAP:
 			return res.getString(R.string.lap);
+		case CURRENT:
+			return "current"; // 
 		}
 		return "";
 	}

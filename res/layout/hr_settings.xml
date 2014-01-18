@@ -1,0 +1,111 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.HRSettingsActivity" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout0"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/totalTime"
+            style="@style/RunHeader"
+            android:layout_marginLeft="5dp"
+            android:gravity="left"
+            android:text="Device" />
+
+        <TextView
+            android:id="@+id/totalPace"
+            style="@style/RunHeader"
+            android:layout_marginRight="3dp"
+            android:gravity="right"
+            android:text="Heart rate" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/total"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout0"
+        android:background="@drawable/countdown_background"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp" >
+
+            <TextView
+                android:id="@+id/TextView01"
+                style="@style/RunHeader" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/hrDevice"
+                style="@style/RunInfo"
+                android:layout_marginLeft="5dp"
+                android:gravity="left"
+                android:text="Polar H7" />
+
+            <TextView
+                android:id="@+id/hrValue"
+                style="@style/RunInfo"
+                android:layout_marginRight="3dp"
+                android:text="" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/aallaa"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/scanButton"
+        android:layout_below="@+id/total"
+        android:weightSum="2" >
+
+        <LinearLayout
+            android:id="@+id/hrGraphLayout"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/hrLog"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:text="TextView" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/scanButton"
+        style="@style/ButtonText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/connectButton"
+        android:background="@drawable/btn_blue"
+        android:text="Scan" />
+
+    <Button
+        android:id="@+id/connectButton"
+        style="@style/ButtonText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_green"
+        android:text="Connect" />
+
+</RelativeLayout>

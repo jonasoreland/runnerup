@@ -16,8 +16,6 @@
  */
 package org.runnerup.view;
 
-import java.util.ArrayList;
-
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
@@ -25,14 +23,19 @@ import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants;
+import org.runnerup.util.SimpleCursorLoader;
+import org.runnerup.widget.WidgetUtil;
 
-import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,17 +45,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class AccountListActivity extends ListActivity implements Constants {
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
+public class AccountListActivity extends FragmentActivity implements Constants, LoaderCallbacks<Cursor> {
 
 	DBHelper mDBHelper = null;
 	SQLiteDatabase mDB = null;
-	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 	UploadManager uploadManager = null;
 	boolean tabFormat = false;
+
+	ListView listView;
+	CursorAdapter cursorAdapter;
 	
 	/** Called when the activity is first created. */
 
@@ -64,8 +73,11 @@ public class AccountListActivity extends ListActivity implements Constants {
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getReadableDatabase();
 		uploadManager = new UploadManager(this);
-		this.getListView().setDividerHeight(10);
-		fillData();
+		listView = (ListView) findViewById(R.id.accountList);
+		listView.setDividerHeight(10);
+		cursorAdapter = new AccountListAdapter(this, null);
+		listView.setAdapter(cursorAdapter);
+		getSupportLoaderManager().initLoader(0,  null,  this);
 	}
 
 	@Override
@@ -73,10 +85,6 @@ public class AccountListActivity extends ListActivity implements Constants {
 		super.onDestroy();
 		mDB.close();
 		mDBHelper.close();
-		for (Cursor c : mCursors) {
-			c.close();
-		}
-		mCursors.clear();
 		uploadManager.close();
 	}
 
@@ -92,16 +100,14 @@ public class AccountListActivity extends ListActivity implements Constants {
 		case R.id.menu_tab_format:
 			tabFormat = !tabFormat;
 			item.setTitle("Icon list");
-			((CursorAdapter)getListView().getAdapter()).notifyDataSetInvalidated();
+			getSupportLoaderManager().restartLoader(0,  null,  this);
 			break;
 		}
 		return true;
 	}
 
-	
-	void fillData() {
-		// Fields from the database (projection)
-		// Must include the _id column for the adapter to work
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		String[] from = new String[] { "_id", 
 				DB.ACCOUNT.NAME,
 				DB.ACCOUNT.URL,
@@ -112,18 +118,26 @@ public class AccountListActivity extends ListActivity implements Constants {
 				DB.ACCOUNT.FLAGS
 		};
 
-		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, null, null,
-				null, null, DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
-		CursorAdapter adapter = new AccountListAdapter(this, c);
-		setListAdapter(adapter);
-		mCursors.add(c);
+		
+		return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, null, null,
+				DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
 	}
 
-	public class AccountListAdapter extends CursorAdapter {
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		cursorAdapter.swapCursor(arg1);
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		cursorAdapter.swapCursor(null);
+	}
+
+	class AccountListAdapter extends CursorAdapter {
 		LayoutInflater inflater;
 
 		public AccountListAdapter(Context context, Cursor c) {
-			super(context, c);
+			super(context, c, true);
 			inflater = LayoutInflater.from(context);
 		}
 
@@ -196,11 +210,11 @@ public class AccountListActivity extends ListActivity implements Constants {
 				b.setOnClickListener(configureButtonClick);
 				if (configured) {
 					b.setText("Edit");
-					b.setBackgroundDrawable(getResources().getDrawable(
+					WidgetUtil.setBackground(b, getResources().getDrawable(
 							R.drawable.btn_blue));
 				} else {
 					b.setText("Connect");
-					b.setBackgroundDrawable(getResources().getDrawable(
+					WidgetUtil.setBackground(b, getResources().getDrawable(
 							R.drawable.btn_green));
 				}
 			}
@@ -258,10 +272,7 @@ public class AccountListActivity extends ListActivity implements Constants {
 			uploadManager.onActivityResult(requestCode, resultCode, data);
 		} else if (requestCode == UploadManager.CONFIGURE_REQUEST + 1000) {
 			uploadManager.clear();
-			for (Cursor c : mCursors) {
-				c.requery();
-			}
+			getSupportLoaderManager().restartLoader(0,  null , this);
 		}
 	}
-
 }

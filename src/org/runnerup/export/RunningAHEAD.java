@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
 import java.util.zip.GZIPOutputStream;
 
 import org.json.JSONException;
@@ -34,11 +33,14 @@ import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.util.Constants.DB;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server {
 
 	public static final String NAME = "RunningAHEAD";
@@ -89,6 +91,11 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 	@Override
 	public String getAuthUrl() {
 		return AUTH_URL;
+	}
+
+	@Override
+	public String getAuthExtra() {
+		return null;
 	}
 
 	@Override
@@ -206,7 +213,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 			System.err.println("code: " + responseCode + ", amsg: " + amsg);
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+			JSONObject obj = parse(in);
 			
 			if (responseCode == 200 && obj.getJSONObject("data").getJSONArray("workoutIds").length() == 1) {
 				conn.disconnect();

@@ -20,36 +20,47 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.hr.MockHRProvider;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.StepButton;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.TitleSpinner.OnCloseDialogListener;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.WorkoutSerializer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -64,12 +75,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class StartActivity extends Activity implements TickListener {
 
 	final static String TAB_BASIC    = "basic";
@@ -86,14 +100,22 @@ public class StartActivity extends Activity implements TickListener {
 	TextView gpsInfoView1 = null;
 	TextView gpsInfoView2 = null;
 	View gpsInfoLayout = null;
+	TextView hrInfo = null;
+	
+	ImageButton hrButton = null; 
+	TextView hrValueText = null;
+	FrameLayout hrLayout = null;
 	
 	TitleSpinner simpleType = null;
 	TitleSpinner simpleTime = null;
 	TitleSpinner simpleDistance = null;
 	TitleSpinner simpleAudioSpinner = null;
 	AudioSchemeListAdapter simpleAudioListAdapter = null;
-	CheckBox simpleTargetPace = null;
+	TitleSpinner simpleTargetType = null;
+	TargetEntriesAdapter targetEntriesAdapter = null;
 	TitleSpinner simpleTargetPaceValue = null;
+	TitleSpinner simpleTargetHrz;
+	HRZonesListAdapter hrZonesAdapter = null;
 
 	TitleSpinner intervalType = null;
 	TitleSpinner intervalTime = null;
@@ -112,7 +134,7 @@ public class StartActivity extends Activity implements TickListener {
 	Workout      advancedWorkout = null;
 	ListView     advancedStepList = null;
 	WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
-	
+		
 	boolean manualSetValue = false;
 	TitleSpinner manualDate = null;
 	TitleSpinner manualTime = null;
@@ -125,7 +147,8 @@ public class StartActivity extends Activity implements TickListener {
 	SQLiteDatabase mDB = null;
 	
 	Formatter formatter = null;
-
+	BroadcastReceiver catchButtonEvent = null;
+	boolean allowHardwareKey = false;
 	/** Called when the activity is first created. */
 
 	@Override
@@ -146,6 +169,12 @@ public class StartActivity extends Activity implements TickListener {
 		gpsInfoLayout = findViewById(R.id.GPSINFO);
 		gpsInfoView1 = (TextView) findViewById(R.id.gpsInfo1);
 		gpsInfoView2 = (TextView) findViewById(R.id.gpsInfo2);
+		hrInfo = (TextView) findViewById(R.id.hrInfo);
+		
+		hrButton = (ImageButton) findViewById(R.id.hrButton);
+		hrButton.setOnClickListener(hrButtonClick);
+		hrValueText = (TextView) findViewById(R.id.hrValueText);
+		hrLayout = (FrameLayout) findViewById(R.id.hrLayout);
 		
 		tabHost = (TabHost)findViewById(R.id.tabhostStart);
 		tabHost.setup();
@@ -183,16 +212,13 @@ public class StartActivity extends Activity implements TickListener {
 		simpleAudioListAdapter.reload();
 		simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basicAudioCueSpinner);
 		simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
-		simpleTargetPace = (CheckBox)findViewById(R.id.tabBasicTargetPace);
+		simpleTargetType = (TitleSpinner) findViewById(R.id.tabBasicTargetType);
 		simpleTargetPaceValue = (TitleSpinner)findViewById(R.id.tabBasicTargetPaceMax);
-		simpleTargetPace.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				simpleTargetPaceValue.setEnabled(isChecked);
-			}
-		});
-		simpleTargetPaceValue.setEnabled(simpleTargetPace.isChecked());
+		hrZonesAdapter = new HRZonesListAdapter(this, inflater);
+		simpleTargetHrz = (TitleSpinner)findViewById(R.id.tabBasicTargetHrz);
+		simpleTargetHrz.setAdapter(hrZonesAdapter);
+		simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
+		targetEntriesAdapter = new TargetEntriesAdapter(this);
 		
 		intervalType = (TitleSpinner)findViewById(R.id.intervalType);
 		intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
@@ -264,6 +290,19 @@ public class StartActivity extends Activity implements TickListener {
 				}
 			}
 		}
+		
+		catchButtonEvent = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				startButton.performClick();
+			}
+		};
+		
+//		if (getAllowStartStopFromHeadsetKey()) {
+//			registerHeadsetListener();
+//		}
+
+		updateTargetView();
 	}
 
 	@Override
@@ -277,6 +316,7 @@ public class StartActivity extends Activity implements TickListener {
 			stopGps();
 		}
 	}
+
 	
 	@Override
 	public void onResume() {
@@ -285,6 +325,15 @@ public class StartActivity extends Activity implements TickListener {
 		intervalAudioListAdapter.reload();
 		advancedAudioListAdapter.reload();
 		advancedWorkoutListAdapter.reload();
+		hrZonesAdapter.reload();
+		simpleTargetHrz.setAdapter(hrZonesAdapter);
+		if (!hrZonesAdapter.hrZones.isConfigured()) {
+			targetEntriesAdapter.addDisabled(2);
+		} else if (targetEntriesAdapter.disabled != null){
+			targetEntriesAdapter.disabled.clear();
+		}
+		simpleTargetType.setAdapter(targetEntriesAdapter);
+
 		if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
 			loadAdvanced(null);
 		}
@@ -294,8 +343,42 @@ public class StartActivity extends Activity implements TickListener {
 		} else {
 			onGpsTrackerBound();
 		}
+		if (getAllowStartStopFromHeadsetKey()) {
+			unregisterHeadsetListener();
+			registerHeadsetListener();
+		}
 	}
 
+	private void registerHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+		
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.setPriority(2147483647);
+		intentFilter.addAction("org.runnerup.START_STOP");
+		registerReceiver(catchButtonEvent, intentFilter);
+	}
+
+	private void unregisterHeadsetListener() {
+		ComponentName mMediaReceiverCompName = new ComponentName(
+				getPackageName(), HeadsetButtonReceiver.class.getName());
+		AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		mAudioManager
+				.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+		try {
+			unregisterReceiver(catchButtonEvent);
+		} catch (IllegalArgumentException e) {
+			if (e.getMessage().contains("Receiver not registered")) {
+			} else {
+				// unexpected, re-throw
+				throw e;
+			}
+		}
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -320,6 +403,12 @@ public class StartActivity extends Activity implements TickListener {
 		Context ctx = getApplicationContext();
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
 		return pref.getBoolean("pref_startgps", false);
+	}
+	
+	boolean getAllowStartStopFromHeadsetKey() {
+		Context ctx = getApplicationContext();
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx); 
+		return pref.getBoolean("pref_keystartstop_active", true);
 	}
 
 	private void startGps() {
@@ -362,6 +451,8 @@ public class StartActivity extends Activity implements TickListener {
 
 	OnClickListener startButtonClick = new OnClickListener() {
 		public void onClick(View v) {
+			
+			
 			if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
 				manualSaveButtonClick.onClick(v);
 				return;
@@ -376,7 +467,18 @@ public class StartActivity extends Activity implements TickListener {
 				Workout w = null;
 				if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
-					w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, simpleTargetPace.isChecked());
+					Dimension target = null;
+					switch(simpleTargetType.getValueInt()) {
+					case 0: // none
+						break;
+					case 1:
+						target = Dimension.PACE;
+						break;
+					case 2:
+						target = Dimension.HRZ;
+						break;
+					}
+					w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
 				}
 				else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
 					audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
@@ -391,15 +493,26 @@ public class StartActivity extends Activity implements TickListener {
 				WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
 				mGpsStatus.stop(StartActivity.this);
 				mGpsTracker.setWorkout(w);
+				
 				Intent intent = new Intent(StartActivity.this,
 						RunActivity.class);
 				StartActivity.this.startActivityForResult(intent, 112);
+				if (getAllowStartStopFromHeadsetKey()){
+					unregisterHeadsetListener();
+				}
 				return;
 			}
 			updateView();
 		}
 	};
 
+	OnClickListener hrButtonClick = new OnClickListener() {
+		@Override
+		public void onClick(View arg0) {
+
+		}
+	};
+	
 	private void updateView() {
 		{
 			int cnt0 = mGpsStatus.getSatellitesFixed();
@@ -440,8 +553,41 @@ public class StartActivity extends Activity implements TickListener {
 			}
 		}
 		gpsInfoLayout.setVisibility(View.VISIBLE);
+		
+		{
+			Resources res = getResources();
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+			if (btDeviceName != null) {
+				hrInfo.setText(btDeviceName);
+			} else {
+				hrInfo.setText("");
+				if (MockHRProvider.NAME.contentEquals(prefs.getString(res.getString(R.string.pref_bt_provider), ""))) {
+					final String btAddress = "mock: " + prefs.getString(res.getString(R.string.pref_bt_address), "???");
+					hrInfo.setText(btAddress);
+				}
+			}
+		}
+		
+		if (mGpsTracker != null && mGpsTracker.isHRConfigured()) {
+			hrLayout.setVisibility(View.VISIBLE);
+			Integer hrVal = null;
+			if (mGpsTracker.isHRConnected()) {
+				hrVal = mGpsTracker.getCurrentHRValue();
+			}
+			if (hrVal != null) {
+				hrButton.setEnabled(false);
+				hrValueText.setText(Integer.toString(hrVal));
+			} else {
+				hrButton.setEnabled(true);
+				hrValueText.setText("?");
+			}
+		}
+		else {
+			hrLayout.setVisibility(View.GONE);
+		}
 	}
-
+	
 	private boolean mIsBound = false;
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -537,6 +683,35 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	};
 
+	OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
+
+		@Override
+		public void onClose(TitleSpinner spinner, boolean ok) {
+			if (ok) {
+				updateTargetView();
+			}
+		}
+	};
+
+	void updateTargetView() {
+		switch(simpleTargetType.getValueInt()) {
+		case 0:
+		default:
+			simpleTargetPaceValue.setEnabled(false);
+			simpleTargetHrz.setEnabled(false);
+			break;
+		case 1:
+			simpleTargetPaceValue.setEnabled(true);
+			simpleTargetPaceValue.setVisibility(View.VISIBLE);
+			simpleTargetHrz.setVisibility(View.GONE);
+			break;
+		case 2:
+			simpleTargetPaceValue.setVisibility(View.GONE);
+			simpleTargetHrz.setEnabled(true);
+			simpleTargetHrz.setVisibility(View.VISIBLE);
+		}
+	}
+	
 	OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
 
 		@Override
@@ -783,3 +958,76 @@ public class StartActivity extends Activity implements TickListener {
 		}
 	};
 }
+
+class TargetEntriesAdapter extends BaseAdapter {
+
+	String[] entries;
+	LayoutInflater inflator;
+	HashSet<String> disabled;
+	
+	TargetEntriesAdapter(Context ctx) {
+		inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		entries = ctx.getResources().getStringArray(R.array.targetEntries);
+	}
+	
+	void addDisabled(int i) {
+		if (disabled == null)
+			disabled = new HashSet<String>();
+		if (i < entries.length)
+			disabled.add(entries[i]);
+	}
+	
+	@Override
+	public int getCount() {
+		return entries.length;
+	}
+
+	@Override
+	public Object getItem(int position) {
+		if (position < entries.length)
+			return entries[position];
+		return null;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return 0;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		String str = (String) getItem(position);
+		if (convertView == null) {
+	        convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+		}
+		TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+		ret.setText(str);
+
+		if (disabled != null && disabled.contains(str))
+			convertView.setEnabled(false);
+		else
+			convertView.setEnabled(true);
+		
+		return convertView;
+	}
+
+	@Override
+	public boolean areAllItemsEnabled() {
+		return disabled == null || disabled.size() == 0;
+	}
+
+	@Override
+	public boolean isEnabled(int position) {
+		if (disabled == null)
+			return true;
+		
+		String str = (String) getItem(position);
+		if (str == null)
+			return true;
+		
+		if (disabled.contains(str))
+			return false;
+
+		return true;
+	}
+};

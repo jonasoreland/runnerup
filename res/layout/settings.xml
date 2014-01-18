@@ -46,7 +46,23 @@
 			    android:targetClass="org.runnerup.view.ManageWorkoutsActivity" />
     </Preference>
     
-    <CheckBoxPreference
+	<Preference
+        android:key="cue_configure_hr"
+        android:title="Heart Rate Monitor">
+			<intent
+			    android:targetPackage="org.runnerup"
+			    android:targetClass="org.runnerup.view.HRSettingsActivity" />
+    </Preference>
+		
+	<Preference
+        android:key="cue_configure_hrzones"
+        android:title="Heart Rate Zones">
+			<intent
+			    android:targetPackage="org.runnerup"
+			    android:targetClass="org.runnerup.view.HRZonesActivity" />
+    </Preference>
+	
+	<CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_autolap_active"
         android:persistent="true"
@@ -69,6 +85,13 @@
         android:title="Enable RunnerUpLive"
         android:summary="Note, you need to connect to the account too" />
 	
+	<CheckBoxPreference
+        android:defaultValue="false"
+        android:persistent="true"
+        android:key="@string/pref_keystartstop_active"
+        android:title="Headset key start/stop"
+        android:summary="Use your headset to start/pause/resume RunnerUp" />
+
     <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"
@@ -183,7 +206,20 @@
         <Preference android:title="Import"
             android:key="importdb"
             android:summary="Import database from sdcard (e.g after upgrade)" />
-   	</PreferenceScreen>
+    	
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="@string/pref_bt_experimental"
+        	android:title="Experimental HRM devices" />
+
+    	<CheckBoxPreference
+        	android:defaultValue="false"
+        	android:persistent="true"
+        	android:key="@string/pref_bt_mock"
+        	android:title="Mock HRM devices" />
+    
+    	</PreferenceScreen>
 
 	<PreferenceCategory android:title="About">
 		<org.runnerup.widget.AboutPreference

@@ -44,6 +44,10 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.os.Build;
+import android.annotation.TargetApi;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class UploadActivity extends ListActivity implements Constants {
 
 	long uploaderID = -1;
@@ -189,7 +193,7 @@ public class UploadActivity extends ListActivity implements Constants {
 		}
 	};
 	
-	public class UploadListAdapter extends BaseAdapter {
+	class UploadListAdapter extends BaseAdapter {
 		LayoutInflater inflater;
 
 		public UploadListAdapter(Context context) {

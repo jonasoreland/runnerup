@@ -86,6 +86,11 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 	}
 
 	@Override
+	public String getAuthExtra() {
+		return "scope=publish_actions";
+	}
+
+	@Override
 	public String getRevokeUrl() {
 		return null;
 	}
@@ -133,12 +138,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 	
 	@Override
 	public Intent getAuthIntent(Activity activity) {
-		Intent i = OAuth2Activity.getIntent(activity, this);
-		Bundle b = i.getBundleExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS);
-		i.removeExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS);
-		b.putString(OAuth2Activity.OAuth2ServerCredentials.AUTH_EXTRA, "scope=publish_actions");
-		i.putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
-		return i;
+		return OAuth2Activity.getIntent(activity, this);
 	}
 	
 	@Override

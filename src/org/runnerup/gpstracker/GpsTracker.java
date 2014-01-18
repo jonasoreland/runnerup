@@ -24,22 +24,30 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
+import org.runnerup.hr.HRManager;
+import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.MockHRProvider;
+import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -47,11 +55,21 @@ import android.preference.PreferenceManager;
  * @author jonas.oreland@gmail.com
  * 
  */
+import android.os.Build;
+import android.annotation.TargetApi;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
 		LocationListener, Constants {
 
 	private static final int NOTIFICATION_ID = 1;
 
+	public static final int MAX_HR_AGE = 3000; // 3s
+	
+	private Handler handler = new Handler();
+	
 	/**
 	 * Work-around for http://code.google.com/p/android/issues/detail?id=23937
 	 */
@@ -65,6 +83,8 @@ public class GpsTracker extends android.app.Service implements
 	long mActivityId = 0;
 	double mElapsedTimeMillis = 0;
 	double mElapsedDistance = 0;
+	double mHeartbeats = 0;
+
 	enum State {
 		INIT, LOGGING, STARTED, PAUSED,
 		ERROR /* Failed to init GPS */
@@ -155,6 +175,8 @@ public class GpsTracker extends android.app.Service implements
 			state = State.ERROR;
 		}
 		
+		startHRMonitor();
+		
 		UploadManager u = new UploadManager(this);
 		u.loadLiveLoggers(liveLoggers);
 		u.close();
@@ -198,6 +220,7 @@ public class GpsTracker extends android.app.Service implements
 		state = State.STARTED;
 		mElapsedTimeMillis = 0;
 		mElapsedDistance = 0;
+		mHeartbeats = 0;
 		// TODO: check if mLastLocation is recent enough
 		mActivityLastLocation = null;
 		setNextLocationType(DB.LOCATION.TYPE_START); // New location update will
@@ -222,16 +245,17 @@ public class GpsTracker extends android.app.Service implements
 	}
 	
 	public void setForeground(Class<?> client) {
-		Notification note = new Notification(R.drawable.icon,
-				"RunnerUp activity started", System.currentTimeMillis());
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 		Intent i = new Intent(this, client);
 		i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
-
-		note.setLatestEventInfo(this, "RunnerUp", "Tracking", pi);
-		note.flags |= Notification.FLAG_NO_CLEAR;
-
-		startForeground(NOTIFICATION_ID, note);
+		builder.setTicker("RunnerUp activity started");
+		builder.setContentIntent(pi);
+		builder.setContentTitle("RunnerUp");
+		builder.setContentText("Tracking");
+		builder.setSmallIcon(R.drawable.icon);
+		builder.setOngoing(true);
+		startForeground(NOTIFICATION_ID, builder.build());
 	}
 
 	public void newLap(ContentValues tmp) {
@@ -312,6 +336,7 @@ public class GpsTracker extends android.app.Service implements
 			state = State.INIT;
 		}
 		liveLoggers.clear();
+		stopHRMonitor();
 	}
 
 	public void completeActivity(boolean save) {
@@ -363,9 +388,10 @@ public class GpsTracker extends android.app.Service implements
 	
 	@Override
 	public void onLocationChanged(Location arg0) {
+		long now = System.currentTimeMillis();
 		if (mBug23937Checked == false) {
 			long gpsTime = arg0.getTime();
-			long utcTime = System.currentTimeMillis();
+			long utcTime = now;
 			if (gpsTime > utcTime + 3 * 1000) {
 				mBug23937Delta = utcTime - gpsTime;
 			} else {
@@ -379,6 +405,7 @@ public class GpsTracker extends android.app.Service implements
 		}
 		
 		if (state == State.STARTED) {
+			Integer hrValue = getCurrentHRValue(now, MAX_HR_AGE);
 			if (mActivityLastLocation != null) {
 				double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
 						.getTime());
@@ -395,10 +422,13 @@ public class GpsTracker extends android.app.Service implements
 				mElapsedTimeMillis += timeDiff;
 				mElapsedDistance += distDiff;
 				mElapsedTimeMillisSinceLiveLog += timeDiff;
+				if (hrValue != null) {
+					mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
+				}
 			}
 			mActivityLastLocation = arg0;
 
-			mDBWriter.onLocationChanged(arg0);
+			mDBWriter.onLocationChanged(arg0, hrValue);
 			
 			switch (mLocationType) {
 			case DB.LOCATION.TYPE_START:
@@ -426,7 +456,8 @@ public class GpsTracker extends android.app.Service implements
 				return;
 			}
 			mElapsedTimeMillisSinceLiveLog = 0;
-		}
+		}		
+
 		
 		for (Uploader l : liveLoggers) {
 			l.liveLog(this, arg0, type, distance, time);
@@ -448,7 +479,6 @@ public class GpsTracker extends android.app.Service implements
 	/**
 	 * Service interface stuff...
 	 */
-
 	public class LocalBinder extends android.os.Binder {
 		public GpsTracker getService() {
 			return GpsTracker.this;
@@ -478,5 +508,125 @@ public class GpsTracker extends android.app.Service implements
 				mWakeLock.acquire();
 			}
 		}
+	}
+
+	HRProvider hrProvider = null;
+	boolean btDisabled = true;
+	
+	private void startHRMonitor() {
+		Resources res = getResources();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+		final String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+		final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+		if (btAddress == null || btProviderName == null)
+			return;
+		
+	    btDisabled = true;
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		if (adapter == null) {
+			return;
+		}
+		
+		if (!adapter.isEnabled() && !MockHRProvider.NAME.contentEquals(btProviderName)) {
+			return;
+		}
+		
+		final BluetoothDevice btDevice = adapter.getRemoteDevice(btAddress);
+		if (btDevice == null) {
+			return;
+		}
+		btDisabled = false;
+
+		hrProvider = HRManager.getHRProvider(this, btProviderName);
+		if (hrProvider != null) {
+			hrProvider.open(handler, new HRClient() {
+				@Override
+				public void onOpenResult(boolean ok) {
+					if (!ok) {
+						hrProvider = null;
+						return;
+					}
+					hrProvider.connect(btDevice, btDeviceName);
+				}
+
+				@Override
+				public void onScanResult(String name, BluetoothDevice device) {
+				}
+
+				@Override
+				public void onConnectResult(boolean connectOK) {
+					if (connectOK) {
+						Toast.makeText(GpsTracker.this,  "Connected to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+					}
+				}
+
+				@Override
+				public void onDisconnectResult(boolean disconnectOK) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onCloseResult(boolean closeOK) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		}
+	}
+	
+	private void stopHRMonitor() {
+		if (hrProvider != null) {
+			hrProvider.close();
+		}
+	}
+	
+	public boolean isHRConfigured() {
+		if (hrProvider != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isHRConnected() {
+		if (hrProvider == null)
+			return false;
+		
+		return hrProvider.isConnected();
+	}
+
+	public Integer getCurrentHRValue(long now, long maxAge) {
+		if (hrProvider == null || !hrProvider.isConnected())
+			return null;
+		
+		if (now > hrProvider.getHRValueTimestamp() + maxAge)
+			return null;
+
+		return hrProvider.getHRValue();
+	}
+		
+	public Integer getCurrentHRValue() {
+		return getCurrentHRValue(System.currentTimeMillis(), 3000);
+	}
+
+	public Double getCurrentSpeed() {
+		return getCurrentSpeed(System.currentTimeMillis(), 3000);
+	}
+
+	private Double getCurrentSpeed(long now, long maxAge) {
+		if (mLastLocation == null)
+			return null;
+		if (!mLastLocation.hasSpeed())
+			return null;
+		if (now > mLastLocation.getTime() + maxAge)
+			return null;
+		return (double) mLastLocation.getSpeed();
+	}
+
+	public double getHeartbeats() {
+		return mHeartbeats;
 	}
 }

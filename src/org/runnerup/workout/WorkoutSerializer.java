@@ -23,16 +23,19 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.FormCrawler;
 import org.runnerup.util.SafeParse;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.util.Pair;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutSerializer {
 
 	public static final String WORKOUTS_DIR = "workouts";
@@ -63,7 +66,7 @@ public class WorkoutSerializer {
 	};
 	
 	public static Workout readJSON(Reader in) throws JSONException {
-		JSONObject obj = new JSONObject(new Scanner(in).useDelimiter("\\A").next());
+		JSONObject obj = FormCrawler.parse(in);
 		obj = obj.getJSONObject("com.garmin.connect.workout.json.UserWorkoutJson");
 		Workout w = new Workout();
 		JSONArray steps = obj.getJSONArray("workoutSteps");
@@ -215,8 +218,10 @@ public class WorkoutSerializer {
 					          SafeParse.parseDouble(getString(obj, "targetValueTwo"), 0));
 			scale(range, dim, obj, "targetValueUnitKey");
 		} else if (targetTypeKey.equalsIgnoreCase("heart.rate.zone")) {
-			// Not implemented
-			return NullTargetPair;
+			dim = Dimension.HR;
+			range = new Range(SafeParse.parseDouble(getString(obj, "targetValueOne"), 0),
+					          SafeParse.parseDouble(getString(obj, "targetValueTwo"), 0));
+			scale(range, dim, obj, "targetValueUnitKey");
 		} else if (targetTypeKey.equalsIgnoreCase("cadence")) {
 			// Not implemented
 			return NullTargetPair;
