@@ -24,6 +24,7 @@ import org.runnerup.export.Endomondo;
 import org.runnerup.export.Facebook;
 import org.runnerup.export.FunBeatUploader;
 import org.runnerup.export.GarminUploader;
+import org.runnerup.export.GooglePlus;
 import org.runnerup.export.JoggSE;
 import org.runnerup.export.MapMyRunUploader;
 import org.runnerup.export.NikePlus;
@@ -380,8 +381,18 @@ public class DBHelper extends SQLiteOpenHelper implements
 			values.put(DB.ACCOUNT.NAME, Facebook.NAME);
 			values.put(DB.ACCOUNT.FORMAT, "");
 			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-			values.put(DB.ACCOUNT.ICON, R.drawable.a9_facebook);
+			values.put(DB.ACCOUNT.ICON, R.drawable.a11_facebook);
 			values.put(DB.ACCOUNT.URL, "http://www.facebook.com");
+			insertAccount(arg0, values);
+		}
+
+		if (yet) {
+			ContentValues values = new ContentValues();
+			values.put(DB.ACCOUNT.NAME, GooglePlus.NAME);
+			values.put(DB.ACCOUNT.FORMAT, "");
+			values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+			values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
+			values.put(DB.ACCOUNT.URL, "https://plus.google.com");
 			insertAccount(arg0, values);
 		}
 	}

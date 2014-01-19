@@ -176,12 +176,14 @@ public class UploadManager {
 			uploader = new RunningAHEAD(this);
 		} else if (uploaderName.contentEquals(RunnerUpLive.NAME)) {
 			uploader = new RunnerUpLive(this);
-		}  else if (uploaderName.contentEquals(Facebook.NAME)) {
-			uploader = new Facebook(this);
 		} else if (uploaderName.contentEquals(DigifitUploader.NAME)) {
 			uploader = new DigifitUploader(this);
 		} else if (uploaderName.contentEquals(Strava.NAME)) {
 			uploader = new Strava(this);
+		}  else if (uploaderName.contentEquals(Facebook.NAME)) {
+			uploader = new Facebook(this);
+		}  else if (uploaderName.contentEquals(GooglePlus.NAME)) {
+			uploader = new GooglePlus(this);
 		}
 		
 		if (uploader != null) {
