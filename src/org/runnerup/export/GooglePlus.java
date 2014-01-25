@@ -41,6 +41,11 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 	public static final String TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
 	public static final String REDIRECT_URI = "http://localhost";
 	
+	public static final String SCOPES =
+			"https://www.googleapis.com/auth/plus.me "+
+			"https://www.googleapis.com/auth/plus.login " + 
+			"https://www.googleapis.com/auth/plus.stream.write";
+	
 	private long id = 0;
 	private String access_token = null;
 	private String refresh_token = null;
@@ -86,7 +91,9 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 
 	@Override
 	public String getAuthExtra() {
-		return "scope="+FormCrawler.URLEncode("https://www.googleapis.com/auth/plus.login");
+		return "scope="+FormCrawler.URLEncode(SCOPES)
+				+ "&request_visible_actions="+FormCrawler.URLEncode("http://schemas.google.com/AddActivity")
+				;
 	}
 
 	@Override
