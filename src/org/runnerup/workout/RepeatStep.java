@@ -148,6 +148,11 @@ public class RepeatStep extends Step {
 	}
 
 	@Override
+	public double getHeartbeats(Workout w, Scope s) {
+		return steps.get(currentStep).getHeartbeats(w, s);
+	}
+
+	@Override
 	public double getDuration(Dimension dimension) {
 		return steps.get(currentStep).getDuration(dimension);
 	}
