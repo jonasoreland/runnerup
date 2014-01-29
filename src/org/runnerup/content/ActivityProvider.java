@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.GoogleStaticMap;
 import org.runnerup.export.format.NikeXML;
@@ -52,12 +53,14 @@ public class ActivityProvider extends ContentProvider {
     public static final String TCX_MIME = "application/tcx+xml";
     public static final String NIKE_MIME = "application/nike+xml";
     public static final String MAPS_MIME = "application/maps";
+    public static final String FACEBOOK_COURSE_MIME = "application/facebook.course";
     
     // UriMatcher used to match against incoming requests
     static final int GPX = 1;
     static final int TCX = 2;
     static final int NIKE = 3;
     static final int MAPS = 4;
+    static final int FACEBOOK_COURSE = 5;
     private UriMatcher uriMatcher;
  
     @Override
@@ -67,6 +70,7 @@ public class ActivityProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, "tcx/#/*", TCX);
         uriMatcher.addURI(AUTHORITY, "nike+xml/#/*", NIKE);
         uriMatcher.addURI(AUTHORITY, "maps/#/*", MAPS);
+        uriMatcher.addURI(AUTHORITY, "facebook.course/#/*", FACEBOOK_COURSE);
         return true;
     }
 
@@ -108,6 +112,7 @@ public class ActivityProvider extends ContentProvider {
 		case TCX:
 		case NIKE:
 		case MAPS:
+		case FACEBOOK_COURSE:
 	    	final List<String> list = uri.getPathSegments();
 	    	final String id = list.get(list.size() - 2);
 			final long activityId = Long.parseLong(id);
@@ -135,6 +140,11 @@ public class ActivityProvider extends ContentProvider {
 				} else if (res == MAPS) {
 					GoogleStaticMap map = new GoogleStaticMap(mDB);
 					String str = map.export(activityId, 2000);
+					out.second.write(str.getBytes());
+				} else if (res == FACEBOOK_COURSE) {
+					FacebookCourse map = new FacebookCourse(getContext(), mDB);
+					final boolean includeMap = true;
+					String str = map.export(activityId, includeMap).toString();
 					out.second.write(str.getBytes());
 				}
 				out.second.flush();
@@ -180,6 +190,8 @@ public class ActivityProvider extends ContentProvider {
     		return NIKE_MIME;
     	case MAPS:
     		return MAPS_MIME;
+    	case FACEBOOK_COURSE:
+    		return FACEBOOK_COURSE_MIME;
     	}
     	return null;
     }
