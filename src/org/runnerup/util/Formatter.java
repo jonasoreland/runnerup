@@ -48,6 +48,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	
 	public final static double km_meters = 1000.0;
 	public final static double mi_meters = 1609.34;
+	public final static double FEETS_PER_METER = 3.2808;
 	
 	public static final int CUE = 1;           // for text to speech
 	public static final int CUE_SHORT = 2;     // brief for tts
@@ -408,8 +409,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		StringBuffer s = new StringBuffer();
 		if (meters >= base_val) {
 			double base = ((double)meters) / base_val;
-			double exp = Math.pow(10, decimals);
-			double val = Math.floor(base * exp) / exp;
+			double val = round(base, decimals);
 			s.append(val).append(" ").append(resources.getString(base > 1 ? res_base_multi : res_base));
 		} else {
 			s.append(meters);
@@ -455,5 +455,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
 	public String formatTime(int target, long seconds_since_epoch) {
 		return timeFormat.format(seconds_since_epoch * 1000);
+	}
+
+	public static double round(double base, double decimals) {
+		double exp = Math.pow(10, decimals);
+		return Math.round(base * exp) / exp;
 	}
 }
