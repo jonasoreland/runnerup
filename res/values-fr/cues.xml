@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="workout">activité</string>
+    <string name="activity">interval</string>
+    <string name="lap">Tour</string>
+
+    <string name="hour">heure</string>
+    <string name="hours">heures</string>
+    <string name="minute">minute</string>
+    <string name="minutes">minutes</string>
+    <string name="second">seconde</string>
+    <string name="seconds">secondes</string>
+
+    <string name="kilometer">kilometre</string>
+    <string name="kilometers">kilometres</string>
+    <string name="perkilometer">par kilometre</string>
+    <string name="permile">par mile</string>
+
+    <string name="started">D�marr�</string>
+    <string name="paused">En pause</string>
+    <string name="resumed">Reprise</string>
+    <string name="stopped">Stopp�e</string>
+    <string name="completed">Complet�e</string>
+
+    <string name="cue_speedup">Acc�lerer</string>
+    <string name="cue_slowdown">Ralentir</string>
+</resources>
