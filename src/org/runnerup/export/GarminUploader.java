@@ -266,6 +266,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			return true;
 		case FEED:
 		case LIVE:
+		case SKIP_MAP:
 			break;
 		}
 		return false;

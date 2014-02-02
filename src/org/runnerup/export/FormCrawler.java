@@ -269,6 +269,7 @@ public class FormCrawler {
 		case GET_WORKOUT:
 		case LIVE:
 		case WORKOUT_LIST:
+		case SKIP_MAP:
 		}
 		return false;
 	}

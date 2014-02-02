@@ -203,6 +203,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 		case FEED:
 		case GET_WORKOUT:
 		case WORKOUT_LIST:
+		case SKIP_MAP:
 			break;
 		}
 		return false;

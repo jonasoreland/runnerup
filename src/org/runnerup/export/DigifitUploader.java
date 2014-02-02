@@ -125,6 +125,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 		case LIVE:
 		case WORKOUT_LIST: // list of prepared work outs (e.g an interval program)
 		case GET_WORKOUT:  // download a prepared work out (e.g an interval program)
+		case SKIP_MAP:
 			return false;
 		}
 

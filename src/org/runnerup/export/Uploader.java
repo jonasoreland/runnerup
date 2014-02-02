@@ -48,6 +48,7 @@ public interface Uploader {
 		FEED,         // list of activities by others (and self)
 		UPLOAD,       // upload activity
 		LIVE          // live feed of activity
+		,SKIP_MAP     // skip map in upload
 	};
 
 	/**

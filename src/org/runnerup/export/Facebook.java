@@ -27,7 +27,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Bundle;
 
 public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 
@@ -202,6 +201,17 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 
 	@Override
 	public boolean checkSupport(Uploader.Feature f) {
+		switch(f) {
+		case SKIP_MAP:
+		case UPLOAD:
+			return true;
+		case FEED:
+		case GET_WORKOUT:
+		case WORKOUT_LIST:
+		case LIVE:
+			break;
+		}
+
 		return false;
 	}
 	

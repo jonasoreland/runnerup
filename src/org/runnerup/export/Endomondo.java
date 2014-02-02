@@ -294,6 +294,7 @@ public class Endomondo extends FormCrawler implements Uploader {
 		case GET_WORKOUT:
 		case WORKOUT_LIST:
 		case LIVE:
+		case SKIP_MAP:
 			break;
 		}
 

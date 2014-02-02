@@ -91,7 +91,11 @@ public interface Constants {
 			public static final int FLAG_UPLOAD = 0;
 			public static final int FLAG_FEED = 1;
 			public static final int FLAG_LIVE = 2;
-			public static final long DEFAULT_FLAGS = 7;
+			public static final int FLAG_SKIP_MAP = 3;
+			public static final long DEFAULT_FLAGS =
+					(1 << FLAG_UPLOAD) +
+					(1 << FLAG_FEED) + 
+					(1 << FLAG_LIVE);
 		};
 
 		public interface EXPORT {

@@ -330,6 +330,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 		case GET_WORKOUT:
 		case WORKOUT_LIST:
 		case LIVE:
+		case SKIP_MAP:
 			break;
 		}
 		return false;
