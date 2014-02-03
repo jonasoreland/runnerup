@@ -16,14 +16,23 @@
  */
 package org.runnerup.export;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
+import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants.DB;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -41,13 +50,20 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 	public static final String AUTH_URL = "https://www.facebook.com/dialog/oauth";
 	public static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token";
 	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/facebook";
-	
+
+	private static final String COURSE_ENDPOINT = "https://graph.facebook.com/me/objects/fitness.course";
+	private static final String RUN_ENDPOINT = "https://graph.facebook.com/me/fitness.runs";
+	private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
+
 	private long id = 0;
 	private String access_token = null;
 	private long token_now = 0;
 	private long expire_time = 0;
+	private boolean skipMapInPost = false;
+	private Context context;
 
-	Facebook(UploadManager uploadManager) {
+	Facebook(Context context, UploadManager uploadManager) {
+		this.context = context;
 		if (CLIENT_ID == null || CLIENT_SECRET == null) {
 			try {
 				JSONObject tmp = new JSONObject(uploadManager.loadData(this));
@@ -118,28 +134,34 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 			}
 		}
 		id = config.getAsLong("_id");
+		if (config.containsKey(DB.ACCOUNT.FLAGS)) {
+			long flags = config.getAsLong(DB.ACCOUNT.FLAGS);
+			if (Bitfield.test(flags, DB.ACCOUNT.FLAG_SKIP_MAP)) {
+				skipMapInPost = true;
+			}
+		}
 	}
-	
+
 	@Override
 	public String getAuthConfig() {
 		JSONObject tmp = new JSONObject();
 		try {
 			tmp.put("access_token", access_token);
 			tmp.put("token_now", token_now);
-			tmp.put("expire_time",  expire_time);
+			tmp.put("expire_time", expire_time);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		
+
 		return tmp.toString();
 
 	}
-	
+
 	@Override
 	public Intent getAuthIntent(Activity activity) {
 		return OAuth2Activity.getIntent(activity, this);
 	}
-	
+
 	@Override
 	public Status getAuthResult(int resultCode, Intent data) {
 		if (resultCode == Activity.RESULT_OK) {
@@ -156,12 +178,12 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		}
 		return Status.ERROR;
 	}
-	
+
 	@Override
 	public boolean isConfigured() {
 		if (access_token == null)
 			return false;
-		
+
 		return true;
 	}
 
@@ -173,7 +195,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 	}
 
 	public static final long ONE_DAY = 24 * 60 * 60;
-	
+
 	@Override
 	public Status connect() {
 		Status s = Status.NEED_AUTH;
@@ -185,7 +207,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		if (diff > ONE_DAY) {
 			return s;
 		}
-		
+
 		return Uploader.Status.OK;
 	}
 
@@ -195,13 +217,98 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		if ((s = connect()) != Status.OK) {
 			return s;
 		}
-		
-		return Status.SKIP;
+
+		FacebookCourse courseFactory = new FacebookCourse(context, db);
+		try {
+			JSONObject course = courseFactory.export(mID, !skipMapInPost);
+			JSONObject ref = createCourse(course);
+
+			try {
+				createRun(ref);
+				return Status.OK;
+			} catch (Exception e) {
+				s.ex = e;
+			} finally {
+				deleteCourse(ref);
+			}
+		} catch (Exception e) {
+			s.ex = e;
+		}
+
+		s = Status.ERROR;
+
+		return s;
+	}
+
+	private JSONObject createCourse(JSONObject course) throws JSONException,
+			IOException, Exception {
+		JSONObject obj = new JSONObject();
+		/* create a facebook course instance */
+		obj.put("fb:app_id", Facebook.CLIENT_ID);
+		obj.put("og:type", "fitness.course");
+		obj.put("og:title", "a RunnerUp course");
+		obj.put("fitness", course);
+
+		Part<StringWritable> themePart = new Part<StringWritable>(
+				"access_token", new StringWritable(
+						FormCrawler.URLEncode(access_token)));
+		Part<StringWritable> payloadPart = new Part<StringWritable>("object",
+				new StringWritable(obj.toString()));
+		Part<?> parts[] = { themePart, payloadPart };
+
+		HttpURLConnection conn = (HttpURLConnection) new URL(COURSE_ENDPOINT)
+				.openConnection();
+		conn.setDoOutput(true);
+		conn.setRequestMethod("POST");
+		postMulti(conn, parts);
+
+		InputStream in = new BufferedInputStream(conn.getInputStream());
+		JSONObject ref = parse(in);
+
+		int code = conn.getResponseCode();
+		conn.disconnect();
+		if (code != 200) {
+			throw new Exception("got a non-200 response code from createCourse");
+		}
+
+		return ref;
+	}
+
+	private JSONObject createRun(JSONObject ref) throws Exception {
+		String id = ref.getString("id");
+		Part<StringWritable> part1 = new Part<StringWritable>("access_token",
+				new StringWritable(FormCrawler.URLEncode(access_token)));
+		Part<StringWritable> part2 = new Part<StringWritable>("course",
+				new StringWritable(id));
+		Part<StringWritable> part3 = new Part<StringWritable>(
+				"fb:explicitly_shared", new StringWritable("true"));
+		Part<?> parts[] = { part1, part2, part3 };
+
+		URL url = new URL(RUN_ENDPOINT);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setDoOutput(true);
+		conn.setRequestMethod("POST");
+		postMulti(conn, parts);
+
+		InputStream in = new BufferedInputStream(conn.getInputStream());
+		JSONObject runRef = parse(in);
+
+		int code = conn.getResponseCode();
+		conn.disconnect();
+		if (code != 200) {
+			throw new Exception("got a non-200 response code from "
+					+ url.toString());
+		}
+
+		return runRef;
+	}
+
+	private void deleteCourse(JSONObject ref) {
 	}
 
 	@Override
 	public boolean checkSupport(Uploader.Feature f) {
-		switch(f) {
+		switch (f) {
 		case SKIP_MAP:
 		case UPLOAD:
 			return true;
@@ -214,7 +321,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 
 		return false;
 	}
-	
+
 	@Override
 	public void logout() {
 	}

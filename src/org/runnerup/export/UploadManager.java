@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Uploader.AuthMethod;
@@ -128,7 +129,7 @@ public class UploadManager {
 	}
 
 	public long load(String uploaderName) {
-		String from[] = new String[] { "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG };
+		String from[] = new String[] { "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS };
 		String args[] = { uploaderName };
 		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
 				args, null, null, null, null);
@@ -142,6 +143,7 @@ public class UploadManager {
 		return id;
 	}
 	
+	@SuppressWarnings("null")
 	public Uploader add(ContentValues config) {
 		if (config == null) {
 			System.err.println("Add null!");
@@ -181,12 +183,18 @@ public class UploadManager {
 		} else if (uploaderName.contentEquals(Strava.NAME)) {
 			uploader = new Strava(this);
 		}  else if (uploaderName.contentEquals(Facebook.NAME)) {
-			uploader = new Facebook(this);
+			uploader = new Facebook(context, this);
 		}  else if (uploaderName.contentEquals(GooglePlus.NAME)) {
 			uploader = new GooglePlus(this);
 		}
 		
 		if (uploader != null) {
+			if (!config.containsKey(DB.ACCOUNT.FLAGS)) {
+				if (BuildConfig.DEBUG) {
+					String s = null;
+					s.charAt(3);
+				}
+			}
 			uploader.init(config);
 			uploaders.put(uploaderName, uploader);
 			uploadersById.put(uploader.getId(),  uploader);
@@ -974,7 +982,7 @@ public class UploadManager {
 			return;
 		}
 
-		String from[] = new String[] { "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG };
+		String from[] = new String[] { "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS };
 		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, 
 				"( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
 				null, null, null, null, null);
