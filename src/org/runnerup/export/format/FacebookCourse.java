@@ -71,7 +71,7 @@ public class FacebookCourse {
 		}
 	}
 
-	public JSONObject export(long activityId, boolean showTrail) throws IOException, JSONException {
+	public JSONObject export(long activityId, boolean showTrail, JSONObject runObj) throws IOException, JSONException {
 
 		final String[] aColumns = { DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
 				DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME,
@@ -80,6 +80,14 @@ public class FacebookCourse {
 				+ activityId, null, null, null, null);
 		cursor.moveToFirst();
 
+		if (runObj != null) {
+			runObj.put("sport", cursor.getInt(5));
+			runObj.put("startTime", cursor.getLong(2));
+			runObj.put("endTime", cursor.getLong(2) + cursor.getLong(4));
+			if (!cursor.isNull(1))
+				runObj.put("comment", cursor.getString(1));
+		}
+		
 		JSONObject obj = new JSONObject();
 		double distance = cursor.getDouble(3);
 		long duration = cursor.getLong(4);

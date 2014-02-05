@@ -21,6 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,12 +59,17 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 	private static final String RUN_ENDPOINT = "https://graph.facebook.com/me/fitness.runs";
 	private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
 
+	boolean uploadComment = false;
+	
 	private long id = 0;
 	private String access_token = null;
 	private long token_now = 0;
 	private long expire_time = 0;
 	private boolean skipMapInPost = false;
 	private Context context;
+	
+	SimpleDateFormat dateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
 	Facebook(Context context, UploadManager uploadManager) {
 		this.context = context;
@@ -220,11 +229,12 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 
 		FacebookCourse courseFactory = new FacebookCourse(context, db);
 		try {
-			JSONObject course = courseFactory.export(mID, !skipMapInPost);
+			JSONObject runObj = new JSONObject();
+			JSONObject course = courseFactory.export(mID, !skipMapInPost, runObj);
 			JSONObject ref = createCourse(course);
 
 			try {
-				createRun(ref);
+				createRun(ref, runObj);
 				return Status.OK;
 			} catch (Exception e) {
 				s.ex = e;
@@ -274,17 +284,41 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		return ref;
 	}
 
-	private JSONObject createRun(JSONObject ref) throws Exception {
+	private JSONObject createRun(JSONObject ref, JSONObject runObj) throws Exception {
+		int sport = runObj.optInt("sport", DB.ACTIVITY.SPORT_OTHER);
+		if (sport != DB.ACTIVITY.SPORT_RUNNING &&
+			sport != DB.ACTIVITY.SPORT_BIKING) {
+			/* only running and biking is supported */
+			return null;
+		}
 		String id = ref.getString("id");
-		Part<StringWritable> part1 = new Part<StringWritable>("access_token",
-				new StringWritable(FormCrawler.URLEncode(access_token)));
-		Part<StringWritable> part2 = new Part<StringWritable>("course",
-				new StringWritable(id));
-		Part<StringWritable> part3 = new Part<StringWritable>(
-				"fb:explicitly_shared", new StringWritable("true"));
-		Part<?> parts[] = { part1, part2, part3 };
+		ArrayList<Part<?>> list = new ArrayList<Part<?>>();
+		list.add(new Part<StringWritable>("access_token",
+				new StringWritable(FormCrawler.URLEncode(access_token))));
+		list.add(new Part<StringWritable>("course",
+				new StringWritable(id)));
+		list.add(new Part<StringWritable>(
+				"fb:explicitly_shared", new StringWritable("true")));
 
-		URL url = new URL(RUN_ENDPOINT);
+		System.err.println("start_time: " + formatTime(runObj.getLong("startTime")));
+		System.err.println("end_time: " + formatTime(runObj.getLong("endTime")));
+		
+		list.add(new Part<StringWritable>(
+				"start_time", new StringWritable(formatTime(runObj.getLong("startTime")))));
+		if (runObj.has("endTime")) {
+			list.add(new Part<StringWritable>(
+				"end_time", new StringWritable(formatTime(runObj.getLong("endTime")))));
+		}
+		
+		if (uploadComment && runObj.has("comment")) {
+			list.add(new Part<StringWritable>(
+				"message", new StringWritable(runObj.getString("comment"))));
+		}
+		
+		Part<?> parts[] = new Part<?>[list.size()];
+		list.toArray(parts);
+
+		URL url = new URL(sport == DB.ACTIVITY.SPORT_RUNNING ? RUN_ENDPOINT : BIKE_ENDPOINT);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		conn.setRequestMethod("POST");
@@ -301,6 +335,10 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		}
 
 		return runRef;
+	}
+
+	private String formatTime(long long1) {
+		return dateFormat.format(new Date(1000 * long1));
 	}
 
 	private void deleteCourse(JSONObject ref) {

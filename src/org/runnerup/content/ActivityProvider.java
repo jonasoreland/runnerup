@@ -144,7 +144,7 @@ public class ActivityProvider extends ContentProvider {
 				} else if (res == FACEBOOK_COURSE) {
 					FacebookCourse map = new FacebookCourse(getContext(), mDB);
 					final boolean includeMap = true;
-					String str = map.export(activityId, includeMap).toString();
+					String str = map.export(activityId, includeMap, null).toString();
 					out.second.write(str.getBytes());
 				}
 				out.second.flush();
