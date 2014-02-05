@@ -386,7 +386,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			insertAccount(arg0, values);
 		}
 
-		if (yet) {
+		if (notyet) {
 			ContentValues values = new ContentValues();
 			values.put(DB.ACCOUNT.NAME, GooglePlus.NAME);
 			values.put(DB.ACCOUNT.FORMAT, "");
