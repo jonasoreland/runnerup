@@ -182,12 +182,13 @@ public abstract class Bt20Base implements HRProvider {
 		cancelThreads();
 
 		mIsConnecting = true;
-		connectThread = new ConnectThread(btAdapter.getRemoteDevice(bluetoothDevice.getAddress()));
+		connectThread = new ConnectThread(btAdapter.getRemoteDevice(bluetoothDevice.getAddress()), btDeviceName);
 		connectThread.start();
 	}
 
 	private synchronized void connected(final BluetoothSocket bluetoothSocket,
-			BluetoothDevice bluetoothDevice) {
+			final BluetoothDevice bluetoothDevice,
+			final String btDeviceName) {
 		cancelThreads();
 
 		if (hrClient != null) {
@@ -197,7 +198,7 @@ public abstract class Bt20Base implements HRProvider {
 				public void run() {
 					if (mIsConnecting && hrClient != null) {
 						// Start connected thread...
-						connectedThread = new ConnectedThread(bluetoothSocket);
+						connectedThread = new ConnectedThread(bluetoothDevice, btDeviceName, bluetoothSocket);
 						connectedThread.start();
 					} else {
 						closeSocket(bluetoothSocket);
@@ -297,10 +298,12 @@ public abstract class Bt20Base implements HRProvider {
 	private class ConnectThread extends Thread {
 		private BluetoothSocket bluetoothSocket;
 		private final BluetoothDevice bluetoothDevice;
-
-		public ConnectThread(BluetoothDevice device) {
+		private final String deviceName;
+		
+		public ConnectThread(BluetoothDevice device, String deviceName) {
 			setName("ConnectThread-" + device.getName());
 			this.bluetoothDevice = device;
+			this.deviceName = deviceName;
 		}
 
 		
@@ -346,7 +349,7 @@ public abstract class Bt20Base implements HRProvider {
 
 			System.err.println("connected => " + bluetoothSocket);
 			// Start the connected thread
-			connected(bluetoothSocket, bluetoothDevice);
+			connected(bluetoothSocket, bluetoothDevice, deviceName);
 			bluetoothSocket = null;
 		}
 
@@ -362,11 +365,16 @@ public abstract class Bt20Base implements HRProvider {
 	 * This thread handles data transmission when connected.
 	 */
 	private class ConnectedThread extends Thread {
+		private final BluetoothDevice bluetoothDevice;
 		private final BluetoothSocket bluetoothSocket;
 		private final InputStream inputStream;
-
-		public ConnectedThread(BluetoothSocket bluetoothSocket) {
+		private final String deviceName;
+		
+		public ConnectedThread(final BluetoothDevice device, final String deviceName, final BluetoothSocket bluetoothSocket) {
+			this.bluetoothDevice = device;
 			this.bluetoothSocket = bluetoothSocket;
+			this.deviceName = deviceName;
+
 			InputStream tmp = null;
 
 			try {
@@ -419,7 +427,7 @@ public abstract class Bt20Base implements HRProvider {
 						bytesInBuffer = 0;
 					}
 				} catch (IOException e) {
-					reportDisconnected(e);
+					reportDisconnected(bluetoothDevice, deviceName, e);
 					break;
 				}
 			}
@@ -437,7 +445,34 @@ public abstract class Bt20Base implements HRProvider {
 		}
 	}
 
-	public void reportDisconnected(IOException e) {
+	public void reportDisconnected(final BluetoothDevice bluetoothDevice, final String btDeviceName, final IOException e) {
+		System.err.println("reportDisconnect()");
+		e.printStackTrace();
+		if (hrClientHandler != null) {
+			hrClientHandler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					if (hrClient == null) {
+						System.err.println("reportDisconnect() hrClient == null");
+						return;
+					}
+					
+					if (mIsConnected) {
+						/**
+						 * reconnect
+						 */
+						System.err.println("reportDisconnect() => reconnecting");
+						connect(bluetoothDevice, btDeviceName);
+						return;
+					} else {
+						System.err.println("reportDisconnect() mIsConnected != true");
+					}
+				}
+			});
+		} else {
+			System.err.println("reportDisconnect() hrClientHandler == null");
+		}
 	}
 
 	abstract static class Bt20BaseOld extends Bt20Base {
