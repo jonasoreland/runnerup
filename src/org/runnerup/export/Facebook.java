@@ -212,10 +212,15 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		if (access_token == null)
 			return s;
 
-		long diff = (System.currentTimeMillis() - token_now) / 1000;
-		if (diff > ONE_DAY) {
+		long endTime = (token_now + 1000 * expire_time) / 1000;
+		long now = System.currentTimeMillis() / 1000;
+
+		System.err.println("now: " + now + ", endTime: " + endTime + ", now + ONE_DAY: " + (now + ONE_DAY));
+		if (now + ONE_DAY > endTime) {
+			System.err.println(" => refresh");
 			return s;
 		}
+		System.err.println(" => OK");
 
 		return Uploader.Status.OK;
 	}
@@ -233,20 +238,23 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 			JSONObject course = courseFactory.export(mID, !skipMapInPost, runObj);
 			JSONObject ref = createCourse(course);
 
+			System.err.println("createdCourseObj: " + ref.toString());
+			
 			try {
-				createRun(ref, runObj);
+				JSONObject ret = createRun(ref, runObj);
+				System.err.println("createdRunObj: " + ret.toString());
 				return Status.OK;
 			} catch (Exception e) {
 				s.ex = e;
-			} finally {
-				deleteCourse(ref);
 			}
+			deleteCourse(ref);
 		} catch (Exception e) {
 			s.ex = e;
 		}
 
 		s = Status.ERROR;
-
+		if (s.ex != null)
+			s.ex.printStackTrace();
 		return s;
 	}
 
