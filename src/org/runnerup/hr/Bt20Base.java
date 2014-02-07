@@ -315,6 +315,10 @@ public abstract class Bt20Base implements HRProvider {
 			}
 			
 			for (int i = 0; i < 3; i++) {
+				if (!(isConnecting() || isConnected())) {
+					/* check for disconnect */
+					break;
+				}
 				try {
 					bluetoothSocket = tryConnect(bluetoothDevice, i);
 					break;
