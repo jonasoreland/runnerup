@@ -327,7 +327,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 							+ ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
 							+ ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
 							+ ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
-							+ ("  acc." + DB.ACCOUNT.ENABLED + " ")
+							+ ("  acc." + DB.ACCOUNT.ENABLED + ", ")
+							+ ("  acc." + DB.ACCOUNT.FLAGS + " ")
 							+ (" FROM " + DB.ACCOUNT.TABLE + " acc "));
 
 			Cursor c = mDB.rawQuery(sql, null);
