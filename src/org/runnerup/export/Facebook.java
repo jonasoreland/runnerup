@@ -60,6 +60,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 	private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
 
 	boolean uploadComment = false;
+	boolean explicitly_shared = false; // Doesn't work now...don't know why...
 	
 	private long id = 0;
 	private String access_token = null;
@@ -215,12 +216,10 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		long endTime = (token_now + 1000 * expire_time) / 1000;
 		long now = System.currentTimeMillis() / 1000;
 
-		System.err.println("now: " + now + ", endTime: " + endTime + ", now + ONE_DAY: " + (now + ONE_DAY));
 		if (now + ONE_DAY > endTime) {
-			System.err.println(" => refresh");
+			System.err.println("now: " + now + ", endTime: " + endTime + ", now + ONE_DAY: " + (now + ONE_DAY) + " => needs refresh");
 			return s;
 		}
-		System.err.println(" => OK");
 
 		return Uploader.Status.OK;
 	}
@@ -245,10 +244,12 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 				System.err.println("createdRunObj: " + ret.toString());
 				return Status.OK;
 			} catch (Exception e) {
+				System.err.println("fail1: " + e);
 				s.ex = e;
 			}
 			deleteCourse(ref);
 		} catch (Exception e) {
+			System.err.println("fail2: " + e);
 			s.ex = e;
 		}
 
@@ -277,16 +278,19 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		HttpURLConnection conn = (HttpURLConnection) new URL(COURSE_ENDPOINT)
 				.openConnection();
 		conn.setDoOutput(true);
+		conn.setDoInput(true);
 		conn.setRequestMethod("POST");
 		postMulti(conn, parts);
+
+		int code = conn.getResponseCode();
+		String msg = conn.getResponseMessage();
 
 		InputStream in = new BufferedInputStream(conn.getInputStream());
 		JSONObject ref = parse(in);
 
-		int code = conn.getResponseCode();
 		conn.disconnect();
 		if (code != 200) {
-			throw new Exception("got a non-200 response code from createCourse");
+			throw new Exception("got " + code + ": >" + msg + "< from createCourse");
 		}
 
 		return ref;
@@ -296,6 +300,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		int sport = runObj.optInt("sport", DB.ACTIVITY.SPORT_OTHER);
 		if (sport != DB.ACTIVITY.SPORT_RUNNING &&
 			sport != DB.ACTIVITY.SPORT_BIKING) {
+			
 			/* only running and biking is supported */
 			return null;
 		}
@@ -305,19 +310,17 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 				new StringWritable(FormCrawler.URLEncode(access_token))));
 		list.add(new Part<StringWritable>("course",
 				new StringWritable(id)));
-		list.add(new Part<StringWritable>(
-				"fb:explicitly_shared", new StringWritable("true")));
+		if (explicitly_shared)
+			list.add(new Part<StringWritable>(
+					"fb:explicitly_shared", new StringWritable("true")));
 
-		System.err.println("start_time: " + formatTime(runObj.getLong("startTime")));
-		System.err.println("end_time: " + formatTime(runObj.getLong("endTime")));
-		
 		list.add(new Part<StringWritable>(
 				"start_time", new StringWritable(formatTime(runObj.getLong("startTime")))));
 		if (runObj.has("endTime")) {
 			list.add(new Part<StringWritable>(
 				"end_time", new StringWritable(formatTime(runObj.getLong("endTime")))));
 		}
-		
+
 		if (uploadComment && runObj.has("comment")) {
 			list.add(new Part<StringWritable>(
 				"message", new StringWritable(runObj.getString("comment"))));
@@ -329,17 +332,19 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		URL url = new URL(sport == DB.ACTIVITY.SPORT_RUNNING ? RUN_ENDPOINT : BIKE_ENDPOINT);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
+		conn.setDoInput(true);
 		conn.setRequestMethod("POST");
 		postMulti(conn, parts);
+
+		int code = conn.getResponseCode();
+		String msg = conn.getResponseMessage();
 
 		InputStream in = new BufferedInputStream(conn.getInputStream());
 		JSONObject runRef = parse(in);
 
-		int code = conn.getResponseCode();
 		conn.disconnect();
 		if (code != 200) {
-			throw new Exception("got a non-200 response code from "
-					+ url.toString());
+			throw new Exception("Got code: " + code + ", msg: " + msg + " from " + url.toString());
 		}
 
 		return runRef;
