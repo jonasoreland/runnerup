@@ -175,6 +175,13 @@ public class OAuth2Activity extends Activity {
 						return;
 					}
 
+					synchronized (this) {
+						if (mFinished) {
+							return;
+						}
+						mFinished = true;
+					}
+					
 					Bundle b = mArgs;
 					String code = u.getQueryParameter("code");
 					String token_url = b.getString(OAuth2ServerCredentials.TOKEN_URL);
@@ -222,7 +229,6 @@ public class OAuth2Activity extends Activity {
 						conn.disconnect();
 					}
 
-					mFinished = true;
 					setResult(resultCode, res);
 					finish();
 				}
