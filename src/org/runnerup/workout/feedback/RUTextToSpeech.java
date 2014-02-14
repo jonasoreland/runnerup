@@ -16,7 +16,9 @@
  */
 package org.runnerup.workout.feedback;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -31,58 +33,58 @@ public class RUTextToSpeech {
 	private static final String UTTERANCE_ID = "RUTextTospeech";
 	boolean mute = false;
 	boolean trace = true;
-	TextToSpeech textToSpeech;
-	Context ctx;
+	final TextToSpeech textToSpeech;
+	final AudioManager audioManager;
 
+	class Entry {
+		final String text;
+		final HashMap<String, String> params;
+		public Entry(String text, HashMap<String, String> params) {
+			this.text = text;
+			this.params = params;
+		}
+	};
+	HashSet<String> cueSet = new HashSet<String>();
+	ArrayList<Entry> cueList = new ArrayList<Entry>();
+	
 	public RUTextToSpeech(TextToSpeech tts, String mute, Context context) {
 		this.textToSpeech = tts;
+		this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		this.mute = "yes".equalsIgnoreCase(mute);
-		this.ctx = context;
-	}
 
-	int speak(String text, int queueMode, HashMap<String, String> params) {
-		if (trace) {
-			System.err.println("speak (mute: " + mute + "): " + text);
-		}
-		if (mute && ctx != null) {
-			return speakWithMute(text, queueMode, params);
-		} else {
-			return textToSpeech.speak(text, queueMode, params);
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private void handleUtteranceComplete(final AudioManager am, final String utId) {
-		if (Build.VERSION.SDK_INT < 15) {
-			textToSpeech
-			.setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
-				@Override
-				public void onUtteranceCompleted(String utteranceId) {
-					if (utId.equalsIgnoreCase(utteranceId)) {
-						am.abandonAudioFocus(null);
-					}
-				}
-			});
-		} else {
-			textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener(){
-				@Override
-				public void onDone(String utteranceId) {
-					if (utId.equalsIgnoreCase(utteranceId)) {
-						am.abandonAudioFocus(null);
-					}
-				}
-				@Override
-				public void onError(String utteranceId) {
-					if (utId.equalsIgnoreCase(utteranceId)) {
-						am.abandonAudioFocus(null);
-					}
-				}
-				@Override
-				public void onStart(String utteranceId) {
-				}});
+		if (this.mute) {
+			UtteranceCompletion.setUtteranceCompletedListener(tts, this);
 		}
 	}
 	
+	int speak(String text, int queueMode, HashMap<String, String> params) {
+
+		if (queueMode == TextToSpeech.QUEUE_FLUSH) {
+			if (trace) {
+				System.err.println("speak (mute: " + mute + "): " + text);
+			}
+			// speak directly
+			if (mute) {
+				return speakWithMute(text, queueMode, params);
+			} else {
+				return textToSpeech.speak(text, queueMode, params);
+			}
+		} else {
+			if (!cueSet.contains(text)) {
+				if (trace) {
+					System.err.println("buffer speak: " + text);
+				}
+				cueSet.add(text);
+				cueList.add(new Entry(text, params));
+			} else {
+				if (trace) {
+					System.err.println("skip buffer (duplicate) speak: " + text);
+				}
+			}
+			return 0;
+		}
+	}
+
 	/**
 	 * Requests audio focus before speaking, if no focus is given nothing is
 	 * said.
@@ -94,16 +96,9 @@ public class RUTextToSpeech {
 	 */
 	private int speakWithMute(String text, int queueMode,
 			HashMap<String, String> params) {
-		final AudioManager am = (AudioManager) ctx
-				.getSystemService(Context.AUDIO_SERVICE);
-		int result = am.requestAudioFocus(
-				null,// afChangeListener,
-				AudioManager.STREAM_MUSIC,
-				AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
-		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+		if (requestFocus()) {
 			final String utId = UTTERANCE_ID + text.hashCode();
-
-			handleUtteranceComplete(am, utId);
+			outstanding.add(utId);
 			
 			if (params == null) {
 				params = new HashMap<String, String>();
@@ -111,11 +106,97 @@ public class RUTextToSpeech {
 			params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
 			int res = textToSpeech.speak(text, queueMode, params);
 			if (res == TextToSpeech.ERROR) {
-				am.abandonAudioFocus(null);
+				outstanding.remove(utId);
+			}
+			if (outstanding.isEmpty()) {
+				audioManager.abandonAudioFocus(null);
 			}
 			return res;
 		}
 		System.err.println("Could not get audio focus.");
 		return TextToSpeech.ERROR;
+	}
+
+	HashSet<String> outstanding = new HashSet<String>();
+	void utteranceCompleted(String id) {
+		outstanding.remove(id);
+		if (outstanding.isEmpty()) {
+			System.err.println("utteranceCompleted: outstanding.isEmpty())");
+			audioManager.abandonAudioFocus(null);
+		}
+	}
+
+	private boolean requestFocus() {
+		final AudioManager am = audioManager;
+		int result = am.requestAudioFocus(
+			null,// afChangeListener,
+			AudioManager.STREAM_MUSIC,
+			AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+		return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+	}
+	
+	public void emit() {
+		if (cueSet.isEmpty()) {
+			return;
+		}
+		if (mute && requestFocus() == true) {
+			for (Entry e : cueList) {
+				final String utId = UTTERANCE_ID + e.text.hashCode();
+				outstanding.add(utId);
+				System.err.println("speak buffer, muted: " + e.text);
+			
+				HashMap<String, String> params = e.params;
+				if (params == null) {
+					params = new HashMap<String, String>();
+				}
+				params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
+				int res = textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, params);
+				if (res == TextToSpeech.ERROR) {
+					outstanding.remove(utId);
+				}
+			}
+			if (outstanding.isEmpty()) {
+				audioManager.abandonAudioFocus(null);
+			}
+		} else {
+			for (Entry e : cueList) {
+				System.err.println("speak buffer: " + e.text);
+				textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, e.params);
+			}
+		}
+		cueSet.clear();
+		cueList.clear();
+		System.err.println("outstanding.size(): " + outstanding.size());
+	}
+}
+
+// separate class to handle FROYO/deprecation
+class UtteranceCompletion {
+
+	@SuppressWarnings("deprecation")
+	public static void setUtteranceCompletedListener(
+			TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {
+		if (Build.VERSION.SDK_INT < 15) {
+			tts
+			.setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
+				@Override
+				public void onUtteranceCompleted(String utteranceId) {
+					ruTextToSpeech.utteranceCompleted(utteranceId);
+				}
+			});
+		} else {
+			tts.setOnUtteranceProgressListener(new UtteranceProgressListener(){
+				@Override
+				public void onDone(String utteranceId) {
+					ruTextToSpeech.utteranceCompleted(utteranceId);
+				}
+				@Override
+				public void onError(String utteranceId) {
+					ruTextToSpeech.utteranceCompleted(utteranceId);
+				}
+				@Override
+				public void onStart(String utteranceId) {
+				}});
+		}
 	}
 }

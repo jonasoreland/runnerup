@@ -24,10 +24,10 @@ import java.util.List;
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.HRZones;
+import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import android.annotation.TargetApi;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 /**
@@ -48,7 +48,6 @@ public class Workout implements WorkoutComponent {
 	class PendingFeedback {
 		int depth = 0;
 		HashSet<Feedback> set = new HashSet<Feedback>();      // For uniquing
-		ArrayList<Feedback> list = new ArrayList<Feedback>(); // For emitting
 
 		void init() {
 			depth++;
@@ -58,22 +57,20 @@ public class Workout implements WorkoutComponent {
 			if (set.contains(f))
 				return;
 			set.add(f);
-			list.add(f);
+
+			try {
+				f.emit(Workout.this, gpsTracker.getApplicationContext());
+			} catch (Exception ex) {
+				// make sure that no small misstake crashes a workout...
+				ex.printStackTrace();
+			}
 		}
 		
-		boolean end(Context context) {
+		boolean end() {
 			--depth;
 			if (depth == 0) {
-				for (Feedback f : list) {
-					try {
-						f.emit(Workout.this, context);
-					} catch (Exception ex) {
-						// make sure that no small misstake crashes a workout...
-						ex.printStackTrace();
-					}
-				}
 				set.clear();
-				list.clear();
+				Workout.this.textToSpeech.emit();
 			}
 			return depth == 0;
 		}
@@ -83,6 +80,7 @@ public class Workout implements WorkoutComponent {
 	GpsTracker gpsTracker = null;
 	SharedPreferences audioCuePrefs;
 	HRZones hrZones = null;
+	RUTextToSpeech textToSpeech = null;
 
 	public static final String KEY_TTS = "tts";
 	public static final String KEY_COUNTER_VIEW = "CountdownView";
@@ -118,6 +116,7 @@ public class Workout implements WorkoutComponent {
 
 	public void onBind(Workout w, HashMap<String, Object> bindValues) {
 		hrZones = (HRZones) bindValues.get(Workout.KEY_HRZONES);
+		textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
 		for (Step a : steps) {
 			a.onBind(w, bindValues);
 		}
@@ -400,7 +399,7 @@ public class Workout implements WorkoutComponent {
 	}
 
 	private void emitFeedback() {
-		pendingFeedback.end(gpsTracker.getApplicationContext());
+		pendingFeedback.end();
 	}
 	
 	void newLap(ContentValues tmp) {
