@@ -23,8 +23,6 @@ public abstract class Trigger implements TickComponent {
 
 	ArrayList<Feedback> triggerAction = new ArrayList<Feedback>();
 
-	Scope scope = Scope.WORKOUT;
-
 	@Override
 	public void onInit(Workout s) {
 		for (Feedback f : triggerAction) {
