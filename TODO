@@ -8,7 +8,7 @@
 - share workouts                   (DONE)
 - download workouts from Garmin    (DONE)
 - text fragment for audio cues (currently translates word by word)
-- post to facebook
+- post to facebook                 (DONE)
 - post to twitter
 - upload to RunKeeper              (DONE)
 - upload to Garmin                 (DONE)
@@ -52,7 +52,8 @@
   nike+                            (DONE)
   funbeat                          (DONE)
   endmondo                         (DONE)
-  strava
+  digifit                          (DONE)
+  strava                           (DONE)
 
 - edit advanced workouts
 - advanced audio cue editor
