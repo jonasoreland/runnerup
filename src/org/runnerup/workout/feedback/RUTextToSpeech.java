@@ -35,7 +35,8 @@ public class RUTextToSpeech {
 	boolean trace = true;
 	final TextToSpeech textToSpeech;
 	final AudioManager audioManager;
-
+	long id = (long) (System.nanoTime() + (1000 * Math.random()));
+	
 	class Entry {
 		final String text;
 		final HashMap<String, String> params;
@@ -55,6 +56,15 @@ public class RUTextToSpeech {
 		if (this.mute) {
 			UtteranceCompletion.setUtteranceCompletedListener(tts, this);
 		}
+	}
+
+	private String getId(String text) {
+		long val;
+		synchronized (this) {
+			val = this.id;
+			this.id ++;
+		}
+		return UTTERANCE_ID + Long.toString(val);
 	}
 	
 	int speak(String text, int queueMode, HashMap<String, String> params) {
@@ -97,7 +107,7 @@ public class RUTextToSpeech {
 	private int speakWithMute(String text, int queueMode,
 			HashMap<String, String> params) {
 		if (requestFocus()) {
-			final String utId = UTTERANCE_ID + text.hashCode();
+			final String utId = getId(text);
 			outstanding.add(utId);
 			
 			if (params == null) {
@@ -121,7 +131,6 @@ public class RUTextToSpeech {
 	void utteranceCompleted(String id) {
 		outstanding.remove(id);
 		if (outstanding.isEmpty()) {
-			System.err.println("utteranceCompleted: outstanding.isEmpty())");
 			audioManager.abandonAudioFocus(null);
 		}
 	}
@@ -141,9 +150,8 @@ public class RUTextToSpeech {
 		}
 		if (mute && requestFocus() == true) {
 			for (Entry e : cueList) {
-				final String utId = UTTERANCE_ID + e.text.hashCode();
+				final String utId = getId(e.text);
 				outstanding.add(utId);
-				System.err.println("speak buffer, muted: " + e.text);
 			
 				HashMap<String, String> params = e.params;
 				if (params == null) {
@@ -152,6 +160,7 @@ public class RUTextToSpeech {
 				params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
 				int res = textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, params);
 				if (res == TextToSpeech.ERROR) {
+					System.err.println("res == ERROR emit() text: " + e.text + ", utId: " + utId + ") outstanding.size(): " + outstanding.size());
 					outstanding.remove(utId);
 				}
 			}
@@ -160,13 +169,11 @@ public class RUTextToSpeech {
 			}
 		} else {
 			for (Entry e : cueList) {
-				System.err.println("speak buffer: " + e.text);
 				textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, e.params);
 			}
 		}
 		cueSet.clear();
 		cueList.clear();
-		System.err.println("outstanding.size(): " + outstanding.size());
 	}
 }
 
