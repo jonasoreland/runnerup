@@ -18,20 +18,23 @@ package org.runnerup.workout;
 
 import org.runnerup.R;
 
-import android.content.Context;
-import android.content.res.Resources;
-
 /**
  * This is just constant
  */
 public enum Event {
 
-	STARTED(1), PAUSED(2), STOPPED(3), RESUMED(4), COMPLETED(5);
+	STARTED(1,R.string.started),
+	PAUSED(2, R.string.paused),
+	STOPPED(3, R.string.stopped),
+	RESUMED(4, R.string.resumed),
+	COMPLETED(5, R.string.completed);
 
 	int value = 0;
-
-	private Event(int val) {
+	int cueId;
+	
+	private Event(int val, int cueId) {
 		this.value = val;
+		this.cueId = cueId;
 	}
 
 	/**
@@ -47,21 +50,7 @@ public enum Event {
 		return true;
 	}
 
-	public String getCue(Context ctx) {
-		Resources res = ctx.getResources();
-		switch (this) {
-		case STARTED:
-			return res.getString(R.string.started);
-		case PAUSED:
-			return res.getString(R.string.paused);
-		case RESUMED:
-			return res.getString(R.string.resumed);
-		case STOPPED:
-			return res.getString(R.string.stopped);
-		case COMPLETED:
-			return res.getString(R.string.completed);
-		}
-		// TODO Auto-generated method stub
-		return null;
+	public int getCueId() {
+		return cueId;
 	}
 }

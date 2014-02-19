@@ -92,14 +92,14 @@ public class AudioFeedback extends Feedback {
 
 	protected String getCue(Workout w, Context ctx) {
 		String msg = null;
+		Resources res = ctx.getResources();
 		if (event != null && scope != null) {
-			msg = scope.getCue(ctx) + " " + event.getCue(ctx);
+			msg = res.getString(scope.getCueId()) + " " + res.getString(event.getCueId());
 		} else if (event != null && intensity != null) {
-			Resources res = ctx.getResources();
-			msg = res.getString(intensity.getCueId(), "") + " " + event.getCue(ctx);
+			msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());
 		} else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
 			double val = w.get(scope, dimension); // SI
-			msg = scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
+			msg = res.getString(scope.getCueId()) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
 		}
 		return msg;
 	}

@@ -19,7 +19,8 @@
     <string name="workout">activity</string>
     <string name="activity">interval</string>
     <string name="lap">lap</string>
-
+    <string name="current">current</string>
+    
     <string name="hour">hour</string>
     <string name="hours">hours</string>
     <string name="minute">minute</string>

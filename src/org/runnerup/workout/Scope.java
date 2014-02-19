@@ -18,20 +18,22 @@ package org.runnerup.workout;
 
 import org.runnerup.R;
 
-import android.content.Context;
-import android.content.res.Resources;
-
 /**
  * This is just constant
  */
 public enum Scope {
 
-	WORKOUT(1), STEP(2), LAP(3), CURRENT(4);
+	WORKOUT(1, R.string.workout),
+	STEP(2, R.string.activity),
+	LAP(3, R.string.lap),
+	CURRENT(4, R.string.current);
 
 	int value = 0;
+	int cueId = 0;
 
-	private Scope(int val) {
+	private Scope(int val, int cueId) {
 		this.value = val;
+		this.cueId = cueId;
 	}
 
 	/**
@@ -47,18 +49,7 @@ public enum Scope {
 		return true;
 	}
 
-	public String getCue(Context ctx) {
-		Resources res = ctx.getResources();
-		switch (this) {
-		case WORKOUT:
-			return res.getString(R.string.workout);
-		case STEP:
-			return res.getString(R.string.activity);
-		case LAP:
-			return res.getString(R.string.lap);
-		case CURRENT:
-			return "current"; // 
-		}
-		return "";
+	public int getCueId() {
+		return cueId;
 	}
 }

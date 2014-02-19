@@ -18,8 +18,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="workout">activité</string>
     <string name="activity">interval</string>
-    <string name="lap">Tour</string>
-
+    <string name="lap">tour</string>
+    <string name="current">courant</string>
+    
     <string name="hour">heure</string>
     <string name="hours">heures</string>
     <string name="minute">minute</string>

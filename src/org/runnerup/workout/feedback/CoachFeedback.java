@@ -25,11 +25,10 @@ import org.runnerup.workout.Scope;
 import org.runnerup.workout.TargetTrigger;
 import org.runnerup.workout.Workout;
 
-import android.content.Context;
-import android.speech.tts.TextToSpeech;
-
-import android.os.Build;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.speech.tts.TextToSpeech;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CoachFeedback extends AudioFeedback {
@@ -95,9 +94,12 @@ public class CoachFeedback extends AudioFeedback {
 		} else if (cmp > 0) {
 			msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
 		}
-		if (! "".contentEquals(msg)) {
-			textToSpeech.speak(scope.getCue(ctx) + " " + formatter.format(Formatter.CUE_LONG, dimension, val) + msg,
-					TextToSpeech.QUEUE_ADD, null);
+		if (!"".contentEquals(msg)) {
+			textToSpeech.speak(ctx.getResources().getString(scope.getCueId())
+							+ " "
+							+ formatter.format(Formatter.CUE_LONG, dimension, val)
+							+ msg,
+							TextToSpeech.QUEUE_ADD, null);
 		}
 	}
 }
