@@ -129,6 +129,20 @@ public class FormCrawler {
 				first = false;
 			}
 		}
+
+		public String queryString() {
+			StringBuffer buf = new StringBuffer();
+			boolean first = true;
+			for (String k : keySet()) {
+				if (!first)
+					buf.append('&');
+				buf.append(URLEncode(k));
+				buf.append('=');
+				buf.append(URLEncode(get(k)));
+				first = false;
+			}
+			return buf.toString();
+		}
 	}
 	
 	public static void postMulti(HttpURLConnection conn, Part<?> parts[]) throws IOException {
@@ -190,6 +204,10 @@ public class FormCrawler {
 		}
 	}
 
+	protected void clearCookies() {
+		cookies.clear();
+	}
+	
 	protected String getFormValues(HttpURLConnection conn) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 		StringBuffer buf = new StringBuffer();

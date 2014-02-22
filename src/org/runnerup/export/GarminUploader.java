@@ -45,6 +45,9 @@ import android.util.Pair;
 public class GarminUploader extends FormCrawler implements Uploader {
 
 	public static final String NAME = "Garmin";
+
+	public static String CHOOSE_URL = "http://connect.garmin.com/";
+	
 	public static String START_URL = "https://connect.garmin.com/signin";
 	public static String LOGIN_URL = "https://connect.garmin.com/signin";
 	public static String CHECK_URL = "http://connect.garmin.com/user/username";
@@ -128,72 +131,20 @@ public class GarminUploader extends FormCrawler implements Uploader {
 		HttpURLConnection conn = null;
 		logout();
 
+		
 		try {
+			conn = (HttpURLConnection) new URL(CHOOSE_URL).openConnection();
+			conn.setInstanceFollowRedirects(false);
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+			getCookies(conn);
 
-			/**
-			 * connect to START_URL to get cookies
-			 */
-			conn = (HttpURLConnection) new URL(START_URL).openConnection();
-			{
-				int responseCode = conn.getResponseCode();
-				String amsg = conn.getResponseMessage();
-				getCookies(conn);
-				if (responseCode != 200) {
-					System.err.println("GarminUploader::connect() - got " + responseCode + ", msg: " + amsg);
-				}
-			}
-			conn.disconnect();
-
-			/**
-			 * Then login using a post
-			 */
-			String login = LOGIN_URL;
-			FormValues kv = new FormValues();
-			kv.put("login", "login");
-			kv.put("login:loginUsernameField", username);
-			kv.put("login:password", password);
-			kv.put("login:signInButton", "Sign In");
-			kv.put("javax.faces.ViewState", "j_id1");
+			System.err.println("GarminUploader.connect() CHOOSE_URL => code: " + responseCode + ", msg: " + amsg);
 			
-			conn = (HttpURLConnection) new URL(login).openConnection();
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			addCookies(conn);
-
-			{
-				OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-				kv.write(wr);
-				wr.flush();
-				wr.close();
-				int responseCode = conn.getResponseCode();
-				String amsg = conn.getResponseMessage();
-				System.err.println("code: " + responseCode + ", msg=" + amsg);
-				getCookies(conn);
-			}
-			conn.disconnect();
-
-			/**
-			 * An finally check that all is OK
-			 */
-			conn = (HttpURLConnection) new URL(CHECK_URL).openConnection();
-			addCookies(conn);
-			{
-				conn.connect();
-				getCookies(conn);
-				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = parse(in);
-				conn.disconnect();
-				int responseCode = conn.getResponseCode();
-				String amsg = conn.getResponseMessage();
-				// Returns username(which is actually Displayname from profile) if logged in
-				if (obj.optString("username", "").length() > 0) {
-					isConnected = true;
-					return Uploader.Status.OK;
-				} else {
-					System.err.println("GarminUploader::connect() missing username, obj: " + obj.toString() + ", code: " + responseCode + ", msg: " + amsg);
-				}
-				return s;
+			if (responseCode == 200) {
+				return connectOld();
+			} else if (responseCode == 302) {
+				return connectNew();
 			}
 		} catch (MalformedURLException e) {
 			ex = e;
@@ -212,6 +163,190 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			ex.printStackTrace();
 		}
 		return s;
+	}
+
+	private Status connectOld() throws MalformedURLException, IOException, JSONException {
+		Status s = Status.NEED_AUTH;
+		s.authMethod = Uploader.AuthMethod.USER_PASS;
+
+		HttpURLConnection conn = null;
+
+		/**
+		 * connect to START_URL to get cookies
+		 */
+		conn = (HttpURLConnection) new URL(START_URL).openConnection();
+		{
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+			getCookies(conn);
+			if (responseCode != 200) {
+				System.err.println("GarminUploader::connect() - got " + responseCode + ", msg: " + amsg);
+			}
+		}
+		conn.disconnect();
+
+		/**
+		 * Then login using a post
+		 */
+		String login = LOGIN_URL;
+		FormValues kv = new FormValues();
+		kv.put("login", "login");
+		kv.put("login:loginUsernameField", username);
+		kv.put("login:password", password);
+		kv.put("login:signInButton", "Sign In");
+		kv.put("javax.faces.ViewState", "j_id1");
+		
+		conn = (HttpURLConnection) new URL(login).openConnection();
+		conn.setDoOutput(true);
+		conn.setRequestMethod("POST");
+		conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		addCookies(conn);
+
+		{
+			OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+			kv.write(wr);
+			wr.flush();
+			wr.close();
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+			System.err.println("code: " + responseCode + ", msg=" + amsg);
+			getCookies(conn);
+		}
+		conn.disconnect();
+
+		/**
+		 * An finally check that all is OK
+		 */
+		return checkLogin();
+	}
+	
+	private Status checkLogin() throws MalformedURLException, IOException, JSONException {
+		HttpURLConnection conn = (HttpURLConnection) new URL(CHECK_URL).openConnection();
+		addCookies(conn);
+		{
+			conn.connect();
+			getCookies(conn);
+			InputStream in = new BufferedInputStream(conn.getInputStream());
+			JSONObject obj = parse(in);
+			conn.disconnect();
+			int responseCode = conn.getResponseCode();
+			String amsg = conn.getResponseMessage();
+			// Returns username(which is actually Displayname from profile) if logged in
+			if (obj.optString("username", "").length() > 0) {
+				isConnected = true;
+				return Uploader.Status.OK;
+			} else {
+				System.err.println("GarminUploader::connect() missing username, obj: " + obj.toString() + ", code: " + responseCode + ", msg: " + amsg);
+			}
+			Status s = Status.NEED_AUTH;
+			s.authMethod = Uploader.AuthMethod.USER_PASS;
+			return s;
+		}
+	}
+	
+	private Status connectNew() throws MalformedURLException, IOException, JSONException {
+		Status s = Status.NEED_AUTH;
+		s.authMethod = Uploader.AuthMethod.USER_PASS;
+
+		FormValues fv = new FormValues();
+		fv.put("service", "http://connect.garmin.com/post-auth/login");
+        fv.put("clientId", "GarminConnect");
+        fv.put("consumeServiceTicket", "false");
+        
+		HttpURLConnection conn = get("https://sso.garmin.com/sso/login", fv);
+		addCookies(conn);
+		expectResponse(conn, 200, "Connection 1: ");
+		getCookies(conn);
+		getFormValues(conn);
+		conn.disconnect();
+
+		// try again
+		FormValues data = new FormValues();
+		data.put("username", username);
+		data.put("password", password);
+		data.put("_eventId", "submit");
+		data.put("embed", "true");
+		data.put("lt", formValues.get("lt"));
+
+		conn = post("https://sso.garmin.com/sso/login", fv);
+		conn.setInstanceFollowRedirects(false);
+		conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		addCookies(conn);
+		postData(conn, data);
+		expectResponse(conn, 200, "Connection 2: ");
+		getCookies(conn);
+		String html = getFormValues(conn);
+		conn.disconnect();
+
+		/* this is really horrible */
+		int start = html.indexOf("?ticket=");
+		if (start == -1) {
+			throw new IOException("Invalid login, unable to locate ticket");
+		}
+		start += "?ticket=".length();
+		int end = html.indexOf("'", start);
+		String ticket = html.substring(start, end);
+		
+		// connection 3...
+		fv.clear();
+		fv.put("ticket", ticket);
+
+		conn = get("http://connect.garmin.com/post-auth/login", fv);
+	 	conn.setInstanceFollowRedirects(false);
+		addCookies(conn);
+		expectResponse(conn, 302, "Connection 3: ");
+		List<String> fields = conn.getHeaderFields().get("location");
+		getCookies(conn);
+		
+		// connection 4...
+		conn = get(fields.get(0), null);
+		conn.setInstanceFollowRedirects(false);
+		addCookies(conn);
+		expectResponse(conn, 302, "Connection 4: ");
+		getCookies(conn);
+		conn.disconnect();
+		return checkLogin();
+	}
+	
+	private HttpURLConnection open(String base, FormValues fv) throws MalformedURLException, IOException {
+		HttpURLConnection conn;
+		if (fv != null) {
+			String url = base + "?" + fv.queryString();
+			conn = (HttpURLConnection) new URL(url).openConnection();
+		} else {
+			conn = (HttpURLConnection) new URL(base).openConnection();
+		}
+		return conn;
+	}
+
+	private HttpURLConnection get(String base, FormValues fv) throws MalformedURLException, IOException {
+		HttpURLConnection conn = open(base, fv);
+		conn.setDoOutput(false);
+		conn.setRequestMethod("GET");
+		return conn;
+	}
+
+	private HttpURLConnection post(String base, FormValues fv) throws MalformedURLException, IOException {
+		HttpURLConnection conn = open(base, fv);
+		conn.setDoOutput(true);
+		conn.setRequestMethod("POST");
+		return conn;
+	}
+
+	private void postData(HttpURLConnection conn, FormValues fv) throws IOException {
+		OutputStream wr = new BufferedOutputStream(
+				conn.getOutputStream());
+		if (fv != null) {
+			fv.write(wr);
+		}
+		wr.flush();
+		wr.close();
+	}
+
+	private void expectResponse(HttpURLConnection conn, int code, String string) throws IOException {
+		if (conn.getResponseCode() != code) {
+			throw new IOException(string + ", code: " + conn.getResponseCode() + ", msg: " + conn.getResponseMessage());
+		}
 	}
 
 	@Override
