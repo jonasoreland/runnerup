@@ -18,10 +18,12 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -366,22 +368,28 @@ public class GarminUploader extends FormCrawler implements Uploader {
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
 			addCookies(conn);
-			Part<StringWritable> part1 = new Part<StringWritable>("responseContentType",
-					new StringWritable(FormCrawler.URLEncode("text/html")));
 			Part<StringWritable> part2 = new Part<StringWritable>("data",
 					new StringWritable(writer.toString()));
 			part2.filename = "RunnerUp.tcx";
 			part2.contentType = "application/octet-stream";
-			Part<?> parts[] = { part1, part2 };
+			Part<?> parts[] = { part2 };
 			postMulti(conn, parts);
 			int responseCode = conn.getResponseCode();
 			String amsg = conn.getResponseMessage();
 			if (responseCode == 200) {
+				JSONObject reply = parse(new BufferedReader(new InputStreamReader(conn.getInputStream())));
 				conn.disconnect();
-				return Status.OK;
+				JSONObject result = reply.getJSONObject("detailedImportResult");
+				if (result.getJSONArray("successes").length() == 1)
+					return Status.OK;
+				else
+					ex = new Exception("Unexpected reply: " + reply.toString());
+			} else {
+				ex = new Exception(amsg);
 			}
-			ex = new Exception(amsg);
 		} catch (IOException e) {
+			ex = e;
+		} catch (JSONException e) {
 			ex = e;
 		}
 
