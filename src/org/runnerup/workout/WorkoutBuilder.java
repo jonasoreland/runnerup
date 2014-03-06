@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2014 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -246,6 +246,7 @@ public class WorkoutBuilder {
 					ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
 					step.triggers.add(ev);
 				}
+				checkDuplicateTriggers(step);
 				break;
 			case RESTING: {
 				IntervalTrigger trigger = new IntervalTrigger();
@@ -288,6 +289,62 @@ public class WorkoutBuilder {
 		}
 	}
 
+	interface TriggerFilter {
+		boolean match(Trigger trigger);
+	};
+	
+	private static boolean hasTrigger(List<Trigger> triggers, TriggerFilter filter) {
+		for (Trigger t : triggers) {
+			if (filter.match(t))
+				return true;
+		}
+		return false;
+	}
+	
+	private static boolean hasEndOfLapTrigger(List<Trigger> triggers) {
+		return hasTrigger(triggers, new TriggerFilter(){
+
+			@Override
+			public boolean match(Trigger trigger) {
+				if (trigger == null)
+					return false;
+				
+				if (! (trigger instanceof EventTrigger))
+					return false;
+				EventTrigger et = (EventTrigger) trigger;
+				return (et.event == Event.COMPLETED && et.scope == Scope.LAP);
+			}});
+	}
+	
+	private static void checkDuplicateTriggers(Step step) {
+		if (hasEndOfLapTrigger(step.triggers)) {
+			System.err.println("hasEndOfLapTrigger()");
+			/**
+			 * The end of lap trigger can be a duplicate of a distance based interval trigger
+			 * 1) in a step with distance duration, that is a multiple of the interval-distance
+			 *    e.g interval-trigger-distance = 100m duration = 1000m, then set max count = 9
+			 * 2) in a step with autolap 500m and interval-trigger-distance 1000
+			 *    then remove the trigger
+			 */
+			ArrayList<TriggerSuppression> list = new ArrayList<TriggerSuppression>();
+			if (step.getAutolap() > 0) {
+				list.add(new EndOfLapSuppression(step.getAutolap()));
+			}
+
+			if (step.getDurationType() == Dimension.DISTANCE) {
+				list.add(new EndOfLapSuppression(step.getDurationValue()));
+			}
+			for (Trigger t : step.triggers) {
+				if (! (t instanceof IntervalTrigger))
+					continue;
+				IntervalTrigger it = (IntervalTrigger) t;
+				if (it.dimension != Dimension.DISTANCE)
+					continue;
+				it.triggerSuppression.addAll(list);
+			}
+		}
+	}
+	
 	private static ArrayList<Trigger> createDefaultTriggers(Resources res, SharedPreferences prefs) {
 		ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 		ArrayList<Trigger> triggers = new ArrayList<Trigger>();
@@ -308,7 +365,7 @@ public class WorkoutBuilder {
 				triggers.add(t);
 			}
 		}
-		
+
 		if (prefs.getBoolean(res.getString(R.string.cue_distance), false)) {
 			long val = 0;
 			String vals = prefs.getString(res.getString(R.string.cue_distance_intervall), "1000");
@@ -326,6 +383,13 @@ public class WorkoutBuilder {
 			}
 		}
 
+		if (prefs.getBoolean(res.getString(R.string.cue_end_of_lap), false)) {
+			EventTrigger ev = new EventTrigger();
+			ev.event = Event.COMPLETED;
+			ev.scope = Scope.LAP;
+			triggers.add(ev);
+		}
+		
 		addFeedbackFromPreferences(prefs, res, feedback);
 
 		for (Trigger t : triggers) {

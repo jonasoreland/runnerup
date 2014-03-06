@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2013 jonas.oreland@gmail.com
+  ~ Copyright (C) 2013 - 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
             android:title="Cue intervall (s)" />
 
     	<CheckBoxPreference
-        	android:defaultValue="true"
+        	android:defaultValue="false"
         	android:persistent="true"
         	android:key="@string/cue_distance"
         	android:title="Distance triggered audio cue" />
@@ -58,7 +58,13 @@
             android:persistent="true"
             android:summary="1000"
             android:title="Cue intervall (m)" />
-	    
+
+	    <CheckBoxPreference
+        	android:defaultValue="true"
+        	android:persistent="true"
+        	android:key="@string/cue_end_of_lap"
+        	android:title="End of lap audio cue" />
+	    	    
 	    <ListPreference
         	android:defaultValue="yes"
         	android:entries="@array/muteEntries"

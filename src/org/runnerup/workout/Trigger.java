@@ -22,6 +22,7 @@ import java.util.HashMap;
 public abstract class Trigger implements TickComponent {
 
 	ArrayList<Feedback> triggerAction = new ArrayList<Feedback>();
+	ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<TriggerSuppression>();
 
 	@Override
 	public void onInit(Workout s) {
@@ -44,9 +45,13 @@ public abstract class Trigger implements TickComponent {
 		}
 	}
 
-	public void fire(Workout s) {
+	public void fire(Workout w) {
+		for (TriggerSuppression s : triggerSuppression) {
+			if (s.suppress(this, w))
+				return;
+		}
 		for (Feedback f : triggerAction) {
-			s.addFeedback(f);
+			w.addFeedback(f);
 		}
 	}
 }

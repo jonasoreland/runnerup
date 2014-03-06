@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@
     <string name="cue_time_intervall">cue_time_intervall</string>
     <string name="cue_distance">cue_distance</string>
     <string name="cue_distance_intervall">cue_distance_intervall</string>
+	<string name="cue_end_of_lap">cue_end_of_lap</string>
+    
     <string name="cueinfo_total_distance">cueinfo_total_distance</string>
     <string name="cueinfo_total_time">cueinfo_total_time</string>
     <string name="cueinfo_total_pace">cueinfo_total_pace</string>
