@@ -86,4 +86,9 @@ public class EventTrigger extends Trigger {
 			fire(s);
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "[ EventTrigger: " + this.scope + " " + this.event + " skipCounter: " + skipCounter + " ]";
+	}
 }

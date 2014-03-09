@@ -92,4 +92,9 @@ public class IntervalTrigger extends Trigger {
 	@Override
 	public void onComplete(Scope what, Workout s) {
 	}
+
+	@Override
+	public String toString() {
+		return "[ IntervalTrigger: " + this.scope + " " + this.dimension + " first: " + first + " interval: " + interval + " ]";
+	}
 }
