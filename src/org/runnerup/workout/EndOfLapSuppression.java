@@ -25,27 +25,78 @@ package org.runnerup.workout;
  */
 public class EndOfLapSuppression extends TriggerSuppression {
 
-	double lapDistance = 0;
+	enum t_type {
+		t_Interval,
+		t_EndOfLap
+	};
+
+	t_type suppressionType = t_type.t_Interval;
+	double lapDuration = 0;
+	
+	static double lapTimeLimit = 10;    // seconds
 	static double lapDistanceLimit = 5; // meters
 	
 	public EndOfLapSuppression(double lap) {
-		this.lapDistance = lap;
+		this.lapDuration = lap;
 	}
 
 	public boolean suppress(Trigger trigger, Workout w) {
+		switch(suppressionType) {
+		case t_Interval:
+			return suppressInterval(trigger, w);
+		case t_EndOfLap:
+			return suppressEndOfLap(trigger, w);
+		}
+
+		return false;
+	}
+	
+	public boolean suppressInterval(Trigger trigger, Workout w) {
+
 		if (! (trigger instanceof IntervalTrigger))
 			return false;
 
 		IntervalTrigger it = (IntervalTrigger) trigger;
-		if (it.dimension != Dimension.DISTANCE)
-			return false;
+		if (it.dimension == Dimension.DISTANCE) {
+			double distance = w.getDistance(Scope.LAP);
+			if (Math.abs(distance - lapDuration) > lapDistanceLimit)
+				return false;
+
+			System.err.println("suppressing trigger! distance: " + distance + ", lapDistance: " + lapDuration);
 		
-		double distance = w.getDistance(Scope.LAP);
-		if (Math.abs(distance - lapDistance) > lapDistanceLimit)
+			return true;
+		}
+		return false;
+	}
+
+	private boolean suppressEndOfLap(Trigger trigger, Workout w) {
+		/* suppress end of lap, if it's really end of step */
+		if (! (trigger instanceof EventTrigger)) {
+			return false;
+		}
+
+		EventTrigger et = (EventTrigger)trigger;
+		if (et.scope != Scope.LAP || et.event != Event.COMPLETED)
 			return false;
 
-		System.err.println("suppressing trigger! distance: " + distance + ", lapDistance: " + lapDistance);
+		Step s = w.getCurrentStep();
+		if (s.getDurationType() == null)
+			return false;
 		
-		return true;
+		switch (s.getDurationType()) {
+		case HR:
+		case HRZ:
+		case PACE:
+		case SPEED:
+			return false;
+		case DISTANCE:
+			return Math.abs(w.getDistance(Scope.STEP) - s.getDurationValue()) <= lapDistanceLimit;
+		case TIME:
+			return Math.abs(w.getTime(Scope.STEP) - s.getDurationValue()) <= lapTimeLimit;
+		default:
+			break;
+			
+		}
+		return false;
 	}
 }

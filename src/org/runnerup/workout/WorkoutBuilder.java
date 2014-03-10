@@ -244,9 +244,27 @@ public class WorkoutBuilder {
 					ev.event = Event.COMPLETED;
 					ev.scope = Scope.STEP;
 					ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
+
+					Trigger elt = hasEndOfLapTrigger(triggers);
+					if (elt != null) {
+						/** Add feedback after "end of lap" */
+						ev.triggerAction.addAll(elt.triggerAction);
+						/** And suppress last end of lap trigger */
+						EndOfLapSuppression sup = new EndOfLapSuppression(0);
+						sup.suppressionType = EndOfLapSuppression.t_type.t_EndOfLap;
+						elt.triggerSuppression.add(sup);
+					}
 					step.triggers.add(ev);
 				}
 				checkDuplicateTriggers(step);
+//				{
+//					System.err.println("triggers: ");
+//					for (Trigger t : step.triggers) {
+//						System.err.print(t + " ");
+//					}
+//					System.err.println("");
+//				}
+				
 				break;
 			case RESTING: {
 				IntervalTrigger trigger = new IntervalTrigger();
@@ -293,15 +311,15 @@ public class WorkoutBuilder {
 		boolean match(Trigger trigger);
 	};
 	
-	private static boolean hasTrigger(List<Trigger> triggers, TriggerFilter filter) {
+	private static Trigger hasTrigger(List<Trigger> triggers, TriggerFilter filter) {
 		for (Trigger t : triggers) {
 			if (filter.match(t))
-				return true;
+				return t;
 		}
-		return false;
+		return null;
 	}
 	
-	private static boolean hasEndOfLapTrigger(List<Trigger> triggers) {
+	private static Trigger hasEndOfLapTrigger(List<Trigger> triggers) {
 		return hasTrigger(triggers, new TriggerFilter(){
 
 			@Override
@@ -317,7 +335,7 @@ public class WorkoutBuilder {
 	}
 	
 	private static void checkDuplicateTriggers(Step step) {
-		if (hasEndOfLapTrigger(step.triggers)) {
+		if (hasEndOfLapTrigger(step.triggers) != null) {
 			System.err.println("hasEndOfLapTrigger()");
 			/**
 			 * The end of lap trigger can be a duplicate of a distance based interval trigger
