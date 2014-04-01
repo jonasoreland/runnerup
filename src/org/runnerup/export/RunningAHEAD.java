@@ -214,8 +214,25 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			JSONObject obj = parse(in);
+			JSONObject data = obj.getJSONObject("data");
 			
-			if (responseCode == 200 && obj.getJSONObject("data").getJSONArray("workoutIds").length() == 1) {
+			boolean found = false;
+			if (found == false) {
+				try {
+					found = data.getJSONArray("workoutIds").length() == 1;
+				} catch (JSONException e) {
+				}
+			}
+			if (found == false) {
+				try {
+					found = data.getJSONArray("ids").length() == 1;
+				} catch (JSONException e) {
+				}
+			}
+			if (!found) {
+				System.err.println("Unhandled response from RunningAHEAD: " + obj);
+			}
+			if (responseCode == 200 && found) {
 				conn.disconnect();
 				return Status.OK;
 			}
