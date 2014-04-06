@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2014 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,26 +16,24 @@
  */
 package org.runnerup.view;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.runnerup.R;
+import org.runnerup.util.FileUtil;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class SettingsActivity extends PreferenceActivity {
@@ -71,38 +69,6 @@ public class SettingsActivity extends PreferenceActivity {
 		return false;
 	}
 
-	static int copyFile(String to, String from) throws IOException {
-		FileInputStream input = null;
-		FileOutputStream output = null;
-
-		try {
-			input = new FileInputStream(from);
-			output = new FileOutputStream(to);
-			int cnt = 0;
-			byte buf[] = new byte[1024];
-			while (input.read(buf) > 0) {
-				cnt += buf.length;
-				output.write(buf);
-			}
-			input.close();
-			output.close();
-			return cnt;
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException ex) {
-				}
-			}
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException ex) {
-				}
-			}
-		}
-	}
-
 	private String getDbFile() {
 		String from = getFilesDir().getPath()+"/../databases/runnerup.db";
 		return from;
@@ -125,7 +91,7 @@ public class SettingsActivity extends PreferenceActivity {
 			String from = getDbFile();
 			String to = dstdir + "/runnerup.db.export";
 			try {
-				int cnt = copyFile(to, from);
+				int cnt = FileUtil.copyFile(to, from);
 				builder.setMessage("Copied " + cnt + " bytes");
 				builder.setPositiveButton("Great!", listener);
 			} catch (IOException e) {
@@ -154,7 +120,7 @@ public class SettingsActivity extends PreferenceActivity {
 			String to = getDbFile();
 			String from = srcdir + "/runnerup.db.export";
 			try {
-				int cnt = copyFile(to, from);
+				int cnt = FileUtil.copyFile(to, from);
 				builder.setMessage("Copied " + cnt + " bytes");
 				builder.setPositiveButton("Great!", listener);
 			} catch (IOException e) {

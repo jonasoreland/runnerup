@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+<boolean name="cueinfo_target_coaching" value="false" />
+<boolean name="cueinfo_total_time" value="false" />
+<string name="pref_mute">no</string>
+<boolean name="cueinfo_skip_startstop" value="false" />
+<string name="cue_time_intervall">120</string>
+<boolean name="cueinfo_step_distance" value="false" />
+<boolean name="cueinfo_lap_hr" value="true" />
+<boolean name="cue_end_of_lap" value="true" />
+<boolean name="cueinfo_step_time" value="false" />
+<boolean name="cueinfo_step_hrz" value="false" />
+<boolean name="cueinfo_total_hrz" value="false" />
+<boolean name="cue_distance" value="true" />
+<boolean name="cueinfo_total_pace" value="false" />
+<boolean name="cueinfo_total_hr" value="false" />
+<boolean name="cueinfo_total_distance" value="false" />
+<boolean name="cueinfo_lap_hrz" value="false" />
+<boolean name="cueinfo_step_pace" value="false" />
+<string name="cue_distance_intervall">100</string>
+<boolean name="cueinfo_lap_distance" value="false" />
+<boolean name="cueinfo_lap_pace" value="true" />
+<boolean name="cueinfo_step_hr" value="false" />
+<boolean name="cueinfo_lap_time" value="false" />
+<boolean name="cue_time" value="false" />
+</map>
