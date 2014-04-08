@@ -168,10 +168,21 @@ public class MainLayout extends TabActivity {
 					String tmp = dst + File.separator + add;
 					File dstFile = new File(tmp);
 					if (dstFile.isDirectory() || dstFile.isFile()) {
-						System.err.println("Skip: " + tmp);
+						System.err.println("Skip: " + tmp + 
+								", isDirectory(): " + dstFile.isDirectory() +
+								", isFile(): " + dstFile.isFile());
 						continue;
 					}
+
+					String key = "install_bundled_"+add;
+					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+					if (pref.contains(key)) {
+						System.err.println("Skip: " + key);
+						continue;
+						
+					}
 					
+					pref.edit().putBoolean(key, true).commit();					
 					System.err.println("Copying: " + tmp);
 					InputStream input = null;
 					try {
