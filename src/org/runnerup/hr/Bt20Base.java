@@ -549,11 +549,20 @@ public abstract class Bt20Base implements HRProvider {
 		    boolean ok = buffer.length > ZEPHYR_HXM_BYTE_ETX
 		        && getByte(buffer[ZEPHYR_HXM_BYTE_STX]) == ZEPHYR_START_BYTE
 		        && getByte(buffer[ZEPHYR_HXM_BYTE_ETX]) == ZEPHYR_END_BYTE
-		        && CalcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
+		        && calcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
 
-		    if (!ok)
-		    	return -1;
-		    
+			if (!ok) {
+				System.err.println("HxM insanity! "
+						+ (buffer.length > ZEPHYR_HXM_BYTE_ETX) + " "
+						+ getByte(buffer[ZEPHYR_HXM_BYTE_STX]) + "=="
+						+ ZEPHYR_START_BYTE + " "
+						+ getByte(buffer[ZEPHYR_HXM_BYTE_ETX]) + "=="
+						+ ZEPHYR_END_BYTE + " " + "calc="
+						+ calcCrc8(buffer, 3, 55) + " " + "given="
+						+ getByte(buffer[ZEPHYR_HXM_BYTE_CRC]));
+				return -1;
+			}
+
 		    return getByte(buffer[ZEPHYR_HXM_BYTE_HR]); 
 		}
 
@@ -567,6 +576,24 @@ public abstract class Bt20Base implements HRProvider {
 			}
 			return -1;
 		}
+		
+		private static int calcCrc8(byte buffer[], int start, int length) {
+			int crc = 0x0;
+
+			for (int i = start; i < (start + length); i++) {
+				crc ^= getByte(buffer[i]);
+				for (int b = 0; b <= 7; b++) {
+					if ((crc & 1) != 0) {
+						crc = ((crc >> 1) ^ 0x8c);
+					} else {
+						crc = (crc >> 1);
+					}
+				}
+		    }
+		    return crc;
+		}
+
+
 	};
 
 	public static class PolarHRM extends Bt20Base {
@@ -632,15 +659,6 @@ public abstract class Bt20Base implements HRProvider {
 		}
 	};
 	
-	public static byte CalcCrc8(byte buffer[], int start, int length) {
-	    byte crc = 0x0;
-
-	    for (int i = start; i < (start + length); i++) {
-	      crc = (byte) (crc ^ buffer[i]);
-	    }
-	    return crc;
-	}
-
 	static public int getByte(byte b) {
 		return b & 0xFF;
 	}
