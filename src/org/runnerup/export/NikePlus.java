@@ -306,7 +306,7 @@ public class NikePlus extends FormCrawler implements Uploader {
 		}
 
 		try {
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'");
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			df.setTimeZone(TimeZone.getTimeZone("UTC"));
 			List<ContentValues> result = new ArrayList<ContentValues>();
 			getOwnFeed(df, result);

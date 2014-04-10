@@ -56,7 +56,7 @@ public class TCX {
 	
 	public TCX(SQLiteDatabase mDB) {
 		this.mDB = mDB;
-		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'", Locale.US);
+		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 

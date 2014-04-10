@@ -361,7 +361,7 @@ public class Endomondo extends FormCrawler implements Uploader {
  "type":"workout"},
 */
 	private void parseFeed(FeedUpdater feedUpdater, JSONObject reply) throws JSONException {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss 'UTC'");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'");
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		JSONArray arr = reply.getJSONArray("data");
 		for (int i = 0; i < arr.length(); i++) {

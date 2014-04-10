@@ -22,10 +22,9 @@ import java.io.InputStream;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.util.Constants.DB;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.workout.WorkoutSerializer;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
