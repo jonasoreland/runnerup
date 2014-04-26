@@ -25,10 +25,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 
@@ -41,6 +43,25 @@ import android.os.Handler;
 @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public abstract class Bt20Base implements HRProvider {
 
+	public boolean isEnabled() {
+		return isEnabledImpl();
+	}
+	
+	public static boolean isEnabledImpl() {
+		if (BluetoothAdapter.getDefaultAdapter() != null)
+			return BluetoothAdapter.getDefaultAdapter().isEnabled();
+		return false;
+	}
+
+	public boolean startEnableIntent(Activity activity, int requestCode) {
+		return startEnableIntentImpl(activity, requestCode);
+	}
+
+	public static boolean startEnableIntentImpl(Activity activity, int requestCode) {
+		activity.startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), requestCode);
+		return true;
+	}
+	
 	public static boolean checkLibrary(Context ctx) {
 
 		// Don't bother if createInsecureRfcommSocketToServiceRecord isn't
@@ -177,7 +198,7 @@ public abstract class Bt20Base implements HRProvider {
 		if (mIsScanning) {
 			BluetoothDevice dev = list.iterator().next();
 			list.remove(dev);
-			hrClient.onScanResult(getProviderName(), dev);
+			hrClient.onScanResult(createDeviceRef(getProviderName(), dev));
 			hrClientHandler.post(new Runnable() {
 
 				@Override
@@ -194,11 +215,11 @@ public abstract class Bt20Base implements HRProvider {
 	}
 
 	@Override
-	public void connect(BluetoothDevice bluetoothDevice, String btDeviceName) {
+	public void connect(HRDeviceRef ref) {
 		cancelThreads();
 
 		mIsConnecting = true;
-		connectThread = new ConnectThread(btAdapter.getRemoteDevice(bluetoothDevice.getAddress()), btDeviceName);
+		connectThread = new ConnectThread(btAdapter.getRemoteDevice(ref.deviceAddress), ref.deviceName);
 		connectThread.start();
 	}
 
@@ -483,7 +504,7 @@ public abstract class Bt20Base implements HRProvider {
 						 * reconnect
 						 */
 						System.err.println("reportDisconnect() => reconnecting");
-						connect(bluetoothDevice, btDeviceName);
+						connect(Bt20Base.createDeviceRef(getProviderName(), bluetoothDevice));
 						return;
 					} else {
 						System.err.println("reportDisconnect() mIsConnected != true");
@@ -677,5 +698,9 @@ public abstract class Bt20Base implements HRProvider {
 	
 	static public int getByte(byte b) {
 		return b & 0xFF;
+	}
+
+	public static HRDeviceRef createDeviceRef(String providerName, BluetoothDevice device) {
+		return HRDeviceRef.create(providerName, device.getName(), device.getAddress());
 	}
 }

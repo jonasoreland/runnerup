@@ -22,21 +22,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.runnerup.R;
+import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Formatter;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,6 +53,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRSettingsActivity extends Activity implements HRClient {
 
@@ -70,8 +69,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	String btAddress;
 	String btProviderName;
 	HRProvider hrProvider = null;
-	BluetoothDevice hrDevice = null;
-	BluetoothAdapter mAdapter = null;
 	
 	Button connectButton = null;
 	Button scanButton = null;
@@ -128,18 +125,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			graphLayout.addView(graphView);
 		}
 		
-		mAdapter = BluetoothAdapter.getDefaultAdapter();
-		if (mAdapter == null) {
-		    notSupported();
-		} else {
-		    if (!mAdapter.isEnabled()) {
-		    	log("Enable Bluetooth");
-		    	Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-	            startActivityForResult(enableIntent, 0);
-	            return;
-		    }
-		}		
-
 		load();
 		open();
 	}
@@ -217,6 +202,12 @@ public class HRSettingsActivity extends Activity implements HRClient {
 	}
 	
 	private void open() {
+		if (hrProvider != null && !hrProvider.isEnabled()) {
+			if (hrProvider.startEnableIntent(this, 0) == true) {
+				return;
+			}
+			hrProvider = null;
+		}
 		if (hrProvider != null) {
 			log(hrProvider.getProviderName() + ".open(this)");
 			hrProvider.open(handler, this);
@@ -261,7 +252,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		btAddress = null;
 		btName = null;
 		btProviderName = null;
-		hrDevice = null;
 		clearGraph();
 	}
 
@@ -351,7 +341,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
 	class DeviceAdapter extends BaseAdapter {
 
-		ArrayList<BluetoothDevice> deviceList = new ArrayList<BluetoothDevice>();
+		ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
 		LayoutInflater inflater = null;
 		Resources resources = null;
 		
@@ -387,9 +377,9 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			TextView tv = (TextView) row.findViewById(android.R.id.text1);
 			tv.setTextColor(resources.getColor(R.color.black));
 
-			BluetoothDevice btDevice = deviceList.get(position);
+			HRDeviceRef btDevice = deviceList.get(position);
 			tv.setTag(btDevice);
-			tv.setText(getName(btDevice));
+			tv.setText(btDevice.getName());
 
 			return tv;
 		}
@@ -439,7 +429,9 @@ public class HRSettingsActivity extends Activity implements HRClient {
 				new  DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
-						hrDevice = deviceAdapter.deviceList.get(arg1);
+						HRDeviceRef hrDevice = deviceAdapter.deviceList.get(arg1);
+						btAddress = hrDevice.getAddress();
+						btName = hrDevice.getName();
 					}
 				});
 		builder.show();
@@ -447,7 +439,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		
 	void connect() {
 		stopTimer();
-		if (hrProvider == null || hrDevice == null) {
+		if (hrProvider == null || btName == null || btAddress == null) {
 			updateView();
 			return;
 		}
@@ -457,21 +449,19 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			updateView();
 			return;
 		}
-		tvBTName.setText(getName(hrDevice));
+		
+		tvBTName.setText(getName());
 		tvHR.setText("?");
-		String name = hrDevice.getName();
-		if (name == null) {
-			name = hrDevice.getAddress();
+		String name = btName;
+		if (name == null || name.length() == 0) {
+			name = btAddress;
 		}
 		log(hrProvider.getProviderName() + ".connect(" + name + ")");
-		hrProvider.connect(hrDevice, hrDevice.getName());
+		hrProvider.connect(HRDeviceRef.create(btProviderName, btName, btAddress));
 		updateView();
 	}
 
 	private void save() {
-		btName = hrDevice.getName();
-		btAddress = hrDevice.getAddress();
-		
 		Resources res = getResources();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		Editor ed = prefs.edit();
@@ -491,10 +481,10 @@ public class HRSettingsActivity extends Activity implements HRClient {
 		ed.commit();
 	}
 
-	private CharSequence getName(BluetoothDevice dev) {
-		if (dev.getName() != null && dev.getName().length() > 0)
-			return dev.getName();
-		return dev.getAddress();
+	private CharSequence getName() {
+		if (btName != null && btName.length() > 0)
+			return btName;
+		return btAddress;
 	}
 
 	Timer hrReader = null;
@@ -558,14 +548,11 @@ public class HRSettingsActivity extends Activity implements HRClient {
 			return;
 		}
 		
-		if (btAddress != null) {
-			hrDevice = this.mAdapter.getRemoteDevice(btAddress);
-		}
 		updateView();
 	}
 
 	@Override
-	public void onScanResult(String name, BluetoothDevice device) {
+	public void onScanResult(HRDeviceRef device) {
 		log(hrProvider.getProviderName() + "::onScanResult(" + device.getAddress() + ", " + device.getName() + ")");
 		deviceAdapter.deviceList.add(device);
 		deviceAdapter.notifyDataSetChanged();
@@ -594,12 +581,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 0) {
-			Resources res = getResources();
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
-			
-			if (!mAdapter.isEnabled() && !mock) {
+		if (requestCode == 0) {			
+			if (!hrProvider.isEnabled()) {
 				log("Bluetooth not enabled!");
 				scanButton.setEnabled(false);
 				connectButton.setEnabled(false);

@@ -17,7 +17,7 @@
 package org.runnerup.hr;
 
 import android.annotation.TargetApi;
-import android.bluetooth.BluetoothDevice;
+import android.app.Activity;
 import android.os.Build;
 import android.os.Handler;
 
@@ -26,7 +26,7 @@ public interface HRProvider {
 
 	public interface HRClient {
 		public void onOpenResult(boolean ok);
-		public void onScanResult(String name, BluetoothDevice device);
+		public void onScanResult(HRDeviceRef device);
 		public void onConnectResult(boolean connectOK);
 		public void onDisconnectResult(boolean disconnectOK);
 		public void onCloseResult(boolean closeOK);
@@ -35,6 +35,9 @@ public interface HRProvider {
 	public abstract String getName();         // For display
 	public abstract String getProviderName(); // For internal usage
 	
+	public abstract boolean isEnabled();
+	public abstract boolean startEnableIntent(Activity activity, int requestCode);
+
 	public abstract void open(Handler handler, HRClient hrClient);
 	public abstract void close();
 
@@ -47,7 +50,7 @@ public interface HRProvider {
 	public abstract void startScan();
 	public abstract void stopScan();
 
-	public abstract void connect(BluetoothDevice _btDevice, String btDeviceName);
+	public abstract void connect(HRDeviceRef ref);
 	public abstract void disconnect();
 
 	public abstract int getHRValue();

@@ -19,6 +19,7 @@ package org.runnerup.hr;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
@@ -84,6 +85,14 @@ public class SamsungBLEHRProvider implements HRProvider {
 	@Override
 	public String getProviderName() {
 		return NAME;
+	}
+
+	public boolean isEnabled() {
+		return Bt20Base.isEnabledImpl();
+	}
+
+	public boolean startEnableIntent(Activity activity, int requestCode) {
+		return Bt20Base.startEnableIntentImpl(activity, requestCode);
 	}
 
 	private HRClient hrClient;
@@ -291,7 +300,7 @@ public class SamsungBLEHRProvider implements HRProvider {
 					@Override
 					public void run() {
 						if (mIsScanning && hrClient != null) { //NOTE: mIsScanning in user-thread
-							hrClient.onScanResult(NAME, arg0);
+							hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, arg0));
 						}
 					}});
             } else {
@@ -434,7 +443,9 @@ public class SamsungBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(BluetoothDevice dev, String btDeviceName) {
+	public void connect(HRDeviceRef ref) {
+		BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(ref.getAddress());
+		
 		stopScan();
 
 		if (mIsConnected)
@@ -445,8 +456,8 @@ public class SamsungBLEHRProvider implements HRProvider {
 		
 		mIsConnecting = true;
 		btDevice = dev;
-		if (btDeviceName == null || dev.getName() == null ||
-			!btDeviceName.contentEquals(dev.getName())) {
+		if (ref.deviceName == null || dev.getName() == null ||
+			!ref.deviceName.contentEquals(dev.getName())) {
 			/**
 			 * If device doesn't match name, scan for before connecting
 			 */

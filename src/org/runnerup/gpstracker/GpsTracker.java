@@ -24,13 +24,14 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
+import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
-import org.runnerup.hr.MockHRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.workout.Workout;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
@@ -41,6 +42,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -48,17 +50,12 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
-
 /**
  * GpsTracker - this class tracks Location updates
  * 
  * @author jonas.oreland@gmail.com
  * 
  */
-import android.os.Build;
-import android.annotation.TargetApi;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
@@ -523,20 +520,6 @@ public class GpsTracker extends android.app.Service implements
 			return;
 		
 	    btDisabled = true;
-		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-		if (adapter == null) {
-			return;
-		}
-		
-		if (!adapter.isEnabled() && !MockHRProvider.NAME.contentEquals(btProviderName)) {
-			return;
-		}
-		
-		final BluetoothDevice btDevice = adapter.getRemoteDevice(btAddress);
-		if (btDevice == null) {
-			return;
-		}
-		btDisabled = false;
 
 		hrProvider = HRManager.getHRProvider(this, btProviderName);
 		if (hrProvider != null) {
@@ -547,32 +530,30 @@ public class GpsTracker extends android.app.Service implements
 						hrProvider = null;
 						return;
 					}
-					hrProvider.connect(btDevice, btDeviceName);
+					hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
 				}
 
 				@Override
-				public void onScanResult(String name, BluetoothDevice device) {
+				public void onScanResult(HRDeviceRef device) {
 				}
 
 				@Override
 				public void onConnectResult(boolean connectOK) {
 					if (connectOK) {
-						Toast.makeText(GpsTracker.this,  "Connected to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+						btDisabled = false;
+						Toast.makeText(GpsTracker.this,  "Connected to HRM " + btDeviceName, Toast.LENGTH_SHORT).show();
 					} else {
-						Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+						btDisabled = true;
+						Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDeviceName, Toast.LENGTH_SHORT).show();
 					}
 				}
 
 				@Override
 				public void onDisconnectResult(boolean disconnectOK) {
-					// TODO Auto-generated method stub
-					
 				}
 
 				@Override
 				public void onCloseResult(boolean closeOK) {
-					// TODO Auto-generated method stub
-					
 				}
 			});
 		}

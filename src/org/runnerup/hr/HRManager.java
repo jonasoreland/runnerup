@@ -32,6 +32,7 @@ import android.preference.PreferenceManager;
 public class HRManager {
 
 	public static HRProvider getHRProvider(Context ctx, String src) {
+		System.err.println("getHRProvider("+src+")");
 		if (src.contentEquals(SamsungBLEHRProvider.NAME)) {
 			if (!SamsungBLEHRProvider.checkLibrary())
 				return null;
@@ -56,7 +57,9 @@ public class HRManager {
 		if (src.contentEquals(AntPlus.NAME)) {
 			if (!AntPlus.checkLibrary(ctx))
 				return null;
-			return new AntPlus(ctx);
+			HRProvider p = new AntPlus(ctx);
+			System.err.println("getHRProvider("+src+") => "+ p);
+			return p;
 		}
 		
 		if (src.contentEquals(MockHRProvider.NAME)) {
