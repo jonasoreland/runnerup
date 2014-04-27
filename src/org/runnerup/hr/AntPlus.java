@@ -37,7 +37,7 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultR
 public class AntPlus implements HRProvider {
 
 	static final String NAME = "AntPlus";
-	static final String DISPLAY_NAME = "Ant+";
+	static final String DISPLAY_NAME = "ANT+";
 
 	Context ctx;
 	HRClient hrClient;
@@ -53,7 +53,6 @@ public class AntPlus implements HRProvider {
 	private boolean mIsScanning = false;
 	private boolean mIsConnected = false;
 	private boolean mIsConnecting = false;
-	private boolean mIsDisconnecting = false;
 	
 	public static boolean checkLibrary(Context ctx) {
 		try {
@@ -124,8 +123,8 @@ public class AntPlus implements HRProvider {
 
 	@Override
 	public void startScan() {
-		System.err.println("startScan()");
 		stopScan();
+		System.err.println("startScan()");
 		mIsScanning = true;
 		mScanDevices.clear();
         hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(ctx, 0, scanReceiver);
@@ -133,7 +132,9 @@ public class AntPlus implements HRProvider {
 
 	@Override
 	public void stopScan() {
-		System.err.println("stopScan()");
+		if (mIsScanning || hrScanCtrl != null)
+			System.err.println("stopScan()");
+
 		mIsScanning = false;
 		if (hrScanCtrl != null) {
 			hrScanCtrl.closeScanController();
@@ -156,7 +157,7 @@ public class AntPlus implements HRProvider {
 			final HRDeviceRef ref = HRDeviceRef.create(NAME,  arg0.getDeviceDisplayName(),
 					Integer.toString(arg0.getAntDeviceNumber()));
 			
-			if (mIsConnecting &&
+			if ((mIsConnecting || mIsConnected) &&
 				ref.deviceAddress.equals(connectRef.deviceAddress) &&
 				ref.deviceName.equals(connectRef.deviceName)) {
 				
@@ -183,6 +184,7 @@ public class AntPlus implements HRProvider {
 
 		@Override
 		public void onSearchStopped(RequestAccessResult arg0) {
+			System.err.println("onSearchStopped("+arg0+")");
 		}
 	};
 		
@@ -190,6 +192,7 @@ public class AntPlus implements HRProvider {
 	public void connect(HRDeviceRef ref) {
 		stopScan();
 		disconnectImpl();
+		connectRef = ref;
 		mIsConnecting = true;
 		AntPlusHeartRatePcc.requestAccess(ctx, Integer.parseInt(ref.deviceAddress), 0, resultReceiver, stateReceiver);
 	}
@@ -201,6 +204,8 @@ public class AntPlus implements HRProvider {
 		@Override
 		public void onResultReceived(AntPlusHeartRatePcc arg0,
 				RequestAccessResult arg1, DeviceState arg2) {
+
+			System.err.println("onResultReceived("+arg0+", " + arg1 + ", " + arg2 + ")");
 
 			antDevice = arg0;
 			switch(arg1){
@@ -258,8 +263,32 @@ public class AntPlus implements HRProvider {
 
 		@Override
 		public void onDeviceStateChange(DeviceState arg0) {
-			// TODO Auto-generated method stub
-			
+			System.err.println("onDeviceStateChange("+arg0+")");
+			switch(arg0) {
+			case CLOSED:
+				break;
+			case DEAD:
+				if (mIsConnected) {
+					/** silent reconnect */
+					antDevice = null;
+					AntPlusHeartRatePcc.requestAccess(ctx, Integer.parseInt(connectRef.deviceAddress), 0,
+							resultReceiver, stateReceiver);
+					return;
+				}
+				if (mIsConnecting) {
+					reportConnectFailed(null);
+					return;
+				}
+				break;
+			case PROCESSING_REQUEST:
+				break;
+			case SEARCHING:
+				break;
+			case TRACKING:
+				break;
+			case UNRECOGNIZED:
+				break;
+			}
 		}
 		
 	};
@@ -272,7 +301,7 @@ public class AntPlus implements HRProvider {
 				@Override
 				public void run() {
 					if (hrClient != null) {
-						hrClient.onDisconnectResult(true);
+						hrClient.onConnectResult(false);
 					}
 				}});
 		}
@@ -313,6 +342,8 @@ public class AntPlus implements HRProvider {
 			antDevice.releaseAccess();
 			antDevice = null;
 		}
+		mIsConnecting = false;
+		mIsConnected = false;
 	}
 	
 	@Override
@@ -324,15 +355,16 @@ public class AntPlus implements HRProvider {
 	public long getHRValueTimestamp() {
 		return hrTimestamp;
 	}
+
+	/** it seems ANT+ requires Bluetooth too */
 	
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return Bt20Base.isEnabledImpl();
 	}
 
 	@Override
 	public boolean startEnableIntent(Activity activity, int requestCode) {
-		// TODO Auto-generated method stub
-		return false;
+		return Bt20Base.startEnableIntentImpl(activity, requestCode);
 	}
 }
