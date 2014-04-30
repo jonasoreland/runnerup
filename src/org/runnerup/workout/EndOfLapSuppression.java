@@ -27,8 +27,12 @@ public class EndOfLapSuppression extends TriggerSuppression {
 
 	enum t_type {
 		t_Interval,
-		t_EndOfLap
-	};
+		t_EndOfLap,
+		t_Empty
+	}
+
+	public static final TriggerSuppression EmptyLapSuppression = new EndOfLapSuppression(t_type.t_Empty);
+	public static final TriggerSuppression EndOfLapSuppression = new EndOfLapSuppression(t_type.t_EndOfLap);
 
 	t_type suppressionType = t_type.t_Interval;
 	double lapDuration = 0;
@@ -36,6 +40,13 @@ public class EndOfLapSuppression extends TriggerSuppression {
 	static double lapTimeLimit = 10;    // seconds
 	static double lapDistanceLimit = 5; // meters
 	
+	static double minTimeLimit = 3;    // suppress Event.COMPLETED if lap/step is shorter than this
+	static double minDistanceLimit = 3;// suppress Event.COMPLETED if lap/step is shorter than this 
+	
+	public EndOfLapSuppression(t_type type) {
+		suppressionType = type;
+	}
+
 	public EndOfLapSuppression(double lap) {
 		this.lapDuration = lap;
 	}
@@ -46,11 +57,35 @@ public class EndOfLapSuppression extends TriggerSuppression {
 			return suppressInterval(trigger, w);
 		case t_EndOfLap:
 			return suppressEndOfLap(trigger, w);
+		case t_Empty:
+			return suppressEmpty(trigger, w);
 		}
 
 		return false;
 	}
 	
+	private boolean suppressEmpty(Trigger trigger, Workout w) {
+		if (! (trigger instanceof EventTrigger)) {
+			return false;
+		}
+		
+		EventTrigger et = (EventTrigger)trigger;
+		if (et.event != Event.COMPLETED) {
+			return false;
+		}
+		
+		Scope s = et.scope;
+		if (w.getDistance(s) > minDistanceLimit) {
+			return false;
+		}
+
+		if (w.getTime(s) > minTimeLimit) {
+			return false;
+		}
+		
+		return true;
+	}
+
 	public boolean suppressInterval(Trigger trigger, Workout w) {
 
 		if (! (trigger instanceof IntervalTrigger))

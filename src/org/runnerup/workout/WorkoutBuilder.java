@@ -244,17 +244,18 @@ public class WorkoutBuilder {
 					ev.event = Event.COMPLETED;
 					ev.scope = Scope.STEP;
 					ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
+					step.triggers.add(ev);
 
 					Trigger elt = hasEndOfLapTrigger(triggers);
 					if (elt != null) {
 						/** Add feedback after "end of lap" */
 						ev.triggerAction.addAll(elt.triggerAction);
+						/** suppress empty STEP COMPLETED */
+						ev.triggerSuppression.add(EndOfLapSuppression.EmptyLapSuppression);
+						
 						/** And suppress last end of lap trigger */
-						EndOfLapSuppression sup = new EndOfLapSuppression(0);
-						sup.suppressionType = EndOfLapSuppression.t_type.t_EndOfLap;
-						elt.triggerSuppression.add(sup);
+						elt.triggerSuppression.add(EndOfLapSuppression.EndOfLapSuppression);
 					}
-					step.triggers.add(ev);
 				}
 				checkDuplicateTriggers(step);
 //				{
@@ -412,6 +413,8 @@ public class WorkoutBuilder {
 
 		for (Trigger t : triggers) {
 			t.triggerAction = feedback;
+			/** suppress empty laps */
+			t.triggerSuppression.add(EndOfLapSuppression.EmptyLapSuppression);
 		}
 
 		return triggers;
