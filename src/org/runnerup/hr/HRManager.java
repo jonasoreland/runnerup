@@ -96,7 +96,7 @@ public class HRManager {
 			providers.add(new Bt20Base.PolarHRM(ctx));
 		}
 
-		if (experimental && AntPlus.checkLibrary(ctx)) {
+		if (AntPlus.checkLibrary(ctx)) {
 			providers.add(new AntPlus(ctx));
 		}
 		
