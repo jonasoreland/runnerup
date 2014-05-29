@@ -28,17 +28,19 @@
     <string name="second">seconde</string>
     <string name="seconds">secondes</string>
 
+    <string name="meter">metre</string>
+    <string name="meters">metres</string>
     <string name="kilometer">kilometre</string>
     <string name="kilometers">kilometres</string>
     <string name="perkilometer">par kilometre</string>
     <string name="permile">par mile</string>
 
-    <string name="started">D�marr�</string>
+    <string name="started">Démarrer</string>
     <string name="paused">En pause</string>
     <string name="resumed">Reprise</string>
-    <string name="stopped">Stopp�e</string>
-    <string name="completed">Complet�e</string>
+    <string name="stopped">Stoppé</string>
+    <string name="completed">Completé</string>
 
-    <string name="cue_speedup">Acc�lerer</string>
+    <string name="cue_speedup">Accélerer</string>
     <string name="cue_slowdown">Ralentir</string>
 </resources>
