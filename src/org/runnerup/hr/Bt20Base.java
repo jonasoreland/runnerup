@@ -269,16 +269,24 @@ public abstract class Bt20Base implements HRProvider {
 	}
 
 
-	private void reportConnected() {
+	private void reportConnected(final boolean result) {
+		System.err.println("reportConnected("+result+") mIsConnecting: " + mIsConnecting + ", mIsConnected: " + mIsConnected + ", hrClient: " + hrClient);
 		if (hrClient != null) {
 			hrClientHandler.post(new Runnable() {
 
 				@Override
 				public void run() {
+					boolean reset = !result;
 					if (mIsConnecting && hrClient != null) {
-						mIsConnected = true;
+						mIsConnected = result;
 						mIsConnecting = false;
-						hrClient.onConnectResult(true);
+						hrClient.onConnectResult(result);
+					} else {
+						reset = true;
+					}
+					
+					if (reset) {
+						Bt20Base.this.reset();
 					}
 				}
 			});
@@ -346,8 +354,8 @@ public abstract class Bt20Base implements HRProvider {
 		
 		@Override
 		public void run() {
-			if (btAdapter == null) {
-				Bt20Base.this.reset();
+			if (btAdapter == null || bluetoothDevice == null || deviceName == null) {
+				reportConnected(false);
 				return;
 			}
 			
@@ -359,14 +367,14 @@ public abstract class Bt20Base implements HRProvider {
 				try {
 					bluetoothSocket = tryConnect(bluetoothDevice, i);
 					break;
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
 
 			if (bluetoothSocket == null) {
 				System.err.println("connect failed!");
-				Bt20Base.this.reset();
+				reportConnected(false);
 				return;
 				
 			}
@@ -377,6 +385,7 @@ public abstract class Bt20Base implements HRProvider {
 				synchronized (Bt20Base.this) {
 					connectThread = null;
 				}
+				reportConnected(false);
 				return;
 			}
 			
@@ -456,7 +465,7 @@ public abstract class Bt20Base implements HRProvider {
 
 						if (hrValue > 0 && mIsConnecting) {
 							System.err.println("hrValue: " + hrValue + " => reportConnected");
-							reportConnected();
+							reportConnected(true);
 						}
 					}
 

@@ -44,6 +44,8 @@ public class HRDeviceRef {
 	}
 	
 	public String getName() {
+		if (deviceName != null && !"".contentEquals(deviceName))
+			return deviceName;
 		return deviceAddress;
 	}
 
