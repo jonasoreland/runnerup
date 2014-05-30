@@ -252,12 +252,12 @@ public class FeedActivity extends Activity implements Constants {
 				TextView tv2 = (TextView) v.findViewById(R.id.feedActivitySummary);
 				TextView tv3 = (TextView) v.findViewById(R.id.feedActivityNotes);
 
+				String src = uploadManager.getUploader(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
 				if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {
 					loadImage(iv, tmp.getAsString(DB.FEED.USER_IMAGE_URL));
 				} else {
 				}
 				
-				String src = uploadManager.getUploader(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
 				// String time = formatter.formatTime(Formatter.TXT, tmp.getAsLong(DB.FEED.START_TIME) / 1000);
 				tv0.setText(src); // + " (" + time + ")");
 				
@@ -379,6 +379,7 @@ public class FeedActivity extends Activity implements Constants {
 					}
 					return d;
 				} catch (Exception e) {
+					System.err.println("url: " + url);
 					e.printStackTrace();
 				}
 				return null;
