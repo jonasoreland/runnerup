@@ -218,6 +218,11 @@ public abstract class Bt20Base implements HRProvider {
 	public void connect(HRDeviceRef ref) {
 		cancelThreads();
 
+		if (!isEnabledImpl()) {
+			reportConnected(false);
+			return;
+		}
+		
 		mIsConnecting = true;
 		connectThread = new ConnectThread(btAdapter.getRemoteDevice(ref.deviceAddress), ref.deviceName);
 		connectThread.start();

@@ -444,10 +444,15 @@ public class SamsungBLEHRProvider implements HRProvider {
 
 	@Override
 	public void connect(HRDeviceRef ref) {
-		BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(ref.getAddress());
-		
 		stopScan();
 
+		if (!Bt20Base.isEnabledImpl()) {
+			reportConnectFailed("BT is not enabled");
+			return;
+		}
+		
+		BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(ref.getAddress());
+		
 		if (mIsConnected)
 			return;
 
@@ -483,7 +488,9 @@ public class SamsungBLEHRProvider implements HRProvider {
 
 	private void reportConnectFailed(String string) {
 		System.err.println("reportConnectFailed("+string+")");
-		btGatt.cancelConnection(btDevice);
+		if (btGatt != null && btDevice != null) {
+			btGatt.cancelConnection(btDevice);
+		}
 		btDevice = null;
 		reportConnected(false);
 	}

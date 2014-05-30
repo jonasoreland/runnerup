@@ -456,9 +456,14 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 	@Override
 	public void connect(HRDeviceRef ref) {
-		BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(ref.deviceAddress);
-
 		stopScan();
+
+		if (!Bt20Base.isEnabledImpl()) {
+			reportConnectFailed("BT is not enabled");
+			return;
+		}
+		
+		BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(ref.deviceAddress);
 
 		if (mIsConnected)
 			return;
@@ -503,6 +508,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 	private void reportConnectFailed(String string) {
 		System.err.println("reportConnectFailed(" + string + ")");
 		if (btGatt != null) {
+			btGatt.disconnect();
 			btGatt.close();
 			btGatt = null;
 		}
