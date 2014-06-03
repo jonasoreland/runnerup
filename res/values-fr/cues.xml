@@ -19,6 +19,8 @@
     <string name="workout">activité</string>
     <string name="activity">interval</string>
     <string name="lap">tour</string>
+    <string name="warmup">échauffement</string>
+    <string name="cooldown">récupération</string>
     <string name="current">courant</string>
     
     <string name="hour">heure</string>
