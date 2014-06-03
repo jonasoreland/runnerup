@@ -186,20 +186,20 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		StringBuilder s = new StringBuilder();
 		if (hours > 0) {
 			includeDimension = true;
-			s.append(hours).append(" ").append(resources.getString(hours > 1 ? R.string.hours : R.string.hour));
+			s.append(hours).append(" ").append(resources.getString(hours > 1 ? R.string.cue_hours : R.string.cue_hour));
 		}
 		if (minutes > 0) {
 			if (hours > 0)
 				s.append(" ");
 			includeDimension = true;
-			s.append(minutes).append(" ").append(resources.getString(minutes > 1 ? R.string.minutes : R.string.minute));
+			s.append(minutes).append(" ").append(resources.getString(minutes > 1 ? R.string.cue_minutes : R.string.cue_minute));
 		}
 		if (seconds > 0) {
 			if (hours > 0 || minutes > 0)
 				s.append(" ");
 			
 			if (includeDimension) {
-				s.append(seconds).append(" ").append(resources.getString(seconds > 1 ? R.string.seconds : R.string.second));
+				s.append(seconds).append(" ").append(resources.getString(seconds > 1 ? R.string.cue_seconds : R.string.cue_second));
 			} else {
 				s.append(seconds);
 			}
@@ -327,19 +327,19 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 		}
 		StringBuilder s = new StringBuilder();
 		if (hours_per_unit > 0) {
-			s.append(hours_per_unit).append(" ").append(resources.getString(hours_per_unit > 1 ? R.string.hours : R.string.hour));
+			s.append(hours_per_unit).append(" ").append(resources.getString(hours_per_unit > 1 ? R.string.cue_hours : R.string.cue_hour));
 		}
 		if (minutes_per_unit > 0) {
 			if (hours_per_unit > 0)
 				s.append(" ");
-			s.append(minutes_per_unit).append(" ").append(resources.getString(minutes_per_unit > 1 ? R.string.minutes : R.string.minute));
+			s.append(minutes_per_unit).append(" ").append(resources.getString(minutes_per_unit > 1 ? R.string.cue_minutes : R.string.cue_minute));
 		}
 		if (seconds_per_unit > 0) {
 			if (hours_per_unit > 0 || minutes_per_unit > 0)
 				s.append(" ");
-			s.append(seconds_per_unit).append(" ").append(resources.getString(seconds_per_unit > 1 ? R.string.seconds : R.string.second));
+			s.append(seconds_per_unit).append(" ").append(resources.getString(seconds_per_unit > 1 ? R.string.cue_seconds : R.string.cue_second));
 		}
-		s.append(" " + resources.getString(km ? R.string.perkilometer : R.string.permile));
+		s.append(" " + resources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile));
 		return s.toString();
 	}
 
@@ -382,16 +382,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 	private String cueDistance(long meters, boolean txt) {
 		double base_val = km_meters; // 1km
 		double decimals = 2;
-		int res_base = R.string.txt_distance_kilometer;
-		int res_base_multi = R.string.txt_distance_kilometers;
+		int res_base = R.string.cue_kilometer;
+		int res_base_multi = R.string.cue_kilometers;
 		if (km == false) {
 			base_val = mi_meters;
-			res_base = R.string.txt_distance_mile;
-			res_base_multi = R.string.txt_distance_miles;
+			res_base = R.string.cue_mile;
+			res_base_multi = R.string.cue_miles;
 		}
 		
-		int res_meter = R.string.txt_distance_meter;
-		int res_meters = R.string.txt_distance_meters;
+		int res_meter = R.string.cue_meter;
+		int res_meters = R.string.cue_meters;
 
 		if (txt) {
 			if (km) {

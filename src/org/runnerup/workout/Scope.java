@@ -23,10 +23,10 @@ import org.runnerup.R;
  */
 public enum Scope {
 
-	WORKOUT(1, R.string.workout),
-	STEP(2, R.string.activity),
-	LAP(3, R.string.lap),
-	CURRENT(4, R.string.current);
+	WORKOUT(1, R.string.cue_workout),
+	STEP(2, R.string.cue_activity),
+	LAP(3, R.string.cue_lap),
+	CURRENT(4, R.string.cue_current);
 
 	int value = 0;
 	int cueId = 0;

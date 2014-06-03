@@ -16,32 +16,34 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="workout">activité</string>
-    <string name="activity">interval</string>
-    <string name="lap">tour</string>
-    <string name="warmup">échauffement</string>
-    <string name="cooldown">récupération</string>
-    <string name="current">courant</string>
+    <string name="cue_workout">activité</string>
+    <string name="cue_activity">interval</string>
+    <string name="cue_lap">tour</string>
+    <string name="cue_warmup">échauffement</string>
+    <string name="cue_cooldown">récupération</string>
+    <string name="cue_current">courant</string>
     
-    <string name="hour">heure</string>
-    <string name="hours">heures</string>
-    <string name="minute">minute</string>
-    <string name="minutes">minutes</string>
-    <string name="second">seconde</string>
-    <string name="seconds">secondes</string>
+    <string name="cue_hour">heure</string>
+    <string name="cue_hours">heures</string>
+    <string name="cue_minute">minute</string>
+    <string name="cue_minutes">minutes</string>
+    <string name="cue_second">seconde</string>
+    <string name="cue_seconds">secondes</string>
 
-    <string name="meter">metre</string>
-    <string name="meters">metres</string>
-    <string name="kilometer">kilometre</string>
-    <string name="kilometers">kilometres</string>
-    <string name="perkilometer">par kilometre</string>
-    <string name="permile">par mile</string>
+    <string name="cue_meter">metre</string>
+    <string name="cue_meters">metres</string>
+    <string name="cue_kilometer">kilometre</string>
+    <string name="cue_kilometers">kilometres</string>
+	<string name="cue_mile">mile</string>
+	<string name="cue_miles">miles</string>
+    <string name="cue_perkilometer">par kilometre</string>
+    <string name="cue_permile">par mile</string>
 
-    <string name="started">Démarrer</string>
-    <string name="paused">En pause</string>
-    <string name="resumed">Reprise</string>
-    <string name="stopped">Stoppé</string>
-    <string name="completed">Completé</string>
+    <string name="cue_started">Démarrer</string>
+    <string name="cue_paused">En pause</string>
+    <string name="cue_resumed">Reprise</string>
+    <string name="cue_stopped">Stoppé</string>
+    <string name="cue_completed">Completé</string>
 
     <string name="cue_speedup">Accélerer</string>
     <string name="cue_slowdown">Ralentir</string>

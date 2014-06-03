@@ -34,12 +34,12 @@ public enum Intensity {
 	/**
 	 * Warm up
 	 */
-	WARMUP(INTENSITY.WARMUP, R.string.txt_intensity_warmup),
+	WARMUP(INTENSITY.WARMUP, R.string.txt_intensity_warmup, R.string.cue_warmup),
 	
 	/**
 	 * Cool down
 	 */
-	COOLDOWN(INTENSITY.COOLDOWN, R.string.txt_intensity_cooldown),
+	COOLDOWN(INTENSITY.COOLDOWN, R.string.txt_intensity_cooldown, R.string.cue_cooldown),
 
 	/**
 	 * Loop (for workout construction/plans)
@@ -48,9 +48,18 @@ public enum Intensity {
 
 	int value;
 	int textId;
+	int cueId;
+
 	Intensity(int val, int textId) {
 		this.value = val;
 		this.textId = textId;
+		this.cueId = textId;
+	}
+
+	Intensity(int val, int textId, int cueId) {
+		this.value = val;
+		this.textId = textId;
+		this.cueId = cueId;
 	}
 
 	public int getValue() {
@@ -62,6 +71,6 @@ public enum Intensity {
 	}
 
 	public int getCueId() {
-		return textId;
+		return cueId;
 	}
 }
