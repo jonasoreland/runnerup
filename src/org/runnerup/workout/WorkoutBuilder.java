@@ -449,6 +449,10 @@ public class WorkoutBuilder {
 	}	
 
 	private static void createAudioCountdown(Step step) {
+		if (step.getDurationType() == null) {
+			return;
+		}
+		
 		double first = 0;
 		ArrayList<Double> list = new ArrayList<Double>();
 		switch (step.getDurationType()) {
