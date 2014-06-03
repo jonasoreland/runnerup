@@ -582,7 +582,9 @@ public class AndroidBLEHRProvider implements HRProvider {
 			}
 		} else {
 			System.out.println("close btGatt here in disconnect()");
-			btGatt.close();
+			BluetoothGatt copy = btGatt;
+			if (copy != null)
+				copy.close();
 			btGatt = null;
 		}
 
