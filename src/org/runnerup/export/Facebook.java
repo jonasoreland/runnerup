@@ -217,6 +217,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 		long now = System.currentTimeMillis() / 1000;
 
 		if (now + ONE_DAY > endTime) {
+			
 			System.err.println("now: " + now + ", endTime: " + endTime + ", now + ONE_DAY: " + (now + ONE_DAY) + " => needs refresh");
 			return s;
 		}

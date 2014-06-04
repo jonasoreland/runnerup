@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -94,6 +95,14 @@ public class AndroidBLEHRProvider implements HRProvider {
 		return NAME;
 	}
 
+	public boolean isEnabled() {
+		return Bt20Base.isEnabledImpl();
+	}
+
+	public boolean startEnableIntent(Activity activity, int requestCode) {
+		return Bt20Base.startEnableIntentImpl(activity, requestCode);
+	}
+	
 	@Override
 	public void open(Handler handler, HRClient hrClient) {
 		this.hrClient = hrClient;
@@ -407,7 +416,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 				@Override
 				public void run() {
 					if (mIsScanning) { // NOTE: mIsScanning in user-thread
-						hrClient.onScanResult(NAME, device);
+						hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, device));
 					}
 				}
 			});
@@ -446,8 +455,15 @@ public class AndroidBLEHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(BluetoothDevice dev, String btDeviceName) {
+	public void connect(HRDeviceRef ref) {
 		stopScan();
+
+		if (!Bt20Base.isEnabledImpl()) {
+			reportConnectFailed("BT is not enabled");
+			return;
+		}
+		
+		BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(ref.deviceAddress);
 
 		if (mIsConnected)
 			return;
@@ -457,8 +473,8 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 		mIsConnecting = true;
 		btDevice = dev;
-		if (btDeviceName == null || dev.getName() == null
-				|| !dev.getName().contentEquals(btDevice.getName())) {
+		if (ref.deviceName == null || dev.getName() == null
+				|| !dev.getName().contentEquals(ref.deviceName)) {
 			/**
 			 * If device doesn't match name, scan for before connecting
 			 */
@@ -492,6 +508,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 	private void reportConnectFailed(String string) {
 		System.err.println("reportConnectFailed(" + string + ")");
 		if (btGatt != null) {
+			btGatt.disconnect();
 			btGatt.close();
 			btGatt = null;
 		}
@@ -565,7 +582,9 @@ public class AndroidBLEHRProvider implements HRProvider {
 			}
 		} else {
 			System.out.println("close btGatt here in disconnect()");
-			btGatt.close();
+			BluetoothGatt copy = btGatt;
+			if (copy != null)
+				copy.close();
 			btGatt = null;
 		}
 

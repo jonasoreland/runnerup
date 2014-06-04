@@ -50,7 +50,7 @@ public class NikeXML {
 
 	public NikeXML(final SQLiteDatabase db) {
 		mDB = db;
-		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssZ",
+		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ",
 				Locale.US);
 	}
 

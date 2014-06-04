@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2013 jonas.oreland@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.runnerup.hr;
 
 import java.io.IOException;
@@ -9,10 +25,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 
@@ -25,6 +43,25 @@ import android.os.Handler;
 @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public abstract class Bt20Base implements HRProvider {
 
+	public boolean isEnabled() {
+		return isEnabledImpl();
+	}
+	
+	public static boolean isEnabledImpl() {
+		if (BluetoothAdapter.getDefaultAdapter() != null)
+			return BluetoothAdapter.getDefaultAdapter().isEnabled();
+		return false;
+	}
+
+	public boolean startEnableIntent(Activity activity, int requestCode) {
+		return startEnableIntentImpl(activity, requestCode);
+	}
+
+	public static boolean startEnableIntentImpl(Activity activity, int requestCode) {
+		activity.startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), requestCode);
+		return true;
+	}
+	
 	public static boolean checkLibrary(Context ctx) {
 
 		// Don't bother if createInsecureRfcommSocketToServiceRecord isn't
@@ -161,7 +198,7 @@ public abstract class Bt20Base implements HRProvider {
 		if (mIsScanning) {
 			BluetoothDevice dev = list.iterator().next();
 			list.remove(dev);
-			hrClient.onScanResult(getProviderName(), dev);
+			hrClient.onScanResult(createDeviceRef(getProviderName(), dev));
 			hrClientHandler.post(new Runnable() {
 
 				@Override
@@ -178,11 +215,16 @@ public abstract class Bt20Base implements HRProvider {
 	}
 
 	@Override
-	public void connect(BluetoothDevice bluetoothDevice, String btDeviceName) {
+	public void connect(HRDeviceRef ref) {
 		cancelThreads();
 
+		if (!isEnabledImpl()) {
+			reportConnected(false);
+			return;
+		}
+		
 		mIsConnecting = true;
-		connectThread = new ConnectThread(btAdapter.getRemoteDevice(bluetoothDevice.getAddress()), btDeviceName);
+		connectThread = new ConnectThread(btAdapter.getRemoteDevice(ref.deviceAddress), ref.deviceName);
 		connectThread.start();
 	}
 
@@ -232,16 +274,24 @@ public abstract class Bt20Base implements HRProvider {
 	}
 
 
-	private void reportConnected() {
+	private void reportConnected(final boolean result) {
+		System.err.println("reportConnected("+result+") mIsConnecting: " + mIsConnecting + ", mIsConnected: " + mIsConnected + ", hrClient: " + hrClient);
 		if (hrClient != null) {
 			hrClientHandler.post(new Runnable() {
 
 				@Override
 				public void run() {
+					boolean reset = !result;
 					if (mIsConnecting && hrClient != null) {
-						mIsConnected = true;
+						mIsConnected = result;
 						mIsConnecting = false;
-						hrClient.onConnectResult(true);
+						hrClient.onConnectResult(result);
+					} else {
+						reset = true;
+					}
+					
+					if (reset) {
+						Bt20Base.this.reset();
 					}
 				}
 			});
@@ -309,8 +359,8 @@ public abstract class Bt20Base implements HRProvider {
 		
 		@Override
 		public void run() {
-			if (btAdapter == null) {
-				Bt20Base.this.reset();
+			if (btAdapter == null || bluetoothDevice == null || deviceName == null) {
+				reportConnected(false);
 				return;
 			}
 			
@@ -322,14 +372,14 @@ public abstract class Bt20Base implements HRProvider {
 				try {
 					bluetoothSocket = tryConnect(bluetoothDevice, i);
 					break;
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
 
 			if (bluetoothSocket == null) {
 				System.err.println("connect failed!");
-				Bt20Base.this.reset();
+				reportConnected(false);
 				return;
 				
 			}
@@ -340,6 +390,7 @@ public abstract class Bt20Base implements HRProvider {
 				synchronized (Bt20Base.this) {
 					connectThread = null;
 				}
+				reportConnected(false);
 				return;
 			}
 			
@@ -419,7 +470,7 @@ public abstract class Bt20Base implements HRProvider {
 
 						if (hrValue > 0 && mIsConnecting) {
 							System.err.println("hrValue: " + hrValue + " => reportConnected");
-							reportConnected();
+							reportConnected(true);
 						}
 					}
 
@@ -467,7 +518,7 @@ public abstract class Bt20Base implements HRProvider {
 						 * reconnect
 						 */
 						System.err.println("reportDisconnect() => reconnecting");
-						connect(bluetoothDevice, btDeviceName);
+						connect(Bt20Base.createDeviceRef(getProviderName(), bluetoothDevice));
 						return;
 					} else {
 						System.err.println("reportDisconnect() mIsConnected != true");
@@ -549,11 +600,20 @@ public abstract class Bt20Base implements HRProvider {
 		    boolean ok = buffer.length > ZEPHYR_HXM_BYTE_ETX
 		        && getByte(buffer[ZEPHYR_HXM_BYTE_STX]) == ZEPHYR_START_BYTE
 		        && getByte(buffer[ZEPHYR_HXM_BYTE_ETX]) == ZEPHYR_END_BYTE
-		        && CalcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
+		        && calcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
 
-		    if (!ok)
-		    	return -1;
-		    
+			if (!ok) {
+				System.err.println("HxM insanity! "
+						+ (buffer.length > ZEPHYR_HXM_BYTE_ETX) + " "
+						+ getByte(buffer[ZEPHYR_HXM_BYTE_STX]) + "=="
+						+ ZEPHYR_START_BYTE + " "
+						+ getByte(buffer[ZEPHYR_HXM_BYTE_ETX]) + "=="
+						+ ZEPHYR_END_BYTE + " " + "calc="
+						+ calcCrc8(buffer, 3, 55) + " " + "given="
+						+ getByte(buffer[ZEPHYR_HXM_BYTE_CRC]));
+				return -1;
+			}
+
 		    return getByte(buffer[ZEPHYR_HXM_BYTE_HR]); 
 		}
 
@@ -567,6 +627,24 @@ public abstract class Bt20Base implements HRProvider {
 			}
 			return -1;
 		}
+		
+		private static int calcCrc8(byte buffer[], int start, int length) {
+			int crc = 0x0;
+
+			for (int i = start; i < (start + length); i++) {
+				crc ^= getByte(buffer[i]);
+				for (int b = 0; b <= 7; b++) {
+					if ((crc & 1) != 0) {
+						crc = ((crc >> 1) ^ 0x8c);
+					} else {
+						crc = (crc >> 1);
+					}
+				}
+		    }
+		    return crc;
+		}
+
+
 	};
 
 	public static class PolarHRM extends Bt20Base {
@@ -632,16 +710,11 @@ public abstract class Bt20Base implements HRProvider {
 		}
 	};
 	
-	public static byte CalcCrc8(byte buffer[], int start, int length) {
-	    byte crc = 0x0;
-
-	    for (int i = start; i < (start + length); i++) {
-	      crc = (byte) (crc ^ buffer[i]);
-	    }
-	    return crc;
-	}
-
 	static public int getByte(byte b) {
 		return b & 0xFF;
+	}
+
+	public static HRDeviceRef createDeviceRef(String providerName, BluetoothDevice device) {
+		return HRDeviceRef.create(providerName, device.getName(), device.getAddress());
 	}
 }

@@ -1,6 +1,49 @@
 <html>
 <body>
 <h1>What's new</h1>
+<h2>v1.30</h2>
+<ul>
+<li>Revert experimental Android >= 4.3 BLE HRM changes (that ended up in release by misstake :-( (reported by Yanick Lantaigne)
+<li>Fix start RunnerUp with HRM configured by bluetooth turned off which could sometimes give crash (reported by David Golovan)
+<li>Fix reporting of failed connection to PolarWearLink, <b>NOTE:</b> Weirdly enough uninstalling RunKeeper seems to make it more stable??
+</ul>
+<h2>v1.29</h2>
+<ul>
+<li>Adopt to Nike+ unannounced changes
+<li>BUG: mapmyrun login (thx to nick scirrotto for help)
+</ul>
+<h2>v1.28</h2>
+<ul>
+<li>ANT+ HRM support<br>
+(for devices that support it, I first tested that <a href=https://play.google.com/store/apps/details?id=com.dsi.ant.antplusdemo>ANT+ Demo</a> worked.)
+<li>BUG: suppress empty audio cues if one skipped over a step
+</ul>
+<h2>v1.27</h2>
+<ul>
+<li>Fix TCX/GPX date-format bug (thx to Jang-Hwan Ahn for report) 
+<li>Mark Zephyr stable
+<li>Revert "Facebook reauthorize"-fix.
+Still need to figure out how to avoid having to enter username/password every 60 days
+</li>
+</ul>
+<h2>v1.26</h2>
+<ul>
+<li>Fix bug: test audio cue button
+<li>Add end of lap trigger (<b>note</b>: enabled by default!)
+<li>Handled change of RunningAHEAD API
+<li>Fix Facebook reauthorize problem
+<li>Fix Zephyr HRM stability (contributed by stribb)
+<li>Add some bundled workouts and audio cues
+</li>
+</ul>
+<h2>v1.25</h2>
+<ul>
+<li>Fix bug with Garmin upload (that surfaced after changes on their side)
+</ul>
+<h2>v1.24</h2>
+<ul>
+<li>Adopt to new Garmin login
+</ul>
 <h2>v1.23</h2>
 <ul>
 <li>Fix bug with incorrect HR cue in interval program

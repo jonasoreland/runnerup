@@ -16,19 +16,29 @@
  */
 package org.runnerup.view;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.AssetManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -119,8 +129,92 @@ public class MainLayout extends TabActivity {
 		if (upgradeState == UpgradeState.UPGRADE) {
 			whatsNew();
 		}
+
+		handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()+"/..");
+	}
+
+	void handleBundled (AssetManager mgr, String src, String dst) {
+		String list[] = null;
+		try {
+			list = mgr.list(src);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (list != null) {
+			for (int i = 0; i < list.length; ++i) {
+				boolean isFile = false;
+				String add = list[i];
+				try {
+					InputStream is = mgr.open(src + File.separator + add);
+					is.close();
+					isFile = true;
+				} catch (Exception ex) {
+				}
+
+				System.err.println("Found: " + dst + ", " + add + ", isFile: " + isFile);
+				if (isFile == false) {
+					File dstDir = new File(dst + File.separator + add);
+					dstDir.mkdir();
+					if (!dstDir.isDirectory()) {
+						System.err.println("Failed to copy " + add + " as \"" + dst + "\" is not a directory!");
+						continue;
+					}
+					if (dst == null)
+						handleBundled(mgr, src + File.separator + add, add);
+					else
+						handleBundled(mgr, src + File.separator + add, dst + File.separator + add);
+				} else {
+					String tmp = dst + File.separator + add;
+					File dstFile = new File(tmp);
+					if (dstFile.isDirectory() || dstFile.isFile()) {
+						System.err.println("Skip: " + tmp + 
+								", isDirectory(): " + dstFile.isDirectory() +
+								", isFile(): " + dstFile.isFile());
+						continue;
+					}
+
+					String key = "install_bundled_"+add;
+					SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+					if (pref.contains(key)) {
+						System.err.println("Skip: " + key);
+						continue;
+						
+					}
+					
+					pref.edit().putBoolean(key, true).commit();					
+					System.err.println("Copying: " + tmp);
+					InputStream input = null;
+					try {
+						input = mgr.open(src + File.separator + add);
+						FileUtil.copy(input, tmp);
+						handleHooks(src, add);
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						FileUtil.close(input);
+					}
+				}
+			}
+		}
 	}
 	
+	private void handleHooks(String path, String file) {
+		if (file.contains("_audio_cues.xml")) {
+			String name = file.substring(0, file.indexOf("_audio_cues.xml"));
+
+			DBHelper mDBHelper = new DBHelper(this);
+			SQLiteDatabase mDB = mDBHelper.getWritableDatabase();
+
+			ContentValues tmp = new ContentValues();
+			tmp.put(DB.AUDIO_SCHEMES.NAME, name);
+			tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
+			mDB.insert(DB.AUDIO_SCHEMES.TABLE, null, tmp);
+			
+			mDB.close();
+			mDBHelper.close();
+		}
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main_menu, menu);

@@ -1,8 +1,8 @@
 package org.runnerup.hr;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
@@ -10,6 +10,7 @@ import android.os.Handler;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MockHRProvider implements HRProvider {
 
+	
 	private HRClient hrClient = null;
 	private Handler hrClientHandler = null;
 	public static final String NAME = "MockHR";
@@ -51,7 +52,7 @@ public class MockHRProvider implements HRProvider {
 		public void run() {
 			if (mIsScanning) {
 				String dev = "00:43:A8:23:10:"+String.format("%02X", System.currentTimeMillis() % 256);
-				hrClient.onScanResult(NAME, BluetoothAdapter.getDefaultAdapter().getRemoteDevice(dev));
+				hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, BluetoothAdapter.getDefaultAdapter().getRemoteDevice(dev)));
 				if (++count < 3) {
 					hrClientHandler.postDelayed(fakeScanResult, 3000);
 					return;
@@ -86,7 +87,7 @@ public class MockHRProvider implements HRProvider {
 	}
 
 	@Override
-	public void connect(BluetoothDevice _btDevice, String btDeviceName) {
+	public void connect(HRDeviceRef ref) {
 		if (mIsConnected)
 			return;
 		
@@ -138,6 +139,16 @@ public class MockHRProvider implements HRProvider {
 
 	@Override
 	public boolean isBondingDevice() {
+		return false;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean startEnableIntent(Activity activity, int requestCode) {
 		return false;
 	}
 }

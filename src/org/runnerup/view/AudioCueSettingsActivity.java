@@ -27,12 +27,9 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
-import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Feedback;
-import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
-import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import android.annotation.TargetApi;
@@ -389,8 +386,9 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 				final String mute = prefs.getString(getResources().getString(R.string.pref_mute), "no");
 
 				Workout w = Workout.fakeWorkoutForTestingAudioCue();
+				RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
 				HashMap<String, Object> bindValues = new HashMap<String, Object>();
-				bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute, getApplicationContext()));
+				bindValues.put(Workout.KEY_TTS, rutts);
 				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
 				bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
 				w.onBind(w,  bindValues);
@@ -398,6 +396,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 					f.onInit(w);
 					f.onBind(w, bindValues);
 					f.emit(w,  AudioCueSettingsActivity.this.getApplicationContext());
+					rutts.emit();
 				}
 			}
 		};

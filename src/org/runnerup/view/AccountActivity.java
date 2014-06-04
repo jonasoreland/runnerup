@@ -304,7 +304,7 @@ public class AccountActivity extends Activity implements Constants {
 
 	OnClickListener disconnectButtonClick = new OnClickListener() {
 		public void onClick(View v) {
-			final CharSequence items[] = { "Clear uploads" };
+			final CharSequence items[] = { "Clear uploads (from phone)" };
 			final boolean selected[] = { true };
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					AccountActivity.this);

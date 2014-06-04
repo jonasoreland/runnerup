@@ -72,6 +72,13 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 		this.getSupportLoaderManager().initLoader(0,  null,  this);
 	}
 
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		getSupportLoaderManager().restartLoader(0,  null , this);
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();

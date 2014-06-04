@@ -25,5 +25,6 @@ Releases can be found at https://play.google.com/store/apps/details?id=org.runne
 
 DEPENDENCIES:
 
-http://developer.android.com/google/play-services/index.html
-https://github.com/jjoe64/GraphView.git
+- http://developer.android.com/google/play-services/index.html
+- https://github.com/jjoe64/GraphView.git
+- http://www.thisisant.com

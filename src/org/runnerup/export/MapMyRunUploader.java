@@ -128,6 +128,18 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 		user_key = null;
 	}
 
+	private String toHexString(byte messageDigest[]) {
+		StringBuffer hexString = new StringBuffer();
+		for (byte b : messageDigest) {
+			String h = Integer.toHexString(0xFF & b);
+			while (h.length() < 2)
+				h = "0" + h;
+			hexString.append(h);
+		}
+		return hexString.toString();
+
+	}
+	
 	@Override
 	public Status connect() {
 		if (isConfigured()) {
@@ -143,8 +155,9 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 		Exception ex = null;
 		HttpURLConnection conn = null;
 		try {
-			if (md5pass == null) {
-				md5pass = Encryption.toHex(Encryption.md5(password));
+			String pass = md5pass;
+			if (pass == null) {
+				pass = toHexString(Encryption.md5(password));
 			}
 			
 			/**
@@ -158,7 +171,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 			FormValues kv = new FormValues();
 			kv.put("consumer_key", CONSUMER_KEY);
 			kv.put("u", username);
-			kv.put("p", md5pass);
+			kv.put("p", pass);
 
 			{
 				OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
@@ -170,10 +183,16 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 				JSONObject obj = parse(in);
 				conn.disconnect();
 
-				JSONObject user = obj.getJSONObject("result").getJSONObject("output").getJSONObject("user");
-				user_id = user.getString("user_id");
-				user_key = user.getString("user_key");
-				return Uploader.Status.OK;
+				try {
+					JSONObject user = obj.getJSONObject("result").getJSONObject("output").getJSONObject("user");
+					user_id = user.getString("user_id");
+					user_key = user.getString("user_key");
+					md5pass = pass;
+					return Uploader.Status.OK;
+				} catch (JSONException e) {
+					System.err.println("obj: " + obj);
+					throw e;
+				}
 			}
 		} catch (MalformedURLException e) {
 			ex = e;

@@ -45,7 +45,7 @@ public class EndomondoTrack {
 
 	public EndomondoTrack(final SQLiteDatabase db) {
 		mDB = db;
-		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss 'UTC'",
+		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'",
 				Locale.US);
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}

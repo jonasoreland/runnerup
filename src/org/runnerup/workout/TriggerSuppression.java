@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 jonas.oreland@gmail.com
+ * Copyright (C) 2014 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,41 +16,7 @@
  */
 package org.runnerup.workout;
 
-import org.runnerup.R;
+public abstract class TriggerSuppression {
 
-/**
- * This is just constant
- */
-public enum Event {
-
-	STARTED(1,R.string.cue_started),
-	PAUSED(2, R.string.cue_paused),
-	STOPPED(3, R.string.cue_stopped),
-	RESUMED(4, R.string.cue_resumed),
-	COMPLETED(5, R.string.cue_completed);
-
-	int value = 0;
-	int cueId;
-	
-	private Event(int val, int cueId) {
-		this.value = val;
-		this.cueId = cueId;
-	}
-
-	/**
-	 * @return the eventValue
-	 */
-	public int getValue() {
-		return value;
-	}
-
-	public boolean equal(Event what) {
-		if (what == null || what.value != this.value)
-			return false;
-		return true;
-	}
-
-	public int getCueId() {
-		return cueId;
-	}
+	public abstract boolean suppress(Trigger trigger, Workout w);
 }

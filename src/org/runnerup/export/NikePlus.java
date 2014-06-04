@@ -18,8 +18,12 @@ package org.runnerup.export;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -167,6 +171,7 @@ public class NikePlus extends FormCrawler implements Uploader {
 			conn.setRequestMethod("POST");
 			conn.addRequestProperty("user-agent", USER_AGENT);
 			conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			conn.addRequestProperty("Accept", "application/json");
 
 			FormValues kv = new FormValues();
 			kv.put("email", username);
@@ -178,8 +183,19 @@ public class NikePlus extends FormCrawler implements Uploader {
 				wr.flush();
 				wr.close();
 
-				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = parse(in);
+				String response;
+				{
+					BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+					StringBuffer buf = new StringBuffer();
+					String line;
+					while ((line = in.readLine()) != null) {
+						buf.append(line);
+					}
+					response = buf.toString().replaceAll("<User>.*</User>", "\"\"");
+					System.err.println("buf: " + buf.toString());
+					System.err.println("res: " + response.toString());
+				}
+				JSONObject obj = parse(new ByteArrayInputStream(response.getBytes()));
 				conn.disconnect();
 
 				access_token = obj.getString("access_token");
@@ -306,7 +322,7 @@ public class NikePlus extends FormCrawler implements Uploader {
 		}
 
 		try {
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'");
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			df.setTimeZone(TimeZone.getTimeZone("UTC"));
 			List<ContentValues> result = new ArrayList<ContentValues>();
 			getOwnFeed(df, result);

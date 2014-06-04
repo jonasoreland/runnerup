@@ -438,8 +438,10 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 						}
 						
 						setName(c, e.getString("sourceUserDisplayName"));
-						c.put(FEED.USER_IMAGE_URL, e.getString("sourceUserAvatarUrl"));
-
+						if (e.has("sourceUserAvatarUrl") && e.getString("sourceUserAvatarUrl").length() > 0) {
+							c.put(FEED.USER_IMAGE_URL, e.getString("sourceUserAvatarUrl"));
+						}
+						
 						reply.add(c);
 						from = e.getLong("posttime");
 					} catch (Exception ex) {
