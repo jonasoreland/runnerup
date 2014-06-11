@@ -284,7 +284,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			}
 			break;
 		case R.id.menu_recompute_activity:
-			ActivityCleaner.recompute(mDB, mID);
+			new ActivityCleaner().recompute(mDB, mID);
 			requery();
 			break;
 		case R.id.menu_share_activity:
@@ -309,7 +309,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			 */
 			String[] from = new String[] { "_id", DB.LAP.LAP, DB.LAP.INTENSITY,
 					DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.PLANNED_TIME,
-					DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE };
+					DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE, DB.LAP.AVG_HR };
 
 			Cursor c = mDB.query(DB.LAP.TABLE, from, DB.LAP.ACTIVITY + " == " + mID,
 					null, null, null, "_id", null);
@@ -480,6 +480,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			{
 				tv4.setText("");
 			}
+			int hr = laps[position].containsKey(DB.LAP.AVG_HR) ? laps[position].getAsInteger(DB.LAP.AVG_HR) : 0;
+			TextView tvHr = (TextView) view.findViewById(R.id.lapList_hr);
+			if (hr > 0)
+				tvHr.setText(formatter.formatHeartRate(Formatter.TXT_LONG, hr));
+			else
+				tvHr.setText("");
+
 			return view;
 		}
 	};

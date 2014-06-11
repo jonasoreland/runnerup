@@ -28,11 +28,13 @@ import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityCleaner implements org.runnerup.util.Constants {
-
+	long _totalSumHr = 0;
+	int _totalCount = 0;
+	int _totalMaxHr = 0;
 	/**
 	 * recompute laps aggregates based on locations
 	 */
-	private static void recomputeLaps(SQLiteDatabase db, long activityId) {
+	private void recomputeLaps(SQLiteDatabase db, long activityId) {
 		final String[] cols = new String[] { 
 				DB.LAP.LAP
 		};
@@ -55,16 +57,19 @@ public class ActivityCleaner implements org.runnerup.util.Constants {
 	/**
 	 * recompute a lap aggregate based on locations
 	 */
-	private static void recomputeLap(SQLiteDatabase db, long activityId, long lap) {
+	private void recomputeLap(SQLiteDatabase db, long activityId, long lap) {
 		long sum_time = 0;
+		long sum_hr = 0;
 		double sum_distance = 0;
-		
+		int count = 0;
+		int max_hr = 0;
 		final String[] cols = new String[] { 
 				DB.LOCATION.TIME,
 				DB.LOCATION.LATITUDE,
 				DB.LOCATION.LONGITUDE,
 				DB.LOCATION.TYPE,
-				"_id" };
+				DB.LOCATION.HR,
+				"_id"};
 
 		Cursor c = db.query(DB.LOCATION.TABLE, cols, DB.LOCATION.ACTIVITY + " = " + activityId + " and " + DB.LOCATION.LAP + " = " + lap,
 				null, null, null, "_id", null);
@@ -93,6 +98,13 @@ public class ActivityCleaner implements org.runnerup.util.Constants {
 
 					sum_distance += l.distanceTo(lastLocation);
 					sum_time += l.getTime() - lastLocation.getTime();
+					int hr = c.getInt(4);
+					sum_hr += hr;
+					max_hr = Math.max(max_hr, hr);
+					_totalMaxHr = Math.max(_totalMaxHr, hr);
+					count++;
+					_totalCount++;
+					_totalSumHr += hr;
 					lastLocation = l;
 					break;
 				}
@@ -103,16 +115,22 @@ public class ActivityCleaner implements org.runnerup.util.Constants {
 		ContentValues tmp = new ContentValues();
 		tmp.put(DB.LAP.DISTANCE, sum_distance);
 		tmp.put(DB.LAP.TIME, (sum_time / 1000));
+		int hr = 0;
+		if (sum_hr > 0) {
+			hr = Math.round(sum_hr / count);
+			tmp.put(DB.LAP.AVG_HR, hr);
+			tmp.put(DB.LAP.MAX_HR, max_hr);
+		}
 		db.update(DB.LAP.TABLE, tmp, DB.LAP.ACTIVITY + " = " + activityId + " and " + DB.LAP.LAP + " = " + lap, null);
 	}
 
 	/**
 	 * recompute an activity summary based on laps
 	 */
-	private static void recomputeSummary(SQLiteDatabase db, long activityId) {
+	private void recomputeSummary(SQLiteDatabase db, long activityId) {
 		long sum_time = 0;
 		double sum_distance = 0;
-		
+
 		final String[] cols = new String[] { 
 				DB.LAP.DISTANCE,
 				DB.LAP.TIME
@@ -130,10 +148,17 @@ public class ActivityCleaner implements org.runnerup.util.Constants {
 		ContentValues tmp = new ContentValues();
 		tmp.put(DB.ACTIVITY.DISTANCE, sum_distance);
 		tmp.put(DB.ACTIVITY.TIME, sum_time);
+		if(_totalSumHr > 0) {
+			int hr = Math.round(_totalSumHr / _totalCount);
+			tmp.put(DB.ACTIVITY.AVG_HR, hr);
+			tmp.put(DB.ACTIVITY.MAX_HR, _totalMaxHr);
+		}
+
+
 		db.update(DB.ACTIVITY.TABLE, tmp, "_id = " + activityId, null);
 	}
 
-	public static void recompute(SQLiteDatabase db, long activityId) {
+	public void recompute(SQLiteDatabase db, long activityId) {
 		recomputeLaps(db, activityId);
 		recomputeSummary(db, activityId);
 	}
