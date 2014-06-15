@@ -155,7 +155,7 @@
 		    android:name=".workout.HeadsetButtonReceiver"
 		    android:enabled="true" >
 		    <intent-filter>
-		        <action android:name="android.intent.action.MEDIA_BUTTON" />
+		        <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
 		    </intent-filter>
 		</receiver>
 		
