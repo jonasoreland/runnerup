@@ -57,6 +57,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.ACTIVITY.NAME + " text," )
 			+ ( DB.ACTIVITY.COMMENT + " text," )
 			+ ( DB.ACTIVITY.SPORT + " integer," )
+			+ ( DB.ACTIVITY.AVG_HR + " int, " )
+			+ ( DB.ACTIVITY.MAX_HR + " int, " )
 			+ ( "deleted integer not null default 0, " )
 			+ "nullColumnHack text null" + ");";
 
@@ -86,7 +88,9 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.LAP.DISTANCE + " real, " )
 			+ ( DB.LAP.PLANNED_TIME + " integer, " )
 			+ ( DB.LAP.PLANNED_DISTANCE + " real, " )
-			+ ( DB.LAP.PLANNED_PACE + " real " )
+			+ ( DB.LAP.PLANNED_PACE + " real, " )
+			+ ( DB.LAP.AVG_HR + " int, " )
+			+ ( DB.LAP.MAX_HR + " int " )
 			+ ");";
 
 	private static final String CREATE_TABLE_ACCOUNT = "create table "
