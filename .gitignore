@@ -21,3 +21,15 @@ local.properties
 
 # imported code
 libs/
+
+# Gedit temp files
+*~
+
+# gradle files
+.gradle/
+.idea/
+build/
+
+# Intellij files (Android Studio)
+*.iml
+
