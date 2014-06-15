@@ -264,10 +264,12 @@ public class Step implements TickComponent {
 		 */
 		long distance = Math.round(s.getDistance(Scope.LAP));
 		long time = Math.round(s.getTime(Scope.LAP));
+		long hr = Math.round(s.getHeartRate(Scope.LAP));
 		if (distance > 0 || time > 0) {
 			ContentValues tmp = new ContentValues();
 			tmp.put(DB.LAP.DISTANCE, distance);
 			tmp.put(DB.LAP.TIME, time);
+			tmp.put(DB.LAP.AVG_HR, Math.round(hr));
 			s.saveLap(tmp, /** next lap */
 			false);
 		}
@@ -324,10 +326,12 @@ public class Step implements TickComponent {
 		if (scope == Scope.LAP) {
 			long distance = Math.round(s.getDistance(scope));
 			long time = Math.round(s.getTime(scope));
+			double hr = s.getHeartRate(scope);
 			if (distance > 0 || time > 0) {
 				ContentValues tmp = new ContentValues();
 				tmp.put(DB.LAP.DISTANCE, distance);
 				tmp.put(DB.LAP.TIME, time);
+				tmp.put(DB.LAP.AVG_HR, Math.round(hr));
 				s.saveLap(tmp, /** next lap */ true);
 			}
 		}

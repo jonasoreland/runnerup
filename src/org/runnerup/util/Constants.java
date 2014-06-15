@@ -29,7 +29,8 @@ public interface Constants {
 			public static final String NAME = "name";
 			public static final String COMMENT = "comment";
 			public static final String SPORT = "type";
-
+			public static final String MAX_HR = "avg_hr";
+			public static final String AVG_HR = "max_hr";
 			public static final int SPORT_RUNNING = 0;
 			public static final int SPORT_BIKING = 1;
 			public static final int SPORT_OTHER = 2; // unknown
@@ -66,6 +67,8 @@ public interface Constants {
 			public static final String PLANNED_TIME = "planned_time";
 			public static final String PLANNED_DISTANCE = "planned_distance";
 			public static final String PLANNED_PACE = "planned_pace";
+			public static final String AVG_HR = "avg_hr";
+			public static final String MAX_HR = "max_hr";
 		};
 
 		public interface INTENSITY {
