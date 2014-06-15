@@ -45,7 +45,7 @@ import android.os.Build;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 23;
+	private static final int DBVERSION = 24;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -199,7 +199,14 @@ public class DBHelper extends SQLiteOpenHelper implements
 		if (oldVersion > 0 && oldVersion < 19 && newVersion >= 19) {
 			echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS + " + " + (1 << DB.ACCOUNT.FLAG_LIVE));
 		}
-		
+
+		if (oldVersion > 0 && oldVersion < 24 && newVersion >= 24) {
+			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_HR + " int");
+			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.MAX_HR + " int");
+			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.AVG_HR + " int");
+			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.MAX_HR + " int");
+		}
+
 		insertAccounts(arg0);
 	}
 

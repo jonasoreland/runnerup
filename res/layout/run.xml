@@ -47,9 +47,14 @@
             <TextView
                 android:id="@+id/activitySpeedPace"
                 style="@style/RunHeader"
-                android:layout_marginRight="3dp"
                 android:gravity="right"
                 android:text="Pace" />
+            <TextView
+                android:id="@+id/activityHeaderHr"
+                style="@style/RunHeader"
+                android:layout_marginRight="3dp"
+                android:gravity="right"
+                android:text="Hr" />
         </TableRow>
 
         <LinearLayout
@@ -87,8 +92,12 @@
                 <TextView
                     android:id="@+id/activityPace"
                     style="@style/RunInfo"
-                    android:layout_marginRight="3dp"
                     android:text="4:34" />
+                <TextView
+                    android:id="@+id/activityHr"
+                    style="@style/RunInfo"
+                    android:layout_marginRight="3dp"
+                    android:text="173" />
             </TableRow>
         </LinearLayout>
 
@@ -128,8 +137,12 @@
                 <TextView
                     android:id="@+id/intervalPace"
                     style="@style/RunInfo"
-                    android:layout_marginRight="3dp"
                     android:text="4:24" />
+                <TextView
+                    android:id="@+id/intervalHr"
+                    style="@style/RunInfo"
+                    android:layout_marginRight="3dp"
+                    android:text="184" />
             </TableRow>
         </LinearLayout>
 
@@ -169,8 +182,12 @@
                 <TextView
                     android:id="@+id/lapPace"
                     style="@style/RunInfo"
-                    android:layout_marginRight="3dp"
                     android:text="4:14" />
+                <TextView
+                    android:id="@+id/lapHr"
+                    style="@style/RunInfo"
+                    android:layout_marginRight="3dp"
+                    android:text="155" />
             </TableRow>
         </LinearLayout>
     </TableLayout>
