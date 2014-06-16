@@ -1,0 +1,18 @@
+Building with Android Studio is quite easy. Just follow these steps:
+
+    1. Run the following command to get all submodules:
+    
+        git submodule init && git submodule update
+        
+    2. Download Android studio here:
+    
+        http://developer.android.com/sdk/installing/studio.html
+        
+    3. When Android Studio is started, choose import project and pick the build.gradle file inside the runnerup folder.
+    
+    4. If Android Studio asks about what gradle to use, choose "gradle wrapper".
+    
+    5. Let Android Studio sync the project
+    
+    6. Press on the play button and the project should compile and deploy to your device!
+

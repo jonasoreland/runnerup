@@ -27,10 +27,6 @@ android {
             assets.srcDirs = ['assets']
         }
     }
-    /*
-    debug.setRoot('build-types/debug')
-    release.setRoot('build-types/release')
-    */
 }
 
 dependencies {
@@ -40,4 +36,29 @@ dependencies {
     compile files('GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')
     provided files('libs/antpluginlib_2.0.0.jar')
+}
+
+task downloadSamsungBleSdk(type: DownloadTask) {
+    sourceUrl = 'https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar'
+    target = file('libs/samsung_ble_sdk_200.jar')
+}
+preBuild.dependsOn downloadSamsungBleSdk
+
+task downloadAntPluginLib(type: DownloadTask) {
+    sourceUrl = 'https://github.com/ant-wireless/Android_API_ANTPlus/raw/master/antpluginlib_2.0.0.jar'
+    target = file('libs/antpluginlib_2.0.0.jar')
+}
+preBuild.dependsOn downloadAntPluginLib
+
+class DownloadTask extends DefaultTask {
+    @Input
+    String sourceUrl
+
+    @OutputFile
+    File target
+
+    @TaskAction
+    void download() {
+        ant.get(src: sourceUrl, dest: target)
+    }
 }
