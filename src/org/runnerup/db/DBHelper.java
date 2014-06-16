@@ -57,8 +57,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.ACTIVITY.NAME + " text," )
 			+ ( DB.ACTIVITY.COMMENT + " text," )
 			+ ( DB.ACTIVITY.SPORT + " integer," )
-			+ ( DB.ACTIVITY.AVG_HR + " int, " )
-			+ ( DB.ACTIVITY.MAX_HR + " int, " )
+			+ ( DB.ACTIVITY.AVG_HR + " integer, " )
+			+ ( DB.ACTIVITY.MAX_HR + " integer, " )
 			+ ( "deleted integer not null default 0, " )
 			+ "nullColumnHack text null" + ");";
 
@@ -75,7 +75,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.LOCATION.ALTITUDE + " real, " )
 			+ ( DB.LOCATION.SPEED + " real, " )
 			+ ( DB.LOCATION.BEARING	+ " real, " )
-			+ ( DB.LOCATION.HR	+ " int " )
+			+ ( DB.LOCATION.HR	+ " integer " )
 			+ ");";
 
 	private static final String CREATE_TABLE_LAP = "create table "
@@ -89,8 +89,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.LAP.PLANNED_TIME + " integer, " )
 			+ ( DB.LAP.PLANNED_DISTANCE + " real, " )
 			+ ( DB.LAP.PLANNED_PACE + " real, " )
-			+ ( DB.LAP.AVG_HR + " int, " )
-			+ ( DB.LAP.MAX_HR + " int " )
+			+ ( DB.LAP.AVG_HR + " integer, " )
+			+ ( DB.LAP.MAX_HR + " integer " )
 			+ ");";
 
 	private static final String CREATE_TABLE_ACCOUNT = "create table "
@@ -100,11 +100,11 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.ACCOUNT.DESCRIPTION + " text, " )
 			+ ( DB.ACCOUNT.URL + " text, " ) 
 			+ ( DB.ACCOUNT.FORMAT + " text not null, " )
-			+ ( DB.ACCOUNT.FLAGS + " int not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", " )
-			+ ( DB.ACCOUNT.ENABLED + " int not null default 1," )
+			+ ( DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", " )
+			+ ( DB.ACCOUNT.ENABLED + " integer not null default 1," )
 			+ ( DB.ACCOUNT.AUTH_METHOD + " text not null, " )
 			+ ( DB.ACCOUNT.AUTH_CONFIG + " text, " )
-			+ ( DB.ACCOUNT.ICON + " int null, " )
+			+ ( DB.ACCOUNT.ICON + " integer null, " )
 			+ "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
 
 	private static final String CREATE_TABLE_REPORT = "create table "
@@ -112,26 +112,26 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ "_id integer primary key autoincrement, " + DB.EXPORT.ACTIVITY
 			+ " integer not null, " + DB.EXPORT.ACCOUNT + " integer not null, "
 			+ DB.EXPORT.STATUS + " text, " + DB.EXPORT.EXTERNAL_ID + " text, "
-			+ DB.EXPORT.EXTRA + " int not null default 1" + ");";
+			+ DB.EXPORT.EXTRA + " integer not null default 1" + ");";
 
 	private static final String CREATE_TABLE_AUDIO_SCHEMES = "create table "
 			+ DB.AUDIO_SCHEMES.TABLE + " ( "
 			+ ( "_id integer primary key autoincrement, " )
 			+ ( DB.AUDIO_SCHEMES.NAME + " text not null, " )
-			+ ( DB.AUDIO_SCHEMES.SORT_ORDER + " int not null, " )
+			+ ( DB.AUDIO_SCHEMES.SORT_ORDER + " integer not null, " )
 			+ ( "unique (" + DB.AUDIO_SCHEMES.NAME + ")" )
 			+ ");";
 
 	private static final String CREATE_TABLE_FEED = "create table "
 			+ DB.FEED.TABLE + " ( "
 			+ ( "_id integer primary key autoincrement, " )
-			+ ( DB.FEED.ACCOUNT_ID + " int not null, " )
+			+ ( DB.FEED.ACCOUNT_ID + " integer not null, " )
 			+ ( DB.FEED.EXTERNAL_ID + " text, " )
-			+ ( DB.FEED.FEED_TYPE + " int not null, " )
-			+ ( DB.FEED.FEED_SUBTYPE + " int, " )
+			+ ( DB.FEED.FEED_TYPE + " integer not null, " )
+			+ ( DB.FEED.FEED_SUBTYPE + " integer, " )
 			+ ( DB.FEED.FEED_TYPE_STRING + " text, " )
-			+ ( DB.FEED.START_TIME + " int not null, " )
-			+ ( DB.FEED.DURATION + " int, ")
+			+ ( DB.FEED.START_TIME + " integer not null, " )
+			+ ( DB.FEED.DURATION + " integer, ")
 			+ ( DB.FEED.DISTANCE + " double, ")
 			+ ( DB.FEED.USER_ID + " text, " )
 			+ ( DB.FEED.USER_FIRST_NAME + " text, " )
@@ -175,7 +175,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 		}
 
 		if (oldVersion > 0 && oldVersion < 5 && newVersion >= 5) {
-			arg0.execSQL("alter table account add column icon int");
+			arg0.execSQL("alter table account add column icon integer");
 		}
 
 		if (oldVersion > 0 && oldVersion < 7 && newVersion >= 7) {
@@ -205,10 +205,10 @@ public class DBHelper extends SQLiteOpenHelper implements
 		}
 
 		if (oldVersion > 0 && oldVersion < 24 && newVersion >= 24) {
-			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_HR + " int");
-			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.MAX_HR + " int");
-			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.AVG_HR + " int");
-			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.MAX_HR + " int");
+			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_HR + " integer");
+			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.MAX_HR + " integer");
+			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.AVG_HR + " integer");
+			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.MAX_HR + " integer");
 		}
 
 		insertAccounts(arg0);
