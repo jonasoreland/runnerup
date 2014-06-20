@@ -54,13 +54,15 @@ public class EndomondoTrack {
 		public int sport;
 		public long duration;
 		public double distance;
+		public Long hr;
 	};
 	
 	public void export(final long activityId, final Writer writer, Summary summary) throws IOException {
 
 		final String[] aColumns = { DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
 				DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME,
-				DB.ACTIVITY.SPORT };
+				DB.ACTIVITY.SPORT,
+				DB.ACTIVITY.AVG_HR };
 		final Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
 				+ activityId, null, null, null, null);
 		cursor.moveToFirst();
@@ -69,8 +71,10 @@ public class EndomondoTrack {
 		final long duration = cursor.getLong(4);
 
 		if (summary != null) {
+			summary.hr = null;
 			summary.distance = distance;
 			summary.duration = duration;
+			summary.sport = 22; // other
 			switch(cursor.getInt(5)) {
 			case DB.ACTIVITY.SPORT_RUNNING:
 				summary.sport = 0;
@@ -78,9 +82,9 @@ public class EndomondoTrack {
 			case DB.ACTIVITY.SPORT_BIKING:
 				summary.sport = 2;
 				break;
-			default:
-				summary.sport = 22; // other
-				break;
+			}
+			if (!cursor.isNull(6)) {
+				summary.hr = cursor.getLong(6);
 			}
 		}
 		cursor.close();

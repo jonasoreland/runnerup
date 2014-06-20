@@ -246,6 +246,9 @@ public class Endomondo extends FormCrawler implements Uploader {
 			url.append("&sport="+summary.sport);
 			url.append("&duration="+summary.duration);
 			url.append("&distance="+summary.distance);
+			if (summary.hr != null) {
+				url.append("&heartRateAvg="+summary.hr.toString());
+			}
 			url.append("&gzip=true");
 			url.append("&extendedResponse=true");
 

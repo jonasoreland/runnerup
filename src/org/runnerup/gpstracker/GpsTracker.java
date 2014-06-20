@@ -81,7 +81,9 @@ public class GpsTracker extends android.app.Service implements
 	double mElapsedTimeMillis = 0;
 	double mElapsedDistance = 0;
 	double mHeartbeats = 0;
-
+	double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
+	long mMaxHR = 0;
+	
 	enum State {
 		INIT, LOGGING, STARTED, PAUSED,
 		ERROR /* Failed to init GPS */
@@ -218,6 +220,8 @@ public class GpsTracker extends android.app.Service implements
 		mElapsedTimeMillis = 0;
 		mElapsedDistance = 0;
 		mHeartbeats = 0;
+		mHeartbeatMillis = 0;
+		mMaxHR = 0;
 		// TODO: check if mLastLocation is recent enough
 		mActivityLastLocation = null;
 		setNextLocationType(DB.LOCATION.TYPE_START); // New location update will
@@ -281,6 +285,19 @@ public class GpsTracker extends android.app.Service implements
 		}		
 	}
 
+	private ContentValues createActivityRow() {
+		ContentValues tmp = new ContentValues();
+		tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+		tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
+		if (mHeartbeatMillis > 0) {
+			long avgHR = Math.round((60 * 1000 * mHeartbeats) / mHeartbeatMillis); // BPM
+			tmp.put(Constants.DB.ACTIVITY.AVG_HR, avgHR);
+		}
+		if (mMaxHR > 0)
+			tmp.put(Constants.DB.ACTIVITY.MAX_HR,  mMaxHR);
+		return tmp;
+	}
+	
 	public void stop() {
 		setNextLocationType(DB.LOCATION.TYPE_PAUSE);
 		if (mActivityLastLocation != null) {
@@ -290,9 +307,7 @@ public class GpsTracker extends android.app.Service implements
 			internalOnLocationChanged(mActivityLastLocation);
 		}
 
-		ContentValues tmp = new ContentValues();
-		tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-		tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
+		ContentValues tmp = createActivityRow();
 		String key[] = { Long.toString(mActivityId) };
 		mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
 		state = State.PAUSED;
@@ -345,9 +360,7 @@ public class GpsTracker extends android.app.Service implements
 		}
 
 		if (save) {
-			ContentValues tmp = new ContentValues();
-			tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-			tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
+			ContentValues tmp = createActivityRow();
 			String key[] = { Long.toString(mActivityId) };
 			mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
 		} else {
@@ -421,6 +434,8 @@ public class GpsTracker extends android.app.Service implements
 				mElapsedTimeMillisSinceLiveLog += timeDiff;
 				if (hrValue != null) {
 					mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
+					mHeartbeatMillis += timeDiff; // TODO handle loss of HRM connection
+					mMaxHR = Math.max(hrValue, mMaxHR);
 				}
 			}
 			mActivityLastLocation = arg0;
