@@ -45,7 +45,7 @@ import android.os.Build;
 public class DBHelper extends SQLiteOpenHelper implements
 		org.runnerup.util.Constants {
 
-	private static final int DBVERSION = 24;
+	private static final int DBVERSION = 25;
 	private static final String DBNAME = "runnerup.db";
 
 	private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -59,6 +59,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.ACTIVITY.SPORT + " integer," )
 			+ ( DB.ACTIVITY.AVG_HR + " integer, " )
 			+ ( DB.ACTIVITY.MAX_HR + " integer, " )
+			+ ( DB.ACTIVITY.AVG_CADENCE + " integer, " )
 			+ ( "deleted integer not null default 0, " )
 			+ "nullColumnHack text null" + ");";
 
@@ -75,7 +76,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.LOCATION.ALTITUDE + " real, " )
 			+ ( DB.LOCATION.SPEED + " real, " )
 			+ ( DB.LOCATION.BEARING	+ " real, " )
-			+ ( DB.LOCATION.HR	+ " integer " )
+			+ ( DB.LOCATION.HR	+ " integer, " )
+			+ ( DB.LOCATION.CADENCE + " integer " )
 			+ ");";
 
 	private static final String CREATE_TABLE_LAP = "create table "
@@ -90,7 +92,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 			+ ( DB.LAP.PLANNED_DISTANCE + " real, " )
 			+ ( DB.LAP.PLANNED_PACE + " real, " )
 			+ ( DB.LAP.AVG_HR + " integer, " )
-			+ ( DB.LAP.MAX_HR + " integer " )
+			+ ( DB.LAP.MAX_HR + " integer, " )
+			+ ( DB.LAP.AVG_CADENCE + " integer " )
 			+ ");";
 
 	private static final String CREATE_TABLE_ACCOUNT = "create table "
@@ -209,6 +212,12 @@ public class DBHelper extends SQLiteOpenHelper implements
 			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.MAX_HR + " integer");
 			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.AVG_HR + " integer");
 			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.MAX_HR + " integer");
+		}
+
+		if (oldVersion > 0 && oldVersion < 25 && newVersion >= 25) {
+			echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_CADENCE + " integer");
+			echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.CADENCE + " integer");
+			echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.AVG_CADENCE + " integer");
 		}
 
 		insertAccounts(arg0);
