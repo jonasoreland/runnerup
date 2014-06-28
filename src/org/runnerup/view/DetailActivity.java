@@ -94,6 +94,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 	HashSet<String> pendingUploaders = new HashSet<String>();
 	HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
 	
+	boolean lapHrPresent = false;
 	ContentValues laps[] = null;
 	ArrayList<ContentValues> reports = new ArrayList<ContentValues>();
 	ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
@@ -316,6 +317,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
 			laps = DBHelper.toArray(c);
 			c.close();
+			lapHrPresent = false;
+			for (ContentValues v : laps) {
+				if (v.containsKey(DB.LAP.AVG_HR) && v.getAsInteger(DB.LAP.AVG_HR) > 0) {
+					lapHrPresent = true;
+					break;
+				}
+			}
 		}
 
 		{
@@ -482,13 +490,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
 			}
 			int hr = laps[position].containsKey(DB.LAP.AVG_HR) ? laps[position].getAsInteger(DB.LAP.AVG_HR) : 0;
 			TextView tvHr = (TextView) view.findViewById(R.id.lapList_hr);
-			if (hr > 0)
-			{
+			if (hr > 0) {
 				tvHr.setVisibility(View.VISIBLE);
 				tvHr.setText(formatter.formatHeartRate(Formatter.TXT_LONG, hr) + " bpm");
-			}
-			else
-			{
+			} else if (lapHrPresent) {
+				tvHr.setVisibility(View.INVISIBLE);
+			} else {
 				tvHr.setVisibility(View.GONE);
 			}
 
