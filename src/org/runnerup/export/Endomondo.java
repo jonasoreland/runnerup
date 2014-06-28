@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
@@ -364,7 +365,7 @@ public class Endomondo extends FormCrawler implements Uploader {
  "type":"workout"},
 */
 	private void parseFeed(FeedUpdater feedUpdater, JSONObject reply) throws JSONException {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'", Locale.getDefault());
 		df.setTimeZone(TimeZone.getTimeZone("UTC"));
 		JSONArray arr = reply.getJSONArray("data");
 		for (int i = 0; i < arr.length(); i++) {
