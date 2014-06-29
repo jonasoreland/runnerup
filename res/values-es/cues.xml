@@ -40,7 +40,7 @@
     <string name="cue_permile">por milla</string>
 
     <string name="cue_started">empezado</string>
-    <string name="cue_paused">pausado</string>
+    <string name="cue_paused">en pausa</string>
     <string name="cue_resumed">resumado</string>
     <string name="cue_stopped">parado</string>
     <string name="cue_completed">completado</string>
