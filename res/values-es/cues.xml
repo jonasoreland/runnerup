@@ -41,7 +41,7 @@
 
     <string name="cue_started">empezado</string>
     <string name="cue_paused">en pausa</string>
-    <string name="cue_resumed">resumado</string>
+    <string name="cue_resumed">reanudado</string>
     <string name="cue_stopped">parado</string>
     <string name="cue_completed">completado</string>
 
