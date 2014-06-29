@@ -15,7 +15,7 @@ Features:
 - Download workouts from Garmin connect
 - Great ideas for future features
 
-Patches, forks, pull requests, suggestions or harsh flame is welcome!
+Patches, forks, pull requests, suggestions or harsh flame is welcome! Please the [contributing guidelines](CONTRIBUTING.md).
 
 ========
 
