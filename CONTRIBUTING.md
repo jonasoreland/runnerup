@@ -4,6 +4,10 @@ Contributions are very welcome. RunnerUp is open source software licensed under 
 
 ## Development
 
+### Code style
+
+Code should follow the [Android Code Style Guidelines](https://source.android.com/source/code-style.html).
+
 ### Tests
 
 Unfortunately there are no tests in this project currently.
@@ -15,6 +19,8 @@ Changes can be previewed using an emulator.
 ### IDE
 
 You may wish to consider [Eclipse](http://www.eclipse.org/) or [Android Studio](https://developer.android.com/sdk/installing/studio.html).
+
+To build the app using Android Studio, see [this guide](Documentation/howto-build-with-android-studio.txt).
 
 ## Making changes
 
@@ -29,5 +35,5 @@ You may wish to consider [Eclipse](http://www.eclipse.org/) or [Android Studio](
 - Look at the [TODO](TODO) list
 - Write some tests
 - Additional languages:
-  - Audio cues are only in English and French
+  - Audio cues are in English, French and Spanish
   - GUI is English only
