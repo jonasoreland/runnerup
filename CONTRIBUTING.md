@@ -4,6 +4,10 @@ Contributions are very welcome. RunnerUp is open source software licensed under 
 
 ## Development
 
+### Code style
+
+Code should follow the [Android Code Style Guidelines](https://source.android.com/source/code-style.html).
+
 ### Tests
 
 Unfortunately there are no tests in this project currently.
