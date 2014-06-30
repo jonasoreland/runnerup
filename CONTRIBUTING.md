@@ -20,6 +20,8 @@ Changes can be previewed using an emulator.
 
 You may wish to consider [Eclipse](http://www.eclipse.org/) or [Android Studio](https://developer.android.com/sdk/installing/studio.html).
 
+To build the app using Android Studio, see [this guide](Documentation/howto-build-with-android-studio.txt).
+
 ## Making changes
 
 1. Fork it ( https://github.com/jonasoreland/runnerup/fork )
