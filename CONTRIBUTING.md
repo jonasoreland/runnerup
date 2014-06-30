@@ -29,5 +29,5 @@ You may wish to consider [Eclipse](http://www.eclipse.org/) or [Android Studio](
 - Look at the [TODO](TODO) list
 - Write some tests
 - Additional languages:
-  - Audio cues are only in English and French
+  - Audio cues are in English, French and Spanish
   - GUI is English only
