@@ -1,3 +1,13 @@
+- make gui translatable (move all strings into xml)
+
+- audio translations (order of importance)
+  spanish     (DONE)
+  italian
+  portuguese
+
+- auto pause (weide is working on this)
+- lock screen widget
+
 - gui/colors (gui is everything when/if publishing on Market)
   I think RunKeeper's gui/colors is great!
 
@@ -61,7 +71,6 @@
 - setting: autolap during interval    (DONE)
 - setting: delayed start after warmup (DONE)
 - better audio cue defaults           (DONE)
-- audio cues settings: step time/distance/pace
-                                      (DONE)
-- audio cues settings: activity/step/lap summaries
+- audio cues settings: step time/distance/pace     (DONE)
+- audio cues settings: activity/step/lap summaries (DONE)
 
