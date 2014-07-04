@@ -28,7 +28,9 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +41,7 @@ import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.workout.Sport;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -76,6 +79,16 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 	private String feed_password = null;
 	private String feed_access_token = null;
 
+	static Map<Integer, Sport> runkeeper2sportMap = new HashMap<Integer, Sport>();
+	static Map<Sport, Integer> sport2runkeeperMap = new HashMap<Sport, Integer>();
+	static {
+		runkeeper2sportMap.put(0, Sport.RUNNING);
+		runkeeper2sportMap.put(1, Sport.BIKING);
+		for (Integer i : runkeeper2sportMap.keySet()) {
+			sport2runkeeperMap.put(runkeeper2sportMap.get(i), i);
+		}
+	};
+	
 	RunKeeperUploader(UploadManager uploadManager) {
 		if (CLIENT_ID == null || CLIENT_SECRET == null) {
 			try {
@@ -414,14 +427,10 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 						c.put(FEED.EXTERNAL_ID, e.getString("id"));
 						c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
 						JSONObject d = e.getJSONObject("data");
-						switch (d.getInt("activityType")) {
-						case 0:
-							c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);
-							break;
-						case 1:
-							c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_BIKING);
-							break;
-						default:
+						Sport sport = runkeeper2sportMap.get(d.getInt("activityType"));
+						if (sport != null) {
+							c.put(FEED.FEED_SUBTYPE, sport.getDbValue());
+						} else {
 							c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
 							break;
 						}

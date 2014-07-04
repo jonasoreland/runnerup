@@ -28,6 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +39,7 @@ import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 import org.runnerup.util.Encryption;
+import org.runnerup.workout.Sport;
 
 import android.annotation.TargetApi;
 import android.content.ContentValues;
@@ -69,6 +72,16 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	private String password = null;
 	private String loginID = null;
 	private String loginSecretHashed = null;
+
+	static Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer,Sport>();
+	static Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
+	static {
+		funbeat2sportMap.put(25, Sport.RUNNING);
+		funbeat2sportMap.put(7, Sport.BIKING);
+		for (Integer i : funbeat2sportMap.keySet()) {
+			sport2funbeatMap.put(funbeat2sportMap.get(i), i);
+		}
+	};
 	
 	FunBeatUploader(UploadManager uploadManager) {
 		if (APP_ID == null || APP_SECRET == null) {
@@ -553,8 +566,9 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 	}
 	
 	private void setTrainingType(ContentValues c, int TypeID, String typeString) {
-		if (TypeID == 25) {
-			c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);			
+		Sport s = funbeat2sportMap.get(Integer.valueOf(TypeID));
+		if (s != null) {
+			c.put(FEED.FEED_SUBTYPE, s.getDbValue());			
 		} else {
 			c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
 			c.put(FEED.FEED_TYPE_STRING, typeString);

@@ -29,7 +29,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
@@ -42,6 +44,7 @@ import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Constants.DB.FEED;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.Sport;
 
 import android.annotation.TargetApi;
 import android.content.ContentValues;
@@ -66,6 +69,16 @@ public class Endomondo extends FormCrawler implements Uploader {
 	private String password = null;
 	private String deviceId = null;
 	private String authToken = null;
+	
+	static Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer,Sport>();
+	static Map<Sport, Integer> sport2endomondoMap = new HashMap<Sport, Integer>();
+	static {
+		endomondo2sportMap.put(0, Sport.RUNNING);
+		endomondo2sportMap.put(2, Sport.BIKING);
+		for (Integer i : endomondo2sportMap.keySet()) {
+			sport2endomondoMap.put(endomondo2sportMap.get(i), i);
+		}
+	};
 	
 	Endomondo(UploadManager uploadManager) {
 	}
@@ -457,11 +470,12 @@ public class Endomondo extends FormCrawler implements Uploader {
 	}
 
 	private void setTrainingType(ContentValues c, JSONObject obj, String txt) throws JSONException {
-		if (obj.getInt("sport") == 0 &&
-				obj.getInt("sport2") == 0 &&
-				"workout".contentEquals(obj.getString("type"))) {
-			c.put(DB.FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING);
-			return;
+		if ("workout".contentEquals(obj.getString("type"))) {
+			Sport s = endomondo2sportMap.get(obj.getInt("sport"));
+			if (s != null) {
+				c.put(DB.FEED.FEED_SUBTYPE, s.getDbValue());
+				return;
+			}
 		}
 		String sportTxt = "something";
 		// <0>running<\/0>

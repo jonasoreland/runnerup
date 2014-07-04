@@ -28,4 +28,8 @@ public enum Sport {
 	Sport(int dbValue) {
 		this.dbValue = dbValue;
 	}
+	
+	public int getDbValue() {
+		return dbValue;
+	}
 }
