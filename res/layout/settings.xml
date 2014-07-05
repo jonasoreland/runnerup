@@ -78,7 +78,13 @@
         android:title="Autolap (m)"
         android:enabled="true" />
 
-	<CheckBoxPreference
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_autopause_active"
+        android:persistent="true"
+        android:title="Autopause"/>
+
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_runneruplive_active"
         android:persistent="true"
@@ -133,7 +139,26 @@
 	        android:summary="asdf"
 	        android:title="RunnerUp live adress"
 	        android:enabled="true" />
-	
+
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="3"
+            android:dependency="@string/pref_autopause_active"
+            android:inputType="number"
+            android:key="@string/pref_autopause_afterseconds"
+            android:persistent="true"
+            android:summary="3"
+            android:title="Autopause after (s)"
+            android:enabled="true"/>
+
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="60"
+            android:dependency="@string/pref_autopause_active"
+            android:inputType="number"
+            android:key="@string/pref_autopause_minpace"
+            android:persistent="true"
+            android:summary="60"
+            android:title="Autopause min pace (min/km)"
+            android:enabled="true"/>
             
 	    <org.runnerup.widget.TextPreference
             android:inputType="number"

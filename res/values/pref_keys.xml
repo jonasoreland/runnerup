@@ -82,4 +82,8 @@
         
     <string name="pref_hrz_values">pref_hrz_values</string>
     <string name="pref_hrz_thresholds">pref_hrz_thresholds</string>
+
+    <string name="pref_autopause_active">pref_autopause_active</string>
+    <string name="pref_autopause_afterseconds">pref_autopause_afterseconds</string>
+    <string name="pref_autopause_minpace">pref_autopause_minpace</string>
 </resources>

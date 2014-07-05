@@ -76,6 +76,7 @@ public class WorkoutBuilder {
 			step.setAutolap(val);
 		}
 
+		addAutoPauseTrigger(step, prefs);
 		w.steps.add(step);
 
 		if (target == Dimension.PACE) {
@@ -98,11 +99,34 @@ public class WorkoutBuilder {
 				}
 			}
 		}
-			
 		/**
 		 *
 		 */
 		return w;
+	}
+
+	private static void addAutoPauseTrigger(Step step, SharedPreferences prefs) {
+		boolean enableAutoPause = prefs.getBoolean("pref_autopause_active", true);
+		if (!enableAutoPause)
+			return;
+
+		float autoPauseMinSpeed = 0;
+		float autoPauseAfterSeconds = 4f;
+
+		String val = prefs.getString("pref_autopause_minpace", "60");
+		try {
+			float autoPauseMinPace = Float.parseFloat(val);
+			if (autoPauseMinPace > 0)
+				autoPauseMinSpeed = 1000 / (autoPauseMinPace * 60);
+		} catch (NumberFormatException e) {
+		}
+		val = prefs.getString("pref_autopause_afterseconds", "4");
+		try {
+			autoPauseAfterSeconds = Float.parseFloat(val);
+		} catch (NumberFormatException e) {
+		}
+		AutoPauseTrigger tr = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
+		step.triggers.add(tr);
 	}
 	
 	public static Workout createDefaultIntervalWorkout(Resources res, SharedPreferences prefs) {
@@ -114,6 +138,7 @@ public class WorkoutBuilder {
 			Step step = new Step();
 			step.intensity = Intensity.WARMUP;
 			step.durationType = null;
+			addAutoPauseTrigger(step,prefs);
 			w.steps.add(step);
 		}
 
@@ -161,6 +186,7 @@ public class WorkoutBuilder {
 			Step step = new Step();
 			step.intensity = Intensity.COOLDOWN;
 			step.durationType = null;
+			addAutoPauseTrigger(step,prefs);
 			w.steps.add(step);
 		}
 		
