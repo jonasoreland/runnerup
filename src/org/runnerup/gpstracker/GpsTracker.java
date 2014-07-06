@@ -612,6 +612,15 @@ public class GpsTracker extends android.app.Service implements
 		return getCurrentSpeed(System.currentTimeMillis(), 3000);
 	}
 
+	public Double getCurrentPace() {
+		Double speed = getCurrentSpeed();
+		if (speed == null)
+			return null;
+		if (speed == 0.0)
+			return Double.MAX_VALUE;
+		return 1000 / (speed * 60);
+	}
+
 	private Double getCurrentSpeed(long now, long maxAge) {
 		if (mLastLocation == null)
 			return null;
