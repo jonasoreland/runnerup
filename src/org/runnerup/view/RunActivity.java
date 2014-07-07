@@ -303,6 +303,7 @@ public class RunActivity extends Activity implements TickListener {
 			if (timer != null) {
 				workout.onStop(workout);
 				stopTimer(); // set timer=null;
+				sendWidgetStop();
 				Intent intent = new Intent(RunActivity.this, DetailActivity.class);
 				/**
 				 * The same activity is used to show details and to save activity
@@ -387,6 +388,16 @@ public class RunActivity extends Activity implements TickListener {
 		}
 	};
 
+	private void sendWidgetStop() {
+		int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), RunnerUpWidgetProvider.class));
+		if (ids.length == 0) //no need to send broadcast is no one is listening..
+			return;
+		Intent intent = new Intent(this, RunnerUpWidgetProvider.class);
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+		intent.setAction(RunnerUpWidgetProvider.STOPPED);
+		sendBroadcast(intent);
+	}
+
 	private void updateWidget() {
 		int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), RunnerUpWidgetProvider.class));
 		if(ids.length == 0) //no need to send broadcast is no one is listening..
@@ -408,7 +419,7 @@ public class RunActivity extends Activity implements TickListener {
 		double ch = workout.getHeartRate(Scope.CURRENT);
 
 		Intent intent = new Intent(this, RunnerUpWidgetProvider.class);
-		intent.setAction("org.runnerup.widget.UPDATE");		
+		intent.setAction(RunnerUpWidgetProvider.UPDATE);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
 		intent.putExtra("Activity Time", formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(at)));
 		intent.putExtra("Activity Pace", formatter.formatPace(Formatter.TXT_LONG, ap));
@@ -422,6 +433,7 @@ public class RunActivity extends Activity implements TickListener {
 		intent.putExtra("Current Pace", formatter.formatPace(Formatter.TXT_LONG, cp));
 		intent.putExtra("Current Distance", formatter.formatDistance(Formatter.TXT_LONG, Math.round(cd)));
 		intent.putExtra("Current HR", formatter.formatDistance(Formatter.TXT_LONG, Math.round(ch)));
+		intent.putExtra("isPaused", mGpsTracker.getWorkout().isPaused());
 		sendBroadcast(intent);
 	}
 	

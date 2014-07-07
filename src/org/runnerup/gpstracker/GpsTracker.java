@@ -18,9 +18,11 @@ package org.runnerup.gpstracker;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
@@ -118,6 +120,11 @@ public class GpsTracker extends android.app.Service implements
 		mDBHelper = new DBHelper(this);
 		mDB = mDBHelper.getWritableDatabase();
 		wakelock(false);
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(BROADCAST_PAUSE);
+		filter.addAction(BROADCAST_RESUME);
+
+		registerReceiver(mBroadcastReceiver, filter);
 	}
 
 	@Override
@@ -138,7 +145,7 @@ public class GpsTracker extends android.app.Service implements
 			mDBHelper.close();
 			mDBHelper = null;
 		}
-
+		unregisterReceiver(mBroadcastReceiver);
 		stopLogging();
 	}
 
@@ -505,6 +512,24 @@ public class GpsTracker extends android.app.Service implements
 		return mBinder;
 	}
 
+	public static final String BROADCAST_PAUSE = "org.runnerup.workout.PAUSE";
+	public static final String BROADCAST_RESUME = "org.runnerup.workout.RESUME";
+	private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (action.equals(BROADCAST_PAUSE)) {
+				if (workout.isPaused())
+					workout.onResume(workout);
+				else
+					workout.onPause(workout);
+			} else if (action.equals(BROADCAST_RESUME)) {
+				if (!workout.isPaused()) return;
+				workout.onResume(workout);
+			}
+		}
+	};
+
 	private void wakelock(boolean get) {
 		if (mWakeLock != null) {
 			if (mWakeLock.isHeld()) {
@@ -557,7 +582,7 @@ public class GpsTracker extends android.app.Service implements
 				public void onConnectResult(boolean connectOK) {
 					if (connectOK) {
 						btDisabled = false;
-						Toast.makeText(GpsTracker.this,  "Connected to HRM " + btDeviceName, Toast.LENGTH_SHORT).show();
+						Toast.makeText(GpsTracker.this, "Connected to HRM " + btDeviceName, Toast.LENGTH_SHORT).show();
 					} else {
 						btDisabled = true;
 						Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDeviceName, Toast.LENGTH_SHORT).show();

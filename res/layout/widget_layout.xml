@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/togglePause"
         android:layout_gravity="center_horizontal"
-        android:visibility="gone"
-        android:background="@android:drawable/ic_media_pause"/>
+        android:background="@android:drawable/ic_media_play"
+        />
 
 </LinearLayout>
