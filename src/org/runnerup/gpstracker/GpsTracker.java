@@ -16,21 +16,6 @@
  */
 package org.runnerup.gpstracker;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
-import org.runnerup.hr.HRDeviceRef;
-import org.runnerup.hr.HRManager;
-import org.runnerup.hr.HRProvider;
-import org.runnerup.hr.HRProvider.HRClient;
-import org.runnerup.util.Constants;
-import org.runnerup.workout.Workout;
-
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.ContentValues;
@@ -50,6 +35,21 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
+import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
+import org.runnerup.hr.HRDeviceRef;
+import org.runnerup.hr.HRManager;
+import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.HRProvider.HRClient;
+import org.runnerup.util.Constants;
+import org.runnerup.workout.Workout;
+
+import java.util.ArrayList;
+import java.util.List;
 /**
  * GpsTracker - this class tracks Location updates
  * 
@@ -460,6 +460,7 @@ public class GpsTracker extends android.app.Service implements
 			}
 		}
 		mLastLocation = arg0;
+
 	}
 
 	private void liveLog(Location arg0, int type, double distance, double time) {

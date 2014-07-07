@@ -28,6 +28,7 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.widget.RunnerUpWidgetProvider;
 import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
@@ -38,6 +39,7 @@ import org.runnerup.workout.feedback.RUTextToSpeech;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -285,6 +287,7 @@ public class RunActivity extends Activity implements TickListener {
 		if (workout != null) {
 			workout.onTick();
 			updateView();
+			updateWidget();
 
 			if (mGpsTracker != null) {
 				Location l2 = mGpsTracker.getLastKnownLocation();
@@ -384,6 +387,44 @@ public class RunActivity extends Activity implements TickListener {
 		}
 	};
 
+	private void updateWidget() {
+		int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), RunnerUpWidgetProvider.class));
+		if(ids.length == 0) //no need to send broadcast is no one is listening..
+			return;
+		
+		double ad = workout.getDistance(Scope.WORKOUT);
+		double at = workout.getTime(Scope.WORKOUT);
+		double ap = workout.getPace(Scope.WORKOUT);
+		double ah = workout.getHeartRate(Scope.WORKOUT);
+
+		double sd = workout.getDistance(Scope.LAP);
+		double st = workout.getTime(Scope.LAP);
+		double sp = workout.getPace(Scope.LAP);
+		double sh = workout.getHeartRate(Scope.LAP);
+
+		double cd = workout.getDistance(Scope.CURRENT);
+		double ct = workout.getTime(Scope.CURRENT);
+		double cp = workout.getPace(Scope.CURRENT);
+		double ch = workout.getHeartRate(Scope.CURRENT);
+
+		Intent intent = new Intent(this, RunnerUpWidgetProvider.class);
+		intent.setAction("org.runnerup.widget.UPDATE");		
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+		intent.putExtra("Activity Time", formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(at)));
+		intent.putExtra("Activity Pace", formatter.formatPace(Formatter.TXT_LONG, ap));
+		intent.putExtra("Activity Distance", formatter.formatDistance(Formatter.TXT_LONG, Math.round(ad)));
+		intent.putExtra("Activity HR", formatter.formatDistance(Formatter.TXT_LONG, Math.round(ah)));
+		intent.putExtra("LAP Time", formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(st)));
+		intent.putExtra("LAP Pace", formatter.formatPace(Formatter.TXT_LONG, sp));
+		intent.putExtra("LAP Distance", formatter.formatDistance(Formatter.TXT_LONG, Math.round(sd)));
+		intent.putExtra("LAP HR", formatter.formatDistance(Formatter.TXT_LONG, Math.round(sh)));
+		intent.putExtra("Current Time", formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(ct)));
+		intent.putExtra("Current Pace", formatter.formatPace(Formatter.TXT_LONG, cp));
+		intent.putExtra("Current Distance", formatter.formatDistance(Formatter.TXT_LONG, Math.round(cd)));
+		intent.putExtra("Current HR", formatter.formatDistance(Formatter.TXT_LONG, Math.round(ch)));
+		sendBroadcast(intent);
+	}
+	
 	private void updateView() {
 		double ad = workout.getDistance(Scope.WORKOUT);
 		double at = workout.getTime(Scope.WORKOUT);

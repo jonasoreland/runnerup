@@ -143,15 +143,29 @@
 		<activity android:name=".view.HRZonesActivity"
 		    android:screenOrientation="portrait" >
 		</activity>
-		
+        <activity android:name=".widget.ConfigureWidgetActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
 		<service 
 		    android:name=".gpstracker.GpsTracker" >
 		</service>
 		<service
                 android:name=".export.RunnerUpLive$LiveService">
  		</service>
- 		
-		<receiver
+
+        <receiver android:name=".widget.RunnerUpWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info"/>
+        </receiver>
+
+        <receiver
 		    android:name=".workout.HeadsetButtonReceiver"
 		    android:enabled="true" >
 		    <intent-filter>
