@@ -362,13 +362,10 @@ public class RunActivity extends Activity implements TickListener {
 		public void onClick(View v) {
 			if (workout.isPaused()) {
 				workout.onResume(workout);
-				pauseButton.setText("Pause");
-				WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_blue));
 			} else {
 				workout.onPause(workout);
-				pauseButton.setText("Resume");
-				WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_green));
 			}
+			setPauseButtonEnabled(!workout.isPaused());
 		}
 	};
 
@@ -395,7 +392,7 @@ public class RunActivity extends Activity implements TickListener {
 	};
 
 	private void updateView() {
-		setPauseButtonEnabled(!mGpsTracker.isPaused());
+		setPauseButtonEnabled(!workout.isPaused());
 		double ad = workout.getDistance(Scope.WORKOUT);
 		double at = workout.getTime(Scope.WORKOUT);
 		double ap = workout.getPace(Scope.WORKOUT);
