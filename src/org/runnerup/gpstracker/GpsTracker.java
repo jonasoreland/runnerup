@@ -545,6 +545,9 @@ public class GpsTracker extends android.app.Service implements
 						hrProvider = null;
 						return;
 					}
+					if (hrProvider == null) {
+						return;
+					}
 					hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
 				}
 
@@ -577,6 +580,7 @@ public class GpsTracker extends android.app.Service implements
 	private void stopHRMonitor() {
 		if (hrProvider != null) {
 			hrProvider.close();
+			hrProvider = null;
 		}
 	}
 	

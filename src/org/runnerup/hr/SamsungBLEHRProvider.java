@@ -120,17 +120,22 @@ public class SamsungBLEHRProvider implements HRProvider {
 	
 	@Override
 	public void close() {
-		if (btAdapter == null)
-			return;
+		do {
+			if (btAdapter == null)
+				break;
 		
-		if (btGatt == null)
-			return;
+			if (btGatt == null)
+				break;
 		
-		stopScan();
-		disconnect();
+			stopScan();
+			disconnect();
 		
-		BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
-		btAdapter = null;
+			BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
+			btAdapter = null;
+		} while (false);
+		
+		hrClient = null;
+		hrClientHandler = null;
 	}
 	
 	private ServiceListener profileServiceListener = new ServiceListener() {
@@ -138,7 +143,15 @@ public class SamsungBLEHRProvider implements HRProvider {
         public void onServiceConnected(int profile, BluetoothProfile proxy) {
             if (profile == BluetoothGattAdapter.GATT) {
                 btGatt = (BluetoothGatt) proxy;
-				btGatt.registerApp(btGattCallbacks);
+
+                if (hrClient == null) {
+                	System.err.println("hrClient == null => skip register in onServiceConnected => closeProfileProxy");
+            		BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
+            		btGatt = null;
+            		return;
+                }
+                
+                btGatt.registerApp(btGattCallbacks);
             }
         }
 
@@ -157,12 +170,21 @@ public class SamsungBLEHRProvider implements HRProvider {
 
 		@Override
 		public void onAppRegistered(final int arg0) {
+			if (hrClientHandler == null) {
+				/* let's hope that unregister has been called...and that it works to call it before
+				 * this callback is called
+				 */
+				System.err.println("onAppRegistered: hrClientHandler == null => return");
+				return;
+			}
 			hrClientHandler.post(new Runnable() {
 
 				@Override
 				public void run() {
-					if (hrClient == null)
+					if (hrClient == null) {
+						System.err.println("onAppRegistered: hrClient == null => return");
 						return;
+					}
 					if (arg0 == BluetoothGatt.GATT_SUCCESS) {
 						hrClient.onOpenResult(true);
 					} else {

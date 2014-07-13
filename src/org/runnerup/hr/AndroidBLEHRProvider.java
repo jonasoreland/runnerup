@@ -65,7 +65,17 @@ public class AndroidBLEHRProvider implements HRProvider {
 			.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
 	static final UUID[] SCAN_UUIDS = { HRP_SERVICE };
+	static boolean AVOID_SCAN_WITH_UUID = false;
+	static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN= false;
 
+	static {
+		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+			// 4.3
+			AVOID_SCAN_WITH_UUID = true;
+			CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = true;
+		}
+	}
+	
 	private Context context;
 	private BluetoothAdapter btAdapter = null;
 	private BluetoothGatt btGatt = null;
@@ -131,8 +141,10 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 		if (btAdapter == null) {
 			btAdapter = null;
-			return;
 		}
+
+		hrClient = null;
+		hrClientHandler = null;
 	}
 
 	private BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
@@ -403,7 +415,16 @@ public class AndroidBLEHRProvider implements HRProvider {
 			if (mIsConnecting
 					&& address.equals(btDevice.getAddress())) {
 				stopScan();
-				btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
+				
+				if (CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN) {
+					System.err.println("CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN");
+					new Thread(){ @Override
+						public void run() {
+						btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
+					}};
+				} else {
+					btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
+				}
 				return;
 			}
 
@@ -433,7 +454,10 @@ public class AndroidBLEHRProvider implements HRProvider {
 
 		mIsScanning = true;
 		mScanDevices.clear();
-		btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
+		if (AVOID_SCAN_WITH_UUID)
+			btAdapter.startLeScan(mLeScanCallback);
+		else
+			btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
 	}
 
 	@Override
