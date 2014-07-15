@@ -46,7 +46,7 @@ public class RunKeeper {
 	}
 
 	static String formatTime(long time) {
-		return new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss", Locale.US)
+		return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US)
 				.format(new Date(time));
 	}
 
