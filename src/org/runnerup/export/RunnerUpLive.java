@@ -44,7 +44,8 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 	public static String POST_URL = "http://weide.devsparkles.se/api/Resource/";
 	
 	long id = 0;
-	private String username = null;
+    private String username = null;
+    private String password = null;
 	private String postUrl = POST_URL;
 	private Formatter formatter;
 	
@@ -73,6 +74,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 			try {
 				JSONObject tmp = new JSONObject(auth);
 				username = tmp.optString("username", null);
+                password = tmp.optString("password", null);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -81,7 +83,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 
 	@Override
 	public boolean isConfigured() {
-		if (username != null) {
+        if (username != null && password != null) {
 			return true;
 		}
 		return false;
@@ -92,6 +94,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 		JSONObject tmp = new JSONObject();
 		try {
 			tmp.put("username", username);
+            tmp.put("password", password);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -102,6 +105,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 	@Override
 	public void reset() {
 		username = null;
+        password = null;
 	}
 
 	@Override
@@ -112,7 +116,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 		
 		Status s = Status.NEED_AUTH;
 		s.authMethod = Uploader.AuthMethod.USER_PASS;
-		if (username == null) {
+        if (username == null || password == null) {
 			return s;
 		}
 		
@@ -137,6 +141,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 				formatter.formatPace(Formatter.TXT_SHORT, mElapsedTimeMillis
 						/ (1000 * mElapsedDistanceMeter)));
 		msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
+        msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
 		msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);
 		context.startService(msgIntent);
 	}
@@ -147,6 +152,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 		public static final String PARAM_IN_ELAPSED_TIME = "time";
 		public static final String PARAM_IN_PACE = "pace";
 		public static final String PARAM_IN_USERNAME = "username";
+        public static final String PARAM_IN_PASSWORD = "password";
 		public static final String PARAM_IN_SERVERADRESS = "serveradress";
 		public static final String PARAM_IN_LAT = "lat";
 		public static final String PARAM_IN_LONG = "long";
@@ -164,6 +170,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 			String mElapsedTime = intent.getStringExtra(PARAM_IN_ELAPSED_TIME);
 			String pace = intent.getStringExtra(PARAM_IN_PACE);
 			String username = intent.getStringExtra(PARAM_IN_USERNAME);
+            String password = intent.getStringExtra(PARAM_IN_PASSWORD);
 			double lat = intent.getDoubleExtra(PARAM_IN_LAT, 0);
 			double lon = intent.getDoubleExtra(PARAM_IN_LONG, 0);
 			int type = intent.getIntExtra(PARAM_IN_TYPE, 0);
@@ -176,6 +183,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 			JSONObject data = new JSONObject();
 			try {
 				data.put("userName", username);
+                data.put("password", password);
 				data.put("lat", lat);
 				data.put("long", lon);
 				data.put("runningEventType", type);
