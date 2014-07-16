@@ -355,7 +355,8 @@ public class GpsTracker extends android.app.Service implements
 		assert (state == State.PAUSED);
 
 		setNextLocationType(DB.LOCATION.TYPE_END);
-		if (mActivityLastLocation != null) {
+        liveLog(mLastLocation, 3, mElapsedDistance, mElapsedTimeMillis);
+        if (mActivityLastLocation != null) {
 			mDBWriter.onLocationChanged(mActivityLastLocation);
 		}
 
