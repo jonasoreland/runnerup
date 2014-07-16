@@ -353,7 +353,8 @@ public class GpsTracker extends android.app.Service implements
 
 	public void completeActivity(boolean save) {
 		assert (state == State.PAUSED);
-
+		liveLog(mLastLocation, DB.LOCATION.TYPE_END, mElapsedDistance, mElapsedTimeMillis);
+		
 		setNextLocationType(DB.LOCATION.TYPE_END);
 		if (mActivityLastLocation != null) {
 			mDBWriter.onLocationChanged(mActivityLastLocation);
@@ -446,24 +447,22 @@ public class GpsTracker extends android.app.Service implements
 			case DB.LOCATION.TYPE_START:
 			case DB.LOCATION.TYPE_RESUME:
 				setNextLocationType(DB.LOCATION.TYPE_GPS);
-				liveLog(arg0, 0, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_GPS:
-				liveLog(arg0, 1, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_PAUSE:
-				liveLog(arg0, 2, mElapsedDistance, mElapsedTimeMillis);
 				break;
 			case DB.LOCATION.TYPE_END:
-				liveLog(arg0, 2, mElapsedDistance, mElapsedTimeMillis);
 				assert (false);
+				break;
 			}
+			liveLog(arg0, mLocationType, mElapsedDistance, mElapsedTimeMillis);
 		}
 		mLastLocation = arg0;
 	}
 
 	private void liveLog(Location arg0, int type, double distance, double time) {
-		if (type == 1) {
+		if (type == DB.LOCATION.TYPE_GPS) {
 			if (mElapsedTimeMillisSinceLiveLog < mMinLiveLogDelayMillis) {
 				return;
 			}
