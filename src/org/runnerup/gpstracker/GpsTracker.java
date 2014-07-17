@@ -356,8 +356,7 @@ public class GpsTracker extends android.app.Service implements
 		liveLog(mLastLocation, DB.LOCATION.TYPE_END, mElapsedDistance, mElapsedTimeMillis);
 		
 		setNextLocationType(DB.LOCATION.TYPE_END);
-        liveLog(mLastLocation, 3, mElapsedDistance, mElapsedTimeMillis);
-        if (mActivityLastLocation != null) {
+		if (mActivityLastLocation != null) {
 			mDBWriter.onLocationChanged(mActivityLastLocation);
 		}
 
