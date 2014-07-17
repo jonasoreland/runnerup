@@ -123,13 +123,31 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 		return s;
 	}
 
+	// translate between constants used in RunnerUp and those that weide choose to use for his live server
+	private int translateType(int type) {
+		switch (type) {
+		case DB.LOCATION.TYPE_START:
+		case DB.LOCATION.TYPE_RESUME:
+			return 0;
+		case DB.LOCATION.TYPE_GPS:
+			return 1;
+		case DB.LOCATION.TYPE_PAUSE:
+			return 2;
+		case DB.LOCATION.TYPE_END:
+			return 3;
+		}
+		assert (false);
+		return 0;
+	}
+
 	@Override
 	public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis) {
+		int externalType = translateType(type);
 		long elapsedDistanceMeter = Math.round(mElapsedDistanceMeter);
 		Intent msgIntent = new Intent(context, LiveService.class);
 		msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
 		msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
-		msgIntent.putExtra(LiveService.PARAM_IN_TYPE, type);
+		msgIntent.putExtra(LiveService.PARAM_IN_TYPE, externalType);
 		msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, formatter
 				.formatDistance(Formatter.TXT_LONG, elapsedDistanceMeter));
 		msgIntent.putExtra(
