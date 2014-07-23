@@ -67,5 +67,18 @@
 	    <item>pace</item>
 	    <item>heart rate zone</item>
 	</string-array>
+
+    <string-array name="widgetInfoTypes">
+        <item>Activity Pace</item>
+        <item>Activity Time</item>
+        <item>Activity Distance</item>
+        <item>Activity HR</item>
+        <item>LAP Pace</item>
+        <item>LAP Time</item>
+        <item>LAP Distance</item>
+        <item>LAP HR</item>
+        <item>Current Pace</item>
+        <item>Current HR</item>
+    </string-array>
 	
 </resources>
