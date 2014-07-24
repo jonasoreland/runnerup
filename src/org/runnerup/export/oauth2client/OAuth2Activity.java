@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.export.oauth2client;
 
 import java.io.BufferedOutputStream;
@@ -48,226 +49,231 @@ import android.annotation.TargetApi;
 @SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Activity extends Activity {
 
-	/**
-	 * Names used in Bundle to/from OAuth2Activity
-	 */
-	public interface OAuth2ServerCredentials {
+    /**
+     * Names used in Bundle to/from OAuth2Activity
+     */
+    public interface OAuth2ServerCredentials {
 
-		public static final String AUTH_ARGUMENTS = "auth_arguments";
+        public static final String AUTH_ARGUMENTS = "auth_arguments";
 
-		/**
-		 * Used as title when opening authorization dialog
-		 * 
-		 * @return
-		 */
-		public static final String NAME = "name";
-		public static final String CLIENT_ID = "client_id";
-		public static final String CLIENT_SECRET = "client_secret";
-		public static final String AUTH_URL = "auth_url";
-		public static final String AUTH_EXTRA = "auth_extra";
-		public static final String TOKEN_URL = "token_url";
-		public static final String REDIRECT_URI = "redirect_uri";
-		public static final String REVOKE_URL = "revoke_url";
+        /**
+         * Used as title when opening authorization dialog
+         * 
+         * @return
+         */
+        public static final String NAME = "name";
+        public static final String CLIENT_ID = "client_id";
+        public static final String CLIENT_SECRET = "client_secret";
+        public static final String AUTH_URL = "auth_url";
+        public static final String AUTH_EXTRA = "auth_extra";
+        public static final String TOKEN_URL = "token_url";
+        public static final String REDIRECT_URI = "redirect_uri";
+        public static final String REVOKE_URL = "revoke_url";
 
-		public static final String AUTH_TOKEN = "auth_token";
-	};
+        public static final String AUTH_TOKEN = "auth_token";
+    };
 
-	boolean mFinished = false;
-	String mRedirectUri = null;
-	ProgressDialog mSpinner = null;
-	Bundle mArgs = null;
+    boolean mFinished = false;
+    String mRedirectUri = null;
+    ProgressDialog mSpinner = null;
+    Bundle mArgs = null;
 
-	@SuppressWarnings("deprecation")
-	private void setSavedPassword(WebView wv, boolean val) {
-		wv.getSettings().setSavePassword(false);
-	} 
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Intent intent = getIntent();
-		Bundle b = mArgs = intent
-				.getBundleExtra(OAuth2ServerCredentials.AUTH_ARGUMENTS);
-		String auth_url = b.getString(OAuth2ServerCredentials.AUTH_URL);
-		String client_id = b.getString(OAuth2ServerCredentials.CLIENT_ID);
-		mRedirectUri = b.getString(OAuth2ServerCredentials.REDIRECT_URI);
-		String auth_extra = null;
-		if (b.containsKey(OAuth2ServerCredentials.AUTH_EXTRA))
-			auth_extra = b.getString(OAuth2ServerCredentials.AUTH_EXTRA);
-		
-		mSpinner = new ProgressDialog(this);
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading...");
+    @SuppressWarnings("deprecation")
+    private void setSavedPassword(WebView wv, boolean val) {
+        wv.getSettings().setSavePassword(false);
+    }
 
-		final WebView wv = new WebView(this);
-		wv.setVerticalScrollBarEnabled(false);
-		wv.setHorizontalScrollBarEnabled(false);
-		wv.getSettings().setJavaScriptEnabled(true);
-		setSavedPassword(wv, false);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        Bundle b = mArgs = intent
+                .getBundleExtra(OAuth2ServerCredentials.AUTH_ARGUMENTS);
+        String auth_url = b.getString(OAuth2ServerCredentials.AUTH_URL);
+        String client_id = b.getString(OAuth2ServerCredentials.CLIENT_ID);
+        mRedirectUri = b.getString(OAuth2ServerCredentials.REDIRECT_URI);
+        String auth_extra = null;
+        if (b.containsKey(OAuth2ServerCredentials.AUTH_EXTRA))
+            auth_extra = b.getString(OAuth2ServerCredentials.AUTH_EXTRA);
 
-		StringBuilder tmp = new StringBuilder();
-		tmp.append(auth_url);
-		tmp.append("?client_id=").append(FormCrawler.URLEncode(client_id));
-		tmp.append("&response_type=code");
-		tmp.append("&redirect_uri=" + FormCrawler.URLEncode(mRedirectUri));
-		if (auth_extra != null) {
-			tmp.append("&").append(auth_extra);
-		}
-		final String url = tmp.toString();
-		
-		CookieSyncManager.createInstance(this);
-		CookieManager.getInstance().removeAllCookie();
-		wv.loadUrl(url);
+        mSpinner = new ProgressDialog(this);
+        mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mSpinner.setMessage("Loading...");
 
-		wv.setWebViewClient(new WebViewClient() {
-			@Override
-			public boolean shouldOverrideUrlLoading(WebView view, String loadurl) {
-				if (loadurl.startsWith("http://runkeeper.com/jsp/widgets/streetTeamWidgetClose.jsp") ||
-					loadurl.startsWith("http://runkeeper.com/jsp/widgets/friendWidgetClose.jsp")) {
-						wv.loadUrl("http://runkeeper.com/facebookSignIn");
-					return true;
-				}
-				if (loadurl.startsWith("http://runkeeper.com/home")) {
-					wv.loadUrl(url);
-					return true;
-				}
-				
-				return super.shouldOverrideUrlLoading(view, loadurl);
-			}
+        final WebView wv = new WebView(this);
+        wv.setVerticalScrollBarEnabled(false);
+        wv.setHorizontalScrollBarEnabled(false);
+        wv.getSettings().setJavaScriptEnabled(true);
+        setSavedPassword(wv, false);
 
-			@Override
-			public void onPageStarted(WebView view, String url, Bitmap favicon) {
-				super.onPageStarted(view, url, favicon);
-				if (!isFinishing())
-					mSpinner.show();
-			}
+        StringBuilder tmp = new StringBuilder();
+        tmp.append(auth_url);
+        tmp.append("?client_id=").append(FormCrawler.URLEncode(client_id));
+        tmp.append("&response_type=code");
+        tmp.append("&redirect_uri=" + FormCrawler.URLEncode(mRedirectUri));
+        if (auth_extra != null) {
+            tmp.append("&").append(auth_extra);
+        }
+        final String url = tmp.toString();
 
-			@Override
-			public void onPageFinished(WebView view, String url) {
-				super.onPageFinished(view, url);
+        CookieSyncManager.createInstance(this);
+        CookieManager.getInstance().removeAllCookie();
+        wv.loadUrl(url);
 
-				try {// to avoid crashing the app add try-catch block, avoid
-						// this stupid crash!
-					if (mSpinner != null && mSpinner.isShowing())
-						mSpinner.dismiss();
-				} catch (Exception ex) {
+        wv.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String loadurl) {
+                if (loadurl
+                        .startsWith("http://runkeeper.com/jsp/widgets/streetTeamWidgetClose.jsp")
+                        ||
+                        loadurl.startsWith("http://runkeeper.com/jsp/widgets/friendWidgetClose.jsp")) {
+                    wv.loadUrl("http://runkeeper.com/facebookSignIn");
+                    return true;
+                }
+                if (loadurl.startsWith("http://runkeeper.com/home")) {
+                    wv.loadUrl(url);
+                    return true;
+                }
 
-				}
+                return super.shouldOverrideUrlLoading(view, loadurl);
+            }
 
-				if (url.startsWith(mRedirectUri)) {
-					Uri u = Uri.parse(url);
-					String e = null;
-					String check[] = { "error", "error_type" };
-					for (int i = 0; i < check.length; i++) {
-						e = u.getQueryParameter(check[i]);
-						if (e != null) {
-							break;
-						}
-					}
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                if (!isFinishing())
+                    mSpinner.show();
+            }
 
-					if (e != null) {
-						System.err.println("e: " + e);
-						Intent res = new Intent();
-						res.putExtra("error", e);
-						OAuth2Activity.this.setResult(Activity.RESULT_CANCELED,
-								res);
-						OAuth2Activity.this.finish();
-						return;
-					}
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
 
-					synchronized (this) {
-						if (mFinished) {
-							return;
-						}
-						mFinished = true;
-					}
-					
-					Bundle b = mArgs;
-					String code = u.getQueryParameter("code");
-					String token_url = b.getString(OAuth2ServerCredentials.TOKEN_URL);
-					FormValues fv = new FormValues();
-					fv.put("client_id", b.getString(OAuth2ServerCredentials.CLIENT_ID));
-					fv.put("client_secret", b.getString(OAuth2ServerCredentials.CLIENT_SECRET));
-					fv.put("grant_type", "authorization_code");
-					fv.put("redirect_uri", b.getString(OAuth2ServerCredentials.REDIRECT_URI));
-					fv.put("code", code);
+                try {// to avoid crashing the app add try-catch block, avoid
+                     // this stupid crash!
+                    if (mSpinner != null && mSpinner.isShowing())
+                        mSpinner.dismiss();
+                } catch (Exception ex) {
 
-					HttpURLConnection conn = null;
+                }
 
-					Intent res = new Intent();
-					int resultCode = Activity.RESULT_OK;
-					res.putExtra("url", token_url);
-					try {
-						URL newurl = new URL(token_url);
-						conn = (HttpURLConnection) newurl.openConnection();
-						conn.setDoOutput(true);
-						conn.setRequestMethod("POST");
-						conn.setRequestProperty("Content-Type",
-								"application/x-www-form-urlencoded");
-						{
-							OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-							fv.write(wr);
-							wr.flush();
-							wr.close();
-						}
-						StringBuilder obj = new StringBuilder();
-						BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-						char buf[] = new char[1024];
-						int len;
-						while ((len = in.read(buf)) != -1) {
-							obj.append(buf,  0,  len);
-						}
-						
-						res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
-					} catch (Exception ex) {
-						ex.printStackTrace(System.err);
-						res.putExtra("ex", ex.toString());
-						resultCode = Activity.RESULT_CANCELED;
-					}
+                if (url.startsWith(mRedirectUri)) {
+                    Uri u = Uri.parse(url);
+                    String e = null;
+                    String check[] = {
+                            "error", "error_type"
+                    };
+                    for (int i = 0; i < check.length; i++) {
+                        e = u.getQueryParameter(check[i]);
+                        if (e != null) {
+                            break;
+                        }
+                    }
 
-					if (conn != null) {
-						conn.disconnect();
-					}
+                    if (e != null) {
+                        System.err.println("e: " + e);
+                        Intent res = new Intent();
+                        res.putExtra("error", e);
+                        OAuth2Activity.this.setResult(Activity.RESULT_CANCELED,
+                                res);
+                        OAuth2Activity.this.finish();
+                        return;
+                    }
 
-					setResult(resultCode, res);
-					finish();
-				}
-			}
+                    synchronized (this) {
+                        if (mFinished) {
+                            return;
+                        }
+                        mFinished = true;
+                    }
 
-			public void onReceivedError(WebView view, int errorCode,
-					String description, String failingUrl) {
-				if (failingUrl.startsWith(mRedirectUri)) {
-					view.setVisibility(View.INVISIBLE);
-					return; // we know this is will give error...
-				}
-				super.onReceivedError(view, errorCode, description, failingUrl);
-				finish();
-			}
-		});
+                    Bundle b = mArgs;
+                    String code = u.getQueryParameter("code");
+                    String token_url = b.getString(OAuth2ServerCredentials.TOKEN_URL);
+                    FormValues fv = new FormValues();
+                    fv.put("client_id", b.getString(OAuth2ServerCredentials.CLIENT_ID));
+                    fv.put("client_secret", b.getString(OAuth2ServerCredentials.CLIENT_SECRET));
+                    fv.put("grant_type", "authorization_code");
+                    fv.put("redirect_uri", b.getString(OAuth2ServerCredentials.REDIRECT_URI));
+                    fv.put("code", code);
 
-		setContentView(wv);
-	}
+                    HttpURLConnection conn = null;
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
+                    Intent res = new Intent();
+                    int resultCode = Activity.RESULT_OK;
+                    res.putExtra("url", token_url);
+                    try {
+                        URL newurl = new URL(token_url);
+                        conn = (HttpURLConnection) newurl.openConnection();
+                        conn.setDoOutput(true);
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Content-Type",
+                                "application/x-www-form-urlencoded");
+                        {
+                            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+                            fv.write(wr);
+                            wr.flush();
+                            wr.close();
+                        }
+                        StringBuilder obj = new StringBuilder();
+                        BufferedReader in = new BufferedReader(new InputStreamReader(conn
+                                .getInputStream()));
+                        char buf[] = new char[1024];
+                        int len;
+                        while ((len = in.read(buf)) != -1) {
+                            obj.append(buf, 0, len);
+                        }
 
-	public static Intent getIntent(Activity activity, OAuth2Server server) {
-		Intent args = new Intent(activity, OAuth2Activity.class);
-		Bundle b = new Bundle();
-		b.putString(OAuth2ServerCredentials.CLIENT_ID, server.getClientId());
-		b.putString(OAuth2ServerCredentials.CLIENT_SECRET,
-				server.getClientSecret());
-		b.putString(OAuth2ServerCredentials.AUTH_URL, server.getAuthUrl());
-		b.putString(OAuth2ServerCredentials.TOKEN_URL, server.getTokenUrl());
-		b.putString(OAuth2ServerCredentials.REDIRECT_URI,
-				server.getRedirectUri());
-		String extra = server.getAuthExtra();
-		if (extra != null) {
-			b.putString(OAuth2ServerCredentials.AUTH_EXTRA, extra);
-		}
-		args.putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
-		return args;
-	}
+                        res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
+                    } catch (Exception ex) {
+                        ex.printStackTrace(System.err);
+                        res.putExtra("ex", ex.toString());
+                        resultCode = Activity.RESULT_CANCELED;
+                    }
+
+                    if (conn != null) {
+                        conn.disconnect();
+                    }
+
+                    setResult(resultCode, res);
+                    finish();
+                }
+            }
+
+            public void onReceivedError(WebView view, int errorCode,
+                    String description, String failingUrl) {
+                if (failingUrl.startsWith(mRedirectUri)) {
+                    view.setVisibility(View.INVISIBLE);
+                    return; // we know this is will give error...
+                }
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                finish();
+            }
+        });
+
+        setContentView(wv);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    public static Intent getIntent(Activity activity, OAuth2Server server) {
+        Intent args = new Intent(activity, OAuth2Activity.class);
+        Bundle b = new Bundle();
+        b.putString(OAuth2ServerCredentials.CLIENT_ID, server.getClientId());
+        b.putString(OAuth2ServerCredentials.CLIENT_SECRET,
+                server.getClientSecret());
+        b.putString(OAuth2ServerCredentials.AUTH_URL, server.getAuthUrl());
+        b.putString(OAuth2ServerCredentials.TOKEN_URL, server.getTokenUrl());
+        b.putString(OAuth2ServerCredentials.REDIRECT_URI,
+                server.getRedirectUri());
+        String extra = server.getAuthExtra();
+        if (extra != null) {
+            b.putString(OAuth2ServerCredentials.AUTH_EXTRA, extra);
+        }
+        args.putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
+        return args;
+    }
 }

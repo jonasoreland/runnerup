@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import android.content.BroadcastReceiver;
@@ -27,17 +28,17 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HeadsetButtonReceiver extends BroadcastReceiver {
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-			KeyEvent event = (KeyEvent) intent
-					.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-			if (KeyEvent.ACTION_DOWN == event.getAction()) {
-				Intent startBroadcastIntent = new Intent();
-				startBroadcastIntent.setAction("org.runnerup.START_STOP");
-				context.sendBroadcast(startBroadcastIntent);
-			}
-		}
-	}
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
+            KeyEvent event = (KeyEvent) intent
+                    .getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            if (KeyEvent.ACTION_DOWN == event.getAction()) {
+                Intent startBroadcastIntent = new Intent();
+                startBroadcastIntent.setAction("org.runnerup.START_STOP");
+                context.sendBroadcast(startBroadcastIntent);
+            }
+        }
+    }
 
 }

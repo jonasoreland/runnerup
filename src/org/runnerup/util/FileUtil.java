@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.util;
 
 import java.io.FileInputStream;
@@ -28,56 +29,56 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FileUtil {
 
-	public static int copy(InputStream src, OutputStream dst) throws IOException {
-		int cnt = 0;
-		byte buf[] = new byte[1024];
-		while (src.read(buf) > 0) {
-			cnt += buf.length;
-			dst.write(buf);
-		}
-		return cnt;
-	}
+    public static int copy(InputStream src, OutputStream dst) throws IOException {
+        int cnt = 0;
+        byte buf[] = new byte[1024];
+        while (src.read(buf) > 0) {
+            cnt += buf.length;
+            dst.write(buf);
+        }
+        return cnt;
+    }
 
-	public static int copyFile(String to, String from) throws IOException {
-		FileInputStream input = null;
-		FileOutputStream output = null;
+    public static int copyFile(String to, String from) throws IOException {
+        FileInputStream input = null;
+        FileOutputStream output = null;
 
-		try {
-			input = new FileInputStream(from);
-			output = new FileOutputStream(to);
+        try {
+            input = new FileInputStream(from);
+            output = new FileOutputStream(to);
 
-			return copy(input, output);
-		} finally {
-			close(input);
-			close(output);
-		}
-	}
+            return copy(input, output);
+        } finally {
+            close(input);
+            close(output);
+        }
+    }
 
-	public static void close(InputStream input) {
-		if (input != null)
-			try {
-				input.close();
-			} catch (IOException ex) {
-			}
-	}
+    public static void close(InputStream input) {
+        if (input != null)
+            try {
+                input.close();
+            } catch (IOException ex) {
+            }
+    }
 
-	public static void close(OutputStream input) {
-		if (input != null)
-			try {
-				input.close();
-			} catch (IOException ex) {
-			}
-	}
+    public static void close(OutputStream input) {
+        if (input != null)
+            try {
+                input.close();
+            } catch (IOException ex) {
+            }
+    }
 
-	public static int copy(InputStream input, String dst) throws IOException {
-		FileOutputStream output = null;
+    public static int copy(InputStream input, String dst) throws IOException {
+        FileOutputStream output = null;
 
-		try {
-			output = new FileOutputStream(dst);
+        try {
+            output = new FileOutputStream(dst);
 
-			return copy(input, output);
-		} finally {
-			close(output);
-		}
-	}
+            return copy(input, output);
+        } finally {
+            close(output);
+        }
+    }
 }

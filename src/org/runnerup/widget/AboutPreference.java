@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.widget;
 
 import org.runnerup.R;
@@ -33,33 +34,34 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AboutPreference extends DialogPreference {
 
-	public AboutPreference(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init();
-	}
+    public AboutPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
 
-	public AboutPreference(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		init();
-	}
+    public AboutPreference(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
+    }
 
-	void init() {
-		setNegativeButtonText(null);
-		Context ctx = getContext();
-		Resources res = ctx.getResources();
-		try {
-			PackageInfo pInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
-			this.setDialogTitle("RunnerUp v" + pInfo.versionName);
-		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String str = res.getString(R.string.Google_Play_Services_Legal_Notices);
-		if (str.contentEquals(this.getTitle())) {
-			CharSequence msg = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this.getContext());
-			if (msg != null) {
-				this.setDialogMessage(msg);
-			}
-		}
-	}
+    void init() {
+        setNegativeButtonText(null);
+        Context ctx = getContext();
+        Resources res = ctx.getResources();
+        try {
+            PackageInfo pInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
+            this.setDialogTitle("RunnerUp v" + pInfo.versionName);
+        } catch (NameNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String str = res.getString(R.string.Google_Play_Services_Legal_Notices);
+        if (str.contentEquals(this.getTitle())) {
+            CharSequence msg = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this
+                    .getContext());
+            if (msg != null) {
+                this.setDialogMessage(msg);
+            }
+        }
+    }
 }

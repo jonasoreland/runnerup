@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import org.runnerup.R;
@@ -23,38 +24,38 @@ import org.runnerup.R;
  */
 public enum Dimension {
 
-	TIME(1, R.string.txt_dimension_time), 
-	DISTANCE(2, R.string.txt_dimension_distance),
-	SPEED(3, R.string.txt_dimension_speed),
-	PACE(4, R.string.txt_dimension_pace),
-	HR(5,R.string.txt_dimension_heartrate),
-	HRZ(6,R.string.txt_dimension_heartratezone);
+    TIME(1, R.string.txt_dimension_time),
+    DISTANCE(2, R.string.txt_dimension_distance),
+    SPEED(3, R.string.txt_dimension_speed),
+    PACE(4, R.string.txt_dimension_pace),
+    HR(5, R.string.txt_dimension_heartrate),
+    HRZ(6, R.string.txt_dimension_heartratezone);
 
-	//TODO
-	public static boolean SPEED_CUE_ENABLED = false; 
-	
-	int value = 0;
-	int textId = 0;
-	
-	private Dimension(int val, int textId) {
-		this.value = val;
-		this.textId = textId;
-	}
+    // TODO
+    public static boolean SPEED_CUE_ENABLED = false;
 
-	/**
-	 * @return the value
-	 */
-	public int getValue() {
-		return value;
-	}
+    int value = 0;
+    int textId = 0;
 
-	public int getTextId() {
-		return textId;
-	}
+    private Dimension(int val, int textId) {
+        this.value = val;
+        this.textId = textId;
+    }
 
-	public boolean equal(Dimension what) {
-		if (what == null || what.value != this.value)
-			return false;
-		return true;
-	}
+    /**
+     * @return the value
+     */
+    public int getValue() {
+        return value;
+    }
+
+    public int getTextId() {
+        return textId;
+    }
+
+    public boolean equal(Dimension what) {
+        if (what == null || what.value != this.value)
+            return false;
+        return true;
+    }
 }

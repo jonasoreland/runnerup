@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.view;
 
 import org.runnerup.R;
@@ -44,173 +45,176 @@ import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
-	LoaderCallbacks<Cursor> {
+        LoaderCallbacks<Cursor> {
 
-	DBHelper mDBHelper = null;
-	SQLiteDatabase mDB = null;
-	Formatter formatter = null;
+    DBHelper mDBHelper = null;
+    SQLiteDatabase mDB = null;
+    Formatter formatter = null;
 
-	ListView listView = null;
-	CursorAdapter cursorAdapter = null;
-	
-	/** Called when the activity is first created. */
+    ListView listView = null;
+    CursorAdapter cursorAdapter = null;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.history);
-		listView = (ListView) findViewById(R.id.historyList);
-		
-		mDBHelper = new DBHelper(this);
-		mDB = mDBHelper.getReadableDatabase();
-		formatter = new Formatter(this);
-		listView.setDividerHeight(2);
-		listView.setOnItemClickListener(this);
-		cursorAdapter = new HistoryListAdapter(this, null);
-		listView.setAdapter(cursorAdapter);
-		
-		this.getSupportLoaderManager().initLoader(0,  null,  this);
-	}
+    /** Called when the activity is first created. */
 
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		getSupportLoaderManager().restartLoader(0,  null , this);
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mDB.close();
-		mDBHelper.close();
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.history);
+        listView = (ListView) findViewById(R.id.historyList);
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		String[] from = new String[] { "_id", DB.ACTIVITY.START_TIME,
-				DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT };
+        mDBHelper = new DBHelper(this);
+        mDB = mDBHelper.getReadableDatabase();
+        formatter = new Formatter(this);
+        listView.setDividerHeight(2);
+        listView.setOnItemClickListener(this);
+        cursorAdapter = new HistoryListAdapter(this, null);
+        listView.setAdapter(cursorAdapter);
 
-		return new SimpleCursorLoader(this, mDB, DB.ACTIVITY.TABLE, from, "deleted == 0", null,
-				"_id desc");
-	}
+        this.getSupportLoaderManager().initLoader(0, null, this);
+    }
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		cursorAdapter.swapCursor(arg1);
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportLoaderManager().restartLoader(0, null, this);
+    }
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		cursorAdapter.swapCursor(null);
-	}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDB.close();
+        mDBHelper.close();
+    }
 
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-		Intent intent = new Intent(this, DetailActivity.class);
-		intent.putExtra("ID", id);
-		intent.putExtra("mode", "details");
-		startActivityForResult(intent, 0);
-	}
+    @Override
+    public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+        String[] from = new String[] {
+                "_id", DB.ACTIVITY.START_TIME,
+                DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
+        };
 
-	@Override
-	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
-		super.onActivityResult(arg0, arg1, arg2);
-		this.getSupportLoaderManager().restartLoader(0,  null,  this);
-	}
+        return new SimpleCursorLoader(this, mDB, DB.ACTIVITY.TABLE, from, "deleted == 0", null,
+                "_id desc");
+    }
 
-	class HistoryListAdapter extends CursorAdapter {
-		LayoutInflater inflater;
+    @Override
+    public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+        cursorAdapter.swapCursor(arg1);
+    }
 
-		public HistoryListAdapter(Context context, Cursor c) {
-			super(context, c, true);
-			inflater = LayoutInflater.from(context);
-		}
+    @Override
+    public void onLoaderReset(Loader<Cursor> arg0) {
+        cursorAdapter.swapCursor(null);
+    }
 
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			int[] to = new int[] { R.id.historyList_id,
-					R.id.historyList_startTime, R.id.historyList_distance,
-					R.id.historyList_time, R.id.historyList_pace, R.id.historyList_sport };
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("ID", id);
+        intent.putExtra("mode", "details");
+        startActivityForResult(intent, 0);
+    }
 
-			int id = cursor.getInt(0);
-			long st = 0;
-			if (!cursor.isNull(1)) {
-				st = cursor.getLong(1); // start time
-			}
-			float d = 0;
-			if (!cursor.isNull(2)) {
-				d = cursor.getFloat(2); // distance
-			}
-			long t = 0;
-			if (!cursor.isNull(3)) {
-				t = cursor.getLong(3); // time (us)
-			}
+    @Override
+    protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+        super.onActivityResult(arg0, arg1, arg2);
+        this.getSupportLoaderManager().restartLoader(0, null, this);
+    }
 
-			{
-				TextView tv = (TextView) view.findViewById(to[0]);
-				tv.setText(Integer.toString(id));
-			}
+    class HistoryListAdapter extends CursorAdapter {
+        LayoutInflater inflater;
 
-			{
-				TextView tv = (TextView) view.findViewById(to[1]);
-				if (!cursor.isNull(1)) {
-					tv.setText(formatter.formatDateTime(Formatter.TXT_LONG, st));
-				} else {
-					tv.setText("");
-				}
-			}
+        public HistoryListAdapter(Context context, Cursor c) {
+            super(context, c, true);
+            inflater = LayoutInflater.from(context);
+        }
 
-			{
-				TextView tv = (TextView) view.findViewById(to[2]);
-				if (!cursor.isNull(2)) {
-					tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long)d));
-				} else {
-					tv.setText("");
-				}
-			}
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            int[] to = new int[] {
+                    R.id.historyList_id,
+                    R.id.historyList_startTime, R.id.historyList_distance,
+                    R.id.historyList_time, R.id.historyList_pace, R.id.historyList_sport
+            };
 
-			{
-				TextView tv = (TextView) view.findViewById(to[3]);
-				if (!cursor.isNull(3)) {
-					tv.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
-				} else {
-					tv.setText("");
-				}
-			}
+            int id = cursor.getInt(0);
+            long st = 0;
+            if (!cursor.isNull(1)) {
+                st = cursor.getLong(1); // start time
+            }
+            float d = 0;
+            if (!cursor.isNull(2)) {
+                d = cursor.getFloat(2); // distance
+            }
+            long t = 0;
+            if (!cursor.isNull(3)) {
+                t = cursor.getLong(3); // time (us)
+            }
 
-			{
-				TextView tv = (TextView) view.findViewById(to[4]);
-				if (!cursor.isNull(3) && !cursor.isNull(3) && d != 0 && t != 0) {
-					tv.setText(formatter.formatPace(Formatter.TXT_LONG, t/d));
-				} else {
-					tv.setText("");
-				}
-			}
+            {
+                TextView tv = (TextView) view.findViewById(to[0]);
+                tv.setText(Integer.toString(id));
+            }
 
-			{
-				TextView tv = (TextView) view.findViewById(to[5]);
-				if (cursor.isNull(4)) {
-					tv.setText("Running");
-				} else {
-					switch(cursor.getInt(4)) {
-					case DB.ACTIVITY.SPORT_RUNNING:
-						tv.setText("Running");
-						break;
-					case DB.ACTIVITY.SPORT_BIKING:
-						tv.setText("Biking");
-						break;
-					default:
-						tv.setText("Unknown?? (" + cursor.getInt(4) + ")");
-						break;
-					}
-				}
-			}
-		}
+            {
+                TextView tv = (TextView) view.findViewById(to[1]);
+                if (!cursor.isNull(1)) {
+                    tv.setText(formatter.formatDateTime(Formatter.TXT_LONG, st));
+                } else {
+                    tv.setText("");
+                }
+            }
 
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			return inflater.inflate(R.layout.history_row, parent, false);
-		}
-	}
+            {
+                TextView tv = (TextView) view.findViewById(to[2]);
+                if (!cursor.isNull(2)) {
+                    tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) d));
+                } else {
+                    tv.setText("");
+                }
+            }
+
+            {
+                TextView tv = (TextView) view.findViewById(to[3]);
+                if (!cursor.isNull(3)) {
+                    tv.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
+                } else {
+                    tv.setText("");
+                }
+            }
+
+            {
+                TextView tv = (TextView) view.findViewById(to[4]);
+                if (!cursor.isNull(3) && !cursor.isNull(3) && d != 0 && t != 0) {
+                    tv.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                } else {
+                    tv.setText("");
+                }
+            }
+
+            {
+                TextView tv = (TextView) view.findViewById(to[5]);
+                if (cursor.isNull(4)) {
+                    tv.setText("Running");
+                } else {
+                    switch (cursor.getInt(4)) {
+                        case DB.ACTIVITY.SPORT_RUNNING:
+                            tv.setText("Running");
+                            break;
+                        case DB.ACTIVITY.SPORT_BIKING:
+                            tv.setText("Biking");
+                            break;
+                        default:
+                            tv.setText("Unknown?? (" + cursor.getInt(4) + ")");
+                            break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return inflater.inflate(R.layout.history_row, parent, false);
+        }
+    }
 }

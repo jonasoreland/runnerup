@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.view;
 
 import java.util.ArrayList;
@@ -30,76 +31,81 @@ import android.widget.TextView;
 
 class AudioSchemeListAdapter extends BaseAdapter {
 
-	/**
+    /**
 	 * 
 	 */
-	LayoutInflater inflater = null;
-	SQLiteDatabase mDB = null;
-	boolean createNewItem = true;
-	ArrayList<String> audioSchemes = new ArrayList<String>();
+    LayoutInflater inflater = null;
+    SQLiteDatabase mDB = null;
+    boolean createNewItem = true;
+    ArrayList<String> audioSchemes = new ArrayList<String>();
 
-	public AudioSchemeListAdapter(SQLiteDatabase db, LayoutInflater inflater, boolean createNew) {
-		super();
-		this.mDB = db;
-		this.inflater = inflater;
-		this.createNewItem = createNew;
-	}
-	
-	@Override
-	public int getCount() {
-		return audioSchemes.size() +
-				/** default */ 1 +
-				(createNewItem ? 1 : 0);
-	}
+    public AudioSchemeListAdapter(SQLiteDatabase db, LayoutInflater inflater, boolean createNew) {
+        super();
+        this.mDB = db;
+        this.inflater = inflater;
+        this.createNewItem = createNew;
+    }
 
-	@Override
-	public Object getItem(int position) {
-		if (position == 0)
-			return "Default";
-		
-		position -= 1;
-		
-		if (position < audioSchemes.size())
-			return audioSchemes.get(position);
-		
-		return "New audio scheme";
-	}
+    @Override
+    public int getCount() {
+        return audioSchemes.size() +
+                /** default */
+                1 +
+                (createNewItem ? 1 : 0);
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return 0;
-	}
+    @Override
+    public Object getItem(int position) {
+        if (position == 0)
+            return "Default";
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-	        convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-		}
+        position -= 1;
 
-		TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
-		ret.setText(getItem(position).toString());
-		return ret;
-	}
+        if (position < audioSchemes.size())
+            return audioSchemes.get(position);
 
-	public int find(String name) {
-		for (int i = 0; i < getCount(); i++) {
-			if (name.contentEquals(getItem(i).toString()))
-				return i;
-		}
-		return 0;
-	}
+        return "New audio scheme";
+    }
 
-	public void reload() {
-		audioSchemes.clear();
-		String[] from = new String[] { DB.AUDIO_SCHEMES.NAME };
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
 
-		Cursor c = mDB.query(DB.AUDIO_SCHEMES.TABLE, from, null, null, null, null, DB.AUDIO_SCHEMES.SORT_ORDER + " desc");
-		if (c.moveToFirst()) {
-			do {
-				audioSchemes.add(c.getString(0));
-			} while (c.moveToNext());
-		}
-		c.close();
-		this.notifyDataSetChanged();
-	}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
+                    false);
+        }
+
+        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        ret.setText(getItem(position).toString());
+        return ret;
+    }
+
+    public int find(String name) {
+        for (int i = 0; i < getCount(); i++) {
+            if (name.contentEquals(getItem(i).toString()))
+                return i;
+        }
+        return 0;
+    }
+
+    public void reload() {
+        audioSchemes.clear();
+        String[] from = new String[] {
+            DB.AUDIO_SCHEMES.NAME
+        };
+
+        Cursor c = mDB.query(DB.AUDIO_SCHEMES.TABLE, from, null, null, null, null,
+                DB.AUDIO_SCHEMES.SORT_ORDER + " desc");
+        if (c.moveToFirst()) {
+            do {
+                audioSchemes.add(c.getString(0));
+            } while (c.moveToNext());
+        }
+        c.close();
+        this.notifyDataSetChanged();
+    }
 }

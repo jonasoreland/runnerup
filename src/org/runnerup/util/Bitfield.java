@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.util;
 
 import android.os.Build;
@@ -22,25 +23,25 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Bitfield {
 
-	public static boolean test(long flags, int bit) {
-		long val = (1 << bit);
-		return (flags & val) == val;
-	}
+    public static boolean test(long flags, int bit) {
+        long val = (1 << bit);
+        return (flags & val) == val;
+    }
 
-	public static long set(long flags, int bit, boolean value) {
-		if (value)
-			return set(flags, bit);
-		else
-			return clear(flags, bit);
-	}
+    public static long set(long flags, int bit, boolean value) {
+        if (value)
+            return set(flags, bit);
+        else
+            return clear(flags, bit);
+    }
 
-	public static long set(long flags, int bit) {
-		long val = (1 << bit);
-		return flags | val;
-	}
+    public static long set(long flags, int bit) {
+        long val = (1 << bit);
+        return flags | val;
+    }
 
-	public static long clear(long flags, int bit) {
-		long val = (1 << bit);
-		return flags & (~val);
-	}
+    public static long clear(long flags, int bit) {
+        long val = (1 << bit);
+        return flags & (~val);
+    }
 }

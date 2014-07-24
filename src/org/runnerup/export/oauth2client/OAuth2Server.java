@@ -14,27 +14,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.export.oauth2client;
 
 public interface OAuth2Server {
-	/**
-	 * Used as title when opening authorization dialog
-	 * 
-	 * @return
-	 */
-	public String getName();
+    /**
+     * Used as title when opening authorization dialog
+     * 
+     * @return
+     */
+    public String getName();
 
-	public String getClientId();
+    public String getClientId();
 
-	public String getRedirectUri();
+    public String getRedirectUri();
 
-	public String getClientSecret();
+    public String getClientSecret();
 
-	public String getAuthUrl();
+    public String getAuthUrl();
 
-	public String getAuthExtra();
+    public String getAuthExtra();
 
-	public String getTokenUrl();
+    public String getTokenUrl();
 
-	public String getRevokeUrl();
+    public String getRevokeUrl();
 };

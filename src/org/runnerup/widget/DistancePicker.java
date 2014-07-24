@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.widget;
 
 import org.runnerup.util.Formatter;
@@ -30,64 +31,66 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DistancePicker extends LinearLayout {
 
-	long baseUnitMeters;
-	
-	NumberPicker unitMeters; // e.g km or mi
-	TextView unitString;
-	NumberPicker meters;
-	
-	public DistancePicker(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	
-		unitMeters = new NumberPicker(context, attrs);
-		LinearLayout unitStringLayout = new LinearLayout(context, attrs);
-		unitStringLayout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
-		unitStringLayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
-		unitString = new TextView(context, attrs);
-		unitString.setTextSize(25);
-		unitStringLayout.addView(unitString);
-		meters = new NumberPicker(context, attrs);
-		
-		unitMeters.setOrientation(VERTICAL);
-		meters.setDigits(4);
-		meters.setOrientation(VERTICAL);
-		
-		setOrientation(HORIZONTAL);
-		setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		addView(unitMeters);
-		addView(unitStringLayout);
-		addView(meters);
+    long baseUnitMeters;
 
-		{
-			Formatter f = new Formatter(context);
-			setBaseUint((long) f.getUnitMeters(), f.getUnitString());
-		}
-	}
+    NumberPicker unitMeters; // e.g km or mi
+    TextView unitString;
+    NumberPicker meters;
 
-	public void setBaseUint(long baseUnit, String baseString) {
-		baseUnitMeters = baseUnit;
-		unitString.setText(baseString);
-		meters.setRange(0,  (int)baseUnitMeters - 1, true);
-	}
-	
-	public long getDistance() {
-		long ret = 0;
-		ret += meters.getValue();
-		ret += (long)unitMeters.getValue() * baseUnitMeters;
-		return ret;
-	}
+    public DistancePicker(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
-	public void setDistance(long s) {
-		long h = s / baseUnitMeters;
-		s -= h * baseUnitMeters;
-		unitMeters.setValue((int)h);
-		meters.setValue((int)s);
-	}
+        unitMeters = new NumberPicker(context, attrs);
+        LinearLayout unitStringLayout = new LinearLayout(context, attrs);
+        unitStringLayout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        unitStringLayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.MATCH_PARENT));
+        unitString = new TextView(context, attrs);
+        unitString.setTextSize(25);
+        unitStringLayout.addView(unitString);
+        meters = new NumberPicker(context, attrs);
 
-	@Override
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		unitMeters.setEnabled(enabled);
-		meters.setEnabled(enabled);
-	}
+        unitMeters.setOrientation(VERTICAL);
+        meters.setDigits(4);
+        meters.setOrientation(VERTICAL);
+
+        setOrientation(HORIZONTAL);
+        setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT));
+        addView(unitMeters);
+        addView(unitStringLayout);
+        addView(meters);
+
+        {
+            Formatter f = new Formatter(context);
+            setBaseUint((long) f.getUnitMeters(), f.getUnitString());
+        }
+    }
+
+    public void setBaseUint(long baseUnit, String baseString) {
+        baseUnitMeters = baseUnit;
+        unitString.setText(baseString);
+        meters.setRange(0, (int) baseUnitMeters - 1, true);
+    }
+
+    public long getDistance() {
+        long ret = 0;
+        ret += meters.getValue();
+        ret += (long) unitMeters.getValue() * baseUnitMeters;
+        return ret;
+    }
+
+    public void setDistance(long s) {
+        long h = s / baseUnitMeters;
+        s -= h * baseUnitMeters;
+        unitMeters.setValue((int) h);
+        meters.setValue((int) s);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        unitMeters.setEnabled(enabled);
+        meters.setEnabled(enabled);
+    }
 }

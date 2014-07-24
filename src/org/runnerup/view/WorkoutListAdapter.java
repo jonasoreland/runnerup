@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.view;
 
 import java.io.File;
@@ -30,71 +31,73 @@ import android.widget.TextView;
 
 class WorkoutListAdapter extends BaseAdapter {
 
-	/**
+    /**
 	 * 
 	 */
-	LayoutInflater inflater = null;
-	String[] workoutList = new String[0];
+    LayoutInflater inflater = null;
+    String[] workoutList = new String[0];
 
-	public WorkoutListAdapter(LayoutInflater inflater) {
-		super();
-		this.inflater = inflater;
-	}
-	
-	@Override
-	public int getCount() {
-		return workoutList.length;
-	}
+    public WorkoutListAdapter(LayoutInflater inflater) {
+        super();
+        this.inflater = inflater;
+    }
 
-	@Override
-	public Object getItem(int position) {
-		return workoutList[position];
-	}
+    @Override
+    public int getCount() {
+        return workoutList.length;
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return 0;
-	}
+    @Override
+    public Object getItem(int position) {
+        return workoutList[position];
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-	        convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-		}
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
 
-		TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
-		ret.setText(getItem(position).toString());
-		return ret;
-	}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
+                    false);
+        }
 
-	public int find(String name) {
-		for (int i = 0; i < getCount(); i++) {
-			if (name.contentEquals(getItem(i).toString()))
-				return i;
-		}
-		return 0;
-	}
+        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        ret.setText(getItem(position).toString());
+        return ret;
+    }
 
-	public void reload() {
-		String[] list = load(inflater.getContext());
-		if (list == null) {
-			if (workoutList != null && workoutList.length == 0) {
-				// return;
-			} else {
-				workoutList = new String[0];
-			}
-		} else {
-			workoutList = list;
-		}
-		this.notifyDataSetChanged();
-	}
+    public int find(String name) {
+        for (int i = 0; i < getCount(); i++) {
+            if (name.contentEquals(getItem(i).toString()))
+                return i;
+        }
+        return 0;
+    }
 
-	public static String[] load(Context ctx) {
-		File f = ctx.getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
-		return f.list(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String filename) {
-				return filename.endsWith(".json");
-			}});
-	}
+    public void reload() {
+        String[] list = load(inflater.getContext());
+        if (list == null) {
+            if (workoutList != null && workoutList.length == 0) {
+                // return;
+            } else {
+                workoutList = new String[0];
+            }
+        } else {
+            workoutList = list;
+        }
+        this.notifyDataSetChanged();
+    }
+
+    public static String[] load(Context ctx) {
+        File f = ctx.getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
+        return f.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(".json");
+            }
+        });
+    }
 }

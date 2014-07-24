@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.view;
 
 import org.runnerup.util.HRZones;
@@ -28,63 +29,64 @@ import android.widget.TextView;
 
 class HRZonesListAdapter extends BaseAdapter {
 
-	/**
+    /**
 	 * 
 	 */
-	HRZones hrZones = null;
-	LayoutInflater inflater = null;
+    HRZones hrZones = null;
+    LayoutInflater inflater = null;
 
-	public HRZonesListAdapter(Context ctx, LayoutInflater inflater) {
-		super();
-		this.inflater = inflater;
-		this.hrZones = new HRZones(ctx);
-	}
-	
-	@Override
-	public int getCount() {
-		return hrZones.getCount();
-	}
+    public HRZonesListAdapter(Context ctx, LayoutInflater inflater) {
+        super();
+        this.inflater = inflater;
+        this.hrZones = new HRZones(ctx);
+    }
 
-	String lastString = null;
-	int lastPosition = -1;
-	
-	@Override
-	public Object getItem(int position) {
-		if (position == lastPosition)
-			return lastString;
-		
-		if (position < hrZones.getCount()) {
-			Pair<Integer, Integer> val = hrZones.getHRValues(position + 1);
-			String str = "Zone " + (position + 1) + " (" + val.first + " - " + val.second + ")";
+    @Override
+    public int getCount() {
+        return hrZones.getCount();
+    }
 
-			lastPosition = position;
-			lastString = str;
-			
-			return str;
-		}
-		
-		return null;
-	}
+    String lastString = null;
+    int lastPosition = -1;
 
-	@Override
-	public long getItemId(int position) {
-		return 0;
-	}
+    @Override
+    public Object getItem(int position) {
+        if (position == lastPosition)
+            return lastString;
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-	        convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
-		}
+        if (position < hrZones.getCount()) {
+            Pair<Integer, Integer> val = hrZones.getHRValues(position + 1);
+            String str = "Zone " + (position + 1) + " (" + val.first + " - " + val.second + ")";
 
-		TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
-		ret.setText(getItem(position).toString());
+            lastPosition = position;
+            lastString = str;
 
-		return convertView;
-	}
+            return str;
+        }
 
-	public void reload() {
-		lastPosition = -1;
-		hrZones.reload();
-	}
+        return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
+                    false);
+        }
+
+        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        ret.setText(getItem(position).toString());
+
+        return convertView;
+    }
+
+    public void reload() {
+        lastPosition = -1;
+        hrZones.reload();
+    }
 }

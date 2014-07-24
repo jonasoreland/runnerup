@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.widget;
 
 import org.runnerup.R;
@@ -38,213 +39,215 @@ public class NumberPicker extends LinearLayout {
     public interface OnChangedListener {
         void onChanged(NumberPicker picker, int oldVal, int newVal);
     };
-	
+
     public interface Formatter {
         String toString(int value);
     };
-    
-	int prevValue;
-	int currValue;
-	int minValue = MIN_VAL;
-	int maxValue = MAX_VAL;
-	boolean wrapValue = true;
-	
-	final static int DIGITS = 2;
-	final static int MIN_VAL = 0;
-	final static int MAX_VAL = 59;
-	
-	EditText valueText;
-	OnChangedListener listener;
-	
-	Button decButton;
-	Button incButton;
 
-	boolean longInc = false;
-	boolean longDec = false;
-	Handler longHandler = new Handler();
-	long longSpeed = 300;
-	int textSize = 25;
-	int digits = DIGITS;
-	String fmtString = "%0"+digits+"d";
-	
-	public NumberPicker(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	
-		if (attrs != null) {
-			TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
-			processAttributes(arr);
-			arr.recycle();
-		}
-		
-		createValueText(context);
-		createButton(context, '+');
-		createButton(context, '-');
-		
-		setPadding(5,5,5,5);
-		setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		addViews();
-		updateView();
-	}
-	
-	public void processAttributes(TypedArray arr) {
-		if (arr == null)
-			return;
-		
-		if (arr.hasValue(R.styleable.TitleSpinner_digits)) {
-			setDigits(arr.getInt(R.styleable.TitleSpinner_digits, digits));
-		}
-		if (arr.hasValue(R.styleable.TitleSpinner_min_val)) {
-			minValue = arr.getInt(R.styleable.TitleSpinner_min_val, minValue);
-		}
-		if (arr.hasValue(R.styleable.TitleSpinner_max_val)) {
-			maxValue = arr.getInt(R.styleable.TitleSpinner_max_val, maxValue);
-		}
-	}
-	
-	private void addViews() {
-		LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		if (this.getOrientation() == VERTICAL) {
-			addView(incButton, lp);
-			addView(valueText, lp);
-			addView(decButton, lp);
-		} else {
-			addView(decButton, lp);
-			addView(valueText, lp);
-			addView(incButton, lp);
-		}
-	}
+    int prevValue;
+    int currValue;
+    int minValue = MIN_VAL;
+    int maxValue = MAX_VAL;
+    boolean wrapValue = true;
 
-	private void createButton(Context context, char c) {
-		Button b = new Button(context);
-		b.setText("" + c);
-		b.setTextSize(textSize);
-		b.setOnClickListener(buttonClick);
-		b.setOnLongClickListener(buttonLongClick);
-		b.setOnTouchListener(buttonLongTouchListener);
-		b.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL );
-		if (c == '+')
-			incButton = b;
-		else
-			decButton = b;
-	}
+    final static int DIGITS = 2;
+    final static int MIN_VAL = 0;
+    final static int MAX_VAL = 59;
 
-	private void createValueText(Context context) {
-		valueText = new EditText(context);
-		valueText.setTextSize(textSize);
-		valueText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (hasFocus){
-					valueText.selectAll();
-				} else {
-					validateInput(valueText);
-				}
-			}
-		});
-		valueText.setInputType(InputType.TYPE_CLASS_NUMBER);
-		valueText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL );
-	}
+    EditText valueText;
+    OnChangedListener listener;
 
-	Runnable longPressUpdater = new Runnable() {
-		public void run() {
-			if (longInc) {
-				setValueImpl(currValue +1);
-			} else if (longDec) {
-				setValueImpl(currValue - 1);
-			} else {
-				return;
-			}
-			longHandler.postDelayed(this, longSpeed);
-		}
-	};
+    Button decButton;
+    Button incButton;
 
-	private void setValueImpl(int newValue) {
-		if (newValue < minValue) {
-			if (wrapValue)
-				newValue = maxValue;
-			else
-				newValue = minValue;
-		} else if (newValue > maxValue) {
-			if (wrapValue)
-				newValue = minValue;
-			else
-				newValue = maxValue;
-		}
-		int save = prevValue;
-		prevValue = currValue;
-		currValue = newValue;
-		if (listener != null)
-			listener.onChanged(this, save, newValue);
-		updateView();
-	}
+    boolean longInc = false;
+    boolean longDec = false;
+    Handler longHandler = new Handler();
+    long longSpeed = 300;
+    int textSize = 25;
+    int digits = DIGITS;
+    String fmtString = "%0" + digits + "d";
 
-	private void updateView() {
-		valueText.setText(formatter.toString(currValue));
-		valueText.selectAll();
-	}
-	
-    OnClickListener buttonClick = new OnClickListener() {
-		@Override
-        public void onClick(View v) {
-	    	validateInput(valueText);
-	        if (!valueText.hasFocus())
-	        {
-	        	valueText.requestFocus();
-	        }
-	        int diff = v == incButton ? 1 : -1;
-	        setValueImpl(currValue + diff);
+    public NumberPicker(Context context, AttributeSet attrs) {
+        super(context, attrs);
+
+        if (attrs != null) {
+            TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
+            processAttributes(arr);
+            arr.recycle();
+        }
+
+        createValueText(context);
+        createButton(context, '+');
+        createButton(context, '-');
+
+        setPadding(5, 5, 5, 5);
+        setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT));
+        addViews();
+        updateView();
+    }
+
+    public void processAttributes(TypedArray arr) {
+        if (arr == null)
+            return;
+
+        if (arr.hasValue(R.styleable.TitleSpinner_digits)) {
+            setDigits(arr.getInt(R.styleable.TitleSpinner_digits, digits));
+        }
+        if (arr.hasValue(R.styleable.TitleSpinner_min_val)) {
+            minValue = arr.getInt(R.styleable.TitleSpinner_min_val, minValue);
+        }
+        if (arr.hasValue(R.styleable.TitleSpinner_max_val)) {
+            maxValue = arr.getInt(R.styleable.TitleSpinner_max_val, maxValue);
+        }
+    }
+
+    private void addViews() {
+        LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT);
+        if (this.getOrientation() == VERTICAL) {
+            addView(incButton, lp);
+            addView(valueText, lp);
+            addView(decButton, lp);
+        } else {
+            addView(decButton, lp);
+            addView(valueText, lp);
+            addView(incButton, lp);
+        }
+    }
+
+    private void createButton(Context context, char c) {
+        Button b = new Button(context);
+        b.setText("" + c);
+        b.setTextSize(textSize);
+        b.setOnClickListener(buttonClick);
+        b.setOnLongClickListener(buttonLongClick);
+        b.setOnTouchListener(buttonLongTouchListener);
+        b.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+        if (c == '+')
+            incButton = b;
+        else
+            decButton = b;
+    }
+
+    private void createValueText(Context context) {
+        valueText = new EditText(context);
+        valueText.setTextSize(textSize);
+        valueText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    valueText.selectAll();
+                } else {
+                    validateInput(valueText);
+                }
+            }
+        });
+        valueText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        valueText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+    }
+
+    Runnable longPressUpdater = new Runnable() {
+        public void run() {
+            if (longInc) {
+                setValueImpl(currValue + 1);
+            } else if (longDec) {
+                setValueImpl(currValue - 1);
+            } else {
+                return;
+            }
+            longHandler.postDelayed(this, longSpeed);
         }
     };
 
-	void buttonLongClick(int i) {
+    private void setValueImpl(int newValue) {
+        if (newValue < minValue) {
+            if (wrapValue)
+                newValue = maxValue;
+            else
+                newValue = minValue;
+        } else if (newValue > maxValue) {
+            if (wrapValue)
+                newValue = minValue;
+            else
+                newValue = maxValue;
+        }
+        int save = prevValue;
+        prevValue = currValue;
+        currValue = newValue;
+        if (listener != null)
+            listener.onChanged(this, save, newValue);
+        updateView();
+    }
+
+    private void updateView() {
+        valueText.setText(formatter.toString(currValue));
+        valueText.selectAll();
+    }
+
+    OnClickListener buttonClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            validateInput(valueText);
+            if (!valueText.hasFocus())
+            {
+                valueText.requestFocus();
+            }
+            int diff = v == incButton ? 1 : -1;
+            setValueImpl(currValue + diff);
+        }
+    };
+
+    void buttonLongClick(int i) {
         valueText.clearFocus();
-		if (i < 0) {
-			longDec = true;
-		} else if (i > 0) {
-			longInc = true;
-		} else {
-			longInc = false;
-			longDec = false;
-			return;
-		}
-			
-		longHandler.post(longPressUpdater);
-	}
+        if (i < 0) {
+            longDec = true;
+        } else if (i > 0) {
+            longInc = true;
+        } else {
+            longInc = false;
+            longDec = false;
+            return;
+        }
+
+        longHandler.post(longPressUpdater);
+    }
 
     OnLongClickListener buttonLongClick = new OnLongClickListener() {
-    	@Override
-    	public boolean onLongClick(View v) {
-    		if (v == incButton)
-    			buttonLongClick(+1);
-    		else
-    			buttonLongClick(-1);
+        @Override
+        public boolean onLongClick(View v) {
+            if (v == incButton)
+                buttonLongClick(+1);
+            else
+                buttonLongClick(-1);
             return true;
         }
     };
 
     OnTouchListener buttonLongTouchListener = new OnTouchListener() {
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			if (event.getAction() == MotionEvent.ACTION_UP &&
-					((longInc && v == incButton) ||
-					 (longDec && v == decButton))) {
-				buttonLongClick(0);
-			}
-			return false;
-		}
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_UP &&
+                    ((longInc && v == incButton) ||
+                    (longDec && v == decButton))) {
+                buttonLongClick(0);
+            }
+            return false;
+        }
     };
-    
+
     protected void validateInput(EditText tv) {
         String str = String.valueOf(tv.getText());
         if ("".equals(str)) {
-        	updateView();
+            updateView();
         } else {
-        	try {
-        		int l = Integer.valueOf(str);
-        		setValueImpl(l);
-        	} catch (NumberFormatException ex) {
-        	}
+            try {
+                int l = Integer.valueOf(str);
+                setValueImpl(l);
+            } catch (NumberFormatException ex) {
+            }
         }
-	}
+    }
 
     @Override
     public void setEnabled(boolean enabled) {
@@ -253,57 +256,58 @@ public class NumberPicker extends LinearLayout {
         decButton.setEnabled(enabled);
         valueText.setEnabled(enabled);
         if (!enabled) {
-        	longInc = false;
-        	longDec = false;
+            longInc = false;
+            longDec = false;
         }
     }
 
     @Override
     public void setOrientation(int orientation) {
-    	if (getOrientation() != orientation) {
-    		super.setOrientation(orientation);
-        	readd();
-    	}
+        if (getOrientation() != orientation) {
+            super.setOrientation(orientation);
+            readd();
+        }
     }
-    
+
     Formatter formatter = new Formatter() {
-    	final StringBuilder builder = new StringBuilder();
-    	final java.util.Formatter fmt = new java.util.Formatter(builder);
-    	final Object[] args = new Object[1];
-    	public String toString(int value) {
-    		args[0] = value;
-    		builder.delete(0, builder.length());
-    		fmt.format(fmtString, args);
-    		return fmt.toString();
-    	}
+        final StringBuilder builder = new StringBuilder();
+        final java.util.Formatter fmt = new java.util.Formatter(builder);
+        final Object[] args = new Object[1];
+
+        public String toString(int value) {
+            args[0] = value;
+            builder.delete(0, builder.length());
+            fmt.format(fmtString, args);
+            return fmt.toString();
+        }
     };
-    
+
     public void setRange(int min, int max, boolean wrap) {
-    	this.minValue = min;
-    	this.maxValue = max;
-    	this.wrapValue = wrap;
+        this.minValue = min;
+        this.maxValue = max;
+        this.wrapValue = wrap;
     }
 
     public void setDigits(int digits) {
-    	this.digits = digits;
-    	fmtString = "%0"+digits+"d";
-    	updateView();
-    	readd();
+        this.digits = digits;
+        fmtString = "%0" + digits + "d";
+        updateView();
+        readd();
     }
 
     public void setValue(int newValue) {
-    	setValueImpl(newValue);
+        setValueImpl(newValue);
     }
 
     public int getValue() {
-    	validateInput(valueText);
-    	return currValue;
+        validateInput(valueText);
+        return currValue;
     }
 
     private void readd() {
-    	removeView(incButton);
-    	removeView(decButton);
-    	removeView(valueText);
-    	addViews();
+        removeView(incButton);
+        removeView(decButton);
+        removeView(valueText);
+        addViews();
     }
 }

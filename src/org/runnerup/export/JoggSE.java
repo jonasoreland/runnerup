@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.export;
 
 import java.io.BufferedInputStream;
@@ -53,278 +54,284 @@ import android.util.Xml;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class JoggSE extends FormCrawler implements Uploader {
 
-	public static final String NAME = "jogg.se";
-	private static String MASTER_USER = null;
-	private static String MASTER_KEY = null;
-	
-	public static final String BASE_URL = "http://jogg.se/iphoneservice/iphoneservice.asmx";
+    public static final String NAME = "jogg.se";
+    private static String MASTER_USER = null;
+    private static String MASTER_KEY = null;
 
-	long id = 0;
-	private String username = null;
-	private String password = null;
-	private boolean isConnected = false;
-	
-	JoggSE(final UploadManager uploadManager) {
-		if (MASTER_USER == null || MASTER_KEY == null) {
-			try {
-				final JSONObject tmp = new JSONObject(uploadManager.loadData(this));
-				MASTER_USER = tmp.getString("MASTER_USER");
-				MASTER_KEY = tmp.getString("MASTER_KEY");
-			} catch (final Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
+    public static final String BASE_URL = "http://jogg.se/iphoneservice/iphoneservice.asmx";
 
-	@Override
-	public long getId() {
-		return id;
-	}
+    long id = 0;
+    private String username = null;
+    private String password = null;
+    private boolean isConnected = false;
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    JoggSE(final UploadManager uploadManager) {
+        if (MASTER_USER == null || MASTER_KEY == null) {
+            try {
+                final JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                MASTER_USER = tmp.getString("MASTER_USER");
+                MASTER_KEY = tmp.getString("MASTER_KEY");
+            } catch (final Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
-	@Override
-	public void init(final ContentValues config) {
-		id = config.getAsLong("_id");
-		final String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-		if (authToken != null) {
-			try {
-				JSONObject tmp = new JSONObject(authToken);
-				username = tmp.optString("username", null);
-				password = tmp.optString("password", null);
-			} catch (final JSONException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    @Override
+    public long getId() {
+        return id;
+    }
 
-	@Override
-	public boolean isConfigured() {
-		if (username != null && password != null)
-			return true;
-		return false;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	@Override
-	public String getAuthConfig() {
-		JSONObject tmp = new JSONObject();
-		try {
-			tmp.put("username",  username);
-			tmp.put("password",  password);
-		} catch (final JSONException e) {
-			e.printStackTrace();
-		}
+    @Override
+    public void init(final ContentValues config) {
+        id = config.getAsLong("_id");
+        final String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        if (authToken != null) {
+            try {
+                JSONObject tmp = new JSONObject(authToken);
+                username = tmp.optString("username", null);
+                password = tmp.optString("password", null);
+            } catch (final JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-		return tmp.toString();
-	}
-	
-	@Override
-	public void reset() {
-		username = null;
-		password = null;
-		isConnected = false;
-	}
+    @Override
+    public boolean isConfigured() {
+        if (username != null && password != null)
+            return true;
+        return false;
+    }
 
-	@Override
-	public Status connect() {
-		if (isConnected) {
-			return Status.OK;
-		}
+    @Override
+    public String getAuthConfig() {
+        JSONObject tmp = new JSONObject();
+        try {
+            tmp.put("username", username);
+            tmp.put("password", password);
+        } catch (final JSONException e) {
+            e.printStackTrace();
+        }
 
-		Status s = Status.NEED_AUTH;
-		s.authMethod = Uploader.AuthMethod.USER_PASS;
-		if (username == null || password == null) {
-			return s;
-		}
+        return tmp.toString();
+    }
 
-		Exception ex = null;
-		HttpURLConnection conn = null;
-		try {
-			/**
-			 * Login by making an empty save-gpx call and see what error message you get
-			 *	
-			 * Invalid/"Invalid Userdetails" => wrong user/pass
-			 * NOK/"Root element is missing" => OK
-			 */
-			final String LOGIN_OK = "NOK";
+    @Override
+    public void reset() {
+        username = null;
+        password = null;
+        isConnected = false;
+    }
 
-			conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Host", "jogg.se");
-			conn.addRequestProperty("Content-Type", "text/xml");
-			
-			final BufferedWriter wr = new BufferedWriter(new PrintWriter(conn.getOutputStream()));
-			saveGPX(wr, "");
-			wr.flush();
-			wr.close();
+    @Override
+    public Status connect() {
+        if (isConnected) {
+            return Status.OK;
+        }
 
-			final InputStream in = new BufferedInputStream(conn.getInputStream());
-			final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			final DocumentBuilder db = dbf.newDocumentBuilder();
-			final InputSource is=new InputSource();
-			is.setByteStream(in);
-			final Document doc = db.parse(is);
-			conn.disconnect();
-			conn = null;
-			
-			final String path[] = { "soap:Envelope", "soap:Body", "SaveGpxResponse", "SaveGpxResult", "ResponseStatus", "ResponseCode"};
-			final Node e = navigate(doc, path);
-			System.err.println("reply: " + e.getTextContent());
-			if (e != null && e.getTextContent() != null && LOGIN_OK.contentEquals(e.getTextContent())) {
-				isConnected = true;
-				return Uploader.Status.OK;
-			}
-			
-			return s;
-		} catch (final MalformedURLException e) {
-			ex = e;
-		} catch (final IOException e) {
-			ex = e;
-		} catch (final ParserConfigurationException e) {
-			ex = e;
-		} catch (final SAXException e) {
-			ex = e;
-		}
+        Status s = Status.NEED_AUTH;
+        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        if (username == null || password == null) {
+            return s;
+        }
 
-		if (conn != null)
-			conn.disconnect();
+        Exception ex = null;
+        HttpURLConnection conn = null;
+        try {
+            /**
+             * Login by making an empty save-gpx call and see what error message
+             * you get Invalid/"Invalid Userdetails" => wrong user/pass
+             * NOK/"Root element is missing" => OK
+             */
+            final String LOGIN_OK = "NOK";
 
-		s = Uploader.Status.ERROR;
-		s.ex = ex;
-		if (ex != null) {
-			ex.printStackTrace();
-		}
-		return s;
-	}
+            conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.addRequestProperty("Host", "jogg.se");
+            conn.addRequestProperty("Content-Type", "text/xml");
 
-	private static Node navigate(final Document doc, final String[] path) {
-		// TODO improve...
-		final NodeList list = doc.getElementsByTagName(path[path.length - 1]);
-		return list.item(0);
-	}
+            final BufferedWriter wr = new BufferedWriter(new PrintWriter(conn.getOutputStream()));
+            saveGPX(wr, "");
+            wr.flush();
+            wr.close();
 
-	private void saveGPX(final Writer wr, final String gpx) throws IllegalArgumentException, IllegalStateException, IOException {
-		final XmlSerializer mXML = Xml.newSerializer();
-		mXML.setFeature(
-				"http://xmlpull.org/v1/doc/features.html#indent-output",
-				true);
-		mXML.setOutput(wr);
-		mXML.startDocument("UTF-8", true);
-		mXML.startTag("", "soap12:Envelope");
-		mXML.attribute("", "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-		mXML.attribute("", "xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
-		mXML.attribute("", "xmlns:soap12", "http://www.w3.org/2003/05/soap-envelope");
-		mXML.startTag("", "soap12:Body");
-		mXML.startTag("", "SaveGpx");
-		mXML.attribute("", "xmlns", "http://jogg.se/IphoneService");
+            final InputStream in = new BufferedInputStream(conn.getInputStream());
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder db = dbf.newDocumentBuilder();
+            final InputSource is = new InputSource();
+            is.setByteStream(in);
+            final Document doc = db.parse(is);
+            conn.disconnect();
+            conn = null;
 
-		mXML.startTag("", "gpx");
-		mXML.text(android.util.Base64.encodeToString(gpx.getBytes(), Base64.NO_WRAP));
-		mXML.endTag("", "gpx");
+            final String path[] = {
+                    "soap:Envelope", "soap:Body", "SaveGpxResponse", "SaveGpxResult",
+                    "ResponseStatus", "ResponseCode"
+            };
+            final Node e = navigate(doc, path);
+            System.err.println("reply: " + e.getTextContent());
+            if (e != null && e.getTextContent() != null
+                    && LOGIN_OK.contentEquals(e.getTextContent())) {
+                isConnected = true;
+                return Uploader.Status.OK;
+            }
 
-		mXML.startTag("", "user");
-		mXML.startTag("", "Email");
-		mXML.text(username);
-		mXML.endTag("", "Email");
-		mXML.startTag("", "Password");
-		mXML.text(password);
-		mXML.endTag("", "Password");
-		mXML.endTag("", "user");
+            return s;
+        } catch (final MalformedURLException e) {
+            ex = e;
+        } catch (final IOException e) {
+            ex = e;
+        } catch (final ParserConfigurationException e) {
+            ex = e;
+        } catch (final SAXException e) {
+            ex = e;
+        }
 
-		mXML.startTag("", "credentials");
-		mXML.startTag("", "MasterUser");
-		mXML.text(MASTER_USER);
-		mXML.endTag("", "MasterUser");
-		mXML.startTag("", "MasterKey");
-		mXML.text(MASTER_KEY);
-		mXML.endTag("", "MasterKey");
-		mXML.endTag("", "credentials");
-		mXML.endTag("", "SaveGpx");
-		mXML.endTag("", "soap12:Body");
-		mXML.endTag("", "soap12:Envelope");
-		mXML.endDocument();
-		mXML.flush();
-	}
+        if (conn != null)
+            conn.disconnect();
 
-	@Override
-	public Status upload(final SQLiteDatabase db, final long mID) {
-		Status s;
-		if ((s = connect()) != Status.OK) {
-			return s;
-		}
-		
-		Exception ex = null;
-		HttpURLConnection conn = null;
-		final GPX gpx = new GPX(db);
-		try {
-			final StringWriter gpxString = new StringWriter();
-			gpx.export(mID, gpxString);
+        s = Uploader.Status.ERROR;
+        s.ex = ex;
+        if (ex != null) {
+            ex.printStackTrace();
+        }
+        return s;
+    }
 
-			conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Host", "jogg.se");
-			conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
+    private static Node navigate(final Document doc, final String[] path) {
+        // TODO improve...
+        final NodeList list = doc.getElementsByTagName(path[path.length - 1]);
+        return list.item(0);
+    }
 
-			final BufferedWriter wr = new BufferedWriter(new PrintWriter(
-					conn.getOutputStream()));
-			saveGPX(wr, gpxString.toString());
-			wr.flush();
-			wr.close();
+    private void saveGPX(final Writer wr, final String gpx) throws IllegalArgumentException,
+            IllegalStateException, IOException {
+        final XmlSerializer mXML = Xml.newSerializer();
+        mXML.setFeature(
+                "http://xmlpull.org/v1/doc/features.html#indent-output",
+                true);
+        mXML.setOutput(wr);
+        mXML.startDocument("UTF-8", true);
+        mXML.startTag("", "soap12:Envelope");
+        mXML.attribute("", "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        mXML.attribute("", "xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+        mXML.attribute("", "xmlns:soap12", "http://www.w3.org/2003/05/soap-envelope");
+        mXML.startTag("", "soap12:Body");
+        mXML.startTag("", "SaveGpx");
+        mXML.attribute("", "xmlns", "http://jogg.se/IphoneService");
 
-			final InputStream in = new BufferedInputStream(conn.getInputStream());
-			final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			final DocumentBuilder dob = dbf.newDocumentBuilder();
-			final InputSource is = new InputSource();
-			is.setByteStream(in);
-			final Document doc = dob.parse(is);
-			conn.disconnect();
-			conn = null;
+        mXML.startTag("", "gpx");
+        mXML.text(android.util.Base64.encodeToString(gpx.getBytes(), Base64.NO_WRAP));
+        mXML.endTag("", "gpx");
 
-			final String path[] = { "soap:Envelope", "soap:Body",
-					"SaveGpxResponse", "SaveGpxResult", "ResponseStatus",
-					"ResponseCode" };
-			final Node e = navigate(doc, path);
-			System.err.println("reply: " + e.getTextContent());
-			if (e != null && e.getTextContent() != null
-					&& "OK".contentEquals(e.getTextContent())) {
-				return Uploader.Status.OK;
-			}
-			throw new Exception(e.getTextContent());
-		} catch (final MalformedURLException e) {
-			ex = e;
-		} catch (final IOException e) {
-			ex = e;
-		} catch (final ParserConfigurationException e) {
-			ex = e;
-		} catch (final SAXException e) {
-			ex = e;
-		} catch (final DOMException e) {
-			ex = e;
-			e.printStackTrace();
-		} catch (final Exception e) {
-			ex = e;
-		}
+        mXML.startTag("", "user");
+        mXML.startTag("", "Email");
+        mXML.text(username);
+        mXML.endTag("", "Email");
+        mXML.startTag("", "Password");
+        mXML.text(password);
+        mXML.endTag("", "Password");
+        mXML.endTag("", "user");
 
-		if (conn != null)
-			conn.disconnect();
+        mXML.startTag("", "credentials");
+        mXML.startTag("", "MasterUser");
+        mXML.text(MASTER_USER);
+        mXML.endTag("", "MasterUser");
+        mXML.startTag("", "MasterKey");
+        mXML.text(MASTER_KEY);
+        mXML.endTag("", "MasterKey");
+        mXML.endTag("", "credentials");
+        mXML.endTag("", "SaveGpx");
+        mXML.endTag("", "soap12:Body");
+        mXML.endTag("", "soap12:Envelope");
+        mXML.endDocument();
+        mXML.flush();
+    }
 
-		s = Uploader.Status.ERROR;
-		s.ex = ex;
-		if (ex != null) {
-			ex.printStackTrace();
-		}
-		return s;
+    @Override
+    public Status upload(final SQLiteDatabase db, final long mID) {
+        Status s;
+        if ((s = connect()) != Status.OK) {
+            return s;
+        }
 
-	}
+        Exception ex = null;
+        HttpURLConnection conn = null;
+        final GPX gpx = new GPX(db);
+        try {
+            final StringWriter gpxString = new StringWriter();
+            gpx.export(mID, gpxString);
 
-	@Override
-	public void logout() {
-		cookies.clear();
-		formValues.clear();
-	}
+            conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.addRequestProperty("Host", "jogg.se");
+            conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
+
+            final BufferedWriter wr = new BufferedWriter(new PrintWriter(
+                    conn.getOutputStream()));
+            saveGPX(wr, gpxString.toString());
+            wr.flush();
+            wr.close();
+
+            final InputStream in = new BufferedInputStream(conn.getInputStream());
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder dob = dbf.newDocumentBuilder();
+            final InputSource is = new InputSource();
+            is.setByteStream(in);
+            final Document doc = dob.parse(is);
+            conn.disconnect();
+            conn = null;
+
+            final String path[] = {
+                    "soap:Envelope", "soap:Body",
+                    "SaveGpxResponse", "SaveGpxResult", "ResponseStatus",
+                    "ResponseCode"
+            };
+            final Node e = navigate(doc, path);
+            System.err.println("reply: " + e.getTextContent());
+            if (e != null && e.getTextContent() != null
+                    && "OK".contentEquals(e.getTextContent())) {
+                return Uploader.Status.OK;
+            }
+            throw new Exception(e.getTextContent());
+        } catch (final MalformedURLException e) {
+            ex = e;
+        } catch (final IOException e) {
+            ex = e;
+        } catch (final ParserConfigurationException e) {
+            ex = e;
+        } catch (final SAXException e) {
+            ex = e;
+        } catch (final DOMException e) {
+            ex = e;
+            e.printStackTrace();
+        } catch (final Exception e) {
+            ex = e;
+        }
+
+        if (conn != null)
+            conn.disconnect();
+
+        s = Uploader.Status.ERROR;
+        s.ex = ex;
+        if (ex != null) {
+            ex.printStackTrace();
+        }
+        return s;
+
+    }
+
+    @Override
+    public void logout() {
+        cookies.clear();
+        formValues.clear();
+    }
 };

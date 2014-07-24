@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.hr;
 
 import java.util.UUID;
@@ -38,119 +39,123 @@ import com.samsung.android.sdk.bt.gatt.BluetoothGattService;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SamsungBLEHRProvider implements HRProvider {
 
-	public static boolean checkLibrary() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-			return false;
+    public static boolean checkLibrary() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+            return false;
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-			return false;
-		
-		try {
-			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGatt");
-			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattAdapter");
-			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCallback");
-			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCharacteristic");
-			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor");
-			Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattService");
-			return true;
-		} catch (Exception e) {
-		}
-		return false;
-	}	
-	
-	static final String NAME = "SamsungBLE";
-	static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+            return false;
+
+        try {
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGatt");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattAdapter");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCallback");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCharacteristic");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattService");
+            return true;
+        } catch (Exception e) {
+        }
+        return false;
+    }
+
+    static final String NAME = "SamsungBLE";
+    static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
     static final UUID HRP_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
-	static final UUID FIRMWARE_REVISON_UUID = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
-	static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
-    static final UUID HEART_RATE_MEASUREMENT_CHARAC = UUID.fromString("00002A37-0000-1000-8000-00805f9b34fb");
+    static final UUID FIRMWARE_REVISON_UUID = UUID
+            .fromString("00002a26-0000-1000-8000-00805f9b34fb");
+    static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
+    static final UUID HEART_RATE_MEASUREMENT_CHARAC = UUID
+            .fromString("00002A37-0000-1000-8000-00805f9b34fb");
     static final UUID CCC = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
-	private Context context;
-	private BluetoothAdapter btAdapter = null;
-	private BluetoothGatt btGatt = null;
-	private BluetoothDevice btDevice = null;
-	private int hrValue = 0;
-	private long hrTimestamp = 0;
-	
-	public SamsungBLEHRProvider(Context ctx) {
-		context = ctx;
-	}
+    private Context context;
+    private BluetoothAdapter btAdapter = null;
+    private BluetoothGatt btGatt = null;
+    private BluetoothDevice btDevice = null;
+    private int hrValue = 0;
+    private long hrTimestamp = 0;
 
-	@Override
-	public String getName() {
-		return DISPLAY_NAME;
-	}
+    public SamsungBLEHRProvider(Context ctx) {
+        context = ctx;
+    }
 
-	@Override
-	public String getProviderName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return DISPLAY_NAME;
+    }
 
-	public boolean isEnabled() {
-		return Bt20Base.isEnabledImpl();
-	}
+    @Override
+    public String getProviderName() {
+        return NAME;
+    }
 
-	public boolean startEnableIntent(Activity activity, int requestCode) {
-		return Bt20Base.startEnableIntentImpl(activity, requestCode);
-	}
+    public boolean isEnabled() {
+        return Bt20Base.isEnabledImpl();
+    }
 
-	private HRClient hrClient;
-	private Handler hrClientHandler;
+    public boolean startEnableIntent(Activity activity, int requestCode) {
+        return Bt20Base.startEnableIntentImpl(activity, requestCode);
+    }
 
-	private boolean mIsScanning = false;
-	private boolean mIsConnected = false;
-	private boolean mIsConnecting = false;
+    private HRClient hrClient;
+    private Handler hrClientHandler;
 
-	@Override
-	public void open(Handler handler, HRClient hrClient) {
-		this.hrClient = hrClient;
-		this.hrClientHandler = handler;
-		
-		if (btAdapter == null) {
-			btAdapter = BluetoothAdapter.getDefaultAdapter();
-		}
-		if (btAdapter == null) {
-			hrClient.onOpenResult(false);
-			return;
-		}
+    private boolean mIsScanning = false;
+    private boolean mIsConnected = false;
+    private boolean mIsConnecting = false;
 
-		BluetoothGattAdapter.getProfileProxy(context, profileServiceListener, BluetoothGattAdapter.GATT);
-	}
-	
-	@Override
-	public void close() {
-		do {
-			if (btAdapter == null)
-				break;
-		
-			if (btGatt == null)
-				break;
-		
-			stopScan();
-			disconnect();
-		
-			BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
-			btAdapter = null;
-		} while (false);
-		
-		hrClient = null;
-		hrClientHandler = null;
-	}
-	
-	private ServiceListener profileServiceListener = new ServiceListener() {
+    @Override
+    public void open(Handler handler, HRClient hrClient) {
+        this.hrClient = hrClient;
+        this.hrClientHandler = handler;
+
+        if (btAdapter == null) {
+            btAdapter = BluetoothAdapter.getDefaultAdapter();
+        }
+        if (btAdapter == null) {
+            hrClient.onOpenResult(false);
+            return;
+        }
+
+        BluetoothGattAdapter.getProfileProxy(context, profileServiceListener,
+                BluetoothGattAdapter.GATT);
+    }
+
+    @Override
+    public void close() {
+        do {
+            if (btAdapter == null)
+                break;
+
+            if (btGatt == null)
+                break;
+
+            stopScan();
+            disconnect();
+
+            BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
+            btAdapter = null;
+        } while (false);
+
+        hrClient = null;
+        hrClientHandler = null;
+    }
+
+    private ServiceListener profileServiceListener = new ServiceListener() {
         @Override
         public void onServiceConnected(int profile, BluetoothProfile proxy) {
             if (profile == BluetoothGattAdapter.GATT) {
                 btGatt = (BluetoothGatt) proxy;
 
                 if (hrClient == null) {
-                	System.err.println("hrClient == null => skip register in onServiceConnected => closeProfileProxy");
-            		BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
-            		btGatt = null;
-            		return;
+                    System.err
+                            .println("hrClient == null => skip register in onServiceConnected => closeProfileProxy");
+                    BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
+                    btGatt = null;
+                    return;
                 }
-                
+
                 btGatt.registerApp(btGattCallbacks);
             }
         }
@@ -164,46 +169,48 @@ public class SamsungBLEHRProvider implements HRProvider {
                 btGatt = null;
             }
         }
-	};
+    };
 
-	private BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
+    private BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
 
-		@Override
-		public void onAppRegistered(final int arg0) {
-			if (hrClientHandler == null) {
-				/* let's hope that unregister has been called...and that it works to call it before
-				 * this callback is called
-				 */
-				System.err.println("onAppRegistered: hrClientHandler == null => return");
-				return;
-			}
-			hrClientHandler.post(new Runnable() {
+        @Override
+        public void onAppRegistered(final int arg0) {
+            if (hrClientHandler == null) {
+                /*
+                 * let's hope that unregister has been called...and that it
+                 * works to call it before this callback is called
+                 */
+                System.err.println("onAppRegistered: hrClientHandler == null => return");
+                return;
+            }
+            hrClientHandler.post(new Runnable() {
 
-				@Override
-				public void run() {
-					if (hrClient == null) {
-						System.err.println("onAppRegistered: hrClient == null => return");
-						return;
-					}
-					if (arg0 == BluetoothGatt.GATT_SUCCESS) {
-						hrClient.onOpenResult(true);
-					} else {
-						hrClient.onOpenResult(false);
-					}
-				}});
-		}
+                @Override
+                public void run() {
+                    if (hrClient == null) {
+                        System.err.println("onAppRegistered: hrClient == null => return");
+                        return;
+                    }
+                    if (arg0 == BluetoothGatt.GATT_SUCCESS) {
+                        hrClient.onOpenResult(true);
+                    } else {
+                        hrClient.onOpenResult(false);
+                    }
+                }
+            });
+        }
 
-		@Override
-		public void onCharacteristicChanged(BluetoothGattCharacteristic arg0) {
-			if (!arg0.getUuid().equals(HEART_RATE_MEASUREMENT_CHARAC)) {
-				System.err.println("onCharacteristicChanged("+arg0+") != HEART_RATE ??");
-				return;
-			}
+        @Override
+        public void onCharacteristicChanged(BluetoothGattCharacteristic arg0) {
+            if (!arg0.getUuid().equals(HEART_RATE_MEASUREMENT_CHARAC)) {
+                System.err.println("onCharacteristicChanged(" + arg0 + ") != HEART_RATE ??");
+                return;
+            }
 
             int length = arg0.getValue().length;
             if (length == 0) {
-            	System.err.println("length = 0");
-            	return;
+                System.err.println("length = 0");
+                return;
             }
 
             if (isHeartRateInUINT16(arg0.getValue()[0])) {
@@ -212,210 +219,220 @@ public class SamsungBLEHRProvider implements HRProvider {
                 hrValue = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
             }
             hrTimestamp = System.currentTimeMillis();
-            
+
             if (mIsConnecting) {
-				reportConnected(true);
-			}
-		}
+                reportConnected(true);
+            }
+        }
 
-		private boolean isHeartRateInUINT16(byte b) {
-	        if ((b & 1) != 0)
-	            return true;
-			return false;
-		}
+        private boolean isHeartRateInUINT16(byte b) {
+            if ((b & 1) != 0)
+                return true;
+            return false;
+        }
 
-		@Override
-		public void onCharacteristicRead(BluetoothGattCharacteristic arg0, int arg1) {
+        @Override
+        public void onCharacteristicRead(BluetoothGattCharacteristic arg0, int arg1) {
             UUID charUuid = arg0.getUuid();
             if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
-            	// triggered from DummyReadForSecLevelCheck
-            	startHR();
+                // triggered from DummyReadForSecLevelCheck
+                startHR();
 
-            	// Continue in onDescriptorRead
-            	return;
+                // Continue in onDescriptorRead
+                return;
             }
-		}
+        }
 
-		private void startHR() {
-	        BluetoothGattService mHRP = btGatt.getService(btDevice, HRP_SERVICE);
-	        if (mHRP == null) {
-	        	reportConnectFailed("HRP service not found!");
-	            return;
-	        }
+        private void startHR() {
+            BluetoothGattService mHRP = btGatt.getService(btDevice, HRP_SERVICE);
+            if (mHRP == null) {
+                reportConnectFailed("HRP service not found!");
+                return;
+            }
 
-	        BluetoothGattCharacteristic mHRMcharac = mHRP.getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
-	        if (mHRMcharac == null) {
-	            reportConnectFailed("HEART RATE MEASUREMENT charateristic not found!");
-	            return;
-	        }
-	        BluetoothGattDescriptor mHRMccc = mHRMcharac.getDescriptor(CCC);
-	        if (mHRMccc == null) {
-	            reportConnectFailed("CCC for HEART RATE MEASUREMENT charateristic not found!");
-	            return;
-	        }
-	        if (btGatt.readDescriptor(mHRMccc) == false) {
-	        	reportConnectFailed("readDescriptor() is failed");
-	            return;
-	        }
-	        // Continue in onDescriptorRead
-		}
+            BluetoothGattCharacteristic mHRMcharac = mHRP
+                    .getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
+            if (mHRMcharac == null) {
+                reportConnectFailed("HEART RATE MEASUREMENT charateristic not found!");
+                return;
+            }
+            BluetoothGattDescriptor mHRMccc = mHRMcharac.getDescriptor(CCC);
+            if (mHRMccc == null) {
+                reportConnectFailed("CCC for HEART RATE MEASUREMENT charateristic not found!");
+                return;
+            }
+            if (btGatt.readDescriptor(mHRMccc) == false) {
+                reportConnectFailed("readDescriptor() is failed");
+                return;
+            }
+            // Continue in onDescriptorRead
+        }
 
-		@Override
-		public void onCharacteristicWrite(BluetoothGattCharacteristic arg0, int arg1) {
-		}
+        @Override
+        public void onCharacteristicWrite(BluetoothGattCharacteristic arg0, int arg1) {
+        }
 
-		@Override
-		public void onConnectionStateChange(BluetoothDevice arg0, int status, int newState) {
+        @Override
+        public void onConnectionStateChange(BluetoothDevice arg0, int status, int newState) {
 
-			if (btDevice != null && arg0 != null && btDevice.getAddress().contentEquals(arg0.getAddress())) {
-			}
-				
-			if (btGatt == null)
-				return;
+            if (btDevice != null && arg0 != null
+                    && btDevice.getAddress().contentEquals(arg0.getAddress())) {
+            }
+
+            if (btGatt == null)
+                return;
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-            	btGatt.discoverServices(arg0);
+                btGatt.discoverServices(arg0);
             }
-            
-            if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-            	reportDisconnected();
-            }
-		}
 
-		@Override
-		public void onDescriptorRead(BluetoothGattDescriptor arg0, int arg1) {
+            if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                reportDisconnected();
+            }
+        }
+
+        @Override
+        public void onDescriptorRead(BluetoothGattDescriptor arg0, int arg1) {
             BluetoothGattCharacteristic mHRMcharac = arg0.getCharacteristic();
             if (!enableNotification(true, mHRMcharac)) {
-            	reportConnectFailed("Failed to enable notification in onDescriptorRead");
+                reportConnectFailed("Failed to enable notification in onDescriptorRead");
             }
-		}
+        }
 
-		@Override
-		public void onDescriptorWrite(BluetoothGattDescriptor arg0, int arg1) {
-		}
+        @Override
+        public void onDescriptorWrite(BluetoothGattDescriptor arg0, int arg1) {
+        }
 
-		@Override
-		public void onReadRemoteRssi(BluetoothDevice arg0, int arg1, int arg2) {
-		}
+        @Override
+        public void onReadRemoteRssi(BluetoothDevice arg0, int arg1, int arg2) {
+        }
 
-		@Override
-		public void onReliableWriteCompleted(BluetoothDevice arg0, int arg1) {
-		}
+        @Override
+        public void onReliableWriteCompleted(BluetoothDevice arg0, int arg1) {
+        }
 
-		@Override
-		public void onScanResult(final BluetoothDevice arg0, int arg1, byte[] scanRecord) {
-			final boolean broadcast = checkIfBroadcastMode(scanRecord);
-			System.err.println("onScanResult(" + arg0.getName() + "), hrClient:" + hrClient + ", broadcast: " + broadcast +
-					", mIsConnecting: " + mIsConnecting + ", mIsScanning: " + mIsScanning);
-			
+        @Override
+        public void onScanResult(final BluetoothDevice arg0, int arg1, byte[] scanRecord) {
+            final boolean broadcast = checkIfBroadcastMode(scanRecord);
+            System.err.println("onScanResult(" + arg0.getName() + "), hrClient:" + hrClient
+                    + ", broadcast: " + broadcast +
+                    ", mIsConnecting: " + mIsConnecting + ", mIsScanning: " + mIsScanning);
+
             if (!broadcast) {
-            	/**
-            	 * If connect was called and btDevice was unknown,
-            	 *   we scan for it before btGatt.connect()
-            	 */
-            	if (mIsConnecting && arg0.getAddress().equals(btDevice.getAddress())) {
-            		btGatt.stopScan();
-            		btGatt.connect(btDevice, false);
-            		return;
-            	}
-            	hrClientHandler.post(new Runnable(){
-					@Override
-					public void run() {
-						if (mIsScanning && hrClient != null) { //NOTE: mIsScanning in user-thread
-							hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, arg0));
-						}
-					}});
+                /**
+                 * If connect was called and btDevice was unknown, we scan for
+                 * it before btGatt.connect()
+                 */
+                if (mIsConnecting && arg0.getAddress().equals(btDevice.getAddress())) {
+                    btGatt.stopScan();
+                    btGatt.connect(btDevice, false);
+                    return;
+                }
+                hrClientHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mIsScanning && hrClient != null) { // NOTE:
+                                                               // mIsScanning in
+                                                               // user-thread
+                            hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, arg0));
+                        }
+                    }
+                });
             } else {
-            	System.err.println("checkIfBroadcastMode(" + arg0 + ") => FAIL");
+                System.err.println("checkIfBroadcastMode(" + arg0 + ") => FAIL");
             }
-		}
+        }
 
-		@Override
-		public void onServicesDiscovered(BluetoothDevice device, int status) {
-			if (status == BluetoothGatt.GATT_SUCCESS) {
-				DummyReadForSecLevelCheck(device);
-				// continue in onCharacteristicRead
-			} else {
-				reportConnectFailed("onServicesDiscovered(" + device + ", " + status + ")");
-			}
-		}
+        @Override
+        public void onServicesDiscovered(BluetoothDevice device, int status) {
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                DummyReadForSecLevelCheck(device);
+                // continue in onCharacteristicRead
+            } else {
+                reportConnectFailed("onServicesDiscovered(" + device + ", " + status + ")");
+            }
+        }
 
-	    /*
-	     * from Samsung HRPService.java
-	     */
-	    private boolean checkIfBroadcastMode(byte[] scanRecord) {
-	        final int ADV_DATA_FLAG = 0x01;
-	        final int LIMITED_AND_GENERAL_DISC_MASK = 0x03;
+        /*
+         * from Samsung HRPService.java
+         */
+        private boolean checkIfBroadcastMode(byte[] scanRecord) {
+            final int ADV_DATA_FLAG = 0x01;
+            final int LIMITED_AND_GENERAL_DISC_MASK = 0x03;
 
-	        int offset = 0;
-	        while (offset < (scanRecord.length - 2)) {
-	            int len = scanRecord[offset++];
-	            if (len == 0)
-	                break; // Length == 0 , we ignore rest of the packet
-	            // TOD Check the rest of the packet if get len = 0
+            int offset = 0;
+            while (offset < (scanRecord.length - 2)) {
+                int len = scanRecord[offset++];
+                if (len == 0)
+                    break; // Length == 0 , we ignore rest of the packet
+                // TOD Check the rest of the packet if get len = 0
 
-	            int type = scanRecord[offset++];
-	            switch (type) {
-	            case ADV_DATA_FLAG:
+                int type = scanRecord[offset++];
+                switch (type) {
+                    case ADV_DATA_FLAG:
 
-	                if (len >= 2) {
-	                    // The usual scenario(2) and More that 2 octets scenario.
-	                    // Since this data will be in Little endian format, we
-	                    // are interested in first 2 bits of first byte
-	                    byte flag = scanRecord[offset++];
-	                    /*
-	                     * 00000011(0x03) - LE Limited Discoverable Mode and LE
-	                     * General Discoverable Mode
-	                     */
-	                    if ((flag & LIMITED_AND_GENERAL_DISC_MASK) > 0)
-	                        return false;
-	                    else
-	                        return true;
-	                } else if (len == 1) {
-	                    continue;// ignore that packet and continue with the rest
-	                }
-	            default:
-	                offset += (len - 1);
-	                break;
-	            }
-	        }
-	        return false;
-	    }
-		
-	    /*
-	     * from Samsung HRPService.java
-	     */
-		private void DummyReadForSecLevelCheck(BluetoothDevice device) {
-			if (btGatt == null)
-				return;
-			
-			if (device == null)
-				return;
-			
-			BluetoothGattService disService = btGatt.getService(device, DIS_UUID);
-			if (disService == null) {
-				reportConnectFailed("Dis service not found");
-				return;
-			}
-			BluetoothGattCharacteristic firmwareIdCharc = disService.getCharacteristic(FIRMWARE_REVISON_UUID);
-			if (firmwareIdCharc == null) {
-				reportConnectFailed("firmware revison charateristic not found!");
-				return;
-			}
+                        if (len >= 2) {
+                            // The usual scenario(2) and More that 2 octets
+                            // scenario.
+                            // Since this data will be in Little endian format,
+                            // we
+                            // are interested in first 2 bits of first byte
+                            byte flag = scanRecord[offset++];
+                            /*
+                             * 00000011(0x03) - LE Limited Discoverable Mode and
+                             * LE General Discoverable Mode
+                             */
+                            if ((flag & LIMITED_AND_GENERAL_DISC_MASK) > 0)
+                                return false;
+                            else
+                                return true;
+                        } else if (len == 1) {
+                            continue;// ignore that packet and continue with the
+                                     // rest
+                        }
+                    default:
+                        offset += (len - 1);
+                        break;
+                }
+            }
+            return false;
+        }
 
-			if (btGatt.readCharacteristic(firmwareIdCharc) == false) {
-				reportConnectFailed("firmware revison reading is failed!");
-			}
-			// continue in onCharacteristicRead
-		}
-	};
+        /*
+         * from Samsung HRPService.java
+         */
+        private void DummyReadForSecLevelCheck(BluetoothDevice device) {
+            if (btGatt == null)
+                return;
 
-	private boolean enableNotification(boolean onoff, BluetoothGattCharacteristic charac) {
-		if (btGatt == null)
-			return false;
+            if (device == null)
+                return;
 
-		if (!btGatt.setCharacteristicNotification(charac,  onoff))
-			return false;
+            BluetoothGattService disService = btGatt.getService(device, DIS_UUID);
+            if (disService == null) {
+                reportConnectFailed("Dis service not found");
+                return;
+            }
+            BluetoothGattCharacteristic firmwareIdCharc = disService
+                    .getCharacteristic(FIRMWARE_REVISON_UUID);
+            if (firmwareIdCharc == null) {
+                reportConnectFailed("firmware revison charateristic not found!");
+                return;
+            }
+
+            if (btGatt.readCharacteristic(firmwareIdCharc) == false) {
+                reportConnectFailed("firmware revison reading is failed!");
+            }
+            // continue in onCharacteristicRead
+        }
+    };
+
+    private boolean enableNotification(boolean onoff, BluetoothGattCharacteristic charac) {
+        if (btGatt == null)
+            return false;
+
+        if (!btGatt.setCharacteristicNotification(charac, onoff))
+            return false;
 
         BluetoothGattDescriptor clientConfig = charac.getDescriptor(CCC);
         if (clientConfig == null)
@@ -429,151 +446,153 @@ public class SamsungBLEHRProvider implements HRProvider {
         return btGatt.writeDescriptor(clientConfig);
     }
 
-	@Override
-	public boolean isScanning() {
-		return mIsScanning;
-	}
+    @Override
+    public boolean isScanning() {
+        return mIsScanning;
+    }
 
-	@Override
-	public void startScan() {
+    @Override
+    public void startScan() {
         if (btGatt == null)
             return;
 
-       	if (mIsScanning)
-       		return;
-        
-       	mIsScanning = true;
-       	btGatt.startScan();
-	}
+        if (mIsScanning)
+            return;
 
-	@Override
-	public void stopScan() {
-		if (mIsScanning) {
-			mIsScanning = false;
-			btGatt.stopScan();
-		}
-	}
+        mIsScanning = true;
+        btGatt.startScan();
+    }
 
-	@Override
-	public boolean isConnected() {
-		return mIsConnected;
-	}
+    @Override
+    public void stopScan() {
+        if (mIsScanning) {
+            mIsScanning = false;
+            btGatt.stopScan();
+        }
+    }
 
-	@Override
-	public boolean isConnecting() {
-		return mIsConnecting;
-	}
+    @Override
+    public boolean isConnected() {
+        return mIsConnected;
+    }
 
-	@Override
-	public void connect(HRDeviceRef ref) {
-		stopScan();
+    @Override
+    public boolean isConnecting() {
+        return mIsConnecting;
+    }
 
-		if (!Bt20Base.isEnabledImpl()) {
-			reportConnectFailed("BT is not enabled");
-			return;
-		}
-		
-		BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(ref.getAddress());
-		
-		if (mIsConnected)
-			return;
+    @Override
+    public void connect(HRDeviceRef ref) {
+        stopScan();
 
-		if (mIsConnecting)
-			return;
-		
-		mIsConnecting = true;
-		btDevice = dev;
-		if (ref.deviceName == null || dev.getName() == null ||
-			!ref.deviceName.contentEquals(dev.getName())) {
-			/**
-			 * If device doesn't match name, scan for before connecting
-			 */
-			System.err.println("Scan before connect");
-			startScan();
-			return;
-		}
-		btGatt.connect(btDevice, false);
-	}
+        if (!Bt20Base.isEnabledImpl()) {
+            reportConnectFailed("BT is not enabled");
+            return;
+        }
 
-	private void reportConnected(final boolean b) {
-		hrClientHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (mIsConnecting) {
-					mIsConnected = b;
-					mIsConnecting = false;
-					hrClient.onConnectResult(b);
-				}
-			}
-		});
-	}
+        BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter()
+                .getRemoteDevice(ref.getAddress());
 
-	private void reportConnectFailed(String string) {
-		System.err.println("reportConnectFailed("+string+")");
-		if (btGatt != null && btDevice != null) {
-			btGatt.cancelConnection(btDevice);
-		}
-		btDevice = null;
-		reportConnected(false);
-	}
+        if (mIsConnected)
+            return;
 
-	@Override
-	public void disconnect() {
-		if (btGatt == null)
-			return;
-		
-		if (btDevice == null) {
-			return;
-		}
+        if (mIsConnecting)
+            return;
 
-		if (mIsConnecting == false && mIsConnected == false)
-			return;
+        mIsConnecting = true;
+        btDevice = dev;
+        if (ref.deviceName == null || dev.getName() == null ||
+                !ref.deviceName.contentEquals(dev.getName())) {
+            /**
+             * If device doesn't match name, scan for before connecting
+             */
+            System.err.println("Scan before connect");
+            startScan();
+            return;
+        }
+        btGatt.connect(btDevice, false);
+    }
 
-		mIsConnected = false;
-		mIsConnecting = false;
-		
-		do {
-			BluetoothGattService mHRP = btGatt.getService(btDevice, HRP_SERVICE);
-			if (mHRP == null) {
-				reportDisconnectFailed("HRP service not found!");
-				break;
-			}
+    private void reportConnected(final boolean b) {
+        hrClientHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mIsConnecting) {
+                    mIsConnected = b;
+                    mIsConnecting = false;
+                    hrClient.onConnectResult(b);
+                }
+            }
+        });
+    }
 
-			BluetoothGattCharacteristic mHRMcharac = mHRP.getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
-			if (mHRMcharac == null) {
-				reportDisconnectFailed("HEART RATE MEASUREMENT charateristic not found!");
-				break;
-			}
-        
-			if (!enableNotification(false, mHRMcharac)) {
-				reportDisconnectFailed("disableNotfication");
-				break;
-			}
-		} while (false);
+    private void reportConnectFailed(String string) {
+        System.err.println("reportConnectFailed(" + string + ")");
+        if (btGatt != null && btDevice != null) {
+            btGatt.cancelConnection(btDevice);
+        }
+        btDevice = null;
+        reportConnected(false);
+    }
 
-		btGatt.cancelConnection(btDevice);
-		btDevice = null;
-	}
+    @Override
+    public void disconnect() {
+        if (btGatt == null)
+            return;
 
-	private void reportDisconnectFailed(String string) {
-		System.err.println("disconnect failed: " + string);
-	}
+        if (btDevice == null) {
+            return;
+        }
 
-	private void reportDisconnected() {
-	}
+        if (mIsConnecting == false && mIsConnected == false)
+            return;
 
-	@Override
-	public int getHRValue() {
-		return this.hrValue;
-	}
+        mIsConnected = false;
+        mIsConnecting = false;
 
-	@Override
-	public long getHRValueTimestamp() {
-		return this.hrTimestamp;
-	}
+        do {
+            BluetoothGattService mHRP = btGatt.getService(btDevice, HRP_SERVICE);
+            if (mHRP == null) {
+                reportDisconnectFailed("HRP service not found!");
+                break;
+            }
 
-	@Override
-	public boolean isBondingDevice() {
-		return false;
-	}
+            BluetoothGattCharacteristic mHRMcharac = mHRP
+                    .getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
+            if (mHRMcharac == null) {
+                reportDisconnectFailed("HEART RATE MEASUREMENT charateristic not found!");
+                break;
+            }
+
+            if (!enableNotification(false, mHRMcharac)) {
+                reportDisconnectFailed("disableNotfication");
+                break;
+            }
+        } while (false);
+
+        btGatt.cancelConnection(btDevice);
+        btDevice = null;
+    }
+
+    private void reportDisconnectFailed(String string) {
+        System.err.println("disconnect failed: " + string);
+    }
+
+    private void reportDisconnected() {
+    }
+
+    @Override
+    public int getHRValue() {
+        return this.hrValue;
+    }
+
+    @Override
+    public long getHRValueTimestamp() {
+        return this.hrTimestamp;
+    }
+
+    @Override
+    public boolean isBondingDevice() {
+        return false;
+    }
 }
