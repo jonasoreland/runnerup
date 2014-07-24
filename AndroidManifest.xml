@@ -16,8 +16,8 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="org.runnerup" android:versionCode="31"
-	android:versionName="1.31" xmlns:tools="http://schemas.android.com/tools">
+	package="org.runnerup" android:versionCode="32"
+	android:versionName="1.32" xmlns:tools="http://schemas.android.com/tools">
 
         <uses-sdk
             android:minSdkVersion="8" />
