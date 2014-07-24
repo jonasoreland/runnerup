@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.export;
 
 import org.apache.http.client.HttpClient;
@@ -40,198 +41,200 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunnerUpLive extends FormCrawler implements Uploader {
 
-	public static final String NAME = "RunnerUp LIVE";
-	public static String POST_URL = "http://weide.devsparkles.se/api/Resource/";
-	
-	long id = 0;
-	private String username = null;
-	private String password = null;
-	private String postUrl = POST_URL;
-	private Formatter formatter;
-	
-	RunnerUpLive(UploadManager uploadManager) {
-		Resources res = uploadManager.getResources();
-		SharedPreferences prefs = uploadManager.getPreferences(null);
-		postUrl = prefs.getString(res.getString(R.string.pref_runneruplive_serveradress), POST_URL);
-		formatter = new Formatter(uploadManager.getContext());
-	}
+    public static final String NAME = "RunnerUp LIVE";
+    public static String POST_URL = "http://weide.devsparkles.se/api/Resource/";
 
-	@Override
-	public long getId() {
-		return id;
-	}
+    long id = 0;
+    private String username = null;
+    private String password = null;
+    private String postUrl = POST_URL;
+    private Formatter formatter;
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    RunnerUpLive(UploadManager uploadManager) {
+        Resources res = uploadManager.getResources();
+        SharedPreferences prefs = uploadManager.getPreferences(null);
+        postUrl = prefs.getString(res.getString(R.string.pref_runneruplive_serveradress), POST_URL);
+        formatter = new Formatter(uploadManager.getContext());
+    }
 
-	@Override
-	public void init(ContentValues config) {
-		id = config.getAsLong("_id");
-		String auth = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-		if (auth != null) {
-			try {
-				JSONObject tmp = new JSONObject(auth);
-				username = tmp.optString("username", null);
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
+    public void init(ContentValues config) {
+        id = config.getAsLong("_id");
+        String auth = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        if (auth != null) {
+            try {
+                JSONObject tmp = new JSONObject(auth);
+                username = tmp.optString("username", null);
                 password = tmp.optString("password", null);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	@Override
-	public boolean isConfigured() {
+    @Override
+    public boolean isConfigured() {
         if (username != null && password != null) {
-			return true;
-		}
-		return false;
-	}
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public String getAuthConfig() {
-		JSONObject tmp = new JSONObject();
-		try {
-			tmp.put("username", username);
+    @Override
+    public String getAuthConfig() {
+        JSONObject tmp = new JSONObject();
+        try {
+            tmp.put("username", username);
             tmp.put("password", password);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-		return tmp.toString();
-	}
-	
-	@Override
-	public void reset() {
-		username = null;
+        return tmp.toString();
+    }
+
+    @Override
+    public void reset() {
+        username = null;
         password = null;
-	}
+    }
 
-	@Override
-	public Status connect() {
-		if (isConfigured()) {
-			return Status.OK;
-		}
-		
-		Status s = Status.NEED_AUTH;
-		s.authMethod = Uploader.AuthMethod.USER_PASS;
-		if (username == null || password == null) {
-			return s;
-		}
-		
-		return s;
-	}
+    @Override
+    public Status connect() {
+        if (isConfigured()) {
+            return Status.OK;
+        }
 
-	// translate between constants used in RunnerUp and those that weide choose to use for his live server
-	private int translateType(int type) {
-		switch (type) {
-		case DB.LOCATION.TYPE_START:
-		case DB.LOCATION.TYPE_RESUME:
-			return 0;
-		case DB.LOCATION.TYPE_GPS:
-			return 1;
-		case DB.LOCATION.TYPE_PAUSE:
-			return 2;
-		case DB.LOCATION.TYPE_END:
-			return 3;
-		}
-		assert (false);
-		return 0;
-	}
+        Status s = Status.NEED_AUTH;
+        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        if (username == null || password == null) {
+            return s;
+        }
 
-	@Override
-	public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter, double mElapsedTimeMillis) {
-		int externalType = translateType(type);
-		long elapsedDistanceMeter = Math.round(mElapsedDistanceMeter);
-		Intent msgIntent = new Intent(context, LiveService.class);
-		msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
-		msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
-		msgIntent.putExtra(LiveService.PARAM_IN_TYPE, externalType);
-		msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, formatter
-				.formatDistance(Formatter.TXT_LONG, elapsedDistanceMeter));
-		msgIntent.putExtra(
-				LiveService.PARAM_IN_ELAPSED_TIME,
-				formatter.formatElapsedTime(Formatter.TXT_LONG,
-						Math.round(mElapsedTimeMillis / 1000)));
-		msgIntent.putExtra(
-				LiveService.PARAM_IN_PACE,
-				formatter.formatPace(Formatter.TXT_SHORT, mElapsedTimeMillis
-						/ (1000 * mElapsedDistanceMeter)));
-		msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
-		msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
-		msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);
-		context.startService(msgIntent);
-	}
+        return s;
+    }
 
-	public static class LiveService extends IntentService {
-		
-		public static final String PARAM_IN_ELAPSED_DISTANCE = "dist";
-		public static final String PARAM_IN_ELAPSED_TIME = "time";
-		public static final String PARAM_IN_PACE = "pace";
-		public static final String PARAM_IN_USERNAME = "username";
-		public static final String PARAM_IN_PASSWORD = "password";
-		public static final String PARAM_IN_SERVERADRESS = "serveradress";
-		public static final String PARAM_IN_LAT = "lat";
-		public static final String PARAM_IN_LONG = "long";
-		public static final String PARAM_IN_TYPE = "type";
+    // translate between constants used in RunnerUp and those that weide choose
+    // to use for his live server
+    private int translateType(int type) {
+        switch (type) {
+            case DB.LOCATION.TYPE_START:
+            case DB.LOCATION.TYPE_RESUME:
+                return 0;
+            case DB.LOCATION.TYPE_GPS:
+                return 1;
+            case DB.LOCATION.TYPE_PAUSE:
+                return 2;
+            case DB.LOCATION.TYPE_END:
+                return 3;
+        }
+        assert (false);
+        return 0;
+    }
 
-		public LiveService() {
-			super("LiveService");
-		}
+    @Override
+    public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter,
+            double mElapsedTimeMillis) {
+        int externalType = translateType(type);
+        long elapsedDistanceMeter = Math.round(mElapsedDistanceMeter);
+        Intent msgIntent = new Intent(context, LiveService.class);
+        msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
+        msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
+        msgIntent.putExtra(LiveService.PARAM_IN_TYPE, externalType);
+        msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, formatter
+                .formatDistance(Formatter.TXT_LONG, elapsedDistanceMeter));
+        msgIntent.putExtra(
+                LiveService.PARAM_IN_ELAPSED_TIME,
+                formatter.formatElapsedTime(Formatter.TXT_LONG,
+                        Math.round(mElapsedTimeMillis / 1000)));
+        msgIntent.putExtra(
+                LiveService.PARAM_IN_PACE,
+                formatter.formatPace(Formatter.TXT_SHORT, mElapsedTimeMillis
+                        / (1000 * mElapsedDistanceMeter)));
+        msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
+        msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
+        msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);
+        context.startService(msgIntent);
+    }
 
-		@Override
-		protected void onHandleIntent(Intent intent) {
+    public static class LiveService extends IntentService {
 
-			String mElapsedDistance = intent
-					.getStringExtra(PARAM_IN_ELAPSED_DISTANCE);
-			String mElapsedTime = intent.getStringExtra(PARAM_IN_ELAPSED_TIME);
-			String pace = intent.getStringExtra(PARAM_IN_PACE);
-			String username = intent.getStringExtra(PARAM_IN_USERNAME);
-			String password = intent.getStringExtra(PARAM_IN_PASSWORD);
-			double lat = intent.getDoubleExtra(PARAM_IN_LAT, 0);
-			double lon = intent.getDoubleExtra(PARAM_IN_LONG, 0);
-			int type = intent.getIntExtra(PARAM_IN_TYPE, 0);
-			String serverAdress = intent.getStringExtra(PARAM_IN_SERVERADRESS);
+        public static final String PARAM_IN_ELAPSED_DISTANCE = "dist";
+        public static final String PARAM_IN_ELAPSED_TIME = "time";
+        public static final String PARAM_IN_PACE = "pace";
+        public static final String PARAM_IN_USERNAME = "username";
+        public static final String PARAM_IN_PASSWORD = "password";
+        public static final String PARAM_IN_SERVERADRESS = "serveradress";
+        public static final String PARAM_IN_LAT = "lat";
+        public static final String PARAM_IN_LONG = "long";
+        public static final String PARAM_IN_TYPE = "type";
 
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost(serverAdress);
+        public LiveService() {
+            super("LiveService");
+        }
 
-			httpPost.setHeader("content-type", "application/json");
-			JSONObject data = new JSONObject();
-			try {
-				data.put("userName", username);
-				data.put("password", password);
-				data.put("lat", lat);
-				data.put("long", lon);
-				data.put("runningEventType", type);
-				data.put("TotalDistance", mElapsedDistance);
-				data.put("TotalTime", mElapsedTime);
-				data.put("Pace", pace);
-				StringEntity entity = new StringEntity(data.toString(), HTTP.UTF_8);
-				httpPost.setEntity(entity);
+        @Override
+        protected void onHandleIntent(Intent intent) {
 
-				httpClient.execute(httpPost);
-				/* HttpResponse response = */
-				// String test = response.toString();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	};
+            String mElapsedDistance = intent
+                    .getStringExtra(PARAM_IN_ELAPSED_DISTANCE);
+            String mElapsedTime = intent.getStringExtra(PARAM_IN_ELAPSED_TIME);
+            String pace = intent.getStringExtra(PARAM_IN_PACE);
+            String username = intent.getStringExtra(PARAM_IN_USERNAME);
+            String password = intent.getStringExtra(PARAM_IN_PASSWORD);
+            double lat = intent.getDoubleExtra(PARAM_IN_LAT, 0);
+            double lon = intent.getDoubleExtra(PARAM_IN_LONG, 0);
+            int type = intent.getIntExtra(PARAM_IN_TYPE, 0);
+            String serverAdress = intent.getStringExtra(PARAM_IN_SERVERADRESS);
 
-	@Override
-	public boolean checkSupport(Uploader.Feature f) {
-		switch (f) {
-		case LIVE:
-			return true;
-		case UPLOAD:
-		case FEED:
-		case GET_WORKOUT:
-		case WORKOUT_LIST:
-		case SKIP_MAP:
-			break;
-		}
-		return false;
-	}
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(serverAdress);
+
+            httpPost.setHeader("content-type", "application/json");
+            JSONObject data = new JSONObject();
+            try {
+                data.put("userName", username);
+                data.put("password", password);
+                data.put("lat", lat);
+                data.put("long", lon);
+                data.put("runningEventType", type);
+                data.put("TotalDistance", mElapsedDistance);
+                data.put("TotalTime", mElapsedTime);
+                data.put("Pace", pace);
+                StringEntity entity = new StringEntity(data.toString(), HTTP.UTF_8);
+                httpPost.setEntity(entity);
+
+                httpClient.execute(httpPost);
+                /* HttpResponse response = */
+                // String test = response.toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    @Override
+    public boolean checkSupport(Uploader.Feature f) {
+        switch (f) {
+            case LIVE:
+                return true;
+            case UPLOAD:
+            case FEED:
+            case GET_WORKOUT:
+            case WORKOUT_LIST:
+            case SKIP_MAP:
+                break;
+        }
+        return false;
+    }
 };
