@@ -10,9 +10,9 @@ If you want to use Eclipse instead of Android Studio, follow these steps:
 
 	* Copy $ANDROID_HOME/extras/android/support/v4/android-support-v4.jar
 
-	* Download https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar
+	* Download https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar to external/
 
-	* Download https://github.com/ant-wireless/Android_API_ANTPlus/raw/master/antpluginlib_2.0.0.jar
+	* Download https://github.com/ant-wireless/Android_API_ANTPlus/raw/master/antpluginlib_2.0.0.jar to external/
 
 	If any other .jar is missing, search the associated sourceUrl the build.gradle file which is used in Android Studio to download dependencies.
 
