@@ -94,11 +94,11 @@ public class FeedActivity extends Activity implements Constants {
         feed.load(); // load from DB
 
         feedAdapter = new FeedListAdapter(this, feed);
-        feedList = (ListView) findViewById(R.id.feedList);
+        feedList = (ListView) findViewById(R.id.feed_list);
         feedList.setAdapter(feedAdapter);
         feedList.setDividerHeight(2);
 
-        refreshButton = (Button) findViewById(R.id.refreshFeedButton);
+        refreshButton = (Button) findViewById(R.id.refresh_feed_button);
         refreshButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -111,7 +111,7 @@ public class FeedActivity extends Activity implements Constants {
             }
         });
 
-        feedAccountButton = (Button) findViewById(R.id.feedAccountButton);
+        feedAccountButton = (Button) findViewById(R.id.feed_account_button);
         feedAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,8 +121,8 @@ public class FeedActivity extends Activity implements Constants {
             }
         });
 
-        feedHeader = (LinearLayout) findViewById(R.id.feedHeader);
-        feedStatus = (TextView) findViewById(R.id.feedStatus);
+        feedHeader = (LinearLayout) findViewById(R.id.feed_header);
+        feedStatus = (TextView) findViewById(R.id.feed_status);
         startSync();
     }
 
@@ -245,17 +245,17 @@ public class FeedActivity extends Activity implements Constants {
             ContentValues tmp = feed.get(arg0);
             if (FeedList.isHeaderDate(tmp)) {
                 View v = layoutInflator.inflate(R.layout.feed_row_date_header, parent, false);
-                TextView tv = (TextView) v.findViewById(R.id.feedActivityDateHeader);
+                TextView tv = (TextView) v.findViewById(R.id.feed_activity_date_header);
                 DateFormat a = android.text.format.DateFormat.getLongDateFormat(context);
                 tv.setText(a.format(tmp.getAsLong(DB.FEED.START_TIME)));
                 return v;
             } else if (FeedList.isActivity(tmp)) {
                 View v = layoutInflator.inflate(R.layout.feed_row_activity, parent, false);
-                ImageView iv = (ImageView) v.findViewById(R.id.feedImage);
-                TextView tv0 = (TextView) v.findViewById(R.id.feedActivitySource);
-                TextView tv1 = (TextView) v.findViewById(R.id.feedActivityHeader);
-                TextView tv2 = (TextView) v.findViewById(R.id.feedActivitySummary);
-                TextView tv3 = (TextView) v.findViewById(R.id.feedActivityNotes);
+                ImageView iv = (ImageView) v.findViewById(R.id.feed_image);
+                TextView tv0 = (TextView) v.findViewById(R.id.feed_activity_source);
+                TextView tv1 = (TextView) v.findViewById(R.id.feed_activity_header);
+                TextView tv2 = (TextView) v.findViewById(R.id.feed_activity_summary);
+                TextView tv3 = (TextView) v.findViewById(R.id.feed_activity_notes);
 
                 String src = uploadManager.getUploader(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
                 if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {

@@ -110,13 +110,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         mDB = mDBHelper.getReadableDatabase();
         uploadManager = new UploadManager(this);
         adapter = new WorkoutAccountListAdapter(this);
-        list = (ExpandableListView) findViewById(R.id.expandableListView);
+        list = (ExpandableListView) findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
-        downloadButton = (Button) findViewById(R.id.downloadWorkoutButton);
+        downloadButton = (Button) findViewById(R.id.download_workout_button);
         downloadButton.setOnClickListener(downloadButtonClick);
-        deleteButton = (Button) findViewById(R.id.deleteWorkoutButton);
+        deleteButton = (Button) findViewById(R.id.delete_workout_button);
         deleteButton.setOnClickListener(deleteButtonClick);
-        shareButton = (Button) findViewById(R.id.shareWorkoutButton);
+        shareButton = (Button) findViewById(R.id.share_workout_button);
         shareButton.setOnClickListener(shareButtonClick);
 
         handleButtons();
@@ -591,8 +591,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             }
 
             WorkoutRef workout = workouts.get(getProvider(groupPosition)).get(childPosition);
-            RadioButton cb = (RadioButton) view.findViewById(R.id.downloadWorkoutCheckbox);
-            TextView tv = (TextView) view.findViewById(R.id.downloadWorkoutName);
+            RadioButton cb = (RadioButton) view.findViewById(R.id.download_workout_checkbox);
+            TextView tv = (TextView) view.findViewById(R.id.download_workout_name);
 
             cb.setTag(workout);
             cb.setChecked(currentlySelectedWorkout != null

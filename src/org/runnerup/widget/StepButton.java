@@ -57,13 +57,13 @@ public class StepButton extends TableLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.step_button, this);
         formatter = new Formatter(context);
-        mLayout = (TableLayout) findViewById(R.id.stepButton);
-        mIntensity = (TextView) findViewById(R.id.stepIntensity);
-        mDurationType = (TextView) findViewById(R.id.stepDurationType);
-        mDurationValue = (TextView) findViewById(R.id.stepDurationValue);
-        mGoalType = (TextView) findViewById(R.id.stepGoalType);
-        mGoalValue = (TextView) findViewById(R.id.stepGoalValue);
-        mGoalRow = (TableRow) findViewById(R.id.stepRow1);
+        mLayout = (TableLayout) findViewById(R.id.step_button);
+        mIntensity = (TextView) findViewById(R.id.step_intensity);
+        mDurationType = (TextView) findViewById(R.id.step_duration_type);
+        mDurationValue = (TextView) findViewById(R.id.step_duration_value);
+        mGoalType = (TextView) findViewById(R.id.step_goal_type);
+        mGoalValue = (TextView) findViewById(R.id.step_goal_value);
+        mGoalRow = (TableRow) findViewById(R.id.step_row1);
 
         mLayout.setOnClickListener(new OnClickListener() {
 

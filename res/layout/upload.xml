@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1Layout"
+    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -29,20 +29,20 @@
         android:gravity="center|center_horizontal|center_vertical" >
 
         <TextView
-            android:id="@+id/accountUploadList_name"
+            android:id="@+id/account_upload_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="200dp"
-            android:text="FunBeat" />
+            android:text="@string/account_upload_list_name_txt" />
 
         <ImageView
-            android:id="@+id/accountUploadList_icon"
+            android:id="@+id/account_upload_list_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/accountUploadList_name"
+            android:layout_toRightOf="@+id/account_upload_list_name"
             android:scaleType="center" />
     </LinearLayout>
     
@@ -50,7 +50,7 @@
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/accountUploadButtons"
+        android:layout_above="@+id/account_upload_buttons"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/name"
         android:scrollbarAlwaysDrawVerticalTrack="true" >
@@ -58,37 +58,37 @@
     </ListView>
     
     <LinearLayout
-        android:id="@+id/accountUploadButtons"
+        android:id="@+id/account_upload_buttons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/accountUploadButton"
+        android:layout_above="@id/account_upload_button"
         android:orientation="horizontal" >
 
-        android:layout_above="@+id/accountUploadButton"
+        android:layout_above="@+id/account_upload_button"
         >
 
         <Button
-            android:id="@+id/accountUploadSetAll"
+            android:id="@+id/account_upload_set_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Select all" />
+            android:text="@string/account_upload_set_all_btn" />
 
         <Button
-            android:id="@+id/accountUploadClearAll"
+            android:id="@+id/account_upload_clear_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Clear all" />
+            android:text="@string/account_upload_clear_all_btn" />
     </LinearLayout>
 
 	<Button
-        android:id="@+id/accountUploadButton"
+        android:id="@+id/account_upload_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_blue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-        android:text="Upload" />
+        android:text="@string/account_upload_button_btn" />
     
 </RelativeLayout>
