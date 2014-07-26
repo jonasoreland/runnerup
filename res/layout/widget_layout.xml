@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="AD:"/>
+            android:text="AT:"/>
 
         <TextView
             android:id="@+id/widget2value"
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="AD:"/>
+            android:text="AP:"/>
 
         <TextView
             android:id="@+id/widget3value"
