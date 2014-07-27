@@ -161,7 +161,7 @@ public class TitleSpinner extends LinearLayout {
                 EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         mValue.setText(defaultValue);
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,7 +215,7 @@ public class TitleSpinner extends LinearLayout {
             }
         }
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -256,7 +256,7 @@ public class TitleSpinner extends LinearLayout {
             mValue.setText("");
         }
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -306,7 +306,7 @@ public class TitleSpinner extends LinearLayout {
             mValue.setText("");
         }
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -355,7 +355,7 @@ public class TitleSpinner extends LinearLayout {
             mValue.setText("");
         }
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -406,7 +406,7 @@ public class TitleSpinner extends LinearLayout {
             mValue.setText("");
         }
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -461,7 +461,7 @@ public class TitleSpinner extends LinearLayout {
         numberPicker.processAttributes(arr);
         numberPicker.setOrientation(VERTICAL);
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -619,7 +619,7 @@ public class TitleSpinner extends LinearLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.titleSpinner);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setEnabled(enabled);
         mSpinner.setEnabled(enabled);
     }

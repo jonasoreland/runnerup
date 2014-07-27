@@ -150,13 +150,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
             assert (false);
         }
 
-        saveButton = (Button) findViewById(R.id.saveButton);
-        discardButton = (Button) findViewById(R.id.discardButton);
-        resumeButton = (Button) findViewById(R.id.resumeButton);
-        activityTime = (TextView) findViewById(R.id.activityTime);
-        activityDistance = (TextView) findViewById(R.id.activityDistance);
-        activityPace = (TextView) findViewById(R.id.activityPace);
-        notes = (EditText) findViewById(R.id.notesText);
+        saveButton = (Button) findViewById(R.id.save_button);
+        discardButton = (Button) findViewById(R.id.discard_button);
+        resumeButton = (Button) findViewById(R.id.resume_button);
+        activityTime = (TextView) findViewById(R.id.activity_time);
+        activityDistance = (TextView) findViewById(R.id.activity_distance);
+        activityPace = (TextView) findViewById(R.id.activity_pace);
+        notes = (EditText) findViewById(R.id.notes_text);
         notes.setHint("Notes about your workout");
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                 .getMap();
@@ -198,27 +198,27 @@ public class DetailActivity extends FragmentActivity implements Constants {
         th.setup();
         TabSpec tabSpec = th.newTabSpec("notes");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Notes"));
-        tabSpec.setContent(R.id.tabMain);
+        tabSpec.setContent(R.id.tab_main);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("laps");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Laps"));
-        tabSpec.setContent(R.id.tabLap);
+        tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("map");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Map"));
-        tabSpec.setContent(R.id.tabMap);
+        tabSpec.setContent(R.id.tab_map);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("graph");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Graph"));
-        tabSpec.setContent(R.id.tabGraph);
+        tabSpec.setContent(R.id.tab_graph);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("share");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Upload"));
-        tabSpec.setContent(R.id.tabUpload);
+        tabSpec.setContent(R.id.tab_upload);
         th.addTab(tabSpec);
 
         th.getTabWidget().setBackgroundColor(Color.DKGRAY);
@@ -230,12 +230,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
             lv.setAdapter(adapter);
         }
         {
-            ListView lv = (ListView) findViewById(R.id.reportList);
+            ListView lv = (ListView) findViewById(R.id.report_list);
             ReportListAdapter adapter = new ReportListAdapter();
             adapters.add(adapter);
             lv.setAdapter(adapter);
         }
-        graphTab = (LinearLayout) findViewById(R.id.tabGraph);
+        graphTab = (LinearLayout) findViewById(R.id.tab_graph);
         {
             graphView = new LineGraphView(this, "Pace") {
                 @Override
@@ -459,7 +459,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
             View view = inflater.inflate(R.layout.laplist_row, parent, false);
-            TextView tv0 = (TextView) view.findViewById(R.id.lapList_type);
+            TextView tv0 = (TextView) view.findViewById(R.id.lap_list_type);
             int i = laps[position].getAsInteger(DB.LAP.INTENSITY);
             switch (Intensity.values()[i]) {
                 case ACTIVE:
@@ -480,17 +480,17 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     break;
 
             }
-            TextView tv1 = (TextView) view.findViewById(R.id.lapList_id);
+            TextView tv1 = (TextView) view.findViewById(R.id.lap_list_id);
             tv1.setText(laps[position].getAsString("_id"));
-            TextView tv2 = (TextView) view.findViewById(R.id.lapList_distance);
+            TextView tv2 = (TextView) view.findViewById(R.id.lap_list_distance);
             float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position]
                     .getAsFloat(DB.LAP.DISTANCE) : 0;
             tv2.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) d));
-            TextView tv3 = (TextView) view.findViewById(R.id.lapList_time);
+            TextView tv3 = (TextView) view.findViewById(R.id.lap_list_time);
             long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position]
                     .getAsLong(DB.LAP.TIME) : 0;
             tv3.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
-            TextView tv4 = (TextView) view.findViewById(R.id.lapList_pace);
+            TextView tv4 = (TextView) view.findViewById(R.id.lap_list_pace);
             if (t != 0 && d != 0)
             {
                 tv4.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
@@ -501,7 +501,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             }
             int hr = laps[position].containsKey(DB.LAP.AVG_HR) ? laps[position]
                     .getAsInteger(DB.LAP.AVG_HR) : 0;
-            TextView tvHr = (TextView) view.findViewById(R.id.lapList_hr);
+            TextView tvHr = (TextView) view.findViewById(R.id.lap_list_hr);
             if (hr > 0) {
                 tvHr.setVisibility(View.VISIBLE);
                 tvHr.setText(formatter.formatHeartRate(Formatter.TXT_LONG, hr) + " bpm");
@@ -559,9 +559,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
             LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
             View view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
-            TextView tv0 = (TextView) view.findViewById(R.id.accountId);
-            CheckBox cb = (CheckBox) view.findViewById(R.id.reportSent);
-            TextView tv1 = (TextView) view.findViewById(R.id.accountName);
+            TextView tv0 = (TextView) view.findViewById(R.id.account_id);
+            CheckBox cb = (CheckBox) view.findViewById(R.id.report_sent);
+            TextView tv1 = (TextView) view.findViewById(R.id.account_name);
 
             ContentValues tmp = reports.get(position);
 
