@@ -18,95 +18,95 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab_interval"
+    android:id="@+id/tabInterval"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/tab_interval0"
+        android:id="@+id/tabInterval0"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_audio_cue_spinner"
+            android:id="@+id/intervalAudioCueSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="intervalAudio"
-            android:text="@string/interval_audio_cue_spinner"
+            android:text="Audio cue settings"
             runnerup:type="spinner_txt" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_type"
+            android:id="@+id/intervalType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/simple_types"
-            android:key="interval_type"
+            android:key="intervalType"
             android:prompt="@string/simple_type"
-            android:text="@string/interval_type" />
+            android:text="Interval type" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_time"
+            android:id="@+id/intervalTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="00:01:00"
             android:inputType="time"
-            android:key="interval_time"
+            android:key="intervalTime"
             android:prompt="@string/simple_type"
-            android:text="@string/interval_time"
+            android:text="Interval time (HH:MM:SS)"
             runnerup:type="durationpicker" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_distance"
+            android:id="@+id/intervalDistance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="1000"
             android:inputType="numberDecimal"
-            android:key="interval_distance"
+            android:key="intervalDistance"
             android:prompt="@string/simple_type"
-            android:text="@string/interval_distance"
+            android:text="Interval distance (m)"
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_rest_type"
+            android:id="@+id/intervalRestType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/simple_types"
-            android:key="interval_rest_type"
+            android:key="intervalRestType"
             android:prompt="@string/simple_type"
-            android:text="@string/interval_rest_type" />
+            android:text="Rest type" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_rest_time"
+            android:id="@+id/intervalRestTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="00:01:00"
             android:inputType="time"
-            android:key="interval_rest_time"
+            android:key="intervalRestTime"
             android:prompt="@string/simple_type"
-            android:text="@string/interval_rest_time"
+            android:text="Rest time (HH:MM:SS)"
             runnerup:type="durationpicker" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_rest_distance"
+            android:id="@+id/intervalRestDistance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="200"
             android:inputType="numberDecimal"
-            android:key="interval_rest_distance"
+            android:key="intervalRestDistance"
             android:prompt="@string/simple_type"
-            android:text="@string/interval_rest_distance"
+            android:text="Rest distance (m)"
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_repetitions"
+            android:id="@+id/intervalRepetitions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="5"
             android:inputType="number"
-            android:key="interval_repetitions"
+            android:key="intervalRepetitions"
             android:prompt="@string/simple_type"
-            android:text="@string/interval_repetitions"
+            android:text="Repetitions"
             runnerup:type="numberpicker" />
 
         <LinearLayout
@@ -115,22 +115,22 @@
             android:orientation="horizontal" >
 
             <CheckBox
-                android:id="@+id/interval_warmup"
+                android:id="@+id/intervalWarmup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
                 android:enabled="false"
-                android:text="@string/interval_warmup_box" />
+                android:text="Warmup" />
 
             <CheckBox
-                android:id="@+id/interval_cooldown"
+                android:id="@+id/intervalCooldown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="true"
                 android:enabled="false"
-                android:text="@string/interval_cooldown_box" />
+                android:text="Cooldown" />
         </LinearLayout>
     </LinearLayout>
 

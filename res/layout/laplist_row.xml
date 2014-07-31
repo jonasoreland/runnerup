@@ -21,15 +21,15 @@
     android:orientation="horizontal" >
 
     <TextView
-        android:id="@+id/lap_list_id"
+        android:id="@+id/lapList_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:text="@string/lap_list_id_txt"
+        android:text="id"
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/lap_list_type"
+        android:id="@+id/lapList_type"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
@@ -38,34 +38,34 @@
         android:textStyle="" />
 
     <TextView
-        android:id="@+id/lap_list_time"
+        android:id="@+id/lapList_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="right"
-        android:text="@string/lap_list_time_txt" />
+        android:text="Time" />
 
     <TextView
-        android:id="@+id/lap_list_distance"
+        android:id="@+id/lapList_distance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="right"
-        android:text="@string/lap_list_distance_txt" />
+        android:text="Distance" />
 
     <TextView
-        android:id="@+id/lap_list_pace"
+        android:id="@+id/lapList_pace"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="right"
-        android:text="@string/lap_list_pace_txt" />
+        android:text="Pace" />
     <TextView
-        android:id="@+id/lap_list_hr"
+        android:id="@+id/lapList_hr"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="right"
-        android:text="@string/lap_list_hr_txt" />
+        android:text="Hr" />
 
 </LinearLayout>

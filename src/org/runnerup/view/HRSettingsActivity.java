@@ -99,12 +99,12 @@ public class HRSettingsActivity extends Activity implements HRClient {
             return;
         }
 
-        tvLog = (TextView) findViewById(R.id.hr_log);
-        tvBTName = (TextView) findViewById(R.id.hr_device);
-        tvHR = (TextView) findViewById(R.id.hr_value);
-        scanButton = (Button) findViewById(R.id.scan_button);
+        tvLog = (TextView) findViewById(R.id.hrLog);
+        tvBTName = (TextView) findViewById(R.id.hrDevice);
+        tvHR = (TextView) findViewById(R.id.hrValue);
+        scanButton = (Button) findViewById(R.id.scanButton);
         scanButton.setOnClickListener(scanButtonClick);
-        connectButton = (Button) findViewById(R.id.connect_button);
+        connectButton = (Button) findViewById(R.id.connectButton);
         connectButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -114,7 +114,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
         formatter = new Formatter(this);
         {
-            LinearLayout graphLayout = (LinearLayout) findViewById(R.id.hr_graph_layout);
+            LinearLayout graphLayout = (LinearLayout) findViewById(R.id.hrGraphLayout);
             graphView = new LineGraphView(this, "Heart rate") {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {

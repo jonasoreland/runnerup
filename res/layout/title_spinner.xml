@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/title_spinner"
+    android:id="@+id/titleSpinner"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/title_spinner"
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_vertical|right"
-        android:text="@string/value_txt"
+        android:text="value"
         android:textColor="@android:color/black" />
 
     <Spinner

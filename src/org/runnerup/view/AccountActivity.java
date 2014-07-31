@@ -83,17 +83,17 @@ public class AccountActivity extends Activity implements Constants {
         fillData();
 
         {
-            Button btn = (Button) findViewById(R.id.ok_account_button);
+            Button btn = (Button) findViewById(R.id.okAccountButton);
             btn.setOnClickListener(okButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.account_upload_button);
+            Button btn = (Button) findViewById(R.id.accountUploadButton);
             btn.setOnClickListener(uploadButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.disconnect_account_button);
+            Button btn = (Button) findViewById(R.id.disconnectAccountButton);
             btn.setOnClickListener(disconnectButtonClick);
         }
     }
@@ -136,8 +136,8 @@ public class AccountActivity extends Activity implements Constants {
             Uploader uploader = uploadManager.add(tmp);
 
             {
-                ImageView im = (ImageView) findViewById(R.id.account_list_icon);
-                TextView tv = (TextView) findViewById(R.id.account_list_name);
+                ImageView im = (ImageView) findViewById(R.id.accountList_icon);
+                TextView tv = (TextView) findViewById(R.id.accountList_name);
                 tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
                 if (c.isNull(c.getColumnIndex(DB.ACCOUNT.ICON))) {
                     im.setVisibility(View.GONE);
@@ -168,7 +168,7 @@ public class AccountActivity extends Activity implements Constants {
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 addRow("Automatic upload", cb);
             } else {
-                Button btn = (Button) findViewById(R.id.account_upload_button);
+                Button btn = (Button) findViewById(R.id.accountUploadButton);
                 btn.setVisibility(View.GONE);
             }
 
@@ -200,7 +200,7 @@ public class AccountActivity extends Activity implements Constants {
     }
 
     void addRow(String string, View btn) {
-        TableLayout table = (TableLayout) findViewById(R.id.account_table);
+        TableLayout table = (TableLayout) findViewById(R.id.accountTable);
         TableRow row = new TableRow(this);
         TextView title = new TextView(this);
         title.setText(string);

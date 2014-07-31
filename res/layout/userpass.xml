@@ -16,26 +16,26 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linear1_layout"
+    android:id="@+id/linear1Layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <TableLayout
-        android:id="@+id/table_layout"
+        android:id="@+id/tableLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
         <TableRow
-            android:id="@+id/table_row1"
+            android:id="@+id/tableRow1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/text_view1"
+                android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_view1_txt" />
+                android:text="Username" />
 
             <EditText
                 android:id="@+id/username"
@@ -47,18 +47,18 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/table_row2"
+            android:id="@+id/tableRow2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/text_view01"
+                android:id="@+id/TextView01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/text_view01_txt" />
+                android:text="Password" />
 
             <EditText
-                android:id="@+id/password_input"
+                android:id="@+id/passwordInput"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -68,7 +68,7 @@
     </TableLayout>
 
     <TableRow
-        android:id="@+id/table_row3"
+        android:id="@+id/tableRow3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
@@ -76,7 +76,7 @@
             android:id="@+id/showpass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/showpass_box" />
+            android:text="Show password" />
     </TableRow>
 
 </LinearLayout>

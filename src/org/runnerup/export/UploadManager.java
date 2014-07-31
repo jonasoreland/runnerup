@@ -312,7 +312,7 @@ public class UploadManager {
         final View view = inflater.inflate(R.layout.userpass, null);
         final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
         final TextView tv1 = (TextView) view.findViewById(R.id.username);
-        final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
+        final TextView tv2 = (TextView) view.findViewById(R.id.passwordInput);
         String authConfigStr = l.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
         String username = authConfig.optString("username", "");

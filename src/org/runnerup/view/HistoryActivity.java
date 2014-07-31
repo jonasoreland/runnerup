@@ -60,7 +60,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history);
-        listView = (ListView) findViewById(R.id.history_list);
+        listView = (ListView) findViewById(R.id.historyList);
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
@@ -132,9 +132,9 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             int[] to = new int[] {
-                    R.id.history_list_id,
-                    R.id.history_list_start_time, R.id.history_list_distance,
-                    R.id.history_list_time, R.id.history_list_pace, R.id.history_list_sport
+                    R.id.historyList_id,
+                    R.id.historyList_startTime, R.id.historyList_distance,
+                    R.id.historyList_time, R.id.historyList_pace, R.id.historyList_sport
             };
 
             int id = cursor.getInt(0);

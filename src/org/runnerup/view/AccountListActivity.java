@@ -75,7 +75,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
         uploadManager = new UploadManager(this);
-        listView = (ListView) findViewById(R.id.account_list);
+        listView = (ListView) findViewById(R.id.accountList);
         listView.setDividerHeight(10);
         cursorAdapter = new AccountListAdapter(this, null);
         listView.setAdapter(cursorAdapter);
@@ -151,10 +151,10 @@ public class AccountListActivity extends FragmentActivity implements Constants,
             final Uploader uploader = uploadManager.add(tmp);
             final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
 
-            ImageView im = (ImageView) view.findViewById(R.id.account_list_icon);
-            TextView tv = (TextView) view.findViewById(R.id.account_list_name);
-            CheckBox cbSend = (CheckBox) view.findViewById(R.id.account_list_upload);
-            CheckBox cbFeed = (CheckBox) view.findViewById(R.id.account_list_feed);
+            ImageView im = (ImageView) view.findViewById(R.id.accountList_icon);
+            TextView tv = (TextView) view.findViewById(R.id.accountList_name);
+            CheckBox cbSend = (CheckBox) view.findViewById(R.id.accountList_upload);
+            CheckBox cbFeed = (CheckBox) view.findViewById(R.id.accountList_feed);
             cbSend.setTag(id);
             cbSend.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
                 @Override
@@ -170,7 +170,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
                 }
 
             });
-            Button b = (Button) view.findViewById(R.id.account_list_configure_button);
+            Button b = (Button) view.findViewById(R.id.accountList_configureButton);
             boolean configured = uploadManager.isConfigured(id);
             if (!tabFormat) {
                 {

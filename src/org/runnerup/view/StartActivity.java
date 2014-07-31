@@ -166,83 +166,83 @@ public class StartActivity extends Activity implements TickListener {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         setContentView(R.layout.start);
-        startButton = (Button) findViewById(R.id.start_button);
+        startButton = (Button) findViewById(R.id.startButton);
         startButton.setOnClickListener(startButtonClick);
-        gpsInfoLayout = findViewById(R.id.gpsinfo);
-        gpsInfoView1 = (TextView) findViewById(R.id.gps_info1);
-        gpsInfoView2 = (TextView) findViewById(R.id.gps_info2);
-        hrInfo = (TextView) findViewById(R.id.hr_info);
+        gpsInfoLayout = findViewById(R.id.GPSINFO);
+        gpsInfoView1 = (TextView) findViewById(R.id.gpsInfo1);
+        gpsInfoView2 = (TextView) findViewById(R.id.gpsInfo2);
+        hrInfo = (TextView) findViewById(R.id.hrInfo);
 
-        hrButton = (ImageButton) findViewById(R.id.hr_button);
+        hrButton = (ImageButton) findViewById(R.id.hrButton);
         hrButton.setOnClickListener(hrButtonClick);
-        hrValueText = (TextView) findViewById(R.id.hr_value_text);
-        hrLayout = (FrameLayout) findViewById(R.id.hr_layout);
+        hrValueText = (TextView) findViewById(R.id.hrValueText);
+        hrLayout = (FrameLayout) findViewById(R.id.hrLayout);
 
-        tabHost = (TabHost) findViewById(R.id.tabhost_start);
+        tabHost = (TabHost) findViewById(R.id.tabhostStart);
         tabHost.setup();
         TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Basic"));
-        tabSpec.setContent(R.id.tab_basic);
+        tabSpec.setContent(R.id.tabBasic);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Interval"));
-        tabSpec.setContent(R.id.tab_interval);
+        tabSpec.setContent(R.id.tabInterval);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Advanced"));
-        tabSpec.setContent(R.id.tab_advanced);
+        tabSpec.setContent(R.id.tabAdvanced);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_MANUAL);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Manual"));
-        tabSpec.setContent(R.id.tab_manual);
+        tabSpec.setContent(R.id.tabManual);
         tabHost.addTab(tabSpec);
 
         tabHost.setOnTabChangedListener(onTabChangeListener);
         tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
-        CheckBox goal = (CheckBox) findViewById(R.id.tab_basic_goal);
+        CheckBox goal = (CheckBox) findViewById(R.id.tabBasicGoal);
         goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
-        simpleType = (TitleSpinner) findViewById(R.id.basic_type);
-        simpleTime = (TitleSpinner) findViewById(R.id.basic_time);
-        simpleDistance = (TitleSpinner) findViewById(R.id.basic_distance);
+        simpleType = (TitleSpinner) findViewById(R.id.basicType);
+        simpleTime = (TitleSpinner) findViewById(R.id.basicTime);
+        simpleDistance = (TitleSpinner) findViewById(R.id.basicDistance);
         simpleType.setOnSetValueListener(simpleTypeSetValue);
         simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
         simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         simpleAudioListAdapter.reload();
-        simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
+        simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basicAudioCueSpinner);
         simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
-        simpleTargetType = (TitleSpinner) findViewById(R.id.tab_basic_target_type);
-        simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.tab_basic_target_pace_max);
+        simpleTargetType = (TitleSpinner) findViewById(R.id.tabBasicTargetType);
+        simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.tabBasicTargetPaceMax);
         hrZonesAdapter = new HRZonesListAdapter(this, inflater);
-        simpleTargetHrz = (TitleSpinner) findViewById(R.id.tab_basic_target_hrz);
+        simpleTargetHrz = (TitleSpinner) findViewById(R.id.tabBasicTargetHrz);
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
         targetEntriesAdapter = new TargetEntriesAdapter(this);
 
-        intervalType = (TitleSpinner) findViewById(R.id.interval_type);
-        intervalTime = (TitleSpinner) findViewById(R.id.interval_time);
+        intervalType = (TitleSpinner) findViewById(R.id.intervalType);
+        intervalTime = (TitleSpinner) findViewById(R.id.intervalTime);
         intervalTime.setOnSetValueListener(onSetTimeValidator);
-        intervalDistance = (TitleSpinner) findViewById(R.id.interval_distance);
+        intervalDistance = (TitleSpinner) findViewById(R.id.intervalDistance);
         intervalType.setOnSetValueListener(intervalTypeSetValue);
 
-        intervalRestType = (TitleSpinner) findViewById(R.id.interval_rest_type);
-        intervalRestTime = (TitleSpinner) findViewById(R.id.interval_rest_time);
+        intervalRestType = (TitleSpinner) findViewById(R.id.intervalRestType);
+        intervalRestTime = (TitleSpinner) findViewById(R.id.intervalRestTime);
         intervalRestTime.setOnSetValueListener(onSetTimeValidator);
-        intervalRestDistance = (TitleSpinner) findViewById(R.id.interval_rest_distance);
+        intervalRestDistance = (TitleSpinner) findViewById(R.id.intervalRestDistance);
         intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
         intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         intervalAudioListAdapter.reload();
-        intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
+        intervalAudioSpinner = (TitleSpinner) findViewById(R.id.intervalAudioCueSpinner);
         intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
 
         advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         advancedAudioListAdapter.reload();
-        advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
+        advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advancedAudioCueSpinner);
         advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
-        advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advanced_workout_spinner);
+        advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advancedWorkoutSpinner);
         advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
         advancedWorkoutListAdapter.reload();
         advancedWorkoutSpinner.setAdapter(advancedWorkoutListAdapter);
@@ -261,10 +261,10 @@ public class StartActivity extends Activity implements TickListener {
                 return newValue;
             }
         });
-        advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
+        advancedStepList = (ListView) findViewById(R.id.advancedStepList);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
-        advancedDownloadWorkoutButton = (Button) findViewById(R.id.advanced_download_button);
+        advancedDownloadWorkoutButton = (Button) findViewById(R.id.advancedDownloadButton);
         advancedDownloadWorkoutButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,17 +273,17 @@ public class StartActivity extends Activity implements TickListener {
             }
         });
 
-        manualDate = (TitleSpinner) findViewById(R.id.manual_date);
+        manualDate = (TitleSpinner) findViewById(R.id.manualDate);
         manualDate.setOnSetValueListener(onSetValueManual);
-        manualTime = (TitleSpinner) findViewById(R.id.manual_time);
+        manualTime = (TitleSpinner) findViewById(R.id.manualTime);
         manualTime.setOnSetValueListener(onSetValueManual);
-        manualDistance = (TitleSpinner) findViewById(R.id.manual_distance);
+        manualDistance = (TitleSpinner) findViewById(R.id.manualDistance);
         manualDistance.setOnSetValueListener(onSetManualDistance);
-        manualDuration = (TitleSpinner) findViewById(R.id.manual_duration);
+        manualDuration = (TitleSpinner) findViewById(R.id.manualDuration);
         manualDuration.setOnSetValueListener(onSetManualDuration);
-        manualPace = (TitleSpinner) findViewById(R.id.manual_pace);
+        manualPace = (TitleSpinner) findViewById(R.id.manualPace);
         manualPace.setVisibility(View.GONE);
-        manualNotes = (EditText) findViewById(R.id.manual_notes);
+        manualNotes = (EditText) findViewById(R.id.manualNotes);
 
         if (getParent().getIntent() != null) {
             Intent i = getParent().getIntent();

@@ -16,48 +16,48 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linear1xx_layout"
+    android:id="@+id/linear1xxLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/org.runnerup">
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrz_age"
+        android:id="@+id/hrzAge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hrz_age"
+        android:text="Age"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="hrz_age" >
+        android:key="hrzAge" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrz_sex"
+        android:id="@+id/hrzSex"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sexes"
         android:prompt="@string/sex"
-        android:text="@string/hrz_sex"
+        android:text="Sex"
         app:type="spinner"
-        android:key="hrz_sex" >
+        android:key="hrzSex" >
     </org.runnerup.widget.TitleSpinner>
     
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrz_mhr"
+        android:id="@+id/hrzMHR"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hrz_mhr"
+        android:text="Maximum heart rate (MHR)"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="hrz_mhr" >
+        android:key="hrzMHR" >
     </org.runnerup.widget.TitleSpinner>
     
     <TableLayout
-        android:id="@+id/zones_table"
+        android:id="@+id/zonesTable"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
     </TableLayout>

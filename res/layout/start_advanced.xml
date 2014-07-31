@@ -18,39 +18,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab_advanced"
+    android:id="@+id/tabAdvanced"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/advanced_audio_cue_spinner"
+        android:id="@+id/advancedAudioCueSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:key="advancedAudio"
-        android:text="@string/advanced_audio_cue_spinner"
+        android:text="Audio cue settings"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/advanced_workout_spinner"
+        android:id="@+id/advancedWorkoutSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/advanced_audio_cue_spinner"
+        android:layout_below="@+id/advancedAudioCueSpinner"
         android:key="advancedWorkout"
-        android:text="@string/advanced_workout_spinner"
+        android:text="Workout"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
     <ListView
-        android:id="@+id/advanced_step_list"
+        android:id="@+id/advancedStepList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/advanced_download_button"
-        android:layout_below="@+id/advanced_workout_spinner"
+        android:layout_above="@+id/advancedDownloadButton"
+        android:layout_below="@+id/advancedWorkoutSpinner"
         android:background="@android:color/darker_gray"
         android:cacheColorHint="@android:color/darker_gray"
         android:fadeScrollbars="false"
@@ -58,12 +58,12 @@
         android:scrollbarAlwaysDrawVerticalTrack="true" />
     
     <Button
-        android:id="@+id/advanced_download_button"
+        android:id="@+id/advancedDownloadButton"
         style="@style/ButtonText"
         android:background="@drawable/btn_blue"
 		android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/advanced_download_button_btn" />
+        android:text="Download workouts" />
 
 </RelativeLayout>
