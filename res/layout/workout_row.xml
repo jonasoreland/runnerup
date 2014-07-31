@@ -24,38 +24,38 @@
     	android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
     	android:orientation="horizontal" >
-    
-    	<TextView
-    	    android:id="@+id/step_intensity"
-    	    android:layout_height="wrap_content"
-    	    android:layout_weight="1"
-    	    android:layout_width="0dp"
-    	    android:gravity="left"
-    	    android:text="intensity" />
 
     	<TextView
-    	    android:id="@+id/step_duration_type"
+    	    android:id="@+id/workout_intensity"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1"
+    	    android:layout_width="0dp"
+    	    android:gravity="left"
+    	    android:text="@string/workout_intensity_txt" />
+
+    	<TextView
+    	    android:id="@+id/workout_duration_type"
     	    android:layout_width="0dp"
     	    android:layout_height="wrap_content"
     	    android:layout_weight="1"
     	    android:gravity="left"
-    	    android:text="distance" />
+    	    android:text="@string/workout_duration_type_txt" />
 
 	    <TextView
-	        android:id="@+id/step_duration_value"
+	        android:id="@+id/workout_duration_value"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        android:gravity="left"
-	        android:text="6000 m" />
+	        android:text="@string/workout_duration_value_txt" />
 
 	    <TextView
-	        android:id="@+id/step_pace"
+	        android:id="@+id/workout_pace"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
     	    android:layout_width="0dp"
     	    android:gravity="left"
-	        android:text="4:05 - 4:25" />
+	        android:text="@string/workout_pace_txt" />
 
 	</LinearLayout>
 </LinearLayout>

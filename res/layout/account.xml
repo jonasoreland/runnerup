@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
+
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
@@ -30,63 +30,63 @@
         android:gravity="center|center_horizontal|center_vertical" >
 
         <TextView
-            android:id="@+id/accountList_name"
+            android:id="@+id/account_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="200dp"
-            android:text="FunBeat" />
+            android:text="@string/account_list_name_txt" />
 
         <ImageView
-            android:id="@+id/accountList_icon"
+            android:id="@+id/account_list_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/accountList_name"
+            android:layout_alignBaseline="@+id/account_list_name"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/accountList_name"
+            android:layout_toRightOf="@+id/account_list_name"
             android:scaleType="center" />
     </LinearLayout>
 
    	<TableLayout
-		android:id="@+id/accountTable"
+        android:id="@+id/account_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/name" >
 
         <TableRow
-            android:id="@+id/tableRow1"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
         </TableRow>
 
     </TableLayout>
-    
+
     <Button
-        android:id="@+id/disconnectAccountButton"
+        android:id="@+id/disconnect_account_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_red"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/accountUploadButton"
-        android:text="Disconnect" />
+        android:layout_above="@+id/account_upload_button"
+        android:text="@string/disconnect_account_button_btn" />
 
     <Button
-        android:id="@+id/accountUploadButton"
+        android:id="@+id/account_upload_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_blue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/okAccountButton"
-        android:text="Upload" />
-    
+        android:layout_above="@+id/ok_account_button"
+        android:text="@string/account_upload_button_btn" />
+
     <Button
-        android:id="@+id/okAccountButton"
+        android:id="@+id/ok_account_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_green"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="OK" />
-    
+        android:text="@string/ok_account_button_btn" />
+
 </RelativeLayout>

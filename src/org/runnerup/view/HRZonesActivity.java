@@ -78,10 +78,10 @@ public class HRZonesActivity extends Activity implements Constants {
 
         hrZones = new HRZones(this);
         hrZoneCalculator = new HRZoneCalculator(this);
-        ageSpinner = (TitleSpinner) findViewById(R.id.hrzAge);
-        sexSpinner = (TitleSpinner) findViewById(R.id.hrzSex);
-        maxHRSpinner = (TitleSpinner) findViewById(R.id.hrzMHR);
-        TableLayout zonesTable = (TableLayout) findViewById(R.id.zonesTable);
+        ageSpinner = (TitleSpinner) findViewById(R.id.hrz_age);
+        sexSpinner = (TitleSpinner) findViewById(R.id.hrz_sex);
+        maxHRSpinner = (TitleSpinner) findViewById(R.id.hrz_mhr);
+        TableLayout zonesTable = (TableLayout) findViewById(R.id.hr_zones_table);
         {
             int zoneCount = hrZoneCalculator.getZoneCount();
             LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);

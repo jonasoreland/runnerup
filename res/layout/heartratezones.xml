@@ -16,48 +16,48 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linear1xxLayout"
+
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/org.runnerup">
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrzAge"
+        android:id="@+id/hrz_age"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Age"
+        android:text="@string/hrz_age"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="hrzAge" >
+        android:key="hrz_age" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrzSex"
+        android:id="@+id/hrz_sex"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sexes"
         android:prompt="@string/sex"
-        android:text="Sex"
+        android:text="@string/hrz_sex"
         app:type="spinner"
-        android:key="hrzSex" >
+        android:key="hrz_sex" >
     </org.runnerup.widget.TitleSpinner>
-    
+
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrzMHR"
+        android:id="@+id/hrz_mhr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Maximum heart rate (MHR)"
+        android:text="@string/hrz_mhr"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="hrzMHR" >
+        android:key="hrz_mhr" >
     </org.runnerup.widget.TitleSpinner>
-    
+
     <TableLayout
-        android:id="@+id/zonesTable"
+        android:id="@+id/hr_zones_table"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
     </TableLayout>

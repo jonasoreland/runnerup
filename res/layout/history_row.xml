@@ -21,13 +21,13 @@
     android:orientation="vertical" >
 
     <RelativeLayout
-        android:id="@+id/historyRow0"
+        
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/historyList_startTime"
+            android:id="@+id/history_list_start_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -36,11 +36,11 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/historyList_sport"
+            android:id="@+id/history_list_sport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Running"
+            android:text="@string/history_list_sport_txt"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -52,37 +52,37 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/historyList_time"
+            android:id="@+id/history_list_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Time"
+            android:text="@string/history_list_time_txt"
             android:textSize="20dp" />
 
         <TextView
-            android:id="@+id/historyList_distance"
+            android:id="@+id/history_list_distance"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Distance"
+            android:text="@string/history_list_distance_txt"
             android:textSize="20dp" />
 
         <TextView
-            android:id="@+id/historyList_pace"
+            android:id="@+id/history_list_pace"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="Pace"
+            android:text="@string/history_list_pace_txt"
             android:textSize="20dp" />
 
         <TextView
-            android:id="@+id/historyList_id"
+            android:id="@+id/history_list_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="id"
+            android:text="@string/history_list_id_txt"
             android:textSize="20dp"
             android:visibility="gone" />
     </LinearLayout>

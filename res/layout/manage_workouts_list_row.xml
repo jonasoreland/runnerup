@@ -22,16 +22,16 @@
     android:paddingLeft="20dp" >
 
     <RadioButton
-        android:id="@+id/downloadWorkoutCheckbox"
+        android:id="@+id/download_workout_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="true" />
 
     <TextView
-        android:id="@+id/downloadWorkoutName"
+        android:id="@+id/download_workout_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Tröskel" />
+        android:text="@string/download_workout_name_txt" />
 
 </LinearLayout>

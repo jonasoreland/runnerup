@@ -16,62 +16,62 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1Layout"
+    
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/feedHeader"
+        android:id="@+id/feed_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:gravity="center_horizontal|center_vertical" >
 
         <TextView
-            android:id="@+id/feedStatus"
+            android:id="@+id/feed_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:text="TextView" />
+            android:text="@string/feed_status_txt" />
 
         <ProgressBar
-            android:id="@+id/feedProgressBar"
+            android:id="@+id/feed_progress_bar"
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
     <ListView
-        android:id="@+id/feedList"
+        android:id="@+id/feed_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/LinearLayout1"
-        android:layout_below="@id/feedHeader" >
+        android:layout_below="@id/feed_header" >
     </ListView>
 
     <LinearLayout
-        android:id="@+id/LinearLayout1"
+        
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/feedAccountButton"
+            android:id="@+id/feed_account_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_blue"
             android:textColor="@color/btn_text_color"
-            android:text="Configure accounts" />
+            android:text="@string/feed_account_button_btn" />
         
         <Button
-            android:id="@+id/refreshFeedButton"
+            android:id="@+id/refresh_feed_button"
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_blue"
-            android:text="Refresh" />
+            android:text="@string/refresh_feed_button_btn" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -16,38 +16,38 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
 	<org.runnerup.widget.TitleSpinner
-        android:id="@+id/settingsSpinner"
+        android:id="@+id/settings_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:visibility="gone" 
-		android:text="Audio cue settings"/>
- 
+        android:visibility="gone"
+		android:text="@string/settings_spinner"/>
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/button1"
+        android:layout_above="@+id/OK"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/settingsSpinner" >
+        android:layout_below="@+id/settings_spinner" >
 
     </ListView>
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/OK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:text="Button"
+        android:text="@string/OK_btn"
         android:visibility="gone" />
 
 </RelativeLayout>

@@ -22,7 +22,7 @@
     android:orientation="horizontal" >
 
     <ImageView
-        android:id="@+id/feedImage"
+        android:id="@+id/feed_image"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_margin="2dp" />
@@ -33,30 +33,30 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/feedActivitySource"
+            android:id="@+id/feed_activity_source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/FeedActivitySource"
-            android:text="TextView"
+            android:text="@string/feed_activity_source_txt"
             />
         
         <TextView
-            android:id="@+id/feedActivityHeader"
+            android:id="@+id/feed_activity_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="@string/feed_activity_source_txt" />
 
         <TextView
-            android:id="@+id/feedActivitySummary"
+            android:id="@+id/feed_activity_summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="@string/feed_activity_source_txt" />
 
         <TextView
-            android:id="@+id/feedActivityNotes"
+            android:id="@+id/feed_activity_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="@string/feed_activity_source_txt" />
 
     </LinearLayout>
 

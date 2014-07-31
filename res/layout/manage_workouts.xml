@@ -16,56 +16,56 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <ExpandableListView
-        android:id="@+id/expandableListView"
+        android:id="@+id/expandable_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/LinearLayout1"
+        android:layout_above="@+id/tool_bar_layout"
         android:layout_alignParentTop="true" >
 
     </ExpandableListView>
 
     <LinearLayout
-        android:id="@+id/LinearLayout1"
+        android:id="@+id/tool_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" >
 
         <Button
-            android:id="@+id/downloadWorkoutButton"
+            android:id="@+id/download_workout_button"
             style="@style/ButtonText"
             android:background="@drawable/btn_blue"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Download"
+            android:text="@string/download_workout_button_btn"
             android:textSize="16sp"
 		/>
 
         <Button
-            android:id="@+id/shareWorkoutButton"
+            android:id="@+id/share_workout_button"
             style="@style/ButtonText"
             android:background="@drawable/btn_blue"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Share"
+            android:text="@string/share_workout_button_btn"
             android:textSize="16sp"
 		/>
-        
+
         <Button
-            android:id="@+id/deleteWorkoutButton"
+            android:id="@+id/delete_workout_button"
             style="@style/ButtonText"
             android:background="@drawable/btn_red"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Delete"
+            android:text="@string/delete_workout_button_btn"
             android:textSize="16sp"
             />
 	</LinearLayout>

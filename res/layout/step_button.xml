@@ -17,7 +17,7 @@
 -->
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/stepButton"
+    android:id="@+id/step_button"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/title_spinner"
@@ -26,7 +26,7 @@
     >
 
     <TableRow
-        android:id="@+id/stepRow0"
+        android:id="@+id/step_row0"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|fill_horizontal"
@@ -34,36 +34,36 @@
         tools:ignore="HardcodedText" >
 
         <TextView
-            android:id="@+id/stepIntensity"
+            android:id="@+id/step_intensity"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="27"
             android:gravity="center_vertical|left"
-            android:text="Cooldown"
+            android:text="@string/step_intensity_txt"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/stepDurationType"
+            android:id="@+id/step_duration_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="25"
             android:gravity="center_vertical|left"
-            android:text="Duration"
+            android:text="@string/step_duration_type_txt"
             android:textColor="@android:color/black" />
 
         <TextView
-            android:id="@+id/stepDurationValue"
+            android:id="@+id/step_duration_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="50"
             android:gravity="center_vertical|right"
-            android:text="3 min"
+            android:text="@string/step_duration_value_txt"
             android:textColor="@android:color/black" />
     </TableRow>
 
     <TableRow
-        android:id="@+id/stepRow1"
+        android:id="@+id/step_row1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical|fill_horizontal"
@@ -72,32 +72,32 @@
         tools:ignore="HardcodedText" >
 
         <TextView
-            android:id="@+id/TextView03"
+            android:id="@+id/hidden_text_debug"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="27"
             android:gravity="center_vertical|left"
-            android:text="1234567"
+            android:text="@string/hidden_text_debug_txt"
             android:textColor="@android:color/black"
             android:textStyle="bold"
             android:visibility="invisible" />
 
         <TextView
-            android:id="@+id/stepGoalType"
+            android:id="@+id/step_goal_type"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="25"
             android:gravity="center_vertical|left"
-            android:text="Pace"
+            android:text="@string/step_goal_type_txt"
             android:textColor="@android:color/black" />
 
         <TextView
-            android:id="@+id/stepGoalValue"
+            android:id="@+id/step_goal_value"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="50"
             android:gravity="center_vertical|right"
-            android:text="4:00 - 4:15 min/km"
+            android:text="@string/step_goal_value_txt"
             android:textColor="@android:color/black" />
     </TableRow>
 </TableLayout>

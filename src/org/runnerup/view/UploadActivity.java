@@ -89,17 +89,17 @@ public class UploadActivity extends ListActivity implements Constants {
         setListAdapter(new UploadListAdapter(this));
 
         {
-            Button btn = (Button) findViewById(R.id.accountUploadSetAll);
+            Button btn = (Button) findViewById(R.id.account_upload_set_all);
             btn.setOnClickListener(setAllButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.accountUploadClearAll);
+            Button btn = (Button) findViewById(R.id.account_upload_clear_all);
             btn.setOnClickListener(clearAllButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.accountUploadButton);
+            Button btn = (Button) findViewById(R.id.account_upload_button);
             btn.setOnClickListener(uploadButtonClick);
 
             uploadButton = btn;
@@ -107,8 +107,8 @@ public class UploadActivity extends ListActivity implements Constants {
         }
 
         {
-            TextView tv = (TextView) findViewById(R.id.accountUploadList_name);
-            ImageView im = (ImageView) findViewById(R.id.accountUploadList_icon);
+            TextView tv = (TextView) findViewById(R.id.account_upload_list_name);
+            ImageView im = (ImageView) findViewById(R.id.account_upload_list_icon);
             tv.setText(uploader);
             if (uploaderIcon == null) {
                 im.setVisibility(View.GONE);
@@ -236,7 +236,7 @@ public class UploadActivity extends ListActivity implements Constants {
             }
 
             {
-                TextView tv = (TextView) view.findViewById(R.id.uploadList_startTime);
+                TextView tv = (TextView) view.findViewById(R.id.upload_list_start_time);
                 if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
                     tv.setText(formatter.formatDateTime(Formatter.TXT_LONG,
                             tmp.getAsLong(DB.ACTIVITY.START_TIME)));
@@ -246,7 +246,7 @@ public class UploadActivity extends ListActivity implements Constants {
             }
 
             {
-                TextView tv = (TextView) view.findViewById(R.id.uploadList_distance);
+                TextView tv = (TextView) view.findViewById(R.id.upload_list_distance);
                 if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
                     tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) d));
                 } else {
@@ -255,7 +255,7 @@ public class UploadActivity extends ListActivity implements Constants {
             }
 
             {
-                TextView tv = (TextView) view.findViewById(R.id.uploadList_time);
+                TextView tv = (TextView) view.findViewById(R.id.upload_list_time);
                 if (tmp.containsKey(DB.ACTIVITY.TIME)) {
                     tv.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
                 } else {
@@ -264,7 +264,7 @@ public class UploadActivity extends ListActivity implements Constants {
             }
 
             {
-                TextView tv = (TextView) view.findViewById(R.id.uploadList_pace);
+                TextView tv = (TextView) view.findViewById(R.id.upload_list_pace);
                 if (tmp.containsKey(DB.ACTIVITY.DISTANCE) && tmp.containsKey(DB.ACTIVITY.TIME)
                         && d != 0 && t != 0) {
                     tv.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
@@ -274,7 +274,7 @@ public class UploadActivity extends ListActivity implements Constants {
             }
 
             {
-                TextView tv = (TextView) view.findViewById(R.id.uploadList_sport);
+                TextView tv = (TextView) view.findViewById(R.id.upload_list_sport);
                 if (!tmp.containsKey(DB.ACTIVITY.SPORT)) {
                     tv.setText("Running");
                 } else {
@@ -293,7 +293,7 @@ public class UploadActivity extends ListActivity implements Constants {
             }
 
             {
-                CheckBox cb = (CheckBox) view.findViewById(R.id.uploadList_check);
+                CheckBox cb = (CheckBox) view.findViewById(R.id.upload_list_check);
                 cb.setTag(Integer.valueOf(arg0));
                 cb.setOnCheckedChangeListener(checkedChangeClick);
                 if (tmp.containsKey("skip")) {

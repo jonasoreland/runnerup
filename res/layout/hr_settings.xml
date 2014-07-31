@@ -5,25 +5,25 @@
     tools:context=".view.HRSettingsActivity" >
 
     <LinearLayout
-        android:id="@+id/linearLayout0"
+
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/totalTime"
+            android:id="@+id/device"
             style="@style/RunHeader"
             android:layout_marginLeft="5dp"
             android:gravity="left"
-            android:text="Device" />
+            android:text="@string/device_txt" />
 
         <TextView
-            android:id="@+id/totalPace"
+            android:id="@+id/heart_rate"
             style="@style/RunHeader"
             android:layout_marginRight="3dp"
             android:gravity="right"
-            android:text="Heart rate" />
+            android:text="@string/heart_rate_txt" />
     </LinearLayout>
 
     <LinearLayout
@@ -41,25 +41,25 @@
             android:layout_marginLeft="10dp" >
 
             <TextView
-                android:id="@+id/TextView01"
+
                 style="@style/RunHeader" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout3"
+
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/hrDevice"
+                android:id="@+id/hr_device"
                 style="@style/RunInfo"
                 android:layout_marginLeft="5dp"
                 android:gravity="left"
-                android:text="Polar H7" />
+                android:text="@string/hr_device_txt" />
 
             <TextView
-                android:id="@+id/hrValue"
+                android:id="@+id/hr_value"
                 style="@style/RunInfo"
                 android:layout_marginRight="3dp"
                 android:text="" />
@@ -71,41 +71,41 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/scanButton"
+        android:layout_above="@+id/scan_button"
         android:layout_below="@+id/total"
         android:weightSum="2" >
 
         <LinearLayout
-            android:id="@+id/hrGraphLayout"
+            android:id="@+id/hr_graph_layout"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/hrLog"
+            android:id="@+id/hr_log"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:text="@string/hr_log_txt" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/scanButton"
+        android:id="@+id/scan_button"
         style="@style/ButtonText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/connectButton"
+        android:layout_above="@+id/connect_button"
         android:background="@drawable/btn_blue"
-        android:text="Scan" />
+        android:text="@string/scan_button_btn" />
 
     <Button
-        android:id="@+id/connectButton"
+        android:id="@+id/connect_button"
         style="@style/ButtonText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/btn_green"
-        android:text="Connect" />
+        android:text="@string/connect_button_btn" />
 
 </RelativeLayout>
