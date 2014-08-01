@@ -359,7 +359,6 @@ public class GpsTracker extends android.app.Service implements
 
     public void completeActivity(boolean save) {
         assert (state == State.PAUSED);
-        liveLog(mLastLocation, DB.LOCATION.TYPE_END, mElapsedDistance, mElapsedTimeMillis);
 
         setNextLocationType(DB.LOCATION.TYPE_END);
         if (mActivityLastLocation != null) {
@@ -372,6 +371,7 @@ public class GpsTracker extends android.app.Service implements
                 Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
+            liveLog(mLastLocation, DB.LOCATION.TYPE_END, mElapsedDistance, mElapsedTimeMillis);
         } else {
             ContentValues tmp = new ContentValues();
             tmp.put("deleted", 1);
@@ -379,6 +379,7 @@ public class GpsTracker extends android.app.Service implements
                 Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
+            liveLog(mLastLocation, DB.LOCATION.TYPE_DISCARD, mElapsedDistance, mElapsedTimeMillis);
         }
         this.stopForeground(true);
         stopLogging();

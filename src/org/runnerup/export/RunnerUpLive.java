@@ -137,6 +137,8 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
                 return 2;
             case DB.LOCATION.TYPE_END:
                 return 3;
+            case DB.LOCATION.TYPE_DISCARD:
+                return 6;
         }
         assert (false);
         return 0;
@@ -150,6 +152,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
         Intent msgIntent = new Intent(context, LiveService.class);
         msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
         msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
+        msgIntent.putExtra(LiveService.PARAM_IN_ALTITUDE, location.getAltitude());
         msgIntent.putExtra(LiveService.PARAM_IN_TYPE, externalType);
         msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, formatter
                 .formatDistance(Formatter.TXT_LONG, elapsedDistanceMeter));
@@ -177,6 +180,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
         public static final String PARAM_IN_SERVERADRESS = "serveradress";
         public static final String PARAM_IN_LAT = "lat";
         public static final String PARAM_IN_LONG = "long";
+        public static final String PARAM_IN_ALTITUDE = "altitude";
         public static final String PARAM_IN_TYPE = "type";
 
         public LiveService() {
@@ -194,6 +198,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
             String password = intent.getStringExtra(PARAM_IN_PASSWORD);
             double lat = intent.getDoubleExtra(PARAM_IN_LAT, 0);
             double lon = intent.getDoubleExtra(PARAM_IN_LONG, 0);
+            double alt = intent.getDoubleExtra(PARAM_IN_ALTITUDE, 0);
             int type = intent.getIntExtra(PARAM_IN_TYPE, 0);
             String serverAdress = intent.getStringExtra(PARAM_IN_SERVERADRESS);
 
@@ -207,6 +212,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
                 data.put("password", password);
                 data.put("lat", lat);
                 data.put("long", lon);
+                data.put("altitude", alt);
                 data.put("runningEventType", type);
                 data.put("TotalDistance", mElapsedDistance);
                 data.put("TotalTime", mElapsedTime);

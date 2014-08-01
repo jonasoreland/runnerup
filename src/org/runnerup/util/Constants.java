@@ -57,6 +57,7 @@ public interface Constants {
             public static final int TYPE_GPS = 3;
             public static final int TYPE_PAUSE = 4;
             public static final int TYPE_RESUME = 5;
+            public static final int TYPE_DISCARD = 6;
         };
 
         public interface LAP {
