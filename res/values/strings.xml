@@ -126,12 +126,12 @@
 	<string name="activity_speed_pace_txt">Pace</string>
 	<string name="activity_header_hr_txt">Hr</string>
 	<string name="activity_hr_txt">173</string>
-	<string name="text_view01_txt">Interval</string>
+	<string name="interval_txt">Interval</string>
 	<string name="interval_time_txt">20:34</string>
 	<string name="intervall_distance_txt">5.67</string>
 	<string name="interval_pace_txt">4:24</string>
 	<string name="interval_hr_txt">184</string>
-	<string name="wrong_named_variable_txt">Lap</string>
+	<string name="lap">Lap</string>
 	<string name="lap_time_txt">2:34</string>
 	<string name="lap_distance_txt">0.67</string>
 	<string name="lap_pace_txt">4:14</string>
