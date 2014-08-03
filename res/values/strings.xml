@@ -175,7 +175,7 @@
 	<string name="manual_duration">Duration (HH:MM:SS)</string>
 	<string name="manual_distance">Distance</string>
 	<string name="manual_pace">Pace</string>
-	<string name="gps_info_text_txt">GPS satelites: </string>
+	<string name="gps_info_text_txt">GPS satellites: </string>
 	<string name="gps_info1_txt">0</string>
 	<string name="gps_info2_txt">0</string>
 	<string name="start_button_btn">Start GPS</string>
