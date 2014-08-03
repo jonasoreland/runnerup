@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linear1xx_layout"
+
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/org.runnerup">
@@ -43,7 +43,7 @@
         app:type="spinner"
         android:key="hrz_sex" >
     </org.runnerup.widget.TitleSpinner>
-    
+
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/hrz_mhr"
         android:layout_width="match_parent"
@@ -55,9 +55,9 @@
         app:max_val="300"
         android:key="hrz_mhr" >
     </org.runnerup.widget.TitleSpinner>
-    
+
     <TableLayout
-        android:id="@+id/zones_table"
+        android:id="@+id/hr_zones_table"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
     </TableLayout>

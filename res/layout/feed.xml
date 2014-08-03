@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1_layout"
+    
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -46,12 +46,12 @@
         android:id="@+id/feed_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/linear_layout1"
+        android:layout_above="@+id/LinearLayout1"
         android:layout_below="@id/feed_header" >
     </ListView>
 
     <LinearLayout
-        android:id="@+id/linear_layout1"
+        
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

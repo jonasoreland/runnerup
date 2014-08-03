@@ -16,44 +16,42 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/linear_layout0"
+
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/total_time"
+            android:id="@+id/time"
             style="@style/RunHeader"
             android:gravity="right"
-            android:text="@string/total_time_txt" />
+            android:text="@string/time_txt" />
 
         <TextView
-            android:id="@+id/total_distance"
+            android:id="@+id/distance"
             style="@style/RunHeader"
             android:gravity="right"
-            android:text="@string/total_distance_txt" />
+            android:text="@string/distance_txt" />
 
         <TextView
-            android:id="@+id/total_pace"
+            android:id="@+id/pace"
             style="@style/RunHeader"
             android:layout_marginRight="3dp"
             android:gravity="right"
-            android:text="@string/total_pace_txt" />
+            android:text="@string/pace_txt" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/total"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_layout0"
+        android:layout_below="@+id/linearLayout0"
         android:background="@drawable/countdown_background"
         android:orientation="vertical" >
 
@@ -64,13 +62,13 @@
             android:layout_marginLeft="10dp" >
 
             <TextView
-                android:id="@+id/text_view01"
+                android:id="@+id/total"
                 style="@style/RunHeader"
-                android:text="@string/text_view01_txt" />
+                android:text="@string/total_txt" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_layout3"
+            
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
@@ -164,7 +162,7 @@
 	                    android:weightSum="1"
 	                    android:orientation="vertical" >
 	                </LinearLayout>
-				
+
                 <LinearLayout
                     android:id="@+id/tab_map"
                     android:layout_width="match_parent"

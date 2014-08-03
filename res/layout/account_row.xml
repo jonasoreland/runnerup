@@ -21,7 +21,7 @@
     android:orientation="vertical" >
 
     <TableRow
-        android:id="@+id/table_row1"
+
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -40,24 +40,24 @@
             android:layout_height="wrap_content"
             android:scaleType="center"
             />
-        
+
         <CheckBox
             android:id="@+id/account_list_upload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/account_list_upload_box" />
-        
+
         <CheckBox
             android:id="@+id/account_list_feed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-			android:text="@string/account_list_feed_box" />
-        
+		        android:text="@string/account_list_feed_box" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1" />                
-        
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/account_list_configure_button"
             android:layout_width="wrap_content"

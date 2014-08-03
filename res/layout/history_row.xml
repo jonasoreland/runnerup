@@ -21,7 +21,7 @@
     android:orientation="vertical" >
 
     <RelativeLayout
-        android:id="@+id/history_row0"
+        
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >

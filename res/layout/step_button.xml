@@ -72,12 +72,12 @@
         tools:ignore="HardcodedText" >
 
         <TextView
-            android:id="@+id/text_view03"
+            android:id="@+id/hidden_text_debug"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="27"
             android:gravity="center_vertical|left"
-            android:text="@string/text_view03_txt"
+            android:text="@string/hidden_text_debug_txt"
             android:textColor="@android:color/black"
             android:textStyle="bold"
             android:visibility="invisible" />

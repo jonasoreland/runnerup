@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1_layout"
+    
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -33,16 +33,16 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/text_view03"
+                android:id="@+id/time"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/text_view03_txt" />
+                android:text="@string/time_txt" />
 
             <TextView
-                android:id="@+id/text_view04"
+                android:id="@+id/distance"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/text_view04_txt" />
+                android:text="@string/distance_txt" />
 
             <TextView
                 android:id="@+id/activity_speed_pace"
@@ -68,14 +68,14 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/text_view01"
+                    android:id="@+id/total"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/text_view01_txt" />
+                    android:text="@string/total_txt" />
             </LinearLayout>
 
             <TableRow
-                android:id="@+id/table_row2"
+                
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
 
@@ -113,10 +113,10 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/text_view01"
+                    android:id="@+id/interval"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/text_view01_txt" />
+                    android:text="@string/interval_txt" />
             </LinearLayout>
 
             <TableRow
@@ -157,14 +157,14 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/text_view01"
+                    android:id="@+id/lap"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/text_view01_txt" />
+                    android:text="@string/lap" />
             </LinearLayout>
 
             <TableRow
-                android:id="@+id/table_row2"
+                
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" >
@@ -226,7 +226,7 @@
         android:id="@+id/table_row1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/table_row2" >
+        android:layout_above="@+id/table_row4" >
 
         <Button
             android:id="@+id/new_lap_button"
@@ -248,7 +248,7 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/table_row2"
+        android:id="@+id/table_row4"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" >

@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relative_layout1"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -25,13 +25,13 @@
         android:id="@+id/expandable_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/linear_layout1"
+        android:layout_above="@+id/tool_bar_layout"
         android:layout_alignParentTop="true" >
 
     </ExpandableListView>
 
     <LinearLayout
-        android:id="@+id/linear_layout1"
+        android:id="@+id/tool_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" >
@@ -57,7 +57,7 @@
             android:text="@string/share_workout_button_btn"
             android:textSize="16sp"
 		/>
-        
+
         <Button
             android:id="@+id/delete_workout_button"
             style="@style/ButtonText"

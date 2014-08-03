@@ -273,7 +273,7 @@ public class MainLayout extends TabActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.whatsnew, null);
-        WebView wv = (WebView) view.findViewById(R.id.web_view1);
+        WebView wv = (WebView) view.findViewById(R.id.whats_new_view);
         builder.setTitle("What's new");
         builder.setView(view);
         builder.setPositiveButton("Rate RunnerUp", new DialogInterface.OnClickListener() {

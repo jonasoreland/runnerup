@@ -17,12 +17,11 @@
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     tools:context=".view.StartActivity" >
-    
+
     <TabHost
         android:id="@+id/tabhost_start"
         android:layout_width="match_parent"
@@ -39,13 +38,13 @@
         		android:layout_width="match_parent"
         		android:layout_height="wrap_content" >
     		</TabWidget>
-            
+
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@android:id/tabs" >
-                
+
                 <include layout="@layout/start_basic" />
                 <include layout="@layout/start_interval" />
                 <include layout="@layout/start_advanced" />
@@ -66,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/gps_info_text_txt" />
-	
+
 	<TextView
         android:id="@+id/gps_info1"
         android:layout_width="wrap_content"
@@ -88,7 +87,7 @@
         android:gravity="center"
         android:text="" />
     </RelativeLayout>
-    
+
     <LinearLayout
         android:id="@+id/start_buttons"
         android:layout_width="fill_parent"
@@ -105,7 +104,7 @@
         android:enabled="true"
         android:text="@string/start_button_btn"
         android:layout_weight="0.8" />
-   	
+
    	<FrameLayout
    	    android:id="@+id/hr_layout"
    	    android:layout_width="0dp"

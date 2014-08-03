@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relative_layout1"
+
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
@@ -49,19 +49,19 @@
     </LinearLayout>
 
    	<TableLayout
-		android:id="@+id/account_table"
+        android:id="@+id/account_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/name" >
 
         <TableRow
-            android:id="@+id/table_row1"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
         </TableRow>
 
     </TableLayout>
-    
+
     <Button
         android:id="@+id/disconnect_account_button"
         style="@style/ButtonText"
@@ -79,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/ok_account_button"
         android:text="@string/account_upload_button_btn" />
-    
+
     <Button
         android:id="@+id/ok_account_button"
         style="@style/ButtonText"
@@ -88,5 +88,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="@string/ok_account_button_btn" />
-    
+
 </RelativeLayout>
