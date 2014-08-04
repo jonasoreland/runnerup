@@ -33,22 +33,22 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/text_view03"
+                android:id="@+id/activity_header_time"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/text_view03_txt" />
+                android:text="@string/activity_header_time_txt" />
 
             <TextView
-                android:id="@+id/text_view04"
+                android:id="@+id/activity_header_distance"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/text_view04_txt" />
+                android:text="@string/activity_header_distance_txt" />
 
             <TextView
-                android:id="@+id/activity_speed_pace"
+                android:id="@+id/activity_header_pace"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/activity_speed_pace_txt" />
+                android:text="@string/activity_header_pace_txt" />
             <TextView
                 android:id="@+id/activity_header_hr"
                 style="@style/RunHeader"
@@ -82,17 +82,17 @@
                 <TextView
                     android:id="@+id/activity_time"
                     style="@style/RunInfo"
-                    android:text="@string/activity_time_txt" />
+                    android:text="@string/placeholder_time_txt" />
 
                 <TextView
                     android:id="@+id/activity_distance"
                     style="@style/RunInfo"
-                    android:text="@string/activity_distance_txt" />
+                    android:text="@string/placeholder_distance_txt" />
 
                 <TextView
                     android:id="@+id/activity_pace"
                     style="@style/RunInfo"
-                    android:text="@string/activity_pace_txt" />
+                    android:text="@string/placeholder_pace_txt" />
                 <TextView
                     android:id="@+id/activity_hr"
                     style="@style/RunInfo"
