@@ -84,12 +84,6 @@
 	<string name="resume_button_btn">Resume</string>
 	<string name="save_button_btn">Save activity</string>
 	<string name="discard_button_btn">Discard activity</string>
-	<string name="feed_activity_source_txt">TextView</string>
-	<string name="feed_activity_header_txt">TextView</string>
-	<string name="feed_activity_summary_txt">TextView</string>
-	<string name="feed_activity_notes_txt">TextView</string>
-	<string name="feed_activity_date_header_txt">TextView</string>
-	<string name="feed_status_txt">TextView</string>
 	<string name="feed_account_button_btn">Configure accounts</string>
 	<string name="refresh_feed_button_btn">Refresh</string>
 	<string name="zonetext_txt">Zone 1 0-59%</string>
@@ -107,7 +101,6 @@
 	<string name="hr_device_header_txt">Device</string>
 	<string name="hr_heart_rate_txt">Heart rate</string>
 	<string name="hr_device_txt">Polar H7</string>
-	<string name="hr_log_txt">TextView</string>
 	<string name="scan_button_btn">Scan</string>
 	<string name="connect_button_btn">Connect</string>
 	<string name="lap_list_id_txt">id</string>
@@ -209,8 +202,7 @@
 	<string name="step_duration_type_txt">distance</string>
 	<string name="step_duration_value_txt">6000 m</string>
 	<string name="step_pace_txt">4:05 - 4:25</string>
-	<string name="feed_activity_source_txt">TextView</string>
-	<string name="feed_activity_header_txt">TextView</string>
-	<string name="feed_activity_summary_txt">TextView</string>
-	<string name="feed_activity_notes_txt">TextView</string>
+
+    <!-- Default text for fields that programmatically overwrite themselves. -->
+    <string name="placeholder_txt">placeholder</string>
 </resources>
