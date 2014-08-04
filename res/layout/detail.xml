@@ -78,18 +78,18 @@
             <TextView
                 android:id="@+id/activity_time"
                 style="@style/RunInfo"
-                android:text="@string/activity_time_txt" />
+                android:text="@string/placeholder_time_txt" />
 
             <TextView
                 android:id="@+id/activity_distance"
                 style="@style/RunInfo"
-                android:text="@string/activity_distance_txt" />
+                android:text="@string/placeholder_distance_txt" />
 
             <TextView
                 android:id="@+id/activity_pace"
                 style="@style/RunInfo"
                 android:layout_marginRight="3dp"
-                android:text="@string/activity_pace_txt" />
+                android:text="@string/placeholder_pace_txt" />
         </LinearLayout>
     </LinearLayout>
 

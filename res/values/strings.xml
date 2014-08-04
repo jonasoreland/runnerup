@@ -77,9 +77,6 @@
 	<string name="total_time_txt">Time</string>
 	<string name="total_distance_txt">Distance</string>
 	<string name="total_pace_txt">Pace</string>
-	<string name="activity_time_txt">32:57</string>
-	<string name="activity_distance_txt">8.34</string>
-	<string name="activity_pace_txt">4:34</string>
 	<string name="resume_button_btn">Resume</string>
 	<string name="save_button_btn">Save activity</string>
 	<string name="discard_button_btn">Discard activity</string>
@@ -119,9 +116,6 @@
 	<string name="activity_header_pace_txt">Pace</string>
 	<string name="activity_header_hr_txt">Hr</string>
 	<string name="activity_total_txt">Total</string>
-	<string name="activity_time_txt">32:57</string>
-	<string name="activity_distance_txt">8.34</string>
-	<string name="activity_pace_txt">4:34</string>
 	<string name="activity_hr_txt">173</string>
 	<string name="interval_total_txt">Interval</string>
 	<string name="interval_time_txt">20:34</string>
@@ -200,6 +194,10 @@
 	<string name="step_duration_value_txt">6000 m</string>
 	<string name="step_pace_txt">4:05 – 4:25</string>
 
-    <!-- Default text for fields that programmatically overwrite themselves. -->
+    <!-- Default text for fields that are programmatically overwritten. -->
     <string name="placeholder_txt">placeholder</string>
+    <string name="placeholder_time_txt">32:57</string>
+    <string name="placeholder_distance_txt">8.34</string>
+    <string name="placeholder_pace_txt">4:34</string>
+
 </resources>
