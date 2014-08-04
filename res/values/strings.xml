@@ -86,7 +86,7 @@
 	<string name="discard_button_btn">Discard activity</string>
 	<string name="feed_account_button_btn">Configure accounts</string>
 	<string name="refresh_feed_button_btn">Refresh</string>
-	<string name="zonetext_txt">Zone 1 0-59%</string>
+	<string name="zonetext_txt">Zone 1 0–59%</string>
 	<string name="zonefiller1_txt">0000</string>
 	<string name="zonefiller2_txt">0000</string>
 	<string name="zonefiller3_txt">0000</string>
@@ -175,7 +175,7 @@
 	<string name="step_duration_value_txt">3 min</string>
 	<string name="text_view03_txt">1234567</string>
 	<string name="step_goal_type_txt">Pace</string>
-	<string name="step_goal_value_txt">4:00 - 4:15 min/km</string>
+	<string name="step_goal_value_txt">4:00 – 4:15 min/km</string>
 	<string name="step_type">Intensity</string>
 	<string name="step_duration_type">Duration type</string>
 	<string name="step_duration_time">Duration time (HH:MM:SS)</string>
@@ -186,7 +186,7 @@
 	<string name="button2_btn">OK</string>
 	<string name="button3_btn">Cancel</string>
 	<string name="value_txt">value</string>
-	<string name="upload_list_start_time_txt">2013-08-12</string>
+	<string name="upload_list_start_time_txt">2013–08–12</string>
 	<string name="upload_list_sport_txt">Running</string>
 	<string name="upload_list_time_txt">Time</string>
 	<string name="upload_list_distance_txt">Distance</string>
@@ -201,7 +201,7 @@
 	<string name="step_intensity_txt">intensity</string>
 	<string name="step_duration_type_txt">distance</string>
 	<string name="step_duration_value_txt">6000 m</string>
-	<string name="step_pace_txt">4:05 - 4:25</string>
+	<string name="step_pace_txt">4:05 – 4:25</string>
 
     <!-- Default text for fields that programmatically overwrite themselves. -->
     <string name="placeholder_txt">placeholder</string>
