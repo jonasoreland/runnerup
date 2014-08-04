@@ -24,11 +24,20 @@
     android:orientation="vertical" >
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manual_date"
+        android:id="@+id/manual_sport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:entries="@array/sportEntries"
+        android:prompt="@string/simple_type"
+        android:text="@string/basic_sport" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manual_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/manual_sport"
         android:prompt="@string/simple_type"
         android:defaultValue="today"
         android:text="@string/manual_date"
