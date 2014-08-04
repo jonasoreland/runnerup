@@ -66,7 +66,7 @@
             <TextView
                 android:id="@+id/text_view01"
                 style="@style/RunHeader"
-                android:text="@string/text_view01_txt" />
+                android:text="@string/activity_total_txt" />
         </LinearLayout>
 
         <LinearLayout

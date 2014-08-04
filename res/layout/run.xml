@@ -71,7 +71,7 @@
                     android:id="@+id/text_view01"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/text_view01_txt" />
+                    android:text="@string/activity_total_txt" />
             </LinearLayout>
 
             <TableRow
@@ -116,7 +116,7 @@
                     android:id="@+id/text_view01"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/text_view01_txt" />
+                    android:text="@string/interval_total_txt" />
             </LinearLayout>
 
             <TableRow
@@ -160,7 +160,7 @@
                     android:id="@+id/text_view01"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/text_view01_txt" />
+                    android:text="@string/lap_total_txt" />
             </LinearLayout>
 
             <TableRow
