@@ -271,7 +271,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     protected void launchMain(String fileName) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        pref.edit().putString("advancedWorkout", fileName).commit();
+        pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), fileName).commit();
 
         Intent intent = new Intent(this, MainLayout.class);
         intent.putExtra("mode", StartActivity.TAB_ADVANCED);
@@ -493,8 +493,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         File f = WorkoutSerializer.getFile(this, selected.workoutName);
         f.delete();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        if (selected.workoutName.contentEquals(pref.getString("advancedWorkout", ""))) {
-            pref.edit().putString("advancedWorkout", "").commit();
+        if (selected.workoutName.contentEquals(pref.getString(getResources().getString(R.string.pref_advanced_workout), ""))) {
+            pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), "").commit();
         }
         currentlySelectedWorkout = null;
         listLocal();

@@ -72,9 +72,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -720,7 +717,7 @@ public class StartActivity extends Activity implements TickListener {
         Context ctx = getApplicationContext();
         if (name == null) {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-            name = pref.getString("advancedWorkout", "");
+            name = pref.getString(getResources().getString(R.string.pref_advanced_workout), "");
         }
         advancedWorkout = null;
         if ("".contentEquals(name))
