@@ -259,7 +259,7 @@ public class FeedActivity extends Activity implements Constants {
 
                 String src = uploadManager.getUploader(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
                 if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {
-                    loadImage(iv, tmp.getAsString(DB.FEED.USER_IMAGE_URL));
+                    loadImage(iv, fixUrl(tmp.getAsString(DB.FEED.USER_IMAGE_URL)));
                 } else {
                 }
 
@@ -343,6 +343,15 @@ public class FeedActivity extends Activity implements Constants {
                 tv.setText(FeedList.toString(tmp));
                 return tv;
             }
+        }
+
+        /**
+         * fb redirects from http to https which is not handled automatically by HttpUrlConnection
+         */
+        private String fixUrl(String in) {
+            if (!in.contains("http://graph.facebook.com/"))
+                return in;
+            return in.replace("http://graph.facebook.com/", "https://graph.facebook.com/");
         }
 
         @Override
