@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name">RunnerUp</string>
+    <string name="Google_Play_Services_Legal_Notices">Mentions légales des services Google Play </string>
+
+	<string name="simple_type">Type</string>
+	<string-array name="simple_types">
+	    <item>Temps</item>
+	    <item>Distance</item>
+   	</string-array>
+
+	<string name="txt_intensity_active">active</string>
+	<string name="txt_intensity_resting">repos</string>
+	<string name="txt_intensity_warmup">échauffement</string>
+	<string name="txt_intensity_cooldown">récupération</string>
+	<string name="txt_intensity_repeat">répétition</string>
+	
+	<string name="txt_dimension_time">temps</string>
+	<string name="txt_dimension_distance">distance</string>
+	<string name="txt_dimension_speed">vitesse</string>
+	<string name="txt_dimension_pace">rythme</string>
+	<string name="txt_dimension_heartrate">fréquence cardiaque</string>
+	<string name="txt_dimension_heartratezone">zone de fréquence cardiaque</string>
+		
+	<string name="txt_distance_kilometer">kilomètre</string>
+	<string name="txt_distance_kilometers">kilomètres</string>
+	<string name="txt_distance_mile">mile</string>
+	<string name="txt_distance_miles">miles</string>
+	<string name="txt_distance_meter">mètre</string>
+	<string name="txt_distance_meters">mètres</string>
+
+	<string name="txt_distance_km">km</string>
+	<string name="txt_distance_mi">mi</string>
+	<string name="txt_distance_m">m</string>
+	
+	<string name="txt_elapsed_h">h</string>
+	<string name="txt_elapsed_m">m</string>
+	<string name="txt_elapsed_min">min</string>
+	<string name="txt_elapsed_s">s</string>
+
+	<string name="txt_heartrate_bpm">bpm</string>
+	
+	<string name="sex">Sexe</string>
+	<string-array name="sexes">
+	    <item>Homme</item>
+	    <item>Femme</item>
+   	</string-array>
+
+	<string-array name="targetEntries">
+	    <item>aucunes</item>
+	    <item>rythme</item>
+	    <item>zone de fréquence cardiaque</item>
+	</string-array>
+	
+</resources>
