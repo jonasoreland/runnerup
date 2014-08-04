@@ -72,9 +72,7 @@
 	<string name="account_list_upload_box">upload</string>
 	<string name="account_list_feed_box">feed</string>
 	<string name="account_list_configure_button_btn">Configure</string>
-	<string name="account_list_name_txt">FunBeat</string>
 	<string name="disconnect_account_button_btn">Disconnect</string>
-	<string name="account_upload_button_btn">Upload</string>
 	<string name="ok_account_button_btn">OK</string>
 	<string name="total_time_txt">Time</string>
 	<string name="total_distance_txt">Distance</string>
@@ -106,8 +104,8 @@
 	<string name="history_list_distance_txt">Distance</string>
 	<string name="history_list_pace_txt">Pace</string>
 	<string name="history_list_id_txt">id</string>
-	<string name="total_time_txt">Device</string>
-	<string name="total_pace_txt">Heart rate</string>
+	<string name="hr_device_header_txt">Device</string>
+	<string name="hr_heart_rate_txt">Heart rate</string>
 	<string name="hr_device_txt">Polar H7</string>
 	<string name="hr_log_txt">TextView</string>
 	<string name="scan_button_btn">Scan</string>
@@ -204,9 +202,9 @@
 	<string name="account_upload_set_all_btn">Select all</string>
 	<string name="account_upload_clear_all_btn">Clear all</string>
 	<string name="account_upload_button_btn">Upload</string>
-	<string name="text_view1_txt">Username</string>
-	<string name="text_view01_txt">Password</string>
-	<string name="showpass_box">Show password</string>
+	<string name="userpass_username_txt">Username</string>
+	<string name="userpass_password_txt">Password</string>
+	<string name="userpass_showpass_box">Show password</string>
 	<string name="step_intensity_txt">intensity</string>
 	<string name="step_duration_type_txt">distance</string>
 	<string name="step_duration_value_txt">6000 m</string>
