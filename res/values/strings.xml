@@ -138,7 +138,6 @@
 	<string name="pause_button_btn">Pause</string>
 	<string name="stop_button_btn">Stop</string>
 	<string name="settings_spinner">Audio cue settings</string>
-	<string name="button1_btn">Button</string>
 	<string name="advanced_audio_cue_spinner">Audio cue settings</string>
 	<string name="advanced_workout_spinner">Workout</string>
 	<string name="advanced_download_button_btn">Download workouts</string>
@@ -182,9 +181,8 @@
 	<string name="step_duration_distance">Duration distance (m)</string>
 	<string name="step_target_type">Target type</string>
 	<string name="step_target_pace">Target pace MM:SS/km</string>
-	<string name="button1_btn">OK</string>
-	<string name="button2_btn">OK</string>
-	<string name="button3_btn">Cancel</string>
+	<string name="step_ok_txt">OK</string>
+	<string name="step_cancel_txt">Cancel</string>
 	<string name="value_txt">value</string>
 	<string name="upload_list_start_time_txt">2013–08–12</string>
 	<string name="upload_list_sport_txt">Running</string>
