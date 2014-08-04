@@ -131,6 +131,7 @@ public class StartActivity extends Activity implements TickListener {
     WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
 
     boolean manualSetValue = false;
+    TitleSpinner manualSport = null;
     TitleSpinner manualDate = null;
     TitleSpinner manualTime = null;
     TitleSpinner manualDistance = null;
@@ -260,6 +261,7 @@ public class StartActivity extends Activity implements TickListener {
             }
         });
 
+        manualSport = (TitleSpinner) findViewById(R.id.manual_sport);
         manualDate = (TitleSpinner) findViewById(R.id.manual_date);
         manualDate.setOnSetValueListener(onSetValueManual);
         manualTime = (TitleSpinner) findViewById(R.id.manual_time);
@@ -868,6 +870,7 @@ public class StartActivity extends Activity implements TickListener {
         @Override
         public void onClick(View v) {
             ContentValues save = new ContentValues();
+            int sport = manualSport.getValueInt();
             CharSequence date = manualDate.getValue();
             CharSequence time = manualTime.getValue();
             CharSequence distance = manualDistance.getValue();
@@ -907,6 +910,7 @@ public class StartActivity extends Activity implements TickListener {
             }
             save.put(DB.ACTIVITY.START_TIME, start_time);
 
+            save.put(DB.ACTIVITY.SPORT, sport);
             long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);
 
             ContentValues lap = new ContentValues();
