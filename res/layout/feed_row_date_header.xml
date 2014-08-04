@@ -26,7 +26,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:text="@string/feed_activity_date_header_txt"
+        android:text="@string/placeholder_txt"
         style="@style/FeedDateHeader"
         />
 

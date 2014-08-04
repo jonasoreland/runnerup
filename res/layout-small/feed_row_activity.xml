@@ -37,26 +37,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/FeedActivitySource"
-            android:text="@string/feed_activity_source_txt"
+            android:text="@string/placeholder_txt"
             />
         
         <TextView
             android:id="@+id/feed_activity_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/feed_activity_source_txt" />
+            android:text="@string/placeholder_txt" />
 
         <TextView
             android:id="@+id/feed_activity_summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/feed_activity_source_txt" />
+            android:text="@string/placeholder_txt" />
 
         <TextView
             android:id="@+id/feed_activity_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/feed_activity_source_txt" />
+            android:text="@string/placeholder_txt" />
 
     </LinearLayout>
 

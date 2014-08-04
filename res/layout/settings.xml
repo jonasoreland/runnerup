@@ -137,7 +137,7 @@
 	        android:key="@string/pref_runneruplive_serveradress"
 	        android:persistent="true"
 	        android:summary="asdf"
-	        android:title="RunnerUp live adress"
+	        android:title="RunnerUp live address"
 	        android:enabled="true" />
 
         <org.runnerup.widget.TextPreference
@@ -214,7 +214,7 @@
             android:key="@string/pref_pollInterval"
             android:persistent="true"
             android:summary="500"
-            android:title="Poll intervall (ms)" />
+            android:title="Poll interval (ms)" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="0"

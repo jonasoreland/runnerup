@@ -42,7 +42,7 @@
             android:key="@string/cue_time_intervall"
             android:persistent="true"
             android:summary="120"
-            android:title="Cue intervall (s)" />
+            android:title="Cue interval (s)" />
 
     	<CheckBoxPreference
         	android:defaultValue="false"

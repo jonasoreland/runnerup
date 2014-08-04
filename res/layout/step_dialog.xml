@@ -84,28 +84,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/button1"
+       <Button
+            android:id="@+id/step_dialog_ok"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
 			android:layout_weight="1"
-            android:text="@string/button1_btn" 
-            style="@style/ButtonText"
-        	android:background="@drawable/btn_green"/>
+			android:text="@string/step_ok_txt" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/step_dialog_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
 			android:layout_weight="1"
-			android:text="@string/button1_btn" />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-			android:layout_weight="1"
-            android:text="@string/button3_btn"
+            android:text="@string/step_cancel_txt"
             style="@style/ButtonText"
         	android:background="@drawable/btn_red"/>
             

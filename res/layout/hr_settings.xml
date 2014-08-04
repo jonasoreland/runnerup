@@ -16,14 +16,14 @@
             style="@style/RunHeader"
             android:layout_marginLeft="5dp"
             android:gravity="left"
-            android:text="@string/total_time_txt" />
+            android:text="@string/hr_device_header_txt" />
 
         <TextView
             android:id="@+id/total_pace"
             style="@style/RunHeader"
             android:layout_marginRight="3dp"
             android:gravity="right"
-            android:text="@string/total_pace_txt" />
+            android:text="@string/hr_heart_rate_txt" />
     </LinearLayout>
 
     <LinearLayout
@@ -87,7 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="@string/hr_log_txt" />
+            android:text="@string/placeholder_txt" />
     </LinearLayout>
 
     <Button
