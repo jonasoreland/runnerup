@@ -189,10 +189,10 @@
 	<string name="userpass_username_txt">Username</string>
 	<string name="userpass_password_txt">Password</string>
 	<string name="userpass_showpass_box">Show password</string>
-	<string name="step_intensity_txt">intensity</string>
-	<string name="step_duration_type_txt">distance</string>
-	<string name="step_duration_value_txt">6000 m</string>
-	<string name="step_pace_txt">4:05 – 4:25</string>
+	<string name="workout_intensity_txt">intensity</string>
+	<string name="workout_distance_txt">distance</string>
+	<string name="workout_actual_distance_txt">6000 m</string>
+	<string name="workout_pace_txt">4:05 – 4:25</string>
 
     <!-- Default text for fields that are programmatically overwritten. -->
     <string name="placeholder_txt">placeholder</string>

@@ -31,7 +31,7 @@
     	    android:layout_weight="1"
     	    android:layout_width="0dp"
     	    android:gravity="left"
-    	    android:text="@string/step_intensity_txt" />
+    	    android:text="@string/workout_intensity_txt" />
 
     	<TextView
     	    android:id="@+id/step_duration_type"
@@ -39,7 +39,7 @@
     	    android:layout_height="wrap_content"
     	    android:layout_weight="1"
     	    android:gravity="left"
-    	    android:text="@string/step_duration_type_txt" />
+    	    android:text="@string/workout_distance_txt" />
 
 	    <TextView
 	        android:id="@+id/step_duration_value"
@@ -47,7 +47,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        android:gravity="left"
-	        android:text="@string/step_duration_value_txt" />
+	        android:text="@string/workout_actual_distance_txt" />
 
 	    <TextView
 	        android:id="@+id/step_pace"
@@ -55,7 +55,7 @@
 	        android:layout_weight="1"
     	    android:layout_width="0dp"
     	    android:gravity="left"
-	        android:text="@string/step_pace_txt" />
+	        android:text="@string/workout_pace_txt" />
 
 	</LinearLayout>
 </LinearLayout>
