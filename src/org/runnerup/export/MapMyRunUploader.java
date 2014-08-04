@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.export;
 
 import java.io.BufferedInputStream;
@@ -41,266 +42,268 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MapMyRunUploader extends FormCrawler implements Uploader {
 
-	public static final String NAME = "MapMyRun";
-	private static String CONSUMER_KEY;
-	private static final String BASE_URL = "https://api.mapmyfitness.com/3.1";
-	private static final String GET_USER_URL = BASE_URL + "/users/get_user";
-	private static final String IMPORT_URL = BASE_URL + "/workouts/import_tcx";
-	private static final String UPDATE_URL = BASE_URL + "/workouts/edit_workout";
-	
-	long id = 0;
-	private String username = null;
-	private String password = null;
-	private String md5pass = null;
-	private String user_id = null;
-	private String user_key = null;
-	
-	MapMyRunUploader(UploadManager uploadManager) {
-		if (CONSUMER_KEY == null) {
-			try {
-				JSONObject tmp = new JSONObject(uploadManager.loadData(this));
-				CONSUMER_KEY = tmp.getString("CONSUMER_KEY");
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public long getId() {
-		return id;
-	}
+    public static final String NAME = "MapMyRun";
+    private static String CONSUMER_KEY;
+    private static final String BASE_URL = "https://api.mapmyfitness.com/3.1";
+    private static final String GET_USER_URL = BASE_URL + "/users/get_user";
+    private static final String IMPORT_URL = BASE_URL + "/workouts/import_tcx";
+    private static final String UPDATE_URL = BASE_URL + "/workouts/edit_workout";
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    long id = 0;
+    private String username = null;
+    private String password = null;
+    private String md5pass = null;
+    private String user_id = null;
+    private String user_key = null;
 
-	@Override
-	public void init(ContentValues config) {
-		id = config.getAsLong("_id");
-		String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-		if (authToken != null) {
-			try {
-				JSONObject tmp = new JSONObject(authToken);
-				username = tmp.optString("username", null);
-				password = tmp.optString("password", null);
-				md5pass = tmp.optString("md5pass", null);
-				user_id = tmp.optString("user_id", null);
-				user_key = tmp.optString("user_key", null);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    MapMyRunUploader(UploadManager uploadManager) {
+        if (CONSUMER_KEY == null) {
+            try {
+                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                CONSUMER_KEY = tmp.getString("CONSUMER_KEY");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
-	@Override
-	public boolean isConfigured() {
-		if (username != null && md5pass != null &&
-			user_id != null && user_key != null) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public long getId() {
+        return id;
+    }
 
-	@Override
-	public String getAuthConfig() {
-		JSONObject tmp = new JSONObject();
-		try {
-			tmp.put("username", username);
-			tmp.put("password", password);
-			tmp.put("md5pass", md5pass);
-			tmp.put("user_id", user_id);
-			tmp.put("user_key", user_key);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
-		return tmp.toString();
-	}
-	
-	@Override
-	public void reset() {
-		username = null;
-		password = null;
-		md5pass = null;
-		user_id = null;
-		user_key = null;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	private String toHexString(byte messageDigest[]) {
-		StringBuffer hexString = new StringBuffer();
-		for (byte b : messageDigest) {
-			String h = Integer.toHexString(0xFF & b);
-			while (h.length() < 2)
-				h = "0" + h;
-			hexString.append(h);
-		}
-		return hexString.toString();
+    @Override
+    public void init(ContentValues config) {
+        id = config.getAsLong("_id");
+        String authToken = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        if (authToken != null) {
+            try {
+                JSONObject tmp = new JSONObject(authToken);
+                username = tmp.optString("username", null);
+                password = tmp.optString("password", null);
+                md5pass = tmp.optString("md5pass", null);
+                user_id = tmp.optString("user_id", null);
+                user_key = tmp.optString("user_key", null);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	}
-	
-	@Override
-	public Status connect() {
-		if (isConfigured()) {
-			return Status.OK;
-		}
+    @Override
+    public boolean isConfigured() {
+        if (username != null && md5pass != null &&
+                user_id != null && user_key != null) {
+            return true;
+        }
+        return false;
+    }
 
-		Status s = Status.NEED_AUTH;
-		s.authMethod = Uploader.AuthMethod.USER_PASS;
-		if (username == null || password == null) {
-			return s;
-		}
+    @Override
+    public String getAuthConfig() {
+        JSONObject tmp = new JSONObject();
+        try {
+            tmp.put("username", username);
+            tmp.put("password", password);
+            tmp.put("md5pass", md5pass);
+            tmp.put("user_id", user_id);
+            tmp.put("user_key", user_key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-		Exception ex = null;
-		HttpURLConnection conn = null;
-		try {
-			String pass = md5pass;
-			if (pass == null) {
-				pass = toHexString(Encryption.md5(password));
-			}
-			
-			/**
-			 * get user id/key
-			 */
-			conn = (HttpURLConnection) new URL(GET_USER_URL).openConnection();
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        return tmp.toString();
+    }
 
-			FormValues kv = new FormValues();
-			kv.put("consumer_key", CONSUMER_KEY);
-			kv.put("u", username);
-			kv.put("p", pass);
+    @Override
+    public void reset() {
+        username = null;
+        password = null;
+        md5pass = null;
+        user_id = null;
+        user_key = null;
+    }
 
-			{
-				OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-				kv.write(wr);
-				wr.flush();
-				wr.close();
+    private String toHexString(byte messageDigest[]) {
+        StringBuffer hexString = new StringBuffer();
+        for (byte b : messageDigest) {
+            String h = Integer.toHexString(0xFF & b);
+            while (h.length() < 2)
+                h = "0" + h;
+            hexString.append(h);
+        }
+        return hexString.toString();
 
-				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = parse(in);
-				conn.disconnect();
+    }
 
-				try {
-					JSONObject user = obj.getJSONObject("result").getJSONObject("output").getJSONObject("user");
-					user_id = user.getString("user_id");
-					user_key = user.getString("user_key");
-					md5pass = pass;
-					return Uploader.Status.OK;
-				} catch (JSONException e) {
-					System.err.println("obj: " + obj);
-					throw e;
-				}
-			}
-		} catch (MalformedURLException e) {
-			ex = e;
-		} catch (IOException e) {
-			ex = e;
-		} catch (JSONException e) {
-			ex = e;
-		} catch (NoSuchAlgorithmException e) {
-			ex = e;
-		}
+    @Override
+    public Status connect() {
+        if (isConfigured()) {
+            return Status.OK;
+        }
 
-		if (conn != null)
-			conn.disconnect();
+        Status s = Status.NEED_AUTH;
+        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        if (username == null || password == null) {
+            return s;
+        }
 
-		s.ex = ex;
-		if (ex != null) {
-			ex.printStackTrace();
-		}
-		return s;
-	}
+        Exception ex = null;
+        HttpURLConnection conn = null;
+        try {
+            String pass = md5pass;
+            if (pass == null) {
+                pass = toHexString(Encryption.md5(password));
+            }
 
-	@Override
-	public Status upload(SQLiteDatabase db, long mID) {
-		Status s;
-		if ((s = connect()) != Status.OK) {
-			return s;
-		}
+            /**
+             * get user id/key
+             */
+            conn = (HttpURLConnection) new URL(GET_USER_URL).openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-		TCX tcx = new TCX(db);
-		HttpURLConnection conn = null;
-		Exception ex = null;
-		try {
-			StringWriter writer = new StringWriter();
-			tcx.export(mID, writer);
+            FormValues kv = new FormValues();
+            kv.put("consumer_key", CONSUMER_KEY);
+            kv.put("u", username);
+            kv.put("p", pass);
 
-			conn = (HttpURLConnection) new URL(IMPORT_URL).openConnection();
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            {
+                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+                kv.write(wr);
+                wr.flush();
+                wr.close();
 
-			FormValues kv = new FormValues();
-			kv.put("consumer_key", CONSUMER_KEY);
-			kv.put("u", username);
-			kv.put("p", md5pass);
-			kv.put("o", "json");
-			kv.put("baretcx", "1");
-			kv.put("tcx", writer.toString());
-			
-			{
-				OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-				kv.write(wr);
-				wr.flush();
-				wr.close();
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                JSONObject obj = parse(in);
+                conn.disconnect();
 
-				InputStream in = new BufferedInputStream(conn.getInputStream());
-				JSONObject obj = parse(in);
-				conn.disconnect();
+                try {
+                    JSONObject user = obj.getJSONObject("result").getJSONObject("output")
+                            .getJSONObject("user");
+                    user_id = user.getString("user_id");
+                    user_key = user.getString("user_key");
+                    md5pass = pass;
+                    return Uploader.Status.OK;
+                } catch (JSONException e) {
+                    System.err.println("obj: " + obj);
+                    throw e;
+                }
+            }
+        } catch (MalformedURLException e) {
+            ex = e;
+        } catch (IOException e) {
+            ex = e;
+        } catch (JSONException e) {
+            ex = e;
+        } catch (NoSuchAlgorithmException e) {
+            ex = e;
+        }
 
-				JSONObject result = obj.getJSONObject("result").getJSONObject("output").getJSONObject("result");
-				final String workout_id = result.getString("workout_id");
-				final String workout_key = result.getString("workout_key");
-				final JSONObject workout = result.getJSONObject("workout");
-				final String raw_workout_date = workout.getString("raw_workout_date");
-				final String workout_type_id = workout.getString("workout_type_id");
-				
-				kv.clear();
-				kv.put("consumer_key", CONSUMER_KEY);
-				kv.put("u", username);
-				kv.put("p", md5pass);
-				kv.put("o", "json");
-				kv.put("workout_id", workout_id);
-				kv.put("workout_key", workout_key);
-				kv.put("workout_type_id", workout_type_id);
-				kv.put("workout_description", "RunnerUp - " + raw_workout_date);
-				kv.put("notes", tcx.getNotes());
-				kv.put("privacy_setting", "1"); // friends
+        if (conn != null)
+            conn.disconnect();
 
-				conn = (HttpURLConnection) new URL(UPDATE_URL).openConnection();
-				conn.setDoOutput(true);
-				conn.setRequestMethod("POST");
-				conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				wr = new BufferedOutputStream(conn.getOutputStream());
-				kv.write(wr);
-				wr.flush();
-				wr.close();
+        s.ex = ex;
+        if (ex != null) {
+            ex.printStackTrace();
+        }
+        return s;
+    }
 
-				in = new BufferedInputStream(conn.getInputStream());
-				obj = parse(in);
-				conn.disconnect();
-				
-				return Uploader.Status.OK;
-			}
-		} catch (IOException e) {
-			ex = e;
-		} catch (JSONException e) {
-			ex = e;
-		}
+    @Override
+    public Status upload(SQLiteDatabase db, long mID) {
+        Status s;
+        if ((s = connect()) != Status.OK) {
+            return s;
+        }
 
-		s = Uploader.Status.ERROR;
-		s.ex = ex;
-		if (ex != null) {
-			ex.printStackTrace();
-		}
-		return s;
-	}
+        TCX tcx = new TCX(db);
+        HttpURLConnection conn = null;
+        Exception ex = null;
+        try {
+            StringWriter writer = new StringWriter();
+            tcx.export(mID, writer);
 
-	@Override
-	public void logout() {
-		super.logout();
-	}
+            conn = (HttpURLConnection) new URL(IMPORT_URL).openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            FormValues kv = new FormValues();
+            kv.put("consumer_key", CONSUMER_KEY);
+            kv.put("u", username);
+            kv.put("p", md5pass);
+            kv.put("o", "json");
+            kv.put("baretcx", "1");
+            kv.put("tcx", writer.toString());
+
+            {
+                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+                kv.write(wr);
+                wr.flush();
+                wr.close();
+
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                JSONObject obj = parse(in);
+                conn.disconnect();
+
+                JSONObject result = obj.getJSONObject("result").getJSONObject("output")
+                        .getJSONObject("result");
+                final String workout_id = result.getString("workout_id");
+                final String workout_key = result.getString("workout_key");
+                final JSONObject workout = result.getJSONObject("workout");
+                final String raw_workout_date = workout.getString("raw_workout_date");
+                final String workout_type_id = workout.getString("workout_type_id");
+
+                kv.clear();
+                kv.put("consumer_key", CONSUMER_KEY);
+                kv.put("u", username);
+                kv.put("p", md5pass);
+                kv.put("o", "json");
+                kv.put("workout_id", workout_id);
+                kv.put("workout_key", workout_key);
+                kv.put("workout_type_id", workout_type_id);
+                kv.put("workout_description", "RunnerUp - " + raw_workout_date);
+                kv.put("notes", tcx.getNotes());
+                kv.put("privacy_setting", "1"); // friends
+
+                conn = (HttpURLConnection) new URL(UPDATE_URL).openConnection();
+                conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
+                conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                wr = new BufferedOutputStream(conn.getOutputStream());
+                kv.write(wr);
+                wr.flush();
+                wr.close();
+
+                in = new BufferedInputStream(conn.getInputStream());
+                obj = parse(in);
+                conn.disconnect();
+
+                return Uploader.Status.OK;
+            }
+        } catch (IOException e) {
+            ex = e;
+        } catch (JSONException e) {
+            ex = e;
+        }
+
+        s = Uploader.Status.ERROR;
+        s.ex = ex;
+        if (ex != null) {
+            ex.printStackTrace();
+        }
+        return s;
+    }
+
+    @Override
+    public void logout() {
+        super.logout();
+    }
 };

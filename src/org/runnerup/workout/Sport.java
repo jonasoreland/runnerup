@@ -14,22 +14,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import org.runnerup.util.Constants.DB;
 
 public enum Sport {
 
-	RUNNING(DB.ACTIVITY.SPORT_RUNNING),
-	BIKING(DB.ACTIVITY.SPORT_BIKING),
-	OTHER(DB.ACTIVITY.SPORT_OTHER);
+    RUNNING(DB.ACTIVITY.SPORT_RUNNING),
+    BIKING(DB.ACTIVITY.SPORT_BIKING),
+    OTHER(DB.ACTIVITY.SPORT_OTHER);
 
-	int dbValue;
-	Sport(int dbValue) {
-		this.dbValue = dbValue;
-	}
-	
-	public int getDbValue() {
-		return dbValue;
-	}
+    int dbValue;
+
+    Sport(int dbValue) {
+        this.dbValue = dbValue;
+    }
+
+    public int getDbValue() {
+        return dbValue;
+    }
 }

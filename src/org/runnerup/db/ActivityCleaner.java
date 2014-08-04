@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.db;
 
 import java.util.ArrayList;
@@ -28,215 +29,224 @@ import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityCleaner implements org.runnerup.util.Constants {
-	long _totalSumHr = 0;
-	int _totalCount = 0;
-	int _totalMaxHr = 0;
-	/**
-	 * recompute laps aggregates based on locations
-	 */
-	private void recomputeLaps(SQLiteDatabase db, long activityId) {
-		final String[] cols = new String[] { 
-				DB.LAP.LAP
-		};
+    long _totalSumHr = 0;
+    int _totalCount = 0;
+    int _totalMaxHr = 0;
 
-		ArrayList<Long> laps = new ArrayList<Long>();
-		Cursor c = db.query(DB.LAP.TABLE, cols, DB.LAP.ACTIVITY + " = " + activityId,
-				null, null, null, "_id", null);
-		if (c.moveToFirst()) {
-			do {
-				laps.add(c.getLong(0));
-			} while (c.moveToNext());
-		}
-		c.close();
-		
-		for (long lap : laps) {
-			recomputeLap(db, activityId, lap);
-		}
-	}
+    /**
+     * recompute laps aggregates based on locations
+     */
+    private void recomputeLaps(SQLiteDatabase db, long activityId) {
+        final String[] cols = new String[] {
+                DB.LAP.LAP
+        };
 
-	/**
-	 * recompute a lap aggregate based on locations
-	 */
-	private void recomputeLap(SQLiteDatabase db, long activityId, long lap) {
-		long sum_time = 0;
-		long sum_hr = 0;
-		double sum_distance = 0;
-		int count = 0;
-		int max_hr = 0;
-		final String[] cols = new String[] { 
-				DB.LOCATION.TIME,
-				DB.LOCATION.LATITUDE,
-				DB.LOCATION.LONGITUDE,
-				DB.LOCATION.TYPE,
-				DB.LOCATION.HR,
-				"_id"};
+        ArrayList<Long> laps = new ArrayList<Long>();
+        Cursor c = db.query(DB.LAP.TABLE, cols, DB.LAP.ACTIVITY + " = " + activityId,
+                null, null, null, "_id", null);
+        if (c.moveToFirst()) {
+            do {
+                laps.add(c.getLong(0));
+            } while (c.moveToNext());
+        }
+        c.close();
 
-		Cursor c = db.query(DB.LOCATION.TABLE, cols, DB.LOCATION.ACTIVITY + " = " + activityId + " and " + DB.LOCATION.LAP + " = " + lap,
-				null, null, null, "_id", null);
-		if (c.moveToFirst()) {
-			Location lastLocation = null;
-			do {
-				Location l = new Location("Dill poh");
-				l.setTime(c.getLong(0));
-				l.setLatitude(c.getDouble(1));
-				l.setLongitude(c.getDouble(2));
-				l.setProvider("" + c.getLong(3));
+        for (long lap : laps) {
+            recomputeLap(db, activityId, lap);
+        }
+    }
 
-				int type = c.getInt(3);
-				switch (type) {
-				case DB.LOCATION.TYPE_START:
-				case DB.LOCATION.TYPE_RESUME:
-					lastLocation = l;
-					break;
-				case DB.LOCATION.TYPE_END:
-				case DB.LOCATION.TYPE_PAUSE:
-				case DB.LOCATION.TYPE_GPS:
-					if (lastLocation == null) {
-						lastLocation = l;
-						break;
-					}
+    /**
+     * recompute a lap aggregate based on locations
+     */
+    private void recomputeLap(SQLiteDatabase db, long activityId, long lap) {
+        long sum_time = 0;
+        long sum_hr = 0;
+        double sum_distance = 0;
+        int count = 0;
+        int max_hr = 0;
+        final String[] cols = new String[] {
+                DB.LOCATION.TIME,
+                DB.LOCATION.LATITUDE,
+                DB.LOCATION.LONGITUDE,
+                DB.LOCATION.TYPE,
+                DB.LOCATION.HR,
+                "_id"
+        };
 
-					sum_distance += l.distanceTo(lastLocation);
-					sum_time += l.getTime() - lastLocation.getTime();
-					int hr = c.getInt(4);
-					sum_hr += hr;
-					max_hr = Math.max(max_hr, hr);
-					_totalMaxHr = Math.max(_totalMaxHr, hr);
-					count++;
-					_totalCount++;
-					_totalSumHr += hr;
-					lastLocation = l;
-					break;
-				}
-			} while (c.moveToNext());
-		}
-		c.close();
+        Cursor c = db.query(DB.LOCATION.TABLE, cols, DB.LOCATION.ACTIVITY + " = " + activityId
+                + " and " + DB.LOCATION.LAP + " = " + lap,
+                null, null, null, "_id", null);
+        if (c.moveToFirst()) {
+            Location lastLocation = null;
+            do {
+                Location l = new Location("Dill poh");
+                l.setTime(c.getLong(0));
+                l.setLatitude(c.getDouble(1));
+                l.setLongitude(c.getDouble(2));
+                l.setProvider("" + c.getLong(3));
 
-		ContentValues tmp = new ContentValues();
-		tmp.put(DB.LAP.DISTANCE, sum_distance);
-		tmp.put(DB.LAP.TIME, (sum_time / 1000));
-		int hr = 0;
-		if (sum_hr > 0) {
-			hr = Math.round(sum_hr / count);
-			tmp.put(DB.LAP.AVG_HR, hr);
-			tmp.put(DB.LAP.MAX_HR, max_hr);
-		}
-		db.update(DB.LAP.TABLE, tmp, DB.LAP.ACTIVITY + " = " + activityId + " and " + DB.LAP.LAP + " = " + lap, null);
-	}
+                int type = c.getInt(3);
+                switch (type) {
+                    case DB.LOCATION.TYPE_START:
+                    case DB.LOCATION.TYPE_RESUME:
+                        lastLocation = l;
+                        break;
+                    case DB.LOCATION.TYPE_END:
+                    case DB.LOCATION.TYPE_PAUSE:
+                    case DB.LOCATION.TYPE_GPS:
+                        if (lastLocation == null) {
+                            lastLocation = l;
+                            break;
+                        }
 
-	/**
-	 * recompute an activity summary based on laps
-	 */
-	private void recomputeSummary(SQLiteDatabase db, long activityId) {
-		long sum_time = 0;
-		double sum_distance = 0;
+                        sum_distance += l.distanceTo(lastLocation);
+                        sum_time += l.getTime() - lastLocation.getTime();
+                        int hr = c.getInt(4);
+                        sum_hr += hr;
+                        max_hr = Math.max(max_hr, hr);
+                        _totalMaxHr = Math.max(_totalMaxHr, hr);
+                        count++;
+                        _totalCount++;
+                        _totalSumHr += hr;
+                        lastLocation = l;
+                        break;
+                }
+            } while (c.moveToNext());
+        }
+        c.close();
 
-		final String[] cols = new String[] { 
-				DB.LAP.DISTANCE,
-				DB.LAP.TIME
-		};
-		Cursor c = db.query(DB.LAP.TABLE, cols, DB.LAP.ACTIVITY + " = " + activityId,
-				null, null, null, "_id", null);
-		if (c.moveToFirst()) {
-			do {
-				sum_distance += c.getDouble(0);
-				sum_time += c.getLong(1);
-			} while (c.moveToNext());
-		}
-		c.close();
+        ContentValues tmp = new ContentValues();
+        tmp.put(DB.LAP.DISTANCE, sum_distance);
+        tmp.put(DB.LAP.TIME, (sum_time / 1000));
+        int hr = 0;
+        if (sum_hr > 0) {
+            hr = Math.round(sum_hr / count);
+            tmp.put(DB.LAP.AVG_HR, hr);
+            tmp.put(DB.LAP.MAX_HR, max_hr);
+        }
+        db.update(DB.LAP.TABLE, tmp, DB.LAP.ACTIVITY + " = " + activityId + " and " + DB.LAP.LAP
+                + " = " + lap, null);
+    }
 
-		ContentValues tmp = new ContentValues();
-		tmp.put(DB.ACTIVITY.DISTANCE, sum_distance);
-		tmp.put(DB.ACTIVITY.TIME, sum_time);
-		if(_totalSumHr > 0) {
-			int hr = Math.round(_totalSumHr / _totalCount);
-			tmp.put(DB.ACTIVITY.AVG_HR, hr);
-			tmp.put(DB.ACTIVITY.MAX_HR, _totalMaxHr);
-		}
+    /**
+     * recompute an activity summary based on laps
+     */
+    private void recomputeSummary(SQLiteDatabase db, long activityId) {
+        long sum_time = 0;
+        double sum_distance = 0;
 
+        final String[] cols = new String[] {
+                DB.LAP.DISTANCE,
+                DB.LAP.TIME
+        };
+        Cursor c = db.query(DB.LAP.TABLE, cols, DB.LAP.ACTIVITY + " = " + activityId,
+                null, null, null, "_id", null);
+        if (c.moveToFirst()) {
+            do {
+                sum_distance += c.getDouble(0);
+                sum_time += c.getLong(1);
+            } while (c.moveToNext());
+        }
+        c.close();
 
-		db.update(DB.ACTIVITY.TABLE, tmp, "_id = " + activityId, null);
-	}
+        ContentValues tmp = new ContentValues();
+        tmp.put(DB.ACTIVITY.DISTANCE, sum_distance);
+        tmp.put(DB.ACTIVITY.TIME, sum_time);
+        if (_totalSumHr > 0) {
+            int hr = Math.round(_totalSumHr / _totalCount);
+            tmp.put(DB.ACTIVITY.AVG_HR, hr);
+            tmp.put(DB.ACTIVITY.MAX_HR, _totalMaxHr);
+        }
 
-	public void recompute(SQLiteDatabase db, long activityId) {
-		recomputeLaps(db, activityId);
-		recomputeSummary(db, activityId);
-	}
+        db.update(DB.ACTIVITY.TABLE, tmp, "_id = " + activityId, null);
+    }
 
-	public static void trim(SQLiteDatabase db, long activityId) {
-		final String[] cols = new String[] { DB.LAP.LAP };
+    public void recompute(SQLiteDatabase db, long activityId) {
+        recomputeLaps(db, activityId);
+        recomputeSummary(db, activityId);
+    }
 
-		ArrayList<Long> laps = new ArrayList<Long>();
-		Cursor c = db.query(DB.LOCATION.LAP, cols, DB.LAP.ACTIVITY + " = "
-				+ activityId, null, null, null, "_id", null);
-		if (c.moveToFirst()) {
-			do {
-				laps.add(c.getLong(0));
-			} while (c.moveToNext());
-		}
-		c.close();
+    public static void trim(SQLiteDatabase db, long activityId) {
+        final String[] cols = new String[] {
+            DB.LAP.LAP
+        };
 
-		for (long lap : laps) {
-			int res = trimLap(db, activityId, lap);
-			System.err.println("lap " + lap + " removed " + res + " locations");
-		}
-	}
-	
-	private static final float MIN_DISTANCE = 2f;
+        ArrayList<Long> laps = new ArrayList<Long>();
+        Cursor c = db.query(DB.LOCATION.LAP, cols, DB.LAP.ACTIVITY + " = "
+                + activityId, null, null, null, "_id", null);
+        if (c.moveToFirst()) {
+            do {
+                laps.add(c.getLong(0));
+            } while (c.moveToNext());
+        }
+        c.close();
 
-	private static int trimLap(SQLiteDatabase db, long activityId, long lap) {
-		int cnt = 0;
-		final String[] cols = new String[] { 
-				DB.LOCATION.TIME,
-				DB.LOCATION.LATITUDE,
-				DB.LOCATION.LONGITUDE,
-				DB.LOCATION.TYPE,
-				"_id" };
+        for (long lap : laps) {
+            int res = trimLap(db, activityId, lap);
+            System.err.println("lap " + lap + " removed " + res + " locations");
+        }
+    }
 
-		Cursor c = db.query(DB.LOCATION.TABLE, cols, DB.LOCATION.ACTIVITY + " = " + activityId + " and " + DB.LOCATION.LAP + " = " + lap,
-				null, null, null, "_id", null);
-		if (c.moveToFirst()) {
-			Location p[] = { null, null };
-			do {
-				Location l = new Location("Dill poh");
-				l.setTime(c.getLong(0));
-				l.setLatitude(c.getDouble(1));
-				l.setLongitude(c.getDouble(2));
-				l.setProvider("" + c.getLong(3));
+    private static final float MIN_DISTANCE = 2f;
 
-				int type = c.getInt(3);
-				switch (type) {
-				case DB.LOCATION.TYPE_START:
-				case DB.LOCATION.TYPE_RESUME:
-					p[0] = l;
-					p[1] = null;
-					break;
-				case DB.LOCATION.TYPE_END:
-				case DB.LOCATION.TYPE_PAUSE:
-				case DB.LOCATION.TYPE_GPS:
-					if (p[0] == null) {
-						p[0] = l;
-						p[1] = null;
-						break;
-					} else if (p[1] == null) {
-						p[1] = l;
-					} else {
-						float d1 = p[0].distanceTo(p[1]);
-						float d2 = p[0].distanceTo(l);
-						if (Math.abs(d1 - d2) <= MIN_DISTANCE) {
-							// p[1] is redundant...prune it
-							p[1] = l;
-							cnt++;
-						} else {
-							p[0] = p[1];
-							p[1] = null;
-						}
-					}
-					break;
-				}
-			} while (c.moveToNext());
-		}
-		c.close();
-		return cnt;
-	}
+    private static int trimLap(SQLiteDatabase db, long activityId, long lap) {
+        int cnt = 0;
+        final String[] cols = new String[] {
+                DB.LOCATION.TIME,
+                DB.LOCATION.LATITUDE,
+                DB.LOCATION.LONGITUDE,
+                DB.LOCATION.TYPE,
+                "_id"
+        };
+
+        Cursor c = db.query(DB.LOCATION.TABLE, cols, DB.LOCATION.ACTIVITY + " = " + activityId
+                + " and " + DB.LOCATION.LAP + " = " + lap,
+                null, null, null, "_id", null);
+        if (c.moveToFirst()) {
+            Location p[] = {
+                    null, null
+            };
+            do {
+                Location l = new Location("Dill poh");
+                l.setTime(c.getLong(0));
+                l.setLatitude(c.getDouble(1));
+                l.setLongitude(c.getDouble(2));
+                l.setProvider("" + c.getLong(3));
+
+                int type = c.getInt(3);
+                switch (type) {
+                    case DB.LOCATION.TYPE_START:
+                    case DB.LOCATION.TYPE_RESUME:
+                        p[0] = l;
+                        p[1] = null;
+                        break;
+                    case DB.LOCATION.TYPE_END:
+                    case DB.LOCATION.TYPE_PAUSE:
+                    case DB.LOCATION.TYPE_GPS:
+                        if (p[0] == null) {
+                            p[0] = l;
+                            p[1] = null;
+                            break;
+                        } else if (p[1] == null) {
+                            p[1] = l;
+                        } else {
+                            float d1 = p[0].distanceTo(p[1]);
+                            float d2 = p[0].distanceTo(l);
+                            if (Math.abs(d1 - d2) <= MIN_DISTANCE) {
+                                // p[1] is redundant...prune it
+                                p[1] = l;
+                                cnt++;
+                            } else {
+                                p[0] = p[1];
+                                p[1] = null;
+                            }
+                        }
+                        break;
+                }
+            } while (c.moveToNext());
+        }
+        c.close();
+        return cnt;
+    }
 }

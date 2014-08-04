@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import java.util.ArrayList;
@@ -21,39 +22,39 @@ import java.util.HashMap;
 
 public abstract class Trigger implements TickComponent {
 
-	ArrayList<Feedback> triggerAction = new ArrayList<Feedback>();
-	ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<TriggerSuppression>();
+    ArrayList<Feedback> triggerAction = new ArrayList<Feedback>();
+    ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<TriggerSuppression>();
 
-	@Override
-	public void onInit(Workout s) {
-		for (Feedback f : triggerAction) {
-			f.onInit(s);
-		}
-	}
+    @Override
+    public void onInit(Workout s) {
+        for (Feedback f : triggerAction) {
+            f.onInit(s);
+        }
+    }
 
-	@Override
-	public void onBind(Workout s, HashMap<String, Object> bindValues) {
-		for (Feedback f : triggerAction) {
-			f.onBind(s, bindValues);
-		}
-	}
+    @Override
+    public void onBind(Workout s, HashMap<String, Object> bindValues) {
+        for (Feedback f : triggerAction) {
+            f.onBind(s, bindValues);
+        }
+    }
 
-	@Override
-	public void onEnd(Workout s) {
-		for (Feedback f : triggerAction) {
-			f.onEnd(s);
-		}
-	}
+    @Override
+    public void onEnd(Workout s) {
+        for (Feedback f : triggerAction) {
+            f.onEnd(s);
+        }
+    }
 
-	public void fire(Workout w) {
-		for (TriggerSuppression s : triggerSuppression) {
-			if (s.suppress(this, w)) {
-				System.err.println("trigger: " + this + "suppressed by: " + s);
-				return;
-			}
-		}
-		for (Feedback f : triggerAction) {
-			w.addFeedback(f);
-		}
-	}
+    public void fire(Workout w) {
+        for (TriggerSuppression s : triggerSuppression) {
+            if (s.suppress(this, w)) {
+                System.err.println("trigger: " + this + "suppressed by: " + s);
+                return;
+            }
+        }
+        for (Feedback f : triggerAction) {
+            w.addFeedback(f);
+        }
+    }
 }

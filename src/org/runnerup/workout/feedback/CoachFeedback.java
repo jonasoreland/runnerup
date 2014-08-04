@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout.feedback;
 
 import org.runnerup.R;
@@ -33,73 +34,73 @@ import android.speech.tts.TextToSpeech;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CoachFeedback extends AudioFeedback {
 
-	int sign = 1;
-	Range range = null;
-	TargetTrigger trigger = null;
-	
-	public CoachFeedback(Scope scope, Dimension dimension, Range range, TargetTrigger trigger) {
-		super(scope, dimension);
-		this.range = range;
-		this.trigger = trigger;
+    int sign = 1;
+    Range range = null;
+    TargetTrigger trigger = null;
 
-		switch(dimension) {
-		case PACE:
-			sign = -1; // pace is "inverse"
-			break;
-		case DISTANCE:
-			break;
-		case HR:
-			break;
-		case HRZ:
-			break;
-		case SPEED:
-			break;
-		case TIME:
-			break;
-		default:
-			break;
-		}
-	}
+    public CoachFeedback(Scope scope, Dimension dimension, Range range, TargetTrigger trigger) {
+        super(scope, dimension);
+        this.range = range;
+        this.trigger = trigger;
 
-	@Override
-	public boolean equals(Feedback _other) {
-		if (! (_other instanceof CoachFeedback))
-			return false;
-		
-		CoachFeedback other = (CoachFeedback)_other;
-		if (! range.contentEquals(other.range))
-			return false;
-		
-		if (! dimension.equal(other.dimension))
-			return false;
+        switch (dimension) {
+            case PACE:
+                sign = -1; // pace is "inverse"
+                break;
+            case DISTANCE:
+                break;
+            case HR:
+                break;
+            case HRZ:
+                break;
+            case SPEED:
+                break;
+            case TIME:
+                break;
+            default:
+                break;
+        }
+    }
 
-		if (! scope.equal(other.scope))
-			return false;
+    @Override
+    public boolean equals(Feedback _other) {
+        if (!(_other instanceof CoachFeedback))
+            return false;
 
-		return true;
-	}
+        CoachFeedback other = (CoachFeedback) _other;
+        if (!range.contentEquals(other.range))
+            return false;
 
-	@Override
-	public void emit(Workout s, Context ctx) {
-		double val;
-		if (trigger != null)
-			val = trigger.getValue();
-		else
-			val = s.get(scope, dimension);
+        if (!dimension.equal(other.dimension))
+            return false;
 
-		int cmp = sign * range.compare(val);
-		String msg = "";
-		if (cmp < 0) {
-			msg = " " + ctx.getResources().getString(R.string.cue_speedup);
-		} else if (cmp > 0) {
-			msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
-		}
-		if (!"".contentEquals(msg)) {
-			textToSpeech.speak(ctx.getResources().getString(scope.getCueId())
-							+ " "
-							+ formatter.format(Formatter.CUE_LONG, dimension, val)
-							+ msg,
-							TextToSpeech.QUEUE_ADD, null);
-		}
-	}
+        if (!scope.equal(other.scope))
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public void emit(Workout s, Context ctx) {
+        double val;
+        if (trigger != null)
+            val = trigger.getValue();
+        else
+            val = s.get(scope, dimension);
+
+        int cmp = sign * range.compare(val);
+        String msg = "";
+        if (cmp < 0) {
+            msg = " " + ctx.getResources().getString(R.string.cue_speedup);
+        } else if (cmp > 0) {
+            msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
+        }
+        if (!"".contentEquals(msg)) {
+            textToSpeech.speak(ctx.getResources().getString(scope.getCueId())
+                    + " "
+                    + formatter.format(Formatter.CUE_LONG, dimension, val)
+                    + msg,
+                    TextToSpeech.QUEUE_ADD, null);
+        }
+    }
 }

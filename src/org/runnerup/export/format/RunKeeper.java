@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.export.format;
 
 import java.io.IOException;
@@ -38,135 +39,139 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunKeeper {
 
-	long mID = 0;
-	SQLiteDatabase mDB = null;
+    long mID = 0;
+    SQLiteDatabase mDB = null;
 
-	public RunKeeper(SQLiteDatabase db) {
-		mDB = db;
-	}
+    public RunKeeper(SQLiteDatabase db) {
+        mDB = db;
+    }
 
-	static String formatTime(long time) {
-		return new SimpleDateFormat("EEE, dd MMM yyyy hh:mm:ss", Locale.US)
-				.format(new Date(time));
-	}
+    static String formatTime(long time) {
+        return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US)
+                .format(new Date(time));
+    }
 
-	public void export(long activityId, Writer writer) throws IOException {
+    public void export(long activityId, Writer writer) throws IOException {
 
-		String[] aColumns = { DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
-				DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT };
-		Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
-				+ activityId, null, null, null, null);
-		cursor.moveToFirst();
+        String[] aColumns = {
+                DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
+                DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
+        };
+        Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
+                + activityId, null, null, null, null);
+        cursor.moveToFirst();
 
-		long startTime = cursor.getLong(2); // epoch
-		double distance = cursor.getDouble(3);
-		long duration = cursor.getLong(4);
-		String comment = null;
-		if (!cursor.isNull(1))
-			comment = cursor.getString(1);
-		try {
-			JsonWriter w = new JsonWriter(writer);
-			w.beginObject();
-			if (cursor.isNull(5)) {
-				w.name("type").value("Running");
-			} else {
-/**
- * Running, Cycling, Mountain Biking, Walking, Hiking, Downhill Skiing,
- * Cross-Country Skiing, Snowboarding, Skating, Swimming, Wheelchair,
- * Rowing, Elliptical, Other
- */
-				switch(cursor.getInt(5)) {
-				case DB.ACTIVITY.SPORT_RUNNING:
-					w.name("type").value("Running");
-					break;
-				case DB.ACTIVITY.SPORT_BIKING:
-					w.name("type").value("Cycling");
-					break;
-				default:
-					w.name("type").value("Other");
-					break;
-				}
-			}
-			w.name("equipment").value("None");
-			w.name("start_time").value(formatTime(startTime * 1000));
-			w.name("total_distance").value(distance);
-			w.name("duration").value(duration);
-			if (comment != null)
-				w.name("notes").value(comment);
-			w.name("heart_rate");
-			w.beginArray();
-			exportHeartRate(activityId, startTime, w);
-			w.endArray();
-			w.name("path");
-			w.beginArray();
-			exportPath(activityId, startTime, w);
-			w.endArray();
-			w.name("post_to_facebook").value(false);
-			w.name("post_to_twitter").value(false);
-			w.endObject();
-		} catch (IOException e) {
-			throw e;
-		}
-		cursor.close();
-	}
+        long startTime = cursor.getLong(2); // epoch
+        double distance = cursor.getDouble(3);
+        long duration = cursor.getLong(4);
+        String comment = null;
+        if (!cursor.isNull(1))
+            comment = cursor.getString(1);
+        try {
+            JsonWriter w = new JsonWriter(writer);
+            w.beginObject();
+            if (cursor.isNull(5)) {
+                w.name("type").value("Running");
+            } else {
+                /**
+                 * Running, Cycling, Mountain Biking, Walking, Hiking, Downhill
+                 * Skiing, Cross-Country Skiing, Snowboarding, Skating,
+                 * Swimming, Wheelchair, Rowing, Elliptical, Other
+                 */
+                switch (cursor.getInt(5)) {
+                    case DB.ACTIVITY.SPORT_RUNNING:
+                        w.name("type").value("Running");
+                        break;
+                    case DB.ACTIVITY.SPORT_BIKING:
+                        w.name("type").value("Cycling");
+                        break;
+                    default:
+                        w.name("type").value("Other");
+                        break;
+                }
+            }
+            w.name("equipment").value("None");
+            w.name("start_time").value(formatTime(startTime * 1000));
+            w.name("total_distance").value(distance);
+            w.name("duration").value(duration);
+            if (comment != null)
+                w.name("notes").value(comment);
+            w.name("heart_rate");
+            w.beginArray();
+            exportHeartRate(activityId, startTime, w);
+            w.endArray();
+            w.name("path");
+            w.beginArray();
+            exportPath(activityId, startTime, w);
+            w.endArray();
+            w.name("post_to_facebook").value(false);
+            w.name("post_to_twitter").value(false);
+            w.endObject();
+        } catch (IOException e) {
+            throw e;
+        }
+        cursor.close();
+    }
 
-	private void exportHeartRate(long activityId, long startTime, JsonWriter w) 
-			throws IOException {
-		String[] pColumns = { DB.LOCATION.TIME, DB.LOCATION.HR };
-		Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
-				DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
-				null);
-		if (cursor.moveToFirst()) {
-			startTime = cursor.getLong(0);
-			do {
-				if (!cursor.isNull(1)) {
-					w.beginObject();
-					w.name("timestamp").value(
-							(cursor.getLong(0) - startTime) / 1000);
-					w.name("heart_rate").value(Integer.toString(cursor.getInt(1)));
-					w.endObject();
-				}
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
-	}
-		
-	
+    private void exportHeartRate(long activityId, long startTime, JsonWriter w)
+            throws IOException {
+        String[] pColumns = {
+                DB.LOCATION.TIME, DB.LOCATION.HR
+        };
+        Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
+                DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
+                null);
+        if (cursor.moveToFirst()) {
+            startTime = cursor.getLong(0);
+            do {
+                if (!cursor.isNull(1)) {
+                    w.beginObject();
+                    w.name("timestamp").value(
+                            (cursor.getLong(0) - startTime) / 1000);
+                    w.name("heart_rate").value(Integer.toString(cursor.getInt(1)));
+                    w.endObject();
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+    }
 
-	private void exportPath(long activityId, long startTime, JsonWriter w)
-			throws IOException {
-		String[] pColumns = { DB.LOCATION.TIME, DB.LOCATION.LATITUDE,
-				DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE };
-		Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
-				DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
-				null);
-		if (cursor.moveToFirst()) {
-			startTime = cursor.getLong(0);
-			do {
-				w.beginObject();
-				w.name("timestamp").value(
-						(cursor.getLong(0) - startTime) / 1000);
-				w.name("latitude").value(cursor.getDouble(1));
-				w.name("longitude").value(cursor.getDouble(2));
-				if (!cursor.isNull(3)) {
-					w.name("altitude").value(cursor.getDouble(3));
-				}
-				if (cursor.getLong(4) == DB.LOCATION.TYPE_START) {
-					w.name("type").value("start");
-				} else if (cursor.getLong(4) == DB.LOCATION.TYPE_END) {
-					w.name("type").value("end");
-				} else if (cursor.getLong(4) == DB.LOCATION.TYPE_PAUSE) {
-					w.name("type").value("pause");
-				} else if (cursor.getLong(4) == DB.LOCATION.TYPE_RESUME) {
-					w.name("type").value("resume");
-				} else if (cursor.getLong(4) == DB.LOCATION.TYPE_GPS) {
-					w.name("type").value("gps");
-				} else {
-					w.name("type").value("manual");
-				}
-				w.endObject();
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
-	}
+    private void exportPath(long activityId, long startTime, JsonWriter w)
+            throws IOException {
+        String[] pColumns = {
+                DB.LOCATION.TIME, DB.LOCATION.LATITUDE,
+                DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE
+        };
+        Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
+                DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
+                null);
+        if (cursor.moveToFirst()) {
+            startTime = cursor.getLong(0);
+            do {
+                w.beginObject();
+                w.name("timestamp").value(
+                        (cursor.getLong(0) - startTime) / 1000);
+                w.name("latitude").value(cursor.getDouble(1));
+                w.name("longitude").value(cursor.getDouble(2));
+                if (!cursor.isNull(3)) {
+                    w.name("altitude").value(cursor.getDouble(3));
+                }
+                if (cursor.getLong(4) == DB.LOCATION.TYPE_START) {
+                    w.name("type").value("start");
+                } else if (cursor.getLong(4) == DB.LOCATION.TYPE_END) {
+                    w.name("type").value("end");
+                } else if (cursor.getLong(4) == DB.LOCATION.TYPE_PAUSE) {
+                    w.name("type").value("pause");
+                } else if (cursor.getLong(4) == DB.LOCATION.TYPE_RESUME) {
+                    w.name("type").value("resume");
+                } else if (cursor.getLong(4) == DB.LOCATION.TYPE_GPS) {
+                    w.name("type").value("gps");
+                } else {
+                    w.name("type").value("manual");
+                }
+                w.endObject();
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+    }
 }

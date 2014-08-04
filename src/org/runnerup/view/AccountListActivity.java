@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.view;
 
 import org.runnerup.R;
@@ -53,226 +54,230 @@ import android.os.Build;
 import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class AccountListActivity extends FragmentActivity implements Constants, LoaderCallbacks<Cursor> {
+public class AccountListActivity extends FragmentActivity implements Constants,
+        LoaderCallbacks<Cursor> {
 
-	DBHelper mDBHelper = null;
-	SQLiteDatabase mDB = null;
-	UploadManager uploadManager = null;
-	boolean tabFormat = false;
+    DBHelper mDBHelper = null;
+    SQLiteDatabase mDB = null;
+    UploadManager uploadManager = null;
+    boolean tabFormat = false;
 
-	ListView listView;
-	CursorAdapter cursorAdapter;
-	
-	/** Called when the activity is first created. */
+    ListView listView;
+    CursorAdapter cursorAdapter;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.account_list);
+    /** Called when the activity is first created. */
 
-		mDBHelper = new DBHelper(this);
-		mDB = mDBHelper.getReadableDatabase();
-		uploadManager = new UploadManager(this);
-		listView = (ListView) findViewById(R.id.accountList);
-		listView.setDividerHeight(10);
-		cursorAdapter = new AccountListAdapter(this, null);
-		listView.setAdapter(cursorAdapter);
-		getSupportLoaderManager().initLoader(0,  null,  this);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.account_list);
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mDB.close();
-		mDBHelper.close();
-		uploadManager.close();
-	}
+        mDBHelper = new DBHelper(this);
+        mDB = mDBHelper.getReadableDatabase();
+        uploadManager = new UploadManager(this);
+        listView = (ListView) findViewById(R.id.account_list);
+        listView.setDividerHeight(10);
+        cursorAdapter = new AccountListAdapter(this, null);
+        listView.setAdapter(cursorAdapter);
+        getSupportLoaderManager().initLoader(0, null, this);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.account_list_menu, menu);
-		return true;
-	}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDB.close();
+        mDBHelper.close();
+        uploadManager.close();
+    }
 
-	@Override
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.account_list_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_tab_format:
-			tabFormat = !tabFormat;
-			item.setTitle("Icon list");
-			getSupportLoaderManager().restartLoader(0,  null,  this);
-			break;
-		}
-		return true;
-	}
+        switch (item.getItemId()) {
+            case R.id.menu_tab_format:
+                tabFormat = !tabFormat;
+                item.setTitle("Icon list");
+                getSupportLoaderManager().restartLoader(0, null, this);
+                break;
+        }
+        return true;
+    }
 
-	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		String[] from = new String[] { "_id", 
-				DB.ACCOUNT.NAME,
-				DB.ACCOUNT.URL,
-				DB.ACCOUNT.DESCRIPTION,
-				DB.ACCOUNT.ENABLED,
-				DB.ACCOUNT.ICON,
-				DB.ACCOUNT.AUTH_CONFIG,
-				DB.ACCOUNT.FLAGS
-		};
+    @Override
+    public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+        String[] from = new String[] {
+                "_id",
+                DB.ACCOUNT.NAME,
+                DB.ACCOUNT.URL,
+                DB.ACCOUNT.DESCRIPTION,
+                DB.ACCOUNT.ENABLED,
+                DB.ACCOUNT.ICON,
+                DB.ACCOUNT.AUTH_CONFIG,
+                DB.ACCOUNT.FLAGS
+        };
 
-		
-		return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, null, null,
-				DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
-	}
+        return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, null, null,
+                DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
+    }
 
-	@Override
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		cursorAdapter.swapCursor(arg1);
-	}
+    @Override
+    public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+        cursorAdapter.swapCursor(arg1);
+    }
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		cursorAdapter.swapCursor(null);
-	}
+    @Override
+    public void onLoaderReset(Loader<Cursor> arg0) {
+        cursorAdapter.swapCursor(null);
+    }
 
-	class AccountListAdapter extends CursorAdapter {
-		LayoutInflater inflater;
+    class AccountListAdapter extends CursorAdapter {
+        LayoutInflater inflater;
 
-		public AccountListAdapter(Context context, Cursor c) {
-			super(context, c, true);
-			inflater = LayoutInflater.from(context);
-		}
+        public AccountListAdapter(Context context, Cursor c) {
+            super(context, c, true);
+            inflater = LayoutInflater.from(context);
+        }
 
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			ContentValues tmp = DBHelper.get(cursor);
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            ContentValues tmp = DBHelper.get(cursor);
 
-			final String id = tmp.getAsString(DB.ACCOUNT.NAME);
-			final Uploader uploader = uploadManager.add(tmp);
-			final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-			
-			ImageView im = (ImageView) view.findViewById(R.id.accountList_icon);
-			TextView tv = (TextView) view.findViewById(R.id.accountList_name);
-			CheckBox cbSend = (CheckBox)view.findViewById(R.id.accountList_upload);
-			CheckBox cbFeed = (CheckBox)view.findViewById(R.id.accountList_feed);
-			cbSend.setTag(id);
-			cbSend.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
-				@Override
-				public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-					setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
-				}
-			});
-			cbFeed.setTag(id);
-			cbFeed.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener(){
-				@Override
-				public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-					setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_FEED, arg1);
-				}
-				
-			});
-			Button b = (Button) view.findViewById(R.id.accountList_configureButton);
-			boolean configured = uploadManager.isConfigured(id);
-			if (!tabFormat) {
-				{
-					if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
-						im.setVisibility(View.GONE);
-						tv.setVisibility(View.VISIBLE);
-						tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-					} else {
-						im.setVisibility(View.VISIBLE);
-						tv.setVisibility(View.GONE);
-						im.setBackgroundResource(tmp
-								.getAsInteger(DB.ACCOUNT.ICON));
-					}
-				}
-				cbSend.setVisibility(View.GONE);
-				cbFeed.setVisibility(View.GONE);
-			} else {
-				im.setVisibility(View.GONE);
-				tv.setVisibility(View.VISIBLE);
-				tv.setText(id);
-				if (configured && uploader.checkSupport(Uploader.Feature.UPLOAD)) {
-					cbSend.setEnabled(true);
-					cbSend.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
-					cbSend.setVisibility(View.VISIBLE);
-				} else {
-					cbSend.setVisibility(View.INVISIBLE);
-				}
-				if (configured && uploader.checkSupport(Uploader.Feature.FEED)) {
-					cbFeed.setEnabled(true);
-					cbFeed.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
-					cbFeed.setVisibility(View.VISIBLE);
-				} else {
-					cbFeed.setVisibility(View.INVISIBLE);
-				}
-			}
+            final String id = tmp.getAsString(DB.ACCOUNT.NAME);
+            final Uploader uploader = uploadManager.add(tmp);
+            final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
 
-			{
-				b.setTag(id);
-				b.setOnClickListener(configureButtonClick);
-				if (configured) {
-					b.setText("Edit");
-					WidgetUtil.setBackground(b, getResources().getDrawable(
-							R.drawable.btn_blue));
-				} else {
-					b.setText("Connect");
-					WidgetUtil.setBackground(b, getResources().getDrawable(
-							R.drawable.btn_green));
-				}
-			}
-		}
+            ImageView im = (ImageView) view.findViewById(R.id.account_list_icon);
+            TextView tv = (TextView) view.findViewById(R.id.account_list_name);
+            CheckBox cbSend = (CheckBox) view.findViewById(R.id.account_list_upload);
+            CheckBox cbFeed = (CheckBox) view.findViewById(R.id.account_list_feed);
+            cbSend.setTag(id);
+            cbSend.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+                    setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
+                }
+            });
+            cbFeed.setTag(id);
+            cbFeed.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+                    setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_FEED, arg1);
+                }
 
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			return inflater.inflate(R.layout.account_row, parent, false);
-		}
-	}
+            });
+            Button b = (Button) view.findViewById(R.id.account_list_configure_button);
+            boolean configured = uploadManager.isConfigured(id);
+            if (!tabFormat) {
+                {
+                    if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
+                        im.setVisibility(View.GONE);
+                        tv.setVisibility(View.VISIBLE);
+                        tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
+                    } else {
+                        im.setVisibility(View.VISIBLE);
+                        tv.setVisibility(View.GONE);
+                        im.setBackgroundResource(tmp
+                                .getAsInteger(DB.ACCOUNT.ICON));
+                    }
+                }
+                cbSend.setVisibility(View.GONE);
+                cbFeed.setVisibility(View.GONE);
+            } else {
+                im.setVisibility(View.GONE);
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(id);
+                if (configured && uploader.checkSupport(Uploader.Feature.UPLOAD)) {
+                    cbSend.setEnabled(true);
+                    cbSend.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
+                    cbSend.setVisibility(View.VISIBLE);
+                } else {
+                    cbSend.setVisibility(View.INVISIBLE);
+                }
+                if (configured && uploader.checkSupport(Uploader.Feature.FEED)) {
+                    cbFeed.setEnabled(true);
+                    cbFeed.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
+                    cbFeed.setVisibility(View.VISIBLE);
+                } else {
+                    cbFeed.setVisibility(View.INVISIBLE);
+                }
+            }
 
-	OnClickListener configureButtonClick = new OnClickListener() {
-		public void onClick(View v) {
-			final String uploader = (String)v.getTag();
-			if (uploadManager.isConfigured(uploader)) {
-				startActivity(uploader, true);
-			} else {
-				uploadManager.connect(callback, uploader, false);
-			}
-		}
-	};
+            {
+                b.setTag(id);
+                b.setOnClickListener(configureButtonClick);
+                if (configured) {
+                    b.setText("Edit");
+                    WidgetUtil.setBackground(b, getResources().getDrawable(
+                            R.drawable.btn_blue));
+                } else {
+                    b.setText("Connect");
+                    WidgetUtil.setBackground(b, getResources().getDrawable(
+                            R.drawable.btn_green));
+                }
+            }
+        }
 
-	private void setFlag(Object obj, int flag, boolean val) {
-		String name = (String) obj;
-		if (val) {
-			long bitval = (1 << flag);
-			mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( "+ 
-					DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + name + "\'");
-		} else {
-			long mask = ~(long)(1 << flag);
-			mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( "+ 
-					DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + name + "\'");
-		}
-	}
-	
-	UploadManager.Callback callback = new UploadManager.Callback() {
-		@Override
-		public void run(String uploader, Status status) {
-			if (status == Uploader.Status.OK) {
-				startActivity(uploader, false);
-			}
-		}
-	};
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return inflater.inflate(R.layout.account_row, parent, false);
+        }
+    }
 
-	void startActivity(String uploader, boolean edit) {
-		Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
-		intent.putExtra("uploader", uploader);
-		intent.putExtra("edit", edit);
-		AccountListActivity.this.startActivityForResult(intent, UploadManager.CONFIGURE_REQUEST + 1000);
-	}
+    OnClickListener configureButtonClick = new OnClickListener() {
+        public void onClick(View v) {
+            final String uploader = (String) v.getTag();
+            if (uploadManager.isConfigured(uploader)) {
+                startActivity(uploader, true);
+            } else {
+                uploadManager.connect(callback, uploader, false);
+            }
+        }
+    };
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == UploadManager.CONFIGURE_REQUEST) {
-			uploadManager.onActivityResult(requestCode, resultCode, data);
-		} else if (requestCode == UploadManager.CONFIGURE_REQUEST + 1000) {
-			uploadManager.clear();
-			getSupportLoaderManager().restartLoader(0,  null , this);
-		}
-	}
+    private void setFlag(Object obj, int flag, boolean val) {
+        String name = (String) obj;
+        if (val) {
+            long bitval = (1 << flag);
+            mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
+                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + name
+                    + "\'");
+        } else {
+            long mask = ~(long) (1 << flag);
+            mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
+                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + name
+                    + "\'");
+        }
+    }
+
+    UploadManager.Callback callback = new UploadManager.Callback() {
+        @Override
+        public void run(String uploader, Status status) {
+            if (status == Uploader.Status.OK) {
+                startActivity(uploader, false);
+            }
+        }
+    };
+
+    void startActivity(String uploader, boolean edit) {
+        Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
+        intent.putExtra("uploader", uploader);
+        intent.putExtra("edit", edit);
+        AccountListActivity.this.startActivityForResult(intent,
+                UploadManager.CONFIGURE_REQUEST + 1000);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == UploadManager.CONFIGURE_REQUEST) {
+            uploadManager.onActivityResult(requestCode, resultCode, data);
+        } else if (requestCode == UploadManager.CONFIGURE_REQUEST + 1000) {
+            uploadManager.clear();
+            getSupportLoaderManager().restartLoader(0, null, this);
+        }
+    }
 }

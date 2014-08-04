@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.view;
 
 import java.util.ArrayList;
@@ -55,298 +56,308 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountActivity extends Activity implements Constants {
 
-	long uploaderID = -1;
-	String uploader = null;
-	Integer uploaderIcon = null;
-	
-	DBHelper mDBHelper = null;
-	SQLiteDatabase mDB = null;
-	ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
+    long uploaderID = -1;
+    String uploader = null;
+    Integer uploaderIcon = null;
 
-	long flags;
-	UploadManager uploadManager = null;
+    DBHelper mDBHelper = null;
+    SQLiteDatabase mDB = null;
+    ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 
-	/** Called when the activity is first created. */
+    long flags;
+    UploadManager uploadManager = null;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.account);
+    /** Called when the activity is first created. */
 
-		Intent intent = getIntent();
-		uploader = intent.getStringExtra("uploader");
-		
-		mDBHelper = new DBHelper(this);
-		mDB = mDBHelper.getReadableDatabase();
-		uploadManager = new UploadManager(this);
-		fillData();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.account);
 
-		
-		{
-			Button btn = (Button) findViewById(R.id.okAccountButton);
-			btn.setOnClickListener(okButtonClick);
-		}
+        Intent intent = getIntent();
+        uploader = intent.getStringExtra("uploader");
 
-		{
-			Button btn = (Button) findViewById(R.id.accountUploadButton);
-			btn.setOnClickListener(uploadButtonClick);
-		}
+        mDBHelper = new DBHelper(this);
+        mDB = mDBHelper.getReadableDatabase();
+        uploadManager = new UploadManager(this);
+        fillData();
 
-		{
-			Button btn = (Button) findViewById(R.id.disconnectAccountButton);
-			btn.setOnClickListener(disconnectButtonClick);
-		}
-	}
+        {
+            Button btn = (Button) findViewById(R.id.ok_account_button);
+            btn.setOnClickListener(okButtonClick);
+        }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mDB.close();
-		mDBHelper.close();
-		for (Cursor c : mCursors) {
-			c.close();
-		}
-		mCursors.clear();
-		uploadManager.close();
-	}
+        {
+            Button btn = (Button) findViewById(R.id.account_upload_button);
+            btn.setOnClickListener(uploadButtonClick);
+        }
 
-	void fillData() {
-		// Fields from the database (projection)
-		// Must include the _id column for the adapter to work
-		String[] from = new String[] { "_id", 
-				DB.ACCOUNT.NAME,
-				DB.ACCOUNT.URL,
-				DB.ACCOUNT.DESCRIPTION,
-				DB.ACCOUNT.ENABLED,
-				DB.ACCOUNT.FLAGS,
-				DB.ACCOUNT.ICON,
-				DB.ACCOUNT.AUTH_CONFIG
-		};
+        {
+            Button btn = (Button) findViewById(R.id.disconnect_account_button);
+            btn.setOnClickListener(disconnectButtonClick);
+        }
+    }
 
-		String args[] = { uploader };
-		Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?", args,
-				null, null, null);
-		
-		if (c.moveToFirst()) {
-			ContentValues tmp = DBHelper.get(c);
-			uploaderID = tmp.getAsLong("_id");
-			Uploader uploader = uploadManager.add(tmp);
-			
-			{
-				ImageView im = (ImageView) findViewById(R.id.accountList_icon);
-				TextView tv = (TextView) findViewById(R.id.accountList_name);
-				tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-				if (c.isNull(c.getColumnIndex(DB.ACCOUNT.ICON))) {
-					im.setVisibility(View.GONE);
-					tv.setVisibility(View.VISIBLE);
-				} else {
-					im.setVisibility(View.VISIBLE);
-					tv.setVisibility(View.GONE);
-					im.setBackgroundResource(tmp.getAsInteger(DB.ACCOUNT.ICON));
-					uploaderIcon = tmp.getAsInteger(DB.ACCOUNT.ICON);
-				}
-			}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDB.close();
+        mDBHelper.close();
+        for (Cursor c : mCursors) {
+            c.close();
+        }
+        mCursors.clear();
+        uploadManager.close();
+    }
 
-			addRow("", null);
+    void fillData() {
+        // Fields from the database (projection)
+        // Must include the _id column for the adapter to work
+        String[] from = new String[] {
+                "_id",
+                DB.ACCOUNT.NAME,
+                DB.ACCOUNT.URL,
+                DB.ACCOUNT.DESCRIPTION,
+                DB.ACCOUNT.ENABLED,
+                DB.ACCOUNT.FLAGS,
+                DB.ACCOUNT.ICON,
+                DB.ACCOUNT.AUTH_CONFIG
+        };
 
-			if (tmp.containsKey(DB.ACCOUNT.URL)) {
-				Button btn = new Button(this);
-				btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
-				btn.setOnClickListener(urlButtonClick);
-				btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));
-				addRow("Website:", btn);
-			}
+        String args[] = {
+            uploader
+        };
+        Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?", args,
+                null, null, null);
 
-			flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-			if (uploader.checkSupport(Uploader.Feature.UPLOAD)) {
-				CheckBox cb = new CheckBox(this);
-				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_UPLOAD));
-				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD)); 
-				cb.setOnCheckedChangeListener(sendCBChecked);
-				addRow("Automatic upload", cb);
-			} else {
-				Button btn = (Button) findViewById(R.id.accountUploadButton);
-				btn.setVisibility(View.GONE);
-			}
+        if (c.moveToFirst()) {
+            ContentValues tmp = DBHelper.get(c);
+            uploaderID = tmp.getAsLong("_id");
+            Uploader uploader = uploadManager.add(tmp);
 
-			if (uploader.checkSupport(Uploader.Feature.FEED)) {
-				CheckBox cb = new CheckBox(this);
-				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_FEED));
-				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED)); 
-				cb.setOnCheckedChangeListener(sendCBChecked);
-				addRow("Feed", cb);
-			}
+            {
+                ImageView im = (ImageView) findViewById(R.id.account_list_icon);
+                TextView tv = (TextView) findViewById(R.id.account_list_name);
+                tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
+                if (c.isNull(c.getColumnIndex(DB.ACCOUNT.ICON))) {
+                    im.setVisibility(View.GONE);
+                    tv.setVisibility(View.VISIBLE);
+                } else {
+                    im.setVisibility(View.VISIBLE);
+                    tv.setVisibility(View.GONE);
+                    im.setBackgroundResource(tmp.getAsInteger(DB.ACCOUNT.ICON));
+                    uploaderIcon = tmp.getAsInteger(DB.ACCOUNT.ICON);
+                }
+            }
 
-			if (uploader.checkSupport(Uploader.Feature.LIVE)) {
-				CheckBox cb = new CheckBox(this);
-				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_LIVE));
-				cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE)); 
-				cb.setOnCheckedChangeListener(sendCBChecked);
-				addRow("Live", cb);
-			}
+            addRow("", null);
 
-			if (uploader.checkSupport(Uploader.Feature.SKIP_MAP)) {
-				CheckBox cb = new CheckBox(this);
-				cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_SKIP_MAP));
-				cb.setChecked(! Bitfield.test(flags, DB.ACCOUNT.FLAG_SKIP_MAP)); 
-				cb.setOnCheckedChangeListener(sendCBChecked);
-				addRow("Include map in post", cb);
-			}
-		}
-		mCursors.add(c);
-	}
-	
-	void addRow(String string, View btn) {
-		TableLayout table = (TableLayout) findViewById(R.id.accountTable);
-		TableRow row = new TableRow(this);
-		TextView title = new TextView(this);
-		title.setText(string);
-		row.addView(title);
-		if (btn != null)
-			row.addView(btn);
-		table.addView(row);
-	}
+            if (tmp.containsKey(DB.ACCOUNT.URL)) {
+                Button btn = new Button(this);
+                btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
+                btn.setOnClickListener(urlButtonClick);
+                btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));
+                addRow("Website:", btn);
+            }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.account_menu, menu);
-		return true;
-	}
+            flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
+            if (uploader.checkSupport(Uploader.Feature.UPLOAD)) {
+                CheckBox cb = new CheckBox(this);
+                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_UPLOAD));
+                cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
+                cb.setOnCheckedChangeListener(sendCBChecked);
+                addRow("Automatic upload", cb);
+            } else {
+                Button btn = (Button) findViewById(R.id.account_upload_button);
+                btn.setVisibility(View.GONE);
+            }
 
-	@Override
+            if (uploader.checkSupport(Uploader.Feature.FEED)) {
+                CheckBox cb = new CheckBox(this);
+                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_FEED));
+                cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
+                cb.setOnCheckedChangeListener(sendCBChecked);
+                addRow("Feed", cb);
+            }
+
+            if (uploader.checkSupport(Uploader.Feature.LIVE)) {
+                CheckBox cb = new CheckBox(this);
+                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_LIVE));
+                cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE));
+                cb.setOnCheckedChangeListener(sendCBChecked);
+                addRow("Live", cb);
+            }
+
+            if (uploader.checkSupport(Uploader.Feature.SKIP_MAP)) {
+                CheckBox cb = new CheckBox(this);
+                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_SKIP_MAP));
+                cb.setChecked(!Bitfield.test(flags, DB.ACCOUNT.FLAG_SKIP_MAP));
+                cb.setOnCheckedChangeListener(sendCBChecked);
+                addRow("Include map in post", cb);
+            }
+        }
+        mCursors.add(c);
+    }
+
+    void addRow(String string, View btn) {
+        TableLayout table = (TableLayout) findViewById(R.id.account_table);
+        TableRow row = new TableRow(this);
+        TextView title = new TextView(this);
+        title.setText(string);
+        row.addView(title);
+        if (btn != null)
+            row.addView(btn);
+        table.addView(row);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.account_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_clear_uploads:
-			clearUploadsButtonClick.onClick(null);
-			break;
-		case R.id.menu_upload_workouts:
-			uploadButtonClick.onClick(null);
-			break;
-		case R.id.menu_disconnect_account:
-			disconnectButtonClick.onClick(null);
-			break;
-		}
-		return true;
-	}
-		
-	OnClickListener clearUploadsButtonClick = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(
-					AccountActivity.this);
-			builder.setTitle("Clear uploads");
-			builder.setMessage("Note that workouts are not removed from " + uploader + ", only from RunnerUp list of workouts uploaded to " + uploader);
-			builder.setPositiveButton("OK",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							uploadManager.clearUploads(callback, uploader);
-						}
-					});
+        switch (item.getItemId()) {
+            case R.id.menu_clear_uploads:
+                clearUploadsButtonClick.onClick(null);
+                break;
+            case R.id.menu_upload_workouts:
+                uploadButtonClick.onClick(null);
+                break;
+            case R.id.menu_disconnect_account:
+                disconnectButtonClick.onClick(null);
+                break;
+        }
+        return true;
+    }
 
-			builder.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							// Do nothing but close the dialog
-							dialog.dismiss();
-						}
+    OnClickListener clearUploadsButtonClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    AccountActivity.this);
+            builder.setTitle("Clear uploads");
+            builder.setMessage("Note that workouts are not removed from " + uploader
+                    + ", only from RunnerUp list of workouts uploaded to " + uploader);
+            builder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            uploadManager.clearUploads(callback, uploader);
+                        }
+                    });
 
-					});
-			builder.show();
-		}
-	};
-	
-	OnClickListener uploadButtonClick = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-			intent.putExtra("uploader", uploader);
-			intent.putExtra("uploaderID", uploaderID);
-			if (uploaderIcon != null)
-				intent.putExtra("uploaderIcon", uploaderIcon.intValue());
-			AccountActivity.this.startActivityForResult(intent, 113);
-		}
-	};
+            builder.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do nothing but close the dialog
+                            dialog.dismiss();
+                        }
 
-	OnClickListener urlButtonClick = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String)v.getTag()));
-			startActivity(intent);
-		}		
-	};
-	
-	OnCheckedChangeListener sendCBChecked = new OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-			ContentValues tmp = new ContentValues();
-			int flag = ((Integer)buttonView.getTag()).intValue();
-			switch (flag) {
-			case DB.ACCOUNT.FLAG_UPLOAD:
-			case DB.ACCOUNT.FLAG_FEED:
-			case DB.ACCOUNT.FLAG_LIVE:
-				flags = Bitfield.set(flags, flag, isChecked);
-				break;
-			case DB.ACCOUNT.FLAG_SKIP_MAP:
-				flags = Bitfield.set(flags, flag, !isChecked);
-			}
-			tmp.put(DB.ACCOUNT.FLAGS, flags);
-			String args[] = { uploader };
-			mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
-		}
-	};
-	
-	OnClickListener okButtonClick = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			finish();
-		}
-	};
+                    });
+            builder.show();
+        }
+    };
 
-	OnClickListener disconnectButtonClick = new OnClickListener() {
-		public void onClick(View v) {
-			final CharSequence items[] = { "Clear uploads (from phone)" };
-			final boolean selected[] = { true };
-			AlertDialog.Builder builder = new AlertDialog.Builder(
-					AccountActivity.this);
-			builder.setTitle("Disconnect account");
-			builder.setPositiveButton("OK",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							uploadManager.disableUploader(disconnectCallback, uploader,
-									selected[0]);
-						}
-					});
-			builder.setNegativeButton("Cancel",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							// Do nothing but close the dialog
-							dialog.dismiss();
-						}
+    OnClickListener uploadButtonClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
+            intent.putExtra("uploader", uploader);
+            intent.putExtra("uploaderID", uploaderID);
+            if (uploaderIcon != null)
+                intent.putExtra("uploaderIcon", uploaderIcon.intValue());
+            AccountActivity.this.startActivityForResult(intent, 113);
+        }
+    };
 
-					});
-			builder.setMultiChoiceItems(items, selected,
-					new OnMultiChoiceClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1,
-								boolean arg2) {
-							selected[arg1] = arg2;
-						}
-					});
-			builder.show();
-		}
-	};
-	
-	UploadManager.Callback callback = new UploadManager.Callback() {
-		@Override
-		public void run(String uploader, Status status) {
-		}
-	};
+    OnClickListener urlButtonClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String) v
+                    .getTag()));
+            startActivity(intent);
+        }
+    };
 
-	UploadManager.Callback disconnectCallback = new UploadManager.Callback() {
-		@Override
-		public void run(String uploader, Status status) {
-			finish();
-		}
-	};
+    OnCheckedChangeListener sendCBChecked = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            ContentValues tmp = new ContentValues();
+            int flag = ((Integer) buttonView.getTag()).intValue();
+            switch (flag) {
+                case DB.ACCOUNT.FLAG_UPLOAD:
+                case DB.ACCOUNT.FLAG_FEED:
+                case DB.ACCOUNT.FLAG_LIVE:
+                    flags = Bitfield.set(flags, flag, isChecked);
+                    break;
+                case DB.ACCOUNT.FLAG_SKIP_MAP:
+                    flags = Bitfield.set(flags, flag, !isChecked);
+            }
+            tmp.put(DB.ACCOUNT.FLAGS, flags);
+            String args[] = {
+                uploader
+            };
+            mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
+        }
+    };
+
+    OnClickListener okButtonClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finish();
+        }
+    };
+
+    OnClickListener disconnectButtonClick = new OnClickListener() {
+        public void onClick(View v) {
+            final CharSequence items[] = {
+                "Clear uploads (from phone)"
+            };
+            final boolean selected[] = {
+                true
+            };
+            AlertDialog.Builder builder = new AlertDialog.Builder(
+                    AccountActivity.this);
+            builder.setTitle("Disconnect account");
+            builder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            uploadManager.disableUploader(disconnectCallback, uploader,
+                                    selected[0]);
+                        }
+                    });
+            builder.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Do nothing but close the dialog
+                            dialog.dismiss();
+                        }
+
+                    });
+            builder.setMultiChoiceItems(items, selected,
+                    new OnMultiChoiceClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1,
+                                boolean arg2) {
+                            selected[arg1] = arg2;
+                        }
+                    });
+            builder.show();
+        }
+    };
+
+    UploadManager.Callback callback = new UploadManager.Callback() {
+        @Override
+        public void run(String uploader, Status status) {
+        }
+    };
+
+    UploadManager.Callback disconnectCallback = new UploadManager.Callback() {
+        @Override
+        public void run(String uploader, Status status) {
+            finish();
+        }
+    };
 
 }

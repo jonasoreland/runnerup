@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.hr;
 
 import java.util.ArrayList;
@@ -31,79 +32,80 @@ import android.preference.PreferenceManager;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRManager {
 
-	public static HRProvider getHRProvider(Context ctx, String src) {
-		System.err.println("getHRProvider("+src+")");
-		if (src.contentEquals(SamsungBLEHRProvider.NAME)) {
-			if (!SamsungBLEHRProvider.checkLibrary())
-				return null;
-			return new SamsungBLEHRProvider(ctx);
-		}
-		if (src.contentEquals(AndroidBLEHRProvider.NAME)) {
-			if (!AndroidBLEHRProvider.checkLibrary(ctx))
-				return null;
-			return new AndroidBLEHRProvider(ctx);
-		}
-		if (src.contentEquals(Bt20Base.ZephyrHRM.NAME)) {
-			if (!Bt20Base.checkLibrary(ctx))
-				return null;
-			return new Bt20Base.ZephyrHRM(ctx);
-		}
-		if (src.contentEquals(Bt20Base.PolarHRM.NAME)) {
-			if (!Bt20Base.checkLibrary(ctx))
-				return null;
-			return new Bt20Base.PolarHRM(ctx);
-		}
+    public static HRProvider getHRProvider(Context ctx, String src) {
+        System.err.println("getHRProvider(" + src + ")");
+        if (src.contentEquals(SamsungBLEHRProvider.NAME)) {
+            if (!SamsungBLEHRProvider.checkLibrary())
+                return null;
+            return new SamsungBLEHRProvider(ctx);
+        }
+        if (src.contentEquals(AndroidBLEHRProvider.NAME)) {
+            if (!AndroidBLEHRProvider.checkLibrary(ctx))
+                return null;
+            return new AndroidBLEHRProvider(ctx);
+        }
+        if (src.contentEquals(Bt20Base.ZephyrHRM.NAME)) {
+            if (!Bt20Base.checkLibrary(ctx))
+                return null;
+            return new Bt20Base.ZephyrHRM(ctx);
+        }
+        if (src.contentEquals(Bt20Base.PolarHRM.NAME)) {
+            if (!Bt20Base.checkLibrary(ctx))
+                return null;
+            return new Bt20Base.PolarHRM(ctx);
+        }
 
-		if (src.contentEquals(AntPlus.NAME)) {
-			if (!AntPlus.checkLibrary(ctx))
-				return null;
-			HRProvider p = new AntPlus(ctx);
-			System.err.println("getHRProvider("+src+") => "+ p);
-			return p;
-		}
-		
-		if (src.contentEquals(MockHRProvider.NAME)) {
-			return new MockHRProvider(ctx);
-		}
+        if (src.contentEquals(AntPlus.NAME)) {
+            if (!AntPlus.checkLibrary(ctx))
+                return null;
+            HRProvider p = new AntPlus(ctx);
+            System.err.println("getHRProvider(" + src + ") => " + p);
+            return p;
+        }
 
-		return null;
-	}
+        if (src.contentEquals(MockHRProvider.NAME)) {
+            return new MockHRProvider(ctx);
+        }
 
-	public static List<HRProvider> getHRProviderList(Context ctx) {
-		Resources res = ctx.getResources();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-		boolean experimental = prefs.getBoolean(res.getString(R.string.pref_bt_experimental), false);
-		boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
-		
-		if (experimental) {
-			/* dummy if to remove warning on experimental */
-		}
-		
-		List<HRProvider> providers = new ArrayList<HRProvider>();
-		if (SamsungBLEHRProvider.checkLibrary()) {
-			providers.add(new SamsungBLEHRProvider(ctx));
-		}
-		
-		if (AndroidBLEHRProvider.checkLibrary(ctx)) {
-			providers.add(new AndroidBLEHRProvider(ctx));
-		}
-		
-		if (Bt20Base.checkLibrary(ctx)) {
-			providers.add(new Bt20Base.ZephyrHRM(ctx));
-		}
+        return null;
+    }
 
-		if (Bt20Base.checkLibrary(ctx)) {
-			providers.add(new Bt20Base.PolarHRM(ctx));
-		}
+    public static List<HRProvider> getHRProviderList(Context ctx) {
+        Resources res = ctx.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean experimental = prefs
+                .getBoolean(res.getString(R.string.pref_bt_experimental), false);
+        boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
 
-		if (AntPlus.checkLibrary(ctx)) {
-			providers.add(new AntPlus(ctx));
-		}
-		
-		if (mock) {
-			providers.add(new MockHRProvider(ctx));
-		}
-		
-		return providers;
-	}
+        if (experimental) {
+            /* dummy if to remove warning on experimental */
+        }
+
+        List<HRProvider> providers = new ArrayList<HRProvider>();
+        if (SamsungBLEHRProvider.checkLibrary()) {
+            providers.add(new SamsungBLEHRProvider(ctx));
+        }
+
+        if (AndroidBLEHRProvider.checkLibrary(ctx)) {
+            providers.add(new AndroidBLEHRProvider(ctx));
+        }
+
+        if (Bt20Base.checkLibrary(ctx)) {
+            providers.add(new Bt20Base.ZephyrHRM(ctx));
+        }
+
+        if (Bt20Base.checkLibrary(ctx)) {
+            providers.add(new Bt20Base.PolarHRM(ctx));
+        }
+
+        if (AntPlus.checkLibrary(ctx)) {
+            providers.add(new AntPlus(ctx));
+        }
+
+        if (mock) {
+            providers.add(new MockHRProvider(ctx));
+        }
+
+        return providers;
+    }
 }

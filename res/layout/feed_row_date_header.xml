@@ -22,11 +22,11 @@
     android:orientation="horizontal" >
 
     <TextView
-        android:id="@+id/feedActivityDateHeader"
+        android:id="@+id/feed_activity_date_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:text="TextView"
+        android:text="@string/placeholder_txt"
         style="@style/FeedDateHeader"
         />
 

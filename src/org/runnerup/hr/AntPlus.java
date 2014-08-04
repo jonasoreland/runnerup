@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.hr;
 
 import java.util.EnumSet;
@@ -36,335 +37,339 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultR
 
 public class AntPlus implements HRProvider {
 
-	static final String NAME = "AntPlus";
-	static final String DISPLAY_NAME = "ANT+";
+    static final String NAME = "AntPlus";
+    static final String DISPLAY_NAME = "ANT+";
 
-	Context ctx;
-	HRClient hrClient;
-	Handler hrClientHandler;
-	int hrValue;
-	long hrTimestamp;
-	
-	HRDeviceRef connectRef = null;
-	
+    Context ctx;
+    HRClient hrClient;
+    Handler hrClientHandler;
+    int hrValue;
+    long hrTimestamp;
+
+    HRDeviceRef connectRef = null;
+
     AntPlusHeartRatePcc hrPcc = null;
-	AsyncScanController<AntPlusHeartRatePcc> hrScanCtrl = null;
+    AsyncScanController<AntPlusHeartRatePcc> hrScanCtrl = null;
 
-	private boolean mIsScanning = false;
-	private boolean mIsConnected = false;
-	private boolean mIsConnecting = false;
-	
-	public static boolean checkLibrary(Context ctx) {
-		try {
-			Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
-			Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
-			Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
-			Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public AntPlus(Context ctx) {
-		this.ctx = ctx;
-	}
+    private boolean mIsScanning = false;
+    private boolean mIsConnected = false;
+    private boolean mIsConnecting = false;
 
-	@Override
-	public String getName() {
-		return DISPLAY_NAME;
-	}
+    public static boolean checkLibrary(Context ctx) {
+        try {
+            Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
+            Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
+            Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
+            Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-	@Override
-	public String getProviderName() {
-		return NAME;
-	}
+    public AntPlus(Context ctx) {
+        this.ctx = ctx;
+    }
 
-	@Override
-	public void open(Handler handler, HRClient hrClient) {
-		System.err.println("open()");
-		this.hrClientHandler = handler;
-		this.hrClient = hrClient;
-		System.err.println("onOpenResult()");
-		hrClient.onOpenResult(true);
-	}
+    @Override
+    public String getName() {
+        return DISPLAY_NAME;
+    }
 
-	@Override
-	public void close() {
-		HRClient client = hrClient;
-		hrClient = null;
-		stopScan();
-		disconnect();
-		if (client != null) {
-			client.onCloseResult(true);
-		}
-	}
+    @Override
+    public String getProviderName() {
+        return NAME;
+    }
 
-	@Override
-	public boolean isBondingDevice() {
-		return false;
-	}
+    @Override
+    public void open(Handler handler, HRClient hrClient) {
+        System.err.println("open()");
+        this.hrClientHandler = handler;
+        this.hrClient = hrClient;
+        System.err.println("onOpenResult()");
+        hrClient.onOpenResult(true);
+    }
 
-	@Override
-	public boolean isScanning() {
-		return mIsScanning;
-	}
+    @Override
+    public void close() {
+        HRClient client = hrClient;
+        hrClient = null;
+        stopScan();
+        disconnect();
+        if (client != null) {
+            client.onCloseResult(true);
+        }
+    }
 
-	@Override
-	public boolean isConnected() {
-		return mIsConnected;
-	}
+    @Override
+    public boolean isBondingDevice() {
+        return false;
+    }
 
-	@Override
-	public boolean isConnecting() {
-		return mIsConnecting;
-	}
+    @Override
+    public boolean isScanning() {
+        return mIsScanning;
+    }
 
-	@Override
-	public void startScan() {
-		stopScan();
-		System.err.println("startScan()");
-		mIsScanning = true;
-		mScanDevices.clear();
+    @Override
+    public boolean isConnected() {
+        return mIsConnected;
+    }
+
+    @Override
+    public boolean isConnecting() {
+        return mIsConnecting;
+    }
+
+    @Override
+    public void startScan() {
+        stopScan();
+        System.err.println("startScan()");
+        mIsScanning = true;
+        mScanDevices.clear();
         hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(ctx, 0, scanReceiver);
-	}
+    }
 
-	@Override
-	public void stopScan() {
-		if (mIsScanning || hrScanCtrl != null)
-			System.err.println("stopScan()");
+    @Override
+    public void stopScan() {
+        if (mIsScanning || hrScanCtrl != null)
+            System.err.println("stopScan()");
 
-		mIsScanning = false;
-		if (hrScanCtrl != null) {
-			hrScanCtrl.closeScanController();
-			hrScanCtrl = null;
-		}
-	}
+        mIsScanning = false;
+        if (hrScanCtrl != null) {
+            hrScanCtrl.closeScanController();
+            hrScanCtrl = null;
+        }
+    }
 
-	HashSet<String> mScanDevices = new HashSet<String>();
-	IAsyncScanResultReceiver scanReceiver = new IAsyncScanResultReceiver() {
+    HashSet<String> mScanDevices = new HashSet<String>();
+    IAsyncScanResultReceiver scanReceiver = new IAsyncScanResultReceiver() {
 
-		@Override
-		public void onSearchResult(final AsyncScanResultDeviceInfo arg0) {
-			System.err.println("onSearchResult("+arg0+")");
-			if (hrClient == null)
-				return;
+        @Override
+        public void onSearchResult(final AsyncScanResultDeviceInfo arg0) {
+            System.err.println("onSearchResult(" + arg0 + ")");
+            if (hrClient == null)
+                return;
 
-			if (hrClientHandler == null)
-				return;
+            if (hrClientHandler == null)
+                return;
 
-			final HRDeviceRef ref = HRDeviceRef.create(NAME,  arg0.getDeviceDisplayName(),
-					Integer.toString(arg0.getAntDeviceNumber()));
-			
-			if ((mIsConnecting || mIsConnected) &&
-				ref.deviceAddress.equals(connectRef.deviceAddress) &&
-				ref.deviceName.equals(connectRef.deviceName)) {
-				
-				stopScan();
-				AntPlusHeartRatePcc.requestAccess(ctx, arg0.getAntDeviceNumber(), 0, resultReceiver, stateReceiver);
-				return;
-			}
+            final HRDeviceRef ref = HRDeviceRef.create(NAME, arg0.getDeviceDisplayName(),
+                    Integer.toString(arg0.getAntDeviceNumber()));
 
-			if (mScanDevices.contains(ref.deviceAddress))
-				return;
-			
-			mScanDevices.add(ref.deviceAddress);
+            if ((mIsConnecting || mIsConnected) &&
+                    ref.deviceAddress.equals(connectRef.deviceAddress) &&
+                    ref.deviceName.equals(connectRef.deviceName)) {
 
-			hrClientHandler.post(new Runnable() {
-				@Override
-				public void run() {
-					if (mIsScanning) { // NOTE: mIsScanning in user-thread
-						hrClient.onScanResult(HRDeviceRef.create(NAME, arg0.getDeviceDisplayName(),
-								Integer.toString(arg0.getAntDeviceNumber())));
-					}
-				}
-			});
-		}
+                stopScan();
+                AntPlusHeartRatePcc.requestAccess(ctx, arg0.getAntDeviceNumber(), 0,
+                        resultReceiver, stateReceiver);
+                return;
+            }
 
-		@Override
-		public void onSearchStopped(RequestAccessResult arg0) {
-			System.err.println("onSearchStopped("+arg0+")");
-		}
-	};
-		
-	@Override
-	public void connect(HRDeviceRef ref) {
-		stopScan();
-		disconnectImpl();
-		connectRef = ref;
-		mIsConnecting = true;
-		AntPlusHeartRatePcc.requestAccess(ctx, Integer.parseInt(ref.deviceAddress), 0, resultReceiver, stateReceiver);
-	}
-	
-	AntPlusHeartRatePcc antDevice = null;
+            if (mScanDevices.contains(ref.deviceAddress))
+                return;
 
-	IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver = new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
+            mScanDevices.add(ref.deviceAddress);
 
-		@Override
-		public void onResultReceived(AntPlusHeartRatePcc arg0,
-				RequestAccessResult arg1, DeviceState arg2) {
+            hrClientHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mIsScanning) { // NOTE: mIsScanning in user-thread
+                        hrClient.onScanResult(HRDeviceRef.create(NAME, arg0.getDeviceDisplayName(),
+                                Integer.toString(arg0.getAntDeviceNumber())));
+                    }
+                }
+            });
+        }
 
-			System.err.println("onResultReceived("+arg0+", " + arg1 + ", " + arg2 + ")");
+        @Override
+        public void onSearchStopped(RequestAccessResult arg0) {
+            System.err.println("onSearchStopped(" + arg0 + ")");
+        }
+    };
 
-			antDevice = arg0;
-			switch(arg1){
-			case ALREADY_SUBSCRIBED:
-			case CHANNEL_NOT_AVAILABLE:
-			case DEPENDENCY_NOT_INSTALLED:
-			case DEVICE_ALREADY_IN_USE:
-			case OTHER_FAILURE:
-			case SEARCH_TIMEOUT:
-			case UNRECOGNIZED:
-			case USER_CANCELLED:
-				reportConnectFailed(arg1);
-				return;
-			case SUCCESS:
-				break;			
-			}
+    @Override
+    public void connect(HRDeviceRef ref) {
+        stopScan();
+        disconnectImpl();
+        connectRef = ref;
+        mIsConnecting = true;
+        AntPlusHeartRatePcc.requestAccess(ctx, Integer.parseInt(ref.deviceAddress), 0,
+                resultReceiver, stateReceiver);
+    }
 
-			switch(arg2) {
-			case CLOSED:
-				break;
-			case DEAD:
-				break;
-			case PROCESSING_REQUEST:
-				break;
-			case SEARCHING:
-				break;
-			case TRACKING:
-				break;
-			case UNRECOGNIZED:
-				break;
-			default:
-				break;
-			}
-			
-			antDevice.subscribeHeartRateDataEvent(heartRateDataReceiver);
-		}
-	};
+    AntPlusHeartRatePcc antDevice = null;
 
-	IHeartRateDataReceiver heartRateDataReceiver = new IHeartRateDataReceiver() {
+    IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver = new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
 
-		@Override
-		public void onNewHeartRateData(long arg0, EnumSet<EventFlag> arg1,
-				int arg2, long arg3) {
+        @Override
+        public void onResultReceived(AntPlusHeartRatePcc arg0,
+                RequestAccessResult arg1, DeviceState arg2) {
 
-			hrValue = arg2;
-			hrTimestamp = System.currentTimeMillis();
-			if (mIsConnecting) {
-				reportConnected(true);
-			}
-		}
-		
-	};
-	
-	IDeviceStateChangeReceiver stateReceiver = new IDeviceStateChangeReceiver() {
+            System.err.println("onResultReceived(" + arg0 + ", " + arg1 + ", " + arg2 + ")");
 
-		@Override
-		public void onDeviceStateChange(DeviceState arg0) {
-			System.err.println("onDeviceStateChange("+arg0+")");
-			switch(arg0) {
-			case CLOSED:
-				break;
-			case DEAD:
-				if (mIsConnected) {
-					/** silent reconnect */
-					antDevice = null;
-					AntPlusHeartRatePcc.requestAccess(ctx, Integer.parseInt(connectRef.deviceAddress), 0,
-							resultReceiver, stateReceiver);
-					return;
-				}
-				if (mIsConnecting) {
-					reportConnectFailed(null);
-					return;
-				}
-				break;
-			case PROCESSING_REQUEST:
-				break;
-			case SEARCHING:
-				break;
-			case TRACKING:
-				break;
-			case UNRECOGNIZED:
-				break;
-			}
-		}
-		
-	};
+            antDevice = arg0;
+            switch (arg1) {
+                case ALREADY_SUBSCRIBED:
+                case CHANNEL_NOT_AVAILABLE:
+                case DEPENDENCY_NOT_INSTALLED:
+                case DEVICE_ALREADY_IN_USE:
+                case OTHER_FAILURE:
+                case SEARCH_TIMEOUT:
+                case UNRECOGNIZED:
+                case USER_CANCELLED:
+                    reportConnectFailed(arg1);
+                    return;
+                case SUCCESS:
+                    break;
+            }
 
-	private void reportConnectFailed(RequestAccessResult arg1) {
-		disconnectImpl();
-		if (hrClientHandler != null) {
-			hrClientHandler.post(new Runnable(){
+            switch (arg2) {
+                case CLOSED:
+                    break;
+                case DEAD:
+                    break;
+                case PROCESSING_REQUEST:
+                    break;
+                case SEARCHING:
+                    break;
+                case TRACKING:
+                    break;
+                case UNRECOGNIZED:
+                    break;
+                default:
+                    break;
+            }
 
-				@Override
-				public void run() {
-					if (hrClient != null) {
-						hrClient.onConnectResult(false);
-					}
-				}});
-		}
-	}
+            antDevice.subscribeHeartRateDataEvent(heartRateDataReceiver);
+        }
+    };
 
-	
-	protected void reportConnected(final boolean b) {
-		hrClientHandler.post(new Runnable() {
-			@Override
-			public void run() {
-				if (mIsConnecting) {
-					mIsConnected = b;
-					mIsConnecting = false;
-					hrClient.onConnectResult(b);
-				}
-			}
-		});
-	}
+    IHeartRateDataReceiver heartRateDataReceiver = new IHeartRateDataReceiver() {
 
-	@Override
-	public void disconnect() {
-		disconnectImpl();
-		if (hrClientHandler != null) {
-			hrClientHandler.post(new Runnable(){
+        @Override
+        public void onNewHeartRateData(long arg0, EnumSet<EventFlag> arg1,
+                int arg2, long arg3) {
 
-				@Override
-				public void run() {
-					if (hrClient != null) {
-						hrClient.onDisconnectResult(true);
-					}
-				}});
-		}
-	}
+            hrValue = arg2;
+            hrTimestamp = System.currentTimeMillis();
+            if (mIsConnecting) {
+                reportConnected(true);
+            }
+        }
 
-	private void disconnectImpl() {
-		stopScan();
-		if (antDevice != null) {
-			antDevice.releaseAccess();
-			antDevice = null;
-		}
-		mIsConnecting = false;
-		mIsConnected = false;
-	}
-	
-	@Override
-	public int getHRValue() {
-		return hrValue;
-	}
+    };
 
-	@Override
-	public long getHRValueTimestamp() {
-		return hrTimestamp;
-	}
+    IDeviceStateChangeReceiver stateReceiver = new IDeviceStateChangeReceiver() {
 
-	/** it seems ANT+ requires Bluetooth too */
-	
-	@Override
-	public boolean isEnabled() {
-		return Bt20Base.isEnabledImpl();
-	}
+        @Override
+        public void onDeviceStateChange(DeviceState arg0) {
+            System.err.println("onDeviceStateChange(" + arg0 + ")");
+            switch (arg0) {
+                case CLOSED:
+                    break;
+                case DEAD:
+                    if (mIsConnected) {
+                        /** silent reconnect */
+                        antDevice = null;
+                        AntPlusHeartRatePcc.requestAccess(ctx,
+                                Integer.parseInt(connectRef.deviceAddress), 0,
+                                resultReceiver, stateReceiver);
+                        return;
+                    }
+                    if (mIsConnecting) {
+                        reportConnectFailed(null);
+                        return;
+                    }
+                    break;
+                case PROCESSING_REQUEST:
+                    break;
+                case SEARCHING:
+                    break;
+                case TRACKING:
+                    break;
+                case UNRECOGNIZED:
+                    break;
+            }
+        }
 
-	@Override
-	public boolean startEnableIntent(Activity activity, int requestCode) {
-		return Bt20Base.startEnableIntentImpl(activity, requestCode);
-	}
+    };
+
+    private void reportConnectFailed(RequestAccessResult arg1) {
+        disconnectImpl();
+        if (hrClientHandler != null) {
+            hrClientHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (hrClient != null) {
+                        hrClient.onConnectResult(false);
+                    }
+                }
+            });
+        }
+    }
+
+    protected void reportConnected(final boolean b) {
+        hrClientHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mIsConnecting) {
+                    mIsConnected = b;
+                    mIsConnecting = false;
+                    hrClient.onConnectResult(b);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void disconnect() {
+        disconnectImpl();
+        if (hrClientHandler != null) {
+            hrClientHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (hrClient != null) {
+                        hrClient.onDisconnectResult(true);
+                    }
+                }
+            });
+        }
+    }
+
+    private void disconnectImpl() {
+        stopScan();
+        if (antDevice != null) {
+            antDevice.releaseAccess();
+            antDevice = null;
+        }
+        mIsConnecting = false;
+        mIsConnected = false;
+    }
+
+    @Override
+    public int getHRValue() {
+        return hrValue;
+    }
+
+    @Override
+    public long getHRValueTimestamp() {
+        return hrTimestamp;
+    }
+
+    /** it seems ANT+ requires Bluetooth too */
+
+    @Override
+    public boolean isEnabled() {
+        return Bt20Base.isEnabledImpl();
+    }
+
+    @Override
+    public boolean startEnableIntent(Activity activity, int requestCode) {
+        return Bt20Base.startEnableIntentImpl(activity, requestCode);
+    }
 }

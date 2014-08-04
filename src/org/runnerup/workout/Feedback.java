@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import java.util.HashMap;
@@ -22,29 +23,29 @@ import android.content.Context;
 
 public abstract class Feedback {
 
-	public void onInit(Workout s) {
-	}
+    public void onInit(Workout s) {
+    }
 
-	public void onBind(Workout s, HashMap<String,Object> bindValues) {
-	}
+    public void onBind(Workout s, HashMap<String, Object> bindValues) {
+    }
 
-	public void onStart(Workout s) {
-	}
-	
-	public void onEnd(Workout s) {
-	}
+    public void onStart(Workout s) {
+    }
 
-	/**
-	 * compare feedback to another feedback so that same information isn't
-	 * emitted twice (or more) during one tick i.e different triggers can have
-	 * same feedback
-	 * 
-	 * @param other
-	 */
-	public abstract boolean equals(Feedback other);
+    public void onEnd(Workout s) {
+    }
 
-	/**
-	 * Emit the feedback
-	 */
-	public abstract void emit(Workout s, Context ctx);
+    /**
+     * compare feedback to another feedback so that same information isn't
+     * emitted twice (or more) during one tick i.e different triggers can have
+     * same feedback
+     * 
+     * @param other
+     */
+    public abstract boolean equals(Feedback other);
+
+    /**
+     * Emit the feedback
+     */
+    public abstract void emit(Workout s, Context ctx);
 }

@@ -14,9 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 public abstract class TriggerSuppression {
 
-	public abstract boolean suppress(Trigger trigger, Workout w);
+    public abstract boolean suppress(Trigger trigger, Workout w);
 }

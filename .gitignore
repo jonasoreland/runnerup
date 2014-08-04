@@ -33,3 +33,4 @@ build/
 # Intellij files (Android Studio)
 *.iml
 
+lint.xml

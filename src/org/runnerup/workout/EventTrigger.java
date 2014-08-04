@@ -14,8 +14,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.runnerup.workout;
 
+package org.runnerup.workout;
 
 import android.os.Build;
 import android.annotation.TargetApi;
@@ -23,72 +23,73 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class EventTrigger extends Trigger {
 
-	Scope scope = Scope.STEP;
-	Event event = Event.STARTED;
-	int counter = 0;
-	int skipCounter = 0;
-	int maxCounter = Integer.MAX_VALUE;
-	
-	@Override
-	public void onInit(Workout s) {
-		counter = 0;
-	}
+    Scope scope = Scope.STEP;
+    Event event = Event.STARTED;
+    int counter = 0;
+    int skipCounter = 0;
+    int maxCounter = Integer.MAX_VALUE;
 
-	@Override
-	public boolean onTick(Workout w) {
-		return false;
-	}
+    @Override
+    public void onInit(Workout s) {
+        counter = 0;
+    }
 
-	@Override
-	public void fire(Workout s) {
-		if (counter >= skipCounter && (counter < maxCounter)) {
-			super.fire(s);
-		}
-		counter++;
-	}
+    @Override
+    public boolean onTick(Workout w) {
+        return false;
+    }
 
-	@Override
-	public void onRepeat(int current, int limit) {
-		counter = 0;
-	}
+    @Override
+    public void fire(Workout s) {
+        if (counter >= skipCounter && (counter < maxCounter)) {
+            super.fire(s);
+        }
+        counter++;
+    }
 
-	@Override
-	public void onStart(Scope what, Workout s) {
-		if (this.scope == what && this.event == Event.STARTED) {
-			fire(s);
-		}
-	}
+    @Override
+    public void onRepeat(int current, int limit) {
+        counter = 0;
+    }
 
-	@Override
-	public void onPause(Workout s) {
-		if (this.event == Event.PAUSED) {
-			fire(s);
-		}
-	}
+    @Override
+    public void onStart(Scope what, Workout s) {
+        if (this.scope == what && this.event == Event.STARTED) {
+            fire(s);
+        }
+    }
 
-	@Override
-	public void onStop(Workout s) {
-		if (this.event == Event.STOPPED) {
-			fire(s);
-		}
-	}
+    @Override
+    public void onPause(Workout s) {
+        if (this.event == Event.PAUSED) {
+            fire(s);
+        }
+    }
 
-	@Override
-	public void onResume(Workout s) {
-		if (this.event == Event.RESUMED) {
-			fire(s);
-		}
-	}
+    @Override
+    public void onStop(Workout s) {
+        if (this.event == Event.STOPPED) {
+            fire(s);
+        }
+    }
 
-	@Override
-	public void onComplete(Scope what, Workout s) {
-		if (this.scope == what && this.event == Event.COMPLETED) {
-			fire(s);
-		}
-	}
+    @Override
+    public void onResume(Workout s) {
+        if (this.event == Event.RESUMED) {
+            fire(s);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "[ EventTrigger: " + this.scope + " " + this.event + " skipCounter: " + skipCounter + " ]";
-	}
+    @Override
+    public void onComplete(Scope what, Workout s) {
+        if (this.scope == what && this.event == Event.COMPLETED) {
+            fire(s);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "[ EventTrigger: " + this.scope + " " + this.event + " skipCounter: " + skipCounter
+                + " ]";
+    }
 }

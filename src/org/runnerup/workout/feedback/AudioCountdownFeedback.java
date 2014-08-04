@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
@@ -33,47 +34,47 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCountdownFeedback extends Feedback {
 
-	boolean emitScope = false;
-	Scope scope = Scope.STEP;
-	Dimension dimension = Dimension.TIME;
-	RUTextToSpeech textToSpeech;
-	Formatter formatter;
-	
-	public AudioCountdownFeedback(Scope s, Dimension d) {
-		this.scope = s;
-		this.dimension = d;
-	}
-	
-	@Override
-	public void onBind(Workout s, HashMap<String, Object> bindValues) {
-		super.onBind(s, bindValues);
-		textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
-		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
-	}
-	
-	@Override
-	public boolean equals(Feedback _other) {
-		if (!(_other instanceof AudioCountdownFeedback))
-			return false;
+    boolean emitScope = false;
+    Scope scope = Scope.STEP;
+    Dimension dimension = Dimension.TIME;
+    RUTextToSpeech textToSpeech;
+    Formatter formatter;
 
-		AudioCountdownFeedback other = (AudioCountdownFeedback) _other;
+    public AudioCountdownFeedback(Scope s, Dimension d) {
+        this.scope = s;
+        this.dimension = d;
+    }
 
-		if (scope != other.scope)
-			return false;
-		
-		if (dimension != other.dimension)
-			return false;
-		
-		return true;
-	}
+    @Override
+    public void onBind(Workout s, HashMap<String, Object> bindValues) {
+        super.onBind(s, bindValues);
+        textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
+        formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
+    }
 
-	@Override
-	public void emit(Workout w, Context ctx) {
-		double remaining = w.getRemaining(scope, dimension); // SI
-		
-		if (remaining > 0) {
-			String msg = formatter.formatRemaining(Formatter.CUE_SHORT, dimension, remaining);
-			textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
-		}
-	}
+    @Override
+    public boolean equals(Feedback _other) {
+        if (!(_other instanceof AudioCountdownFeedback))
+            return false;
+
+        AudioCountdownFeedback other = (AudioCountdownFeedback) _other;
+
+        if (scope != other.scope)
+            return false;
+
+        if (dimension != other.dimension)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public void emit(Workout w, Context ctx) {
+        double remaining = w.getRemaining(scope, dimension); // SI
+
+        if (remaining > 0) {
+            String msg = formatter.formatRemaining(Formatter.CUE_SHORT, dimension, remaining);
+            textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
+        }
+    }
 }

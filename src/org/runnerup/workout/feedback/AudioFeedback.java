@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
@@ -36,79 +37,80 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioFeedback extends Feedback {
 
-	Event event = Event.STARTED;
-	Scope scope = Scope.WORKOUT;
-	Dimension dimension = Dimension.DISTANCE;
-	Intensity intensity = null;
-	RUTextToSpeech textToSpeech;
-	Formatter formatter;
-	
-	public AudioFeedback(Scope scope, Event event) {
-		super();
-		this.scope = scope;
-		this.event = event;
-		this.dimension = null;
-	}
+    Event event = Event.STARTED;
+    Scope scope = Scope.WORKOUT;
+    Dimension dimension = Dimension.DISTANCE;
+    Intensity intensity = null;
+    RUTextToSpeech textToSpeech;
+    Formatter formatter;
 
-	public AudioFeedback(Scope scope, Dimension dimension) {
-		super();
-		this.scope = scope;
-		this.event = null;
-		this.dimension = dimension;
-	}
+    public AudioFeedback(Scope scope, Event event) {
+        super();
+        this.scope = scope;
+        this.event = event;
+        this.dimension = null;
+    }
 
-	public AudioFeedback(Intensity intensity, Event event) {
-		super();
-		this.scope = null;
-		this.dimension = null;
-		this.intensity = intensity;
-		this.event = event;
-	}
+    public AudioFeedback(Scope scope, Dimension dimension) {
+        super();
+        this.scope = scope;
+        this.event = null;
+        this.dimension = dimension;
+    }
 
-	@Override
-	public void onBind(Workout s, HashMap<String, Object> bindValues) {
-		super.onBind(s, bindValues);
-		textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
-		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
-	}
-	
-	@Override
-	public boolean equals(Feedback _other) {
-		if (!(_other instanceof AudioFeedback))
-			return false;
+    public AudioFeedback(Intensity intensity, Event event) {
+        super();
+        this.scope = null;
+        this.dimension = null;
+        this.intensity = intensity;
+        this.event = event;
+    }
 
-		AudioFeedback other = (AudioFeedback) _other;
-		if (this.scope != other.scope)
-			return false;
+    @Override
+    public void onBind(Workout s, HashMap<String, Object> bindValues) {
+        super.onBind(s, bindValues);
+        textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
+        formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
+    }
 
-		if (this.event != other.event)
-			return false;
+    @Override
+    public boolean equals(Feedback _other) {
+        if (!(_other instanceof AudioFeedback))
+            return false;
 
-		if (this.dimension != other.dimension)
-			return false;
+        AudioFeedback other = (AudioFeedback) _other;
+        if (this.scope != other.scope)
+            return false;
 
-		return true;
-	}
+        if (this.event != other.event)
+            return false;
 
-	protected String getCue(Workout w, Context ctx) {
-		String msg = null;
-		Resources res = ctx.getResources();
-		if (event != null && scope != null) {
-			msg = res.getString(scope.getCueId()) + " " + res.getString(event.getCueId());
-		} else if (event != null && intensity != null) {
-			msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());
-		} else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
-			double val = w.get(scope, dimension); // SI
-			msg = res.getString(scope.getCueId()) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
-		}
-		return msg;
-	}
-	
-	@Override
-	public void emit(Workout w, Context ctx) {
-		String msg = getCue(w, ctx);
-		if (msg != null) {
-			textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
-		}
-	}
+        if (this.dimension != other.dimension)
+            return false;
+
+        return true;
+    }
+
+    protected String getCue(Workout w, Context ctx) {
+        String msg = null;
+        Resources res = ctx.getResources();
+        if (event != null && scope != null) {
+            msg = res.getString(scope.getCueId()) + " " + res.getString(event.getCueId());
+        } else if (event != null && intensity != null) {
+            msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());
+        } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
+            double val = w.get(scope, dimension); // SI
+            msg = res.getString(scope.getCueId()) + " "
+                    + formatter.format(Formatter.CUE_LONG, dimension, val);
+        }
+        return msg;
+    }
+
+    @Override
+    public void emit(Workout w, Context ctx) {
+        String msg = getCue(w, ctx);
+        if (msg != null) {
+            textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
+        }
+    }
 }

@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.widget;
 
 import org.runnerup.R;
@@ -32,39 +33,39 @@ import android.widget.TextView;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class WidgetUtil {
 
-	public static void setEditable(EditText editText, boolean onoff) {
-		if (onoff == true) {
-			editText.setClickable(onoff);
-			editText.setFocusable(onoff);
-			editText.setFocusableInTouchMode(onoff);
-		} else {
-			editText.setClickable(onoff);
-			editText.setFocusable(onoff);
-		}
-	}
+    public static void setEditable(EditText editText, boolean onoff) {
+        if (onoff == true) {
+            editText.setClickable(onoff);
+            editText.setFocusable(onoff);
+            editText.setFocusableInTouchMode(onoff);
+        } else {
+            editText.setClickable(onoff);
+            editText.setFocusable(onoff);
+        }
+    }
 
-	public static View createHoloTabIndicator(Context ctx, String title) {
+    public static View createHoloTabIndicator(Context ctx, String title) {
         Resources res = ctx.getResources(); // Resource object to get Drawables
         TextView txtTab = new TextView(ctx);
         txtTab.setText(title);
         txtTab.setTextColor(Color.WHITE);
         txtTab.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_HORIZONTAL);
         Drawable drawable = res.getDrawable(R.drawable.tab_indicator_holo);
-        WidgetUtil.setBackground(txtTab,  drawable); // R.drawable.tab_indicator_holo);
+        WidgetUtil.setBackground(txtTab, drawable); // R.drawable.tab_indicator_holo);
 
         int h = (25 * drawable.getIntrinsicHeight()) / 10;
         txtTab.setPadding(0, h, 0, h);
-//        txtTab.setHeight(1 + 10 * drawable.getIntrinsicHeight());
-//        txtTab.setLineSpacing(1 + 5 * drawable.getIntrinsicHeight(), 1);
+        // txtTab.setHeight(1 + 10 * drawable.getIntrinsicHeight());
+        // txtTab.setLineSpacing(1 + 5 * drawable.getIntrinsicHeight(), 1);
         return txtTab;
     }
-	
-	@SuppressWarnings("deprecation")
-	public static void setBackground(View v, Drawable d) {
-		if (Build.VERSION.SDK_INT < 16) {
-			v.setBackgroundDrawable(d);
-		} else {
-			v.setBackground(d);
-		}
-	}
+
+    @SuppressWarnings("deprecation")
+    public static void setBackground(View v, Drawable d) {
+        if (Build.VERSION.SDK_INT < 16) {
+            v.setBackgroundDrawable(d);
+        } else {
+            v.setBackground(d);
+        }
+    }
 }

@@ -14,8 +14,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 public interface TickComponent extends WorkoutComponent {
-	public boolean onTick(Workout w);
+    public boolean onTick(Workout w);
 }

@@ -16,41 +16,41 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tabAdvanced"
+    android:id="@+id/tab_advanced"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/advancedAudioCueSpinner"
+        android:id="@+id/advanced_audio_cue_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:key="advancedAudio"
-        android:text="Audio cue settings"
+        android:key="@string/pref_advanced_audio"
+        android:text="@string/advanced_audio_cue_spinner"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/advancedWorkoutSpinner"
+        android:id="@+id/advanced_workout_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/advancedAudioCueSpinner"
-        android:key="advancedWorkout"
-        android:text="Workout"
+        android:layout_below="@+id/advanced_audio_cue_spinner"
+        android:key="@string/pref_advanced_workout"
+        android:text="@string/advanced_workout_spinner"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
     <ListView
-        android:id="@+id/advancedStepList"
+        android:id="@+id/advanced_step_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/advancedDownloadButton"
-        android:layout_below="@+id/advancedWorkoutSpinner"
+        android:layout_above="@+id/advanced_download_button"
+        android:layout_below="@+id/advanced_workout_spinner"
         android:background="@android:color/darker_gray"
         android:cacheColorHint="@android:color/darker_gray"
         android:fadeScrollbars="false"
@@ -58,12 +58,12 @@
         android:scrollbarAlwaysDrawVerticalTrack="true" />
     
     <Button
-        android:id="@+id/advancedDownloadButton"
+        android:id="@+id/advanced_download_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_blue"
 		android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Download workouts" />
+        android:text="@string/advanced_download_button_btn" />
 
 </RelativeLayout>

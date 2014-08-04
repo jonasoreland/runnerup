@@ -57,8 +57,27 @@
     <string name="cueinfo_target_coaching">cueinfo_target_coaching</string>
     <string name="cueinfo_skip_startstop">cueinfo_skip_startstop</string>
 
-	<string name="target_pace_moving_average_seconds">target_pace_moving_average_seconds</string>
-	<string name="target_pace_grace_seconds">target_pace_grace_seconds</string>
+    <string name="pref_basic_audio">basicAudio</string>
+    <string name="pref_basic_sport">basicSport</string>
+    <string name="pref_basic_target_type">basicTargetType</string>
+    <string name="pref_basic_target_pace_max">basic_target_pace_max</string>
+    <string name="pref_basic_target_pace_min_range">basic_target_pace_min_range</string>
+    <string name="pref_basic_target_hrz">basic_target_hrz</string>
+    
+    <string name="pref_interval_audio">intervalAudio</string>
+    <string name="pref_interval_repetitions">intervalRepetitions</string>
+    <string name="pref_interval_type">intervalType</string>
+    <string name="pref_interval_time">intervalTime</string>
+    <string name="pref_interval_distance">intervalDistance</string>
+    <string name="pref_interval_rest_type">intervalRestType</string>
+    <string name="pref_interval_rest_time">intervalRestTime</string>
+    <string name="pref_interval_rest_distance">intervalRestDistance</string>
+    
+    <string name="pref_advanced_audio">advancedAudio</string>
+    <string name="pref_advanced_workout">advancedWorkout</string>
+    
+    <string name="target_pace_moving_average_seconds">target_pace_moving_average_seconds</string>
+    <string name="target_pace_grace_seconds">target_pace_grace_seconds</string>
 
     <string name="pref_step_autolap_active">pref_step_autolap_active</string>
     <string name="pref_step_countdown_active">pref_step_countdown_active</string>
@@ -79,7 +98,11 @@
 
     <string name="pref_bt_experimental">pref_bt_experimental</string>
     <string name="pref_bt_mock">pref_bt_mock</string>
-        
+
+    <string name="pref_hrz_age">hrzAge</string>
+    <string name="pref_hrz_sex">hrzSex</string>
+    <string name="pref_hrz_mhr">hrzMHR</string>
+
     <string name="pref_hrz_values">pref_hrz_values</string>
     <string name="pref_hrz_thresholds">pref_hrz_thresholds</string>
 

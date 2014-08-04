@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout.feedback;
 
 import java.util.HashMap;
@@ -34,51 +35,51 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CountdownFeedback extends Feedback {
 
-	Scope scope = Scope.STEP;
-	Dimension dimension = Dimension.TIME;
-	TextView textView = null;
-	Formatter formatter;
+    Scope scope = Scope.STEP;
+    Dimension dimension = Dimension.TIME;
+    TextView textView = null;
+    Formatter formatter;
 
-	public CountdownFeedback(Scope s, Dimension d) {
-		this.scope = s;
-		this.dimension = d;
-	}
-	
-	@Override
-	public void onBind(Workout s, HashMap<String, Object> bindValues) {
-		super.onBind(s, bindValues);
-		textView = (TextView) bindValues.get(Workout.KEY_COUNTER_VIEW);
-		formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
-	}
-	
-	@Override
-	public void onStart(Workout s) {
-		textView.setVisibility(View.VISIBLE);
-	}
-	
-	@Override
-	public void onEnd(Workout s) {
-		textView.setVisibility(View.GONE);
-	}
+    public CountdownFeedback(Scope s, Dimension d) {
+        this.scope = s;
+        this.dimension = d;
+    }
 
-	@Override
-	public boolean equals(Feedback _other) {
-		if (!(_other instanceof CountdownFeedback))
-			return false;
+    @Override
+    public void onBind(Workout s, HashMap<String, Object> bindValues) {
+        super.onBind(s, bindValues);
+        textView = (TextView) bindValues.get(Workout.KEY_COUNTER_VIEW);
+        formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
+    }
 
-		return true;
-	}
+    @Override
+    public void onStart(Workout s) {
+        textView.setVisibility(View.VISIBLE);
+    }
 
-	@Override
-	public void emit(Workout w, Context ctx) {
-		double remaining = w.getRemaining(scope, dimension);
-		if (remaining > 0) {
-			textView.setVisibility(View.VISIBLE);
-			textView.setText(formatter.formatRemaining(Formatter.TXT_SHORT, dimension, remaining));
-		}
-		else {
-			textView.setVisibility(View.INVISIBLE);
-		}
-	}
+    @Override
+    public void onEnd(Workout s) {
+        textView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean equals(Feedback _other) {
+        if (!(_other instanceof CountdownFeedback))
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public void emit(Workout w, Context ctx) {
+        double remaining = w.getRemaining(scope, dimension);
+        if (remaining > 0) {
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(formatter.formatRemaining(Formatter.TXT_SHORT, dimension, remaining));
+        }
+        else {
+            textView.setVisibility(View.INVISIBLE);
+        }
+    }
 
 }

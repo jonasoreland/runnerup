@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import org.runnerup.R;
@@ -21,56 +22,56 @@ import org.runnerup.util.Constants.DB.INTENSITY;
 
 public enum Intensity {
 
-	/**
-	 * Running
-	 */
-	ACTIVE(INTENSITY.ACTIVE, R.string.txt_intensity_active),
-	
-	/**
+    /**
+     * Running
+     */
+    ACTIVE(INTENSITY.ACTIVE, R.string.txt_intensity_active),
+
+    /**
 	 *
 	 */
-	RESTING(INTENSITY.RESTING, R.string.txt_intensity_resting),
-	
-	/**
-	 * Warm up
-	 */
-	WARMUP(INTENSITY.WARMUP, R.string.txt_intensity_warmup, R.string.cue_warmup),
-	
-	/**
-	 * Cool down
-	 */
-	COOLDOWN(INTENSITY.COOLDOWN, R.string.txt_intensity_cooldown, R.string.cue_cooldown),
+    RESTING(INTENSITY.RESTING, R.string.txt_intensity_resting),
 
-	/**
-	 * Loop (for workout construction/plans)
-	 */
-	REPEAT(INTENSITY.REPEAT, R.string.txt_intensity_repeat);
+    /**
+     * Warm up
+     */
+    WARMUP(INTENSITY.WARMUP, R.string.txt_intensity_warmup, R.string.cue_warmup),
 
-	int value;
-	int textId;
-	int cueId;
+    /**
+     * Cool down
+     */
+    COOLDOWN(INTENSITY.COOLDOWN, R.string.txt_intensity_cooldown, R.string.cue_cooldown),
 
-	Intensity(int val, int textId) {
-		this.value = val;
-		this.textId = textId;
-		this.cueId = textId;
-	}
+    /**
+     * Loop (for workout construction/plans)
+     */
+    REPEAT(INTENSITY.REPEAT, R.string.txt_intensity_repeat);
 
-	Intensity(int val, int textId, int cueId) {
-		this.value = val;
-		this.textId = textId;
-		this.cueId = cueId;
-	}
+    int value;
+    int textId;
+    int cueId;
 
-	public int getValue() {
-		return value;
-	}
+    Intensity(int val, int textId) {
+        this.value = val;
+        this.textId = textId;
+        this.cueId = textId;
+    }
 
-	public int getTextId() {
-		return textId;
-	}
+    Intensity(int val, int textId, int cueId) {
+        this.value = val;
+        this.textId = textId;
+        this.cueId = cueId;
+    }
 
-	public int getCueId() {
-		return cueId;
-	}
+    public int getValue() {
+        return value;
+    }
+
+    public int getTextId() {
+        return textId;
+    }
+
+    public int getCueId() {
+        return cueId;
+    }
 }

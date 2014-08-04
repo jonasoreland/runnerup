@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.hr;
 
 import android.annotation.TargetApi;
@@ -24,35 +25,47 @@ import android.os.Handler;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public interface HRProvider {
 
-	public interface HRClient {
-		public void onOpenResult(boolean ok);
-		public void onScanResult(HRDeviceRef device);
-		public void onConnectResult(boolean connectOK);
-		public void onDisconnectResult(boolean disconnectOK);
-		public void onCloseResult(boolean closeOK);
-	};
-	
-	public abstract String getName();         // For display
-	public abstract String getProviderName(); // For internal usage
-	
-	public abstract boolean isEnabled();
-	public abstract boolean startEnableIntent(Activity activity, int requestCode);
+    public interface HRClient {
+        public void onOpenResult(boolean ok);
 
-	public abstract void open(Handler handler, HRClient hrClient);
-	public abstract void close();
+        public void onScanResult(HRDeviceRef device);
 
-	public abstract boolean isBondingDevice();
-	
-	public abstract boolean isScanning();
-	public abstract boolean isConnected();
-	public abstract boolean isConnecting();
+        public void onConnectResult(boolean connectOK);
 
-	public abstract void startScan();
-	public abstract void stopScan();
+        public void onDisconnectResult(boolean disconnectOK);
 
-	public abstract void connect(HRDeviceRef ref);
-	public abstract void disconnect();
+        public void onCloseResult(boolean closeOK);
+    };
 
-	public abstract int getHRValue();
-	public abstract long getHRValueTimestamp();
+    public abstract String getName(); // For display
+
+    public abstract String getProviderName(); // For internal usage
+
+    public abstract boolean isEnabled();
+
+    public abstract boolean startEnableIntent(Activity activity, int requestCode);
+
+    public abstract void open(Handler handler, HRClient hrClient);
+
+    public abstract void close();
+
+    public abstract boolean isBondingDevice();
+
+    public abstract boolean isScanning();
+
+    public abstract boolean isConnected();
+
+    public abstract boolean isConnecting();
+
+    public abstract void startScan();
+
+    public abstract void stopScan();
+
+    public abstract void connect(HRDeviceRef ref);
+
+    public abstract void disconnect();
+
+    public abstract int getHRValue();
+
+    public abstract long getHRValueTimestamp();
 }

@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import java.util.ArrayList;
@@ -30,399 +31,393 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Step implements TickComponent {
 
-	String name = null;
+    String name = null;
 
-	/**
-	 * Intensity
-	 */
-	Intensity intensity = Intensity.ACTIVE;
+    /**
+     * Intensity
+     */
+    Intensity intensity = Intensity.ACTIVE;
 
-	/**
-	 * Duration
-	 */
-	Dimension durationType = null;
-	double durationValue = 0;
+    /**
+     * Duration
+     */
+    Dimension durationType = null;
+    double durationValue = 0;
 
-	/**
-	 * Target
-	 */
-	Dimension targetType = null;
-	Range targetValue = null;
+    /**
+     * Target
+     */
+    Dimension targetType = null;
+    Range targetValue = null;
 
-	/**
-	 * Autolap (m)
-	 */
-	double autolap = 0;
+    /**
+     * Autolap (m)
+     */
+    double autolap = 0;
 
-	/**
-	 * Triggers
-	 */
-	ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+    /**
+     * Triggers
+     */
+    ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @return the durationType
-	 */
-	public Dimension getDurationType() {
-		return durationType;
-	}
+    /**
+     * @return the durationType
+     */
+    public Dimension getDurationType() {
+        return durationType;
+    }
 
-	/**
-	 * @param durationType
-	 *            the durationType to set
-	 */
-	public void setDurationType(Dimension durationType) {
-		this.durationType = durationType;
-	}
+    /**
+     * @param durationType the durationType to set
+     */
+    public void setDurationType(Dimension durationType) {
+        this.durationType = durationType;
+    }
 
-	/**
-	 * @return the durationValue
-	 */
-	public double getDurationValue() {
-		return durationValue;
-	}
+    /**
+     * @return the durationValue
+     */
+    public double getDurationValue() {
+        return durationValue;
+    }
 
-	/**
-	 * @param durationValue
-	 *            the durationValue to set
-	 */
-	public void setDurationValue(double durationValue) {
-		this.durationValue = durationValue;
-	}
+    /**
+     * @param durationValue the durationValue to set
+     */
+    public void setDurationValue(double durationValue) {
+        this.durationValue = durationValue;
+    }
 
-	/**
-	 * @return the targetType
-	 */
-	public Dimension getTargetType() {
-		return targetType;
-	}
+    /**
+     * @return the targetType
+     */
+    public Dimension getTargetType() {
+        return targetType;
+    }
 
-	/**
-	 * @param targetType
-	 *            the targetType to set
-	 */
-	public void setTargetType(Dimension targetType) {
-		this.targetType = targetType;
-	}
+    /**
+     * @param targetType the targetType to set
+     */
+    public void setTargetType(Dimension targetType) {
+        this.targetType = targetType;
+    }
 
-	/**
-	 * @return the targetValue
-	 */
-	public Range getTargetValue() {
-		return targetValue;
-	}
+    /**
+     * @return the targetValue
+     */
+    public Range getTargetValue() {
+        return targetValue;
+    }
 
-	/**
-	 * @param targetValue
-	 *            the targetValue to set
-	 */
-	public void setTargetValue(double targetValue) {
-		this.targetValue = new Range(targetValue, targetValue);
-	}
+    /**
+     * @param targetValue the targetValue to set
+     */
+    public void setTargetValue(double targetValue) {
+        this.targetValue = new Range(targetValue, targetValue);
+    }
 
-	public void setTargetValue(double min, double max) {
-		this.targetValue = new Range(min, max);
-	}
+    public void setTargetValue(double min, double max) {
+        this.targetValue = new Range(min, max);
+    }
 
-	public Intensity getIntensity() {
-		return intensity;
-	}
+    public Intensity getIntensity() {
+        return intensity;
+    }
 
-	/**
-	 * @return the autolap
-	 */
-	public double getAutolap() {
-		return autolap;
-	}
+    /**
+     * @return the autolap
+     */
+    public double getAutolap() {
+        return autolap;
+    }
 
-	/**
-	 * @param val
-	 *            the autolap to set
-	 */
-	public void setAutolap(double val) {
-		this.autolap = val;
-	}
+    /**
+     * @param val the autolap to set
+     */
+    public void setAutolap(double val) {
+        this.autolap = val;
+    }
 
-	@Override
-	public void onInit(Workout s) {
-		for (Trigger t : triggers) {
-			t.onInit(s);
-		}
-	}
+    @Override
+    public void onInit(Workout s) {
+        for (Trigger t : triggers) {
+            t.onInit(s);
+        }
+    }
 
-	@Override
-	public void onBind(Workout s, HashMap<String, Object> bindValues) {
-		for (Trigger t : triggers) {
-			t.onBind(s, bindValues);
-		}
-	}
+    @Override
+    public void onBind(Workout s, HashMap<String, Object> bindValues) {
+        for (Trigger t : triggers) {
+            t.onBind(s, bindValues);
+        }
+    }
 
-	@Override
-	public void onEnd(Workout s) {
-		for (Trigger t : triggers) {
-			t.onEnd(s);
-		}
-	}
+    @Override
+    public void onEnd(Workout s) {
+        for (Trigger t : triggers) {
+            t.onEnd(s);
+        }
+    }
 
-	public void onRepeat(int current, int count) {
-		for (Trigger t : triggers) {
-			t.onRepeat(current, count);
-		}
-	}
+    public void onRepeat(int current, int count) {
+        for (Trigger t : triggers) {
+            t.onRepeat(current, count);
+        }
+    }
 
-	double stepStartTime = 0;
-	double stepStartDistance = 0;
-	double stepStartHeartbeats = 0;
-	double lapStartTime = 0;
-	double lapStartDistance = 0;
-	double lapStartHeartbeats = 0;
+    double stepStartTime = 0;
+    double stepStartDistance = 0;
+    double stepStartHeartbeats = 0;
+    double lapStartTime = 0;
+    double lapStartDistance = 0;
+    double lapStartHeartbeats = 0;
 
-	@Override
-	public void onStart(Scope what, Workout s) {
-		double time = s.getTime(Scope.WORKOUT);
-		double dist = s.getDistance(Scope.WORKOUT);
-		double beats = s.getHeartbeats(Scope.WORKOUT);
-		
-		if (what == Scope.STEP) {
-			stepStartTime = time;
-			stepStartDistance = dist;
-			stepStartHeartbeats = beats;
-			if (s.isPaused())
-				s.gpsTracker.stopOrPause();
-			else
-				s.gpsTracker.startOrResume();
-		} else if (what == Scope.LAP) {
-			lapStartTime = time;
-			lapStartDistance = dist;
-			lapStartHeartbeats = beats;
-			ContentValues tmp = new ContentValues();
-			tmp.put(DB.LAP.INTENSITY, intensity.getValue());
-			if (durationType != null) {
-				switch (durationType) {
-				case TIME:
-					tmp.put(DB.LAP.PLANNED_TIME, (long) durationValue);
-					break;
-				case DISTANCE:
-					tmp.put(DB.LAP.PLANNED_DISTANCE, (long) durationValue);
-					break;
-				case PACE:
-				case SPEED:
-				case HR:
-				case HRZ:
-					break;
-				}
-			}
-			if (targetType != null) {
-				switch (targetType) {
-				case PACE:
-					tmp.put(DB.LAP.PLANNED_PACE, targetValue.maxValue);
-					break;
-				case SPEED:
-					if (targetValue.maxValue != 0) {
-						tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue.maxValue);
-					}
-					break;
-				case DISTANCE:
-				case TIME:
-				case HR:
-				case HRZ:
-					break;
-				}
-			}
-			s.newLap(tmp);
-		}
+    @Override
+    public void onStart(Scope what, Workout s) {
+        double time = s.getTime(Scope.WORKOUT);
+        double dist = s.getDistance(Scope.WORKOUT);
+        double beats = s.getHeartbeats(Scope.WORKOUT);
 
-		for (Trigger t : triggers) {
-			t.onStart(what, s);
-		}
-	}
+        if (what == Scope.STEP) {
+            stepStartTime = time;
+            stepStartDistance = dist;
+            stepStartHeartbeats = beats;
+            if (s.isPaused())
+                s.gpsTracker.stopOrPause();
+            else
+                s.gpsTracker.startOrResume();
+        } else if (what == Scope.LAP) {
+            lapStartTime = time;
+            lapStartDistance = dist;
+            lapStartHeartbeats = beats;
+            ContentValues tmp = new ContentValues();
+            tmp.put(DB.LAP.INTENSITY, intensity.getValue());
+            if (durationType != null) {
+                switch (durationType) {
+                    case TIME:
+                        tmp.put(DB.LAP.PLANNED_TIME, (long) durationValue);
+                        break;
+                    case DISTANCE:
+                        tmp.put(DB.LAP.PLANNED_DISTANCE, (long) durationValue);
+                        break;
+                    case PACE:
+                    case SPEED:
+                    case HR:
+                    case HRZ:
+                        break;
+                }
+            }
+            if (targetType != null) {
+                switch (targetType) {
+                    case PACE:
+                        tmp.put(DB.LAP.PLANNED_PACE, targetValue.maxValue);
+                        break;
+                    case SPEED:
+                        if (targetValue.maxValue != 0) {
+                            tmp.put(DB.LAP.PLANNED_PACE, 1.0d / targetValue.maxValue);
+                        }
+                        break;
+                    case DISTANCE:
+                    case TIME:
+                    case HR:
+                    case HRZ:
+                        break;
+                }
+            }
+            s.newLap(tmp);
+        }
 
-	@Override
-	public void onStop(Workout s) {
-		for (Trigger t : triggers) {
-			t.onStop(s);
-		}
+        for (Trigger t : triggers) {
+            t.onStart(what, s);
+        }
+    }
 
-		s.gpsTracker.stopOrPause();
+    @Override
+    public void onStop(Workout s) {
+        for (Trigger t : triggers) {
+            t.onStop(s);
+        }
 
-		/**
-		 * Save current lap so that it shows in DetailActivity
-		 */
-		long distance = Math.round(s.getDistance(Scope.LAP));
-		long time = Math.round(s.getTime(Scope.LAP));
-		long hr = Math.round(s.getHeartRate(Scope.LAP));
-		if (distance > 0 || time > 0) {
-			ContentValues tmp = new ContentValues();
-			tmp.put(DB.LAP.DISTANCE, distance);
-			tmp.put(DB.LAP.TIME, time);
-			tmp.put(DB.LAP.AVG_HR, Math.round(hr));
-			s.saveLap(tmp, /** next lap */
-			false);
-		}
-	}
+        s.gpsTracker.stopOrPause();
 
-	@Override
-	public void onPause(Workout s) {
-		s.gpsTracker.stopOrPause();
-		for (Trigger t : triggers) {
-			t.onPause(s);
-		}
-	}
+        /**
+         * Save current lap so that it shows in DetailActivity
+         */
+        long distance = Math.round(s.getDistance(Scope.LAP));
+        long time = Math.round(s.getTime(Scope.LAP));
+        long hr = Math.round(s.getHeartRate(Scope.LAP));
+        if (distance > 0 || time > 0) {
+            ContentValues tmp = new ContentValues();
+            tmp.put(DB.LAP.DISTANCE, distance);
+            tmp.put(DB.LAP.TIME, time);
+            tmp.put(DB.LAP.AVG_HR, Math.round(hr));
+            s.saveLap(tmp, /** next lap */
+            false);
+        }
+    }
 
-	/**
-	 * 
-	 * @return true if finished
-	 */
-	public boolean onTick(Workout s) {
-		if (checkFinished(s)) {
-			return true;
-		}
+    @Override
+    public void onPause(Workout s) {
+        s.gpsTracker.stopOrPause();
+        for (Trigger t : triggers) {
+            t.onPause(s);
+        }
+    }
 
-		for (Trigger t : triggers) {
-			t.onTick(s);
-		}
+    /**
+     * @return true if finished
+     */
+    public boolean onTick(Workout s) {
+        if (checkFinished(s)) {
+            return true;
+        }
 
-		if (this.autolap > 0 && s.getDistance(Scope.LAP) >= this.autolap) {
-			s.onNewLap();
-		}
-		return false;
-	}
+        for (Trigger t : triggers) {
+            t.onTick(s);
+        }
 
-	public boolean onNextStep(Workout w) {
-		return true; // move to next step
-	}
-	
-	private boolean checkFinished(Workout s) {
-		if (durationType == null)
-			return false;
+        if (this.autolap > 0 && s.getDistance(Scope.LAP) >= this.autolap) {
+            s.onNewLap();
+        }
+        return false;
+    }
 
-		return s.get(Scope.STEP, durationType) >= this.durationValue;
-	}
+    public boolean onNextStep(Workout w) {
+        return true; // move to next step
+    }
 
-	@Override
-	public void onResume(Workout s) {
-		for (Trigger t : triggers) {
-			t.onResume(s);
-		}
-		s.gpsTracker.startOrResume();
-	}
+    private boolean checkFinished(Workout s) {
+        if (durationType == null)
+            return false;
 
-	@Override
-	public void onComplete(Scope scope, Workout s) {
-		if (scope == Scope.LAP) {
-			long distance = Math.round(s.getDistance(scope));
-			long time = Math.round(s.getTime(scope));
-			double hr = s.getHeartRate(scope);
-			if (distance > 0 || time > 0) {
-				ContentValues tmp = new ContentValues();
-				tmp.put(DB.LAP.DISTANCE, distance);
-				tmp.put(DB.LAP.TIME, time);
-				tmp.put(DB.LAP.AVG_HR, Math.round(hr));
-				s.saveLap(tmp, /** next lap */ true);
-			}
-		}
-		for (Trigger t : triggers) {
-			t.onComplete(scope, s);
-		}
+        return s.get(Scope.STEP, durationType) >= this.durationValue;
+    }
 
-		if (scope == Scope.STEP) {
-			for (Trigger t : triggers) {
-				t.onEnd(s);
-			}
-		}
-	}
+    @Override
+    public void onResume(Workout s) {
+        for (Trigger t : triggers) {
+            t.onResume(s);
+        }
+        s.gpsTracker.startOrResume();
+    }
 
-	public double getDistance(Workout w, Scope s) {
-		double d = w.getDistance(Scope.WORKOUT);
-		if (s == Scope.STEP) {
-			return d - stepStartDistance;
-		} else if (s == Scope.LAP) {
-			return d - lapStartDistance;
-		}
-		assert (false);
-		return 0;
-	}
+    @Override
+    public void onComplete(Scope scope, Workout s) {
+        if (scope == Scope.LAP) {
+            long distance = Math.round(s.getDistance(scope));
+            long time = Math.round(s.getTime(scope));
+            double hr = s.getHeartRate(scope);
+            if (distance > 0 || time > 0) {
+                ContentValues tmp = new ContentValues();
+                tmp.put(DB.LAP.DISTANCE, distance);
+                tmp.put(DB.LAP.TIME, time);
+                tmp.put(DB.LAP.AVG_HR, Math.round(hr));
+                s.saveLap(tmp, /** next lap */
+                true);
+            }
+        }
+        for (Trigger t : triggers) {
+            t.onComplete(scope, s);
+        }
 
-	public double getTime(Workout w, Scope s) {
-		double t = w.getTime(Scope.WORKOUT);
-		if (s == Scope.STEP) {
-			return t - stepStartTime;
-		} else if (s == Scope.LAP) {
-			return t - lapStartTime;
-		}
-		assert (false);
-		return 0;
-	}
+        if (scope == Scope.STEP) {
+            for (Trigger t : triggers) {
+                t.onEnd(s);
+            }
+        }
+    }
 
-	public double getSpeed(Workout w, Scope s) {
-		double t = getTime(w, s);
-		double d = getDistance(w, s);
-		if (t != 0) {
-			return d / t;
-		}
-		return 0;
-	}
+    public double getDistance(Workout w, Scope s) {
+        double d = w.getDistance(Scope.WORKOUT);
+        if (s == Scope.STEP) {
+            return d - stepStartDistance;
+        } else if (s == Scope.LAP) {
+            return d - lapStartDistance;
+        }
+        assert (false);
+        return 0;
+    }
 
-	public double getHeartbeats(Workout w, Scope s) {
-		double t = w.getHeartbeats(Scope.WORKOUT);
-		if (s == Scope.STEP) {
-			return t - stepStartHeartbeats;
-		} else if (s == Scope.LAP) {
-			return t - lapStartHeartbeats;
-		}
-		return 0;
-	}
-	
-	public double getDuration(Dimension dimension) {
-		if (durationType == dimension)
-			return durationValue;
-		return 0;
-	}
+    public double getTime(Workout w, Scope s) {
+        double t = w.getTime(Scope.WORKOUT);
+        if (s == Scope.STEP) {
+            return t - stepStartTime;
+        } else if (s == Scope.LAP) {
+            return t - lapStartTime;
+        }
+        assert (false);
+        return 0;
+    }
 
-	public static Step createPauseStep(Dimension dim, double duration) {
-		Step step = null;
-		if (dim == Dimension.TIME)
-			step = new PauseStep();
-		else
-			step = new Step();
-		
-		step.intensity = Intensity.RESTING;
-		step.durationType = dim;
-		step.durationValue = duration;
-		return step;
-	}
+    public double getSpeed(Workout w, Scope s) {
+        double t = getTime(w, s);
+        double d = getDistance(w, s);
+        if (t != 0) {
+            return d / t;
+        }
+        return 0;
+    }
 
-	public void getSteps(Step parent, int i, List<Workout.StepListEntry> list) {
-		list.add(new Workout.StepListEntry(this, i, parent));
-	}
+    public double getHeartbeats(Workout w, Scope s) {
+        double t = w.getHeartbeats(Scope.WORKOUT);
+        if (s == Scope.STEP) {
+            return t - stepStartHeartbeats;
+        } else if (s == Scope.LAP) {
+            return t - lapStartHeartbeats;
+        }
+        return 0;
+    }
 
-	public Step getCurrentStep() {
-		return this;
-	}
+    public double getDuration(Dimension dimension) {
+        if (durationType == dimension)
+            return durationValue;
+        return 0;
+    }
 
-	public int getRepeatCount() {
-		return 0;
-	}
+    public static Step createPauseStep(Dimension dim, double duration) {
+        Step step = null;
+        if (dim == Dimension.TIME)
+            step = new PauseStep();
+        else
+            step = new Step();
 
-	public int getCurrentRepeat() {
-		return 0;
-	}
+        step.intensity = Intensity.RESTING;
+        step.durationType = dim;
+        step.durationValue = duration;
+        return step;
+    }
 
-	public boolean isLastStep() {
-		return true;
-	}
+    public void getSteps(Step parent, int i, List<Workout.StepListEntry> list) {
+        list.add(new Workout.StepListEntry(this, i, parent));
+    }
+
+    public Step getCurrentStep() {
+        return this;
+    }
+
+    public int getRepeatCount() {
+        return 0;
+    }
+
+    public int getCurrentRepeat() {
+        return 0;
+    }
+
+    public boolean isLastStep() {
+        return true;
+    }
 };

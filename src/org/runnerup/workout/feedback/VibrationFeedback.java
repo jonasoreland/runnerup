@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout.feedback;
 
 import org.runnerup.workout.Feedback;
@@ -27,17 +28,17 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class VibrationFeedback extends Feedback {
 
-	@Override
-	public boolean equals(Feedback _other) {
-		if (!(_other instanceof VibrationFeedback))
-			return false;
+    @Override
+    public boolean equals(Feedback _other) {
+        if (!(_other instanceof VibrationFeedback))
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public void emit(Workout s, Context ctx) {
-		// TODO Auto-generated method stub
+    @Override
+    public void emit(Workout s, Context ctx) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 }

@@ -16,73 +16,82 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tabManual"
+    android:id="@+id/tab_manual"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manualDate"
+        android:id="@+id/manual_sport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:entries="@array/sportEntries"
+        android:prompt="@string/simple_type"
+        android:text="@string/basic_sport" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/manual_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/manual_sport"
         android:prompt="@string/simple_type"
         android:defaultValue="today"
-        android:text="Date"
+        android:text="@string/manual_date"
         runnerup:type="datepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manualTime"
+        android:id="@+id/manual_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manualDate"
+        android:layout_below="@+id/manual_date"
         android:prompt="@string/simple_type"
-        android:text="Time"
+        android:text="@string/manual_time"
         runnerup:type="timepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manualDuration"
+        android:id="@+id/manual_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manualTime"
+        android:layout_below="@+id/manual_time"
         android:prompt="@string/simple_type"
-        android:text="Duration (HH:MM:SS)"
+        android:text="@string/manual_duration"
         android:defaultValue="00:00:00"
         runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manualDistance"
+        android:id="@+id/manual_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manualDuration"
+        android:layout_below="@+id/manual_duration"
         android:prompt="@string/simple_type"
         android:inputType="numberDecimal"
-        android:text="Distance"
+        android:text="@string/manual_distance"
         runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manualPace"
+        android:id="@+id/manual_pace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manualDistance"
+        android:layout_below="@+id/manual_distance"
         android:prompt="@string/simple_type"
         android:inputType="numberDecimal"
-        android:text="Pace"
+        android:text="@string/manual_pace"
         runnerup:type="durationpicker" />
 
     <EditText
-        android:id="@+id/manualNotes"
+        android:id="@+id/manual_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manualPace"
+        android:layout_below="@+id/manual_pace"
         android:layout_alignParentBottom="true"
         android:ems="10"
         android:gravity="top|left"
@@ -91,3 +100,4 @@
         android:hint="Add workout notes" />
 
 </RelativeLayout>
+

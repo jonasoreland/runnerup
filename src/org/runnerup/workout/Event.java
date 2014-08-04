@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.workout;
 
 import org.runnerup.R;
@@ -23,34 +24,34 @@ import org.runnerup.R;
  */
 public enum Event {
 
-	STARTED(1,R.string.cue_started),
-	PAUSED(2, R.string.cue_paused),
-	STOPPED(3, R.string.cue_stopped),
-	RESUMED(4, R.string.cue_resumed),
-	COMPLETED(5, R.string.cue_completed);
+    STARTED(1, R.string.cue_started),
+    PAUSED(2, R.string.cue_paused),
+    STOPPED(3, R.string.cue_stopped),
+    RESUMED(4, R.string.cue_resumed),
+    COMPLETED(5, R.string.cue_completed);
 
-	int value = 0;
-	int cueId;
-	
-	private Event(int val, int cueId) {
-		this.value = val;
-		this.cueId = cueId;
-	}
+    int value = 0;
+    int cueId;
 
-	/**
-	 * @return the eventValue
-	 */
-	public int getValue() {
-		return value;
-	}
+    private Event(int val, int cueId) {
+        this.value = val;
+        this.cueId = cueId;
+    }
 
-	public boolean equal(Event what) {
-		if (what == null || what.value != this.value)
-			return false;
-		return true;
-	}
+    /**
+     * @return the eventValue
+     */
+    public int getValue() {
+        return value;
+    }
 
-	public int getCueId() {
-		return cueId;
-	}
+    public boolean equal(Event what) {
+        if (what == null || what.value != this.value)
+            return false;
+        return true;
+    }
+
+    public int getCueId() {
+        return cueId;
+    }
 }

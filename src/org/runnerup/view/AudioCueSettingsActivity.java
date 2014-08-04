@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.view;
 
 import java.io.File;
@@ -60,368 +61,375 @@ import android.widget.EditText;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCueSettingsActivity extends PreferenceActivity {
 
-	boolean started = false;
-	boolean delete = false;
-	String settingsName = null;
-	AudioSchemeListAdapter adapter = null; 
-	DBHelper mDBHelper = null;
-	SQLiteDatabase mDB = null;
-	MenuItem newSettings;
+    boolean started = false;
+    boolean delete = false;
+    String settingsName = null;
+    AudioSchemeListAdapter adapter = null;
+    DBHelper mDBHelper = null;
+    SQLiteDatabase mDB = null;
+    MenuItem newSettings;
 
-	public static final String DEFAULT = "Default";
-	public static final String SUFFIX = "_audio_cues";
-	static final String PREFS_DIR = "shared_prefs";
-	
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    public static final String DEFAULT = "Default";
+    public static final String SUFFIX = "_audio_cues";
+    static final String PREFS_DIR = "shared_prefs";
 
-		mDBHelper = new DBHelper(this);
-		mDB = mDBHelper.getWritableDatabase();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		Intent intent = getIntent();
-		settingsName = intent.getStringExtra("name");
-		if (settingsName != null) {
-	         PreferenceManager prefMgr = getPreferenceManager();
-	         prefMgr.setSharedPreferencesName(settingsName + SUFFIX);
-	         prefMgr.setSharedPreferencesMode(MODE_PRIVATE);
-		}
+        mDBHelper = new DBHelper(this);
+        mDB = mDBHelper.getWritableDatabase();
 
-		addPreferencesFromResource(R.layout.audio_cue_settings);
-		setContentView(R.layout.settings_wrapper);
+        Intent intent = getIntent();
+        settingsName = intent.getStringExtra("name");
+        if (settingsName != null) {
+            PreferenceManager prefMgr = getPreferenceManager();
+            prefMgr.setSharedPreferencesName(settingsName + SUFFIX);
+            prefMgr.setSharedPreferencesMode(MODE_PRIVATE);
+        }
 
-		{
-			Preference btn = (Preference)findPreference("test_cueinfo");
-			btn.setOnPreferenceClickListener(onTestCueinfoClick);
-		}
+        addPreferencesFromResource(R.layout.audio_cue_settings);
+        setContentView(R.layout.settings_wrapper);
 
-		{
-			Preference btn = (Preference)findPreference("cue_silence");
-			if (btn != null) {
-				btn.setOnPreferenceClickListener(this.onSilenceClick);
-			}
-		}
+        {
+            Preference btn = (Preference) findPreference("test_cueinfo");
+            btn.setOnPreferenceClickListener(onTestCueinfoClick);
+        }
 
-		HRZones hrZones = new HRZones(this);
-		boolean hasHR = SettingsActivity.hasHR(this);
-		boolean hasHRZones = hrZones.isConfigured();
+        {
+            Preference btn = (Preference) findPreference("cue_silence");
+            if (btn != null) {
+                btn.setOnPreferenceClickListener(this.onSilenceClick);
+            }
+        }
 
-		if (!hasHR || !hasHRZones) {
-			final int remove[] = {
-					R.string.cueinfo_total_hrz,
-					R.string.cueinfo_step_hrz,
-					R.string.cueinfo_lap_hrz
-			};
-			removePrefs(remove);
-		}
-		
-		if (!hasHR) {
-			final int remove[] = {
-					R.string.cueinfo_total_hr,
-					R.string.cueinfo_step_hr,
-					R.string.cueinfo_lap_hr
-			};
-			removePrefs(remove);
-		}
-		
-		{
-			Preference btn = (Preference)findPreference("tts_settings");
-			btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				@Override
-				public boolean onPreferenceClick(Preference preference) {
-					Intent intent = new Intent();
-					intent.setAction("com.android.settings.TTS_SETTINGS");
-					startActivity(intent);
-					return false;
-				}
-				
-			});
-		}
+        HRZones hrZones = new HRZones(this);
+        boolean hasHR = SettingsActivity.hasHR(this);
+        boolean hasHRZones = hrZones.isConfigured();
 
-		final boolean createNewItem = true;
-		adapter = new AudioSchemeListAdapter(mDB, (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE),
-				createNewItem);
-		adapter.reload();
-		
-		{
-			TitleSpinner spinner = (TitleSpinner) findViewById(R.id.settingsSpinner);
-			spinner.setVisibility(View.VISIBLE);
-			spinner.setAdapter(adapter);
+        if (!hasHR || !hasHRZones) {
+            final int remove[] = {
+                    R.string.cueinfo_total_hrz,
+                    R.string.cueinfo_step_hrz,
+                    R.string.cueinfo_lap_hrz
+            };
+            removePrefs(remove);
+        }
 
-			if (settingsName == null) {
-				spinner.setValue(0);
-			} else {
-				int idx = adapter.find(settingsName);
-				spinner.setValue(idx);
-			}
-			spinner.setOnSetValueListener(onSetValueListener);
-		}
-	}
+        if (!hasHR) {
+            final int remove[] = {
+                    R.string.cueinfo_total_hr,
+                    R.string.cueinfo_step_hr,
+                    R.string.cueinfo_lap_hr
+            };
+            removePrefs(remove);
+        }
 
-	private void removePrefs(int[] remove) {
-		Resources res = getResources();
-		PreferenceGroup group = (PreferenceGroup) findPreference("cueinfo");
-		if (group == null)
-			return;
-		for (int i = 0; i < remove.length; i++) {
-			String s = res.getString(remove[i]);
-			Preference pref = findPreference(s);
-			group.removePreference(pref);
-		}
-	}
+        {
+            Preference btn = (Preference) findPreference("tts_settings");
+            btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent();
+                    intent.setAction("com.android.settings.TTS_SETTINGS");
+                    startActivity(intent);
+                    return false;
+                }
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
+            });
+        }
 
-		if (delete) {
-			deleteAudioSchemeImpl(settingsName);
-		}
-		mDB.close();
-		mDBHelper.close();
-	}
+        final boolean createNewItem = true;
+        adapter = new AudioSchemeListAdapter(mDB,
+                (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE),
+                createNewItem);
+        adapter.reload();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		newSettings = menu.add("New settings");
-		MenuItem deleteMenuItem = menu.add("Delete settings");
-		if (settingsName == null)
-			deleteMenuItem.setEnabled(false);
-		return true;
-	}
+        {
+            TitleSpinner spinner = (TitleSpinner) findViewById(R.id.settings_spinner);
+            spinner.setVisibility(View.VISIBLE);
+            spinner.setAdapter(adapter);
 
-	@Override
+            if (settingsName == null) {
+                spinner.setValue(0);
+            } else {
+                int idx = adapter.find(settingsName);
+                spinner.setValue(idx);
+            }
+            spinner.setOnSetValueListener(onSetValueListener);
+        }
+    }
+
+    private void removePrefs(int[] remove) {
+        Resources res = getResources();
+        PreferenceGroup group = (PreferenceGroup) findPreference("cueinfo");
+        if (group == null)
+            return;
+        for (int i = 0; i < remove.length; i++) {
+            String s = res.getString(remove[i]);
+            Preference pref = findPreference(s);
+            group.removePreference(pref);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (delete) {
+            deleteAudioSchemeImpl(settingsName);
+        }
+        mDB.close();
+        mDBHelper.close();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        newSettings = menu.add("New settings");
+        MenuItem deleteMenuItem = menu.add("Delete settings");
+        if (settingsName == null)
+            deleteMenuItem.setEnabled(false);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-		if (item == newSettings) {
-			createNewAudioSchemeDialog();
-			return true;
-		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Are you sure?");
-		builder.setPositiveButton("Yes",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						deleteAudioScheme();
-					}
-				});
-		builder.setNegativeButton("No",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						// Do nothing but close the dialog
-						dialog.dismiss();
-					}
+        if (item == newSettings) {
+            createNewAudioSchemeDialog();
+            return true;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?");
+        builder.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        deleteAudioScheme();
+                    }
+                });
+        builder.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing but close the dialog
+                        dialog.dismiss();
+                    }
 
-				});
-		builder.show();
-		return true;
-	}
-	
-	
-	void createNewAudioScheme(String scheme) {
-		ContentValues tmp = new ContentValues();
-		tmp.put(DB.AUDIO_SCHEMES.NAME, scheme);
-		tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
-		mDB.insert(DB.AUDIO_SCHEMES.TABLE, null, tmp);
-	}
+                });
+        builder.show();
+        return true;
+    }
 
-	private void deleteAudioScheme() {
-		delete = true;
-		getPreferenceManager().getSharedPreferences().edit().clear().commit();
-		/**
-		 * Can only delete file in "next" activity...cause on destory on this, will save file...
-		 */
-		
-		switchTo(null);
-	}
+    void createNewAudioScheme(String scheme) {
+        ContentValues tmp = new ContentValues();
+        tmp.put(DB.AUDIO_SCHEMES.NAME, scheme);
+        tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
+        mDB.insert(DB.AUDIO_SCHEMES.TABLE, null, tmp);
+    }
 
-	private void deleteAudioSchemeImpl(String name) {
-		/**
-		 * Start by deleting file...then delete from table...so we don't get stray files
-		 */
-		File a = new File(getFilesDir().getAbsoluteFile() + "/../" + PREFS_DIR + "/" + name + SUFFIX + ".xml");
-		a.delete();
-		
-		String args[] = { name } ;
-		mDB.delete(DB.AUDIO_SCHEMES.TABLE, DB.AUDIO_SCHEMES.NAME + "= ?", args);
-	}
+    private void deleteAudioScheme() {
+        delete = true;
+        getPreferenceManager().getSharedPreferences().edit().clear().commit();
+        /**
+         * Can only delete file in "next" activity...cause on destory on this,
+         * will save file...
+         */
 
-	
-	void updateSortOrder(String name) {
+        switchTo(null);
+    }
+
+    private void deleteAudioSchemeImpl(String name) {
+        /**
+         * Start by deleting file...then delete from table...so we don't get
+         * stray files
+         */
+        File a = new File(getFilesDir().getAbsoluteFile() + "/../" + PREFS_DIR + "/" + name
+                + SUFFIX + ".xml");
+        a.delete();
+
+        String args[] = {
+            name
+        };
+        mDB.delete(DB.AUDIO_SCHEMES.TABLE, DB.AUDIO_SCHEMES.NAME + "= ?", args);
+    }
+
+    void updateSortOrder(String name) {
         mDB.execSQL("UPDATE " + DB.AUDIO_SCHEMES.TABLE + " set " + DB.AUDIO_SCHEMES.SORT_ORDER +
-        		" = (SELECT MAX(" + DB.AUDIO_SCHEMES.SORT_ORDER + ") + 1 FROM " + DB.AUDIO_SCHEMES.TABLE + ") " +
-        		" WHERE " + DB.AUDIO_SCHEMES.NAME + " = '" + name + "'");
-	}
-	
-	OnSetValueListener onSetValueListener = new OnSetValueListener() {
+                " = (SELECT MAX(" + DB.AUDIO_SCHEMES.SORT_ORDER + ") + 1 FROM "
+                + DB.AUDIO_SCHEMES.TABLE + ") " +
+                " WHERE " + DB.AUDIO_SCHEMES.NAME + " = '" + name + "'");
+    }
 
-		@Override
-		public String preSetValue(String newValue)
-				throws IllegalArgumentException {
-			return newValue;
-		}
+    OnSetValueListener onSetValueListener = new OnSetValueListener() {
 
-		@Override
-		public int preSetValue(int newValueId) throws IllegalArgumentException {
-			String newValue = (String) adapter.getItem(newValueId);
-			PreferenceManager prefMgr = getPreferenceManager();
-			if (newValue.contentEquals(DEFAULT)) {
-				prefMgr.getSharedPreferences().edit().commit();
-				switchTo(null);
-			} else if (newValue.contentEquals("New audio scheme")) {
-				createNewAudioSchemeDialog();
-			} else {
-				prefMgr.getSharedPreferences().edit().commit();
-		        updateSortOrder(newValue);
-				switchTo(newValue);
-			}
-			throw new IllegalArgumentException();
-		}
-		
-	};
+        @Override
+        public String preSetValue(String newValue)
+                throws IllegalArgumentException {
+            return newValue;
+        }
 
-	private void switchTo(String name) {
+        @Override
+        public int preSetValue(int newValueId) throws IllegalArgumentException {
+            String newValue = (String) adapter.getItem(newValueId);
+            PreferenceManager prefMgr = getPreferenceManager();
+            if (newValue.contentEquals(DEFAULT)) {
+                prefMgr.getSharedPreferences().edit().commit();
+                switchTo(null);
+            } else if (newValue.contentEquals("New audio scheme")) {
+                createNewAudioSchemeDialog();
+            } else {
+                prefMgr.getSharedPreferences().edit().commit();
+                updateSortOrder(newValue);
+                switchTo(newValue);
+            }
+            throw new IllegalArgumentException();
+        }
 
-		if (started == false) {
-			//TODO investigate "spurious" onItemSelected during start
-			started = true;
-			return;
-		}
+    };
 
-		if (name == null && settingsName == null) {
-			return;
-		}
-		
-		if (name != null && settingsName != null && name.contentEquals(settingsName)) {
-			return;
-		}
+    private void switchTo(String name) {
 
-		Intent i = new Intent(this, AudioCueSettingsActivity.class);
-		if (name != null) {
-			i.putExtra("name", name);
-		}
-		startActivity(i);
-		finish();
-	}
-	
-	private void createNewAudioSchemeDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Create new audio cue scheme");
-		// Get the layout inflater
-		final EditText editText = new EditText(this); 
-		builder.setView(editText);
-		builder.setPositiveButton("Create", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				String scheme = editText.getText().toString();
-				if (!scheme.contentEquals("")) {
-					createNewAudioScheme(scheme);
-					updateSortOrder(scheme);
-					switchTo(scheme);
-				}
-			}
-		});
-		builder.setNegativeButton("Cancel", new OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-			}
-		});
-		final AlertDialog dialog = builder.create();
-		dialog.show();
-	}
+        if (started == false) {
+            // TODO investigate "spurious" onItemSelected during start
+            started = true;
+            return;
+        }
 
-	OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
-		@Override
-		public boolean onPreferenceClick(Preference preference) {
-			Resources res = getResources();
-			int clearList[] = {
-					R.string.cueinfo_total_distance,
-					R.string.cueinfo_total_time,
-					R.string.cueinfo_total_speed,
-					R.string.cueinfo_total_pace,
-					R.string.cueinfo_lap_distance,
-					R.string.cueinfo_lap_time,
-					R.string.cueinfo_lap_speed,
-					R.string.cueinfo_lap_pace,
-					R.string.cueinfo_target_coaching
-			};
+        if (name == null && settingsName == null) {
+            return;
+        }
 
-			int setList[] = {
-					R.string.cueinfo_skip_startstop
-			};
-			
-			for (int s : clearList) {
-				Preference a = getPreferenceManager().findPreference(res.getString(s));
-				if (a != null) {
-					a.getEditor().putBoolean(res.getString(s), false);
-					a.getEditor().commit();
-				}
-			}
-			
-			for (int s : setList) {
-				Preference a = getPreferenceManager().findPreference(res.getString(s));
-				if (a != null) {
-					a.getEditor().putBoolean(res.getString(s), true);
-					a.getEditor().commit();
-				}
-			}
-			return false;
-		}
-		
-	};
+        if (name != null && settingsName != null && name.contentEquals(settingsName)) {
+            return;
+        }
 
-	OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
+        Intent i = new Intent(this, AudioCueSettingsActivity.class);
+        if (name != null) {
+            i.putExtra("name", name);
+        }
+        startActivity(i);
+        finish();
+    }
 
-		TextToSpeech tts = null;
-		ArrayList<Feedback> feedback = new ArrayList<Feedback>();
-		
-		private OnInitListener mTTSOnInitListener = new OnInitListener() {
+    private void createNewAudioSchemeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create new audio cue scheme");
+        // Get the layout inflater
+        final EditText editText = new EditText(this);
+        builder.setView(editText);
+        builder.setPositiveButton("Create", new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String scheme = editText.getText().toString();
+                if (!scheme.contentEquals("")) {
+                    createNewAudioScheme(scheme);
+                    updateSortOrder(scheme);
+                    switchTo(scheme);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
-			@Override
-			public void onInit(int arg0) {
-				SharedPreferences prefs = null;
-				if (settingsName == null || settingsName.contentEquals(DEFAULT))
-					prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-				else
-					prefs = getApplicationContext().getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
-				final String mute = prefs.getString(getResources().getString(R.string.pref_mute), "no");
+    OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            Resources res = getResources();
+            int clearList[] = {
+                    R.string.cueinfo_total_distance,
+                    R.string.cueinfo_total_time,
+                    R.string.cueinfo_total_speed,
+                    R.string.cueinfo_total_pace,
+                    R.string.cueinfo_lap_distance,
+                    R.string.cueinfo_lap_time,
+                    R.string.cueinfo_lap_speed,
+                    R.string.cueinfo_lap_pace,
+                    R.string.cueinfo_target_coaching
+            };
 
-				Workout w = Workout.fakeWorkoutForTestingAudioCue();
-				RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
-				HashMap<String, Object> bindValues = new HashMap<String, Object>();
-				bindValues.put(Workout.KEY_TTS, rutts);
-				bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
-				bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
-				w.onBind(w,  bindValues);
-				for (Feedback f : feedback) {
-					f.onInit(w);
-					f.onBind(w, bindValues);
-					f.emit(w,  AudioCueSettingsActivity.this.getApplicationContext());
-					rutts.emit();
-				}
-			}
-		};
+            int setList[] = {
+                    R.string.cueinfo_skip_startstop
+            };
 
-		@Override
-		public boolean onPreferenceClick(Preference arg0) {
-			Context ctx = getApplicationContext();
-			Resources res = getResources();
-			
-			feedback.clear();
-			SharedPreferences prefs = null;
-			if (settingsName == null || settingsName.contentEquals(DEFAULT))
-				prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-			else
-				prefs = ctx.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
+            for (int s : clearList) {
+                Preference a = getPreferenceManager().findPreference(res.getString(s));
+                if (a != null) {
+                    a.getEditor().putBoolean(res.getString(s), false);
+                    a.getEditor().commit();
+                }
+            }
 
-			WorkoutBuilder.addFeedbackFromPreferences(prefs, res, feedback);
-			
-			if (tts != null) {
-				mTTSOnInitListener.onInit(0);
-			} else {
-				tts = new TextToSpeech(ctx, mTTSOnInitListener);
-			}
-			
-			return false;
-		}
-	};
+            for (int s : setList) {
+                Preference a = getPreferenceManager().findPreference(res.getString(s));
+                if (a != null) {
+                    a.getEditor().putBoolean(res.getString(s), true);
+                    a.getEditor().commit();
+                }
+            }
+            return false;
+        }
+
+    };
+
+    OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
+
+        TextToSpeech tts = null;
+        ArrayList<Feedback> feedback = new ArrayList<Feedback>();
+
+        private OnInitListener mTTSOnInitListener = new OnInitListener() {
+
+            @Override
+            public void onInit(int arg0) {
+                SharedPreferences prefs = null;
+                if (settingsName == null || settingsName.contentEquals(DEFAULT))
+                    prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                else
+                    prefs = getApplicationContext().getSharedPreferences(settingsName + SUFFIX,
+                            Context.MODE_PRIVATE);
+                final String mute = prefs.getString(getResources().getString(R.string.pref_mute),
+                        "no");
+
+                Workout w = Workout.fakeWorkoutForTestingAudioCue();
+                RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
+                HashMap<String, Object> bindValues = new HashMap<String, Object>();
+                bindValues.put(Workout.KEY_TTS, rutts);
+                bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
+                bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
+                w.onBind(w, bindValues);
+                for (Feedback f : feedback) {
+                    f.onInit(w);
+                    f.onBind(w, bindValues);
+                    f.emit(w, AudioCueSettingsActivity.this.getApplicationContext());
+                    rutts.emit();
+                }
+            }
+        };
+
+        @Override
+        public boolean onPreferenceClick(Preference arg0) {
+            Context ctx = getApplicationContext();
+            Resources res = getResources();
+
+            feedback.clear();
+            SharedPreferences prefs = null;
+            if (settingsName == null || settingsName.contentEquals(DEFAULT))
+                prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            else
+                prefs = ctx.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
+
+            WorkoutBuilder.addFeedbackFromPreferences(prefs, res, feedback);
+
+            if (tts != null) {
+                mTTSOnInitListener.onInit(0);
+            } else {
+                tts = new TextToSpeech(ctx, mTTSOnInitListener);
+            }
+
+            return false;
+        }
+    };
 }

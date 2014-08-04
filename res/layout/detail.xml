@@ -17,43 +17,43 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab1Layout"
+    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/linearLayout0"
+        android:id="@+id/linear_layout0"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/totalTime"
+            android:id="@+id/total_time"
             style="@style/RunHeader"
             android:gravity="right"
-            android:text="Time" />
+            android:text="@string/total_time_txt" />
 
         <TextView
-            android:id="@+id/totalDistance"
+            android:id="@+id/total_distance"
             style="@style/RunHeader"
             android:gravity="right"
-            android:text="Distance" />
+            android:text="@string/total_distance_txt" />
 
         <TextView
-            android:id="@+id/totalPace"
+            android:id="@+id/total_pace"
             style="@style/RunHeader"
             android:layout_marginRight="3dp"
             android:gravity="right"
-            android:text="Pace" />
+            android:text="@string/total_pace_txt" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/total"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout0"
+        android:layout_below="@+id/linear_layout0"
         android:background="@drawable/countdown_background"
         android:orientation="vertical" >
 
@@ -64,32 +64,32 @@
             android:layout_marginLeft="10dp" >
 
             <TextView
-                android:id="@+id/TextView01"
+                android:id="@+id/text_view01"
                 style="@style/RunHeader"
-                android:text="Total" />
+                android:text="@string/activity_total_txt" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout3"
+            android:id="@+id/linear_layout3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
             <TextView
-                android:id="@+id/activityTime"
+                android:id="@+id/activity_time"
                 style="@style/RunInfo"
-                android:text="32:57" />
+                android:text="@string/placeholder_time_txt" />
 
             <TextView
-                android:id="@+id/activityDistance"
+                android:id="@+id/activity_distance"
                 style="@style/RunInfo"
-                android:text="8.34" />
+                android:text="@string/placeholder_distance_txt" />
 
             <TextView
-                android:id="@+id/activityPace"
+                android:id="@+id/activity_pace"
                 style="@style/RunInfo"
                 android:layout_marginRight="3dp"
-                android:text="4:34" />
+                android:text="@string/placeholder_pace_txt" />
         </LinearLayout>
     </LinearLayout>
 
@@ -117,12 +117,12 @@
                 android:layout_height="match_parent" >
 
                 <LinearLayout
-                    android:id="@+id/tabMain"
+                    android:id="@+id/tab_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
                     <EditText
-                        android:id="@+id/notesText"
+                        android:id="@+id/notes_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|left"
@@ -132,7 +132,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tabLap"
+                    android:id="@+id/tab_lap"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
@@ -145,12 +145,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tabUpload"
+                    android:id="@+id/tab_upload"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
                     <ListView
-                        android:id="@+id/reportList"
+                        android:id="@+id/report_list"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_weight="1" >
@@ -158,7 +158,7 @@
                 </LinearLayout>
 
 	                <LinearLayout
-	                    android:id="@+id/tabGraph"
+	                    android:id="@+id/tab_graph"
 	                    android:layout_width="match_parent"
 	                    android:layout_height="wrap_content"
 	                    android:weightSum="1"
@@ -166,7 +166,7 @@
 	                </LinearLayout>
 				
                 <LinearLayout
-                    android:id="@+id/tabMap"
+                    android:id="@+id/tab_map"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
@@ -188,31 +188,31 @@
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/resumeButton"
+            android:id="@+id/resume_button"
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/saveButton"
+            android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="Resume" />
+            android:text="@string/resume_button_btn" />
 
         <Button
-            android:id="@+id/saveButton"
+            android:id="@+id/save_button"
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/discardButton"
+            android:layout_above="@+id/discard_button"
             android:background="@drawable/btn_green"
-            android:text="Save activity" />
+            android:text="@string/save_button_btn" />
 
         <Button
-            android:id="@+id/discardButton"
+            android:id="@+id/discard_button"
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@drawable/btn_red"
-            android:text="Discard activity" />
+            android:text="@string/discard_button_btn" />
     </LinearLayout>
 
 </RelativeLayout>

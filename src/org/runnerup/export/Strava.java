@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.export;
 
 import java.io.BufferedReader;
@@ -40,204 +41,206 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Strava extends FormCrawler implements Uploader, OAuth2Server {
 
-	public static final String NAME = "Strava";
+    public static final String NAME = "Strava";
 
-	/**
-	 * @todo register OAuth2Server
-	 */
-	public static String CLIENT_ID = null;
-	public static String CLIENT_SECRET = null;
+    /**
+     * @todo register OAuth2Server
+     */
+    public static String CLIENT_ID = null;
+    public static String CLIENT_SECRET = null;
 
-	public static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
-	public static final String TOKEN_URL = "https://www.strava.com/oauth/token";
-	public static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
+    public static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
+    public static final String TOKEN_URL = "https://www.strava.com/oauth/token";
+    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
 
-	public static final String REST_URL = "https://www.strava.com/api/v3/uploads";
-	
-	private long id = 0;
-	private String access_token = null;
+    public static final String REST_URL = "https://www.strava.com/api/v3/uploads";
 
-	Strava(UploadManager uploadManager) {
-		if (CLIENT_ID == null || CLIENT_SECRET == null) {
-			try {
-				JSONObject tmp = new JSONObject(uploadManager.loadData(this));
-				CLIENT_ID = tmp.getString("CLIENT_ID");
-				CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
+    private long id = 0;
+    private String access_token = null;
 
-	@Override
-	public String getClientId() {
-		return CLIENT_ID;
-	}
+    Strava(UploadManager uploadManager) {
+        if (CLIENT_ID == null || CLIENT_SECRET == null) {
+            try {
+                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                CLIENT_ID = tmp.getString("CLIENT_ID");
+                CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
-	@Override
-	public String getRedirectUri() {
-		return REDIRECT_URI;
-	}
+    @Override
+    public String getClientId() {
+        return CLIENT_ID;
+    }
 
-	@Override
-	public String getClientSecret() {
-		return CLIENT_SECRET;
-	}
+    @Override
+    public String getRedirectUri() {
+        return REDIRECT_URI;
+    }
 
-	@Override
-	public String getAuthUrl() {
-		return AUTH_URL;
-	}
+    @Override
+    public String getClientSecret() {
+        return CLIENT_SECRET;
+    }
 
-	@Override
-	public String getAuthExtra() {
-		return "scope=write";
-	}
+    @Override
+    public String getAuthUrl() {
+        return AUTH_URL;
+    }
 
-	@Override
-	public String getTokenUrl() {
-		return TOKEN_URL;
-	}
+    @Override
+    public String getAuthExtra() {
+        return "scope=write";
+    }
 
-	@Override
-	public String getRevokeUrl() {
-		return null;
-	}
+    @Override
+    public String getTokenUrl() {
+        return TOKEN_URL;
+    }
 
-	@Override
-	public long getId() {
-		return id;
-	}
+    @Override
+    public String getRevokeUrl() {
+        return null;
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public long getId() {
+        return id;
+    }
 
-	@Override
-	public void init(ContentValues config) {
-		String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-		if (authConfig != null) {
-			try {
-				JSONObject tmp = new JSONObject(authConfig);
-				access_token = tmp.optString("access_token", null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		id = config.getAsLong("_id");
-	}
-	
-	@Override
-	public String getAuthConfig() {
-		JSONObject tmp = new JSONObject();
-		try {
-			tmp.put("access_token", access_token);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		
-		return tmp.toString();
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
-	}
-	
-	@Override
-	public Intent getAuthIntent(Activity activity) {
-		return OAuth2Activity.getIntent(activity, this);
-	}
-	
-	@Override
-	public Status getAuthResult(int resultCode, Intent data) {
-		if (resultCode == Activity.RESULT_OK) {
-			String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
-			try {
-				access_token = new JSONObject(authConfig).getString("access_token");
-				return Status.OK;
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-		return Status.ERROR;
-	}
-	
-	@Override
-	public boolean isConfigured() {
-		if (access_token == null)
-			return false;
-		return true;
-	}
+    @Override
+    public void init(ContentValues config) {
+        String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        if (authConfig != null) {
+            try {
+                JSONObject tmp = new JSONObject(authConfig);
+                access_token = tmp.optString("access_token", null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        id = config.getAsLong("_id");
+    }
 
-	@Override
-	public void reset() {
-		access_token = null;
-	}
+    @Override
+    public String getAuthConfig() {
+        JSONObject tmp = new JSONObject();
+        try {
+            tmp.put("access_token", access_token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-	@Override
-	public Status connect() {
-		Status s = Status.NEED_AUTH;
-		s.authMethod = AuthMethod.OAUTH2;
-		if (access_token == null)
-			return s;
+        return tmp.toString();
 
-		return Uploader.Status.OK;
-	}
+    }
 
-	@Override
-	public Uploader.Status upload(SQLiteDatabase db, final long mID) {
-		Status s;
-		if ((s = connect()) != Status.OK) {
-			return s;
-		}
-		
-		String URL = REST_URL;
-		TCX tcx = new TCX(db);
-		HttpURLConnection conn = null;
-		Exception ex = null;
-		try {
-			StringWriter writer = new StringWriter();
-			tcx.export(mID, writer);
-			conn = (HttpURLConnection) new URL(URL).openConnection();
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			
-			Part<StringWritable> part0 = new Part<StringWritable>("access_token",
-					new StringWritable(access_token));
-			Part<StringWritable> part1 = new Part<StringWritable>("data_type",
-					new StringWritable("tcx"));
-			Part<StringWritable> part2 = new Part<StringWritable>("file",
-					new StringWritable(writer.toString()));
-			part2.filename = "RunnerUp.tcx";
-			part2.contentType = "application/octet-stream";
-			Part<?> parts[] = { part0, part1, part2 };
-			postMulti(conn, parts);
-			
-			int responseCode = conn.getResponseCode();
-			String amsg = conn.getResponseMessage();
-			System.err.println("code: " + responseCode + ", amsg: " + amsg);
+    @Override
+    public Intent getAuthIntent(Activity activity) {
+        return OAuth2Activity.getIntent(activity, this);
+    }
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			JSONObject obj = parse(in);
-			
-			if (responseCode == 201 && obj.getLong("id") > 0) {
-				conn.disconnect();
-				return Status.OK;
-			}
-			ex = new Exception(amsg);
-		} catch (IOException e) {
-			ex = e;
-		} catch (JSONException e) {
-			ex = e;
-		}
+    @Override
+    public Status getAuthResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
+            try {
+                access_token = new JSONObject(authConfig).getString("access_token");
+                return Status.OK;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return Status.ERROR;
+    }
 
-		s = Uploader.Status.ERROR;
-		s.ex = ex;
-		if (ex != null) {
-			ex.printStackTrace();
-		}
-		return s;
-	}
+    @Override
+    public boolean isConfigured() {
+        if (access_token == null)
+            return false;
+        return true;
+    }
 
-	@Override
-	public void logout() {
-	}
+    @Override
+    public void reset() {
+        access_token = null;
+    }
+
+    @Override
+    public Status connect() {
+        Status s = Status.NEED_AUTH;
+        s.authMethod = AuthMethod.OAUTH2;
+        if (access_token == null)
+            return s;
+
+        return Uploader.Status.OK;
+    }
+
+    @Override
+    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+        Status s;
+        if ((s = connect()) != Status.OK) {
+            return s;
+        }
+
+        String URL = REST_URL;
+        TCX tcx = new TCX(db);
+        HttpURLConnection conn = null;
+        Exception ex = null;
+        try {
+            StringWriter writer = new StringWriter();
+            tcx.export(mID, writer);
+            conn = (HttpURLConnection) new URL(URL).openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+
+            Part<StringWritable> part0 = new Part<StringWritable>("access_token",
+                    new StringWritable(access_token));
+            Part<StringWritable> part1 = new Part<StringWritable>("data_type",
+                    new StringWritable("tcx"));
+            Part<StringWritable> part2 = new Part<StringWritable>("file",
+                    new StringWritable(writer.toString()));
+            part2.filename = "RunnerUp.tcx";
+            part2.contentType = "application/octet-stream";
+            Part<?> parts[] = {
+                    part0, part1, part2
+            };
+            postMulti(conn, parts);
+
+            int responseCode = conn.getResponseCode();
+            String amsg = conn.getResponseMessage();
+            System.err.println("code: " + responseCode + ", amsg: " + amsg);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            JSONObject obj = parse(in);
+
+            if (responseCode == 201 && obj.getLong("id") > 0) {
+                conn.disconnect();
+                return Status.OK;
+            }
+            ex = new Exception(amsg);
+        } catch (IOException e) {
+            ex = e;
+        } catch (JSONException e) {
+            ex = e;
+        }
+
+        s = Uploader.Status.ERROR;
+        s.ex = ex;
+        if (ex != null) {
+            ex.printStackTrace();
+        }
+        return s;
+    }
+
+    @Override
+    public void logout() {
+    }
 };

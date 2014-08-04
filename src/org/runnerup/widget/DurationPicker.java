@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.runnerup.widget;
 
 import android.content.Context;
@@ -26,51 +27,52 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DurationPicker extends LinearLayout {
 
-	NumberPicker hours;
-	NumberPicker minutes;
-	NumberPicker seconds;
-	
-	public DurationPicker(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	
-		hours = new NumberPicker(context, attrs);
-		minutes = new NumberPicker(context, attrs);
-		seconds = new NumberPicker(context, attrs);
+    NumberPicker hours;
+    NumberPicker minutes;
+    NumberPicker seconds;
 
-		hours.setOrientation(VERTICAL);
-		minutes.setOrientation(VERTICAL);
-		seconds.setOrientation(VERTICAL);
-		
-		setOrientation(HORIZONTAL);
-		setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		addView(hours);
-		addView(minutes);
-		addView(seconds);
-	}
+    public DurationPicker(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
-	public long getEpochTime() {
-		long ret = 0;
-		ret += seconds.getValue();
-		ret += (long)minutes.getValue() * 60;
-		ret += (long)hours.getValue() * 60 * 60;
-		return ret;
-	}
+        hours = new NumberPicker(context, attrs);
+        minutes = new NumberPicker(context, attrs);
+        seconds = new NumberPicker(context, attrs);
 
-	public void setEpochTime(long s) {
-		long h = s / 3600;
-		s -= h * 3600;
-		long m = s / 60;
-		s -= m * 60;
-		hours.setValue((int)h);
-		minutes.setValue((int)m);
-		seconds.setValue((int)s);
-	}
+        hours.setOrientation(VERTICAL);
+        minutes.setOrientation(VERTICAL);
+        seconds.setOrientation(VERTICAL);
 
-	@Override
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		hours.setEnabled(enabled);
-		minutes.setEnabled(enabled);
-		seconds.setEnabled(enabled);
-	}
+        setOrientation(HORIZONTAL);
+        setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT));
+        addView(hours);
+        addView(minutes);
+        addView(seconds);
+    }
+
+    public long getEpochTime() {
+        long ret = 0;
+        ret += seconds.getValue();
+        ret += (long) minutes.getValue() * 60;
+        ret += (long) hours.getValue() * 60 * 60;
+        return ret;
+    }
+
+    public void setEpochTime(long s) {
+        long h = s / 3600;
+        s -= h * 3600;
+        long m = s / 60;
+        s -= m * 60;
+        hours.setValue((int) h);
+        minutes.setValue((int) m);
+        seconds.setValue((int) s);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        hours.setEnabled(enabled);
+        minutes.setEnabled(enabled);
+        seconds.setEnabled(enabled);
+    }
 }
