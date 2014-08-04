@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_advanced"
     android:layout_width="match_parent"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:key="advancedAudio"
+        android:key="@string/pref_advanced_audio"
         android:text="@string/advanced_audio_cue_spinner"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/advanced_audio_cue_spinner"
-        android:key="advancedWorkout"
+        android:key="@string/pref_advanced_workout"
         android:text="@string/advanced_workout_spinner"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>

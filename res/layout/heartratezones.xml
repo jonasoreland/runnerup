@@ -19,7 +19,7 @@
     android:id="@+id/linear1xx_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/org.runnerup">
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/hrz_age"
@@ -30,7 +30,7 @@
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="hrz_age" >
+        android:key="@string/pref_hrz_age" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
@@ -41,7 +41,7 @@
         android:prompt="@string/sex"
         android:text="@string/hrz_sex"
         app:type="spinner"
-        android:key="hrz_sex" >
+        android:key="@string/pref_hrz_sex" >
     </org.runnerup.widget.TitleSpinner>
     
     <org.runnerup.widget.TitleSpinner
@@ -53,7 +53,7 @@
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="hrz_mhr" >
+        android:key="@string/pref_hrz_mhr" >
     </org.runnerup.widget.TitleSpinner>
     
     <TableLayout

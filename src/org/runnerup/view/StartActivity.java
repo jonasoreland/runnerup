@@ -107,15 +107,12 @@ public class StartActivity extends Activity implements TickListener {
     TextView hrValueText = null;
     FrameLayout hrLayout = null;
 
-    TitleSpinner simpleType = null;
-    TitleSpinner simpleTime = null;
-    TitleSpinner simpleDistance = null;
     TitleSpinner simpleAudioSpinner = null;
     AudioSchemeListAdapter simpleAudioListAdapter = null;
     TitleSpinner simpleTargetType = null;
     TargetEntriesAdapter targetEntriesAdapter = null;
     TitleSpinner simpleTargetPaceValue = null;
-    TitleSpinner simpleTargetHrz;
+    TitleSpinner simpleTargetHrz = null;
     HRZonesListAdapter hrZonesAdapter = null;
 
     TitleSpinner intervalType = null;
@@ -203,13 +200,6 @@ public class StartActivity extends Activity implements TickListener {
         tabHost.setOnTabChangedListener(onTabChangeListener);
         tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
-        CheckBox goal = (CheckBox) findViewById(R.id.tab_basic_goal);
-        goal.setOnCheckedChangeListener(simpleGoalOnCheckClick);
-        simpleType = (TitleSpinner) findViewById(R.id.basic_type);
-        simpleTime = (TitleSpinner) findViewById(R.id.basic_time);
-        simpleDistance = (TitleSpinner) findViewById(R.id.basic_distance);
-        simpleType.setOnSetValueListener(simpleTypeSetValue);
-        simpleGoalOnCheckClick.onCheckedChanged(goal, goal.isChecked());
         simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         simpleAudioListAdapter.reload();
         simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
@@ -483,11 +473,13 @@ public class StartActivity extends Activity implements TickListener {
                     w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
                 }
                 else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
-                    audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "intervalAudio");
+                    audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
+                            getResources().getString(R.string.pref_interval_audio));
                     w = WorkoutBuilder.createDefaultIntervalWorkout(getResources(), pref);
                 }
                 else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
-                    audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "advancedAudio");
+                    audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
+                            getResources().getString(R.string.pref_advanced_audio));
                     w = advancedWorkout;
                 }
                 skipStopGps = true;
@@ -660,33 +652,6 @@ public class StartActivity extends Activity implements TickListener {
     public void onTick() {
         updateView();
     }
-
-    OnSetValueListener simpleTypeSetValue = new OnSetValueListener() {
-
-        @Override
-        public String preSetValue(String newValue)
-                throws IllegalArgumentException {
-            return newValue;
-        }
-
-        @Override
-        public int preSetValue(int newValue) throws IllegalArgumentException {
-            boolean time = (newValue == 0);
-            simpleTime.setVisibility(time ? View.VISIBLE : View.GONE);
-            simpleDistance.setVisibility(time ? View.GONE : View.VISIBLE);
-            return newValue;
-        }
-
-    };
-
-    OnCheckedChangeListener simpleGoalOnCheckClick = new OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            simpleType.setEnabled(isChecked);
-            simpleTime.setEnabled(isChecked);
-            simpleDistance.setEnabled(isChecked);
-        }
-    };
 
     OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
 

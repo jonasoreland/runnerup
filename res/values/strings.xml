@@ -136,10 +136,6 @@
 	<string name="advanced_download_button_btn">Download workouts</string>
 	<string name="basic_audio_cue_spinner">Audio cue settings</string>
 	<string name="basic_sport">Sport</string>
-	<string name="tab_basic_goal_box">Goal</string>
-	<string name="basic_type">Goal type</string>
-	<string name="basic_distance">Goal distance (km)</string>
-	<string name="basic_time">Goal time (HH:MM:SS)</string>
 	<string name="tab_basic_target_type">Target</string>
 	<string name="tab_basic_target_pace_max">Target pace (HH:MM:SS)</string>
 	<string name="tab_basic_target_hrz">Target heart rate zone</string>

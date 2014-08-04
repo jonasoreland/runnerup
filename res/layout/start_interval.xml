@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_interval"
     android:layout_width="match_parent"
@@ -32,7 +32,7 @@
             android:id="@+id/interval_audio_cue_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:key="intervalAudio"
+            android:key="@string/pref_interval_audio"
             android:text="@string/interval_audio_cue_spinner"
             runnerup:type="spinner_txt" />
 
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/simple_types"
-            android:key="interval_type"
+            android:key="@string/pref_interval_type"
             android:prompt="@string/simple_type"
             android:text="@string/interval_type" />
 
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="00:01:00"
             android:inputType="time"
-            android:key="interval_time"
+            android:key="@string/pref_interval_time"
             android:prompt="@string/simple_type"
             android:text="@string/interval_time"
             runnerup:type="durationpicker" />
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="1000"
             android:inputType="numberDecimal"
-            android:key="interval_distance"
+            android:key="@string/pref_interval_distance"
             android:prompt="@string/simple_type"
             android:text="@string/interval_distance"
             runnerup:type="distancepicker" />
@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/simple_types"
-            android:key="interval_rest_type"
+            android:key="@string/pref_interval_rest_type"
             android:prompt="@string/simple_type"
             android:text="@string/interval_rest_type" />
 
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="00:01:00"
             android:inputType="time"
-            android:key="interval_rest_time"
+            android:key="@string/pref_interval_rest_time"
             android:prompt="@string/simple_type"
             android:text="@string/interval_rest_time"
             runnerup:type="durationpicker" />
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="200"
             android:inputType="numberDecimal"
-            android:key="interval_rest_distance"
+            android:key="@string/pref_interval_rest_distance"
             android:prompt="@string/simple_type"
             android:text="@string/interval_rest_distance"
             runnerup:type="distancepicker" />
@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="5"
             android:inputType="number"
-            android:key="interval_repetitions"
+            android:key="@string/pref_interval_repetitions"
             android:prompt="@string/simple_type"
             android:text="@string/interval_repetitions"
             runnerup:type="numberpicker" />

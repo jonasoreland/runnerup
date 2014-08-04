@@ -16,7 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:runnerup="http://schemas.android.com/apk/res/org.runnerup"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_basic"
     android:layout_width="match_parent"
@@ -27,7 +27,7 @@
         android:id="@+id/basic_audio_cue_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:key="basicAudio"
+        android:key="@string/pref_basic_audio"
 		android:text="@string/basic_audio_cue_spinner"
 		runnerup:type="spinner_txt"/>
     
@@ -36,54 +36,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sportEntries"
-        android:key="basic_sport"
+        android:key="@string/pref_basic_sport"
         android:prompt="@string/simple_type"
         android:text="@string/basic_sport" />
-	
-	<CheckBox
-        android:visibility="gone"
-        android:id="@+id/tab_basic_goal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"
-        android:text="@string/tab_basic_goal_box" />
 
     <org.runnerup.widget.TitleSpinner
-        android:visibility="gone"
-        android:id="@+id/basic_type"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/simple_types"
-        android:key="basic_type"
-        android:prompt="@string/simple_type"
-        android:text="@string/basic_type" />
-
-    <org.runnerup.widget.TitleSpinner
-        android:visibility="gone"
-        android:id="@+id/basic_distance"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:defaultValue="5.0"
-        android:inputType="number|numberDecimal"
-        android:key="basic_distance"
-        android:prompt="@string/simple_type"
-        android:text="@string/basic_distance"
-        runnerup:type="edittext" />
-
-    <org.runnerup.widget.TitleSpinner
-        android:visibility="gone"
-        android:id="@+id/basic_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:defaultValue="30:00"
-        android:inputType="time"
-        android:key="basic_time"
-        android:prompt="@string/simple_type"
-        android:text="@string/basic_time"
-        runnerup:type="durationpicker" />
-
-    <org.runnerup.widget.TitleSpinner
-        android:key="basicTargetType"
+        android:key="@string/pref_basic_target_type"
         android:id="@+id/tab_basic_target_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,7 +55,7 @@
         android:layout_height="wrap_content"
         android:defaultValue="00:05:00"
         android:inputType="time"
-        android:key="basic_target_pace_max"
+        android:key="@string/pref_basic_target_pace_max"
         android:prompt="@string/simple_type"
         android:text="@string/tab_basic_target_pace_max"
         runnerup:type="durationpicker" />
@@ -106,7 +64,7 @@
         android:id="@+id/tab_basic_target_hrz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:key="basic_target_hrz"
+        android:key="@string/pref_basic_target_hrz"
         android:prompt="@string/simple_type"
         android:text="@string/tab_basic_target_hrz"
         android:visibility="gone" />

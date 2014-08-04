@@ -50,7 +50,7 @@ public class WorkoutBuilder {
     public static Workout createDefaultWorkout(Resources res, SharedPreferences prefs,
             Dimension target) {
         Workout w = new Workout();
-        w.sport = prefs.getInt("basicSport", DB.ACTIVITY.SPORT_RUNNING);
+        w.sport = prefs.getInt(res.getString(R.string.pref_basic_sport), DB.ACTIVITY.SPORT_RUNNING);
 
         if (prefs.getBoolean(res.getString(R.string.pref_countdown_active), false))
         {
@@ -77,14 +77,14 @@ public class WorkoutBuilder {
             step.setAutolap(val);
         }
 
-        addAutoPauseTrigger(step, prefs);
+        addAutoPauseTrigger(res, step, prefs);
         w.steps.add(step);
 
         if (target == Dimension.PACE) {
             double unitMeters = Formatter.getUnitMeters(prefs);
             double seconds_per_unit = (double) SafeParse.parseSeconds(
-                    prefs.getString("basic_target_pace_max", "00:05:00"), 5 * 60);
-            int targetPaceRange = prefs.getInt("basic_target_pace_min_range", 15);
+                    prefs.getString(res.getString(R.string.pref_basic_target_pace_max), "00:05:00"), 5 * 60);
+            int targetPaceRange = prefs.getInt(res.getString(R.string.pref_basic_target_pace_min_range), 15);
             double targetPaceMax = seconds_per_unit / unitMeters;
             double targetPaceMin = (targetPaceMax * unitMeters - targetPaceRange) / unitMeters;
             Range range = new Range(targetPaceMin, targetPaceMax);
@@ -92,7 +92,7 @@ public class WorkoutBuilder {
             step.targetValue = range;
         } else if (target == Dimension.HRZ) {
             HRZones hrCalc = new HRZones(res, prefs);
-            int zone = prefs.getInt("basic_target_hrz", 0);
+            int zone = prefs.getInt(res.getString(R.string.pref_basic_target_hrz), 0);
             if (zone > 0) {
                 Pair<Integer, Integer> vals = hrCalc.getHRValues(zone + 1);
                 if (vals != null) {
@@ -107,22 +107,22 @@ public class WorkoutBuilder {
         return w;
     }
 
-    private static void addAutoPauseTrigger(Step step, SharedPreferences prefs) {
-        boolean enableAutoPause = prefs.getBoolean("pref_autopause_active", true);
+    private static void addAutoPauseTrigger(Resources res, Step step, SharedPreferences prefs) {
+        boolean enableAutoPause = prefs.getBoolean(res.getString(R.string.pref_autopause_active), true);
         if (!enableAutoPause)
             return;
 
         float autoPauseMinSpeed = 0;
         float autoPauseAfterSeconds = 4f;
 
-        String val = prefs.getString("pref_autopause_minpace", "60");
+        String val = prefs.getString(res.getString(R.string.pref_autopause_minpace), "60");
         try {
             float autoPauseMinPace = Float.parseFloat(val);
             if (autoPauseMinPace > 0)
                 autoPauseMinSpeed = 1000 / (autoPauseMinPace * 60);
         } catch (NumberFormatException e) {
         }
-        val = prefs.getString("pref_autopause_afterseconds", "4");
+        val = prefs.getString(res.getString(R.string.pref_autopause_afterseconds), "4");
         try {
             autoPauseAfterSeconds = Float.parseFloat(val);
         } catch (NumberFormatException e) {
@@ -140,23 +140,23 @@ public class WorkoutBuilder {
             Step step = new Step();
             step.intensity = Intensity.WARMUP;
             step.durationType = null;
-            addAutoPauseTrigger(step, prefs);
+            addAutoPauseTrigger(res, step, prefs);
             w.steps.add(step);
         }
 
-        int repetitions = (int) SafeParse.parseDouble(prefs.getString("intervalRepetitions", "1"),
+        int repetitions = (int) SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_repetitions), "1"),
                 1);
 
-        int intervalType = prefs.getInt("intervalType", 0);
-        long intervalTime = SafeParse.parseSeconds(prefs.getString("intervalTime", "00:04:00"),
+        int intervalType = prefs.getInt(res.getString(R.string.pref_interval_type), 0);
+        long intervalTime = SafeParse.parseSeconds(prefs.getString(res.getString(R.string.pref_interval_time), "00:04:00"),
                 4 * 60);
-        double intevalDistance = SafeParse.parseDouble(prefs.getString("intervalDistance", "1000"),
+        double intevalDistance = SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_distance), "1000"),
                 1000);
-        int intervalRestType = prefs.getInt("intervalRestType", 0);
+        int intervalRestType = prefs.getInt(res.getString(R.string.pref_interval_rest_type), 0);
         long intervalRestTime = SafeParse.parseSeconds(
-                prefs.getString("intervalRestTime", "00:01:00"), 60);
+                prefs.getString(res.getString(R.string.pref_interval_rest_time), "00:01:00"), 60);
         double intevalRestDistance = SafeParse.parseDouble(
-                prefs.getString("intervalRestDistance", "200"), 200);
+                prefs.getString(res.getString(R.string.pref_interval_rest_distance), "200"), 200);
 
         RepeatStep repeat = new RepeatStep();
         repeat.repeatCount = repetitions;
@@ -193,7 +193,7 @@ public class WorkoutBuilder {
             Step step = new Step();
             step.intensity = Intensity.COOLDOWN;
             step.durationType = null;
-            addAutoPauseTrigger(step, prefs);
+            addAutoPauseTrigger(res, step, prefs);
             w.steps.add(step);
         }
 
