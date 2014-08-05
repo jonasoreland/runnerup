@@ -119,7 +119,17 @@
                 <LinearLayout
                     android:id="@+id/tab_main"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/summary_sport"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="1px"
+                        android:entries="@array/sportEntries"
+                        android:prompt="@string/simple_type"
+                        android:text="@string/basic_sport" />
 
                     <EditText
                         android:id="@+id/notes_text"
@@ -157,14 +167,14 @@
                     </ListView>
                 </LinearLayout>
 
-	                <LinearLayout
-	                    android:id="@+id/tab_graph"
-	                    android:layout_width="match_parent"
-	                    android:layout_height="wrap_content"
-	                    android:weightSum="1"
-	                    android:orientation="vertical" >
-	                </LinearLayout>
-				
+                <LinearLayout
+                    android:id="@+id/tab_graph"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+                </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/tab_map"
                     android:layout_width="match_parent"

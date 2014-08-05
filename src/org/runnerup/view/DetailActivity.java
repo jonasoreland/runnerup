@@ -78,6 +78,7 @@ import org.runnerup.export.Uploader.Feature;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
+import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
 
@@ -113,6 +114,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
     TextView activityPace = null;
     TextView activityDistance = null;
 
+    TitleSpinner sport = null;
     EditText notes = null;
     MenuItem recomputeMenuItem = null;
 
@@ -156,6 +158,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         activityTime = (TextView) findViewById(R.id.activity_time);
         activityDistance = (TextView) findViewById(R.id.activity_distance);
         activityPace = (TextView) findViewById(R.id.activity_pace);
+        sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
         notes.setHint("Notes about your workout");
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
@@ -187,6 +190,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             resumeButton.setText("Upload activity");
             resumeButton.setOnClickListener(uploadButtonClick);
             WidgetUtil.setEditable(notes, false);
+            sport.setEnabled(false);
         }
 
         fillHeaderData();
@@ -282,6 +286,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     WidgetUtil.setEditable(notes, true);
                     notes.requestFocus();
                     saveButton.setEnabled(true);
+                    sport.setEnabled(true);
                     if (recomputeMenuItem != null)
                         recomputeMenuItem.setEnabled(true);
                     requery();
@@ -397,7 +402,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
         // Must include the _id column for the adapter to work
         String[] from = new String[] {
                 DB.ACTIVITY.START_TIME,
-                DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT
+                DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT,
+                DB.ACTIVITY.SPORT
         };
 
         Cursor c = mDB.query(DB.ACTIVITY.TABLE, from, "_id == " + mID, null,
@@ -435,6 +441,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
         if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
             notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
+        }
+
+        if (tmp.containsKey(DB.ACTIVITY.SPORT)) {
+            sport.setValue(tmp.getAsInteger(DB.ACTIVITY.SPORT));
         }
     }
 
@@ -600,6 +610,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
     void saveActivity() {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
+        tmp.put(DB.ACTIVITY.SPORT, sport.getValueInt());
         String whereArgs[] = {
             Long.toString(mID)
         };
@@ -642,6 +653,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             if (mode == MODE_DETAILS) {
                 edit = false;
                 WidgetUtil.setEditable(notes, false);
+                sport.setEnabled(false);
                 saveButton.setEnabled(false);
                 if (recomputeMenuItem != null)
                     recomputeMenuItem.setEnabled(false);
