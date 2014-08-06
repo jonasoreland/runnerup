@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="app_name">RunnerUp</string>
+    <string name="Google_Play_Services_Legal_Notices">Mentions légales des services Google Play </string>
+
+	<string name="simple_type">Type</string>
+	<string-array name="simple_types">
+	    <item>Temps</item>
+	    <item>Distance</item>
+   	</string-array>
+
+	<string name="txt_intensity_active">active</string>
+	<string name="txt_intensity_resting">repos</string>
+	<string name="txt_intensity_warmup">échauffement</string>
+	<string name="txt_intensity_cooldown">récupération</string>
+	<string name="txt_intensity_repeat">répétition</string>
+	
+	<string name="txt_dimension_time">temps</string>
+	<string name="txt_dimension_distance">distance</string>
+	<string name="txt_dimension_speed">vitesse</string>
+	<string name="txt_dimension_pace">rythme</string>
+	<string name="txt_dimension_heartrate">fréquence cardiaque</string>
+	<string name="txt_dimension_heartratezone">zone de fréquence cardiaque</string>
+		
+	<string name="txt_distance_kilometer">kilomètre</string>
+	<string name="txt_distance_kilometers">kilomètres</string>
+	<string name="txt_distance_mile">mile</string>
+	<string name="txt_distance_miles">miles</string>
+	<string name="txt_distance_meter">mètre</string>
+	<string name="txt_distance_meters">mètres</string>
+
+	<string name="txt_distance_km">km</string>
+	<string name="txt_distance_mi">mi</string>
+	<string name="txt_distance_m">m</string>
+	
+	<string name="txt_elapsed_h">h</string>
+	<string name="txt_elapsed_m">m</string>
+	<string name="txt_elapsed_min">min</string>
+	<string name="txt_elapsed_s">s</string>
+
+	<string name="txt_heartrate_bpm">bpm</string>
+	
+	<string name="sex">Sexe</string>
+	<string-array name="sexes">
+	    <item>Homme</item>
+	    <item>Femme</item>
+   	</string-array>
+
+	<string-array name="targetEntries">
+	    <item>aucunes</item>
+	    <item>rythme</item>
+	    <item>zone de fréquence cardiaque</item>
+	</string-array>
+	
+	<string name="account_list_name_txt">FunBeat</string>
+	<string name="account_list_upload_box">uploader</string>
+	<string name="account_list_feed_box">flux</string>
+	<string name="account_list_configure_button_btn">Configurer</string>
+	<string name="disconnect_account_button_btn">Déconnecter</string>
+	<string name="ok_account_button_btn">OK</string>
+	<string name="total_time_txt">Temps</string>
+	<string name="total_distance_txt">Distance</string>
+	<string name="total_pace_txt">Rythme</string>
+	<string name="resume_button_btn">Reprendre</string>
+	<string name="save_button_btn">Enregistrer l'activité</string>
+    <string name="discard_button_btn">Jeter l'activité</string>
+	<string name="feed_account_button_btn">Configurer le compte</string>
+	<string name="refresh_feed_button_btn">Rafraichir</string>
+	<string name="zonetext_txt">Zone 1 0–59%</string>
+	<string name="zonefiller1_txt">0000</string>
+	<string name="zonefiller2_txt">0000</string>
+	<string name="zonefiller3_txt">0000</string>
+	<string name="hrz_age">Age</string>
+	<string name="hrz_sex">Sexe</string>
+	<string name="hrz_mhr">Fréquence Cardiaque Maximum (FCM)</string>
+	<string name="history_list_sport_txt">Course</string>
+	<string name="history_list_time_txt">Temps</string>
+	<string name="history_list_distance_txt">Distance</string>
+	<string name="history_list_pace_txt">Rythme</string>
+	<string name="history_list_id_txt">id</string>
+	<string name="hr_device_header_txt">Appareil</string>
+	<string name="hr_heart_rate_txt">Fréquence Cardiaque</string>
+	<string name="hr_device_txt">Polar H7</string>
+	<string name="scan_button_btn">Scanner</string>
+	<string name="connect_button_btn">Connecter</string>
+	<string name="lap_list_id_txt">id</string>
+	<string name="lap_list_time_txt">Temps</string>
+	<string name="lap_list_distance_txt">Distance</string>
+	<string name="lap_list_pace_txt">Rythme</string>
+	<string name="lap_list_hr_txt">H</string>
+	<string name="download_workout_name_txt">Tröskel</string>
+	<string name="download_workout_button_btn">Télécharger</string>
+	<string name="share_workout_button_btn">Partager</string>
+	<string name="delete_workout_button_btn">Supprimer</string>
+	<string name="account_id_txt">id</string>
+	<string name="account_name_txt">account</string>
+	<string name="report_sent_box">Uploadé</string>
+	<string name="activity_header_time_txt">Temps</string>
+	<string name="activity_header_distance_txt">Distance</string>
+	<string name="activity_header_pace_txt">Rythme</string>
+	<string name="activity_header_hr_txt">H</string>
+	<string name="activity_total_txt">Total</string>
+	<string name="activity_hr_txt">173</string>
+	<string name="interval_total_txt">Intervalle</string>
+	<string name="interval_time_txt">20:34</string>
+	<string name="intervall_distance_txt">5.67</string>
+	<string name="interval_pace_txt">4:24</string>
+	<string name="interval_hr_txt">184</string>
+	<string name="lap_total_txt">Lap</string>
+	<string name="lap_time_txt">2:34</string>
+	<string name="lap_distance_txt">0.67</string>
+	<string name="lap_pace_txt">4:14</string>
+	<string name="lap_hr_txt">155</string>
+	<string name="new_lap_button_btn">Nouveau tour</string>
+	<string name="pause_button_btn">Pause</string>
+	<string name="stop_button_btn">Stop</string>
+	<string name="settings_spinner">Configuration des repères vocaux</string>
+	<string name="advanced_audio_cue_spinner">Configuration des repères vocaux</string>
+	<string name="advanced_workout_spinner">Activité</string>
+	<string name="advanced_download_button_btn">Télécharger les activités</string>
+	<string name="basic_audio_cue_spinner">Configuration des repères vocaux</string>
+	<string name="basic_sport">Sport</string>
+	<string name="tab_basic_target_type">Cible</string>
+	<string name="tab_basic_target_pace_max">Rythme cible (HH:MM:SS)</string>
+	<string name="tab_basic_target_hrz">zone de fréquence cardiaque cible</string>
+	<string name="interval_audio_cue_spinner">Configuration des repères vocaux</string>
+	<string name="interval_type">type d'intervalle</string>
+	<string name="interval_time">Intervalle de temps (HH:MM:SS)</string>
+	<string name="interval_distance">Intervalle de distance (m)</string>
+	<string name="interval_rest_type">type de repos</string>
+	<string name="interval_rest_time">temps de repos(HH:MM:SS)</string>
+	<string name="interval_rest_distance">Distance de repos(m)</string>
+	<string name="interval_repetitions">Répétitions</string>
+	<string name="interval_warmup_box">Échauffement</string>
+	<string name="interval_cooldown_box">Récupération</string>
+	<string name="manual_date">Date</string>
+	<string name="manual_time">Temps</string>
+	<string name="manual_duration">Durée (HH:MM:SS)</string>
+	<string name="manual_distance">Distance</string>
+	<string name="manual_pace">Rythmes</string>
+    <string name="gps_info_text_txt">Satellites GPS: </string>
+	<string name="gps_info1_txt">0</string>
+	<string name="gps_info2_txt">0</string>
+	<string name="start_button_btn">Démarrer GPS</string>
+	<string name="step_intensity_txt">Récupération</string>
+	<string name="step_duration_type_txt">Durée</string>
+	<string name="step_duration_value_txt">3 min</string>
+	<string name="text_view03_txt">1234567</string>
+	<string name="step_goal_type_txt">Rythme</string>
+	<string name="step_goal_value_txt">4:00 – 4:15 min/km</string>
+	<string name="step_type">Intensitée</string>
+	<string name="step_duration_type">Type de durée</string>
+	<string name="step_duration_time">Durée (HH:MM:SS)</string>
+	<string name="step_duration_distance">Distance (m)</string>
+	<string name="step_target_type">Type de cible</string>
+	<string name="step_target_pace">Rythme cible MM:SS/km</string>
+	<string name="step_ok_txt">OK</string>
+	<string name="step_cancel_txt">Annuler</string>
+	<string name="value_txt">valeur</string>
+	<string name="upload_list_start_time_txt">2013–08–12</string>
+	<string name="upload_list_sport_txt">Course</string>
+	<string name="upload_list_time_txt">Temps</string>
+	<string name="upload_list_distance_txt">Distance</string>
+	<string name="upload_list_pace_txt">Rythme</string>
+	<string name="account_upload_list_name_txt">FunBeat</string>
+	<string name="account_upload_set_all_btn">Tout séléctionner</string>
+	<string name="account_upload_clear_all_btn">Tout déséléctionner</string>
+	<string name="account_upload_button_btn">Uploader</string>
+	<string name="userpass_username_txt">Nom d'utilisateur</string>
+	<string name="userpass_password_txt">Mot de passe</string>
+	<string name="userpass_showpass_box">Montrer le mot de passe</string>
+	<string name="workout_intensity_txt">intensité</string>
+	<string name="workout_distance_txt">distance</string>
+	<string name="workout_actual_distance_txt">6000 m</string>
+	<string name="workout_pace_txt">4:05 – 4:25</string>
+
+    <!-- Default text for fields that are programmatically overwritten. -->
+    <string name="placeholder_txt">texte générique</string>
+    <string name="placeholder_time_txt">32:57</string>
+    <string name="placeholder_distance_txt">8.34</string>
+    <string name="placeholder_pace_txt">4:34</string>
+</resources>
