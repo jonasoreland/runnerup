@@ -18,8 +18,9 @@ Inspiration Garmin 410, RunKeeper and Everywhere Run.
 
 Patches, forks, pull requests, suggestions or harsh flame is welcome! Please the [contributing guidelines](CONTRIBUTING.md).
 
-## Release 
+## Release
 Releases can be downloaded on the [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
+
 
 ## Build
 Depending on your IDE, see according documentation:
@@ -30,6 +31,10 @@ Depending on your IDE, see according documentation:
 - [Google Play Services API](http://developer.android.com/google/play-services/index.html): Used to display map to the user.
 - [GraphView](https://github.com/jjoe64/GraphView.git): Used to plot data in a nicely way.
 - [Ant Plugin](http://www.thisisant.com): Used to retrieve heart rate monitor data.
+
+## Contributing Translations
+Interested in helping to translate RunnerUp? 
+Contribute [on Transifex](https://www.transifex.com/projects/p/runner-up-android).
 
 ## License
 This project is under GNU GPL v3. See [LICENSE](LICENSE) file for more information.
