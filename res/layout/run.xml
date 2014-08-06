@@ -28,7 +28,6 @@
         android:layout_alignParentTop="true" >
 
         <TableRow
-            android:id="@+id/table_row2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
@@ -68,14 +67,12 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/text_view01"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
                     android:text="@string/activity_total_txt" />
             </LinearLayout>
 
             <TableRow
-                android:id="@+id/table_row2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
 
@@ -113,7 +110,6 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/text_view01"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
                     android:text="@string/interval_total_txt" />
@@ -157,14 +153,12 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/text_view01"
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
                     android:text="@string/lap_total_txt" />
             </LinearLayout>
 
             <TableRow
-                android:id="@+id/table_row2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right" >
