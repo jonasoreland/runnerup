@@ -78,8 +78,8 @@
 	<string name="total_distance_txt">Distance</string>
 	<string name="total_pace_txt">Rythme</string>
 	<string name="resume_button_btn">Reprendre</string>
-	<string name="save_button_btn">Enregistrer l'activité</string>
-    <string name="discard_button_btn">Jeter l'activité</string>
+	<string name="save_button_btn">Enregistrer l\'activité</string>
+    <string name="discard_button_btn">Jeter l\'activité</string>
 	<string name="feed_account_button_btn">Configurer le compte</string>
 	<string name="refresh_feed_button_btn">Rafraichir</string>
 	<string name="zonetext_txt">Zone 1 0–59%</string>
@@ -140,7 +140,7 @@
 	<string name="tab_basic_target_pace_max">Rythme cible (HH:MM:SS)</string>
 	<string name="tab_basic_target_hrz">zone de fréquence cardiaque cible</string>
 	<string name="interval_audio_cue_spinner">Configuration des repères vocaux</string>
-	<string name="interval_type">type d'intervalle</string>
+	<string name="interval_type">type d\'intervalle</string>
 	<string name="interval_time">Intervalle de temps (HH:MM:SS)</string>
 	<string name="interval_distance">Intervalle de distance (m)</string>
 	<string name="interval_rest_type">type de repos</string>
@@ -182,7 +182,7 @@
 	<string name="account_upload_set_all_btn">Tout séléctionner</string>
 	<string name="account_upload_clear_all_btn">Tout déséléctionner</string>
 	<string name="account_upload_button_btn">Uploader</string>
-	<string name="userpass_username_txt">Nom d'utilisateur</string>
+	<string name="userpass_username_txt">Nom d\'utilisateur</string>
 	<string name="userpass_password_txt">Mot de passe</string>
 	<string name="userpass_showpass_box">Montrer le mot de passe</string>
 	<string name="workout_intensity_txt">intensité</string>
