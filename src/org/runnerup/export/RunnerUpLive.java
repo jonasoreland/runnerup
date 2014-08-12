@@ -24,7 +24,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.R;
+import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 
@@ -35,25 +35,42 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunnerUpLive extends FormCrawler implements Uploader {
 
     public static final String NAME = "RunnerUp LIVE";
-    public static String POST_URL = "http://weide.devsparkles.se/api/Resource/";
 
-    long id = 0;
+    private String authUrl = null;
+    private String authType = null;
     private String username = null;
     private String password = null;
-    private String postUrl = POST_URL;
+    private String postUrl = null;
     private Formatter formatter;
+    private boolean _loggedin;
+
+    long id = 0;
 
     RunnerUpLive(UploadManager uploadManager) {
-        Resources res = uploadManager.getResources();
-        SharedPreferences prefs = uploadManager.getPreferences(null);
-        postUrl = prefs.getString(res.getString(R.string.pref_runneruplive_serveradress), POST_URL);
+        if (postUrl == null || username == null) {
+            try {
+                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                username = tmp.getString("username");
+                postUrl = tmp.getString("postUrl");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
         formatter = new Formatter(uploadManager.getContext());
     }
 
@@ -71,11 +88,15 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
     public void init(ContentValues config) {
         id = config.getAsLong("_id");
         String auth = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+
         if (auth != null) {
             try {
                 JSONObject tmp = new JSONObject(auth);
                 username = tmp.optString("username", null);
                 password = tmp.optString("password", null);
+                authUrl = tmp.optString("authurl", null);
+                postUrl = tmp.optString("posturl", null);
+                authType = tmp.optString("authtype", null);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -92,10 +113,14 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 
     @Override
     public String getAuthConfig() {
+
         JSONObject tmp = new JSONObject();
         try {
             tmp.put("username", username);
             tmp.put("password", password);
+            tmp.put("authurl", authUrl);
+            tmp.put("posturl", postUrl);
+            tmp.put("authtype", authType);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -111,17 +136,72 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
 
     @Override
     public Status connect() {
-        if (isConfigured()) {
-            return Status.OK;
-        }
-
-        Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
-        if (username == null || password == null) {
+        if (!isConfigured()) {
+            // user/pass needed
+            Status s = Status.NEED_AUTH;
+            s.authMethod = Uploader.AuthMethod.RUNNERUP_LIVE;
             return s;
         }
 
-        return s;
+        if (authType.equals("user")) {
+            _loggedin = true;
+        }
+
+        if (_loggedin) {
+            return Uploader.Status.OK;
+        }
+
+        JSONObject credentials = new JSONObject();
+        try {
+            credentials.put("userName", username);
+            credentials.put("password", password);
+            credentials.put("authurl", authUrl);
+            credentials.put("posturl", postUrl);
+            credentials.put("authtype", authType);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return Uploader.Status.INCORRECT_USAGE;
+        }
+
+        Status errorStatus = Status.ERROR;
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL(authUrl)
+                    .openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            OutputStream out = conn.getOutputStream();
+            out.write(credentials.toString().getBytes());
+            out.flush();
+            out.close();
+
+            /*
+             * A success message looks like:
+             * <response><result>success</result></response> A failure message
+             * looks like: <response><error code="1102"
+             * message="Login or Password is not correct" /></response> For
+             * flexibility (and ease), we won't do full XML parsing here. We'll
+             * simply look for a few key tokens and hope that's good enough.
+             */
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line = in.readLine();
+
+            if (conn.getResponseCode() == 200) {
+                if (line.contains("success")) {
+                    _loggedin = true;
+                    return Status.OK;
+                } else {
+                    Status s = Status.NEED_AUTH;
+                    s.authMethod = Uploader.AuthMethod.USER_PASS;
+                    return s;
+                }
+            }
+            conn.disconnect();
+        } catch (Exception ex) {
+            errorStatus.ex = ex;
+            ex.printStackTrace();
+        }
+        return errorStatus;
     }
 
     // translate between constants used in RunnerUp and those that weide choose

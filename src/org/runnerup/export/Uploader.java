@@ -33,7 +33,7 @@ import android.util.Pair;
 public interface Uploader {
 
     enum AuthMethod {
-        OAUTH2, USER_PASS
+        OAUTH2, USER_PASS, RUNNERUP_LIVE
     }
 
     enum Status {

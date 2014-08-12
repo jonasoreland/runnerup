@@ -129,16 +129,6 @@
 	<PreferenceScreen 
             android:key="second_preferencescreen"
             android:title="Advanced options">
-			
-	    <org.runnerup.widget.TextPreference
-	        android:defaultValue="http://weide.devsparkles.se/api/Resource/"
-	        android:dependency="@string/pref_runneruplive_active"
-	        android:inputType="text"
-	        android:key="@string/pref_runneruplive_serveradress"
-	        android:persistent="true"
-	        android:summary="asdf"
-	        android:title="RunnerUp live address"
-	        android:enabled="true" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="3"

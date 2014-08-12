@@ -263,6 +263,9 @@ public class UploadManager {
             case USER_PASS:
                 askUsernamePassword(l, false);
                 return;
+            case RUNNERUP_LIVE:
+                askForLiveServer(l,false);
+                return;
         }
     }
 
@@ -361,6 +364,96 @@ public class UploadManager {
         });
         final AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void askForLiveServer(final Uploader l, final boolean showPassword) {
+        AlertDialog.Builder server_builder = new AlertDialog.Builder(activity);
+
+        server_builder.setTitle("Select server");
+        final String[] mServerArray = getResources().getStringArray(R.array.liveservername);
+        final String[] mServerAddress = getResources().getStringArray(R.array.liveserverurl);
+        final String[] mServerURL = getResources().getStringArray(R.array.liveposturl);
+        final String[] mServerAuthAddress = getResources().getStringArray(R.array.liveauthurl);
+        final String[] mServerAuthType =  getResources().getStringArray(R.array.liveauthtype);
+
+        server_builder.setSingleChoiceItems(mServerArray,-1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, final int item) {
+                dialog.dismiss();
+                updateURL(l,mServerAddress[item]);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle(l.getName());
+                // Get the layout inflater
+                LayoutInflater inflater = activity.getLayoutInflater();
+                final View view = inflater.inflate(R.layout.userpass, null);
+                final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
+                final TextView tv1 = (TextView) view.findViewById(R.id.username);
+                final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
+                String authConfigStr = l.getAuthConfig();
+                final JSONObject authConfig = newObj(authConfigStr);
+                String username = authConfig.optString("username", "");
+                String password = authConfig.optString("password", "");
+                tv1.setText(username);
+                tv2.setText(password);
+                cb.setChecked(showPassword);
+                tv2.setInputType(InputType.TYPE_CLASS_TEXT
+                       | (showPassword ? 0 : InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+                        tv2.setInputType(InputType.TYPE_CLASS_TEXT
+                                | (isChecked ? 0
+                                : InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                    }
+                });
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                builder.setView(view);
+                builder.setPositiveButton("OK", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            authConfig.put("username", tv1.getText());
+                            authConfig.put("password", tv2.getText());
+                            authConfig.put("posturl", mServerURL[item]);
+                            authConfig.put("authurl", mServerAuthAddress[item]);
+                            authConfig.put("authtype", mServerAuthType[item]);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        testUserPass(l, authConfig, cb.isChecked());
+                    }
+                });
+                builder.setNeutralButton("Skip", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handleAuthComplete(l, Status.SKIP);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handleAuthComplete(l, Status.SKIP);
+                    }
+                });
+                AlertDialog dialog_ask = builder.create();
+                dialog_ask.show();
+            }
+        });
+        AlertDialog server_dialog = server_builder.create();
+        server_dialog.show();
+    }
+
+    private void updateURL(final Uploader l, final String url) {
+            final SQLiteDatabase mDB = mDBHelper.getWritableDatabase();
+            final String args[] = {
+                Long.toString(l.getId())
+            };
+            ContentValues config = new ContentValues();
+            config.put(DB.ACCOUNT.URL, url);
+            config.put("_id", l.getId());
+            mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
     }
 
     private void testUserPass(final Uploader l, final JSONObject authConfig,
