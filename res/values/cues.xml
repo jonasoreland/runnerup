@@ -22,7 +22,8 @@
     <string name="cue_warmup">warm up</string>
     <string name="cue_cooldown">cool down</string>
     <string name="cue_current">current</string>
-    
+    <string name="cue_recovery">recovery</string>
+
     <string name="cue_hour">hour</string>
     <string name="cue_hours">hours</string>
     <string name="cue_minute">minute</string>

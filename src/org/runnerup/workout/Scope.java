@@ -27,8 +27,8 @@ public enum Scope {
     WORKOUT(1, R.string.cue_workout),
     STEP(2, R.string.cue_activity),
     LAP(3, R.string.cue_lap),
-    CURRENT(4, R.string.cue_current);
-
+    CURRENT(4, R.string.cue_current),
+    RECOVERY(5, R.string.cue_recovery);
     int value = 0;
     int cueId = 0;
 

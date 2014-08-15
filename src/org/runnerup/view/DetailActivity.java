@@ -473,12 +473,16 @@ public class DetailActivity extends FragmentActivity implements Constants {
             int i = laps[position].getAsInteger(DB.LAP.INTENSITY);
             switch (Intensity.values()[i]) {
                 case ACTIVE:
+                    tv0.setText("(active)");
                     break;
                 case COOLDOWN:
                     tv0.setText("(cooldown)");
                     break;
                 case RESTING:
                     tv0.setText("(rest)");
+                    break;
+                case RECOVERY:
+                    tv0.setText("(recovery)");
                     break;
                 case WARMUP:
                     tv0.setText("(warmup)");

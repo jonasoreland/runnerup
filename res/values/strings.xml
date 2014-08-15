@@ -27,6 +27,7 @@
 
 	<string name="txt_intensity_active">active</string>
 	<string name="txt_intensity_resting">rest</string>
+    <string name="txt_intensity_recovery">recovery</string>
 	<string name="txt_intensity_warmup">warmup</string>
 	<string name="txt_intensity_cooldown">cooldown</string>
 	<string name="txt_intensity_repeat">repeat</string>

@@ -45,7 +45,12 @@ public enum Intensity {
     /**
      * Loop (for workout construction/plans)
      */
-    REPEAT(INTENSITY.REPEAT, R.string.txt_intensity_repeat);
+    REPEAT(INTENSITY.REPEAT, R.string.txt_intensity_repeat),
+
+    /**
+     *
+     */
+   RECOVERY(INTENSITY.RECOVERY, R.string.txt_intensity_recovery) ;
 
     int value;
     int textId;
