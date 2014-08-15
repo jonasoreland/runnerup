@@ -29,7 +29,7 @@
 	<string name="txt_intensity_resting">repos</string>
         <string name="txt_intensity_recovery">récupération</string>
 	<string name="txt_intensity_warmup">échauffement</string>
-	<string name="txt_intensity_cooldown">Refroidissement</string>
+	<string name="txt_intensity_cooldown">refroidissement</string>
 	<string name="txt_intensity_repeat">répétition</string>
 	
 	<string name="txt_dimension_time">temps</string>
