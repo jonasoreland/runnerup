@@ -27,7 +27,7 @@
 
 	<string name="txt_intensity_active">active</string>
 	<string name="txt_intensity_resting">repos</string>
-    <string name="txt_intensity_recovery">récupération</string>
+        <string name="txt_intensity_recovery">récupération</string>
 	<string name="txt_intensity_warmup">échauffement</string>
 	<string name="txt_intensity_cooldown">Refroidissement</string>
 	<string name="txt_intensity_repeat">répétition</string>
@@ -80,7 +80,7 @@
 	<string name="total_pace_txt">Rythme</string>
 	<string name="resume_button_btn">Reprendre</string>
 	<string name="save_button_btn">Enregistrer l\'activité</string>
-    <string name="discard_button_btn">Jeter l\'activité</string>
+        <string name="discard_button_btn">Jeter l\'activité</string>
 	<string name="feed_account_button_btn">Configurer le compte</string>
 	<string name="refresh_feed_button_btn">Rafraichir</string>
 	<string name="zonetext_txt">Zone 1 0–59%</string>
@@ -155,7 +155,7 @@
 	<string name="manual_duration">Durée (HH:MM:SS)</string>
 	<string name="manual_distance">Distance</string>
 	<string name="manual_pace">Rythmes</string>
-    <string name="gps_info_text_txt">Satellites GPS: </string>
+        <string name="gps_info_text_txt">Satellites GPS: </string>
 	<string name="gps_info1_txt">0</string>
 	<string name="gps_info2_txt">0</string>
 	<string name="start_button_btn">Démarrer GPS</string>
