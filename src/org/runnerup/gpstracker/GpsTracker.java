@@ -85,6 +85,8 @@ public class GpsTracker extends android.app.Service implements
     double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
     long mMaxHR = 0;
 
+    boolean mWithoutGps = false;
+    
     enum State {
         INIT, LOGGING, STARTED, PAUSED,
         ERROR /* Failed to init GPS */
@@ -155,22 +157,13 @@ public class GpsTracker extends android.app.Service implements
     public void startLogging() {
         assert (state == State.INIT);
         wakelock(true);
-        String frequency_ms = PreferenceManager.getDefaultSharedPreferences(
-                this).getString("pref_pollInterval", "500");
-        String frequency_meters = PreferenceManager
-                .getDefaultSharedPreferences(this).getString(
-                        "pref_pollDistance", "5");
         // TODO add preference
         mMinLiveLogDelayMillis = PreferenceManager
                 .getDefaultSharedPreferences(this).getInt("pref_min_livelog_delay_millis",
                         (int) mMinLiveLogDelayMillis);
 
-        LocationManager lm = (LocationManager) this
-                .getSystemService(LOCATION_SERVICE);
         try {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    Integer.valueOf(frequency_ms),
-                    Integer.valueOf(frequency_meters), this);
+            requestLocationUpdates();
             state = State.LOGGING;
         } catch (Exception ex) {
             state = State.ERROR;
@@ -183,6 +176,68 @@ public class GpsTracker extends android.app.Service implements
         u.close();
     }
 
+    private void requestLocationUpdates() {
+        LocationManager lm = (LocationManager) this
+                .getSystemService(LOCATION_SERVICE);
+        if (mWithoutGps == false) {
+            String frequency_ms = PreferenceManager.getDefaultSharedPreferences(
+                    this).getString("pref_pollInterval", "500");
+            String frequency_meters = PreferenceManager
+                    .getDefaultSharedPreferences(this).getString(
+                            "pref_pollDistance", "5");
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    Integer.valueOf(frequency_ms),
+                    Integer.valueOf(frequency_meters), this);
+        } else {
+            String list[] = { LocationManager.GPS_PROVIDER, 
+                    LocationManager.NETWORK_PROVIDER,
+                    LocationManager.PASSIVE_PROVIDER };
+            mLastLocation = null;
+            for (String s : list) {
+                Location tmp = lm.getLastKnownLocation(s);
+                if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
+                    mLastLocation = tmp;
+                }
+            }
+            mLastLocation.removeSpeed();
+            mLastLocation.removeAltitude();
+            mLastLocation.removeAccuracy();
+            mLastLocation.removeBearing();
+            gpsLessLocationProvider.run();
+        }
+    }
+
+    Runnable gpsLessLocationProvider = new Runnable() {
+
+        int frequency_ms = 0;
+        Location location = null;
+        
+        @Override
+        public void run() {
+            if (location == null) {
+                location = new Location(mLastLocation);
+                mLastLocation = null;
+                String frequency_ms_str = PreferenceManager.getDefaultSharedPreferences(
+                        GpsTracker.this).getString("pref_pollInterval", "500");
+                frequency_ms = Integer.valueOf(frequency_ms_str);
+            }
+            location.setTime(System.currentTimeMillis());
+            if (isLogging()) {
+                onLocationChanged(location);
+                handler.postDelayed(this, frequency_ms);
+            }
+        }
+    };
+
+    private void removeLocationUpdates() {
+        if (mWithoutGps == false) {
+            LocationManager lm = (LocationManager) this
+                    .getSystemService(LOCATION_SERVICE);
+            lm.removeUpdates(this);
+        } else {
+        }
+    }
+    
     public boolean isLogging() {
         switch (state) {
             case ERROR:
@@ -348,9 +403,7 @@ public class GpsTracker extends android.app.Service implements
         assert (state == State.PAUSED || state == State.LOGGING);
         wakelock(false);
         if (state != State.INIT) {
-            LocationManager lm = (LocationManager) this
-                    .getSystemService(LOCATION_SERVICE);
-            lm.removeUpdates(this);
+            removeLocationUpdates();
             state = State.INIT;
         }
         liveLoggers.clear();
