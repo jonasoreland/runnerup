@@ -55,6 +55,9 @@ import android.widget.Toast;
 /**
  * GpsTracker - this class tracks Location updates
  * 
+ * TODO: rename this class into ActivityTracker and factor out Gps stuff into own class
+ *       that should be handled much like hrm (e.g as a sensor among others)
+ * 
  * @author jonas.oreland@gmail.com
  */
 
