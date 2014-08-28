@@ -81,6 +81,7 @@ public interface Constants {
             public static final int WARMUP = 2;
             public static final int COOLDOWN = 3;
             public static final int REPEAT = 4;
+            public static final int RECOVERY = 5;
         };
 
         public interface ACCOUNT {

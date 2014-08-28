@@ -2,9 +2,9 @@
 
 <step> = <intensity> <duration>? <target>? <trigger>* <autolap>?
 
-<sport> = running
+<sport> = running | cycling
 
-<intensity> = active | resting | warmup | cooldown
+<intensity> = active | resting | recovery | warmup | cooldown
 
 <dimension> = time | distance | pace | speed
 
