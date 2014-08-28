@@ -28,6 +28,7 @@ public enum Scope {
     STEP(2, R.string.cue_activity),
     LAP(3, R.string.cue_lap),
     CURRENT(4, R.string.cue_current);
+    
     int value = 0;
     int cueId = 0;
 
