@@ -307,7 +307,7 @@ public class WorkoutBuilder {
 
                     break;
                 case RECOVERY:
-
+                case RESTING: {
                     step.triggers.addAll(triggers);
                     if (!silent && (next == null || next.getIntensity() != step.getIntensity()))
                     {
@@ -329,10 +329,6 @@ public class WorkoutBuilder {
                         }
                     }
                     checkDuplicateTriggers(step);
-
-                    break;
-
-                case RESTING: {
                     IntervalTrigger trigger = new IntervalTrigger();
                     trigger.dimension = step.durationType;
                     trigger.first = 1;
