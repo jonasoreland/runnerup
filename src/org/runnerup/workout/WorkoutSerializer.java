@@ -126,7 +126,7 @@ public class WorkoutSerializer {
         else if (stepTypeKey.equalsIgnoreCase("rest"))
             return Intensity.RESTING;
         else if (stepTypeKey.equalsIgnoreCase("recovery"))
-            return Intensity.RESTING;
+            return Intensity.RECOVERY;
         else if (stepTypeKey.equalsIgnoreCase("cooldown"))
             return Intensity.COOLDOWN;
 
@@ -322,6 +322,7 @@ public class WorkoutSerializer {
             case ACTIVE:
             case WARMUP:
             case COOLDOWN:
+            case RECOVERY:
                 js.step = new Step();
                 js.step.intensity = intensity;
                 js.step.durationType = duration.first;

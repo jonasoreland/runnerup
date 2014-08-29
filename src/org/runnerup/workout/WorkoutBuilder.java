@@ -305,7 +305,29 @@ public class WorkoutBuilder {
                     // }
 
                     break;
+                case RECOVERY:
                 case RESTING: {
+                    step.triggers.addAll(triggers);
+                    if (!silent && (next == null || next.getIntensity() != step.getIntensity()))
+                    {
+                        EventTrigger ev = new EventTrigger();
+                        ev.event = Event.COMPLETED;
+                        ev.scope = Scope.STEP;
+                        ev.triggerAction.add(new AudioFeedback(Scope.RECOVERY, Event.COMPLETED));
+                        step.triggers.add(ev);
+
+                        Trigger elt = hasEndOfLapTrigger(triggers);
+                        if (elt != null) {
+                            /** Add feedback after "end of lap" */
+                            ev.triggerAction.addAll(elt.triggerAction);
+                            /** suppress empty STEP COMPLETED */
+                            ev.triggerSuppression.add(EndOfLapSuppression.EmptyLapSuppression);
+
+                            /** And suppress last end of lap trigger */
+                            elt.triggerSuppression.add(EndOfLapSuppression.EndOfLapSuppression);
+                        }
+                    }
+                    checkDuplicateTriggers(step);
                     IntervalTrigger trigger = new IntervalTrigger();
                     trigger.dimension = step.durationType;
                     trigger.first = 1;
@@ -597,6 +619,7 @@ public class WorkoutBuilder {
                     case ACTIVE:
                         s.step.setAutolap(val);
                         break;
+                    case RECOVERY:
                     case RESTING:
                     case WARMUP:
                     case COOLDOWN:
