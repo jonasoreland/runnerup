@@ -2,12 +2,12 @@
   "workoutId": 7626728,
   "workoutName": "Super1000",
   "createdDate": "2013-07-10 07:58:50.0 GMT",
-  "updatedDate": "2013-07-10 16:46:03.0 GMT",
+  "updatedDate": "2014-08-31 10:59:02.0 GMT",
   "ownerId": 4349770,
   "sportTypeKey": "running",
   "workoutSteps": [
     {
-      "stepId": 32525999,
+      "stepId": 93879627,
       "stepOrder": 1,
       "endConditionId": 1,
       "endConditionUnitPk": 6,
@@ -20,7 +20,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526000,
+      "stepId": 93879628,
       "stepOrder": 2,
       "groupId": 1,
       "endConditionId": 1,
@@ -31,7 +31,7 @@
       "endConditionUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526001,
+      "stepId": 93879629,
       "stepOrder": 3,
       "groupId": 1,
       "parentGroupId": 1,
@@ -50,7 +50,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526002,
+      "stepId": 93879630,
       "stepOrder": 4,
       "groupId": 1,
       "parentGroupId": 1,
@@ -58,8 +58,8 @@
       "endConditionValue": 10000.0,
       "endConditionUnitPk": 5,
       "targetValueUnitPk": 6,
-      "stepTypeKey": "rest",
-      "intensityTypeKey": "rest",
+      "stepTypeKey": "recovery",
+      "intensityTypeKey": "active",
       "endConditionTypeKey": "distance",
       "targetTypeKey": "no.target",
       "endConditionUnitKey": "centimeter",
@@ -69,7 +69,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526003,
+      "stepId": 93879631,
       "stepOrder": 5,
       "groupId": 1,
       "parentGroupId": 1,
@@ -88,7 +88,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526004,
+      "stepId": 93879632,
       "stepOrder": 6,
       "groupId": 1,
       "parentGroupId": 1,
@@ -96,8 +96,8 @@
       "endConditionValue": 10000.0,
       "endConditionUnitPk": 5,
       "targetValueUnitPk": 6,
-      "stepTypeKey": "rest",
-      "intensityTypeKey": "rest",
+      "stepTypeKey": "recovery",
+      "intensityTypeKey": "active",
       "endConditionTypeKey": "distance",
       "targetTypeKey": "no.target",
       "endConditionUnitKey": "centimeter",
@@ -107,7 +107,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526005,
+      "stepId": 93879633,
       "stepOrder": 7,
       "groupId": 1,
       "parentGroupId": 1,
@@ -126,7 +126,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526006,
+      "stepId": 93879634,
       "stepOrder": 8,
       "groupId": 1,
       "parentGroupId": 1,
@@ -134,8 +134,8 @@
       "endConditionValue": 10000.0,
       "endConditionUnitPk": 5,
       "targetValueUnitPk": 6,
-      "stepTypeKey": "rest",
-      "intensityTypeKey": "rest",
+      "stepTypeKey": "recovery",
+      "intensityTypeKey": "active",
       "endConditionTypeKey": "distance",
       "targetTypeKey": "no.target",
       "endConditionUnitKey": "centimeter",
@@ -145,7 +145,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526007,
+      "stepId": 93879635,
       "stepOrder": 9,
       "groupId": 1,
       "parentGroupId": 1,
@@ -164,7 +164,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526008,
+      "stepId": 93879636,
       "stepOrder": 10,
       "groupId": 1,
       "parentGroupId": 1,
@@ -172,8 +172,8 @@
       "endConditionValue": 60000.0,
       "endConditionUnitPk": 41,
       "targetValueUnitPk": 6,
-      "stepTypeKey": "rest",
-      "intensityTypeKey": "rest",
+      "stepTypeKey": "recovery",
+      "intensityTypeKey": "active",
       "endConditionTypeKey": "time",
       "targetTypeKey": "no.target",
       "endConditionUnitKey": "ms",
@@ -183,7 +183,7 @@
       "targetValueUnitKey": "dimensionless"
     },
     {
-      "stepId": 32526009,
+      "stepId": 93879637,
       "stepOrder": 11,
       "endConditionId": 1,
       "endConditionUnitPk": 6,
@@ -196,7 +196,6 @@
       "targetValueUnitKey": "dimensionless"
     }
   ]
-}}itKey": "dimensionless"
+}}: "dimensionless"
     },
-    {
-      "stepId"
+  

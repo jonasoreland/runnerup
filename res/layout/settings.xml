@@ -159,7 +159,21 @@
             android:summary="60"
             android:title="Autopause min pace (min/km)"
             android:enabled="true"/>
-            
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_convert_interval_distance_rest_to_recovery"
+            android:title="Convert rest on Interval tab"
+            android:summary="Convert rest-step with type distance to recovery-step for Interval-tab" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_convert_advanced_distance_rest_to_recovery"
+            android:title="Convert rest on Advanced tab"
+            android:summary="Convert rest-step with type distance to recovery-step for Advanced-tab" />
+
 	    <org.runnerup.widget.TextPreference
             android:inputType="number"
             android:key="@string/target_pace_moving_average_seconds"

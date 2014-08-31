@@ -180,7 +180,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         if (is == null) {
             throw new Exception("Failed to get input stream");
         }
-        Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)));
+        boolean convertRestToRecovery = true; // we just test to import, value of this doesnt matter
+        Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)),
+                convertRestToRecovery);
         is.close();
         if (w == null)
             throw new Exception("Failed to parse content");

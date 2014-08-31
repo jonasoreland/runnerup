@@ -135,6 +135,8 @@ public class WorkoutBuilder {
         Workout w = new Workout();
         final boolean warmup = true;
         final boolean cooldown = true;
+        final boolean convertRestToRecovery = prefs.getBoolean(res.getString(
+                R.string.pref_convert_interval_distance_rest_to_recovery), true);
 
         if (warmup) {
             Step step = new Step();
@@ -181,7 +183,14 @@ public class WorkoutBuilder {
                         rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
                         break;
                     case 1: // Distance
-                        rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
+                        if (convertRestToRecovery == false) {
+                            rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
+                        } else {
+                            rest = new Step();
+                            rest.intensity = Intensity.RECOVERY;
+                            rest.durationType = Dimension.DISTANCE;
+                            rest.durationValue = intevalRestDistance;
+                        }
                         break;
                 }
                 repeat.steps.add(rest);
@@ -307,27 +316,6 @@ public class WorkoutBuilder {
                     break;
                 case RECOVERY:
                 case RESTING: {
-                    step.triggers.addAll(triggers);
-                    if (!silent && (next == null || next.getIntensity() != step.getIntensity()))
-                    {
-                        EventTrigger ev = new EventTrigger();
-                        ev.event = Event.COMPLETED;
-                        ev.scope = Scope.STEP;
-                        ev.triggerAction.add(new AudioFeedback(Scope.RECOVERY, Event.COMPLETED));
-                        step.triggers.add(ev);
-
-                        Trigger elt = hasEndOfLapTrigger(triggers);
-                        if (elt != null) {
-                            /** Add feedback after "end of lap" */
-                            ev.triggerAction.addAll(elt.triggerAction);
-                            /** suppress empty STEP COMPLETED */
-                            ev.triggerSuppression.add(EndOfLapSuppression.EmptyLapSuppression);
-
-                            /** And suppress last end of lap trigger */
-                            elt.triggerSuppression.add(EndOfLapSuppression.EndOfLapSuppression);
-                        }
-                    }
-                    checkDuplicateTriggers(step);
                     IntervalTrigger trigger = new IntervalTrigger();
                     trigger.dimension = step.durationType;
                     trigger.first = 1;
@@ -375,7 +363,7 @@ public class WorkoutBuilder {
 
     interface TriggerFilter {
         boolean match(Trigger trigger);
-    };
+    }
 
     private static Trigger hasTrigger(List<Trigger> triggers, TriggerFilter filter) {
         for (Trigger t : triggers) {

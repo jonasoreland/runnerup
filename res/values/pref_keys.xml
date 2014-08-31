@@ -79,6 +79,8 @@
     <string name="target_pace_moving_average_seconds">target_pace_moving_average_seconds</string>
     <string name="target_pace_grace_seconds">target_pace_grace_seconds</string>
 
+    <string name="pref_convert_interval_distance_rest_to_recovery">pref_convert_interval_distance_rest_to_recovery</string>
+    <string name="pref_convert_advanced_distance_rest_to_recovery">pref_convert_advanced_distance_rest_to_recovery</string>
     <string name="pref_step_autolap_active">pref_step_autolap_active</string>
     <string name="pref_step_countdown_active">pref_step_countdown_active</string>
     <string name="pref_step_countdown_time">pref_step_countdown_time</string>

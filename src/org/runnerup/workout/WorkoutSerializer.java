@@ -28,12 +28,15 @@ import java.util.Comparator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.export.FormCrawler;
 import org.runnerup.util.SafeParse;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -66,7 +69,7 @@ public class WorkoutSerializer {
         Step step;
     };
 
-    public static Workout readJSON(Reader in) throws JSONException {
+    public static Workout readJSON(Reader in, boolean convertRestToRecovery) throws JSONException {
         JSONObject obj = FormCrawler.parse(in);
         obj = obj.getJSONObject("com.garmin.connect.workout.json.UserWorkoutJson");
         Workout w = new Workout();
@@ -76,7 +79,7 @@ public class WorkoutSerializer {
         ArrayList<jsonstep> list = new ArrayList<jsonstep>(4);
         while ((step = steps.optJSONObject(stepNo)) != null)
         {
-            jsonstep js = parseStep(step);
+            jsonstep js = parseStep(step, convertRestToRecovery);
             list.add(js);
             stepNo++;
         }
@@ -301,7 +304,7 @@ public class WorkoutSerializer {
         }
     }
 
-    private static jsonstep parseStep(JSONObject obj) throws JSONException {
+    private static jsonstep parseStep(JSONObject obj, boolean convertRestToRecovery) throws JSONException {
         jsonstep js = new jsonstep();
         js.order = obj.getInt("stepOrder");
         js.group = getInt(obj, "groupId");
@@ -317,8 +320,13 @@ public class WorkoutSerializer {
                 break;
             }
             case RESTING:
-                js.step = Step.createPauseStep(duration.first, duration.second);
-                break;
+                if (convertRestToRecovery && duration.first == Dimension.DISTANCE &&
+                        duration.second != null) {
+                    // fall through
+                } else {
+                    js.step = Step.createPauseStep(duration.first, duration.second);
+                    break;
+                }
             case ACTIVE:
             case WARMUP:
             case COOLDOWN:
@@ -341,8 +349,12 @@ public class WorkoutSerializer {
 
     public static Workout readFile(Context ctx, String name) throws FileNotFoundException,
             JSONException {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         File fin = getFile(ctx, name);
         System.err.println("reading " + fin.getPath());
-        return readJSON(new FileReader(fin));
+        final boolean convertRestToRecovery = prefs.getBoolean(ctx.getResources().getString(
+                R.string.pref_convert_advanced_distance_rest_to_recovery), false);
+
+        return readJSON(new FileReader(fin), convertRestToRecovery);
     }
 }
