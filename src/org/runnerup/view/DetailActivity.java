@@ -471,25 +471,17 @@ public class DetailActivity extends FragmentActivity implements Constants {
             View view = inflater.inflate(R.layout.laplist_row, parent, false);
             TextView tv0 = (TextView) view.findViewById(R.id.lap_list_type);
             int i = laps[position].getAsInteger(DB.LAP.INTENSITY);
-            switch (Intensity.values()[i]) {
+            Intensity intensity = Intensity.values()[i];
+            switch (intensity) {
                 case ACTIVE:
-                    tv0.setText("(active)");
+                    tv0.setText("");
                     break;
                 case COOLDOWN:
-                    tv0.setText("(cooldown)");
-                    break;
                 case RESTING:
-                    tv0.setText("(rest)");
-                    break;
                 case RECOVERY:
-                    tv0.setText("(recovery)");
-                    break;
                 case WARMUP:
-                    tv0.setText("(warmup)");
-                    break;
                 case REPEAT:
-                    tv0.setText("(repeat)");
-                    break;
+                    tv0.setText("(" + getResources().getString(intensity.getTextId()) + ")");
                 default:
                     break;
 
