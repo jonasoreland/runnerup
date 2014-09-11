@@ -165,6 +165,11 @@ public class RepeatStep extends Step {
     }
 
     @Override
+    public void setRepeatCount(int val) {
+        repeatCount = val;
+    }
+
+    @Override
     public int getCurrentRepeat() {
         return currentRepeat;
     }
