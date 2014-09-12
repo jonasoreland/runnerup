@@ -460,6 +460,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
             return Status.OK;
         } catch (Exception ex) {
             errorStatus.ex = ex;
+            System.err.println("Digifit returned: " + ex);
         }
 
         return errorStatus;
@@ -484,8 +485,9 @@ public class DigifitUploader extends FormCrawler implements Uploader {
         };
         postMulti(conn, parts);
 
-        if (conn.getResponseCode() != 200) {
-            throw new Exception("got a non-200 response code from upload");
+        int code = conn.getResponseCode();
+        if (code != 200 && code != 302) {
+            throw new Exception("got a " + code + " response code from upload");
         }
 
         try {
