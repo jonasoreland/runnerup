@@ -19,16 +19,21 @@ package org.runnerup.widget;
 
 import org.runnerup.R;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.SafeParse;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Step;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -48,6 +53,9 @@ public class StepButton extends TableLayout {
     private TextView mGoalValue;
     private TableRow mGoalRow;
     private Formatter formatter;
+    private Step step;
+
+    static final boolean editRepeatCount = true;
 
     public StepButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -64,21 +72,6 @@ public class StepButton extends TableLayout {
         mGoalType = (TextView) findViewById(R.id.step_goal_type);
         mGoalValue = (TextView) findViewById(R.id.step_goal_value);
         mGoalRow = (TableRow) findViewById(R.id.step_row1);
-
-        mLayout.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO
-                boolean SOON = false;
-                if (SOON) {
-                    final Dialog dialog = new Dialog(mContext);
-                    dialog.setContentView(R.layout.step_dialog);
-                    dialog.setTitle("Title...");
-                    dialog.show();
-                }
-            }
-        });
     }
 
     @Override
@@ -91,12 +84,15 @@ public class StepButton extends TableLayout {
     }
 
     public void setStep(Step step) {
+        this.step = step;
         Resources res = getResources();
         mIntensity.setText(res.getText(step.getIntensity().getTextId()));
         if (step.getIntensity() == Intensity.REPEAT) {
             mDurationType.setText("");
             mDurationValue.setText("" + step.getRepeatCount());
             mGoalRow.setVisibility(View.GONE);
+            if (editRepeatCount)
+                mLayout.setOnClickListener(onRepeatClickListener);
             return;
         }
         Dimension durationType = step.getDurationType();
@@ -121,4 +117,40 @@ public class StepButton extends TableLayout {
                     formatter.format(Formatter.TXT_LONG, goalType, step.getTargetValue().maxValue));
         }
     }
+
+    OnClickListener onRepeatClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            final NumberPicker numberPicker = new NumberPicker(mContext, null);
+            numberPicker.setOrientation(VERTICAL);
+            numberPicker.setValue(step.getRepeatCount());
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+            alert.setTitle("Repeat");
+
+            final LinearLayout layout = new LinearLayout(mContext);
+            layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+            layout.addView(numberPicker);
+            alert.setView(layout);
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    step.setRepeatCount(numberPicker.getValue());
+                    dialog.dismiss();
+                    setStep(step); // redraw
+                }
+            });
+
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = alert.create();
+            dialog.show();
+        }
+    };
 }
+
