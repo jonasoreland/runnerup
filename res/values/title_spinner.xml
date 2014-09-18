@@ -24,6 +24,7 @@
 	<attr name="android:text" />
     <attr name="android:prompt" />
     <attr name="android:entries" />
+    <attr name="values" format="reference"/>
     <attr name="android:inputType" />
     <attr name="android:defaultValue" />
     <attr name="android:key" />

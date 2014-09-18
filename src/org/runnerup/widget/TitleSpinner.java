@@ -76,6 +76,7 @@ public class TitleSpinner extends LinearLayout {
     private OnCloseDialogListener mCloseDialogListener = null;
     private Type mType = null;
     private boolean mFirstSetValue = true;
+    private int values[] = null;
 
     public interface OnSetValueListener {
         /**
@@ -201,6 +202,10 @@ public class TitleSpinner extends LinearLayout {
         }
 
         CharSequence entries[] = arr.getTextArray(R.styleable.TitleSpinner_android_entries);
+        int valuesId = arr.getResourceId(R.styleable.TitleSpinner_values, 0);
+        if (valuesId != 0) {
+            values = getResources().getIntArray(valuesId);
+        }
         if (entries != null) {
             ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context,
                     android.R.layout.simple_spinner_dropdown_item, entries);
@@ -209,10 +214,11 @@ public class TitleSpinner extends LinearLayout {
             if (defaultValue != null) {
                 value = SafeParse.parseInt(defaultValue.toString(), 0);
             }
-            if (value >= 0 && value < entries.length) {
-                mValueInt = value;
-                mValue.setText(entries[value]);
-            }
+            setValue(value);
+//            if (value >= 0 && value < entries.length) {
+//                mValueInt = value;
+//                mValue.setText(entries[value]);
+//            }
         }
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
@@ -231,7 +237,7 @@ public class TitleSpinner extends LinearLayout {
                         setValue(mSpinner.getAdapter().getItem(arg2).toString());
                     }
                 } else {
-                    setValue(arg2);
+                    setValue(getRealValue(arg2));
                 }
                 if (!mFirstSetValue) {
                     onClose(true);
@@ -589,6 +595,30 @@ public class TitleSpinner extends LinearLayout {
         return 0;
     }
 
+    int getSelectionValue(int value) {
+        if (values == null)
+            return value;
+        int p = 0;
+        for (int v : values) {
+            if (v == value)
+                return p;
+            p++;
+        }
+
+        /* not found, hmm...what to do... */
+        return 0;
+    }
+
+    int getRealValue(int value) {
+        if (values == null)
+            return value;
+        if (value >= 0 && value < values.length)
+            return values[value];
+
+        /* invalid value, hmm...what to do... */
+        return values[0];
+    }
+
     public void setValue(int value) {
         if (mSetValueListener != null) {
             try {
@@ -601,9 +631,10 @@ public class TitleSpinner extends LinearLayout {
             }
         }
         mValueInt = value;
-        mSpinner.setSelection(mValueInt);
+        int selectionValue = getSelectionValue(value);
+        mSpinner.setSelection(selectionValue);
         if (mSpinner.getAdapter() != null) {
-            Object val = mSpinner.getAdapter().getItem(value);
+            Object val = mSpinner.getAdapter().getItem(selectionValue);
             if (val != null)
                 mValue.setText(val.toString());
             else
