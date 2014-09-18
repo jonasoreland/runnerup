@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-class HRZonesListAdapter extends BaseAdapter {
+public class HRZonesListAdapter extends BaseAdapter {
 
     /**
 	 * 

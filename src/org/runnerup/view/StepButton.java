@@ -15,20 +15,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.runnerup.widget;
+package org.runnerup.view;
 
-import org.runnerup.R;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.SafeParse;
-import org.runnerup.workout.Dimension;
-import org.runnerup.workout.Intensity;
-import org.runnerup.workout.Step;
-
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,8 +32,16 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import android.os.Build;
-import android.annotation.TargetApi;
+import org.runnerup.R;
+import org.runnerup.util.Constants;
+import org.runnerup.util.Constants.DB.DIMENSION;
+import org.runnerup.util.Formatter;
+import org.runnerup.view.HRZonesListAdapter;
+import org.runnerup.widget.NumberPicker;
+import org.runnerup.widget.TitleSpinner;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Step;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StepButton extends TableLayout {
@@ -56,6 +58,7 @@ public class StepButton extends TableLayout {
     private Step step;
 
     static final boolean editRepeatCount = true;
+    static final boolean editStepButton = true;
 
     public StepButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -116,6 +119,8 @@ public class StepButton extends TableLayout {
                     + "-" +
                     formatter.format(Formatter.TXT_LONG, goalType, step.getTargetValue().maxValue));
         }
+        if (editStepButton)
+            mLayout.setOnClickListener(onStepClickListener);
     }
 
     OnClickListener onRepeatClickListener = new OnClickListener() {
@@ -152,5 +157,112 @@ public class StepButton extends TableLayout {
             dialog.show();
         }
     };
-}
 
+    OnClickListener onStepClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+            alert.setTitle("Edit step");
+
+            final LayoutInflater inflator = LayoutInflater.from(mContext);
+            final View layout = inflator.inflate(
+                    R.layout.step_dialog, null);
+
+            setupEditStep(inflator, layout);
+            alert.setView(layout);
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = alert.create();
+            dialog.show();
+        }
+    };
+
+    void setupEditStep(LayoutInflater inflator, View layout) {
+        TitleSpinner stepType = (TitleSpinner) layout.findViewById(R.id.step_intensity);
+        stepType.setValue(step.getIntensity().getValue());
+
+        HRZonesListAdapter hrZonesAdapter = new HRZonesListAdapter(mContext, inflator);
+        final TitleSpinner durationType = (TitleSpinner) layout.findViewById(R.id.step_duration_type);
+        final TitleSpinner durationTime = (TitleSpinner) layout.findViewById(R.id.step_duration_time);
+        final TitleSpinner durationDistance = (TitleSpinner) layout.findViewById(R.id.step_duration_distance);
+        durationType.setOnSetValueListener(new TitleSpinner.OnSetValueListener() {
+            @Override
+            public String preSetValue(String newValue) throws IllegalArgumentException {
+                return null;
+            }
+
+            @Override
+            public int preSetValue(int newValue) throws IllegalArgumentException {
+                switch (newValue) {
+                    case DIMENSION.TIME:
+                        durationTime.setEnabled(true);
+                        durationTime.setVisibility(View.VISIBLE);
+                        durationTime.setValue((int) step.getDurationValue());
+                        durationDistance.setVisibility(View.GONE);
+                        break;
+                    case DIMENSION.DISTANCE:
+                        durationTime.setVisibility(View.GONE);
+                        durationDistance.setEnabled(true);
+                        durationDistance.setVisibility(View.VISIBLE);
+                        durationDistance.setValue((int) step.getDurationValue());
+                        break;
+                    default:
+                        durationTime.setEnabled(false);
+                        durationDistance.setEnabled(false);
+                        break;
+                }
+                return newValue;
+            }
+        });
+        if (step.getDurationType() == null) {
+            durationType.setValue(-1);
+        } else {
+            durationType.setValue(step.getDurationType().getValue());
+        }
+
+        final TitleSpinner targetType = (TitleSpinner) layout.findViewById(R.id.step_target_type);
+        
+
+        final View targetPace = layout.findViewById(R.id.step_target_pace);
+        final TitleSpinner targetPageLo = (TitleSpinner) layout.findViewById(R.id.step_target_hr_lo);
+        final TitleSpinner targetPageHi = (TitleSpinner) layout.findViewById(R.id.step_target_hr_hi);
+        final TitleSpinner targetHrz = (TitleSpinner) layout.findViewById(R.id.step_target_hrz);
+
+        targetType.setOnSetValueListener(new TitleSpinner.OnSetValueListener() {
+            @Override
+            public String preSetValue(String newValue) throws IllegalArgumentException {
+                return null;
+            }
+
+            @Override
+            public int preSetValue(int newValue) throws IllegalArgumentException {
+                switch (newValue) {
+                    case DIMENSION.PACE:
+                        targetPace.setEnabled(true);
+                        targetPace.setVisibility(View.VISIBLE);
+                        targetHrz.setVisibility(View.GONE);
+                        break;
+                    case Constants.DB.DIMENSION.DISTANCE:
+                        targetPace.setVisibility(View.GONE);
+                        targetHrz.setEnabled(true);
+                        targetHrz.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        targetPace.setEnabled(false);
+                        targetHrz.setEnabled(false);
+                        break;
+                }
+                return newValue;
+            }
+        });
+        if (step.getTargetType() == null) {
+            targetType.setValue(-1);
+        } else {
+            targetType.setValue(step.getTargetType().getValue());
+        }
+    }
+}
