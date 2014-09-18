@@ -84,6 +84,15 @@ public interface Constants {
             public static final int RECOVERY = 5;
         };
 
+        public interface DIMENSION {
+            public static final int TIME = 1;
+            public static final int DISTANCE = 2;
+            public static final int SPEED = 3;
+            public static final int PACE = 4;
+            public static final int HR = 5;
+            public static final int HRZ = 6;
+        };
+
         public interface ACCOUNT {
             public static final String TABLE = "account";
             public static final String NAME = "name";

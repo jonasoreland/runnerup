@@ -18,18 +18,19 @@
 package org.runnerup.workout;
 
 import org.runnerup.R;
+import org.runnerup.util.Constants.DB.DIMENSION;
 
 /**
  * This is just constant
  */
 public enum Dimension {
 
-    TIME(1, R.string.txt_dimension_time),
-    DISTANCE(2, R.string.txt_dimension_distance),
-    SPEED(3, R.string.txt_dimension_speed),
-    PACE(4, R.string.txt_dimension_pace),
-    HR(5, R.string.txt_dimension_heartrate),
-    HRZ(6, R.string.txt_dimension_heartratezone);
+    TIME(DIMENSION.TIME, R.string.txt_dimension_time),
+    DISTANCE(DIMENSION.DISTANCE, R.string.txt_dimension_distance),
+    SPEED(DIMENSION.SPEED, R.string.txt_dimension_speed),
+    PACE(DIMENSION.PACE, R.string.txt_dimension_pace),
+    HR(DIMENSION.HR, R.string.txt_dimension_heartrate),
+    HRZ(DIMENSION.HRZ, R.string.txt_dimension_heartratezone);
 
     // TODO
     public static boolean SPEED_CUE_ENABLED = false;
