@@ -57,5 +57,26 @@
 	<string-array name="muteValues">
     	<item>no</item>
     	<item>yes</item>
-	</string-array>	
+	</string-array>
+
+    <string-array name="liveservername">
+        <item>weide.devsparkles.se</item>
+        <item>live.runnerup.info</item>
+    </string-array>
+    <string-array name="liveserverurl">
+        <item>http://weide.devsparkles.se/MAP/MAP</item>
+        <item>http://live.runnerup.info</item>
+    </string-array>
+    <string-array name="liveposturl">
+        <item>http://weide.devsparkles.se/api/Resource/</item>
+        <item>http://live.runnerup.info/requests.php</item>
+    </string-array>
+    <string-array name="liveauthtype">
+        <item>user</item>
+        <item>user_pass</item>
+    </string-array>
+    <string-array name="liveauthurl">
+        <item></item>
+        <item>http://live.runnerup.info/clientauth.php</item>
+    </string-array>
 </resources>
