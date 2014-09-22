@@ -17,6 +17,17 @@
 
 package org.runnerup.view;
 
+import org.runnerup.R;
+import org.runnerup.util.Constants.DB.DIMENSION;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.SafeParse;
+import org.runnerup.widget.NumberPicker;
+import org.runnerup.widget.TitleSpinner;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Range;
+import org.runnerup.workout.Step;
+
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -32,18 +43,6 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import org.runnerup.R;
-import org.runnerup.util.Constants.DB.DIMENSION;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZones;
-import org.runnerup.util.SafeParse;
-import org.runnerup.widget.NumberPicker;
-import org.runnerup.widget.TitleSpinner;
-import org.runnerup.workout.Dimension;
-import org.runnerup.workout.Intensity;
-import org.runnerup.workout.Range;
-import org.runnerup.workout.Step;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StepButton extends TableLayout {

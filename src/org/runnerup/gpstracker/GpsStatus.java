@@ -19,22 +19,21 @@ package org.runnerup.gpstracker;
 
 import org.runnerup.util.TickListener;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.location.GpsSatellite;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.os.Build;
 import android.os.Bundle;
-
 /**
  * 
  * This is a helper class that is used to determine when the GPS status is good
  * enough (isFixed())
  * 
  */
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsStatus implements LocationListener,

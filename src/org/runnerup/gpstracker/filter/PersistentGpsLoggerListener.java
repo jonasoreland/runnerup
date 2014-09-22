@@ -19,13 +19,12 @@ package org.runnerup.gpstracker.filter;
 
 import org.runnerup.gpstracker.LocationListenerBase;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Bundle;
-
 import android.os.Build;
-import android.annotation.TargetApi;
+import android.os.Bundle;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class PersistentGpsLoggerListener extends LocationListenerBase implements

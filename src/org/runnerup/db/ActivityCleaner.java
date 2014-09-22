@@ -19,13 +19,12 @@ package org.runnerup.db;
 
 import java.util.ArrayList;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-
 import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityCleaner implements org.runnerup.util.Constants {

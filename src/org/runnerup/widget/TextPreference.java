@@ -17,11 +17,10 @@
 
 package org.runnerup.widget;
 
-import android.content.Context;
-import android.util.AttributeSet;
-
-import android.os.Build;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.util.AttributeSet;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TextPreference extends android.preference.EditTextPreference {

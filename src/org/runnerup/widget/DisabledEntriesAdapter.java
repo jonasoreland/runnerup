@@ -1,15 +1,13 @@
 package org.runnerup.widget;
 
+import java.util.HashSet;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import org.runnerup.R;
-
-import java.util.HashSet;
 
 /**
  * Created by jonas on 9/18/14.

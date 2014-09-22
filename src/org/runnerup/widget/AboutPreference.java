@@ -19,17 +19,16 @@ package org.runnerup.widget;
 
 import org.runnerup.R;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
-
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AboutPreference extends DialogPreference {

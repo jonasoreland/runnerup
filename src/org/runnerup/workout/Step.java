@@ -23,10 +23,9 @@ import java.util.List;
 
 import org.runnerup.util.Constants.DB;
 
-import android.content.ContentValues;
-
-import android.os.Build;
 import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Step implements TickComponent {

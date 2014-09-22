@@ -17,8 +17,8 @@
 
 package org.runnerup.workout;
 
-import android.os.Build;
 import android.annotation.TargetApi;
+import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TargetTrigger extends Trigger {

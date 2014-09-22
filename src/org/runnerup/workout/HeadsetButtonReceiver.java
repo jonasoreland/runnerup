@@ -17,13 +17,12 @@
 
 package org.runnerup.workout;
 
+import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.view.KeyEvent;
-
 import android.os.Build;
-import android.annotation.TargetApi;
+import android.view.KeyEvent;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HeadsetButtonReceiver extends BroadcastReceiver {

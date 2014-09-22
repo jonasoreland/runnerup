@@ -35,10 +35,9 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import android.util.Base64;
-
-import android.os.Build;
 import android.annotation.TargetApi;
+import android.os.Build;
+import android.util.Base64;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Encryption {

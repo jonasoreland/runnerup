@@ -27,12 +27,11 @@ import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
-import android.speech.tts.TextToSpeech;
-
 import android.os.Build;
-import android.annotation.TargetApi;
+import android.speech.tts.TextToSpeech;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioFeedback extends Feedback {

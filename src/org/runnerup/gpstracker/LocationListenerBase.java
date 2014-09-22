@@ -17,18 +17,17 @@
 
 package org.runnerup.gpstracker;
 
+import android.annotation.TargetApi;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Build;
 import android.os.Bundle;
-
 /**
  * Base class for writing chained LocationListener(s)
  * 
  * @author jonas
  * 
  */
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class LocationListenerBase implements LocationListener {

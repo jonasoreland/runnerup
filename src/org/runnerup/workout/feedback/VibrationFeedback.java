@@ -20,10 +20,9 @@ package org.runnerup.workout.feedback;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Workout;
 
-import android.content.Context;
-
-import android.os.Build;
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class VibrationFeedback extends Feedback {

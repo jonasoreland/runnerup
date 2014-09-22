@@ -34,7 +34,7 @@
         <item>Cooldown</item>
     </string-array>
 
-    /* same order as above, same values as Intensity */
+    <!-- same order as above, same values as Intensity -->
     <integer-array name="step_intensity_values">
         <item>2</item>
         <item>0</item>
@@ -49,7 +49,7 @@
         <item>Distance</item>
     </string-array>
 
-    /* same order as above, same values as Dimension */
+    <!-- same order as above, same values as Dimension -->
     <integer-array name="step_duration_values">
         <item>-1</item>
         <item>1</item>

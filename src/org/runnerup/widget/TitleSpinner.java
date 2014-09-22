@@ -41,7 +41,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -201,7 +200,6 @@ public class TitleSpinner extends LinearLayout {
             mSpinner.setPrompt(mPrompt);
         }
 
-        CharSequence entries[] = arr.getTextArray(R.styleable.TitleSpinner_android_entries);
         int entriesId = arr.getResourceId(R.styleable.TitleSpinner_android_entries, 0);
         int valuesId = arr.getResourceId(R.styleable.TitleSpinner_values, 0);
         if (valuesId != 0) {

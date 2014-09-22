@@ -26,15 +26,14 @@ import java.util.Locale;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.JsonWriter;
 
+import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
+import android.os.Build;
 /**
  * @author jonas.oreland@gmail.com
  * 
  */
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunKeeper {

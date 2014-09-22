@@ -22,15 +22,14 @@ import java.io.FileNotFoundException;
 
 import org.runnerup.workout.WorkoutSerializer;
 
+import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-
 import android.os.Build;
-import android.annotation.TargetApi;
+import android.os.ParcelFileDescriptor;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutFileProvider extends ContentProvider {

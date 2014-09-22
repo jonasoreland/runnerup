@@ -28,17 +28,16 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.xmlpull.v1.XmlSerializer;
 
+import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.os.Build;
 import android.util.Xml;
-
 /**
  * @author jonas.oreland@gmail.com
  * 
  */
-import android.os.Build;
-import android.annotation.TargetApi;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class NikeXML {
