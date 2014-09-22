@@ -137,6 +137,9 @@ public class Step implements TickComponent {
     public Intensity getIntensity() {
         return intensity;
     }
+    public void setIntensity(Intensity intensity) {
+        this.intensity = intensity;
+    }
 
     /**
      * @return the autolap

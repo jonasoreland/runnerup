@@ -59,4 +59,25 @@ public enum Dimension {
             return false;
         return true;
     }
+
+    public static Dimension valueOf(int val) {
+        switch(val) {
+            case -1:
+                return null;
+            case DIMENSION.TIME:
+                return TIME;
+            case DIMENSION.DISTANCE:
+                return DISTANCE;
+            case DIMENSION.SPEED:
+                return SPEED;
+            case DIMENSION.PACE:
+                return PACE;
+            case DIMENSION.HR:
+                return HR;
+            case DIMENSION.HRZ:
+                return HRZ;
+            default:
+                return null;
+        }
+    }
 }

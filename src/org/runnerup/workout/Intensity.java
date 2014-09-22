@@ -79,4 +79,24 @@ public enum Intensity {
     public int getCueId() {
         return cueId;
     }
+
+    public static Intensity valueOf(int valueInt) {
+        switch (valueInt) {
+            case INTENSITY.ACTIVE:
+                return ACTIVE;
+            case INTENSITY.RESTING:
+                return RESTING;
+            case INTENSITY.WARMUP:
+                return WARMUP;
+            case INTENSITY.COOLDOWN:
+                return COOLDOWN;
+            case INTENSITY.REPEAT:
+                return REPEAT;
+            case INTENSITY.RECOVERY:
+                return RECOVERY;
+            default:
+            case -1:
+                return null;
+        }
+    }
 }

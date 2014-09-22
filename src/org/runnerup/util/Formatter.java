@@ -482,4 +482,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         double exp = Math.pow(10, decimals);
         return Math.round(base * exp) / exp;
     }
+
+    public static double getUnitMeters(Context mContext) {
+        return getUnitMeters(PreferenceManager.getDefaultSharedPreferences(mContext));
+    }
 }
