@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,14 +34,15 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.runnerup.R;
-import org.runnerup.util.Constants;
 import org.runnerup.util.Constants.DB.DIMENSION;
 import org.runnerup.util.Formatter;
-import org.runnerup.view.HRZonesListAdapter;
+import org.runnerup.util.HRZones;
+import org.runnerup.util.SafeParse;
 import org.runnerup.widget.NumberPicker;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Range;
 import org.runnerup.workout.Step;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -165,12 +167,19 @@ public class StepButton extends TableLayout {
             AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
             alert.setTitle("Edit step");
 
-            final LayoutInflater inflator = LayoutInflater.from(mContext);
-            final View layout = inflator.inflate(
+            final LayoutInflater inflater = LayoutInflater.from(mContext);
+            final View layout = inflater.inflate(
                     R.layout.step_dialog, null);
 
-            setupEditStep(inflator, layout);
+            final Runnable save = setupEditStep(inflater, layout);
             alert.setView(layout);
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    save.run();
+                    dialog.dismiss();
+                    setStep(step); // redraw
+                }
+            });
             alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
@@ -181,11 +190,11 @@ public class StepButton extends TableLayout {
         }
     };
 
-    void setupEditStep(LayoutInflater inflator, View layout) {
-        TitleSpinner stepType = (TitleSpinner) layout.findViewById(R.id.step_intensity);
+    Runnable setupEditStep(LayoutInflater inflator, View layout) {
+        final TitleSpinner stepType = (TitleSpinner) layout.findViewById(R.id.step_intensity);
         stepType.setValue(step.getIntensity().getValue());
 
-        HRZonesListAdapter hrZonesAdapter = new HRZonesListAdapter(mContext, inflator);
+        final HRZonesListAdapter hrZonesAdapter = new HRZonesListAdapter(mContext, inflator);
         final TitleSpinner durationType = (TitleSpinner) layout.findViewById(R.id.step_duration_type);
         final TitleSpinner durationTime = (TitleSpinner) layout.findViewById(R.id.step_duration_time);
         final TitleSpinner durationDistance = (TitleSpinner) layout.findViewById(R.id.step_duration_distance);
@@ -201,14 +210,15 @@ public class StepButton extends TableLayout {
                     case DIMENSION.TIME:
                         durationTime.setEnabled(true);
                         durationTime.setVisibility(View.VISIBLE);
-                        durationTime.setValue((int) step.getDurationValue());
+                        durationTime.setValue(formatter.formatElapsedTime(Formatter.TXT,
+                                (long) step.getDurationValue()));
                         durationDistance.setVisibility(View.GONE);
                         break;
                     case DIMENSION.DISTANCE:
                         durationTime.setVisibility(View.GONE);
                         durationDistance.setEnabled(true);
                         durationDistance.setVisibility(View.VISIBLE);
-                        durationDistance.setValue((int) step.getDurationValue());
+                        durationDistance.setValue(Long.toString((long) step.getDurationValue()));
                         break;
                     default:
                         durationTime.setEnabled(false);
@@ -225,12 +235,15 @@ public class StepButton extends TableLayout {
         }
 
         final TitleSpinner targetType = (TitleSpinner) layout.findViewById(R.id.step_target_type);
-        
-
-        final View targetPace = layout.findViewById(R.id.step_target_pace);
-        final TitleSpinner targetPageLo = (TitleSpinner) layout.findViewById(R.id.step_target_hr_lo);
-        final TitleSpinner targetPageHi = (TitleSpinner) layout.findViewById(R.id.step_target_hr_hi);
+        final TitleSpinner targetPaceLo = (TitleSpinner) layout.findViewById(R.id.step_target_pace_lo);
+        final TitleSpinner targetPaceHi = (TitleSpinner) layout.findViewById(R.id.step_target_pace_hi);
         final TitleSpinner targetHrz = (TitleSpinner) layout.findViewById(R.id.step_target_hrz);
+
+        if (!hrZonesAdapter.hrZones.isConfigured()) {
+            targetType.addDisabledValue(DIMENSION.HRZ);
+        } else {
+            targetHrz.setAdapter(hrZonesAdapter);
+        }
 
         targetType.setOnSetValueListener(new TitleSpinner.OnSetValueListener() {
             @Override
@@ -240,19 +253,33 @@ public class StepButton extends TableLayout {
 
             @Override
             public int preSetValue(int newValue) throws IllegalArgumentException {
+                Range target = step.getTargetValue();
                 switch (newValue) {
                     case DIMENSION.PACE:
-                        targetPace.setEnabled(true);
-                        targetPace.setVisibility(View.VISIBLE);
+                        targetPaceLo.setEnabled(true);
+                        targetPaceHi.setEnabled(true);
+                        targetPaceLo.setVisibility(View.VISIBLE);
+                        targetPaceHi.setVisibility(View.VISIBLE);
+                        if (target != null) {
+                            targetPaceLo.setValue(formatter.formatPace(Formatter.TXT_SHORT,
+                                    target.minValue));
+                            targetPaceHi.setValue(formatter.formatPace(Formatter.TXT_SHORT,
+                                    target.maxValue));
+                        }
                         targetHrz.setVisibility(View.GONE);
                         break;
-                    case Constants.DB.DIMENSION.DISTANCE:
-                        targetPace.setVisibility(View.GONE);
+                    case DIMENSION.HRZ:
+                        targetPaceLo.setVisibility(View.GONE);
+                        targetPaceHi.setVisibility(View.GONE);
                         targetHrz.setEnabled(true);
                         targetHrz.setVisibility(View.VISIBLE);
+                        targetHrz.setValue(hrZonesAdapter.hrZones.match(target.minValue,
+                                target.maxValue));
                         break;
                     default:
-                        targetPace.setEnabled(false);
+                        targetPaceLo.setEnabled(false);
+                        targetPaceHi
+                                .setEnabled(false);
                         targetHrz.setEnabled(false);
                         break;
                 }
@@ -264,5 +291,40 @@ public class StepButton extends TableLayout {
         } else {
             targetType.setValue(step.getTargetType().getValue());
         }
+
+        return new Runnable() {
+
+            @Override
+            public void run() {
+                step.setIntensity(Intensity.valueOf(stepType.getValueInt()));
+                step.setDurationType(Dimension.valueOf(durationType.getValueInt()));
+                switch (durationType.getValueInt()) {
+                    case DIMENSION.DISTANCE:
+                        step.setDurationValue(SafeParse.parseDouble(
+                                durationDistance.getValue().toString(), 1000));
+                        break;
+                    case DIMENSION.TIME:
+                        step.setDurationValue(SafeParse.parseSeconds(
+                                durationTime.getValue().toString(), 60));
+                        break;
+                }
+                step.setTargetType(Dimension.valueOf(targetType.getValueInt()));
+                switch (targetType.getValueInt()) {
+                    case DIMENSION.PACE: {
+                        double unitMeters = Formatter.getUnitMeters(mContext);
+                        double paceLo = (double) SafeParse.parseSeconds(
+                                targetPaceLo.getValue().toString(), 5 * 60);
+                        double paceHi = (double) SafeParse.parseSeconds(
+                                targetPaceHi.getValue().toString(), 5 * 60);
+                        step.setTargetValue(paceLo / unitMeters, paceHi / unitMeters);
+                        break;
+                    }
+                    case DIMENSION.HRZ:
+                        Pair<Integer, Integer> range = hrZonesAdapter.hrZones.getHRValues(
+                                targetHrz.getValueInt());
+                        step.setTargetValue(range.first, range.second);
+                }
+            }
+        };
     }
 }

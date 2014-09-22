@@ -202,13 +202,13 @@ public class TitleSpinner extends LinearLayout {
         }
 
         CharSequence entries[] = arr.getTextArray(R.styleable.TitleSpinner_android_entries);
+        int entriesId = arr.getResourceId(R.styleable.TitleSpinner_android_entries, 0);
         int valuesId = arr.getResourceId(R.styleable.TitleSpinner_values, 0);
         if (valuesId != 0) {
             values = getResources().getIntArray(valuesId);
         }
-        if (entries != null) {
-            ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(context,
-                    android.R.layout.simple_spinner_dropdown_item, entries);
+        if (entriesId != 0) {
+            DisabledEntriesAdapter adapter = new DisabledEntriesAdapter(mContext, entriesId);
             mSpinner.setAdapter(adapter);
             int value = 0;
             if (defaultValue != null) {
@@ -645,6 +645,11 @@ public class TitleSpinner extends LinearLayout {
         Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
         pref.putInt(mKey, value);
         pref.commit();
+    }
+
+    public void addDisabledValue(int value) {
+        int selection = getSelectionValue(value);
+        ((DisabledEntriesAdapter)mSpinner.getAdapter()).addDisabled(selection);
     }
 
     @Override

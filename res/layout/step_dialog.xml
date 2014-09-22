@@ -75,11 +75,6 @@
             android:prompt="@string/simple_type"
             android:text="Target" />
 
-        <LinearLayout
-            android:id="@+id/step_target_pace"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/step_target_pace_lo"
             android:layout_width="match_parent"
@@ -99,10 +94,10 @@
             android:prompt="@string/simple_type"
             android:text="High pace"
             runnerup:type="durationpicker" />
-        </LinearLayout>
 
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/step_target_hrz"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:prompt="@string/simple_type"
