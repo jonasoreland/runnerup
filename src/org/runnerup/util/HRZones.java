@@ -117,4 +117,15 @@ public class HRZones {
         zones = null;
         prefs.edit().remove(key).commit();
     }
+
+    /**
+     * Find best matching HRZone give a min/max pair
+     *
+     * @param minValue
+     * @param maxValue
+     * @return
+     */
+    public int match(double minValue, double maxValue) {
+        return (int)(getZone((minValue + maxValue) / 2) + 0.5);
+    }
 }
