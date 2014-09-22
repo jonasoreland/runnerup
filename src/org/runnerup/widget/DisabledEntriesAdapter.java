@@ -1,4 +1,4 @@
-package org.runnerup.view;
+package org.runnerup.widget;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,22 +14,27 @@ import java.util.HashSet;
 /**
  * Created by jonas on 9/18/14.
  */
-class TargetEntriesAdapter extends BaseAdapter {
+public class DisabledEntriesAdapter extends BaseAdapter {
 
     String[] entries;
     LayoutInflater inflator;
     HashSet<String> disabled;
 
-    TargetEntriesAdapter(Context ctx) {
+    public DisabledEntriesAdapter(Context ctx, int id) {
         inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        entries = ctx.getResources().getStringArray(R.array.targetEntries);
+        entries = ctx.getResources().getStringArray(id);
     }
 
-    void addDisabled(int i) {
+    public void addDisabled(int i) {
         if (disabled == null)
             disabled = new HashSet<String>();
         if (i < entries.length)
             disabled.add(entries[i]);
+    }
+
+    public void clearDisabled() {
+        if (disabled != null)
+            disabled.clear();
     }
 
     @Override

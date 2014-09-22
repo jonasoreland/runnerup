@@ -31,6 +31,7 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
+import org.runnerup.widget.DisabledEntriesAdapter;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnCloseDialogListener;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
@@ -105,7 +106,7 @@ public class StartActivity extends Activity implements TickListener {
     TitleSpinner simpleAudioSpinner = null;
     AudioSchemeListAdapter simpleAudioListAdapter = null;
     TitleSpinner simpleTargetType = null;
-    TargetEntriesAdapter targetEntriesAdapter = null;
+    DisabledEntriesAdapter targetEntriesAdapter = null;
     TitleSpinner simpleTargetPaceValue = null;
     TitleSpinner simpleTargetHrz = null;
     HRZonesListAdapter hrZonesAdapter = null;
@@ -206,7 +207,7 @@ public class StartActivity extends Activity implements TickListener {
         simpleTargetHrz = (TitleSpinner) findViewById(R.id.tab_basic_target_hrz);
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
-        targetEntriesAdapter = new TargetEntriesAdapter(this);
+        targetEntriesAdapter = new DisabledEntriesAdapter(this, R.array.targetEntries);
 
         intervalType = (TitleSpinner) findViewById(R.id.interval_type);
         intervalTime = (TitleSpinner) findViewById(R.id.interval_time);
@@ -319,8 +320,8 @@ public class StartActivity extends Activity implements TickListener {
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         if (!hrZonesAdapter.hrZones.isConfigured()) {
             targetEntriesAdapter.addDisabled(2);
-        } else if (targetEntriesAdapter.disabled != null) {
-            targetEntriesAdapter.disabled.clear();
+        } else {
+            targetEntriesAdapter.clearDisabled();
         }
         simpleTargetType.setAdapter(targetEntriesAdapter);
 
