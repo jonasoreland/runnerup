@@ -20,10 +20,15 @@ package org.runnerup.workout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Stack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -141,6 +146,33 @@ public class WorkoutSerializer {
         return null;
     }
 
+    private static void putIntensity(JSONObject obj, Intensity intensity) throws JSONException {
+        String val = null;
+        switch (intensity) {
+            case ACTIVE:
+                val = "interval";
+                break;
+            case RESTING:
+                val = "rest";
+                break;
+            case WARMUP:
+                val = "warmup";
+                break;
+            case COOLDOWN:
+                val = "cooldown";
+                break;
+            case REPEAT:
+                val = "repeat";
+                break;
+            case RECOVERY:
+                val = "recovery";
+                break;
+        }
+        if (val != null) {
+            obj.put("stepTypeKey", val);
+        }
+    }
+
     private static Pair<Dimension, Double> NullDimensionPair = new Pair<Dimension, Double>(null,
             0.0);
 
@@ -170,6 +202,44 @@ public class WorkoutSerializer {
         }
 
         return new Pair<Dimension, Double>(dim, val);
+    }
+
+    private static void putDuration(JSONObject obj, Step step, Dimension durationType,
+                                    double durationValue) throws JSONException {
+
+        if (step.getIntensity() == Intensity.REPEAT) {
+            obj.put("endConditionTypeKey", "iterations");
+            obj.put("endConditionValue", ((RepeatStep) step).getRepeatCount());
+            obj.put("endConditionUnitKey", "dimensionless");
+            return;
+        }
+
+        if (durationType == null) {
+            obj.put("endConditionTypeKey", "lap.button");
+            obj.put("endConditionUnitKey", "dimensionless");
+            return;
+        }
+
+        switch (durationType) {
+            case TIME:
+                obj.put("endConditionTypeKey", "time");
+                obj.put("endConditionValue", 1000 * durationValue);
+                obj.put("endConditionUnitKey", "ms");
+                break;
+            case DISTANCE:
+                obj.put("endConditionTypeKey", "distance");
+                obj.put("endConditionValue", 100 * durationValue);
+                obj.put("endConditionUnitKey", "centimeter");
+                break;
+            case SPEED:
+                break;
+            case PACE:
+                break;
+            case HR:
+                break;
+            case HRZ:
+                break;
+        }
     }
 
     private static double scale(double val, JSONObject obj, String key) {
@@ -237,6 +307,47 @@ public class WorkoutSerializer {
         }
 
         return new Pair<Dimension, Range>(dim, range);
+    }
+
+    private static void putTarget(JSONObject obj, Step step, Dimension targetType, Range targetValue) throws JSONException {
+        if (step.getIntensity() == Intensity.REPEAT)
+            return;
+
+        if (targetType == null) {
+            obj.put("targetTypeKey", "no.target");
+            obj.put("targetValueUnitKey", "dimensionless");
+            return;
+        }
+
+        final double centimeterPerMilliseconds = 100.0 / 1000.0;
+        switch (targetType) {
+            case TIME:
+                break;
+            case DISTANCE:
+                break;
+            case SPEED:
+                obj.put("targetTypeKey", "speed.zone");
+                obj.put("targetValueOne", centimeterPerMilliseconds*targetValue.minValue);
+                obj.put("targetValueTwo", centimeterPerMilliseconds*targetValue.maxValue);
+                obj.put("targetValueUnitKey", "centimetersPerMillisecond");
+                break;
+            case PACE:
+                obj.put("targetTypeKey", "pace.zone");
+                obj.put("targetValueOne", centimeterPerMilliseconds *
+                        (targetValue.maxValue != 0 ? 1.0/targetValue.maxValue : 0));
+                obj.put("targetValueTwo", centimeterPerMilliseconds *
+                        (targetValue.minValue != 0 ? 1.0/targetValue.minValue : 0));
+                obj.put("targetValueUnitKey", "centimetersPerMillisecond");
+                break;
+            case HR:
+                obj.put("targetTypeKey", "heart.rate.zone");
+                obj.put("targetValueOne", targetValue.minValue);
+                obj.put("targetValueTwo", targetValue.maxValue);
+                obj.put("targetValueUnitKey", "bpm");
+                break;
+            case HRZ:
+                break;
+        }
     }
 
     private static void scale(Range range, Dimension dim, JSONObject obj, String key) {
@@ -356,5 +467,70 @@ public class WorkoutSerializer {
                 R.string.pref_convert_advanced_distance_rest_to_recovery), false);
 
         return readJSON(new FileReader(fin), convertRestToRecovery);
+    }
+
+    public static void writeFile(Context ctx, String name, Workout workout) throws IOException,
+            JSONException {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        File fout = getFile(ctx, name);
+        writeJSON(new FileWriter(fout), workout);
+    }
+
+    public static void writeJSON(Writer out, Workout workout) throws JSONException, IOException {
+        JSONObject obj = createJSON(workout);
+        out.write(obj.toString());
+        out.flush();
+    }
+
+    public static JSONObject createJSON(Workout workout) throws JSONException {
+        Stack<jsonstep> stepStack = new Stack<jsonstep>();
+        ArrayList<jsonstep> stepList = new ArrayList<jsonstep>();
+        int no = 1;
+        int group = 1;
+        for (Workout.StepListEntry e : workout.getSteps()) {
+            jsonstep s = new jsonstep();
+            s.step = e.step;
+            s.order = no++;
+            if (e.parent != null) {
+                while (e.parent != stepStack.peek().step) {
+                    stepStack.pop();
+                    group = stepStack.peek().group;
+                }
+                s.parentGroup = stepStack.peek().group;
+                s.parentStep = (RepeatStep) stepStack.peek().step;
+            }
+            if (e.step instanceof RepeatStep) {
+                group++;
+                stepStack.push(s);
+            }
+            s.group = group;
+            stepList.add(s);
+        }
+
+        JSONArray steps = new JSONArray();
+        for (jsonstep s : stepList) {
+            JSONObject obj = toJSON(s.step);
+            obj.put("stepOrder", s.order);
+            obj.put("groupId", s.group);
+            if (s.parentGroup != null) {
+                obj.put("parentGroupId", s.parentGroup.intValue());
+            }
+            steps.put(obj);
+        }
+
+        JSONObject obj = new JSONObject();
+        obj.put("workoutSteps", steps);
+
+        JSONObject ret = new JSONObject();
+        ret.put("com.garmin.connect.workout.json.UserWorkoutJson", obj);
+        return ret;
+    }
+
+    private static JSONObject toJSON(Step step) throws JSONException {
+        JSONObject obj = new JSONObject();
+        putIntensity(obj, step.getIntensity());
+        putDuration(obj, step, step.getDurationType(), step.getDurationValue());
+        putTarget(obj, step, step.getTargetType(), step.getTargetValue());
+        return obj;
     }
 }
