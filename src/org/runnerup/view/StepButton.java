@@ -57,6 +57,7 @@ public class StepButton extends TableLayout {
     private TableRow mGoalRow;
     private Formatter formatter;
     private Step step;
+    private Runnable mOnChangedListener = null;
 
     static final boolean editRepeatCount = true;
     static final boolean editStepButton = true;
@@ -85,6 +86,10 @@ public class StepButton extends TableLayout {
         for (int i = 0, j = mLayout.getChildCount(); i < j; i++) {
             mLayout.getChildAt(i).setEnabled(enabled);
         }
+    }
+
+    public void setOnChangedListener(Runnable runnable) {
+        mOnChangedListener = runnable;
     }
 
     public void setStep(Step step) {
@@ -146,6 +151,9 @@ public class StepButton extends TableLayout {
                     step.setRepeatCount(numberPicker.getValue());
                     dialog.dismiss();
                     setStep(step); // redraw
+                    if (mOnChangedListener != null) {
+                        mOnChangedListener.run();
+                    }
                 }
             });
 
@@ -177,6 +185,9 @@ public class StepButton extends TableLayout {
                     save.run();
                     dialog.dismiss();
                     setStep(step); // redraw
+                    if (mOnChangedListener != null) {
+                        mOnChangedListener.run();
+                    }
                 }
             });
             alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -473,6 +473,7 @@ public class WorkoutSerializer {
             JSONException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         File fout = getFile(ctx, name);
+        System.err.println("writing " + fout.getPath());
         writeJSON(new FileWriter(fout), workout);
     }
 

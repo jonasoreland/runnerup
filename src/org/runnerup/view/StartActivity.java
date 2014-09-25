@@ -17,12 +17,14 @@
 
 package org.runnerup.view;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.json.JSONException;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
@@ -774,7 +776,33 @@ public class StartActivity extends Activity implements TickListener {
             }
             button.setStep(entry.step);
             button.setPadding(entry.level * 7, 0, 0, 0);
+            button.setOnChangedListener(onWorkoutChanged);
             return button;
+        }
+    };
+
+    Runnable onWorkoutChanged = new Runnable() {
+        @Override
+        public void run() {
+            String name = advancedWorkoutSpinner.getValue().toString();
+            if (advancedWorkout != null) {
+                Context ctx = getApplicationContext();
+                try {
+                    WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
+                } catch (Exception ex) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
+                    builder.setTitle("Failed to load workout!!");
+                    builder.setMessage("" + ex.toString());
+                    builder.setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    builder.show();
+                    return;
+                }
+            }
         }
     };
 
