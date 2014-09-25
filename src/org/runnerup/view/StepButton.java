@@ -267,13 +267,18 @@ public class StepButton extends TableLayout {
                         }
                         targetHrz.setVisibility(View.GONE);
                         break;
+                    case DIMENSION.HR:
                     case DIMENSION.HRZ:
                         targetPaceLo.setVisibility(View.GONE);
                         targetPaceHi.setVisibility(View.GONE);
                         targetHrz.setEnabled(true);
                         targetHrz.setVisibility(View.VISIBLE);
-                        targetHrz.setValue(hrZonesAdapter.hrZones.match(target.minValue,
-                                target.maxValue));
+                        if (target != null) {
+                            targetHrz.setValue(hrZonesAdapter.hrZones.match(target.minValue,
+                                    target.maxValue));
+                        } else {
+                            targetHrz.setValue(0);
+                        }
                         break;
                     default:
                         targetPaceLo.setEnabled(false);
@@ -287,6 +292,8 @@ public class StepButton extends TableLayout {
         });
         if (step.getTargetType() == null) {
             targetType.setValue(-1);
+        } else if (step.getTargetType().getValue() == DIMENSION.HR) {
+            targetType.setValue(DIMENSION.HRZ);
         } else {
             targetType.setValue(step.getTargetType().getValue());
         }
@@ -319,8 +326,9 @@ public class StepButton extends TableLayout {
                         break;
                     }
                     case DIMENSION.HRZ:
+                        step.setTargetType(Dimension.HR);
                         Pair<Integer, Integer> range = hrZonesAdapter.hrZones.getHRValues(
-                                targetHrz.getValueInt());
+                                targetHrz.getValueInt() + 1);
                         step.setTargetValue(range.first, range.second);
                 }
             }
