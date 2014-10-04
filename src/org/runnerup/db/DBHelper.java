@@ -32,6 +32,7 @@ import org.runnerup.export.NikePlus;
 import org.runnerup.export.RunKeeperUploader;
 import org.runnerup.export.RunnerUpLive;
 import org.runnerup.export.RunningAHEAD;
+import org.runnerup.export.RuntasticUploader;
 import org.runnerup.export.Strava;
 
 import android.annotation.TargetApi;
@@ -432,6 +433,16 @@ public class DBHelper extends SQLiteOpenHelper implements
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
             values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
             values.put(DB.ACCOUNT.URL, "https://plus.google.com");
+            insertAccount(arg0, values);
+        }
+
+        if (DBVERSION >= 26) {
+            ContentValues values = new ContentValues();
+            values.put(DB.ACCOUNT.NAME, RuntasticUploader.NAME);
+            values.put(DB.ACCOUNT.FORMAT, "tcx");
+            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+            values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
+            values.put(DB.ACCOUNT.URL, "http://www.runtastic.com");
             insertAccount(arg0, values);
         }
     }

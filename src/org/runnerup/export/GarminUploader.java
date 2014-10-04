@@ -342,16 +342,6 @@ public class GarminUploader extends FormCrawler implements Uploader {
         return conn;
     }
 
-    private void postData(HttpURLConnection conn, FormValues fv) throws IOException {
-        OutputStream wr = new BufferedOutputStream(
-                conn.getOutputStream());
-        if (fv != null) {
-            fv.write(wr);
-        }
-        wr.flush();
-        wr.close();
-    }
-
     private void expectResponse(HttpURLConnection conn, int code, String string) throws IOException {
         if (conn.getResponseCode() != code) {
             throw new IOException(string + ", code: " + conn.getResponseCode() + ", msg: "

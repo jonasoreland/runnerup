@@ -17,6 +17,7 @@
 
 package org.runnerup.export;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -305,6 +306,16 @@ public class FormCrawler {
 
     public Status getFeed(FeedUpdater feedUpdater) {
         return Status.OK;
+    }
+
+    protected void postData(HttpURLConnection conn, FormValues fv) throws IOException {
+        OutputStream wr = new BufferedOutputStream(
+                conn.getOutputStream());
+        if (fv != null) {
+            fv.write(wr);
+        }
+        wr.flush();
+        wr.close();
     }
 
     public Status upload(SQLiteDatabase db, long mID) {

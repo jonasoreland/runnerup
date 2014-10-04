@@ -191,6 +191,8 @@ public class UploadManager {
             uploader = new Facebook(context, this);
         } else if (uploaderName.contentEquals(GooglePlus.NAME)) {
             uploader = new GooglePlus(this);
+        } else if (uploaderName.contentEquals(RuntasticUploader.NAME)) {
+            uploader = new RuntasticUploader(this);
         }
 
         if (uploader != null) {
