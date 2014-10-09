@@ -227,7 +227,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
                 e.printStackTrace();
             }
         }
-    };
+    }
 
     @Override
     public boolean checkSupport(Uploader.Feature f) {
@@ -243,4 +243,4 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
         }
         return false;
     }
-};
+}

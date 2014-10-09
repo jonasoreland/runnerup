@@ -387,7 +387,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
             return tv;
         }
-    };
+    }
 
     private void startScan() {
         log(hrProvider.getProviderName() + ".startScan()");

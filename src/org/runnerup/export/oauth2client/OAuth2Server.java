@@ -38,4 +38,4 @@ public interface OAuth2Server {
     public String getTokenUrl();
 
     public String getRevokeUrl();
-};
+}

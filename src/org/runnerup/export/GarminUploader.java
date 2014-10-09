@@ -519,4 +519,4 @@ public class GarminUploader extends FormCrawler implements Uploader {
     public void logout() {
         super.logout();
     }
-};
+}

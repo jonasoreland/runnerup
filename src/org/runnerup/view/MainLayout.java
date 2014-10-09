@@ -64,7 +64,7 @@ public class MainLayout extends TabActivity {
 
     private enum UpgradeState {
         UNKNOWN, NEW, UPGRADE, DOWNGRADE, SAME
-    };
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

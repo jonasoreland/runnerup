@@ -88,7 +88,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         for (Integer i : runkeeper2sportMap.keySet()) {
             sport2runkeeperMap.put(runkeeper2sportMap.get(i), i);
         }
-    };
+    }
 
     RunKeeperUploader(UploadManager uploadManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
@@ -502,4 +502,4 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         }
         throw new IOException(amsg);
     }
-};
+}

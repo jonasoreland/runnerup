@@ -70,7 +70,7 @@ public class OAuth2Activity extends Activity {
         public static final String REVOKE_URL = "revoke_url";
 
         public static final String AUTH_TOKEN = "auth_token";
-    };
+    }
 
     boolean mFinished = false;
     String mRedirectUri = null;

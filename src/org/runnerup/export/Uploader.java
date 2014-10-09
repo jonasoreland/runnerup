@@ -41,7 +41,7 @@ public interface Uploader {
 
         public Exception ex = null;
         public AuthMethod authMethod = null;
-    };
+    }
 
     enum Feature {
         WORKOUT_LIST, // list prepared workouts (e.g a interval program)
@@ -50,7 +50,7 @@ public interface Uploader {
         UPLOAD, // upload activity
         LIVE // live feed of activity
         , SKIP_MAP // skip map in upload
-    };
+    }
 
     /**
      * @return

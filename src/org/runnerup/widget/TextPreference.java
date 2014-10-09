@@ -51,4 +51,4 @@ public class TextPreference extends android.preference.EditTextPreference {
             super.setSummary(super.getPersistedString(""));
         }
     }
-};
+}

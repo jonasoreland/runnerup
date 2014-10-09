@@ -61,7 +61,7 @@ public class TitleSpinner extends LinearLayout {
         TS_DURATIONPICKER,
         TS_DISTANCEPICKER,
         TS_NUMBERPICKER
-    };
+    }
 
     private int mValueInt = -1;
     private String mKey = null;
@@ -91,11 +91,11 @@ public class TitleSpinner extends LinearLayout {
          * @throws java.lang.IllegalArgumentException
          */
         public int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
-    };
+    }
 
     public interface OnCloseDialogListener {
         public void onClose(TitleSpinner spinner, boolean ok);
-    };
+    }
 
     public TitleSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);

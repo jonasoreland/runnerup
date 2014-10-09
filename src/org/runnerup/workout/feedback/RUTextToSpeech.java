@@ -46,7 +46,7 @@ public class RUTextToSpeech {
             this.text = text;
             this.params = params;
         }
-    };
+    }
 
     HashSet<String> cueSet = new HashSet<String>();
     ArrayList<Entry> cueList = new ArrayList<Entry>();

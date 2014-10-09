@@ -35,7 +35,7 @@ public interface Constants {
             public static final int SPORT_RUNNING = 0;
             public static final int SPORT_BIKING = 1;
             public static final int SPORT_OTHER = 2; // unknown
-        };
+        }
 
         public interface LOCATION {
             public static final String TABLE = "location";
@@ -58,7 +58,7 @@ public interface Constants {
             public static final int TYPE_PAUSE = 4;
             public static final int TYPE_RESUME = 5;
             public static final int TYPE_DISCARD = 6;
-        };
+        }
 
         public interface LAP {
             public static final String TABLE = "lap";
@@ -73,7 +73,7 @@ public interface Constants {
             public static final String AVG_HR = "avg_hr";
             public static final String MAX_HR = "max_hr";
             public static final String AVG_CADENCE = "avg_cadence";
-        };
+        }
 
         public interface INTENSITY {
             public static final int ACTIVE = 0;
@@ -82,7 +82,7 @@ public interface Constants {
             public static final int COOLDOWN = 3;
             public static final int REPEAT = 4;
             public static final int RECOVERY = 5;
-        };
+        }
 
         public interface DIMENSION {
             public static final int TIME = 1;
@@ -91,7 +91,7 @@ public interface Constants {
             public static final int PACE = 4;
             public static final int HR = 5;
             public static final int HRZ = 6;
-        };
+        }
 
         public interface ACCOUNT {
             public static final String TABLE = "account";
@@ -113,7 +113,7 @@ public interface Constants {
                     (1 << FLAG_UPLOAD) +
                             (1 << FLAG_FEED) +
                             (1 << FLAG_LIVE);
-        };
+        }
 
         public interface EXPORT {
             public static final String TABLE = "report";
@@ -156,5 +156,5 @@ public interface Constants {
 
             public static final int FEED_TYPE_EVENT_DATE_HEADER = 0;
         }
-    };
-};
+    }
+}

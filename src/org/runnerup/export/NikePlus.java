@@ -460,4 +460,4 @@ public class NikePlus extends FormCrawler implements Uploader {
             e.printStackTrace();
         }
     }
-};
+}

@@ -779,7 +779,7 @@ public class StartActivity extends Activity implements TickListener {
             button.setOnChangedListener(onWorkoutChanged);
             return button;
         }
-    };
+    }
 
     Runnable onWorkoutChanged = new Runnable() {
         @Override
@@ -956,4 +956,3 @@ public class StartActivity extends Activity implements TickListener {
     };
 }
 
-;

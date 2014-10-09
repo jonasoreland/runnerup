@@ -378,7 +378,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     interface Filter<T> {
         boolean match(T t);
-    };
+    }
 
     ArrayList<UploadManager.WorkoutRef> filter(List<UploadManager.WorkoutRef> list,
             Filter<UploadManager.WorkoutRef> f) {
@@ -723,5 +723,5 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 }
             }
         }
-    };
+    }
 }

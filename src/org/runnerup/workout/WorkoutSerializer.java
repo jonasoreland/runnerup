@@ -72,7 +72,7 @@ public class WorkoutSerializer {
         Integer parentGroup;
         RepeatStep parentStep;
         Step step;
-    };
+    }
 
     public static Workout readJSON(Reader in, boolean convertRestToRecovery) throws JSONException {
         JSONObject obj = FormCrawler.parse(in);

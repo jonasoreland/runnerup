@@ -84,7 +84,7 @@ public class FormCrawler {
         public void write(OutputStream out) throws IOException {
             out.write(s.getBytes());
         }
-    };
+    }
 
     class Part<Value extends Writable> {
         public Part(String name, Value value) {
@@ -97,7 +97,7 @@ public class FormCrawler {
         String contentType = null;
         String contentTransferEncoding = null;
         Value value = null;
-    };
+    }
 
     public static String URLEncode(String s) {
         try {

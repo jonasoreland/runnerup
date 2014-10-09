@@ -78,7 +78,7 @@ public class Endomondo extends FormCrawler implements Uploader {
         for (Integer i : endomondo2sportMap.keySet()) {
             sport2endomondoMap.put(endomondo2sportMap.get(i), i);
         }
-    };
+    }
 
     Endomondo(UploadManager uploadManager) {
     }
@@ -488,4 +488,4 @@ public class Endomondo extends FormCrawler implements Uploader {
         c.put(DB.FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
         c.put(DB.FEED.FEED_TYPE_STRING, sportTxt);
     }
-};
+}

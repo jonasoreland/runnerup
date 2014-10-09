@@ -35,7 +35,7 @@ public interface HRProvider {
         public void onDisconnectResult(boolean disconnectOK);
 
         public void onCloseResult(boolean closeOK);
-    };
+    }
 
     public abstract String getName(); // For display
 

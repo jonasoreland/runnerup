@@ -70,7 +70,7 @@ enum JsonScope {
      * A document that's been closed and cannot be accessed.
      */
     CLOSED,
-};
+}
 
 /**
  * Writes a JSON (<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)

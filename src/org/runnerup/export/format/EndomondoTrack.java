@@ -55,7 +55,7 @@ public class EndomondoTrack {
         public long duration;
         public double distance;
         public Long hr;
-    };
+    }
 
     public void export(final long activityId, final Writer writer, Summary summary)
             throws IOException {
