@@ -307,7 +307,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
             return view;
         }
-    };
+    }
 
     OnCheckedChangeListener checkedChangeClick = new OnCheckedChangeListener() {
 

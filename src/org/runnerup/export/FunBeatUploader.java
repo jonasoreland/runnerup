@@ -82,7 +82,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
         for (Integer i : funbeat2sportMap.keySet()) {
             sport2funbeatMap.put(funbeat2sportMap.get(i), i);
         }
-    };
+    }
 
     FunBeatUploader(UploadManager uploadManager) {
         if (APP_ID == null || APP_SECRET == null) {
@@ -604,4 +604,4 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
         req.put("loginSecret", loginSecretHashed);
         return req;
     }
-};
+}

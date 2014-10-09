@@ -76,7 +76,7 @@ public class Workout implements WorkoutComponent {
             }
             return depth == 0;
         }
-    };
+    }
 
     PendingFeedback pendingFeedback = new PendingFeedback();
 
@@ -442,7 +442,7 @@ public class Workout implements WorkoutComponent {
         public final int level;
         public final Step parent;
         public final Step step;
-    };
+    }
 
     public List<StepListEntry> getSteps() {
         ArrayList<StepListEntry> list = new ArrayList<StepListEntry>();
@@ -508,7 +508,7 @@ public class Workout implements WorkoutComponent {
         public double getHeartRate(Scope scope) {
             return 150 + 25 * Math.random();
         }
-    };
+    }
 
     public static Workout fakeWorkoutForTestingAudioCue() {
         FakeWorkout w = new FakeWorkout();
@@ -522,4 +522,4 @@ public class Workout implements WorkoutComponent {
     public SharedPreferences getAudioCues() {
         return audioCuePrefs;
     }
-};
+}

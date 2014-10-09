@@ -38,11 +38,11 @@ public class NumberPicker extends LinearLayout {
 
     public interface OnChangedListener {
         void onChanged(NumberPicker picker, int oldVal, int newVal);
-    };
+    }
 
     public interface Formatter {
         String toString(int value);
-    };
+    }
 
     int prevValue;
     int currValue;

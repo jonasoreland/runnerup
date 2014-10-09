@@ -178,7 +178,7 @@ public class FeedList extends Observable implements Constants {
             l1.addAll(l2);
             FeedList.sort(l1);
             l2.clear();
-        };
+        }
     }
 
     public FeedUpdater getUpdater() {
@@ -422,4 +422,4 @@ public class FeedList extends Observable implements Constants {
         });
 
     }
-};
+}

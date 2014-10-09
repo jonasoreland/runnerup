@@ -66,7 +66,7 @@ public class NikeXML {
         TIME,
         SPEED,
         HR
-    };
+    }
 
     public void export(final long activityId, final Writer writer) throws Exception {
 
@@ -327,7 +327,7 @@ public class NikeXML {
 
         public abstract void emit(Pos p, Vector<Pos> posHist, Vector<Location> hist)
                 throws Exception;
-    };
+    }
 
     class SnapshotList extends Emitter
     {
@@ -379,7 +379,7 @@ public class NikeXML {
 
             mXML.endTag("", "snapShot");
         }
-    };
+    }
 
     class ExtendedData extends Emitter
     {
@@ -424,7 +424,7 @@ public class NikeXML {
                 buf.append(Long.toString(Math.round(avgHR)));
             }
         }
-    };
+    }
 
     class Pos {
         public Pos() {
@@ -439,7 +439,7 @@ public class NikeXML {
         long sumTime = 0;
         double sumDistance = 0;
         long sumHR = 0;
-    };
+    }
 
     private void emitList(final long activityId, final Dim d, final double add, final Emitter out)
             throws Exception {

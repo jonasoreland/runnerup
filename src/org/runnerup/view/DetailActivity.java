@@ -519,7 +519,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
             return view;
         }
-    };
+    }
 
     class ReportListAdapter extends BaseAdapter {
 
@@ -601,7 +601,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             tv1.setText(name);
             return view;
         }
-    };
+    }
 
     void saveActivity() {
         ContentValues tmp = new ContentValues();
@@ -810,7 +810,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             path.color(Color.RED);
             path.width(3);
         }
-    };
+    }
 
     class GraphProducer {
         static final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
@@ -1058,7 +1058,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 for (int i = 0; i < n; i++)
                     movingAvergage(len);
             }
-        };
+        }
 
         public void complete(GraphView graphView) {
             avg_pace /= paceList.size();
@@ -1135,7 +1135,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public boolean HasHRInfo() {
             return showHR;
         }
-    };
+    }
 
     public double calculateAverage(int[] data) {
         int sum = 0;

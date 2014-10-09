@@ -81,7 +81,7 @@ public class UploadManager {
 
     public interface Callback {
         void run(String uploader, Uploader.Status status);
-    };
+    }
 
     public UploadManager(Activity activity) {
         this.activity = activity;
@@ -191,6 +191,8 @@ public class UploadManager {
             uploader = new Facebook(context, this);
         } else if (uploaderName.contentEquals(GooglePlus.NAME)) {
             uploader = new GooglePlus(this);
+        } else if (uploaderName.contentEquals(RuntasticUploader.NAME)) {
+            uploader = new RuntasticUploader(this);
         }
 
         if (uploader != null) {
@@ -563,7 +565,7 @@ public class UploadManager {
         public final String uploader;
         public final String workoutKey;
         public final String workoutName;
-    };
+    }
 
     Callback listWorkoutCallback = null;
     HashSet<String> pendingListWorkout = null;

@@ -423,4 +423,4 @@ public class Step implements TickComponent {
     public boolean isLastStep() {
         return true;
     }
-};
+}

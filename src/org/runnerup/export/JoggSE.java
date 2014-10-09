@@ -334,4 +334,4 @@ public class JoggSE extends FormCrawler implements Uploader {
         cookies.clear();
         formValues.clear();
     }
-};
+}

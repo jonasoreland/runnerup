@@ -17,14 +17,12 @@
 
 package org.runnerup.view;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.json.JSONException;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.gpstracker.GpsTracker;
@@ -779,7 +777,7 @@ public class StartActivity extends Activity implements TickListener {
             button.setOnChangedListener(onWorkoutChanged);
             return button;
         }
-    };
+    }
 
     Runnable onWorkoutChanged = new Runnable() {
         @Override
@@ -956,4 +954,3 @@ public class StartActivity extends Activity implements TickListener {
     };
 }
 
-;

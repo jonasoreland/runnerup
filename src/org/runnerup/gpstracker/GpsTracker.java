@@ -93,7 +93,7 @@ public class GpsTracker extends android.app.Service implements
     enum State {
         INIT, LOGGING, STARTED, PAUSED,
         ERROR /* Failed to init GPS */
-    };
+    }
 
     State state = State.INIT;
     int mLocationType = DB.LOCATION.TYPE_START;

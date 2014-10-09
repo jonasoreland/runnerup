@@ -116,4 +116,4 @@ public class PauseStep extends Step {
         }
         return super.getTime(w, s);
     }
-};
+}

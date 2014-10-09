@@ -256,4 +256,4 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
     @Override
     public void logout() {
     }
-};
+}

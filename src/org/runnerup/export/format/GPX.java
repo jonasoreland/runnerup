@@ -41,7 +41,7 @@ public class GPX {
     enum RestLapMode {
         EMPTY_TRKSEG,
         START_STOP_TRKSEG
-    };
+    }
 
     RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
 

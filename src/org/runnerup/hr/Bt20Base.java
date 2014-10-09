@@ -653,7 +653,7 @@ public abstract class Bt20Base implements HRProvider {
             return crc;
         }
 
-    };
+    }
 
     public static class PolarHRM extends Bt20Base {
 
@@ -716,7 +716,7 @@ public abstract class Bt20Base implements HRProvider {
             }
             return 0;
         }
-    };
+    }
 
     static public int getByte(byte b) {
         return b & 0xFF;

@@ -27,7 +27,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Stack;
 
 import org.json.JSONArray;
@@ -72,7 +71,7 @@ public class WorkoutSerializer {
         Integer parentGroup;
         RepeatStep parentStep;
         Step step;
-    };
+    }
 
     public static Workout readJSON(Reader in, boolean convertRestToRecovery) throws JSONException {
         JSONObject obj = FormCrawler.parse(in);
@@ -471,7 +470,6 @@ public class WorkoutSerializer {
 
     public static void writeFile(Context ctx, String name, Workout workout) throws IOException,
             JSONException {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         File fout = getFile(ctx, name);
         System.err.println("writing " + fout.getPath());
         writeJSON(new FileWriter(fout), workout);

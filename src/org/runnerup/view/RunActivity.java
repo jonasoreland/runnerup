@@ -97,7 +97,7 @@ public class RunActivity extends Activity implements TickListener {
         org.runnerup.workout.Step step = null;
         ContentValues lap = null;
         public int level;
-    };
+    }
 
     ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
     ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
@@ -612,5 +612,5 @@ public class RunActivity extends Activity implements TickListener {
         public boolean hasStableIds() {
             return false;
         }
-    };
+    }
 }
