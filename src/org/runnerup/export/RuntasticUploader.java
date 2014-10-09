@@ -147,10 +147,10 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             conn.setInstanceFollowRedirects(false);
             addRequestHeaders(conn);
             {
-                int responseCode = conn.getResponseCode();
-                String amsg = conn.getResponseMessage();
+//                int responseCode = conn.getResponseCode();
+//                String amsg = conn.getResponseMessage();
                 getCookies(conn);
-                String html = getFormValues(conn);
+                getFormValues(conn);
                 authToken = formValues.get("authenticity_token");
             }
             conn.disconnect();
@@ -176,15 +176,14 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
                     "application/x-www-form-urlencoded");
 
             String url2 = null;
-            boolean ok = false;
             {
                 OutputStream wr = new BufferedOutputStream(
                         conn.getOutputStream());
                 kv.write(wr);
                 wr.flush();
                 wr.close();
-                int responseCode = conn.getResponseCode();
-                String amsg = conn.getResponseMessage();
+                // int responseCode = conn.getResponseCode();
+                // String amsg = conn.getResponseMessage();
                 getCookies(conn);
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 JSONObject ret = parse(in);
@@ -263,7 +262,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
         HttpURLConnection conn = null;
         try {
-            String id = tcx.export(mID, writer);
+            tcx.export(mID, writer);
             String filename = "activity" + Long.toString(Math.round(1000*Math.random())) + mID + ".tcx";
 
             String url = UPLOAD_URL + "?authenticity_token=" + URLEncode(authToken) + "&qqfile=" +
