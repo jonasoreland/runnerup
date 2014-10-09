@@ -23,15 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Patterns;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Constants.DB.FEED;
-import org.runnerup.util.Encryption;
-import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,21 +34,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-/**
- * TODO: 1) serious cleanup needed 2) maybe reverse engineer
- * 1.0.0.api.funbeat.se that I found...
- */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RuntasticUploader extends FormCrawler implements Uploader {
@@ -71,7 +55,6 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
     private Integer userId = null;
     private String authToken = null;
-    private String relicId = null;
 
     RuntasticUploader(UploadManager uploadManager) {
     }
@@ -114,7 +97,6 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
         password = null;
         userId = null;
         authToken = null;
-        relicId = null;
     }
 
     @Override
@@ -129,6 +111,15 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
         return tmp.toString();
     }
 
+    private void addRequestHeaders(HttpURLConnection conn) {
+        conn.addRequestProperty("Accept", "text/html, application/xhtml+xml, */*");
+        conn.addRequestProperty("User-Agent", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)");
+        conn.addRequestProperty("Accept-Encoding", "");
+        conn.addRequestProperty("Accept-Language", "en-US");
+        conn.addRequestProperty("Connection", "keep-alive");
+        addCookies(conn);
+    }
+
     @Override
     public Status connect() {
         Exception ex = null;
@@ -141,8 +132,12 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             return s;
         }
 
-        if (userId != null && authToken != null && relicId != null)
+        System.out.println("userId: " + userId + ", authToken: " + authToken);
+        if (userId != null && authToken != null) {
             return Status.OK;
+        }
+
+        cookies.clear();
 
         try {
             /**
@@ -150,12 +145,12 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
              */
             conn = (HttpURLConnection) new URL(START_URL).openConnection();
             conn.setInstanceFollowRedirects(false);
+            addRequestHeaders(conn);
             {
                 int responseCode = conn.getResponseCode();
                 String amsg = conn.getResponseMessage();
                 getCookies(conn);
                 String html = getFormValues(conn);
-                relicId = html.substring(html.indexOf("={xpid:")).substring(8, 24);
                 authToken = formValues.get("authenticity_token");
             }
             conn.disconnect();
@@ -176,9 +171,9 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
+            addRequestHeaders(conn);
             conn.addRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
-            addCookies(conn);
 
             String url2 = null;
             boolean ok = false;
@@ -190,9 +185,10 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
                 wr.close();
                 int responseCode = conn.getResponseCode();
                 String amsg = conn.getResponseMessage();
+                getCookies(conn);
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 JSONObject ret = parse(in);
-                if (ret != null && ret.getBoolean("success")) {
+                if (ret != null && ret.has("success") && ret.getBoolean("success")) {
                     Matcher matcher = Patterns.WEB_URL.matcher(ret.getString("update"));
                     while (matcher.find()) {
                         String tmp = matcher.group();
@@ -220,22 +216,19 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
             {
                 url2 = url2 + "?authenticity_token=" + URLEncode(authToken);
-                System.out.println("url2: " + url2);
                 conn = (HttpURLConnection) new URL(url2).openConnection();
                 conn.setInstanceFollowRedirects(false);
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Host", "www.runtastic.com");
                 conn.addRequestProperty("Accept", "application/json");
                 InputStream in = new BufferedInputStream(conn.getInputStream());
+                getCookies(conn);
                 JSONObject ret = parse(in);
                 userId = ret.getJSONObject("user").getInt("id");
                 conn.disconnect();
             }
 
-            if (userId != null && authToken != null)
-            {
-                System.out.println("userId: " + userId.toString() + ", authToken: " + authToken +
-                        ", relicId: " + relicId);
+            if (userId != null && authToken != null) {
                 return Status.OK;
             }
         } catch (MalformedURLException e) {
@@ -271,24 +264,21 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
         HttpURLConnection conn = null;
         try {
             String id = tcx.export(mID, writer);
-            String filename = "activity" + mID + ".tcx";
+            String filename = "activity" + Long.toString(Math.round(1000*Math.random())) + mID + ".tcx";
 
             String url = UPLOAD_URL + "?authenticity_token=" + URLEncode(authToken) + "&qqfile=" +
                     filename;
-            System.out.println("filename: " + filename);
-            System.out.println("url: " + url);
             conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
             conn.addRequestProperty("Host", "www.runtastic.com");
             conn.addRequestProperty("Origin", "https://www.runtastic.com");
-            conn.addRequestProperty("Referer", "https://www.runtastic.com/en/users/jonas-oreland/import_iframe");
+            conn.addRequestProperty("Referer", "https://www.runtastic.com");
             conn.addRequestProperty("X-Requested-With", "XMLHttpRequest");
             conn.addRequestProperty("X-File-Name", filename);
-            conn.addRequestProperty("X-NewRelic-ID", relicId);
             conn.addRequestProperty("Content-Type", "application/octet-stream");
-            conn.addRequestProperty("Accept", "*/*");
+            addRequestHeaders(conn);
 
             OutputStream out = new BufferedOutputStream(conn.getOutputStream());
             out.write(writer.toString().getBytes());
@@ -296,9 +286,8 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             out.close();
             InputStream in = new BufferedInputStream(conn.getInputStream());
             JSONObject ret = parse(in);
-            System.out.println("ret: " + ret);
-            conn.disconnect();
-            if (!ret.getBoolean("success")) {
+            getCookies(conn);
+            if (ret == null || !ret.has("success") || !ret.getBoolean("success")) {
                 System.out.println("ret: " + ret);
                 throw new JSONException("Unexpected json return");
             }
@@ -313,7 +302,10 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             i1 += name.length();
             int i2 = tmp.indexOf('\'', i1);
             String import_id = tmp.substring(i1, i2);
-            System.out.println("tmp: " + ret.toString());
+            System.out.println("import_id: " + import_id);
+            conn.disconnect();
+            logout();
+            return Status.OK;
 
 //            conn = (HttpURLConnection) new URL(UPDATE_SPORTS_TYPE).openConnection();
 //            conn.setDoOutput(true);
@@ -328,7 +320,6 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 //            int responseCode = conn.getResponseCode();
 //            String amsg = conn.getResponseMessage();
 //            System.out.println("code: " + responseCode + ", html: " + getFormValues(conn));
-//            conn.disconnect();
         } catch (IOException ex) {
             s.ex = ex;
         } catch (JSONException e) {
@@ -363,6 +354,8 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
     @Override
     public void logout() {
+        userId = null;
+        authToken = null;
         cookies.clear();
         formValues.clear();
     }
