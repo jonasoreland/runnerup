@@ -199,7 +199,7 @@ public class NikePlus extends FormCrawler implements Uploader {
                     }
                     response = buf.toString().replaceAll("<User>.*</User>", "\"\"");
                     System.err.println("buf: " + buf.toString());
-                    System.err.println("res: " + response.toString());
+                    System.err.println("res: " + response);
                 }
                 JSONObject obj = parse(new ByteArrayInputStream(response.getBytes()));
                 conn.disconnect();

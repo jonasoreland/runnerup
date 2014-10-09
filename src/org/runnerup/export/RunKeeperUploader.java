@@ -443,7 +443,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
                             if (p.has("distance"))
                                 c.put(FEED.DISTANCE, p.getDouble("distance"));
                             if (p.has("notes") && p.getString("notes") != null
-                                    && p.getString("notes") != "null")
+                                    && !p.getString("notes").equals("null"))
                                 c.put(FEED.NOTES, p.getString("notes"));
                         }
 

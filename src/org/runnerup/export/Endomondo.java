@@ -254,13 +254,13 @@ public class Endomondo extends FormCrawler implements Uploader {
             System.err.println("workoutId: " + workoutId);
 
             StringBuffer url = new StringBuffer();
-            url.append(UPLOAD_URL + "?authToken=" + authToken);
-            url.append("&workoutId=" + workoutId);
-            url.append("&sport=" + summary.sport);
-            url.append("&duration=" + summary.duration);
-            url.append("&distance=" + summary.distance);
+            url.append(UPLOAD_URL).append("?authToken=").append(authToken);
+            url.append("&workoutId=").append(workoutId);
+            url.append("&sport=").append(summary.sport);
+            url.append("&duration=").append(summary.duration);
+            url.append("&distance=").append(summary.distance);
             if (summary.hr != null) {
-                url.append("&heartRateAvg=" + summary.hr.toString());
+                url.append("&heartRateAvg=").append(summary.hr.toString());
             }
             url.append("&gzip=true");
             url.append("&extendedResponse=true");
@@ -331,7 +331,7 @@ public class Endomondo extends FormCrawler implements Uploader {
         }
 
         StringBuffer url = new StringBuffer();
-        url.append(FEED_URL + "?authToken=" + authToken);
+        url.append(FEED_URL).append("?authToken=").append(authToken);
         url.append("&maxResults=25");
 
         HttpURLConnection conn = null;

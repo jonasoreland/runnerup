@@ -109,7 +109,7 @@ public class OAuth2Activity extends Activity {
         tmp.append(auth_url);
         tmp.append("?client_id=").append(FormCrawler.URLEncode(client_id));
         tmp.append("&response_type=code");
-        tmp.append("&redirect_uri=" + FormCrawler.URLEncode(mRedirectUri));
+        tmp.append("&redirect_uri=").append(FormCrawler.URLEncode(mRedirectUri));
         if (auth_extra != null) {
             tmp.append("&").append(auth_extra);
         }

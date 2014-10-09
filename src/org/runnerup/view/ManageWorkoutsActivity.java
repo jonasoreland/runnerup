@@ -200,7 +200,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         String saveName = fileName;
                         try {
                             if (exists && selected[0] == false) {
-                                String name = new String();
+                                String name = "";
                                 String tmp[] = fileName.split("\\.");
                                 if (tmp.length > 0) {
                                     for (int i = 0; i < tmp.length - 1; i++)

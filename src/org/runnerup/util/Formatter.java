@@ -358,7 +358,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                     .append(resources.getString(seconds_per_unit > 1 ? R.string.cue_seconds
                             : R.string.cue_second));
         }
-        s.append(" " + resources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile));
+        s.append(" ").append(resources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile));
         return s.toString();
     }
 
