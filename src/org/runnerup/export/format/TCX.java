@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.runnerup.util.Constants.DB;
+import org.runnerup.workout.Sport;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.annotation.TargetApi;
@@ -32,6 +33,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
+import android.util.Pair;
 import android.util.Xml;
 /**
  * TCX - export an activity in TCX format
@@ -64,14 +66,20 @@ public class TCX {
         return simpleDateFormat.format(new Date(time));
     }
 
+    public String export(long activityId, Writer writer) throws IOException {
+        Pair<String,Sport> res = exportWithSport(activityId, writer);
+        return res.first;
+    }
+
     /**
      * @param activityId
      * @param writer
      * @return TCX id
      * @throws IOException
      */
-    public String export(long activityId, Writer writer) throws IOException {
+    public Pair<String,Sport> exportWithSport(long activityId, Writer writer) throws IOException {
 
+        Sport sport = null;
         String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
                 DB.ACTIVITY.START_TIME, DB.ACTIVITY.SPORT
@@ -97,9 +105,11 @@ public class TCX {
             } else {
                 switch (cursor.getInt(3)) {
                     case DB.ACTIVITY.SPORT_RUNNING:
+                        sport = Sport.RUNNING;
                         mXML.attribute("", "Sport", "Running");
                         break;
                     case DB.ACTIVITY.SPORT_BIKING:
+                        sport = Sport.BIKING;
                         mXML.attribute("", "Sport", "Biking");
                         break;
                     default:
@@ -125,7 +135,7 @@ public class TCX {
             mXML.endDocument();
             mXML = null;
             cursor.close();
-            return id;
+            return new Pair<String, Sport>(id, sport);
         } catch (IOException e) {
             cursor.close();
             mXML = null;

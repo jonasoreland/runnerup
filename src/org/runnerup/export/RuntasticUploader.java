@@ -21,12 +21,14 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 import android.util.Patterns;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.Constants.DB;
+import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -37,6 +39,8 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -55,6 +59,17 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
     private Integer userId = null;
     private String authToken = null;
+
+    static Map<Integer, Sport> runtastic2sportMap = new HashMap<Integer, Sport>();
+    static Map<Sport, Integer> sport2runtasticMap = new HashMap<Sport, Integer>();
+    static {
+        runtastic2sportMap.put(1, Sport.RUNNING);
+        runtastic2sportMap.put(3, Sport.BIKING);
+        for (Integer i : runtastic2sportMap.keySet()) {
+            sport2runtasticMap.put(runtastic2sportMap.get(i), i);
+        }
+    }
+
 
     RuntasticUploader(UploadManager uploadManager) {
     }
@@ -117,6 +132,8 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
         conn.addRequestProperty("Accept-Encoding", "");
         conn.addRequestProperty("Accept-Language", "en-US");
         conn.addRequestProperty("Connection", "keep-alive");
+        conn.addRequestProperty("Origin", "https://www.runtastic.com");
+        conn.addRequestProperty("Referer", "https://www.runtastic.com");
         addCookies(conn);
     }
 
@@ -263,8 +280,10 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
         HttpURLConnection conn = null;
         try {
-            String id = tcx.export(mID, writer);
-            String filename = "activity" + Long.toString(Math.round(1000*Math.random())) + mID + ".tcx";
+            Pair<String, Sport> res = tcx.exportWithSport(mID, writer);
+            String id = res.first;
+            Sport sport = res.second;
+            String filename = String.format("activity%s%d.tcx", Long.toString(Math.round(1000 * Math.random())), mID);
 
             String url = UPLOAD_URL + "?authenticity_token=" + URLEncode(authToken) + "&qqfile=" +
                     filename;
@@ -273,8 +292,6 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
             conn.addRequestProperty("Host", "www.runtastic.com");
-            conn.addRequestProperty("Origin", "https://www.runtastic.com");
-            conn.addRequestProperty("Referer", "https://www.runtastic.com");
             conn.addRequestProperty("X-Requested-With", "XMLHttpRequest");
             conn.addRequestProperty("X-File-Name", filename);
             conn.addRequestProperty("Content-Type", "application/octet-stream");
@@ -304,22 +321,29 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             String import_id = tmp.substring(i1, i2);
             System.out.println("import_id: " + import_id);
             conn.disconnect();
+
+            if (sport != null && sport != Sport.RUNNING && sport2runtasticMap.containsKey(sport)) {
+                conn = (HttpURLConnection) new URL(UPDATE_SPORTS_TYPE).openConnection();
+                conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
+                conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                conn.addRequestProperty("X-Requested-With", "XMLHttpRequest");
+                addRequestHeaders(conn);
+
+                FormValues fv = new FormValues();
+                fv.put("authenticity_token", authToken);
+                fv.put("data_import_id", import_id);
+                fv.put("sport_type_id", sport2runtasticMap.get(sport).toString());
+                fv.put("user_id", userId.toString());
+                postData(conn, fv);
+                int responseCode = conn.getResponseCode();
+                String amsg = conn.getResponseMessage();
+                System.out.println("code: " + responseCode + ", html: " + getFormValues(conn));
+                conn.disconnect();
+            }
             logout();
             return Status.OK;
 
-//            conn = (HttpURLConnection) new URL(UPDATE_SPORTS_TYPE).openConnection();
-//            conn.setDoOutput(true);
-//            conn.setRequestMethod("POST");
-//            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//            FormValues fv = new FormValues();
-//            fv.put("authenticity_token", authToken);
-//            fv.put("data_import_id", import_id);
-//            fv.put("sport_type_id", "1");
-//            fv.put("user_id", userId.toString());
-//            postData(conn, fv);
-//            int responseCode = conn.getResponseCode();
-//            String amsg = conn.getResponseMessage();
-//            System.out.println("code: " + responseCode + ", html: " + getFormValues(conn));
         } catch (IOException ex) {
             s.ex = ex;
         } catch (JSONException e) {
