@@ -17,23 +17,7 @@
 
 package org.runnerup.gpstracker;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
-import org.runnerup.hr.HRDeviceRef;
-import org.runnerup.hr.HRManager;
-import org.runnerup.hr.HRProvider;
-import org.runnerup.hr.HRProvider.HRClient;
-import org.runnerup.util.Constants;
-import org.runnerup.workout.Workout;
-
 import android.annotation.TargetApi;
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -49,8 +33,28 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
+import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
+import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
+import org.runnerup.notification.GpsBoundState;
+import org.runnerup.notification.NotificationState;
+import org.runnerup.notification.NotificationStateManager;
+import org.runnerup.notification.OngoingState;
+import org.runnerup.hr.HRDeviceRef;
+import org.runnerup.hr.HRManager;
+import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.HRProvider.HRClient;
+import org.runnerup.util.Constants;
+import org.runnerup.util.Formatter;
+import org.runnerup.workout.Workout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -63,10 +67,7 @@ import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
-        LocationListener, Constants {
-
-    private static final int NOTIFICATION_ID = 1;
-
+        LocationListener, Constants, CurrentTrackerInformation {
     public static final int MAX_HR_AGE = 3000; // 3s
 
     private Handler handler = new Handler();
@@ -89,7 +90,7 @@ public class GpsTracker extends android.app.Service implements
     long mMaxHR = 0;
 
     boolean mWithoutGps = false;
-    
+
     enum State {
         INIT, LOGGING, STARTED, PAUSED,
         ERROR /* Failed to init GPS */
@@ -117,12 +118,21 @@ public class GpsTracker extends android.app.Service implements
     private Workout workout = null;
 
     private double mMinLiveLogDelayMillis = 5000;
+
     private double mElapsedTimeMillisSinceLiveLog = 0;
+    private NotificationStateManager notificationStateManager;
+
+    private NotificationState gpsTrackerBoundState;
+    private NotificationState activityOngoingState;
 
     @Override
     public void onCreate() {
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getWritableDatabase();
+        notificationStateManager = new NotificationStateManager(new ForegroundNotificationDisplayStrategy(this));
+        activityOngoingState = new OngoingState(new Formatter(this), this, this);
+        gpsTrackerBoundState = new GpsBoundState(this);
+
         wakelock(false);
     }
 
@@ -159,6 +169,7 @@ public class GpsTracker extends android.app.Service implements
 
     public void startLogging() {
         assert (state == State.INIT);
+
         wakelock(true);
         // TODO add preference
         mMinLiveLogDelayMillis = PreferenceManager
@@ -305,18 +316,8 @@ public class GpsTracker extends android.app.Service implements
         }
     }
 
-    public void setForeground(Class<?> client) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        Intent i = new Intent(this, client);
-        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0);
-        builder.setTicker("RunnerUp activity started");
-        builder.setContentIntent(pi);
-        builder.setContentTitle("RunnerUp");
-        builder.setContentText("Tracking");
-        builder.setSmallIcon(R.drawable.icon);
-        builder.setOngoing(true);
-        startForeground(NOTIFICATION_ID, builder.build());
+    public void setGpsTrackerBound() {
+        notificationStateManager.displayNotificationState(gpsTrackerBoundState);
     }
 
     public void newLap(ContentValues tmp) {
@@ -437,7 +438,7 @@ public class GpsTracker extends android.app.Service implements
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
             liveLog(mLastLocation, DB.LOCATION.TYPE_DISCARD, mElapsedDistance, mElapsedTimeMillis);
         }
-        this.stopForeground(true);
+        notificationStateManager.cancelNotification();
         stopLogging();
     }
 
@@ -448,10 +449,12 @@ public class GpsTracker extends android.app.Service implements
         mLocationType = newType;
     }
 
+    @Override
     public double getTime() {
         return mElapsedTimeMillis / 1000;
     }
 
+    @Override
     public double getDistance() {
         return mElapsedDistance;
     }
@@ -527,6 +530,8 @@ public class GpsTracker extends android.app.Service implements
                     break;
             }
             liveLog(arg0, mLocationType, mElapsedDistance, mElapsedTimeMillis);
+
+            notificationStateManager.displayNotificationState(activityOngoingState);
         }
         mLastLocation = arg0;
     }
@@ -683,10 +688,12 @@ public class GpsTracker extends android.app.Service implements
         return getCurrentHRValue(System.currentTimeMillis(), 3000);
     }
 
+    @Override
     public Double getCurrentSpeed() {
         return getCurrentSpeed(System.currentTimeMillis(), 3000);
     }
 
+    @Override
     public Double getCurrentPace() {
         Double speed = getCurrentSpeed();
         if (speed == null)

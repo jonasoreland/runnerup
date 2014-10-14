@@ -17,25 +17,6 @@
 
 package org.runnerup.view;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.runnerup.R;
-import org.runnerup.gpstracker.GpsTracker;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZones;
-import org.runnerup.util.TickListener;
-import org.runnerup.widget.WidgetUtil;
-import org.runnerup.workout.HeadsetButtonReceiver;
-import org.runnerup.workout.Intensity;
-import org.runnerup.workout.Scope;
-import org.runnerup.workout.Step;
-import org.runnerup.workout.Workout;
-import org.runnerup.workout.feedback.RUTextToSpeech;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -63,6 +44,25 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.runnerup.R;
+import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
+import org.runnerup.util.TickListener;
+import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.HeadsetButtonReceiver;
+import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Scope;
+import org.runnerup.workout.Step;
+import org.runnerup.workout.Workout;
+import org.runnerup.workout.feedback.RUTextToSpeech;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunActivity extends Activity implements TickListener {
@@ -212,7 +212,7 @@ public class RunActivity extends Activity implements TickListener {
     void onGpsTrackerBound() {
         workout = mGpsTracker.getWorkout();
         mGpsTracker.createActivity(workout.getSport());
-        mGpsTracker.setForeground(RunActivity.class);
+        mGpsTracker.setGpsTrackerBound();
         mGpsTracker.start();
 
         SharedPreferences prefs = workout.getAudioCues();

@@ -17,8 +17,6 @@
 
 package org.runnerup.gpstracker;
 
-import org.runnerup.util.TickListener;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.location.GpsSatellite;
@@ -28,6 +26,8 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
+
+import org.runnerup.util.TickListener;
 /**
  * 
  * This is a helper class that is used to determine when the GPS status is good

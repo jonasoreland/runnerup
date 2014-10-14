@@ -17,35 +17,10 @@
 
 package org.runnerup.view;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.gpstracker.GpsTracker;
-import org.runnerup.hr.MockHRProvider;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.SafeParse;
-import org.runnerup.util.TickListener;
-import org.runnerup.widget.DisabledEntriesAdapter;
-import org.runnerup.widget.TitleSpinner;
-import org.runnerup.widget.TitleSpinner.OnCloseDialogListener;
-import org.runnerup.widget.TitleSpinner.OnSetValueListener;
-import org.runnerup.widget.WidgetUtil;
-import org.runnerup.workout.Dimension;
-import org.runnerup.workout.HeadsetButtonReceiver;
-import org.runnerup.workout.Workout;
-import org.runnerup.workout.Workout.StepListEntry;
-import org.runnerup.workout.WorkoutBuilder;
-import org.runnerup.workout.WorkoutSerializer;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -80,8 +55,39 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.gpstracker.GpsInformation;
+import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.hr.MockHRProvider;
+import org.runnerup.notification.GpsBoundState;
+import org.runnerup.notification.GpsSearchingState;
+import org.runnerup.notification.NotificationManagerDisplayStrategy;
+import org.runnerup.notification.NotificationStateManager;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.SafeParse;
+import org.runnerup.util.TickListener;
+import org.runnerup.widget.DisabledEntriesAdapter;
+import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.TitleSpinner.OnCloseDialogListener;
+import org.runnerup.widget.TitleSpinner.OnSetValueListener;
+import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.HeadsetButtonReceiver;
+import org.runnerup.workout.Workout;
+import org.runnerup.workout.Workout.StepListEntry;
+import org.runnerup.workout.WorkoutBuilder;
+import org.runnerup.workout.WorkoutSerializer;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class StartActivity extends Activity implements TickListener {
+public class StartActivity extends Activity implements TickListener, GpsInformation {
 
     final static String TAB_BASIC = "basic";
     final static String TAB_INTERVAL = "interval";
@@ -144,6 +150,9 @@ public class StartActivity extends Activity implements TickListener {
     Formatter formatter = null;
     BroadcastReceiver catchButtonEvent = null;
     boolean allowHardwareKey = false;
+    private NotificationStateManager notificationStateManager;
+    private GpsSearchingState gpsSearchingState;
+    private GpsBoundState gpsBoundState;
 
     /** Called when the activity is first created. */
 
@@ -157,6 +166,10 @@ public class StartActivity extends Activity implements TickListener {
 
         bindGpsTracker();
         mGpsStatus = new org.runnerup.gpstracker.GpsStatus(this);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationStateManager = new NotificationStateManager(new NotificationManagerDisplayStrategy(notificationManager));
+        gpsSearchingState = new GpsSearchingState(this, this);
+        gpsBoundState = new GpsBoundState(this);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         setContentView(R.layout.start);
@@ -273,7 +286,7 @@ public class StartActivity extends Activity implements TickListener {
         manualPace.setVisibility(View.GONE);
         manualNotes = (EditText) findViewById(R.id.manual_notes);
 
-        if (getParent().getIntent() != null) {
+        if (getParent() != null && getParent().getIntent() != null) {
             Intent i = getParent().getIntent();
             if (i.hasExtra("mode")) {
                 if (i.getStringExtra("mode").equals(TAB_ADVANCED)) {
@@ -408,6 +421,8 @@ public class StartActivity extends Activity implements TickListener {
             mGpsStatus.start(this);
         if (mGpsTracker != null && !mGpsTracker.isLogging())
             mGpsTracker.startLogging();
+
+        notificationStateManager.displayNotificationState(gpsSearchingState);
     }
 
     private void stopGps() {
@@ -420,6 +435,8 @@ public class StartActivity extends Activity implements TickListener {
 
         if (mGpsTracker != null)
             mGpsTracker.stopLogging();
+
+        notificationStateManager.cancelNotification();
     }
 
     OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
@@ -513,15 +530,7 @@ public class StartActivity extends Activity implements TickListener {
             gpsInfoView1.setText("" + cnt0 + "/" + cnt1);
         }
 
-        String gpsInfo2 = "";
-        if (mGpsTracker != null) {
-            Location l = mGpsTracker.getLastKnownLocation();
-
-            if (l != null && l.getAccuracy() > 0) {
-                gpsInfo2 = ", " + l.getAccuracy() + "m";
-            }
-        }
-        gpsInfoView2.setText(gpsInfo2);
+        gpsInfoView2.setText(getGpsAccuracy());
 
         if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
             gpsInfoLayout.setVisibility(View.GONE);
@@ -537,6 +546,7 @@ public class StartActivity extends Activity implements TickListener {
         } else if (mGpsStatus.isFixed() == false) {
             startButton.setEnabled(false);
             startButton.setText("Waiting for GPS");
+            notificationStateManager.displayNotificationState(gpsSearchingState);
         } else {
             startButton.setText("Start activity");
             if (!tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) || advancedWorkout != null) {
@@ -544,6 +554,7 @@ public class StartActivity extends Activity implements TickListener {
             } else {
                 startButton.setEnabled(false);
             }
+            notificationStateManager.displayNotificationState(gpsBoundState);
         }
         gpsInfoLayout.setVisibility(View.VISIBLE);
 
@@ -581,6 +592,19 @@ public class StartActivity extends Activity implements TickListener {
         else {
             hrLayout.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public String getGpsAccuracy() {
+        if (mGpsTracker != null) {
+            Location l = mGpsTracker.getLastKnownLocation();
+
+            if (l != null && l.getAccuracy() > 0) {
+                return String.format(", %s m", l.getAccuracy());
+            }
+        }
+
+        return "";
     }
 
     private boolean mIsBound = false;
@@ -742,6 +766,16 @@ public class StartActivity extends Activity implements TickListener {
             builder.show();
             return;
         }
+    }
+
+    @Override
+    public int getSatellitesAvailable() {
+        return mGpsStatus.getSatellitesAvailable();
+    }
+
+    @Override
+    public int getSatellitesFixed() {
+        return mGpsStatus.getSatellitesFixed();
     }
 
     class WorkoutStepsAdapter extends BaseAdapter {
