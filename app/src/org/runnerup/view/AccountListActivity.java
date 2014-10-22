@@ -121,7 +121,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         };
 
         return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, null, null,
-                DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
+                DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.NAME);
     }
 
     @Override
