@@ -57,6 +57,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +74,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
@@ -1318,20 +1320,37 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     graphData.complete(graphView);
                     if (!graphData.HasHRInfo()) {
                         graphTab.addView(graphView);
-                    } else {
+                    } else if (!graphData.HasHRZHist()) {
                         graphTab.addView(graphView,
-                                new LinearLayout.LayoutParams(
-                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
-                        graphTab.addView(graphView2,
-                                new LinearLayout.LayoutParams(
+                                new LayoutParams(
                                         LayoutParams.MATCH_PARENT, 0, 0.5f));
 
-                        if (graphData.HasHRZHist()) {
-                            graphTab.addView(hrzonesBar,
-                                    new LinearLayout.LayoutParams(
-                                            LayoutParams.MATCH_PARENT,
-                                            hrzonesBar.getTotalBarHeight(), 0));
-                        }
+                        graphTab.addView(graphView2,
+                                new LayoutParams(
+                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
+                    } else if (hrzonesBar.barOrientation == HRZonesBar.BarOrientation.HORIZONTAL) {
+                        graphTab.addView(graphView,
+                                new LayoutParams(
+                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
+
+                        graphTab.addView(graphView2,
+                                new LayoutParams(
+                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
+
+                        graphTab.addView(hrzonesBar,
+                                new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        hrzonesBar.getTotalBarHeight(), 0));
+
+                    } else if (hrzonesBar.barOrientation == HRZonesBar.BarOrientation.VERTICAL) {
+                        // TODO: Position correctly hrzonesBar (RelativeLayout?)
+                        graphTab.addView(graphView,
+                                new LayoutParams(
+                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
+
+                        graphTab.addView(graphView2,
+                                new LayoutParams(
+                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
                     }
                     if (map != null) {
                         map.addPolyline(route.path);

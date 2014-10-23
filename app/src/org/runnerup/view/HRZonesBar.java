@@ -28,6 +28,12 @@ import android.view.View;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZonesBar extends View {
 
+    enum BarOrientation {
+        HORIZONTAL, VERTICAL
+    };
+
+    BarOrientation barOrientation = BarOrientation.HORIZONTAL;
+
     static final int colorLow = Color.WHITE; // Color for the zone 0
     static final int colorHigh = Color.parseColor("#ff0000"); // Color for the last zone
 
@@ -80,12 +86,24 @@ public class HRZonesBar extends View {
         paint.setStrokeWidth(0);
         paint.setStyle(Paint.Style.FILL);
 
-        float left = border;
-        float totWidth = getWidth() - border * 2;
+        float left = 0;
+        float totWidth = 0;
+        if (barOrientation == BarOrientation.HORIZONTAL) {
+            totWidth = getWidth() - border * 2;
+            left = border;
+        } else if (barOrientation == BarOrientation.VERTICAL) {
+            totWidth = getHeight() - border * 2;
+            left = getHeight() - border;
+        }
+
         for (int i = 0; i < hrzData.length; i++) {
             if (hrzData[i] > 0) {
                 totWidth -= separator;
             }
+        }
+        if (totWidth <= 0) {
+            System.err.println("Not enough space to display the heart-rate zone bar");
+            return;
         }
 
         for (int i = 0; i < hrzData.length; i++) {
@@ -100,14 +118,24 @@ public class HRZonesBar extends View {
             fontPaint.setColor(blackOrWhiteContrastingColor(rectColor));
 
             float len = (float) (totWidth * hrzData[i]);
-            canvas.drawRect(left, border, left + len, barHeight + border, paint);
-
-            float textLen = fontPaint.measureText("Z" + i);
-            if (textLen < len) {
-                canvas.drawText("Z" + i, left + (len - textLen) / 2, border + (barHeight + fontSize) / 2, fontPaint);
+            if (barOrientation == BarOrientation.HORIZONTAL) {
+                canvas.drawRect(left, border, left + len, barHeight + border, paint);
+            } else if (barOrientation == BarOrientation.VERTICAL) {
+                canvas.drawRect(border, left - len, barHeight + border, left, paint);
             }
 
-            left += len + separator;
+            float textLen = fontPaint.measureText("Z" + i);
+            if ((barOrientation == BarOrientation.HORIZONTAL) && (textLen < len)) {
+                canvas.drawText("Z" + i, left + (len - textLen) / 2, border + (barHeight + fontSize) / 2, fontPaint);
+            } else if ((barOrientation == BarOrientation.VERTICAL) && (fontSize < len)) {
+                canvas.drawText("Z" + i, border + (barHeight - textLen) / 2, left + (fontSize - len) / 2, fontPaint);
+            }
+
+            if (barOrientation == BarOrientation.HORIZONTAL) {
+                left += len + separator;
+            } else if (barOrientation == BarOrientation.VERTICAL) {
+                left -= len + separator;
+            }
         }
     }
 
