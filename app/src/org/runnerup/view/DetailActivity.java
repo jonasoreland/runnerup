@@ -33,6 +33,7 @@ import org.runnerup.export.Uploader.Feature;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
@@ -41,8 +42,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -126,6 +130,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
     LinearLayout graphTab = null;
     GraphView graphView;
     GraphView graphView2;
+    HRZonesBar hrzonesBar;
 
     UploadManager uploadManager = null;
     Formatter formatter = null;
@@ -262,6 +267,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     }
                 }
             };
+
+            hrzonesBar = new HRZonesBar(this);
         }
     }
 
@@ -825,6 +832,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         double acc_time = 0;
 
         int[] hr = null;
+        double[] hrzHist = null;
 
         double tot_avg_hr = 0;
         int min_hr = Integer.MAX_VALUE;
@@ -837,6 +845,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
         List<GraphViewData> hrList = null;
 
         boolean showHR = false;
+        boolean showHRZhist = false;
+        HRZones hrCalc = null;
 
         GraphProducer() {
             this(GRAPH_INTERVAL_SECONDS, GRAPH_AVERAGE_SECONDS);
@@ -850,6 +860,19 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
             this.hrList = new ArrayList<GraphViewData>();
             this.hr = new int[graphAverageSeconds];
+
+            Resources res = getResources();
+            Context ctx = getApplicationContext();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            int zone = prefs.getInt(res.getString(R.string.pref_basic_target_hrz), 0);
+            if (zone > 0) {
+                this.hrCalc = new HRZones(res, prefs);
+                this.hrzHist = new double[hrCalc.getCount() + 1];
+                for (int i = 0; i < this.hrzHist.length; i++) {
+                    this.hrzHist[i] = 0;
+                }
+                showHRZhist = true;
+            }
 
             clear(0);
         }
@@ -874,8 +897,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
         void addObservation(double delta_time, double delta_distance, double tot_distance, int hr) {
             if (delta_time < 500)
                 return;
-            if (hr > 0)
+            if (hr > 0) {
                 showHR = true;
+            }
 
             int p = pos % this.time.length;
             sum_time -= this.time[p];
@@ -887,6 +911,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
             this.distance[p] = delta_distance;
             this.hr[p] = hr;
             pos = (pos + 1);
+
+            if (showHRZhist) {
+                this.hrzHist[hrCalc.getZoneInt(hr)] += delta_time;
+            }
 
             acc_time += delta_time;
 
@@ -1113,6 +1141,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 GraphViewSeries graphViewData2 = new GraphViewSeries(
                         hrList.toArray(new GraphViewData[hrList.size()]));
                 graphView2.addSeries(graphViewData2); // data
+
+                if (showHRZhist) {
+                    System.err.print("HR Zones:");
+                    double sum = 0;
+                    for (int i = 0; i < hrzHist.length; i++) {
+                        sum += hrzHist[i];
+                    }
+                    for (int i = 0; i < hrzHist.length; i++) {
+                        hrzHist[i] = hrzHist[i] / sum;
+                        System.err.print(" " + hrzHist[i]);
+                    }
+                    System.err.println("\n");
+                    hrzonesBar.pushHrzData(hrzHist);
+                }
             }
         }
 
@@ -1135,6 +1177,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public boolean HasHRInfo() {
             return showHR;
         }
+
+        public boolean HasHRZHist () { return showHR && showHRZhist; }
     }
 
     public double calculateAverage(int[] data) {
@@ -1281,6 +1325,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         graphTab.addView(graphView2,
                                 new LinearLayout.LayoutParams(
                                         LayoutParams.MATCH_PARENT, 0, 0.5f));
+
+                        if (graphData.HasHRZHist()) {
+                            graphTab.addView(hrzonesBar,
+                                    new LinearLayout.LayoutParams(
+                                            LayoutParams.MATCH_PARENT,
+                                            hrzonesBar.getTotalBarHeight(), 0));
+                        }
                     }
                     if (map != null) {
                         map.addPolyline(route.path);

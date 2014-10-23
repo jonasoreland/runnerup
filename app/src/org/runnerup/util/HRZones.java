@@ -94,6 +94,19 @@ public class HRZones {
         return 0;
     }
 
+    public int getZoneInt(double value) {
+        if (zones == null) {
+            return 0;
+        }
+
+        int z = 0;
+        for (z = 0; z < zones.length; z++) {
+            if (zones[z] >= value)
+                return z;
+        }
+        return z - 1;
+    }
+
     public Pair<Integer, Integer> getHRValues(int zone) {
         if (zones != null && zone < zones.length) {
             if (zone == 0) {
