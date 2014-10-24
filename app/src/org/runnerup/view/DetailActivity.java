@@ -1343,14 +1343,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                         hrzonesBar.getTotalBarHeight(), 0));
 
                     } else if (hrzonesBar.barOrientation == HRZonesBar.BarOrientation.VERTICAL) {
-                        // TODO: Position correctly hrzonesBar (RelativeLayout?)
-                        graphTab.addView(graphView,
-                                new LayoutParams(
-                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
+                        // Global holder
+                        LinearLayout ll0 = new LinearLayout(DetailActivity.this);
+                        ll0.setOrientation(LinearLayout.VERTICAL);
 
-                        graphTab.addView(graphView2,
-                                new LayoutParams(
-                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
+                        // LinearLayout holder for HRM data
+                        LinearLayout ll1 = new LinearLayout(DetailActivity.this);
+                        ll1.setOrientation(LinearLayout.HORIZONTAL);
+
+                        ll1.addView(graphView2, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
+                        ll1.addView(hrzonesBar, new LayoutParams(hrzonesBar.getTotalBarHeight(), LayoutParams.MATCH_PARENT));
+
+                        ll0.addView(graphView, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
+                        ll0.addView(ll1, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
+                        graphTab.addView(ll0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
                     }
                     if (map != null) {
                         map.addPolyline(route.path);
