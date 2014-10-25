@@ -83,6 +83,16 @@
             android:layout_weight="1" />
 
         <TextView
+            android:id="@+id/hr_battery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="@string/placeholder_battery_level_txt"
+            android:layout_margin="10px"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/hr_log"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"

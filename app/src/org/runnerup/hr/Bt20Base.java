@@ -154,6 +154,11 @@ public abstract class Bt20Base implements HRProvider {
         return hrTimestamp;
     }
 
+    @Override
+    public int getBatteryLevel() {
+        return -1;
+    }
+
     /**
      * Cancels all the threads.
      */

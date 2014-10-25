@@ -361,6 +361,11 @@ public class AntPlus implements HRProvider {
         return hrTimestamp;
     }
 
+    @Override
+    public int getBatteryLevel() {
+        return -1;
+    }
+
     /** it seems ANT+ requires Bluetooth too */
 
     @Override

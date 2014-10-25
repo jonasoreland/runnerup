@@ -183,4 +183,5 @@
   <string name="placeholder_time_txt">32:57</string>
   <string name="placeholder_distance_txt">8.34</string>
   <string name="placeholder_pace_txt">4:34</string>
+  <string name="placeholder_battery_level_txt">Battery: unknown</string>
 </resources>
