@@ -25,7 +25,9 @@ Releases can be downloaded on the [Play Store](https://play.google.com/store/app
 ## Build
 Depending on your IDE, see according documentation:
 - for Android Studio, please see [how to build with Android Studio](Documentation/howto-build-with-android-studio.txt).
-- for Eclipse, please see [how to build with Eclipse](Documentation/howto-build-with-eclipse.txt).
+
+- UPDATE: Eclipse is currently broken,
+for Eclipse, please see [how to build with Eclipse](Documentation/howto-build-with-eclipse.txt).
 
 ## Dependencies
 - [Google Play Services API](http://developer.android.com/google/play-services/index.html): Used to display map to the user.
