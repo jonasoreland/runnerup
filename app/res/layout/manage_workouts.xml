@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/download_workout_button_btn"
+            android:text="@string/download"
             android:textSize="16sp"
 		/>
 
@@ -54,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/share_workout_button_btn"
+            android:text="@string/share"
             android:textSize="16sp"
 		/>
         
@@ -65,7 +65,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/delete_workout_button_btn"
+            android:text="@string/delete"
             android:textSize="16sp"
             />
 	</LinearLayout>

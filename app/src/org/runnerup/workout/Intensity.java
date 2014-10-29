@@ -25,32 +25,32 @@ public enum Intensity {
     /**
      * Running
      */
-    ACTIVE(INTENSITY.ACTIVE, R.string.txt_intensity_active),
+    ACTIVE(INTENSITY.ACTIVE, R.string.active),
 
     /**
 	 *
 	 */
-    RESTING(INTENSITY.RESTING, R.string.txt_intensity_resting),
+    RESTING(INTENSITY.RESTING, R.string.rest),
 
     /**
      * Warm up
      */
-    WARMUP(INTENSITY.WARMUP, R.string.txt_intensity_warmup, R.string.cue_warmup),
+    WARMUP(INTENSITY.WARMUP, R.string.warmup, R.string.cue_warmup),
 
     /**
      * Cool down
      */
-    COOLDOWN(INTENSITY.COOLDOWN, R.string.txt_intensity_cooldown, R.string.cue_cooldown),
+    COOLDOWN(INTENSITY.COOLDOWN, R.string.cooldown, R.string.cue_cooldown),
 
     /**
      * Loop (for workout construction/plans)
      */
-    REPEAT(INTENSITY.REPEAT, R.string.txt_intensity_repeat),
+    REPEAT(INTENSITY.REPEAT, R.string.repeat),
 
     /**
      *
      */
-   RECOVERY(INTENSITY.RECOVERY, R.string.txt_intensity_recovery) ;
+   RECOVERY(INTENSITY.RECOVERY, R.string.recovery) ;
 
     int value;
     int textId;

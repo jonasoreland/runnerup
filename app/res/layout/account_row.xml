@@ -31,7 +31,7 @@
             android:id="@+id/account_list_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/account_list_name_txt"
+            android:text="@string/fun_beat"
             android:layout_weight="3" />
 
         <ImageView
@@ -45,13 +45,13 @@
             android:id="@+id/account_list_upload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/account_list_upload_box" />
+            android:text="@string/upload" />
         
         <CheckBox
             android:id="@+id/account_list_feed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-			android:text="@string/account_list_feed_box" />
+			android:text="@string/feed" />
         
         <View
             android:layout_width="0dp"
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             style="@style/ButtonText"
 	        android:background="@drawable/btn_blue"
-            android:text="@string/account_list_configure_button_btn" />
+            android:text="@string/configure" />
 
     </TableRow>
 

@@ -33,20 +33,20 @@
             android:id="@+id/total_time"
             style="@style/RunHeader"
             android:gravity="right"
-            android:text="@string/total_time_txt" />
+            android:text="@string/time" />
 
         <TextView
             android:id="@+id/total_distance"
             style="@style/RunHeader"
             android:gravity="right"
-            android:text="@string/total_distance_txt" />
+            android:text="@string/distance" />
 
         <TextView
             android:id="@+id/total_pace"
             style="@style/RunHeader"
             android:layout_marginRight="3dp"
             android:gravity="right"
-            android:text="@string/total_pace_txt" />
+            android:text="@string/pace" />
     </LinearLayout>
 
     <LinearLayout
@@ -66,7 +66,7 @@
             <TextView
                 android:id="@+id/text_view01"
                 style="@style/RunHeader"
-                android:text="@string/activity_total_txt" />
+                android:text="@string/total" />
         </LinearLayout>
 
         <LinearLayout
@@ -128,8 +128,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="1px"
                         android:entries="@array/sportEntries"
-                        android:prompt="@string/simple_type"
-                        android:text="@string/basic_sport" />
+                        android:prompt="@string/type"
+                        android:text="@string/sport" />
 
                     <EditText
                         android:id="@+id/notes_text"
@@ -204,7 +204,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/resume_button_btn" />
+            android:text="@string/resume" />
 
         <Button
             android:id="@+id/save_button"
@@ -213,7 +213,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/discard_button"
             android:background="@drawable/btn_green"
-            android:text="@string/save_button_btn" />
+            android:text="@string/save_activity" />
 
         <Button
             android:id="@+id/discard_button"
@@ -222,7 +222,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@drawable/btn_red"
-            android:text="@string/discard_button_btn" />
+            android:text="@string/discard_activity" />
     </LinearLayout>
 
 </RelativeLayout>

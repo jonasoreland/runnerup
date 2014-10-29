@@ -39,17 +39,17 @@
             android:layout_width="0dp"
             android:layout_weight="27"
             android:gravity="center_vertical|left"
-            android:text="@string/step_intensity_txt"
+            android:text="@string/cooldown"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/step_duration_type"
+            android:id="@+id/duration_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="25"
             android:gravity="center_vertical|left"
-            android:text="@string/step_duration_type_txt"
+            android:text="@string/duration"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="50"
             android:gravity="center_vertical|right"
-            android:text="@string/step_duration_value_txt"
+            android:text="@string/placeholder_time"
             android:textColor="@android:color/black" />
     </TableRow>
 
@@ -88,7 +88,7 @@
             android:layout_width="0dp"
             android:layout_weight="25"
             android:gravity="center_vertical|left"
-            android:text="@string/step_goal_type_txt"
+            android:text="@string/pace"
             android:textColor="@android:color/black" />
 
         <TextView

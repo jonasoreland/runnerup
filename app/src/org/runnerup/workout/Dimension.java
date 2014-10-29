@@ -25,12 +25,12 @@ import org.runnerup.util.Constants.DB.DIMENSION;
  */
 public enum Dimension {
 
-    TIME(DIMENSION.TIME, R.string.txt_dimension_time),
-    DISTANCE(DIMENSION.DISTANCE, R.string.txt_dimension_distance),
-    SPEED(DIMENSION.SPEED, R.string.txt_dimension_speed),
-    PACE(DIMENSION.PACE, R.string.txt_dimension_pace),
-    HR(DIMENSION.HR, R.string.txt_dimension_heartrate),
-    HRZ(DIMENSION.HRZ, R.string.txt_dimension_heartratezone);
+    TIME(DIMENSION.TIME, R.string.time),
+    DISTANCE(DIMENSION.DISTANCE, R.string.distance),
+    SPEED(DIMENSION.SPEED, R.string.speed),
+    PACE(DIMENSION.PACE, R.string.pace),
+    HR(DIMENSION.HR, R.string.heartrate),
+    HRZ(DIMENSION.HRZ, R.string.heartrate_zone);
 
     // TODO
     public static boolean SPEED_CUE_ENABLED = false;

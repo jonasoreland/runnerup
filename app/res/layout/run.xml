@@ -35,25 +35,25 @@
                 android:id="@+id/activity_header_time"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/activity_header_time_txt" />
+                android:text="@string/time" />
 
             <TextView
                 android:id="@+id/activity_header_distance"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/activity_header_distance_txt" />
+                android:text="@string/distance" />
 
             <TextView
                 android:id="@+id/activity_header_pace"
                 style="@style/RunHeader"
                 android:gravity="right"
-                android:text="@string/activity_header_pace_txt" />
+                android:text="@string/pace" />
             <TextView
                 android:id="@+id/activity_header_hr"
                 style="@style/RunHeader"
                 android:layout_marginRight="3dp"
                 android:gravity="right"
-                android:text="@string/activity_header_hr_txt" />
+                android:text="@string/metrics_heartrate" />
         </TableRow>
 
         <LinearLayout
@@ -69,7 +69,7 @@
                 <TextView
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/activity_total_txt" />
+                    android:text="@string/total" />
             </LinearLayout>
 
             <TableRow
@@ -112,7 +112,7 @@
                 <TextView
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/interval_total_txt" />
+                    android:text="@string/interval" />
             </LinearLayout>
 
             <TableRow
@@ -155,7 +155,7 @@
                 <TextView
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/lap_total_txt" />
+                    android:text="@string/lap" />
             </LinearLayout>
 
             <TableRow
@@ -229,7 +229,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/new_lap_button_btn" />
+            android:text="@string/new_lap" />
 
         <Button
             android:id="@+id/pause_button"
@@ -238,7 +238,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/pause_button_btn" />
+            android:text="@string/pause" />
     </TableRow>
 
     <TableRow
@@ -254,7 +254,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_red"
-            android:text="@string/stop_button_btn" />
+            android:text="@string/stop" />
     </TableRow>
 
 </RelativeLayout>

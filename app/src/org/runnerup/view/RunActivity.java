@@ -557,7 +557,7 @@ public class RunActivity extends Activity implements TickListener {
             LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
             View view = inflater.inflate(R.layout.workout_row, parent, false);
             TextView intensity = (TextView) view.findViewById(R.id.step_intensity);
-            TextView durationType = (TextView) view.findViewById(R.id.step_duration_type);
+            TextView durationType = (TextView) view.findViewById(R.id.duration_type);
             TextView durationValue = (TextView) view.findViewById(R.id.step_duration_value);
             TextView targetPace = (TextView) view.findViewById(R.id.step_pace);
             intensity.setPadding(level * 10, 0, 0, 0);

@@ -30,60 +30,60 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:entries="@array/sportEntries"
-        android:prompt="@string/simple_type"
-        android:text="@string/basic_sport" />
+        android:prompt="@string/type"
+        android:text="@string/sport" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manual_date"
+        android:id="@+id/date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/manual_sport"
-        android:prompt="@string/simple_type"
+        android:prompt="@string/type"
         android:defaultValue="today"
-        android:text="@string/manual_date"
+        android:text="@string/date"
         runnerup:type="datepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manual_time"
+        android:id="@+id/time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_date"
-        android:prompt="@string/simple_type"
-        android:text="@string/manual_time"
+        android:layout_below="@+id/date"
+        android:prompt="@string/type"
+        android:text="@string/time"
         runnerup:type="timepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manual_duration"
+        android:id="@+id/duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_time"
-        android:prompt="@string/simple_type"
-        android:text="@string/manual_duration"
+        android:layout_below="@+id/time"
+        android:prompt="@string/type"
+        android:text="@string/duration_time_format"
         android:defaultValue="00:00:00"
         runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manual_distance"
+        android:id="@+id/distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_duration"
-        android:prompt="@string/simple_type"
+        android:layout_below="@+id/duration"
+        android:prompt="@string/type"
         android:inputType="numberDecimal"
-        android:text="@string/manual_distance"
+        android:text="@string/distance"
         runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/manual_pace"
+        android:id="@+id/pace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_distance"
-        android:prompt="@string/simple_type"
+        android:layout_below="@+id/distance"
+        android:prompt="@string/type"
         android:inputType="numberDecimal"
-        android:text="@string/manual_pace"
+        android:text="@string/pace"
         runnerup:type="durationpicker" />
 
     <EditText
@@ -91,7 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_pace"
+        android:layout_below="@+id/pace"
         android:layout_alignParentBottom="true"
         android:ems="10"
         android:gravity="top|left"

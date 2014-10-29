@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/account_id_txt"
+        android:text="@string/id"
         android:visibility="gone" />
 
     <TextView
@@ -33,13 +33,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="@string/account_name_txt" />
+        android:text="@string/fun_beat" />
 
     <CheckBox
         android:id="@+id/report_sent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="true"
-        android:text="@string/report_sent_box" />
+        android:text="@string/upload" />
 
 </LinearLayout>

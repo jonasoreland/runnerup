@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/upload_list_check"
-            android:text="@string/upload_list_sport_txt" />
+            android:text="@string/running" />
         
         <CheckBox
             android:id="@+id/upload_list_check"
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="@string/upload_list_time_txt" />
+            android:text="@string/time" />
 
         <TextView
             android:id="@+id/upload_list_distance"
@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="@string/upload_list_distance_txt" />
+            android:text="@string/distance" />
 
         <TextView
             android:id="@+id/upload_list_pace"
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="@string/upload_list_pace_txt" />
+            android:text="@string/pace" />
     </LinearLayout>
 
 </LinearLayout>

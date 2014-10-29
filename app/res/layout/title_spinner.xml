@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center_vertical|right"
-        android:text="@string/value_txt"
+        android:text="@string/value"
         android:textColor="@android:color/black" />
 
     <Spinner

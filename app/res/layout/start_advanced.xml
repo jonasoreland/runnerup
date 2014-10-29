@@ -30,7 +30,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:key="@string/pref_advanced_audio"
-        android:text="@string/advanced_audio_cue_spinner"
+        android:text="@string/audio_cue_settings"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
@@ -41,7 +41,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/advanced_audio_cue_spinner"
         android:key="@string/pref_advanced_workout"
-        android:text="@string/advanced_workout_spinner"
+        android:text="@string/workout"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
@@ -56,7 +56,7 @@
         android:fadeScrollbars="false"
         android:paddingTop="5dp"
         android:scrollbarAlwaysDrawVerticalTrack="true" />
-    
+
     <Button
         android:id="@+id/advanced_download_button"
         style="@style/ButtonText"
@@ -64,6 +64,6 @@
 		android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/advanced_download_button_btn" />
+        android:text="@string/download_workouts" />
 
 </RelativeLayout>

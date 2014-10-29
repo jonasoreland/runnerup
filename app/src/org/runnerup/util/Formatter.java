@@ -228,20 +228,20 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
         StringBuilder s = new StringBuilder();
         if (hours > 0) {
-            s.append(hours).append(" ").append(resources.getString(R.string.txt_elapsed_h));
+            s.append(hours).append(" ").append(resources.getString(R.string.metrics_hours));
         }
         if (minutes > 0) {
             if (hours > 0)
                 s.append(" ");
             if (hours > 0 || seconds > 0)
-                s.append(minutes).append(" ").append(resources.getString(R.string.txt_elapsed_m));
+                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_meters));
             else
-                s.append(minutes).append(" ").append(resources.getString(R.string.txt_elapsed_min));
+                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_min));
         }
         if (seconds > 0) {
             if (hours > 0 || minutes > 0)
                 s.append(" ");
-            s.append(seconds).append(" ").append(resources.getString(R.string.txt_elapsed_s));
+            s.append(seconds).append(" ").append(resources.getString(R.string.metrics_sec));
         }
         return s.toString();
     }
@@ -259,7 +259,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE_SHORT:
             case CUE_LONG:
                 return Integer.toString((int) Math.round(heart_rate)) + " "
-                        + resources.getString(R.string.txt_heartrate_bpm);
+                        + resources.getString(R.string.metrics_beatsperminute);
             case TXT:
             case TXT_SHORT:
             case TXT_LONG:
@@ -276,11 +276,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case TXT_LONG:
                 return Double.toString(Math.round(10.0 * hrZone) / 10.0);
             case CUE_SHORT:
-                return resources.getString(R.string.txt_dimension_heartratezone) + " "
+                return resources.getString(R.string.heartrate_zone) + " "
                         + Integer.toString((int) Math.floor(hrZone));
             case CUE:
             case CUE_LONG:
-                return resources.getString(R.string.txt_dimension_heartratezone) + " "
+                return resources.getString(R.string.heartrate_zone) + " "
                         + Double.toString(Math.floor(10.0 * hrZone) / 10.0);
         }
         return "";
@@ -318,7 +318,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (includeUnit == false)
             return str;
         else {
-            int res = km ? R.string.txt_distance_km : R.string.txt_distance_mi;
+            int res = km ? R.string.metrics_kilometers : R.string.metrics_miles;
             return str + "/" + resources.getString(res);
         }
     }
@@ -414,15 +414,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
         if (txt) {
             if (km) {
-                res_base = R.string.txt_distance_km;
-                res_base_multi = R.string.txt_distance_km;
+                res_base = R.string.metrics_kilometers;
+                res_base_multi = R.string.metrics_kilometers;
             } else {
-                res_base = R.string.txt_distance_mi;
-                res_base_multi = R.string.txt_distance_mi;
+                res_base = R.string.metrics_miles;
+                res_base_multi = R.string.metrics_miles;
             }
 
-            res_meter = R.string.txt_distance_m;
-            res_meters = R.string.txt_distance_m;
+            res_meter = R.string.metrics_meters;
+            res_meters = R.string.metrics_meters;
         }
 
         StringBuffer s = new StringBuffer();

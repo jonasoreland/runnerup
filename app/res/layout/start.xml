@@ -65,7 +65,7 @@
         android:id="@+id/gps_info_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/gps_info_text_txt" />
+        android:text="@string/gps_satellites" />
 	
 	<TextView
         android:id="@+id/gps_info1"
@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/btn_green"
         android:enabled="true"
-        android:text="@string/start_button_btn"
+        android:text="@string/start_gps"
         android:layout_weight="0.8" />
    	
    	<FrameLayout

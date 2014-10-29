@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/history_list_sport_txt"
+            android:text="@string/running"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="@string/history_list_time_txt"
+            android:text="@string/time"
             android:textSize="20dp" />
 
         <TextView
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="@string/history_list_distance_txt"
+            android:text="@string/distance"
             android:textSize="20dp" />
 
         <TextView
@@ -75,14 +75,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="@string/history_list_pace_txt"
+            android:text="@string/pace"
             android:textSize="20dp" />
 
         <TextView
             android:id="@+id/history_list_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/history_list_id_txt"
+            android:text="@string/id"
             android:textSize="20dp"
             android:visibility="gone" />
     </LinearLayout>

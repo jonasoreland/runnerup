@@ -36,7 +36,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="200dp"
-            android:text="@string/account_list_name_txt" />
+            android:text="@string/fun_beat" />
 
         <ImageView
             android:id="@+id/account_list_icon"
@@ -69,7 +69,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/account_upload_button"
-        android:text="@string/disconnect_account_button_btn" />
+        android:text="@string/disconnect" />
 
     <Button
         android:id="@+id/account_upload_button"
@@ -78,7 +78,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ok_account_button"
-        android:text="@string/account_upload_button_btn" />
+        android:text="@string/upload" />
     
     <Button
         android:id="@+id/ok_account_button"
@@ -87,6 +87,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/ok_account_button_btn" />
+        android:text="@string/ok" />
     
 </RelativeLayout>

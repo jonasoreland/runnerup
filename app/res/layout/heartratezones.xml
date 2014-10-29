@@ -22,38 +22,38 @@
     android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrz_age"
+        android:id="@+id/age"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hrz_age"
+        android:text="@string/age"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="@string/pref_hrz_age" >
+        android:key="@string/pref_age" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrz_sex"
+        android:id="@+id/sex"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sexes"
         android:prompt="@string/sex"
-        android:text="@string/hrz_sex"
+        android:text="@string/sex"
         app:type="spinner"
-        android:key="@string/pref_hrz_sex" >
+        android:key="@string/pref_sex" >
     </org.runnerup.widget.TitleSpinner>
     
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/hrz_mhr"
+        android:id="@+id/maximum_heart_rate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hrz_mhr"
+        android:text="@string/maximum_heart_rate"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="@string/pref_hrz_mhr" >
+        android:key="@string/pref_maximum_heart_rate" >
     </org.runnerup.widget.TitleSpinner>
     
     <TableLayout

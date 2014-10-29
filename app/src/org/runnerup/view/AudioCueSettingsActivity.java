@@ -145,7 +145,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         adapter.reload();
 
         {
-            TitleSpinner spinner = (TitleSpinner) findViewById(R.id.settings_spinner);
+            TitleSpinner spinner = (TitleSpinner) findViewById(R.id.audio_cue_settings);
             spinner.setVisibility(View.VISIBLE);
             spinner.setAdapter(adapter);
 

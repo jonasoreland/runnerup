@@ -35,7 +35,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="200dp"
-            android:text="@string/account_upload_list_name_txt" />
+            android:text="@string/fun_beat" />
 
         <ImageView
             android:id="@+id/account_upload_list_icon"
@@ -72,14 +72,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/account_upload_set_all_btn" />
+            android:text="@string/select_all" />
 
         <Button
             android:id="@+id/account_upload_clear_all"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/account_upload_clear_all_btn" />
+            android:text="@string/clear_all" />
     </LinearLayout>
 
 	<Button
@@ -89,6 +89,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-        android:text="@string/account_upload_button_btn" />
+        android:text="@string/upload" />
     
 </RelativeLayout>

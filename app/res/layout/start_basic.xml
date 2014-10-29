@@ -28,44 +28,44 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="@string/pref_basic_audio"
-		android:text="@string/basic_audio_cue_spinner"
+		android:text="@string/audio_cue_settings"
 		runnerup:type="spinner_txt"/>
-    
+
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/basic_sport"
+        android:id="@+id/sport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sportEntries"
-        android:key="@string/pref_basic_sport"
-        android:prompt="@string/simple_type"
-        android:text="@string/basic_sport" />
+        android:key="@string/pref_sport"
+        android:prompt="@string/type"
+        android:text="@string/sport" />
 
     <org.runnerup.widget.TitleSpinner
         android:key="@string/pref_basic_target_type"
-        android:id="@+id/tab_basic_target_type"
+        android:id="@+id/target"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/simple_type"
+        android:prompt="@string/type"
         android:entries="@array/targetEntries"
-        android:text="@string/tab_basic_target_type" />
-    
+        android:text="@string/target" />
+
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/tab_basic_target_pace_max"
+        android:id="@+id/target_pace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:defaultValue="00:05:00"
         android:inputType="time"
         android:key="@string/pref_basic_target_pace_max"
-        android:prompt="@string/simple_type"
-        android:text="@string/tab_basic_target_pace_max"
+        android:prompt="@string/type"
+        android:text="@string/target_pace_format"
         runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/tab_basic_target_hrz"
+        android:id="@+id/target_heart_rate_zone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="@string/pref_basic_target_hrz"
-        android:prompt="@string/simple_type"
-        android:text="@string/tab_basic_target_hrz"
+        android:prompt="@string/type"
+        android:text="@string/target_heart_rate_zone"
         android:visibility="gone" />
 </LinearLayout>

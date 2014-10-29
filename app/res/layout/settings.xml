@@ -266,7 +266,7 @@
         	android:dialogMessage="Not much to say at this point" /> 
 		
 		<org.runnerup.widget.AboutPreference
-        	android:title="@string/Google_Play_Services_Legal_Notices"
+        	android:title="@string/google_play_services_legal_notices"
         	android:dialogMessage="Not much to say at this point" /> 
 	</PreferenceCategory>
 	
