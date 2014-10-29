@@ -19,5 +19,5 @@
     <item
         android:id="@+id/menu_tab_format"
         android:orderInCategory="100"
-        android:title="Table format" />
+        android:title="@string/table_format" />
 </menu>

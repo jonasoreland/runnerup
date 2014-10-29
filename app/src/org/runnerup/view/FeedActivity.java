@@ -161,7 +161,7 @@ public class FeedActivity extends Activity implements Constants {
             feedHeader.setVisibility(View.VISIBLE);
 
             refreshButton.setEnabled(false);
-            feedStatus.setText("Synchronizing feed");
+            feedStatus.setText(getString(R.string.synchronizing_feed));
             cancelSync = new StringBuffer();
             uploadManager.syncronizeFeed(syncDone, set, feed, cancelSync);
         } else {
@@ -373,7 +373,7 @@ public class FeedActivity extends Activity implements Constants {
                 feedAdapter.notifyDataSetChanged();
             } else {
                 String uploader = (String) data;
-                feedStatus.setText("Synchronizing: " + uploader);
+                feedStatus.setText(getString(R.string.synchronizing) + " " + uploader);
             }
         }
     }

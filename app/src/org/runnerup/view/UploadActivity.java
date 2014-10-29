@@ -275,17 +275,17 @@ public class UploadActivity extends ListActivity implements Constants {
             {
                 TextView tv = (TextView) view.findViewById(R.id.upload_list_sport);
                 if (!tmp.containsKey(DB.ACTIVITY.SPORT)) {
-                    tv.setText("Running");
+                    tv.setText(getString(R.string.running));
                 } else {
                     switch (tmp.getAsInteger(DB.ACTIVITY.SPORT)) {
                         case DB.ACTIVITY.SPORT_RUNNING:
-                            tv.setText("Running");
+                            tv.setText(getString(R.string.running));
                             break;
                         case DB.ACTIVITY.SPORT_BIKING:
-                            tv.setText("Biking");
+                            tv.setText(getString(R.string.biking));
                             break;
                         default:
-                            tv.setText("Unknown?? (" + tmp.getAsInteger(DB.ACTIVITY.SPORT) + ")");
+                            tv.setText(getString(R.string.unknown)  + "(" + tmp.getAsInteger(DB.ACTIVITY.SPORT) + ")");
                             break;
                     }
                 }

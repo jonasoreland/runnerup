@@ -269,7 +269,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         if (hrProvider == null) {
             scanButton.setEnabled(true);
             connectButton.setEnabled(false);
-            connectButton.setText("Connect");
+            connectButton.setText(getString(R.string.connect));
             tvBTName.setText("");
             tvHR.setText("");
             return;
@@ -283,14 +283,14 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
 
         if (hrProvider.isConnected()) {
-            connectButton.setText("Disconnect");
+            connectButton.setText(getString(R.string.disconnect));
             connectButton.setEnabled(true);
         } else if (hrProvider.isConnecting()) {
             connectButton.setEnabled(false);
-            connectButton.setText("Connecting");
+            connectButton.setText(getString(R.string.connecting));
         } else {
             connectButton.setEnabled(btName == null ? false : true);
-            connectButton.setText("Connect");
+            connectButton.setText(getString(R.string.connect));
         }
     }
 

@@ -236,10 +236,10 @@ public class RunActivity extends Activity implements TickListener {
 
         if (simpleWorkout) {
             newLapButton.setOnClickListener(newLapButtonClick);
-            newLapButton.setText("New lap");
+            newLapButton.setText(getString(R.string.new_lap));
         } else {
             newLapButton.setOnClickListener(nextStepButtonClick);
-            newLapButton.setText("Next lap");
+            newLapButton.setText(getString(R.string.new_lap));
         }
         workout.onInit(workout);
         workout.onStart(Scope.WORKOUT, this.workout);
@@ -376,10 +376,10 @@ public class RunActivity extends Activity implements TickListener {
 
     private void setPauseButtonEnabled(boolean enabled) {
         if (enabled) {
-            pauseButton.setText("Pause");
+            pauseButton.setText(getString(R.string.pause));
             WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_blue));
         } else {
-            pauseButton.setText("Resume");
+            pauseButton.setText(getString(R.string.resume));
             WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_green));
         }
     }
@@ -593,7 +593,7 @@ public class RunActivity extends Activity implements TickListener {
 
             if (step.getRepeatCount() > 0) {
                 if (step.getCurrentRepeat() == step.getRepeatCount()) {
-                    durationValue.setText("finished");
+                    durationValue.setText(getString(R.string.finished));
                 } else {
                     durationValue.setText("" + (step.getCurrentRepeat() + 1) + "/"
                             + step.getRepeatCount());

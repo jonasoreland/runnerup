@@ -20,20 +20,20 @@
     <item
         android:id="@+id/menu_edit_activity"
         android:orderInCategory="100"
-        android:title="Edit activity"/>
+        android:title="@string/edit_activity"/>
 
     <item
         android:id="@+id/menu_share_activity"
         android:orderInCategory="100"
-        android:title="Share activity"/>
+        android:title="@string/share_activity"/>
     
     <item
         android:id="@+id/menu_delete_activity"
         android:orderInCategory="100"
-        android:title="Delete activity"/>
+        android:title="@string/delete_activity"/>
     <item
         android:id="@+id/menu_recompute_activity"
         android:orderInCategory="100"
-        android:title="Recompute activity"
+        android:title="@string/recompute_activity"
         android:enabled="false"/>
 </menu>

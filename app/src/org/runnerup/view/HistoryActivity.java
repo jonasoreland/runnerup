@@ -194,17 +194,17 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             {
                 TextView tv = (TextView) view.findViewById(to[5]);
                 if (cursor.isNull(4)) {
-                    tv.setText("Running");
+                    tv.setText(getString(R.string.running));
                 } else {
                     switch (cursor.getInt(4)) {
                         case DB.ACTIVITY.SPORT_RUNNING:
-                            tv.setText("Running");
+                            tv.setText(getString(R.string.running));
                             break;
                         case DB.ACTIVITY.SPORT_BIKING:
-                            tv.setText("Biking");
+                            tv.setText(getString(R.string.biking));
                             break;
                         default:
-                            tv.setText("Unknown?? (" + cursor.getInt(4) + ")");
+                            tv.setText(getString(R.string.unknown) + "(" + cursor.getInt(4) + ")");
                             break;
                     }
                 }

@@ -20,10 +20,10 @@
     <item
         android:id="@+id/menu_hrzones"
         android:orderInCategory="100"
-        android:title="Configure heart rate zones"/>
+        android:title="@string/configure_heart_rate_zones"/>
     
     <item
         android:id="@+id/menu_hrsettings_clear"
         android:orderInCategory="100"
-        android:title="Clear HR settings"/>
+        android:title="@string/clear_hr_settings"/>
 </menu>

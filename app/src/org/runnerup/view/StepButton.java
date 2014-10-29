@@ -107,7 +107,7 @@ public class StepButton extends TableLayout {
         Dimension durationType = step.getDurationType();
         if (durationType == null) {
             mDurationType.setText("");
-            mDurationValue.setText("Until press");
+            mDurationValue.setText(res.getString(R.string.until_press));
         } else {
             mDurationType.setText(res.getString(durationType.getTextId()));
             mDurationValue.setText(formatter.format(Formatter.TXT_LONG, durationType,

@@ -210,11 +210,11 @@ public class AccountListActivity extends FragmentActivity implements Constants,
                 b.setTag(id);
                 b.setOnClickListener(configureButtonClick);
                 if (configured) {
-                    b.setText("Edit");
+                    b.setText(getString(R.string.edit));
                     WidgetUtil.setBackground(b, getResources().getDrawable(
                             R.drawable.btn_blue));
                 } else {
-                    b.setText("Connect");
+                    b.setText(getString(R.string.connect));
                     WidgetUtil.setBackground(b, getResources().getDrawable(
                             R.drawable.btn_green));
                 }

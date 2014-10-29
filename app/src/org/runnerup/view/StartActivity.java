@@ -451,7 +451,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 startButton.setVisibility(View.VISIBLE);
                 loadAdvanced(null);
             } else if (tabId.contentEquals(TAB_MANUAL)) {
-                startButton.setText("Save activity");
+                startButton.setText(getString(R.string.save_activity));
             }
             updateView();
         }
@@ -535,20 +535,20 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
             gpsInfoLayout.setVisibility(View.GONE);
             startButton.setEnabled(manualSetValue);
-            startButton.setText("Save activity");
+            startButton.setText(getString(R.string.save_activity));
             return;
         } else if (mGpsStatus.isEnabled() == false) {
             startButton.setEnabled(true);
-            startButton.setText("Enable GPS");
+            startButton.setText(getString(R.string.enable_gps));
         } else if (mGpsStatus.isLogging() == false) {
             startButton.setEnabled(true);
-            startButton.setText("Start GPS");
+            startButton.setText(getString(R.string.start_gps));
         } else if (mGpsStatus.isFixed() == false) {
             startButton.setEnabled(false);
-            startButton.setText("Waiting for GPS");
+            startButton.setText(getString(R.string.waiting_for_gps));
             notificationStateManager.displayNotificationState(gpsSearchingState);
         } else {
-            startButton.setText("Start activity");
+            startButton.setText(getString(R.string.start_activity));
             if (!tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) || advancedWorkout != null) {
                 startButton.setEnabled(true);
             } else {

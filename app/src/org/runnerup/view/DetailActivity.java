@@ -194,7 +194,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             saveButton.setEnabled(false);
             discardButton.setVisibility(View.GONE);
             resumeButton.setVisibility(View.GONE);
-            resumeButton.setText("Upload activity");
+            resumeButton.setText(getString(R.string.upload_activity));
             resumeButton.setOnClickListener(uploadButtonClick);
             WidgetUtil.setEditable(notes, false);
             sport.setEnabled(false);
@@ -556,7 +556,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (position == reports.size()) {
                 Button b = new Button(DetailActivity.this);
-                b.setText("Configure accounts");
+                b.setText(getString(R.string.configure_accounts));
                 b.setBackgroundResource(R.drawable.btn_blue);
                 b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
                 b.setOnClickListener(new OnClickListener() {
@@ -584,7 +584,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             cb.setTag(name);
             if (alreadyUploadedUploaders.contains(name)) {
                 cb.setChecked(true);
-                cb.setText("Uploaded");
+                cb.setText(getString(R.string.uploaded));
                 if (edit)
                 {
                     cb.setOnLongClickListener(clearUploadClick);
