@@ -198,15 +198,15 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             return true;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure?");
-        builder.setPositiveButton("Yes",
+        builder.setMessage(getString(R.string.are_you_sure));
+        builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         deleteAudioScheme();
                     }
                 });
-        builder.setNegativeButton("No",
+        builder.setNegativeButton(getString(R.string.no),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -311,11 +311,11 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     private void createNewAudioSchemeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Create new audio cue scheme");
+        builder.setTitle(getString(R.string.create_new_audio_cue_scheme));
         // Get the layout inflater
         final EditText editText = new EditText(this);
         builder.setView(editText);
-        builder.setPositiveButton("Create", new OnClickListener() {
+        builder.setPositiveButton(getString(R.string.create), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String scheme = editText.getText().toString();
@@ -326,7 +326,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 }
             }
         });
-        builder.setNegativeButton("Cancel", new OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }

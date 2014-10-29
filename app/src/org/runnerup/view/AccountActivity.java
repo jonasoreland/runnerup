@@ -236,17 +236,17 @@ public class AccountActivity extends Activity implements Constants {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this);
-            builder.setTitle("Clear uploads");
+            builder.setTitle(getString(R.string.clear_uploads));
             builder.setMessage("Note that workouts are not removed from " + uploader
                     + ", only from RunnerUp list of workouts uploaded to " + uploader);
-            builder.setPositiveButton("OK",
+            builder.setPositiveButton(getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             uploadManager.clearUploads(callback, uploader);
                         }
                     });
 
-            builder.setNegativeButton("Cancel",
+            builder.setNegativeButton(getString(R.string.cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -318,15 +318,15 @@ public class AccountActivity extends Activity implements Constants {
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this);
-            builder.setTitle("Disconnect account");
-            builder.setPositiveButton("OK",
+            builder.setTitle(getString(R.string.disconnect_account));
+            builder.setPositiveButton(getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             uploadManager.disableUploader(disconnectCallback, uploader,
                                     selected[0]);
                         }
                     });
-            builder.setNegativeButton("Cancel",
+            builder.setNegativeButton(getString(R.string.cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog

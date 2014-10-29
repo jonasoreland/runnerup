@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.runnerup.R;
 import org.runnerup.export.FormCrawler;
 import org.runnerup.export.FormCrawler.FormValues;
 import org.runnerup.util.Constants.DB;
@@ -97,8 +98,8 @@ public class OAuth2Activity extends Activity {
 
         mSpinner = new ProgressDialog(this);
         mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mSpinner.setMessage("Loading...");
-
+        mSpinner.setMessage(getString(R.string.loading));
+        
         final WebView wv = new WebView(this);
         wv.setVerticalScrollBarEnabled(false);
         wv.setHorizontalScrollBarEnabled(false);

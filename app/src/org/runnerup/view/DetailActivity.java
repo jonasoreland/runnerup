@@ -629,8 +629,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
             final String name = (String) arg0.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
             builder.setTitle("Clear upload for " + name);
-            builder.setMessage("Are you sure?");
-            builder.setPositiveButton("Yes",
+            builder.setMessage(getString(R.string.are_you_sure));
+            builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -638,7 +638,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             requery();
                         }
                     });
-            builder.setNegativeButton("No",
+            builder.setNegativeButton(getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -680,9 +680,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
     OnClickListener discardButtonClick = new OnClickListener() {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
-            builder.setTitle("Discard activity");
-            builder.setMessage("Are you sure?");
-            builder.setPositiveButton("Yes",
+            builder.setTitle(getString(R.string.discard_activity));
+            builder.setMessage(getString(R.string.are_you_sure));
+            builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -690,7 +690,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             DetailActivity.this.finish();
                         }
                     });
-            builder.setNegativeButton("No",
+            builder.setNegativeButton(getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -766,9 +766,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     DetailActivity.this);
-            builder.setTitle("Delete activity");
-            builder.setMessage("Are you sure?");
-            builder.setPositiveButton("Yes",
+            builder.setTitle(getString(R.string.delete_activity));
+            builder.setMessage(getString(R.string.are_you_sure));
+            builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             ContentValues tmp = new ContentValues();
@@ -782,7 +782,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             DetailActivity.this.finish();
                         }
                     });
-            builder.setNegativeButton("No",
+            builder.setNegativeButton(getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -1384,8 +1384,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 "gpx", "tcx" /* "nike+xml" */
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Share activity");
-        builder.setPositiveButton("OK",
+        builder.setTitle(getString(R.string.share_activity));
+        builder.setPositiveButton(getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int w) {
                         if (which[0] == -1) {
@@ -1406,7 +1406,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
                     }
                 });
-        builder.setNegativeButton("Cancel",
+        builder.setNegativeButton(getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog

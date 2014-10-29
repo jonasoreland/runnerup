@@ -97,7 +97,7 @@
         android:gravity="top|left"
         android:inputType="textMultiLine"
         android:singleLine="false"
-        android:hint="Add workout notes" />
+        android:hint="@string/add_workout_notes" />
 
 </RelativeLayout>
 

@@ -94,10 +94,10 @@ public class SettingsActivity extends PreferenceActivity {
             try {
                 int cnt = FileUtil.copyFile(to, from);
                 builder.setMessage("Copied " + cnt + " bytes");
-                builder.setPositiveButton("Great!", listener);
+                builder.setPositiveButton(getString(R.string.great), listener);
             } catch (IOException e) {
                 builder.setMessage("Exception: " + e.toString());
-                builder.setNegativeButton("Darn!", listener);
+                builder.setNegativeButton(getString(R.string.darn), listener);
             }
             builder.show();
             return false;
@@ -123,10 +123,10 @@ public class SettingsActivity extends PreferenceActivity {
             try {
                 int cnt = FileUtil.copyFile(to, from);
                 builder.setMessage("Copied " + cnt + " bytes");
-                builder.setPositiveButton("Great!", listener);
+                builder.setPositiveButton(getString(R.string.great), listener);
             } catch (IOException e) {
                 builder.setMessage("Exception: " + e.toString());
-                builder.setNegativeButton("Darn!", listener);
+                builder.setNegativeButton(getString(R.string.darn), listener);
             }
             builder.show();
             return false;

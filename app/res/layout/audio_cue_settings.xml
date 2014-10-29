@@ -27,13 +27,13 @@
         	android:title="Silence"
         	android:summary="Clear all cues"/>
 -->    
-   	    <PreferenceCategory android:title="Triggers" />
+   	    <PreferenceCategory android:title="@string/triggers" />
     
    	    <CheckBoxPreference
         	android:defaultValue="false"
         	android:persistent="true"
         	android:key="@string/cue_time"
-        	android:title="Time triggered audio cue" />
+        	android:title="@string/time_triggered_audio_cue" />
     	
 	    <org.runnerup.widget.TextPreference
 	        android:dependency="cue_time"
@@ -41,14 +41,13 @@
             android:inputType="number"
             android:key="@string/cue_time_intervall"
             android:persistent="true"
-            android:summary="120"
-            android:title="Cue interval (s)" />
+            android:title="@string/cue_interval_s" />
 
     	<CheckBoxPreference
         	android:defaultValue="false"
         	android:persistent="true"
         	android:key="@string/cue_distance"
-        	android:title="Distance triggered audio cue" />
+        	android:title="@string/distance_triggered_audio_cue" />
     	
 	    <org.runnerup.widget.TextPreference
 	        android:dependency="@string/cue_distance"
@@ -56,14 +55,13 @@
             android:inputType="number"
             android:key="@string/cue_distance_intervall"
             android:persistent="true"
-            android:summary="1000"
-            android:title="Cue intervall (m)" />
+            android:title="@string/cue_intervall_m" />
 
 	    <CheckBoxPreference
         	android:defaultValue="true"
         	android:persistent="true"
         	android:key="@string/cue_end_of_lap"
-        	android:title="End of lap audio cue" />
+        	android:title="@string/end_of_lap_audio_cue" />
 	    	    
 	    <ListPreference
         	android:defaultValue="yes"
@@ -71,50 +69,50 @@
         	android:entryValues="@array/muteValues"
         	android:key="@string/pref_mute"
         	android:persistent="true"
-        	android:title="Mute music during audio cues" />
+        	android:title="@string/mute_music_during_audio_cues" />
 
-		<PreferenceCategory android:key="cueinfo" android:title="Cue information">
+		<PreferenceCategory android:key="cueinfo" android:title="@string/cue_information">
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_total_distance"
-        		android:title="Total distance" />
+        		android:title="@string/total_distance" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_total_time"
-        		android:title="Total time" />
+        		android:title="@string/total_time" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_total_pace"
-        		android:title="Total pace" />
+        		android:title="@string/total_pace" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_total_hr"
-        		android:title="Total heart rate" />
+        		android:title="@string/total_heart_rate" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_total_hrz"
-        		android:title="Total heart rate zone" />
+        		android:title="@string/total_heart_rate_zone" />
     				
     		<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
         		android:key="@string/cueinfo_step_distance"
-        		android:title="Interval distance" />
+        		android:title="@string/interval_distance" />
     		<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
         		android:key="@string/cueinfo_step_time"
-        		android:title="Interval time" />
+        		android:title="@string/interval_time" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_step_pace"
-        		android:title="Interval pace" />
+        		android:title="@string/interval_pace" />
 <!-- 
     		<CheckBoxPreference
         		android:defaultValue="false"
@@ -126,28 +124,28 @@
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_step_hr"
-        		android:title="Interval heart rate" />
+        		android:title="@string/interval_heart_rate" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_step_hrz"
-        		android:title="Interval heart rate zone" />
+        		android:title="@string/interval_heart_rate_zone" />
  
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_lap_distance"
-        		android:title="Lap distance" />
+        		android:title="@string/lap_distance" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_lap_time"
-        		android:title="Lap time" />
+        		android:title="@string/lap_time" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_lap_pace"
-        		android:title="Lap pace" />
+        		android:title="@string/lap_pace" />
 <!-- 
     		<CheckBoxPreference
         		android:defaultValue="false"
@@ -159,36 +157,36 @@
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_lap_hr"
-        		android:title="Lap heart rate" />
+        		android:title="@string/lap_heart_rate" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_lap_hrz"
-        		android:title="Lap heart rate zone" />
+        		android:title="@string/lap_heart_rate_zone" />
 
     		</PreferenceCategory>
-    	<PreferenceCategory android:title="Misc cues">
+    	<PreferenceCategory android:title="@string/misc_cues">
 			<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
         		android:key="@string/cueinfo_target_coaching"
-        		android:title="Target coaching"
-        		android:summary="Coach to help you reach target (if having set target)"
+        		android:title="@string/target_coaching"
+        		android:summary="@string/coach_to_help_you_reach_target_if_having_set_target"
         		/>
     	    <CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
         		android:key="@string/cueinfo_skip_startstop"
-        		android:title="Skip event audio cues"
-        		android:summary="Keep silent when workout start/pause/resume/stop"
+        		android:title="@string/skip_event_audio_cues"
+        		android:summary="@string/keep_silent_when_workout_startpauseresumestop"
         		/>
    		</PreferenceCategory>
 	    
-    	<PreferenceCategory android:title="Test audio cue">
-			<Preference android:title="Push"
+    	<PreferenceCategory android:title="@string/test_audio_cue">
+			<Preference android:title="@string/push"
                 android:key="test_cueinfo"
-                android:summary="Test audio cue"/>
-			<Preference android:title="Android text to speech settings"
+                android:summary="@string/test_audio_cue"/>
+			<Preference android:title="@string/android_text_to_speech_settings"
                 android:key="tts_settings" />
 		</PreferenceCategory>	    
 </PreferenceScreen>

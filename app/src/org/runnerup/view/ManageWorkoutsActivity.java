@@ -134,9 +134,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 importData(fileName, data);
             } catch (Exception e) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Problem");
+                builder.setTitle(getString(R.string.problem));
                 builder.setMessage("Failed to import: " + fileName);
-                builder.setPositiveButton("OK, darn!",
+                builder.setPositiveButton(getString(R.string.ok_darn),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -193,7 +193,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Import workout: " + fileName);
-        builder.setPositiveButton("Yes!",
+        builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -230,7 +230,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         return;
                     }
                 });
-        builder.setNegativeButton("No way",
+        builder.setNegativeButton(getString(R.string.no_way),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -408,8 +408,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
                 builder.setTitle("Downloading " + selected.workoutName + " will overwrite "
                         + PHONE_STRING + " workout with same name");
-                builder.setMessage("Are you sure?");
-                builder.setPositiveButton("Yes",
+                builder.setMessage(getString(R.string.are_you_sure));
+                builder.setPositiveButton(getString(R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -417,7 +417,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                                 return;
                             }
                         });
-                builder.setNegativeButton("No",
+                builder.setNegativeButton(getString(R.string.no),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Do nothing but close the dialog
@@ -468,8 +468,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
             builder.setTitle("Delete workout " + selected.workoutName);
-            builder.setMessage("Are you sure?");
-            builder.setPositiveButton("Yes",
+            builder.setMessage(getString(R.string.are_you_sure));
+            builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -477,7 +477,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             return;
                         }
                     });
-            builder.setNegativeButton("No",
+            builder.setNegativeButton(getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog

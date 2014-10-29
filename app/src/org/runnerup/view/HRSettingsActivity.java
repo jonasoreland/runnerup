@@ -169,15 +169,15 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
     void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Clear HR settings");
-        builder.setMessage("Are you sure");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.clear_hr_settings));
+        builder.setMessage(getString(R.string.are_you_sure));
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 doClear();
             }
         });
 
-        builder.setNegativeButton("Cancel",
+        builder.setNegativeButton(getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -229,8 +229,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
     public void notSupported() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Heart rate monitor is not supported for your device");
-        builder.setMessage("try again later!");
+        builder.setTitle(getString(R.string.heart_rate_monitor_is_not_supported_for_your_device));
+        builder.setMessage(getString(R.string.try_again_later));
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -238,7 +238,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
                 finish();
             }
         };
-        builder.setNegativeButton("ok, rats", listener);
+        builder.setNegativeButton(getString(R.string.ok_rats), listener);
         builder.show();
         return;
     }
@@ -314,14 +314,14 @@ public class HRSettingsActivity extends Activity implements HRClient {
             itemNames[i] = providers.get(i).getName();
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Select type of Bluetooth device");
-        builder.setPositiveButton("OK",
+        builder.setTitle(getString(R.string.select_type_of_bluetooth_device));
+        builder.setPositiveButton(getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
                         open();
                     }
                 });
-        builder.setNegativeButton("Cancel",
+        builder.setNegativeButton(getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mIsScanning = false;
@@ -395,8 +395,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
         deviceAdapter.deviceList.clear();
         hrProvider.startScan();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Scanning");
-        builder.setPositiveButton("Connect",
+        builder.setTitle(getString(R.string.scanning));
+        builder.setPositiveButton(getString(R.string.connect),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         log(hrProvider.getProviderName() + ".stopScan()");
@@ -417,7 +417,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
                 }
             });
         }
-        builder.setNegativeButton("Cancel",
+        builder.setNegativeButton(getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         log(hrProvider.getProviderName() + ".stopScan()");

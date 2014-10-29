@@ -100,7 +100,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         switch (item.getItemId()) {
             case R.id.menu_tab_format:
                 tabFormat = !tabFormat;
-                item.setTitle("Icon list");
+                item.setTitle(getString(R.string.icon_list));
                 getSupportLoaderManager().restartLoader(0, null, this);
                 break;
         }

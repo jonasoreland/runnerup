@@ -111,19 +111,19 @@ public class MainLayout extends TabActivity {
         TabHost tabHost = getTabHost(); // The activity TabHost
 
         tabHost.addTab(tabHost.newTabSpec("Start")
-                .setIndicator("Start", getDrawable(R.drawable.ic_tab_main))
+                .setIndicator(getString(R.string.start), getDrawable(R.drawable.ic_tab_main))
                 .setContent(new Intent(this, StartActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Feed")
-                .setIndicator("Feed", getDrawable(R.drawable.ic_tab_feed))
+                .setIndicator(getString(R.string.feed), getDrawable(R.drawable.ic_tab_feed))
                 .setContent(new Intent(this, FeedActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("History")
-                .setIndicator("History", getDrawable(R.drawable.ic_tab_history))
+                .setIndicator(getString(R.string.history), getDrawable(R.drawable.ic_tab_history))
                 .setContent(new Intent(this, HistoryActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Settings")
-                .setIndicator("Settings", getDrawable(R.drawable.ic_tab_setup))
+                .setIndicator(getString(R.string.settings), getDrawable(R.drawable.ic_tab_setup))
                 .setContent(new Intent(this, SettingsActivity.class)));
 
         // Set tabs Colors
@@ -274,16 +274,16 @@ public class MainLayout extends TabActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = (WebView) view.findViewById(R.id.web_view1);
-        builder.setTitle("What's new");
+        builder.setTitle(getString(R.string.what_s_new));
         builder.setView(view);
-        builder.setPositiveButton("Rate RunnerUp", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.rate_runner_up), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 onRateClick.onClick(null);
             }
 
         });
-        builder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.dismiss), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

@@ -216,9 +216,9 @@ public class HRZonesActivity extends Activity implements Constants {
 
     void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Clear heart rate zone settings");
-        builder.setMessage("Are you sure");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.clear_heart_rate_zone_settings));
+        builder.setMessage(getString(R.string.are_you_sure));
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ageSpinner.clear();
                 sexSpinner.clear();
@@ -230,7 +230,7 @@ public class HRZonesActivity extends Activity implements Constants {
             }
         });
 
-        builder.setNegativeButton("Cancel",
+        builder.setNegativeButton(getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog

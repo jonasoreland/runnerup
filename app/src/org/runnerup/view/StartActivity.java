@@ -188,22 +188,22 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         tabHost = (TabHost) findViewById(R.id.tabhost_start);
         tabHost.setup();
         TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Basic"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.basic)));
         tabSpec.setContent(R.id.tab_basic);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Interval"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.interval)));
         tabSpec.setContent(R.id.tab_interval);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Advanced"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.advanced)));
         tabSpec.setContent(R.id.tab_advanced);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_MANUAL);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Manual"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.manual)));
         tabSpec.setContent(R.id.tab_manual);
         tabHost.addTab(tabSpec);
 
@@ -755,9 +755,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         } catch (Exception ex) {
             ex.printStackTrace();
             AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-            builder.setTitle("Failed to load workout!!");
+            builder.setTitle(getString(R.string.failed_to_load_workout));
             builder.setMessage("" + ex.toString());
-            builder.setPositiveButton("OK",
+            builder.setPositiveButton(getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -823,9 +823,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                     WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
                 } catch (Exception ex) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-                    builder.setTitle("Failed to load workout!!");
+                    builder.setTitle(getString(R.string.failed_to_load_workout));
                     builder.setMessage("" + ex.toString());
-                    builder.setPositiveButton("OK",
+                    builder.setPositiveButton(getString(R.string.ok),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();

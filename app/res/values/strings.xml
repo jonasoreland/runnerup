@@ -15,6 +15,47 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">"RunnerUp"</string>
+
+  <!-- metrics stuff -->
+  <string name="kilometer">"kilometer"</string>
+  <string name="kilometers">"kilometers"</string>
+  <string name="mile">"mile"</string>
+  <string name="miles">"miles"</string>
+  <string name="meter">"meter"</string>
+  <string name="meters">"meters"</string>
+  <string name="metrics_kilometers">"km"</string>
+  <string name="metrics_meters">"m"</string>
+  <string name="metrics_miles">"mi"</string>
+  <string name="metrics_hours">"h"</string>
+  <string name="metrics_min">"min"</string>
+  <string name="metrics_sec">"s"</string>
+  <string name="metrics_beatsperminute">"bpm"</string>
+  <string name="metrics_heartrate">"Hr"</string>
+
+  <!-- format hint stuff -->
+  <string name="maximum_heart_rate">"Maximum heart rate (MHR)"</string>
+  <string name="target_pace_format">"Target pace (HH:MM:SS)"</string>
+  <string name="interval_time_format">"Interval time (HH:MM:SS)"</string>
+  <string name="interval_distance_format">"Interval distance (m)"</string>
+  <string name="rest_time_format">"Rest time (HH:MM:SS)"</string>
+  <string name="rest_distance_format">"Rest distance (m)"</string>
+  <string name="duration_time_format">"Duration time (HH:MM:SS)"</string>
+  <string name="duration_distance_format">"Duration distance (m)"</string>
+
+
+  <!-- weird stuff: should it be placeholders or even removed? -->
+  <string name="polar_h7">"Polar H7"</string>
+  <string name="tröskel">"Tröskel"</string>
+  <string name="placeholder_time">"3 min"</string>
+  <string name="step_goal_value_txt">"4:00 – 4:15 min/km"</string>
+  <string name="upload_list_start_time_txt">"2013–08–12"</string>
+  <string name="placeholder_distance">"6000 m"</string>
+  <string name="zonetext_txt">"Zone 1 0–59%"</string>
+  <string name="id">"id"</string>
+  <string name="ok_rats">"ok, rats"</string>
+  <string name="asdf">"asdf"</string>
+
+  <!-- other -->
   <string name="google_play_services_legal_notices">"Google Play Services Legal Notices"</string>
   <string name="type">"Type"</string>
   <string name="active">"active"</string>
@@ -29,7 +70,7 @@
   <string name="pace">"pace"</string>
   <string name="heartrate">"heart rate"</string>
   <string name="heartrate_zone">"heart rate zone"</string>
-    <string name="device">"Device"</string>
+  <string name="device">"Device"</string>
   <string name="heart_rate">"Heart rate"</string>
   <string name="scan">"Scan"</string>
   <string name="connect">"Connect"</string>
@@ -74,7 +115,6 @@
   <string name="feed">"feed"</string>
   <string name="configure">"Configure"</string>
   <string name="disconnect">"Disconnect"</string>
-  <string name="ok">"OK"</string>
   <string name="resume">"Resume"</string>
   <string name="save_activity">"Save activity"</string>
   <string name="upload_activity">"Upload activity"</string>
@@ -91,42 +131,7 @@
   <string name="edit">"edit"</string>
   <string name="synchronizing">"Synchronizing:"</string>
   <string name="synchronizing_feed">"synchronizing feed..."</string>
-<!-- metrics stuff -->
-  <string name="kilometer">"kilometer"</string>
-  <string name="kilometers">"kilometers"</string>
-  <string name="mile">"mile"</string>
-  <string name="miles">"miles"</string>
-  <string name="meter">"meter"</string>
-  <string name="meters">"meters"</string>
-  <string name="metrics_kilometers">"km"</string>
-  <string name="metrics_meters">"m"</string>
-  <string name="metrics_miles">"mi"</string>
-  <string name="metrics_hours">"h"</string>
-  <string name="metrics_min">"min"</string>
-  <string name="metrics_sec">"s"</string>
-  <string name="metrics_beatsperminute">"bpm"</string>
-  <string name="metrics_heartrate">"Hr"</string>
-
-<!-- format hint stuff -->
-  <string name="maximum_heart_rate">"Maximum heart rate (MHR)"</string>
-  <string name="target_pace_format">"Target pace (HH:MM:SS)"</string>
-  <string name="interval_time_format">"Interval time (HH:MM:SS)"</string>
-  <string name="interval_distance_format">"Interval distance (m)"</string>
-  <string name="rest_time_format">"Rest time (HH:MM:SS)"</string>
-  <string name="rest_distance_format">"Rest distance (m)"</string>
-  <string name="duration_time_format">"Duration time (HH:MM:SS)"</string>
-  <string name="duration_distance_format">"Duration distance (m)"</string>
-
-
-<!-- weird stuff: should it be placeholders or even removed? -->
-  <string name="polar_h7">"Polar H7"</string>
-  <string name="tröskel">"Tröskel"</string>
-  <string name="placeholder_time">"3 min"</string>
-  <string name="step_goal_value_txt">"4:00 – 4:15 min/km"</string>
-  <string name="upload_list_start_time_txt">"2013–08–12"</string>
-  <string name="placeholder_distance">"6000 m"</string>
-  <string name="zonetext_txt">"Zone 1 0–59%"</string>
-  <string name="id">"id"</string>
+  <string name="ok">"OK"</string>
   <string name="table_format">"Table format"</string>
   <string name="clear_uploads">"Clear uploads"</string>
   <string name="upload_missing_workouts">"Upload (missing) workouts"</string>
@@ -136,7 +141,6 @@
   <string name="delete_activity">"Delete activity"</string>
   <string name="recompute_activity">"Recompute activity"</string>
   <string name="configure_heart_rate_zones">"Configure heart rate zones"</string>
-  <string name="clear_hr_settings">"Clear HR settings"</string>
   <string name="clear_heart_rate_zone_settings">"Clear heart rate zone settings"</string>
   <string name="manage_accounts">"Manage accounts"</string>
   <string name="manage_audio_cues">"Manage audio cues"</string>
@@ -144,7 +148,109 @@
   <string name="settings">"Settings"</string>
   <string name="what_s_new">"What's new"</string>
   <string name="rate_runner_up">"Rate RunnerUp"</string>
-    <string name="enable_gps">Enable GPS</string>
-    <string name="waiting_for_gps">Waiting for GPS</string>
-    <string name="start_activity">Start activity</string>
+  <string name="enable_gps">Enable GPS</string>
+  <string name="waiting_for_gps">Waiting for GPS</string>
+  <string name="start_activity">Start activity</string>
+  <string name="clear_hr_settings">"Clear HR settings"</string>
+  <string name="heart_rate_monitor_is_not_supported_for_your_device">"Heart rate monitor is not supported for your device"</string>
+  <string name="select_type_of_bluetooth_device">"Select type of Bluetooth device"</string>
+  <string name="scanning">"Scanning"</string>
+  <string name="failed_to_load_workout">"Failed to load workout!!"</string>
+  <string name="icon_list">"Icon list"</string>
+  <string name="problem">"Problem"</string>
+  <string name="edit_step">"Edit step"</string>
+  <string name="create_new_audio_cue_scheme">"Create new audio cue scheme"</string>
+  <string name="great">"Great!"</string>
+  <string name="ok_darn">"OK, darn!"</string>
+  <string name="yes">"Yes"</string>
+  <string name="create">"Create"</string>
+  <string name="darn">"Darn!"</string>
+  <string name="dismiss">"Dismiss"</string>
+  <string name="no_way">"No way"</string>
+  <string name="no">"No"</string>
+  <string name="loading">"Loading..."</string>
+  <string name="saving">"Saving"</string>
+  <string name="cancelling_please_wait">"Cancelling...please wait"</string>
+  <string name="try_again_later">"try again later!"</string>
+  <string name="are_you_sure">"Are you sure?"</string>
+  <string name="configure_audio_cues">"Configure audio cues"</string>
+  <string name="downloadeditremove_workouts">"Download/edit/remove workouts"</string>
+  <string name="note_you_need_to_connect_to_the_account_too">"Note, you need to connect to the account too"</string>
+  <string name="use_your_headset_to_startpauseresume_runner_up">"Use your headset to start/pause/resume RunnerUp"</string>
+  <string name="convert_rest_step_with_type_distance_to_recovery_step_for_interval_tab">"Convert rest-step with type distance to recovery-step for Interval-tab"</string>
+  <string name="convert_rest_step_with_type_distance_to_recovery_step_for_advanced_tab">"Convert rest-step with type distance to recovery-step for Advanced-tab"</string>
+  <string name="mm_31_kz_5_13_sg_5">"mm(31);kz(5,13);sg(5)"</string>
+  <string name="export_database_to_sdcard_eg_for_upgrade">"Export database to sdcard (e.g for upgrade)"</string>
+  <string name="import_database_from_sdcard_eg_after_upgrade">"Import database from sdcard (e.g after upgrade)"</string>
+  <string name="coach_to_help_you_reach_target_if_having_set_target">"Coach to help you reach target (if having set target)"</string>
+  <string name="keep_silent_when_workout_startpauseresumestop">"Keep silent when workout start/pause/resume/stop"</string>
+  <string name="test_audio_cue">"Test audio cue"</string>
+  <string name="accounts">"Accounts"</string>
+  <string name="audio_cues">"Audio cues"</string>
+  <string name="heart_rate_monitor">"Heart Rate Monitor"</string>
+  <string name="heart_rate_zones">"Heart Rate Zones"</string>
+  <string name="autolap">"Autolap"</string>
+  <string name="autolap_m">"Autolap (m)"</string>
+  <string name="autopause">"Autopause"</string>
+  <string name="enable_runner_up_live">"Enable RunnerUpLive"</string>
+  <string name="headset_key_startstop">"Headset key start/stop"</string>
+  <string name="activity_countdown">"Activity countdown"</string>
+  <string name="countdown_time_s">"Countdown time (s)"</string>
+  <string name="unit_preference">"Unit preference"</string>
+  <string name="auto_start_gps">"Auto start gps"</string>
+  <string name="advanced_options">"Advanced options"</string>
+  <string name="runner_up_live_address">"RunnerUp live address"</string>
+  <string name="autopause_after_s">"Autopause after (s)"</string>
+  <string name="autopause_min_pace_minkm">"Autopause min pace (min/km)"</string>
+  <string name="convert_rest_on_interval_tab">"Convert rest on Interval tab"</string>
+  <string name="convert_rest_on_advanced_tab">"Convert rest on Advanced tab"</string>
+  <string name="target_pace_moving_average_seconds">"Target pace moving average seconds"</string>
+  <string name="target_pace_grace_seconds">"Target pace grace seconds"</string>
+  <string name="autolap_during_intervals">"Autolap during intervals"</string>
+  <string name="add_countdown_after_step_that_ends_with_user_press">"Add countdown after step that ends with user press"</string>
+  <string name="step_countdown_time_s">"Step countdown time (s)"</string>
+  <string name="smooth_pace_graph">"Smooth pace graph"</string>
+  <string name="smooth_pace_filter_s">"Smooth pace filter(s)"</string>
+  <string name="poll_interval_ms">"Poll interval (ms)"</string>
+  <string name="poll_distance_m">"Poll distance (m)"</string>
+  <string name="export">"Export"</string>
+  <string name="import_">"Import"</string>
+  <string name="experimental_hrm_devices">"Experimental HRM devices"</string>
+  <string name="mock_hrm_devices">"Mock HRM devices"</string>
+  <string name="about">"About"</string>
+  <string name="about_runner_up">"About RunnerUp"</string>
+  <string name="triggers">"Triggers"</string>
+  <string name="time_triggered_audio_cue">"Time triggered audio cue"</string>
+  <string name="cue_interval_s">"Cue interval (s)"</string>
+  <string name="distance_triggered_audio_cue">"Distance triggered audio cue"</string>
+  <string name="cue_intervall_m">"Cue intervall (m)"</string>
+  <string name="end_of_lap_audio_cue">"End of lap audio cue"</string>
+  <string name="mute_music_during_audio_cues">"Mute music during audio cues"</string>
+  <string name="cue_information">"Cue information"</string>
+  <string name="total_distance">"Total distance"</string>
+  <string name="total_time">"Total time"</string>
+  <string name="total_pace">"Total pace"</string>
+  <string name="total_heart_rate">"Total heart rate"</string>
+  <string name="total_heart_rate_zone">"Total heart rate zone"</string>
+  <string name="interval_distance">"Interval distance"</string>
+  <string name="interval_time">"Interval time"</string>
+  <string name="interval_pace">"Interval pace"</string>
+  <string name="interval_heart_rate">"Interval heart rate"</string>
+  <string name="interval_heart_rate_zone">"Interval heart rate zone"</string>
+  <string name="lap_distance">"Lap distance"</string>
+  <string name="lap_time">"Lap time"</string>
+  <string name="lap_pace">"Lap pace"</string>
+  <string name="lap_heart_rate">"Lap heart rate"</string>
+  <string name="lap_heart_rate_zone">"Lap heart rate zone"</string>
+  <string name="misc_cues">"Misc cues"</string>
+  <string name="target_coaching">"Target coaching"</string>
+  <string name="skip_event_audio_cues">"Skip event audio cues"</string>
+  <string name="push">"Push"</string>
+  <string name="android_text_to_speech_settings">"Android text to speech settings"</string>
+  <string name="start">"Start"</string>
+  <string name="history">"History"</string>
+  <string name="basic">"Basic"</string>
+  <string name="advanced">"Advanced"</string>
+  <string name="manual">"Manual"</string>
+  <string name="add_workout_notes">"Add workout notes"</string>
 </resources>

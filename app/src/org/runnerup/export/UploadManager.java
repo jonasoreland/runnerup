@@ -337,7 +337,7 @@ public class UploadManager {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view);
-        builder.setPositiveButton("OK", new OnClickListener() {
+        builder.setPositiveButton(getResources().getString(R.string.ok), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
@@ -355,7 +355,7 @@ public class UploadManager {
                 handleAuthComplete(l, Status.SKIP);
             }
         });
-        builder.setNegativeButton("Cancel", new OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 handleAuthComplete(l, Status.SKIP);
@@ -488,7 +488,7 @@ public class UploadManager {
 
     private void uploadOK(Uploader uploader, ProgressDialog copySpinner, SQLiteDatabase copyDB,
             long id) {
-        copySpinner.setMessage("Saving");
+        copySpinner.setMessage(getResources().getString(R.string.saving));
         ContentValues tmp = new ContentValues();
         tmp.put(DB.EXPORT.ACCOUNT, uploader.getId());
         tmp.put(DB.EXPORT.ACTIVITY, id);
@@ -819,7 +819,7 @@ public class UploadManager {
                         synchronized (cancel) {
                             cancel.append('t');
                         }
-                        mSpinner.setMessage("Cancelling...please wait");
+                        mSpinner.setMessage(getResources().getString(R.string.cancelling_please_wait));
                     }
                 });
         mSpinner.setCancelable(false);
@@ -844,7 +844,7 @@ public class UploadManager {
                         synchronized (cancel) {
                             cancel.append('t');
                         }
-                        mSpinner.setMessage("Cancelling...please wait");
+                        mSpinner.setMessage(getResources().getString(R.string.cancelling_please_wait));
                     }
                 });
 
