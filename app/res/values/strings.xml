@@ -178,6 +178,7 @@
   <string name="workout_distance_txt">distance</string>
   <string name="workout_actual_distance_txt">6000 m</string>
   <string name="workout_pace_txt">4:05 – 4:25</string>
+  <string name="battery_level_txt">Battery level</string>
   <!--Default text for fields that are programmatically overwritten.-->
   <string name="placeholder_txt">placeholder</string>
   <string name="placeholder_time_txt">32:57</string>
