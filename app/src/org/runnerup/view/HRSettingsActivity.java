@@ -574,7 +574,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
             save();
             if (hrProvider.getBatteryLevel() > 0) {
                 tvBatteryLevel.setVisibility(View.VISIBLE);
-                tvBatteryLevel.setText(R.string.battery_level_txt + ": " + hrProvider.getBatteryLevel() + "%");
+                tvBatteryLevel.setText(getResources().getText(R.string.battery_level_txt) + ": " + hrProvider.getBatteryLevel() + "%");
             }
             startTimer();
         } else {
