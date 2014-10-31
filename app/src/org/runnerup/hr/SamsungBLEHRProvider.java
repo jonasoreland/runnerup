@@ -592,6 +592,11 @@ public class SamsungBLEHRProvider implements HRProvider {
     }
 
     @Override
+    public int getBatteryLevel() {
+        return -1;
+    }
+
+    @Override
     public boolean isBondingDevice() {
         return false;
     }

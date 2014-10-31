@@ -142,6 +142,11 @@ public class MockHRProvider implements HRProvider {
     }
 
     @Override
+    public int getBatteryLevel() {
+        return (int) (100 * Math.random());
+    }
+
+    @Override
     public boolean isBondingDevice() {
         return false;
     }

@@ -68,4 +68,6 @@ public interface HRProvider {
     public abstract int getHRValue();
 
     public abstract long getHRValueTimestamp();
+
+    public abstract int getBatteryLevel();
 }
