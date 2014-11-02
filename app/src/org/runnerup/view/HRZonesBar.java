@@ -32,7 +32,7 @@ public class HRZonesBar extends View {
         HORIZONTAL, VERTICAL
     };
 
-    BarOrientation barOrientation = BarOrientation.VERTICAL;
+    BarOrientation barOrientation = BarOrientation.HORIZONTAL;
 
     static final int colorLow = Color.WHITE; // Color for the zone 0
     static final int colorHigh = Color.parseColor("#ff0000"); // Color for the last zone
