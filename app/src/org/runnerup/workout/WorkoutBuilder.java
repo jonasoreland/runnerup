@@ -158,7 +158,7 @@ public class WorkoutBuilder {
         long intervalRestTime = SafeParse.parseSeconds(
                 prefs.getString(res.getString(R.string.pref_interval_rest_time), "00:01:00"), 60);
         double intevalRestDistance = SafeParse.parseDouble(
-                prefs.getString(res.getString(R.string.pref_interval_rest_distance_format), "200"), 200);
+                prefs.getString(res.getString(R.string.pref_interval_rest_distance), "200"), 200);
 
         RepeatStep repeat = new RepeatStep();
         repeat.repeatCount = repetitions;
@@ -346,9 +346,9 @@ public class WorkoutBuilder {
             if (coaching && step.getTargetType() != null) {
                 Range range = step.getTargetValue();
                 int averageSeconds = SafeParse.parseInt(prefs.getString(
-                        res.getString(R.string.target_pace_moving_average_seconds), "20"), 20);
+                        res.getString(R.string.pref_target_pace_moving_average_seconds), "20"), 20);
                 int graceSeconds = SafeParse.parseInt(
-                        prefs.getString(res.getString(R.string.target_pace_grace_seconds), "30"),
+                        prefs.getString(res.getString(R.string.pref_target_pace_grace_seconds), "30"),
                         30);
                 TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds,
                         graceSeconds);

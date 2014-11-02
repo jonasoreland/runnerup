@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="200"
             android:inputType="numberDecimal"
-            android:key="@string/pref_interval_rest_distance_format"
+            android:key="@string/pref_interval_rest_distance"
             android:prompt="@string/type"
             android:text="@string/rest_distance_format"
             runnerup:type="distancepicker" />

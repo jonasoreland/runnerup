@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <string name="google_play_services_legal_notices">Mentions légales des services Google Play</string>
+  <string name="type">Type</string>
+  <string name="active">active</string>
+  <string name="rest">repos</string>
+  <string name="recovery">récupération</string>
+  <string name="repeat">répétition</string>
+  <string name="time">temps</string>
+  <string name="speed">vitesse</string>
+  <string name="pace">rythme</string>
+  <string name="kilometer">kilomètre</string>
+  <string name="kilometers">kilomètres</string>
+  <string name="mile">mile</string>
+  <string name="miles">miles</string>
+  <string name="meter">mètre</string>
+  <string name="meters">mètres</string>
+  <string name="metrics_kilometers">km</string>
+  <string name="metrics_miles">mi</string>
+  <string name="metrics_hours">h</string>
+  <string name="metrics_min">min</string>
+  <string name="metrics_sec">s</string>
+  <string name="metrics_beatsperminute">bpm</string>
+  <string name="upload">uploader</string>
+  <string name="feed">flux</string>
+  <string name="configure">Configurer</string>
+  <string name="disconnect">Déconnecter</string>
+  <string name="resume">Reprendre</string>
+  <string name="save_activity">Enregistrer l\'activité</string>
+  <string name="discard_activity">Jeter l\'activité</string>
+  <string name="configure_accounts">Configurer le compte</string>
+  <string name="refresh">Rafraichir</string>
+  <string name="zonetext_txt">Zone 1 0–59%</string>
+  <string name="age">Age</string>
+  <string name="sex">Sexe</string>
+  <string name="maximum_heart_rate">Fréquence Cardiaque Maximum (FCM)</string>
+  <string name="device">Appareil</string>
+  <string name="heart_rate">Fréquence Cardiaque</string>
+  <string name="polar_h7">Polar H7</string>
+  <string name="scan">Scanner</string>
+  <string name="connect">Connecter</string>
+  <string name="tröskel">Tröskel</string>
+  <string name="download">Télécharger</string>
+  <string name="share">Partager</string>
+  <string name="delete">Supprimer</string>
+  <string name="id">id</string>
+  <string name="metrics_heartrate">H</string>
+  <string name="total">Total</string>
+  <string name="interval">Intervalle</string>
+  <string name="lap">Lap</string>
+  <string name="new_lap">Nouveau tour</string>
+  <string name="pause">Pause</string>
+  <string name="stop">Stop</string>
+  <string name="workout">Activité</string>
+  <string name="download_workouts">Télécharger les activités</string>
+  <string name="audio_cue_settings">Configuration des repères vocaux</string>
+  <string name="sport">Sport</string>
+  <string name="target">Cible</string>
+  <string name="target_pace_format">Rythme cible (HH:MM:SS)</string>
+  <string name="target_heart_rate_zone">zone de fréquence cardiaque cible</string>
+  <string name="interval_type">type d\'intervalle</string>
+  <string name="interval_time_format">Intervalle de temps (HH:MM:SS)</string>
+  <string name="interval_distance_format">Intervalle de distance (m)</string>
+  <string name="rest_type">type de repos</string>
+  <string name="rest_time_format">temps de repos(HH:MM:SS)</string>
+  <string name="rest_distance_format">Distance de repos(m)</string>
+  <string name="repetitions">Répétitions</string>
+  <string name="date">Date</string>
+  <string name="gps_satellites">Satellites GPS :</string>
+  <string name="start_gps">Démarrer GPS</string>
+  <string name="duration">Durée</string>
+  <string name="placeholder_time">3 min</string>
+  <string name="step_goal_value_txt">4:00 – 4:15 min/km</string>
+  <string name="duration_type">Type de durée</string>
+  <string name="duration_time_format">Durée (HH:MM:SS)</string>
+  <string name="duration_distance_format">Distance (m)</string>
+  <string name="target_type">Type de cible</string>
+  <string name="ok">OK</string>
+  <string name="cancel">Annuler</string>
+  <string name="value">valeur</string>
+  <string name="upload_list_start_time_txt">2013–08–12</string>
+  <string name="running">Course</string>
+  <string name="select_all">Tout séléctionner</string>
+  <string name="clear_all">Tout déséléctionner</string>
+  <string name="username">Nom d\'utilisateur</string>
+  <string name="password">Mot de passe</string>
+  <string name="show_password">Montrer le mot de passe</string>
+  <string name="intensity">intensité</string>
+  <string name="distance">distance</string>
+  <string name="placeholder_distance">6000 m</string>
+  <!--Default text for fields that are programmatically overwritten.-->
+</resources>
