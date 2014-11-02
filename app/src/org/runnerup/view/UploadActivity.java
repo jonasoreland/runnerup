@@ -25,6 +25,7 @@ import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.Sport;
 
 import android.annotation.TargetApi;
 import android.app.ListActivity;
@@ -275,19 +276,10 @@ public class UploadActivity extends ListActivity implements Constants {
             {
                 TextView tv = (TextView) view.findViewById(R.id.upload_list_sport);
                 if (!tmp.containsKey(DB.ACTIVITY.SPORT)) {
-                    tv.setText("Running");
+                    tv.setText(getResources().getText(R.string.txt_sport_Running))
                 } else {
-                    switch (tmp.getAsInteger(DB.ACTIVITY.SPORT)) {
-                        case DB.ACTIVITY.SPORT_RUNNING:
-                            tv.setText("Running");
-                            break;
-                        case DB.ACTIVITY.SPORT_BIKING:
-                            tv.setText("Biking");
-                            break;
-                        default:
-                            tv.setText("Unknown?? (" + tmp.getAsInteger(DB.ACTIVITY.SPORT) + ")");
-                            break;
-                    }
+                    tv.setText(getResources().getText(Sport.valueOf(tmp.getAsInteger(
+                            DB.ACTIVITY.SPORT)).getTextId()));
                 }
             }
 

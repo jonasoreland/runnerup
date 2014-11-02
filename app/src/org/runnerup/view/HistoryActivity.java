@@ -22,6 +22,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
+import org.runnerup.workout.Sport;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -193,20 +194,11 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
             {
                 TextView tv = (TextView) view.findViewById(to[5]);
+
                 if (cursor.isNull(4)) {
-                    tv.setText("Running");
+                    tv.setText(getResources().getText(R.string.txt_sport_Running));
                 } else {
-                    switch (cursor.getInt(4)) {
-                        case DB.ACTIVITY.SPORT_RUNNING:
-                            tv.setText("Running");
-                            break;
-                        case DB.ACTIVITY.SPORT_BIKING:
-                            tv.setText("Biking");
-                            break;
-                        default:
-                            tv.setText("Unknown?? (" + cursor.getInt(4) + ")");
-                            break;
-                    }
+                    tv.setText(getResources().getText(Sport.valueOf(cursor.getInt(4)).getTextId()));
                 }
             }
         }

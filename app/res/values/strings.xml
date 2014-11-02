@@ -186,4 +186,7 @@
   <string name="placeholder_pace_txt">4:34</string>
   <string name="placeholder_battery_level_txt">Battery: unknown</string>
   <string name="heartrate_zones_distribution">Heartrate zones distribution</string>
+  <string name="txt_sport_Running">Running</string>
+  <string name="txt_sport_Biking">Biking</string>
+  <string name="txt_sport_Other">Other</string>
 </resources>
