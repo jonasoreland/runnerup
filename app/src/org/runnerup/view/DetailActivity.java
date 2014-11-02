@@ -773,12 +773,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             builder.setPositiveButton("Yes",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            ContentValues tmp = new ContentValues();
-                            tmp.put("deleted", 1);
-                            String args[] = {
-                                "" + mID
-                            };
-                            mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", args);
+                            DBHelper.deleteActivity(mDB, mID);
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_OK);
                             DetailActivity.this.finish();

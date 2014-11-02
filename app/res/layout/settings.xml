@@ -245,7 +245,11 @@
         <Preference android:title="Import"
             android:key="importdb"
             android:summary="Import database from sdcard (e.g after upgrade)" />
-    	
+
+        <Preference android:title="Prune"
+            android:key="prunedb"
+            android:summary="Prune deleted activities from database" />
+
     	<CheckBoxPreference
         	android:defaultValue="false"
         	android:persistent="true"
