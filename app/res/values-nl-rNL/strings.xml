@@ -15,20 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
-  <string name="google_play_services_legal_notices">Google Play Services Wettelijke Bepalingen</string>
-  <string name="type">Type</string>
-  <string-array name="simple_types">
-    <item>Tijd</item>
-    <item>Afstand</item>
-  </string-array>
-  <string name="active">actief</string>
-  <string name="rest">rust</string>
-  <string name="recovery">herstel</string>
-  <string name="repeat">herhalen</string>
-  <string name="time">tijd</string>
-  <string name="distance">afstand</string>
-  <string name="speed">snelheid</string>
-  <string name="pace">tempo</string>
+  <!--metrics stuff-->
   <string name="kilometer">kilometer</string>
   <string name="kilometers">kilometers</string>
   <string name="mile">mijl</string>
@@ -36,34 +23,48 @@
   <string name="meter">meter</string>
   <string name="meters">meters</string>
   <string name="metrics_kilometers">km</string>
-  <string name="metrics_miles">mi</string>
   <string name="metrics_meters">m</string>
+  <string name="metrics_miles">mi</string>
   <string name="metrics_hours">h</string>
   <string name="metrics_min">min</string>
   <string name="metrics_sec">s</string>
   <string name="metrics_beatsperminute">bpm</string>
-  <string name="upload">upload</string>
-  <string name="feed">feed</string>
-  <string name="configure">Configureer</string>
-  <string name="disconnect">Verbinding verbreken</string>
-  <string name="resume">Doorgaan</string>
-  <string name="save_activity">Activiteit opslaan</string>
-  <string name="discard_activity">Activiteit verwijderen</string>
-  <string name="configure_accounts">Accounts configureren</string>
-  <string name="refresh">Veversen</string>
-  <string name="zonetext_txt">Zone 1 0–59%</string>
-  <string name="age">Leeftijd</string>
-  <string name="sex">Geslacht</string>
+  <string name="metrics_heartrate">Hr</string>
+  <!--format hint stuff-->
   <string name="maximum_heart_rate">Maximale hartslag (HFmax)</string>
-  <string name="running">Hardlopen</string>
+  <string name="target_pace_format">Doel tempo (HH:MM:SS)</string>
+  <string name="interval_time_format">Interval tijd (HH:MM:SS)</string>
+  <string name="interval_distance_format">Interval afstand (m)</string>
+  <string name="rest_time_format">Rust tijd (HH:MM:SS)</string>
+  <string name="rest_distance_format">Rust afstand (m)</string>
+  <string name="duration_time_format">Duur tijd (HH:MM:SS)</string>
+  <string name="duration_distance_format">Duur afstand (m)</string>
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="polar_h7">Polar H7</string>
+  <string name="tröskel">Tröskel</string>
+  <string name="placeholder_time">3 min</string>
+  <string name="step_goal_value_txt">4:00 – 4:15 min/km</string>
+  <string name="upload_list_start_time_txt">2013–08–12</string>
+  <string name="placeholder_distance">6000 m</string>
+  <string name="zonetext_txt">Zone 1 0–59%</string>
   <string name="id">id</string>
+  <!--other-->
+  <string name="google_play_services_legal_notices">Google Play Services Wettelijke Bepalingen</string>
+  <string name="type">Type</string>
+  <string name="active">actief</string>
+  <string name="rest">rust</string>
+  <string name="recovery">herstel</string>
+  <string name="warmup">warming-up</string>
+  <string name="cooldown">cooling-down</string>
+  <string name="repeat">herhalen</string>
+  <string name="time">tijd</string>
+  <string name="distance">afstand</string>
+  <string name="speed">snelheid</string>
+  <string name="pace">tempo</string>
   <string name="device">Apparaat</string>
   <string name="heart_rate">Hartslag</string>
-  <string name="polar_h7">Polar H7</string>
   <string name="scan">Zoeken</string>
   <string name="connect">Verbinden</string>
-  <string name="metrics_heartrate">Hr</string>
-  <string name="tröskel">Tröskel</string>
   <string name="download">Download</string>
   <string name="share">Delen</string>
   <string name="delete">Verwijderen</string>
@@ -75,38 +76,38 @@
   <string name="stop">Stop</string>
   <string name="workout">Training</string>
   <string name="download_workouts">Download trainingen</string>
+  <string name="audio_cue_settings">Audio cue instellingen</string>
   <string name="sport">Sport</string>
   <string name="target">Doel</string>
-  <string name="target_pace_format">Doel tempo (HH:MM:SS)</string>
   <string name="target_heart_rate_zone">Doel hartslagzone</string>
-  <string name="audio_cue_settings">Audio cue instellingen</string>
   <string name="interval_type">Interval type</string>
-  <string name="interval_time_format">Interval tijd (HH:MM:SS)</string>
-  <string name="interval_distance_format">Interval afstand (m)</string>
   <string name="rest_type">Rust type</string>
-  <string name="rest_time_format">Rust tijd (HH:MM:SS)</string>
-  <string name="rest_distance_format">Rust afstand (m)</string>
   <string name="repetitions">Herhalingen</string>
   <string name="date">Datum</string>
   <string name="gps_satellites">GPS satellieten</string>
   <string name="start_gps">Start GPS</string>
   <string name="duration">Duur</string>
-  <string name="placeholder_time">3 min</string>
-  <string name="step_goal_value_txt">4:00 – 4:15 min/km</string>
   <string name="duration_type">Duur soort</string>
-  <string name="duration_time_format">Duur tijd (HH:MM:SS)</string>
-  <string name="duration_distance_format">Duur afstand (m)</string>
   <string name="target_type">Doel type</string>
-  <string name="ok">OK</string>
   <string name="cancel">Afbreken</string>
   <string name="value">waarde</string>
-  <string name="upload_list_start_time_txt">2013–08–12</string>
   <string name="select_all">Alles selecteren</string>
   <string name="clear_all">Alles wissen</string>
   <string name="username">Gebruikersnaam</string>
   <string name="password">Wachtwoord</string>
   <string name="show_password">Toon wachtwoord</string>
   <string name="intensity">intensiteit</string>
-  <string name="placeholder_distance">6000 m</string>
-  <!--Default text for fields that are programmatically overwritten.-->
+  <string name="sex">Geslacht</string>
+  <string name="upload">upload</string>
+  <string name="feed">feed</string>
+  <string name="configure">Configureer</string>
+  <string name="disconnect">Verbinding verbreken</string>
+  <string name="resume">Doorgaan</string>
+  <string name="save_activity">Activiteit opslaan</string>
+  <string name="discard_activity">Activiteit verwijderen</string>
+  <string name="configure_accounts">Accounts configureren</string>
+  <string name="refresh">Veversen</string>
+  <string name="age">Leeftijd</string>
+  <string name="running">Hardlopen</string>
+  <string name="ok">OK</string>
 </resources>

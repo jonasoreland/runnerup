@@ -15,12 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
-  <string name="google_play_services_legal_notices">Google Play Servisi Yasal Notlar</string>
-  <string name="type">Tip</string>
-  <string-array name="simple_types">
-    <item>Süre</item>
-    <item>Mesafe</item>
-  </string-array>
+  <!--metrics stuff-->
   <string name="kilometer">kilometre</string>
   <string name="kilometers">kilometre</string>
   <string name="mile">mil</string>
@@ -30,18 +25,14 @@
   <string name="metrics_kilometers">km</string>
   <string name="metrics_meters">m</string>
   <string name="metrics_min">dk</string>
-  <string-array name="sexes">
-    <item>Erkek</item>
-    <item>Kadın</item>
-  </string-array>
-  <string name="configure">Yapılandır</string>
-  <string name="disconnect">Bağlantıyı kes</string>
-  <string name="ok">Tamam</string>
-  <string name="configure_accounts">Hesapları yapılandır</string>
-  <string name="refresh">Yenile</string>
-  <string name="age">Yaş</string>
-  <string name="sex">Cinsiyet</string>
-  <string name="running">Koşu</string>
+  <!--format hint stuff-->
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="step_goal_value_txt">4:00 – 4:15 dk/km</string>
+  <string name="upload_list_start_time_txt">2013–08–12</string>
+  <string name="placeholder_distance">6000 m</string>
+  <!--other-->
+  <string name="google_play_services_legal_notices">Google Play Servisi Yasal Notlar</string>
+  <string name="type">Tip</string>
   <string name="device">Cihaz</string>
   <string name="scan">Tara</string>
   <string name="connect">Bağlan</string>
@@ -56,14 +47,18 @@
   <string name="workout">Çalışma</string>
   <string name="target">Hedef</string>
   <string name="gps_satellites">GPS uyduları: </string>
-  <string name="step_goal_value_txt">4:00 – 4:15 dk/km</string>
   <string name="cancel">İptal</string>
-  <string name="upload_list_start_time_txt">2013–08–12</string>
   <string name="select_all">Hepsini seç</string>
   <string name="clear_all">Hepsini temizle</string>
   <string name="username">Kullanıcı adı</string>
   <string name="password">Şifre</string>
   <string name="show_password">Şifreyi göster</string>
-  <string name="placeholder_distance">6000 m</string>
-  <!--Default text for fields that are programmatically overwritten.-->
+  <string name="sex">Cinsiyet</string>
+  <string name="configure">Yapılandır</string>
+  <string name="disconnect">Bağlantıyı kes</string>
+  <string name="configure_accounts">Hesapları yapılandır</string>
+  <string name="refresh">Yenile</string>
+  <string name="age">Yaş</string>
+  <string name="running">Koşu</string>
+  <string name="ok">Tamam</string>
 </resources>
