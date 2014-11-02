@@ -20,10 +20,13 @@ package org.runnerup.view;
 import java.io.IOException;
 
 import org.runnerup.R;
+import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -51,6 +54,10 @@ public class SettingsActivity extends PreferenceActivity {
         {
             Preference btn = (Preference) findPreference("importdb");
             btn.setOnPreferenceClickListener(onImportClick);
+        }
+        {
+            Preference btn = (Preference) findPreference("prunedb");
+            btn.setOnPreferenceClickListener(onPruneClick);
         }
 
         if (!hasHR(this)) {
@@ -129,6 +136,22 @@ public class SettingsActivity extends PreferenceActivity {
                 builder.setNegativeButton(getString(R.string.darn), listener);
             }
             builder.show();
+            return false;
+        }
+    };
+    OnPreferenceClickListener onPruneClick = new OnPreferenceClickListener() {
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
+            dialog.setTitle(R.string.pruning_deleted_activities_from_database);
+            dialog.show();
+            DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                }
+            });
             return false;
         }
     };

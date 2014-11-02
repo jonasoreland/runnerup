@@ -1,3 +1,7 @@
+UPDATE: currently developing with Eclipse is broken,
+du to changes made for android wear. Patches that restores
+eclipse but keeps android wear structure is welcome.
+
 If you want to use Eclipse instead of Android Studio, follow these steps:
 
 	1. Set $ANDROID_HOME env variable to your Android SDK folder path.

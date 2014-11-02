@@ -76,6 +76,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
     TextView tvBTName = null;
     TextView tvHR = null;
     TextView tvLog = null;
+    TextView tvBatteryLevel = null;
 
     Formatter formatter = null;
     GraphView graphView = null;
@@ -102,6 +103,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
         tvLog = (TextView) findViewById(R.id.hr_log);
         tvBTName = (TextView) findViewById(R.id.hr_device);
         tvHR = (TextView) findViewById(R.id.hr_value);
+        tvBatteryLevel = (TextView) findViewById(R.id.hr_battery);
+        tvBatteryLevel.setVisibility(View.GONE);
         scanButton = (Button) findViewById(R.id.scan_button);
         scanButton.setOnClickListener(scanButtonClick);
         connectButton = (Button) findViewById(R.id.connect_button);
@@ -569,6 +572,10 @@ public class HRSettingsActivity extends Activity implements HRClient {
         log(hrProvider.getProviderName() + "::onConnectResult(" + connectOK + ")");
         if (connectOK) {
             save();
+            if (hrProvider.getBatteryLevel() > 0) {
+                tvBatteryLevel.setVisibility(View.VISIBLE);
+                tvBatteryLevel.setText(getResources().getText(R.string.battery_level) + ": " + hrProvider.getBatteryLevel() + "%");
+            }
             startTimer();
         } else {
         }

@@ -125,8 +125,9 @@
   <string name="configure_accounts">"Configure accounts"</string>
   <string name="refresh">"Refresh"</string>
   <string name="age">"Age"</string>
-  <string name="running">"Running"</string>
-  <string name="biking">"Biking"</string>
+  <string name="Running">"Running"</string>
+  <string name="Biking">"Biking"</string>
+  <string name="Other">"Other"</string>
   <string name="unknown">"Unknown"</string>
   <string name="edit">"edit"</string>
   <string name="synchronizing">"Synchronizing:"</string>
@@ -253,4 +254,9 @@
   <string name="advanced">"Advanced"</string>
   <string name="manual">"Manual"</string>
   <string name="add_workout_notes">"Add workout notes"</string>
+  <string name="pruning_deleted_activities_from_database">Pruning deleted activities from database</string>
+  <string name="prune">Prune</string>
+  <string name="heartrate_zones_distribution">Heartrate zones distribution</string>
+  <string name="placeholder_battery_level">Battery: unknown</string>
+  <string name="battery_level">Battery level</string>
 </resources>

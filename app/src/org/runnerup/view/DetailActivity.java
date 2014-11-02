@@ -132,6 +132,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
     LinearLayout graphTab = null;
     GraphView graphView;
     GraphView graphView2;
+
+    LinearLayout hrzonesBarLayout;
     HRZonesBar hrzonesBar;
 
     UploadManager uploadManager = null;
@@ -269,9 +271,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     }
                 }
             };
-
-            hrzonesBar = new HRZonesBar(this);
         }
+        hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
+        hrzonesBar = new HRZonesBar(this);
     }
 
     @Override
@@ -771,12 +773,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            ContentValues tmp = new ContentValues();
-                            tmp.put("deleted", 1);
-                            String args[] = {
-                                "" + mID
-                            };
-                            mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", args);
+                            DBHelper.deleteActivity(mDB, mID);
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_OK);
                             DetailActivity.this.finish();
@@ -1320,7 +1317,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     graphData.complete(graphView);
                     if (!graphData.HasHRInfo()) {
                         graphTab.addView(graphView);
-                    } else if (!graphData.HasHRZHist()) {
+                    } else {
                         graphTab.addView(graphView,
                                 new LayoutParams(
                                         LayoutParams.MATCH_PARENT, 0, 0.5f));
@@ -1328,36 +1325,15 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         graphTab.addView(graphView2,
                                 new LayoutParams(
                                         LayoutParams.MATCH_PARENT, 0, 0.5f));
-                    } else if (hrzonesBar.barOrientation == HRZonesBar.BarOrientation.HORIZONTAL) {
-                        graphTab.addView(graphView,
-                                new LayoutParams(
-                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
-
-                        graphTab.addView(graphView2,
-                                new LayoutParams(
-                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
-
-                        graphTab.addView(hrzonesBar,
-                                new LayoutParams(
-                                        LayoutParams.MATCH_PARENT,
-                                        hrzonesBar.getTotalBarHeight(), 0));
-
-                    } else if (hrzonesBar.barOrientation == HRZonesBar.BarOrientation.VERTICAL) {
-                        // Global holder
-                        LinearLayout ll0 = new LinearLayout(DetailActivity.this);
-                        ll0.setOrientation(LinearLayout.VERTICAL);
-
-                        // LinearLayout holder for HRM data
-                        LinearLayout ll1 = new LinearLayout(DetailActivity.this);
-                        ll1.setOrientation(LinearLayout.HORIZONTAL);
-
-                        ll1.addView(graphView2, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1f));
-                        ll1.addView(hrzonesBar, new LayoutParams(hrzonesBar.getTotalBarHeight(), LayoutParams.MATCH_PARENT));
-
-                        ll0.addView(graphView, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
-                        ll0.addView(ll1, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
-                        graphTab.addView(ll0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
                     }
+
+                    if (graphData.HasHRZHist()) {
+                        hrzonesBarLayout.setVisibility(View.VISIBLE);
+                        hrzonesBarLayout.addView(hrzonesBar);
+                    } else {
+                        hrzonesBarLayout.setVisibility(View.GONE);
+                    }
+
                     if (map != null) {
                         map.addPolyline(route.path);
                         mapBounds = route.bounds.build();

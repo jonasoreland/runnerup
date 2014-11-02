@@ -37,7 +37,7 @@ import android.os.Build;
 import android.os.Handler;
 
 @TargetApi(18)
-public class AndroidBLEHRProvider implements HRProvider {
+public class AndroidBLEHRProvider extends BLEBase implements HRProvider {
 
     public static boolean checkLibrary(Context ctx) {
 
@@ -53,17 +53,7 @@ public class AndroidBLEHRProvider implements HRProvider {
     }
 
     static final String NAME = "AndroidBLE";
-    static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
-    static final UUID HRP_SERVICE = UUID
-            .fromString("0000180D-0000-1000-8000-00805f9b34fb");
-    static final UUID FIRMWARE_REVISON_UUID = UUID
-            .fromString("00002a26-0000-1000-8000-00805f9b34fb");
-    static final UUID DIS_UUID = UUID
-            .fromString("0000180a-0000-1000-8000-00805f9b34fb");
-    static final UUID HEART_RATE_MEASUREMENT_CHARAC = UUID
-            .fromString("00002A37-0000-1000-8000-00805f9b34fb");
-    static final UUID CCC = UUID
-            .fromString("00002902-0000-1000-8000-00805f9b34fb");
+    static final String DISPLAY_NAME = "Bluetooth SMART (BLEBase)";
 
     static final UUID[] SCAN_UUIDS = {
         HRP_SERVICE
@@ -85,6 +75,8 @@ public class AndroidBLEHRProvider implements HRProvider {
     private BluetoothDevice btDevice = null;
     private int hrValue = 0;
     private long hrTimestamp = 0;
+    private int batteryLevel = -1;
+    private boolean hasBatteryService = false;
 
     private HRClient hrClient;
     private Handler hrClientHandler;
@@ -154,7 +146,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
-                BluetoothGattCharacteristic arg0) {
+                                            BluetoothGattCharacteristic arg0) {
             if (gatt != btGatt) {
                 return;
             }
@@ -187,9 +179,9 @@ public class AndroidBLEHRProvider implements HRProvider {
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt,
-                BluetoothGattCharacteristic arg0, int status) {
+                                         BluetoothGattCharacteristic arg0, int status) {
             System.out.println("onCharacteristicRead(): " + gatt + ", char: "
-                    + arg0 + ", status: " + status);
+                    + arg0.getUuid() + ", status: " + status);
 
             if (gatt != btGatt)
                 return;
@@ -200,18 +192,29 @@ public class AndroidBLEHRProvider implements HRProvider {
                 // triggered from DummyReadForSecLevelCheck
                 startHR();
                 return;
+            } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
+                batteryLevel = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                System.err.println("Battery level: " + batteryLevel);
+
+                System.out.println(" => startHR()");
+                // triggered from DummyReadForSecLevelCheck
+                startHR();
+                return;
+
+            } else {
+                System.err.println("Unknown characteristic received: " + charUuid);
             }
         }
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt,
-                BluetoothGattCharacteristic characteristic, int status) {
+                                          BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
         }
 
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status,
-                int newState) {
+                                            int newState) {
 
             System.err.println("onConnectionStateChange: " + gatt
                     + ", status: " + status + ", newState: " + newState);
@@ -260,7 +263,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 
         @Override
         public void onDescriptorRead(BluetoothGatt gatt,
-                BluetoothGattDescriptor arg0, int status) {
+                                     BluetoothGattDescriptor arg0, int status) {
 
             BluetoothGattCharacteristic mHRMcharac = arg0.getCharacteristic();
             if (!enableNotification(true, mHRMcharac)) {
@@ -270,7 +273,7 @@ public class AndroidBLEHRProvider implements HRProvider {
 
         @Override
         public void onDescriptorWrite(BluetoothGatt gatt,
-                BluetoothGattDescriptor descriptor, int status) {
+                                      BluetoothGattDescriptor descriptor, int status) {
             super.onDescriptorWrite(gatt, descriptor, status);
         }
 
@@ -302,6 +305,10 @@ public class AndroidBLEHRProvider implements HRProvider {
                 for (BluetoothGattService a : s.getIncludedServices()) {
                     System.err.println("  serv: " + a.getUuid());
                 }
+
+                if (s.getUuid().equals(BATTERY_SERVICE)) {
+                    hasBatteryService = true;
+                }
             }
 
             System.out.println(" => DummyRead");
@@ -321,6 +328,10 @@ public class AndroidBLEHRProvider implements HRProvider {
         private void DummyReadForSecLevelCheck(BluetoothGatt btGatt) {
             if (btGatt == null)
                 return;
+
+            if (hasBatteryService && readBatteryLevel()) {
+                return;
+            }
 
             BluetoothGattService disService = btGatt.getService(DIS_UUID);
             if (disService == null) {
@@ -371,6 +382,27 @@ public class AndroidBLEHRProvider implements HRProvider {
             // Continue in onDescriptorRead
         }
 
+        private boolean readBatteryLevel() {
+            BluetoothGattService mBS = btGatt.getService(BATTERY_SERVICE);
+            if (mBS == null) {
+                System.err.println("Battery service not found.");
+                return false;
+            }
+
+            BluetoothGattCharacteristic mBLcharac = mBS
+                    .getCharacteristic(BATTERY_LEVEL_CHARAC);
+            if (mBLcharac == null) {
+                reportConnectFailed("BATTERY LEVEL charateristic not found!");
+                return false;
+            }
+
+            if (!btGatt.readCharacteristic(mBLcharac)) {
+                System.err.println("readCharacteristic(" + mBLcharac.getUuid() + ") failed");
+                return false;
+            }
+            // continue in onCharacteristicRead
+            return true;
+        }
     };
 
     private boolean enableNotification(boolean onoff,
@@ -642,5 +674,10 @@ public class AndroidBLEHRProvider implements HRProvider {
     @Override
     public boolean isBondingDevice() {
         return false;
+    }
+
+    @Override
+    public int getBatteryLevel() {
+        return this.batteryLevel;
     }
 }

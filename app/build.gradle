@@ -16,11 +16,17 @@ android {
             assets.srcDirs = ['assets']
         }
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
 }
 
 dependencies {
     compile 'com.android.support:support-v4:19.1.+'
-    compile 'com.android.support:appcompat-v7:19.1.+'
     compile 'com.google.android.gms:play-services:3.2.65'
     compile files('../GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')

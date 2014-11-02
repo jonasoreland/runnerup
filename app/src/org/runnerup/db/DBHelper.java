@@ -17,7 +17,15 @@
 
 package org.runnerup.db;
 
-import java.util.ArrayList;
+import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
+import android.os.Build;
 
 import org.runnerup.R;
 import org.runnerup.export.DigifitUploader;
@@ -35,13 +43,7 @@ import org.runnerup.export.RunningAHEAD;
 import org.runnerup.export.RuntasticUploader;
 import org.runnerup.export.Strava;
 
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
+import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
@@ -487,5 +489,66 @@ public class DBHelper extends SQLiteOpenHelper implements
             } while (c.moveToNext());
         }
         return list.toArray(new ContentValues[list.size()]);
+    }
+
+    public static void deleteActivity(SQLiteDatabase db, long id) {
+        System.err.println("deleting activity: " + id);
+        String args[] = {
+                Long.toString(id)
+        };
+        db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACTIVITY + " = ?", args);
+        db.delete(DB.LOCATION.TABLE, DB.LOCATION.ACTIVITY + " = ?", args);
+        db.delete(DB.LAP.TABLE, DB.LAP.ACTIVITY + " = ?", args);
+        db.delete(DB.ACTIVITY.TABLE, "_id = ?", args);
+    }
+
+    public static void purgeDeletedActivities(Context ctx, final ProgressDialog dialog,
+                                              final Runnable onComplete) {
+
+        final DBHelper mDBHelper = new DBHelper(ctx);
+        final SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        String from[] = { "_id" };
+        Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0",
+                null, null, null, null, null);
+        final ArrayList<Long> list = new ArrayList<Long>(10);
+        if (c.moveToFirst()) {
+            do {
+                list.add(c.getLong(0));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        if (list.size() > 0) {
+            new AsyncTask<Long, Void, Void>() {
+
+                @Override
+                protected void onPreExecute() {
+                    dialog.setMax(list.size());
+                    super.onPreExecute();
+                }
+
+                @Override
+                protected Void doInBackground(Long... args) {
+                    for (Long id : list) {
+                        deleteActivity(db, id);
+                        dialog.incrementProgressBy(1);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    db.close();
+                    mDBHelper.close();
+                    if (onComplete != null)
+                        onComplete.run();
+                }
+            }.execute(Long.valueOf(2));
+        } else {
+            db.close();
+            mDBHelper.close();
+            if (onComplete != null)
+                onComplete.run();
+        }
     }
 }

@@ -17,8 +17,6 @@
 
 package org.runnerup.hr;
 
-import java.util.UUID;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -36,8 +34,11 @@ import com.samsung.android.sdk.bt.gatt.BluetoothGattCharacteristic;
 import com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor;
 import com.samsung.android.sdk.bt.gatt.BluetoothGattService;
 
+import java.util.List;
+import java.util.UUID;
+
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class SamsungBLEHRProvider implements HRProvider {
+public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
 
     public static boolean checkLibrary() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -60,14 +61,7 @@ public class SamsungBLEHRProvider implements HRProvider {
     }
 
     static final String NAME = "SamsungBLE";
-    static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
-    static final UUID HRP_SERVICE = UUID.fromString("0000180D-0000-1000-8000-00805f9b34fb");
-    static final UUID FIRMWARE_REVISON_UUID = UUID
-            .fromString("00002a26-0000-1000-8000-00805f9b34fb");
-    static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
-    static final UUID HEART_RATE_MEASUREMENT_CHARAC = UUID
-            .fromString("00002A37-0000-1000-8000-00805f9b34fb");
-    static final UUID CCC = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+    static final String DISPLAY_NAME = "Bluetooth SMART (BLEBase)";
 
     private Context context;
     private BluetoothAdapter btAdapter = null;
@@ -75,6 +69,8 @@ public class SamsungBLEHRProvider implements HRProvider {
     private BluetoothDevice btDevice = null;
     private int hrValue = 0;
     private long hrTimestamp = 0;
+    private boolean hasBattery = false;
+    private int batteryLevel = -1;
 
     public SamsungBLEHRProvider(Context ctx) {
         context = ctx;
@@ -233,14 +229,18 @@ public class SamsungBLEHRProvider implements HRProvider {
 
         @Override
         public void onCharacteristicRead(BluetoothGattCharacteristic arg0, int arg1) {
+            // triggered from DummyReadForSecLevelCheck
             UUID charUuid = arg0.getUuid();
             if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
-                // triggered from DummyReadForSecLevelCheck
-                startHR();
-
-                // Continue in onDescriptorRead
-                return;
+            } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
+                batteryLevel = arg0.getIntValue(android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                System.err.println("Battery level: " + batteryLevel);
             }
+
+            System.out.println(" => startHR()");
+            // triggered from DummyReadForSecLevelCheck
+            startHR();
+            return;
         }
 
         private void startHR() {
@@ -346,6 +346,13 @@ public class SamsungBLEHRProvider implements HRProvider {
         @Override
         public void onServicesDiscovered(BluetoothDevice device, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
+                List<BluetoothGattService> list = btGatt.getServices(device);
+                for (BluetoothGattService s : list) {
+                    if (BLEBase.BATTERY_SERVICE.equals(s.getUuid())) {
+                        hasBattery = true;
+                        break;
+                    }
+                }
                 DummyReadForSecLevelCheck(device);
                 // continue in onCharacteristicRead
             } else {
@@ -408,6 +415,10 @@ public class SamsungBLEHRProvider implements HRProvider {
             if (device == null)
                 return;
 
+            if (hasBattery && readBatteryLevel(device)) {
+                return;
+            }
+
             BluetoothGattService disService = btGatt.getService(device, DIS_UUID);
             if (disService == null) {
                 reportConnectFailed("Dis service not found");
@@ -426,6 +437,27 @@ public class SamsungBLEHRProvider implements HRProvider {
             // continue in onCharacteristicRead
         }
     };
+
+    private boolean readBatteryLevel(BluetoothDevice device) {
+        BluetoothGattService service = btGatt.getService(device, BATTERY_SERVICE);
+        if (service == null) {
+            System.err.println("Battery service not found.");
+            return false;
+        }
+
+        BluetoothGattCharacteristic characteristic = service.getCharacteristic(BATTERY_LEVEL_CHARAC);
+        if (characteristic == null) {
+            System.err.println("Battery characteristic not found.");
+            return false;
+        }
+
+        if (!btGatt.readCharacteristic(characteristic)) {
+            System.err.println("readCharacteristic(" + characteristic.getUuid() + ") failed");
+            return false;
+        }
+        return true;
+        // continue in onCharacteristicRead
+    }
 
     private boolean enableNotification(boolean onoff, BluetoothGattCharacteristic charac) {
         if (btGatt == null)
@@ -589,6 +621,11 @@ public class SamsungBLEHRProvider implements HRProvider {
     @Override
     public long getHRValueTimestamp() {
         return this.hrTimestamp;
+    }
+
+    @Override
+    public int getBatteryLevel() {
+        return batteryLevel;
     }
 
     @Override
