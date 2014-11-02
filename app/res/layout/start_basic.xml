@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sportEntries"
-        android:key="@string/pref_sport"
+        android:key="@string/pref_basic_sport"
         android:prompt="@string/type"
         android:text="@string/sport" />
 

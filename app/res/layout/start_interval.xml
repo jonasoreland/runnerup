@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/types"
-            android:key="@string/pref_rest_type"
+            android:key="@string/pref_interval_rest_type"
             android:prompt="@string/type"
             android:text="@string/rest_type" />
 
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="00:01:00"
             android:inputType="time"
-            android:key="@string/pref_rest_time"
+            android:key="@string/pref_interval_rest_time"
             android:prompt="@string/type"
             android:text="@string/rest_time_format"
             runnerup:type="durationpicker" />
@@ -93,7 +93,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="200"
             android:inputType="numberDecimal"
-            android:key="@string/pref_rest_distance_format"
+            android:key="@string/pref_interval_rest_distance_format"
             android:prompt="@string/type"
             android:text="@string/rest_distance_format"
             runnerup:type="distancepicker" />
@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="5"
             android:inputType="number"
-            android:key="@string/pref_repetitions"
+            android:key="@string/pref_interval_repetitions"
             android:prompt="@string/type"
             android:text="@string/repetitions"
             runnerup:type="numberpicker" />

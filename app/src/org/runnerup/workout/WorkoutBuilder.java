@@ -50,7 +50,7 @@ public class WorkoutBuilder {
     public static Workout createDefaultWorkout(Resources res, SharedPreferences prefs,
             Dimension target) {
         Workout w = new Workout();
-        w.sport = prefs.getInt(res.getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING);
+        w.sport = prefs.getInt(res.getString(R.string.pref_basic_sport), DB.ACTIVITY.SPORT_RUNNING);
 
         if (prefs.getBoolean(res.getString(R.string.pref_countdown_active), false))
         {
@@ -146,7 +146,7 @@ public class WorkoutBuilder {
             w.steps.add(step);
         }
 
-        int repetitions = (int) SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_repetitions), "1"),
+        int repetitions = (int) SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_repetitions), "1"),
                 1);
 
         int intervalType = prefs.getInt(res.getString(R.string.pref_interval_type), 0);
@@ -154,11 +154,11 @@ public class WorkoutBuilder {
                 4 * 60);
         double intevalDistance = SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_distance), "1000"),
                 1000);
-        int intervalRestType = prefs.getInt(res.getString(R.string.pref_rest_type), 0);
+        int intervalRestType = prefs.getInt(res.getString(R.string.pref_interval_rest_type), 0);
         long intervalRestTime = SafeParse.parseSeconds(
-                prefs.getString(res.getString(R.string.pref_rest_time), "00:01:00"), 60);
+                prefs.getString(res.getString(R.string.pref_interval_rest_time), "00:01:00"), 60);
         double intevalRestDistance = SafeParse.parseDouble(
-                prefs.getString(res.getString(R.string.pref_rest_distance_format), "200"), 200);
+                prefs.getString(res.getString(R.string.pref_interval_rest_distance_format), "200"), 200);
 
         RepeatStep repeat = new RepeatStep();
         repeat.repeatCount = repetitions;

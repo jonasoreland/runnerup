@@ -30,7 +30,7 @@
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="@string/pref_age" >
+        android:key="@string/pref_hrz_age" >
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
@@ -41,7 +41,7 @@
         android:prompt="@string/sex"
         android:text="@string/sex"
         app:type="spinner"
-        android:key="@string/pref_sex" >
+        android:key="@string/pref_hrz_sex" >
     </org.runnerup.widget.TitleSpinner>
     
     <org.runnerup.widget.TitleSpinner
@@ -53,7 +53,7 @@
         app:digits="3"
         app:min_val="0"
         app:max_val="300"
-        android:key="@string/pref_maximum_heart_rate" >
+        android:key="@string/pref_hrz_mhr" >
     </org.runnerup.widget.TitleSpinner>
     
     <TableLayout
