@@ -144,7 +144,7 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
-            dialog.setTitle("Pruning deleted activities from database");
+            dialog.setTitle(R.string.txt_Pruning_deleted_activities_from_database);
             dialog.show();
             DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, new Runnable() {
                 @Override

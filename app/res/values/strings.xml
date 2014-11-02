@@ -189,4 +189,5 @@
   <string name="txt_sport_Running">Running</string>
   <string name="txt_sport_Biking">Biking</string>
   <string name="txt_sport_Other">Other</string>
+  <string name="txt_Pruning_deleted_activities_from_database">Pruning deleted activities from database</string>
 </resources>
