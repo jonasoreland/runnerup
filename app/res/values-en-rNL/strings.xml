@@ -26,7 +26,6 @@
   <string name="recovery">herstel</string>
   <string name="repeat">herhalen</string>
   <string name="time">tijd</string>
-  <string name="distance">afstand</string>
   <string name="speed">snelheid</string>
   <string name="pace">tempo</string>
   <string name="kilometer">kilometer</string>
@@ -39,25 +38,13 @@
   <string name="metrics_miles">mi</string>
   <string name="metrics_meters">m</string>
   <string name="metrics_hours">h</string>
-  <string name="metrics_meters">m</string>
   <string name="metrics_min">min</string>
   <string name="metrics_sec">s</string>
   <string name="metrics_beatsperminute">bpm</string>
-  <string name="sex">Geslacht</string>
-  <string-array name="sexes">
-    <item>Man</item>
-    <item>Vrouw</item>
-  </string-array>
-  <string-array name="targetEntries">
-    <item>geen</item>
-    <item>tempo</item>
-    <item>hartslagzone</item>
-  </string-array>
   <string name="upload">upload</string>
   <string name="feed">feed</string>
   <string name="configure">Configureer</string>
   <string name="disconnect">Verbinding verbreken</string>
-  <string name="ok">OK</string>
   <string name="resume">Doorgaan</string>
   <string name="save_activity">Activiteit opslaan</string>
   <string name="discard_activity">Activiteit verwijderen</string>
@@ -67,15 +54,11 @@
   <string name="age">Leeftijd</string>
   <string name="sex">Geslacht</string>
   <string name="maximum_heart_rate">Maximale hartslag (HFmax)</string>
-  <string name="running">Hardlopen</string>
-  <string name="id">id</string>
   <string name="device">Apparaat</string>
   <string name="heart_rate">Hartslag</string>
   <string name="polar_h7">Polar H7</string>
   <string name="scan">Zoeken</string>
   <string name="connect">Verbinden</string>
-  <string name="id">id</string>
-  <string name="metrics_heartrate">Hr</string>
   <string name="tröskel">Tröskel</string>
   <string name="download">Download</string>
   <string name="share">Delen</string>
@@ -88,11 +71,8 @@
   <string name="new_lap">Nieuwe ronde</string>
   <string name="pause">Pauze</string>
   <string name="stop">Stop</string>
-  <string name="audio_cue_settings">Audio cue instellingen</string>
-  <string name="audio_cue_settings">Audio cue instellingen</string>
   <string name="workout">Training</string>
-  <string name="download_workouts">Download trainingen</string>
-  <string name="audio_cue_settings">Audio cue instellingen</string>
+  <string name="download_workouts">Download training</string>
   <string name="sport">Sport</string>
   <string name="target">Doel</string>
   <string name="target_pace_format">Doel tempo (HH:MM:SS)</string>
