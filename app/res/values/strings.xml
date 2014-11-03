@@ -205,8 +205,8 @@
   <string name="autopause_min_pace_minkm">"Autopause min pace (min/km)"</string>
   <string name="convert_rest_on_interval_tab">"Convert rest on Interval tab"</string>
   <string name="convert_rest_on_advanced_tab">"Convert rest on Advanced tab"</string>
-  <string name="target_pace_moving_average_seconds">"Target pace moving average seconds"</string>
-  <string name="target_pace_grace_seconds">"Target pace grace seconds"</string>
+  <string name="target_pace_moving_average_seconds_">"Target pace moving average seconds"</string>
+  <string name="target_pace_grace_seconds_">"Target pace grace seconds"</string>
   <string name="autolap_during_intervals">"Autolap during intervals"</string>
   <string name="add_countdown_after_step_that_ends_with_user_press">"Add countdown after step that ends with user press"</string>
   <string name="step_countdown_time_s">"Step countdown time (s)"</string>

@@ -25,20 +25,20 @@
 	<string name="pref_pollInterval">pref_pollInterval</string>
 	<string name="pref_pollDistance">pref_pollDistance</string>
 	<string name="pref_mute">pref_mute</string>
-
+	
 	<string name="cue_time">cue_time</string>
     <string name="cue_time_intervall">cue_time_intervall</string>
     <string name="cue_distance">cue_distance</string>
     <string name="cue_distance_intervall">cue_distance_intervall</string>
 	<string name="cue_end_of_lap">cue_end_of_lap</string>
-
+    
     <string name="cueinfo_total_distance">cueinfo_total_distance</string>
     <string name="cueinfo_total_time">cueinfo_total_time</string>
     <string name="cueinfo_total_pace">cueinfo_total_pace</string>
     <string name="cueinfo_total_speed">cueinfo_total_speed</string>
     <string name="cueinfo_total_hr">cueinfo_total_hr</string>
     <string name="cueinfo_total_hrz">cueinfo_total_hrz</string>
-
+    
     <!-- TODO configurable step cues -->
     <string name="cueinfo_step_distance">cueinfo_step_distance</string>
     <string name="cueinfo_step_time">cueinfo_step_time</string>
@@ -46,14 +46,14 @@
     <string name="cueinfo_step_speed">cueinfo_step_speed</string>
     <string name="cueinfo_step_hr">cueinfo_step_hr</string>
     <string name="cueinfo_step_hrz">cueinfo_step_hrz</string>
-
+    
     <string name="cueinfo_lap_distance">cueinfo_lap_distance</string>
     <string name="cueinfo_lap_time">cueinfo_lap_time</string>
     <string name="cueinfo_lap_pace">cueinfo_lap_pace</string>
     <string name="cueinfo_lap_speed">cueinfo_lap_speed</string>
     <string name="cueinfo_lap_hr">cueinfo_lap_hr</string>
     <string name="cueinfo_lap_hrz">cueinfo_lap_hrz</string>
-
+    
     <string name="cueinfo_target_coaching">cueinfo_target_coaching</string>
     <string name="cueinfo_skip_startstop">cueinfo_skip_startstop</string>
 
@@ -63,7 +63,7 @@
     <string name="pref_basic_target_pace_max">basic_target_pace_max</string>
     <string name="pref_basic_target_pace_min_range">basic_target_pace_min_range</string>
     <string name="pref_basic_target_hrz">basic_target_hrz</string>
-
+    
     <string name="pref_interval_audio">intervalAudio</string>
     <string name="pref_interval_repetitions">intervalRepetitions</string>
     <string name="pref_interval_type">intervalType</string>
@@ -72,12 +72,12 @@
     <string name="pref_interval_rest_type">intervalRestType</string>
     <string name="pref_interval_rest_time">intervalRestTime</string>
     <string name="pref_interval_rest_distance">intervalRestDistance</string>
-
+    
     <string name="pref_advanced_audio">advancedAudio</string>
     <string name="pref_advanced_workout">advancedWorkout</string>
-
-    <string name="pref_target_pace_moving_average_seconds">pref_target_pace_moving_average_seconds</string>
-    <string name="pref_target_pace_grace_seconds">pref_target_pace_grace_seconds</string>
+    
+    <string name="target_pace_moving_average_seconds">target_pace_moving_average_seconds</string>
+    <string name="target_pace_grace_seconds">target_pace_grace_seconds</string>
 
     <string name="pref_convert_interval_distance_rest_to_recovery">pref_convert_interval_distance_rest_to_recovery</string>
     <string name="pref_convert_advanced_distance_rest_to_recovery">pref_convert_advanced_distance_rest_to_recovery</string>
@@ -87,13 +87,13 @@
 
     <string name="pref_pace_graph_smoothing">pref_pace_graph_smoothing</string>
     <string name="pref_pace_graph_smoothing_filters">pref_pace_graph_smoothing_filters</string>
-
+    
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
     <string name="pref_runneruplive_username">pref_runneruplive_username</string>
-
+    
     <string name="pref_keystartstop_active">pref_keystartstop_active</string>
-
+    
     <string name="pref_bt_name">pref_bt_name</string>
     <string name="pref_bt_address">pref_bt_address</string>
     <string name="pref_bt_provider">pref_bt_provider</string>
