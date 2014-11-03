@@ -59,6 +59,5 @@
   <string name="configure_accounts">Hesapları yapılandır</string>
   <string name="refresh">Yenile</string>
   <string name="age">Yaş</string>
-  <string name="running">Koşu</string>
   <string name="ok">Tamam</string>
 </resources>
