@@ -228,27 +228,27 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
         StringBuilder s = new StringBuilder();
         if (hours > 0) {
-            s.append(hours).append(" ").append(resources.getString(R.string.metrics_hours));
+            s.append(hours).append(" ").append(resources.getString(R.string.metrics_elapsed_h));
         }
         if (minutes > 0) {
             if (hours > 0)
                 s.append(" ");
             if (hours > 0 || seconds > 0)
-                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_meters));
+                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_elapsed_m));
             else
-                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_min));
+                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_elapsed_min));
         }
         if (seconds > 0) {
             if (hours > 0 || minutes > 0)
                 s.append(" ");
-            s.append(seconds).append(" ").append(resources.getString(R.string.metrics_sec));
+            s.append(seconds).append(" ").append(resources.getString(R.string.metrics_elapsed_s));
         }
         return s.toString();
     }
 
     /**
      * Format heart rate
-     * 
+     *
      * @param target
      * @param bpm
      * @return
@@ -288,7 +288,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     /**
      * Format pace
-     * 
+     *
      * @param target
      * @param seconds_per_meter
      * @return
@@ -318,7 +318,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (includeUnit == false)
             return str;
         else {
-            int res = km ? R.string.metrics_kilometers : R.string.metrics_miles;
+            int res = km ? R.string.metrics_distance_kilometers : R.string.metrics_distance_mi;
             return str + "/" + resources.getString(res);
         }
     }
@@ -414,15 +414,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
         if (txt) {
             if (km) {
-                res_base = R.string.metrics_kilometers;
-                res_base_multi = R.string.metrics_kilometers;
+                res_base = R.string.metrics_distance_kilometers;
+                res_base_multi = R.string.metrics_distance_kilometers;
             } else {
-                res_base = R.string.metrics_miles;
-                res_base_multi = R.string.metrics_miles;
+                res_base = R.string.metrics_distance_mi;
+                res_base_multi = R.string.metrics_distance_mi;
             }
 
-            res_meter = R.string.metrics_meters;
-            res_meters = R.string.metrics_meters;
+            res_meter = R.string.metrics_distance_m;
+            res_meters = R.string.metrics_distance_m;
         }
 
         StringBuffer s = new StringBuffer();

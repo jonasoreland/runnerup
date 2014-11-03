@@ -16,18 +16,18 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
-  <string name="kilometer">kilometer</string>
-  <string name="kilometers">kilometers</string>
-  <string name="mile">mijl</string>
-  <string name="miles">mijlen</string>
-  <string name="meter">meter</string>
-  <string name="meters">meters</string>
-  <string name="metrics_kilometers">km</string>
-  <string name="metrics_meters">m</string>
-  <string name="metrics_miles">mi</string>
-  <string name="metrics_hours">h</string>
-  <string name="metrics_min">min</string>
-  <string name="metrics_sec">s</string>
+  <string name="metrics_distance_kilometer">kilometer</string>
+  <string name="metrics_distance_kilometers">kilometers</string>
+  <string name="metrics_distance_mile">mijl</string>
+  <string name="metrics_distance_miles">mijlen</string>
+  <string name="metrics_distance_meter">meter</string>
+  <string name="metrics_distance_meters">meters</string>
+  <string name="metrics_distance_kilometers">km</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
   <string name="metrics_beatsperminute">bpm</string>
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->

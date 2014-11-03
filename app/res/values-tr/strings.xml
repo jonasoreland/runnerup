@@ -16,15 +16,15 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
-  <string name="kilometer">kilometre</string>
-  <string name="kilometers">kilometre</string>
-  <string name="mile">mil</string>
-  <string name="miles">mil</string>
-  <string name="meter">metre</string>
-  <string name="meters">metre</string>
-  <string name="metrics_kilometers">km</string>
-  <string name="metrics_meters">m</string>
-  <string name="metrics_min">dk</string>
+  <string name="metrics_distance_kilometer">kilometre</string>
+  <string name="metrics_distance_kilometers">kilometre</string>
+  <string name="metrics_distance_mile">mil</string>
+  <string name="metrics_distance_miles">mil</string>
+  <string name="metrics_distance_meter">metre</string>
+  <string name="metrics_distance_meters">metre</string>
+  <string name="metrics_distance_kilometers">km</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">dk</string>
   <!--format hint stuff-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="step_goal_value_txt">4:00 – 4:15 dk/km</string>
