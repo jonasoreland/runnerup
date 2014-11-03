@@ -22,7 +22,7 @@
   <string name="metrics_distance_miles">miles</string>
   <string name="metrics_distance_meter">mètre</string>
   <string name="metrics_distance_meters">mètres</string>
-  <string name="metrics_distance_kilometers">km</string>
+  <string name="metrics_distance_km">km</string>
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_elapsed_h">h</string>

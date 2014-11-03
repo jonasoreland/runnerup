@@ -318,7 +318,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (includeUnit == false)
             return str;
         else {
-            int res = km ? R.string.metrics_distance_kilometers : R.string.metrics_distance_mi;
+            int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
             return str + "/" + resources.getString(res);
         }
     }

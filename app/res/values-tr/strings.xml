@@ -22,7 +22,7 @@
   <string name="metrics_distance_miles">mil</string>
   <string name="metrics_distance_meter">metre</string>
   <string name="metrics_distance_meters">metre</string>
-  <string name="metrics_distance_kilometers">km</string>
+  <string name="metrics_distance_km">km</string>
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">dk</string>
   <!--format hint stuff-->
