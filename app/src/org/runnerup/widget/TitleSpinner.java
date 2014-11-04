@@ -454,21 +454,21 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupNumberPicker(final Context context, TypedArray arr, CharSequence defaultValue) {
+    private void setupNumberPicker(final Context context, final TypedArray arr, CharSequence defaultValue) {
         if (defaultValue != null) {
             mValue.setText(defaultValue);
         } else {
             mValue.setText("");
         }
 
-        final NumberPicker numberPicker = new NumberPicker(context, null);
-        numberPicker.processAttributes(arr);
-        numberPicker.setOrientation(VERTICAL);
-
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                final NumberPicker numberPicker = new NumberPicker(context, null);
+                numberPicker.processAttributes(arr);
+                numberPicker.setOrientation(VERTICAL);
+
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
@@ -488,7 +488,6 @@ public class TitleSpinner extends LinearLayout {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(numberPicker));
                         dialog.dismiss();
-                        layout.removeView(numberPicker);
                         onClose(true);
                     }
 
@@ -499,7 +498,6 @@ public class TitleSpinner extends LinearLayout {
                 alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
-                        layout.removeView(numberPicker);
                         onClose(false);
                     }
                 });
