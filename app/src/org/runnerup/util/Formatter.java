@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.runnerup.R;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.RepeatStep;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -73,12 +74,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
             String key) {
-        if (key != null && "pref_unit".contentEquals(key))
+        if (key != null && context.getString(R.string.pref_unit).contentEquals(key))
             setUnit();
     }
 
     private void setUnit() {
-        km = getUseKilometers(sharedPreferences, null);
+        km = getUseKilometers(context.getResources(), sharedPreferences, null);
 
         if (km) {
             base_unit = "km";
@@ -89,35 +90,36 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
     }
 
-    public static boolean getUseKilometers(SharedPreferences prefs, Editor editor) {
+    public static boolean getUseKilometers(Resources res, SharedPreferences prefs, Editor editor) {
         boolean _km = true;
-        String unit = prefs.getString("pref_unit", null);
+        String unit = prefs.getString(res.getString(R.string.pref_unit), null);
         if (unit == null)
-            _km = guessDefaultUnit(prefs, editor);
+            _km = guessDefaultUnit(res, prefs, editor);
         else if (unit.contentEquals("km"))
             _km = true;
         else if (unit.contentEquals("mi"))
             _km = false;
         else
-            _km = guessDefaultUnit(prefs, editor);
+            _km = guessDefaultUnit(res, prefs, editor);
 
         return _km;
     }
 
-    private static boolean guessDefaultUnit(SharedPreferences prefs, Editor editor) {
+    private static boolean guessDefaultUnit(Resources res, SharedPreferences prefs, Editor editor) {
         String countryCode = Locale.getDefault().getCountry();
         System.err.println("guessDefaultUnit: countryCode: " + countryCode);
         if (countryCode == null)
             return true; // km;
+        String key = res.getString(R.string.pref_unit);
         if ("US".contentEquals(countryCode) ||
                 "GB".contentEquals(countryCode)) {
             if (editor != null)
-                editor.putString("pref_unit", "mi");
+                editor.putString(key, "mi");
             return false;
         }
         else {
             if (editor != null)
-                editor.putString("pref_unit", "km");
+                editor.putString(key, "km");
         }
         return true;
     }
@@ -126,8 +128,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return this.base_meters;
     }
 
-    public static double getUnitMeters(SharedPreferences prefs) {
-        if (getUseKilometers(prefs, null))
+    public static double getUnitMeters(Resources res, SharedPreferences prefs) {
+        if (getUseKilometers(res, prefs, null))
             return km_meters;
         else
             return mi_meters;
@@ -483,6 +485,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     public static double getUnitMeters(Context mContext) {
-        return getUnitMeters(PreferenceManager.getDefaultSharedPreferences(mContext));
+        return getUnitMeters(mContext.getResources(),
+                PreferenceManager.getDefaultSharedPreferences(mContext));
     }
 }

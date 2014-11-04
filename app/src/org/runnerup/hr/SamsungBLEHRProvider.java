@@ -233,7 +233,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
             UUID charUuid = arg0.getUuid();
             if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
             } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
-                batteryLevel = arg0.getIntValue(android.bluetooth.BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                batteryLevel = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                 System.err.println("Battery level: " + batteryLevel);
             }
 
@@ -346,8 +346,9 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
         @Override
         public void onServicesDiscovered(BluetoothDevice device, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                List<BluetoothGattService> list = btGatt.getServices(device);
-                for (BluetoothGattService s : list) {
+                List list = btGatt.getServices(device);
+                for (Object _s : list) {
+                    BluetoothGattService s = (BluetoothGattService) _s;
                     if (BLEBase.BATTERY_SERVICE.equals(s.getUuid())) {
                         hasBattery = true;
                         break;

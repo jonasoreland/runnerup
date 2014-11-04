@@ -91,7 +91,7 @@ public class MainLayout extends TabActivity {
             e.printStackTrace();
         }
         editor.putInt("app-version", versionCode);
-        boolean km = Formatter.getUseKilometers(pref, editor);
+        boolean km = Formatter.getUseKilometers(getResources(), pref, editor);
 
         if (upgradeState == UpgradeState.NEW) {
             editor.putString(getResources().getString(R.string.pref_autolap),
@@ -100,7 +100,7 @@ public class MainLayout extends TabActivity {
         editor.commit();
 
         // clear basicTargetType between application startup/shutdown
-        pref.edit().remove("basicTargetType").commit();
+        pref.edit().remove(getString(R.string.pref_basic_target_type)).commit();
 
         System.err.println("app-version: " + versionCode + ", upgradeState: " + upgradeState
                 + ", km: " + km);

@@ -406,13 +406,13 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     boolean getAutoStartGps() {
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return pref.getBoolean("pref_startgps", false);
+        return pref.getBoolean(getString(R.string.pref_startgps), false);
     }
 
     boolean getAllowStartStopFromHeadsetKey() {
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return pref.getBoolean("pref_keystartstop_active", true);
+        return pref.getBoolean(getString(R.string.pref_keystartstop_active), true);
     }
 
     private void startGps() {

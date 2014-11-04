@@ -33,6 +33,12 @@ dependencies {
     provided files('libs/antpluginlib_2.0.0.jar')
 }
 
+allprojects {
+    tasks.withType(JavaCompile) {
+        // options.compilerArgs << "-Xlint:deprecation";
+        options.compilerArgs << "-Xlint:unchecked"
+    }
+}
 
 task downloadSamsungBleSdk(type: DownloadTask) {
     sourceUrl = 'https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar'

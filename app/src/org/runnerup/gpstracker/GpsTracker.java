@@ -173,7 +173,8 @@ public class GpsTracker extends android.app.Service implements
         wakelock(true);
         // TODO add preference
         mMinLiveLogDelayMillis = PreferenceManager
-                .getDefaultSharedPreferences(this).getInt("pref_min_livelog_delay_millis",
+                .getDefaultSharedPreferences(this).getInt(
+                        getString(R.string.pref_min_livelog_delay_millis),
                         (int) mMinLiveLogDelayMillis);
 
         try {
@@ -195,10 +196,10 @@ public class GpsTracker extends android.app.Service implements
                 .getSystemService(LOCATION_SERVICE);
         if (mWithoutGps == false) {
             String frequency_ms = PreferenceManager.getDefaultSharedPreferences(
-                    this).getString("pref_pollInterval", "500");
+                    this).getString(getString(R.string.pref_pollInterval), "500");
             String frequency_meters = PreferenceManager
                     .getDefaultSharedPreferences(this).getString(
-                            "pref_pollDistance", "5");
+                            getString(R.string.pref_pollDistance), "5");
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     Integer.valueOf(frequency_ms),
                     Integer.valueOf(frequency_meters), this);
@@ -232,7 +233,7 @@ public class GpsTracker extends android.app.Service implements
                 location = new Location(mLastLocation);
                 mLastLocation = null;
                 String frequency_ms_str = PreferenceManager.getDefaultSharedPreferences(
-                        GpsTracker.this).getString("pref_pollInterval", "500");
+                        GpsTracker.this).getString(getString(R.string.pref_pollInterval), "500");
                 frequency_ms = Integer.valueOf(frequency_ms_str);
             }
             location.setTime(System.currentTimeMillis());

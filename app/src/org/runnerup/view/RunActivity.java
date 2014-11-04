@@ -206,7 +206,7 @@ public class RunActivity extends Activity implements TickListener {
     boolean getAllowStartStopFromHeadsetKey() {
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return pref.getBoolean("pref_keystartstop_active", true);
+        return pref.getBoolean(getString(R.string.pref_keystartstop_active), true);
     }
 
     void onGpsTrackerBound() {
@@ -216,7 +216,7 @@ public class RunActivity extends Activity implements TickListener {
         mGpsTracker.start();
 
         SharedPreferences prefs = workout.getAudioCues();
-        final String mute = prefs.getString(getResources().getString(R.string.pref_mute), "no");
+        final String mute = prefs.getString(getString(R.string.pref_mute), "no");
 
         HashMap<String, Object> bindValues = new HashMap<String, Object>();
         bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute, getApplicationContext()));

@@ -81,7 +81,7 @@ public class WorkoutBuilder {
         w.steps.add(step);
 
         if (target == Dimension.PACE) {
-            double unitMeters = Formatter.getUnitMeters(prefs);
+            double unitMeters = Formatter.getUnitMeters(res, prefs);
             double seconds_per_unit = (double) SafeParse.parseSeconds(
                     prefs.getString(res.getString(R.string.pref_basic_target_pace_max), "00:05:00"), 5 * 60);
             int targetPaceRange = prefs.getInt(res.getString(R.string.pref_basic_target_pace_min_range), 15);
@@ -346,9 +346,9 @@ public class WorkoutBuilder {
             if (coaching && step.getTargetType() != null) {
                 Range range = step.getTargetValue();
                 int averageSeconds = SafeParse.parseInt(prefs.getString(
-                        res.getString(R.string.target_pace_moving_average_seconds), "20"), 20);
+                        res.getString(R.string.pref_target_pace_moving_average_seconds), "20"), 20);
                 int graceSeconds = SafeParse.parseInt(
-                        prefs.getString(res.getString(R.string.target_pace_grace_seconds), "30"),
+                        prefs.getString(res.getString(R.string.pref_target_pace_grace_seconds), "30"),
                         30);
                 TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds,
                         graceSeconds);

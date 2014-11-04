@@ -172,15 +172,15 @@
 
 	    <org.runnerup.widget.TextPreference
             android:inputType="number"
-            android:key="@string/target_pace_moving_average_seconds"
+            android:key="@string/pref_target_pace_moving_average_seconds"
             android:persistent="true"
-            android:title="@string/target_pace_moving_average_seconds" />
+            android:title="@string/target_pace_moving_average_seconds_" />
 
 	    <org.runnerup.widget.TextPreference
             android:inputType="number"
-            android:key="@string/target_pace_grace_seconds"
+            android:key="@string/pref_target_pace_grace_seconds"
             android:persistent="true"
-            android:title="@string/target_pace_grace_seconds" />
+            android:title="@string/target_pace_grace_seconds_" />
 
     	<CheckBoxPreference
         	android:defaultValue="true"
