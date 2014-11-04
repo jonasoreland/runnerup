@@ -22,7 +22,7 @@
     android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/age"
+        android:id="@+id/hrz_age"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/age"
@@ -34,7 +34,7 @@
     </org.runnerup.widget.TitleSpinner>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/sex"
+        android:id="@+id/hrz_sex"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sexes"
@@ -45,7 +45,7 @@
     </org.runnerup.widget.TitleSpinner>
     
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/maximum_heart_rate"
+        android:id="@+id/hrz_mhr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/maximum_heart_rate"

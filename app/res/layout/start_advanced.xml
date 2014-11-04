@@ -56,7 +56,7 @@
         android:fadeScrollbars="false"
         android:paddingTop="5dp"
         android:scrollbarAlwaysDrawVerticalTrack="true" />
-
+    
     <Button
         android:id="@+id/advanced_download_button"
         style="@style/ButtonText"

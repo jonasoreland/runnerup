@@ -288,7 +288,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     /**
      * Format pace
-     *
+     * 
      * @param target
      * @param seconds_per_meter
      * @return
@@ -414,8 +414,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
         if (txt) {
             if (km) {
-                res_base = R.string.metrics_distance_kilometers;
-                res_base_multi = R.string.metrics_distance_kilometers;
+                res_base = R.string.metrics_distance_km;
+                res_base_multi = R.string.metrics_distance_km;
             } else {
                 res_base = R.string.metrics_distance_mi;
                 res_base_multi = R.string.metrics_distance_mi;

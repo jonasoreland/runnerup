@@ -72,7 +72,7 @@ public class StepButton extends TableLayout {
         formatter = new Formatter(context);
         mLayout = (TableLayout) findViewById(R.id.step_button);
         mIntensity = (TextView) findViewById(R.id.step_intensity);
-        mDurationType = (TextView) findViewById(R.id.duration_type);
+        mDurationType = (TextView) findViewById(R.id.step_duration_type);
         mDurationValue = (TextView) findViewById(R.id.step_duration_value);
         mGoalType = (TextView) findViewById(R.id.step_goal_type);
         mGoalValue = (TextView) findViewById(R.id.step_goal_value);
@@ -205,9 +205,9 @@ public class StepButton extends TableLayout {
         stepType.setValue(step.getIntensity().getValue());
 
         final HRZonesListAdapter hrZonesAdapter = new HRZonesListAdapter(mContext, inflator);
-        final TitleSpinner durationType = (TitleSpinner) layout.findViewById(R.id.duration_type);
-        final TitleSpinner durationTime = (TitleSpinner) layout.findViewById(R.id.duration_time);
-        final TitleSpinner durationDistance = (TitleSpinner) layout.findViewById(R.id.duration_distance_format);
+        final TitleSpinner durationType = (TitleSpinner) layout.findViewById(R.id.step_duration_type);
+        final TitleSpinner durationTime = (TitleSpinner) layout.findViewById(R.id.step_duration_time);
+        final TitleSpinner durationDistance = (TitleSpinner) layout.findViewById(R.id.step_duration_distance);
         durationType.setOnSetValueListener(new TitleSpinner.OnSetValueListener() {
             @Override
             public String preSetValue(String newValue) throws IllegalArgumentException {
@@ -244,10 +244,10 @@ public class StepButton extends TableLayout {
             durationType.setValue(step.getDurationType().getValue());
         }
 
-        final TitleSpinner targetType = (TitleSpinner) layout.findViewById(R.id.target_type);
-        final TitleSpinner targetPaceLo = (TitleSpinner) layout.findViewById(R.id.target_pace_mm_low);
-        final TitleSpinner targetPaceHi = (TitleSpinner) layout.findViewById(R.id.target_pace_mm_high);
-        final TitleSpinner targetHrz = (TitleSpinner) layout.findViewById(R.id.heartrate_zone);
+        final TitleSpinner targetType = (TitleSpinner) layout.findViewById(R.id.step_target_type);
+        final TitleSpinner targetPaceLo = (TitleSpinner) layout.findViewById(R.id.step_target_pace_lo);
+        final TitleSpinner targetPaceHi = (TitleSpinner) layout.findViewById(R.id.step_target_pace_hi);
+        final TitleSpinner targetHrz = (TitleSpinner) layout.findViewById(R.id.step_target_hrz);
 
         if (!hrZonesAdapter.hrZones.isConfigured()) {
             targetType.addDisabledValue(DIMENSION.HRZ);

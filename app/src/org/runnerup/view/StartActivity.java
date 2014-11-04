@@ -212,12 +212,12 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
         simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         simpleAudioListAdapter.reload();
-        simpleAudioSpinner = (TitleSpinner) findViewById(R.id.audio_cue_settings);
+        simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
         simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
-        simpleTargetType = (TitleSpinner) findViewById(R.id.target);
-        simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.target_pace);
+        simpleTargetType = (TitleSpinner) findViewById(R.id.tab_basic_target_type);
+        simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.tab_basic_target_pace_max);
         hrZonesAdapter = new HRZonesListAdapter(this, inflater);
-        simpleTargetHrz = (TitleSpinner) findViewById(R.id.target_heart_rate_zone);
+        simpleTargetHrz = (TitleSpinner) findViewById(R.id.tab_basic_target_hrz);
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
         targetEntriesAdapter = new DisabledEntriesAdapter(this, R.array.targetEntries);
@@ -228,19 +228,19 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         intervalDistance = (TitleSpinner) findViewById(R.id.interval_distance);
         intervalType.setOnSetValueListener(intervalTypeSetValue);
 
-        intervalRestType = (TitleSpinner) findViewById(R.id.rest_type);
-        intervalRestTime = (TitleSpinner) findViewById(R.id.rest_time);
+        intervalRestType = (TitleSpinner) findViewById(R.id.interval_rest_type);
+        intervalRestTime = (TitleSpinner) findViewById(R.id.interval_rest_time);
         intervalRestTime.setOnSetValueListener(onSetTimeValidator);
-        intervalRestDistance = (TitleSpinner) findViewById(R.id.rest_distance_format);
+        intervalRestDistance = (TitleSpinner) findViewById(R.id.interval_rest_distance);
         intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
         intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         intervalAudioListAdapter.reload();
-        intervalAudioSpinner = (TitleSpinner) findViewById(R.id.audio_cue_settings);
+        intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
         intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
 
         advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         advancedAudioListAdapter.reload();
-        advancedAudioSpinner = (TitleSpinner) findViewById(R.id.audio_cue_settings);
+        advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
         advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
         advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advanced_workout_spinner);
         advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
@@ -274,15 +274,15 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         });
 
         manualSport = (TitleSpinner) findViewById(R.id.manual_sport);
-        manualDate = (TitleSpinner) findViewById(R.id.date);
+        manualDate = (TitleSpinner) findViewById(R.id.manual_date);
         manualDate.setOnSetValueListener(onSetValueManual);
-        manualTime = (TitleSpinner) findViewById(R.id.time);
+        manualTime = (TitleSpinner) findViewById(R.id.manual_time);
         manualTime.setOnSetValueListener(onSetValueManual);
-        manualDistance = (TitleSpinner) findViewById(R.id.distance);
+        manualDistance = (TitleSpinner) findViewById(R.id.manual_distance);
         manualDistance.setOnSetValueListener(onSetManualDistance);
-        manualDuration = (TitleSpinner) findViewById(R.id.duration);
+        manualDuration = (TitleSpinner) findViewById(R.id.manual_duration);
         manualDuration.setOnSetValueListener(onSetManualDuration);
-        manualPace = (TitleSpinner) findViewById(R.id.pace);
+        manualPace = (TitleSpinner) findViewById(R.id.manual_pace);
         manualPace.setVisibility(View.GONE);
         manualNotes = (EditText) findViewById(R.id.manual_notes);
 

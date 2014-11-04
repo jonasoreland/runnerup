@@ -346,9 +346,9 @@ public class WorkoutBuilder {
             if (coaching && step.getTargetType() != null) {
                 Range range = step.getTargetValue();
                 int averageSeconds = SafeParse.parseInt(prefs.getString(
-                        res.getString(R.string.target_pace_moving_average_seconds_), "20"), 20);
+                        res.getString(R.string.target_pace_moving_average_seconds), "20"), 20);
                 int graceSeconds = SafeParse.parseInt(
-                        prefs.getString(res.getString(R.string.target_pace_grace_seconds_), "30"),
+                        prefs.getString(res.getString(R.string.target_pace_grace_seconds), "30"),
                         30);
                 TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds,
                         graceSeconds);

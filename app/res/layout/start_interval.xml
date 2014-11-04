@@ -29,7 +29,7 @@
         android:orientation="vertical" >
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/audio_cue_settings"
+            android:id="@+id/interval_audio_cue_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/pref_interval_audio"
@@ -64,11 +64,11 @@
             android:inputType="numberDecimal"
             android:key="@string/pref_interval_distance"
             android:prompt="@string/type"
-            android:text="@string/interval_distance_format"
+            android:text="@string/interval_distance"
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/rest_type"
+            android:id="@+id/interval_rest_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/types"
@@ -77,7 +77,7 @@
             android:text="@string/rest_type" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/rest_time"
+            android:id="@+id/interval_rest_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="00:01:00"
@@ -88,7 +88,7 @@
             runnerup:type="durationpicker" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/rest_distance_format"
+            android:id="@+id/interval_rest_distance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="200"
@@ -99,7 +99,7 @@
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/repetitions"
+            android:id="@+id/interval_repetitions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="5"

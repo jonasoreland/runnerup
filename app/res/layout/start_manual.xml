@@ -34,7 +34,7 @@
         android:text="@string/sport" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/date"
+        android:id="@+id/manual_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/manual_sport"
@@ -44,43 +44,43 @@
         runnerup:type="datepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/time"
+        android:id="@+id/manual_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/date"
+        android:layout_below="@+id/manual_date"
         android:prompt="@string/type"
         android:text="@string/time"
         runnerup:type="timepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/duration"
+        android:id="@+id/manual_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/time"
+        android:layout_below="@+id/manual_time"
         android:prompt="@string/type"
         android:text="@string/duration_time_format"
         android:defaultValue="00:00:00"
         runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/distance"
+        android:id="@+id/manual_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/duration"
+        android:layout_below="@+id/manual_duration"
         android:prompt="@string/type"
         android:inputType="numberDecimal"
         android:text="@string/distance"
         runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/pace"
+        android:id="@+id/manual_pace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/distance"
+        android:layout_below="@+id/manual_distance"
         android:prompt="@string/type"
         android:inputType="numberDecimal"
         android:text="@string/pace"
@@ -91,7 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/pace"
+        android:layout_below="@+id/manual_pace"
         android:layout_alignParentBottom="true"
         android:ems="10"
         android:gravity="top|left"
