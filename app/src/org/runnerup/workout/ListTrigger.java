@@ -37,13 +37,13 @@ public class ListTrigger extends Trigger {
         if (pos < triggerTimes.size()) {
             if (remaining == false) {
                 double now = w.get(scope, dimension);
-                if (now >= triggerTimes.get(pos).doubleValue()) {
+                if (now >= triggerTimes.get(pos)) {
                     fire(w);
                     scheduleNext(w, now);
                 }
             } else {
                 double now = w.getRemaining(scope, dimension);
-                if (now <= triggerTimes.get(pos).doubleValue()) {
+                if (now <= triggerTimes.get(pos)) {
                     fire(w);
                     scheduleNext(w, now);
                 }
@@ -54,11 +54,11 @@ public class ListTrigger extends Trigger {
 
     private void scheduleNext(Workout w, double now) {
         if (remaining == false) {
-            while (pos < triggerTimes.size() && now >= triggerTimes.get(pos).doubleValue()) {
+            while (pos < triggerTimes.size() && now >= triggerTimes.get(pos)) {
                 pos++;
             }
         } else {
-            while (pos < triggerTimes.size() && now <= triggerTimes.get(pos).doubleValue()) {
+            while (pos < triggerTimes.size() && now <= triggerTimes.get(pos)) {
                 pos++;
             }
         }

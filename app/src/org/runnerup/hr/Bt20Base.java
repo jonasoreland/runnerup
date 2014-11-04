@@ -477,7 +477,7 @@ public abstract class Bt20Base implements HRProvider {
                     bytesInBuffer += bytesRead;
                     int bytesUsed = parseBuffer(buffer, bytesInBuffer, hr);
                     if (hr[0] != null) {
-                        hrValue = hr[0].intValue();
+                        hrValue = hr[0];
                         hrTimestamp = System.currentTimeMillis();
 
                         if (hrValue > 0 && mIsConnecting) {
@@ -557,7 +557,7 @@ public abstract class Bt20Base implements HRProvider {
 
             int hrValue = parseBuffer(buffer);
             if (hrValue > 0) {
-                hr[0] = Integer.valueOf(hrValue);
+                hr[0] = hrValue;
                 return bytesInBuffer; // use all of buffer
             } else {
                 int index = findNextAlignment(buffer);
@@ -715,7 +715,7 @@ public abstract class Bt20Base implements HRProvider {
             for (int i = 0; i < bytesInBuffer; i++) {
                 if (startOfMessage(buffer, bytesInBuffer, i)) {
                     int bytesUsed = getByte(buffer[i + 1]);
-                    hrVal[0] = Integer.valueOf(getByte(buffer[i + 5]));
+                    hrVal[0] = getByte(buffer[i + 5]);
                     return bytesUsed;
                 }
             }

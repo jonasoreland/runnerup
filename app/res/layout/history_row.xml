@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:text=""
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="@string/running"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
     </RelativeLayout>
@@ -58,7 +58,7 @@
             android:layout_weight="1"
             android:gravity="right"
             android:text="@string/time"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/history_list_distance"
@@ -67,7 +67,7 @@
             android:layout_weight="1"
             android:gravity="right"
             android:text="@string/distance"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/history_list_pace"
@@ -76,14 +76,14 @@
             android:layout_weight="1"
             android:gravity="right"
             android:text="@string/pace"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/history_list_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/id"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:visibility="gone" />
     </LinearLayout>
 

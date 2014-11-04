@@ -56,8 +56,8 @@ public class HRZones {
         }
         if (zones != null) {
             System.err.print("loaded: (" + str + ")");
-            for (int i = 0; i < zones.length; i++) {
-                System.err.print(" " + zones[i]);
+            for (int zone : zones) {
+                System.err.print(" " + zone);
             }
             System.err.println("");
         }

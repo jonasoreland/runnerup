@@ -190,16 +190,16 @@ public class FeedList extends Observable implements Constants {
         Calendar lastDate = Calendar.getInstance();
         lastDate.setTimeInMillis(0);
         Calendar tmp = Calendar.getInstance();
-        for (int i = 0; i < oldList.size(); i++) {
-            if (isHeaderDate(oldList.get(i))) {
-                setDate(lastDate, oldList.get(i));
+        for (ContentValues anOldList : oldList) {
+            if (isHeaderDate(anOldList)) {
+                setDate(lastDate, anOldList);
             } else {
-                setDate(tmp, oldList.get(i));
+                setDate(tmp, anOldList);
                 if (compare(tmp, lastDate) != 0) {
                     newList.add(newHeaderDate(tmp.getTimeInMillis()));
                     lastDate.setTime(tmp.getTime());
                 }
-                newList.add(oldList.get(i));
+                newList.add(anOldList);
             }
         }
         return newList;

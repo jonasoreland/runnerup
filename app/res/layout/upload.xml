@@ -32,7 +32,6 @@
             android:id="@+id/account_upload_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="200dp"
             android:text="@string/fun_beat" />
@@ -63,9 +62,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/account_upload_button"
         android:orientation="horizontal" >
-
-        android:layout_above="@+id/account_upload_button"
-        >
 
         <Button
             android:id="@+id/account_upload_set_all"

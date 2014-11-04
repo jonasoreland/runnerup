@@ -371,7 +371,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      */
     public String formatDateTime(int target, long seconds_since_epoch) {
         // ignore target
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append(dateFormat.format(seconds_since_epoch * 1000)); // takes
                                                                  // milliseconds
                                                                  // as argument
@@ -427,7 +427,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             res_meters = R.string.metrics_distance_m;
         }
 
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         if (meters >= base_val) {
             double base = ((double) meters) / base_val;
             double val = round(base, decimals);

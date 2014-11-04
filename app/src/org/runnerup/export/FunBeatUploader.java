@@ -575,7 +575,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
     }
 
     private void setTrainingType(ContentValues c, int TypeID, String typeString) {
-        Sport s = funbeat2sportMap.get(Integer.valueOf(TypeID));
+        Sport s = funbeat2sportMap.get(TypeID);
         if (s != null) {
             c.put(FEED.FEED_SUBTYPE, s.getDbValue());
         } else {

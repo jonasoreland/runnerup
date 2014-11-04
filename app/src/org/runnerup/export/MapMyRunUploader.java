@@ -130,7 +130,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
     }
 
     private String toHexString(byte messageDigest[]) {
-        StringBuffer hexString = new StringBuffer();
+        StringBuilder hexString = new StringBuilder();
         for (byte b : messageDigest) {
             String h = Integer.toHexString(0xFF & b);
             while (h.length() < 2)

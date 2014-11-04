@@ -79,10 +79,6 @@
 		    android:screenOrientation="portrait" >
 		</activity>
 		
-		<activity android:name=".view.SaveActivity"
-		    android:screenOrientation="portrait" >
-		</activity>
-
 		<activity android:name=".view.SettingsActivity"
 		    android:screenOrientation="portrait" >
 		</activity>
@@ -128,8 +124,8 @@
 			</intent-filter>
 		</activity>
 
-		<provider android:name=".content.WorkoutFileProvider" android:authorities="org.runnerup.workout.file.provider" tools:ignore="ExportedContentProvider"></provider>
-		<provider android:name=".content.ActivityProvider" android:authorities="org.runnerup.activity.provider" tools:ignore="ExportedContentProvider"></provider>
+		<provider android:name=".content.WorkoutFileProvider" android:authorities="org.runnerup.workout.file.provider" tools:ignore="ExportedContentProvider"/>
+		<provider android:name=".content.ActivityProvider" android:authorities="org.runnerup.activity.provider" tools:ignore="ExportedContentProvider"/>
 				
 		<activity android:name=".export.oauth2client.OAuth2Activity"
 		    android:screenOrientation="portrait" >

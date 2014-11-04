@@ -96,8 +96,8 @@ public class HRZonesBar extends View {
             left = getHeight() - border;
         }
 
-        for (int i = 0; i < hrzData.length; i++) {
-            if (hrzData[i] > 0) {
+        for (double aHrzData : hrzData) {
+            if (aHrzData > 0) {
                 totWidth -= separator;
             }
         }

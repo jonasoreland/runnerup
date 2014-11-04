@@ -401,7 +401,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
                 if (workout == null) {
                     break;
                 }
-                StringBuffer title = new StringBuffer(workout.getJSONObject("description")
+                StringBuilder title = new StringBuilder(workout.getJSONObject("description")
                         .getString("title"));
                 String id = "" + workout.getLong("id");
                 String startTime = workout.getJSONObject("summary").getString("startTime");

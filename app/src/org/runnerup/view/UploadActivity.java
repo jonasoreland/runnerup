@@ -116,7 +116,7 @@ public class UploadActivity extends ListActivity implements Constants {
             } else {
                 im.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.GONE);
-                im.setBackgroundResource(uploaderIcon.intValue());
+                im.setBackgroundResource(uploaderIcon);
             }
         }
 
@@ -285,7 +285,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
             {
                 CheckBox cb = (CheckBox) view.findViewById(R.id.upload_list_check);
-                cb.setTag(Integer.valueOf(arg0));
+                cb.setTag(arg0);
                 cb.setOnCheckedChangeListener(checkedChangeClick);
                 if (tmp.containsKey("skip")) {
                     cb.setChecked(false);

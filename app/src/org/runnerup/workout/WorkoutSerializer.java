@@ -116,7 +116,7 @@ public class WorkoutSerializer {
 
     private static RepeatStep findRepeatStep(ArrayList<jsonstep> list, int groupId) {
         for (jsonstep s : list) {
-            if (s.group != null && s.group.intValue() == groupId &&
+            if (s.group != null && s.group == groupId &&
                     s.step instanceof RepeatStep) {
                 return (RepeatStep) s.step;
             }

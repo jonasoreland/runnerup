@@ -1005,8 +1005,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 }
 
                 double sum = 0;
-                for (int i = 0; i < window.length; i++)
-                    sum += window[i];
+                for (double aWindow : window) sum += aWindow;
 
                 for (int i = 0; i < data.length; i++) {
                     double newY = sum / windowLen;
@@ -1102,24 +1101,24 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         defaultFilterList);
                 final String filters[] = filterList.split(";");
                 System.err.print("Applying filters(" + filters.length + ", >" + filterList + "<):");
-                for (int i = 0; i < filters.length; i++) {
-                    int args[] = getArgs(filters[i]);
-                    if (filters[i].startsWith("mm")) {
+                for (String filter : filters) {
+                    int args[] = getArgs(filter);
+                    if (filter.startsWith("mm")) {
                         if (args.length == 1) {
                             f.movingMedian(args[0]);
                             System.err.print(" mm(" + args[0] + ")");
                         }
-                    } else if (filters[i].startsWith("ma")) {
+                    } else if (filter.startsWith("ma")) {
                         if (args.length == 1) {
                             f.movingAvergage(args[0]);
                             System.err.print(" ma(" + args[0] + ")");
                         }
-                    } else if (filters[i].startsWith("kz")) {
+                    } else if (filter.startsWith("kz")) {
                         if (args.length == 2) {
                             f.KolmogorovZurbenko(args[0], args[1]);
                             System.err.print(" kz(" + args[0] + "," + args[1] + ")");
                         }
-                    } else if (filters[i].startsWith("sg")) {
+                    } else if (filter.startsWith("sg")) {
                         if (args.length == 1 && args[0] == 5) {
                             f.SavitzkyGolay5();
                             System.err.print(" sg(5)");
@@ -1144,8 +1143,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 if (showHRZhist) {
                     System.err.print("HR Zones:");
                     double sum = 0;
-                    for (int i = 0; i < hrzHist.length; i++) {
-                        sum += hrzHist[i];
+                    for (double aHrzHist : hrzHist) {
+                        sum += aHrzHist;
                     }
                     for (int i = 0; i < hrzHist.length; i++) {
                         hrzHist[i] = hrzHist[i] / sum;
@@ -1183,8 +1182,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
     public double calculateAverage(int[] data) {
         int sum = 0;
 
-        for (int i = 0; i < data.length; i++) {
-            sum = sum + data[i];
+        for (int aData : data) {
+            sum = sum + aData;
         }
         double average = (double) sum / data.length;
         return average;

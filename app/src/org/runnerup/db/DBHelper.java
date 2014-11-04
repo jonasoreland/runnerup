@@ -256,7 +256,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         if (c != null)
             c.close();
 
-        StringBuffer newtab = new StringBuffer();
+        StringBuilder newtab = new StringBuilder();
         newtab.append(CREATE_TABLE_ACCOUNT);
         newtab.replace(0,
                 ("create table " + DB.ACCOUNT.TABLE).length(),
@@ -543,7 +543,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                     if (onComplete != null)
                         onComplete.run();
                 }
-            }.execute(Long.valueOf(2));
+            }.execute((long) 2);
         } else {
             db.close();
             mDBHelper.close();

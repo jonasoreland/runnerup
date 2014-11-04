@@ -147,9 +147,9 @@ public class MainLayout extends TabActivity {
             e.printStackTrace();
         }
         if (list != null) {
-            for (int i = 0; i < list.length; ++i) {
+            for (String aList : list) {
                 boolean isFile = false;
-                String add = list[i];
+                String add = aList;
                 try {
                     InputStream is = mgr.open(src + File.separator + add);
                     is.close();

@@ -162,7 +162,7 @@ public class AccountActivity extends Activity implements Constants {
             flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
             if (uploader.checkSupport(Uploader.Feature.UPLOAD)) {
                 CheckBox cb = new CheckBox(this);
-                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_UPLOAD));
+                cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 addRow("Automatic upload", cb);
@@ -173,7 +173,7 @@ public class AccountActivity extends Activity implements Constants {
 
             if (uploader.checkSupport(Uploader.Feature.FEED)) {
                 CheckBox cb = new CheckBox(this);
-                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_FEED));
+                cb.setTag(DB.ACCOUNT.FLAG_FEED);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 addRow("Feed", cb);
@@ -181,7 +181,7 @@ public class AccountActivity extends Activity implements Constants {
 
             if (uploader.checkSupport(Uploader.Feature.LIVE)) {
                 CheckBox cb = new CheckBox(this);
-                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_LIVE));
+                cb.setTag(DB.ACCOUNT.FLAG_LIVE);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE));
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 addRow("Live", cb);
@@ -189,7 +189,7 @@ public class AccountActivity extends Activity implements Constants {
 
             if (uploader.checkSupport(Uploader.Feature.SKIP_MAP)) {
                 CheckBox cb = new CheckBox(this);
-                cb.setTag(Integer.valueOf(DB.ACCOUNT.FLAG_SKIP_MAP));
+                cb.setTag(DB.ACCOUNT.FLAG_SKIP_MAP);
                 cb.setChecked(!Bitfield.test(flags, DB.ACCOUNT.FLAG_SKIP_MAP));
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 addRow("Include map in post", cb);
@@ -283,7 +283,7 @@ public class AccountActivity extends Activity implements Constants {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             ContentValues tmp = new ContentValues();
-            int flag = ((Integer) buttonView.getTag()).intValue();
+            int flag = (Integer) buttonView.getTag();
             switch (flag) {
                 case DB.ACCOUNT.FLAG_UPLOAD:
                 case DB.ACCOUNT.FLAG_FEED:

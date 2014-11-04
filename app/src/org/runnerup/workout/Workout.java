@@ -305,7 +305,7 @@ public class Workout implements WorkoutComponent {
                 double d = getDistance(scope);
                 double t = getTime(scope);
                 if (t == 0)
-                    return Double.valueOf(0);
+                    return (double) 0;
                 return d / t;
             case STEP:
             case LAP:
@@ -316,7 +316,7 @@ public class Workout implements WorkoutComponent {
             case CURRENT:
                 Double s = gpsTracker.getCurrentSpeed();
                 if (s != null)
-                    return s.doubleValue();
+                    return s;
                 return 0;
         }
         return 0;
@@ -367,7 +367,7 @@ public class Workout implements WorkoutComponent {
                 Integer val = gpsTracker.getCurrentHRValue();
                 if (val == null)
                     return 0;
-                return val.intValue();
+                return val;
             }
             case LAP:
             case STEP:

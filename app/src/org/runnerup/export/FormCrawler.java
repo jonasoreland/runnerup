@@ -133,7 +133,7 @@ public class FormCrawler {
         }
 
         public String queryString() {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             boolean first = true;
             for (String k : keySet()) {
                 if (!first)
@@ -156,23 +156,23 @@ public class FormCrawler {
                 "multipart/form-data; boundary=" + boundary);
         DataOutputStream outputStream = new DataOutputStream(
                 conn.getOutputStream());
-        for (int i = 0; i < parts.length; i++) {
+        for (Part<?> part : parts) {
             outputStream.writeBytes(twoHyphens + boundary + lineEnd);
             outputStream.writeBytes("Content-Disposition: form-data; name=\""
-                    + parts[i].name + "\"");
-            if (parts[i].filename != null)
-                outputStream.writeBytes("; filename=\"" + parts[i].filename
+                    + part.name + "\"");
+            if (part.filename != null)
+                outputStream.writeBytes("; filename=\"" + part.filename
                         + "\"");
             outputStream.writeBytes(lineEnd);
 
-            if (parts[i].contentType != null)
-                outputStream.writeBytes("Content-Type: " + parts[i].contentType
+            if (part.contentType != null)
+                outputStream.writeBytes("Content-Type: " + part.contentType
                         + lineEnd);
-            if (parts[i].contentTransferEncoding != null)
+            if (part.contentTransferEncoding != null)
                 outputStream.writeBytes("Content-Transfer-Encoding: "
-                        + parts[i].contentTransferEncoding + lineEnd);
+                        + part.contentTransferEncoding + lineEnd);
             outputStream.writeBytes(lineEnd);
-            parts[i].value.write(outputStream);
+            part.value.write(outputStream);
             outputStream.writeBytes(lineEnd);
         }
         outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
@@ -182,7 +182,7 @@ public class FormCrawler {
 
     protected void addCookies(HttpURLConnection conn) {
         boolean first = true;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (String cookie : cookies) {
             if (!first)
                 buf.append("; ");
@@ -214,7 +214,7 @@ public class FormCrawler {
 
     protected String getFormValues(HttpURLConnection conn) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         String s = null;
         while ((s = in.readLine()) != null) {
             buf.append(s);
@@ -269,7 +269,7 @@ public class FormCrawler {
 
     protected String findName(Set<String> names, String s) {
         for (String k : names) {
-            if (k.indexOf(s) != -1)
+            if (k.contains(s))
                 return k;
         }
         return null;

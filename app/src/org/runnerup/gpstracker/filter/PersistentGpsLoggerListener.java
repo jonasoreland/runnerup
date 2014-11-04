@@ -106,7 +106,7 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
             values.put(DB.LOCATION.BEARING, arg0.getBearing());
         }
         if (hrValue != null) {
-            values.put(DB.LOCATION.HR, hrValue.intValue());
+            values.put(DB.LOCATION.HR, hrValue);
         }
         if (mDB != null) {
             mDB.insert(mTable, null, values);

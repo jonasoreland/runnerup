@@ -192,7 +192,7 @@ public class NikePlus extends FormCrawler implements Uploader {
                 {
                     BufferedReader in = new BufferedReader(new InputStreamReader(
                             conn.getInputStream()));
-                    StringBuffer buf = new StringBuffer();
+                    StringBuilder buf = new StringBuilder();
                     String line;
                     while ((line = in.readLine()) != null) {
                         buf.append(line);

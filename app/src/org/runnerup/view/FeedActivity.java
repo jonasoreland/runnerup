@@ -278,7 +278,7 @@ public class FeedActivity extends Activity implements Constants {
                     if (tmp.containsKey(DB.FEED.DURATION))
                         duration = tmp.getAsLong(DB.FEED.DURATION);
 
-                    StringBuffer p = new StringBuffer();
+                    StringBuilder p = new StringBuilder();
                     if (duration != 0) {
                         p.append(formatter.formatElapsedTime(Formatter.TXT_LONG, duration));
                     }

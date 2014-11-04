@@ -164,8 +164,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         PreferenceGroup group = (PreferenceGroup) findPreference("cueinfo");
         if (group == null)
             return;
-        for (int i = 0; i < remove.length; i++) {
-            String s = res.getString(remove[i]);
+        for (int aRemove : remove) {
+            String s = res.getString(aRemove);
             Preference pref = findPreference(s);
             group.removePreference(pref);
         }

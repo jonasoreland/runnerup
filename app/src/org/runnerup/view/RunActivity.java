@@ -247,10 +247,10 @@ public class RunActivity extends Activity implements TickListener {
 
     private void populateWorkoutList() {
         List<Workout.StepListEntry> list = workout.getSteps();
-        for (int i = 0; i < list.size(); i++) {
+        for (Workout.StepListEntry aList : list) {
             WorkoutRow row = new WorkoutRow();
-            row.level = list.get(i).level;
-            row.step = list.get(i).step;
+            row.level = aList.level;
+            row.step = aList.step;
             row.lap = null;
             workoutRows.add(row);
         }

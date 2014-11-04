@@ -163,8 +163,8 @@ public class OAuth2Activity extends Activity {
                     String check[] = {
                             "error", "error_type"
                     };
-                    for (int i = 0; i < check.length; i++) {
-                        e = u.getQueryParameter(check[i]);
+                    for (String aCheck : check) {
+                        e = u.getQueryParameter(aCheck);
                         if (e != null) {
                             break;
                         }

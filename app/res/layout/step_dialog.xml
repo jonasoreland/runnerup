@@ -17,9 +17,8 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/tab_interval0"
@@ -34,7 +33,7 @@
             android:entries="@array/step_intensity_types"
             runnerup:values="@array/step_intensity_values"
             android:prompt="@string/type"
-            android:text="Step intensity" />
+            android:text="@string/step_intensity" />
 
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/step_duration_type"
@@ -43,7 +42,7 @@
             android:entries="@array/duration_types"
             runnerup:values="@array/step_duration_values"
             android:prompt="@string/type"
-            android:text="Duration" />
+            android:text="@string/duration" />
 
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/step_duration_distance"
@@ -52,7 +51,7 @@
             android:defaultValue="1000"
             android:inputType="numberDecimal"
             android:prompt="@string/type"
-            android:text="Duration distance"
+            android:text="@string/duration_distance_format"
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -62,7 +61,7 @@
             android:defaultValue="00:01:00"
             android:inputType="time"
             android:prompt="@string/type"
-            android:text="Duration time"
+            android:text="@string/duration_time_format"
             android:visibility="gone"
             runnerup:type="durationpicker" />
 
@@ -73,7 +72,7 @@
             android:entries="@array/target_types"
             runnerup:values="@array/step_target_values"
             android:prompt="@string/type"
-            android:text="Target" />
+            android:text="@string/target" />
 
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/step_target_pace_lo"
@@ -82,7 +81,7 @@
             android:defaultValue="00:05:00"
             android:inputType="time"
             android:prompt="@string/type"
-            android:text="Low pace"
+            android:text="@string/low_pace"
             runnerup:type="durationpicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -92,7 +91,7 @@
             android:defaultValue="00:05:30"
             android:inputType="time"
             android:prompt="@string/type"
-            android:text="High pace"
+            android:text="@string/high_pace"
             runnerup:type="durationpicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -101,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:prompt="@string/type"
-            android:text="Heartrate zone" />
+            android:text="@string/heartrate_zone" />
 
     </LinearLayout>
 
