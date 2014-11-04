@@ -236,10 +236,10 @@ public class RunActivity extends Activity implements TickListener {
 
         if (simpleWorkout) {
             newLapButton.setOnClickListener(newLapButtonClick);
-            newLapButton.setText("New lap");
+            newLapButton.setText(getString(R.string.new_lap)));
         } else {
             newLapButton.setOnClickListener(nextStepButtonClick);
-            newLapButton.setText("Next lap");
+            newLapButton.setText(getString(R.string.next_lap));
         }
         workout.onInit(workout);
         workout.onStart(Scope.WORKOUT, this.workout);

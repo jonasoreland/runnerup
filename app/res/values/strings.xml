@@ -83,6 +83,7 @@
   <string name="interval">"Interval"</string>
   <string name="lap">"Lap"</string>
   <string name="new_lap">"New lap"</string>
+  <string name="next_lap">"Next lap"</string>
   <string name="pause">"Pause"</string>
   <string name="stop">"Stop"</string>
   <string name="workout">"Workout"</string>
