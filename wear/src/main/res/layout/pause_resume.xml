@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.wearable.view.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/debug_background_1"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:padding="15dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp"
+        app:layout_box="all">
+
+    <android.support.wearable.view.CircledImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:circle_color="@color/action_button"
+        app:circle_radius="40dp"
+        app:circle_border_width="0dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:id="@+id/label"
+        android:fontFamily="sans-serif-condensed-light"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:text="Pause"/>
+        </FrameLayout>
+    </android.support.wearable.view.BoxInsetLayout>

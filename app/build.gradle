@@ -2,8 +2,8 @@ apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 20
+    buildToolsVersion '20.0.0'
 
     sourceSets {
         main {
@@ -15,6 +15,53 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
+
+        froyo {
+            manifest.srcFile 'froyo/AndroidManifest.xml'
+            java.srcDirs = ['froyo/java']
+        }
+        latest {
+            manifest.srcFile 'latest/AndroidManifest.xml'
+            java.srcDirs = ['latest/java']
+        }
+    }
+
+    productFlavors {
+        froyo {
+            minSdkVersion 8
+            targetSdkVersion 18
+            versionName "1.36"
+            versionCode 36
+        }
+        latest {
+            minSdkVersion 14
+            targetSdkVersion 18
+            versionName "1.37"
+            versionCode 37
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../../my-release-key.keystore")
+            keyAlias "alias_name"
+        }
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            //zipAlign true
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
 
     lintOptions {
@@ -26,11 +73,21 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.+'
-    compile 'com.google.android.gms:play-services:3.2.65'
+    latestCompile 'com.android.support:support-v4:20.0.0'
+    latestCompile 'com.android.support:appcompat-v7:20.0.0'
+    latestCompile 'com.google.android.gms:play-services:6.1.11'
+
+
+    froyoCompile 'com.android.support:support-v4:19.1.+'
+    froyoCompile 'com.google.android.gms:play-services:3.2.65'
+
+
     compile files('../GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')
     provided files('libs/antpluginlib_2.0.0.jar')
+
+    wearApp project(':wear')
+    compile project (':common')
 }
 
 allprojects {
@@ -64,4 +121,9 @@ class DownloadTask extends DefaultTask {
         ant.get(src: sourceUrl, dest: target)
     }
 }
+
+def props = new Properties()
+props.load(new FileInputStream(rootProject.file("../release.properties")))
+android.signingConfigs.release.storePassword props.keyStorePassword
+android.signingConfigs.release.keyPassword props.keyAliasPassword
 

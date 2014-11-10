@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RunnerUpWear</string>
+    <string name="pause">Pause</string>
+    <string name="stats_title_total">Total</string>
+    <string name="stats_title_lap">Lap</string>
+    <string name="stats_title_interval">Interval</string>
+    <string name="start">Resume</string>
+
+</resources>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
+import org.runnerup.view.MainLayout;
 import org.runnerup.view.StartActivity;
 
 public class GpsBoundState implements NotificationState {
@@ -19,7 +20,10 @@ public class GpsBoundState implements NotificationState {
     @Override
     public Notification createNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Intent i = new Intent(context, StartActivity.class);
+        Intent intent = new Intent("org.runnerup.START_STOP");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.addAction(R.drawable.ic_tab_main,"Start",pendingIntent);
+        Intent i = new Intent(context, MainLayout.class);
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
@@ -27,7 +31,8 @@ public class GpsBoundState implements NotificationState {
         builder.setContentTitle("Activity ready");
         builder.setContentText("Ready to start running!");
         builder.setSmallIcon(R.drawable.icon);
-
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setAutoCancel(true);
         return builder.build();
     }
 }
