@@ -102,8 +102,8 @@ public interface Uploader {
     public Status getAuthResult(int resultCode, Intent data);
 
     /**
+     * @param db
      * @param mID
-     * @param onUploadCallback
      */
     public Status upload(SQLiteDatabase db, long mID);
 
@@ -145,9 +145,4 @@ public interface Uploader {
      */
     public Status getFeed(FeedUpdater feedUpdater);
 
-    /**
-	 * 
-	 */
-    public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter,
-            double mElapsedTimeMillis);
 }

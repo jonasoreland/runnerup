@@ -40,6 +40,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -149,10 +150,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     Formatter formatter = null;
     BroadcastReceiver catchButtonEvent = null;
-    boolean allowHardwareKey = false;
     private NotificationStateManager notificationStateManager;
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
+    private boolean gpsBoundNotificationSent;
 
     /** Called when the activity is first created. */
 
@@ -299,14 +300,14 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         catchButtonEvent = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                startButton.performClick();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startButton.performClick();
+                    }
+                });
             }
         };
-
-        // if (getAllowStartStopFromHeadsetKey()) {
-        // registerHeadsetListener();
-        // }
-
         updateTargetView();
     }
 
@@ -320,6 +321,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
              */
             stopGps();
         }
+        unregisterHeadsetListener();
+        unRegisterStartStopListener();
     }
 
     @Override
@@ -351,6 +354,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             unregisterHeadsetListener();
             registerHeadsetListener();
         }
+        registerStartStopListener();
     }
 
     private void registerHeadsetListener() {
@@ -359,7 +363,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager
                 .registerMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
 
+    private void registerStartStopListener(){
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.setPriority(2147483647);
         intentFilter.addAction("org.runnerup.START_STOP");
@@ -372,6 +378,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager
                 .unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+        unRegisterStartStopListener();
+    }
+
+    private void unRegisterStartStopListener() {
         try {
             unregisterReceiver(catchButtonEvent);
         } catch (IllegalArgumentException e) {
@@ -459,7 +469,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
-
+            if(mGpsStatus == null) {
+                Log.d("StartActivity", "mGpsStatus == null!!");
+                return;
+            }
             if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
                 manualSaveButtonClick.onClick(v);
                 return;
@@ -507,9 +520,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 Intent intent = new Intent(StartActivity.this,
                         RunActivity.class);
                 StartActivity.this.startActivityForResult(intent, 112);
-                if (getAllowStartStopFromHeadsetKey()) {
-                    unregisterHeadsetListener();
-                }
                 return;
             }
             updateView();
@@ -547,6 +557,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             startButton.setEnabled(false);
             startButton.setText(getString(R.string.waiting_for_gps));
             notificationStateManager.displayNotificationState(gpsSearchingState);
+            gpsBoundNotificationSent = false;
         } else {
             startButton.setText(getString(R.string.start_activity));
             if (!tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) || advancedWorkout != null) {
@@ -554,7 +565,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             } else {
                 startButton.setEnabled(false);
             }
-            notificationStateManager.displayNotificationState(gpsBoundState);
+            if(!gpsBoundNotificationSent) {
+                notificationStateManager.displayNotificationState(gpsBoundState);
+                gpsBoundNotificationSent = true;
+            }
         }
         gpsInfoLayout.setVisibility(View.VISIBLE);
 

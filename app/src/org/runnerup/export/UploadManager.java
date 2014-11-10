@@ -182,7 +182,7 @@ public class UploadManager {
         } else if (uploaderName.contentEquals(RunningAHEAD.NAME)) {
             uploader = new RunningAHEAD(this);
         } else if (uploaderName.contentEquals(RunnerUpLive.NAME)) {
-            uploader = new RunnerUpLive(this);
+            uploader = new RunnerUpLive(context);
         } else if (uploaderName.contentEquals(DigifitUploader.NAME)) {
             uploader = new DigifitUploader(this);
         } else if (uploaderName.contentEquals(Strava.NAME)) {
@@ -1009,7 +1009,7 @@ public class UploadManager {
         }.execute(uploader);
     }
 
-    public void loadLiveLoggers(List<Uploader> liveLoggers) {
+    public void loadLiveLoggers(List<LiveLogger> liveLoggers) {
         liveLoggers.clear();
         Resources res = getResources();
         String key = res.getString(R.string.pref_runneruplive_active);
@@ -1020,18 +1020,28 @@ public class UploadManager {
         String from[] = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
-        Cursor c = mDB.query(DB.ACCOUNT.TABLE, from,
-                "( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
-                null, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                ContentValues config = DBHelper.get(c);
-                Uploader u = add(config);
-                if (u.isConfigured() && u.checkSupport(Uploader.Feature.LIVE)) {
-                    liveLoggers.add(u);
-                }
-            } while (c.moveToNext());
+
+        Cursor c = null;
+        try {
+            c = mDB.query(DB.ACCOUNT.TABLE, from,
+                    "( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
+                    null, null, null, null, null);
+            if (c.moveToFirst()) {
+                do {
+                    ContentValues config = DBHelper.get(c);
+                    Uploader u = add(config);
+                    if (u.isConfigured() && u.checkSupport(Uploader.Feature.LIVE) && u instanceof LiveLogger) {
+                        liveLoggers.add((LiveLogger) u);
+                    }
+                } while (c.moveToNext());
+            }
+        } finally {
+            if(c != null)
+                c.close();
         }
-        c.close();
+
+        if (Build.VERSION.SDK_INT >= 18) {
+            liveLoggers.add(new WearLiveLogger(context));
+        }
     }
 }

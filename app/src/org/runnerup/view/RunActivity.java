@@ -102,7 +102,6 @@ public class RunActivity extends Activity implements TickListener {
     ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
     ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
     boolean simpleWorkout;
-    boolean allowHardwareKey = false;
     HRZones hrZones = null;
 
     /** Called when the activity is first created. */
@@ -145,9 +144,6 @@ public class RunActivity extends Activity implements TickListener {
                 pauseButton.performClick();
             }
         };
-        if (getAllowStartStopFromHeadsetKey()) {
-            registerHeadsetListener();
-        }
     }
 
     @Override
@@ -159,7 +155,10 @@ public class RunActivity extends Activity implements TickListener {
     @Override
     public void onPause() {
         super.onPause();
-
+        if (getAllowStartStopFromHeadsetKey()) {
+            unregisterHeadsetListener();
+        }
+        unRegisterStartStopListener();
     }
 
     private void unregisterHeadsetListener() {
@@ -168,14 +167,26 @@ public class RunActivity extends Activity implements TickListener {
         AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager
                 .unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
 
-        unregisterReceiver(catchButtonEvent);
+    private void unRegisterStartStopListener() {
+        try {
+            unregisterReceiver(catchButtonEvent);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("Receiver not registered")) {
+            } else {
+                throw e;
+            }
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        if (getAllowStartStopFromHeadsetKey()) {
+            registerHeadsetListener();
+        }
+        registerStartStopListener();
     }
 
     private void registerHeadsetListener() {
@@ -184,7 +195,9 @@ public class RunActivity extends Activity implements TickListener {
         AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager
                 .registerMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
 
+    private void registerStartStopListener() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.setPriority(2147483647);
         intentFilter.addAction("org.runnerup.START_STOP");
@@ -337,6 +350,7 @@ public class RunActivity extends Activity implements TickListener {
             if (getAllowStartStopFromHeadsetKey()) {
                 unregisterHeadsetListener();
             }
+            unRegisterStartStopListener();
             finish();
             return;
         } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -349,6 +363,7 @@ public class RunActivity extends Activity implements TickListener {
             if (getAllowStartStopFromHeadsetKey()) {
                 unregisterHeadsetListener();
             }
+            unRegisterStartStopListener();
             finish();
             return;
         } else if (resultCode == Activity.RESULT_FIRST_USER) {

@@ -1,0 +1,7 @@
+- froyo flavor building
+- proguard
+- translations
+- update pauseresume gui if status changed
+- hide intervall gui if no intervall present
+- Resume from start activity (when paused)?
+- hide HR if not present
