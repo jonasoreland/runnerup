@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
-import org.runnerup.view.StartActivity;
+import org.runnerup.view.MainLayout;
 
 public class GpsBoundState implements NotificationState {
     private final Context context;
@@ -19,7 +19,7 @@ public class GpsBoundState implements NotificationState {
     @Override
     public Notification createNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Intent i = new Intent(context, StartActivity.class);
+        Intent i = new Intent(context, MainLayout.class);
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
