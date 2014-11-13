@@ -7,18 +7,20 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
-import org.runnerup.gpstracker.CurrentTrackerInformation;
+import org.runnerup.gpstracker.WorkoutProvider;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
+import org.runnerup.workout.Scope;
+import org.runnerup.workout.Workout;
 
 public class OngoingState implements NotificationState {
     private final Formatter formatter;
-    private final CurrentTrackerInformation currentTrackerInformation;
+    private final WorkoutProvider workoutProvider;
     private final Context context;
 
-    public OngoingState(Formatter formatter, CurrentTrackerInformation currentTrackerInformation, Context context) {
+    public OngoingState(Formatter formatter, WorkoutProvider workoutProvider, Context context) {
         this.formatter = formatter;
-        this.currentTrackerInformation = currentTrackerInformation;
+        this.workoutProvider = workoutProvider;
         this.context = context;
     }
 
@@ -29,9 +31,12 @@ public class OngoingState implements NotificationState {
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
-        String distance = getDistance();
-        String time = getTime();
-        String pace = getPace();
+        Workout workout = workoutProvider.getWorkout();
+        if(workout == null) throw new IllegalStateException("workout is null!");
+
+        String distance = getDistance(workout);
+        String time = getTime(workout);
+        String pace = getPace(workout);
 
         builder.setTicker("RunnerUp activity started");
         builder.setContentIntent(pi);
@@ -49,24 +54,18 @@ public class OngoingState implements NotificationState {
         return builder.build();
     }
 
-    private String getDistance() {
-        Double ad = currentTrackerInformation.getDistance();
-        if(ad == null) return "0";
-
+    private String getDistance(Workout workout) {
+        double ad = workout.getDistance(Scope.WORKOUT);
         return formatter.formatDistance(Formatter.TXT_SHORT, Math.round(ad));
     }
 
-    private String getPace() {
-        Double ap = currentTrackerInformation.getCurrentPace();
-        if(ap == null) return "0";
-
+    private String getPace(Workout workout) {
+        double ap = workout.getPace(Scope.WORKOUT);
         return formatter.formatPace(Formatter.TXT_SHORT, ap);
     }
 
-    private String getTime() {
-        Double at = currentTrackerInformation.getTime();
-        if(at == null) return "0";
-
+    private String getTime(Workout workout) {
+        double at = workout.getTime(Scope.WORKOUT);
         return formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(at));
     }
 }
