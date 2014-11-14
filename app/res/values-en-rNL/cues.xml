@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_workout">activiteit</string>
+  <string name="cue_activity">interval</string>
+  <string name="cue_lap">ronde</string>
+  <string name="cue_warmup">warming-up</string>
+  <string name="cue_cooldown">cooling-down</string>
+  <string name="cue_current">huidigi</string>
+  <string name="cue_recovery">herstel</string>
+  <string name="cue_hour">uur</string>
+  <string name="cue_hours">uren</string>
+  <string name="cue_minute">minute</string>
+  <string name="cue_minutes">minuten</string>
+  <string name="cue_second">seconde</string>
+  <string name="cue_seconds">seconden</string>
+  <string name="cue_meter">meter</string>
+  <string name="cue_meters">meters</string>
+  <string name="cue_kilometer">kilometer</string>
+  <string name="cue_kilometers">kilometers</string>
+  <string name="cue_mile">mijl</string>
+  <string name="cue_miles">mijlen</string>
+  <string name="cue_perkilometer">per kilometer</string>
+  <string name="cue_permile">per mijl</string>
+  <string name="cue_started">gestart</string>
+  <string name="cue_paused">gepauzeerd</string>
+  <string name="cue_resumed">hervatten</string>
+  <string name="cue_stopped">gestopt</string>
+  <string name="cue_completed">afgerond</string>
+  <string name="cue_speedup">versnellen</string>
+  <string name="cue_slowdown">vertragen</string>
+</resources>

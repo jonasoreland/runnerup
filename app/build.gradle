@@ -1,0 +1,67 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.1.0'
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:19.1.+'
+    compile 'com.google.android.gms:play-services:3.2.65'
+    compile files('../GraphView/public/graphview-3.1.jar')
+    provided files('libs/samsung_ble_sdk_200.jar')
+    provided files('libs/antpluginlib_2.0.0.jar')
+}
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        // options.compilerArgs << "-Xlint:deprecation";
+        options.compilerArgs << "-Xlint:unchecked"
+    }
+}
+
+task downloadSamsungBleSdk(type: DownloadTask) {
+    sourceUrl = 'https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar'
+    target = file('libs/samsung_ble_sdk_200.jar')
+}
+preBuild.dependsOn downloadSamsungBleSdk
+
+task downloadAntPluginLib(type: DownloadTask) {
+    sourceUrl = 'https://github.com/ant-wireless/Android_API_ANTPlus/raw/master/antpluginlib_2.0.0.jar'
+    target = file('libs/antpluginlib_2.0.0.jar')
+}
+preBuild.dependsOn downloadAntPluginLib
+
+class DownloadTask extends DefaultTask {
+    @Input
+    String sourceUrl
+
+    @OutputFile
+    File target
+
+    @TaskAction
+    void download() {
+        ant.get(src: sourceUrl, dest: target)
+    }
+}
+

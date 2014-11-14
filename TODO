@@ -1,11 +1,11 @@
-- make gui translatable (move all strings into xml)
+- make gui translatable (DONE)
 
 - audio translations (order of importance)
   spanish     (DONE)
   italian
   portuguese
 
-- auto pause (weide is working on this)
+- auto pause (DONE)
 - lock screen widget
 
 - gui/colors (gui is everything when/if publishing on Market)
@@ -25,7 +25,7 @@
 - upload to FunBeat                (DONE)
 - upload to MapMyRun               (DONE)
 - upload to Endmondo               (DONE)
-- upload to runtastic
+- upload to runtastic              (DONE)
 - upload to jogg.se                (DONE, but their GPX import isn't perfect)
 - upload to Nike+                  (DONE)
 - upload to RunningAHEAD           (DONE)
@@ -65,7 +65,7 @@
   digifit                          (DONE)
   strava                           (DONE)
 
-- edit advanced workouts
+- edit advanced workouts           (DONE)
 - advanced audio cue editor
 
 - setting: autolap during interval    (DONE)

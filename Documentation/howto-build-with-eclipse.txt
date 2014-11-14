@@ -1,3 +1,7 @@
+UPDATE: currently developing with Eclipse is broken,
+du to changes made for android wear. Patches that restores
+eclipse but keeps android wear structure is welcome.
+
 If you want to use Eclipse instead of Android Studio, follow these steps:
 
 	1. Set $ANDROID_HOME env variable to your Android SDK folder path.
@@ -21,7 +25,7 @@ If you want to use Eclipse instead of Android Studio, follow these steps:
 	5. Copy $ANDROID_HOME/extras/google/google_play_services/libproject/google-play-services_lib in the same folder than RunnerUp, or update project.properties.
 	Change line:
 
-		android.library.reference.1=../google-play-services_lib
+		android.library.reference.1=../../google-play-services_lib
 
 	By the relative path of the google-play-services_lib.
 

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tab_interval"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/tab_interval0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_audio_cue_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/pref_interval_audio"
+            android:text="@string/audio_cue_settings"
+            runnerup:type="spinner_txt" />
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/types"
+            android:key="@string/pref_interval_type"
+            android:prompt="@string/type"
+            android:text="@string/interval_type" />
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="00:01:00"
+            android:inputType="time"
+            android:key="@string/pref_interval_time"
+            android:prompt="@string/type"
+            android:text="@string/interval_time_format"
+            runnerup:type="durationpicker" />
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="1000"
+            android:inputType="numberDecimal"
+            android:key="@string/pref_interval_distance"
+            android:prompt="@string/type"
+            android:text="@string/interval_distance"
+            runnerup:type="distancepicker" />
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_rest_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/types"
+            android:key="@string/pref_interval_rest_type"
+            android:prompt="@string/type"
+            android:text="@string/rest_type" />
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_rest_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="00:01:00"
+            android:inputType="time"
+            android:key="@string/pref_interval_rest_time"
+            android:prompt="@string/type"
+            android:text="@string/rest_time_format"
+            runnerup:type="durationpicker" />
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_rest_distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="200"
+            android:inputType="numberDecimal"
+            android:key="@string/pref_interval_rest_distance"
+            android:prompt="@string/type"
+            android:text="@string/rest_distance_format"
+            runnerup:type="distancepicker" />
+
+        <org.runnerup.widget.TitleSpinner
+            android:id="@+id/interval_repetitions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="5"
+            android:inputType="number"
+            android:key="@string/pref_interval_repetitions"
+            android:prompt="@string/type"
+            android:text="@string/repetitions"
+            runnerup:type="numberpicker" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/interval_warmup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:enabled="false"
+                android:text="@string/warmup" />
+
+            <CheckBox
+                android:id="@+id/interval_cooldown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:enabled="false"
+                android:text="@string/cooldown" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

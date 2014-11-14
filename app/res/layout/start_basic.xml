@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tab_basic"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+	<org.runnerup.widget.TitleSpinner
+        android:id="@+id/basic_audio_cue_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="@string/pref_basic_audio"
+		android:text="@string/audio_cue_settings"
+		runnerup:type="spinner_txt"/>
+    
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/basic_sport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/sportEntries"
+        android:key="@string/pref_basic_sport"
+        android:prompt="@string/type"
+        android:text="@string/sport" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:key="@string/pref_basic_target_type"
+        android:id="@+id/tab_basic_target_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:prompt="@string/type"
+        android:entries="@array/targetEntries"
+        android:text="@string/target" />
+    
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/tab_basic_target_pace_max"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:defaultValue="00:05:00"
+        android:inputType="time"
+        android:key="@string/pref_basic_target_pace_max"
+        android:prompt="@string/type"
+        android:text="@string/target_pace_format"
+        runnerup:type="durationpicker" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/tab_basic_target_hrz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="@string/pref_basic_target_hrz"
+        android:prompt="@string/type"
+        android:text="@string/target_heart_rate_zone"
+        android:visibility="gone" />
+</LinearLayout>
