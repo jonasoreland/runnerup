@@ -53,6 +53,7 @@ import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +121,6 @@ public class GpsTracker extends android.app.Service implements
 
     private double mMinLiveLogDelayMillis = 5000;
 
-    private double mElapsedTimeMillisSinceLiveLog = 0;
     private NotificationStateManager notificationStateManager;
 
     private NotificationState gpsTrackerBoundState;
@@ -165,7 +165,7 @@ public class GpsTracker extends android.app.Service implements
     }
 
     @Override
-    public Workout getWorkout() {
+    public Workout getWorkoutInfo() {
         return this.workout;
     }
 
@@ -460,24 +460,13 @@ public class GpsTracker extends android.app.Service implements
         return mElapsedDistance;
     }
 
+    @Override
     public Location getLastKnownLocation() {
         return mLastLocation;
     }
 
     public long getActivityId() {
         return mActivityId;
-    }
-
-    public double getElapsedTimeMillis() {
-        return mElapsedTimeMillis;
-    }
-
-    public Location getLastLocation() {
-        return mLastLocation;
-    }
-
-    public double getElapsedDistance() {
-        return mElapsedDistance;
     }
 
     @Override
@@ -517,7 +506,6 @@ public class GpsTracker extends android.app.Service implements
                 }
                 mElapsedTimeMillis += timeDiff;
                 mElapsedDistance += distDiff;
-                mElapsedTimeMillisSinceLiveLog += timeDiff;
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
                     mHeartbeatMillis += timeDiff; // TODO handle loss of HRM

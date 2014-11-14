@@ -25,9 +25,10 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
-import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.gpstracker.WorkoutProvider;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.Scope;
 
 import android.annotation.TargetApi;
 import android.app.IntentService;
@@ -152,18 +153,21 @@ public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
     }
 
     @Override
-    public void liveLog(GpsTracker gpsTracker, int type) {
+    public void liveLog(WorkoutProvider workoutProvider, int type) {
 
         if (type == DB.LOCATION.TYPE_GPS) {
             if (System.currentTimeMillis()-mTimeLastLog < mMinLiveLogDelayMillis) {
                 return;
             }
-            mTimeLastLog = System.currentTimeMillis();
         }
+        
+        mTimeLastLog = System.currentTimeMillis();
         int externalType = translateType(type);
-        long elapsedDistanceMeter = Math.round(gpsTracker.getElapsedDistance());
+        long elapsedDistanceMeter = Math.round(workoutProvider.getWorkoutInfo().getDistance(Scope.WORKOUT));
+        long elapsedTimeMillis = Math.round(workoutProvider.getWorkoutInfo().getTime(Scope.WORKOUT));
+
         Intent msgIntent = new Intent(context, LiveService.class);
-        Location location = gpsTracker.getLastLocation();
+        Location location = workoutProvider.getLastKnownLocation();
 
         msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
         msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
@@ -174,11 +178,11 @@ public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
         msgIntent.putExtra(
                 LiveService.PARAM_IN_ELAPSED_TIME,
                 formatter.formatElapsedTime(Formatter.TXT_LONG,
-                        Math.round(gpsTracker.getElapsedTimeMillis() / 1000)));
+                        Math.round(elapsedTimeMillis / 1000)));
         msgIntent.putExtra(
                 LiveService.PARAM_IN_PACE,
-                formatter.formatPace(Formatter.TXT_SHORT, gpsTracker.getElapsedTimeMillis()
-                        / (1000 * gpsTracker.getElapsedDistance())));
+                formatter.formatPace(Formatter.TXT_SHORT, elapsedDistanceMeter > 0 ? elapsedTimeMillis
+                        / (1000 * elapsedDistanceMeter) : 0));
         msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
         msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
         msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);

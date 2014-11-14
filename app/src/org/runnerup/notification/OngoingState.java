@@ -12,6 +12,7 @@ import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutInfo;
 
 public class OngoingState implements NotificationState {
     private final Formatter formatter;
@@ -31,12 +32,12 @@ public class OngoingState implements NotificationState {
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
-        Workout workout = workoutProvider.getWorkout();
-        if(workout == null) throw new IllegalStateException("workout is null!");
+        WorkoutInfo workout = workoutProvider.getWorkoutInfo();
+        if (workout == null) throw new IllegalStateException("workout is null!");
 
-        String distance = getDistance(workout);
-        String time = getTime(workout);
-        String pace = getPace(workout);
+        String distance = formatter.formatDistance(Formatter.TXT_SHORT, Math.round(workout.getDistance(Scope.WORKOUT)));
+        String time = formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(workout.getTime(Scope.WORKOUT)));
+        String pace = formatter.formatPace(Formatter.TXT_SHORT, workout.getPace(Scope.WORKOUT));
 
         builder.setTicker("RunnerUp activity started");
         builder.setContentIntent(pi);

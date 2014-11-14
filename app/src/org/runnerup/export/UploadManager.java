@@ -1036,7 +1036,7 @@ public class UploadManager {
                 } while (c.moveToNext());
             }
         } finally {
-            if(c != null)
+            if (c != null)
                 c.close();
         }
     }

@@ -1,7 +1,10 @@
 package org.runnerup.gpstracker;
 
-import org.runnerup.workout.Workout;
+import android.location.Location;
+import org.runnerup.workout.WorkoutInfo;
 
 public interface WorkoutProvider {
-    Workout getWorkout();
+    WorkoutInfo getWorkoutInfo();
+
+    Location getLastKnownLocation();
 }

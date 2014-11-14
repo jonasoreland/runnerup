@@ -38,7 +38,7 @@ import android.os.Build;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Workout implements WorkoutComponent {
+public class Workout implements WorkoutComponent, WorkoutInfo {
 
     long lap = 0;
     int currentStepNo = -1;
@@ -249,6 +249,7 @@ public class Workout implements WorkoutComponent {
         gpsTracker.completeActivity(false);
     }
 
+    @Override
     public double get(Scope scope, Dimension d) {
         switch (d) {
             case DISTANCE:
@@ -267,6 +268,7 @@ public class Workout implements WorkoutComponent {
         return 0;
     }
 
+    @Override
     public double getDistance(Scope scope) {
         switch (scope) {
             case WORKOUT:
@@ -283,6 +285,7 @@ public class Workout implements WorkoutComponent {
         return 0;
     }
 
+    @Override
     public double getTime(Scope scope) {
         switch (scope) {
             case WORKOUT:
@@ -299,6 +302,7 @@ public class Workout implements WorkoutComponent {
         return 0;
     }
 
+    @Override
     public double getSpeed(Scope scope) {
         switch (scope) {
             case WORKOUT:
@@ -322,6 +326,7 @@ public class Workout implements WorkoutComponent {
         return 0;
     }
 
+    @Override
     public double getPace(Scope scope) {
         double s = getSpeed(scope);
         if (s != 0)
@@ -329,6 +334,7 @@ public class Workout implements WorkoutComponent {
         return 0;
     }
 
+    @Override
     public double getDuration(Scope scope, Dimension dimension) {
         if (scope == Scope.STEP && currentStep != null) {
             return currentStep.getDuration(dimension);
@@ -336,6 +342,7 @@ public class Workout implements WorkoutComponent {
         return 0;
     }
 
+    @Override
     public double getRemaining(Scope scope, Dimension dimension) {
         double curr = this.get(scope, dimension);
         double duration = this.getDuration(scope, dimension);
@@ -361,6 +368,7 @@ public class Workout implements WorkoutComponent {
         return 0;
     }
 
+    @Override
     public double getHeartRate(Scope scope) {
         switch (scope) {
             case CURRENT: {
@@ -389,6 +397,7 @@ public class Workout implements WorkoutComponent {
         return hrZones.getZone(getHeartRate(scope));
     }
 
+    @Override
     public int getSport() {
         return sport;
     }
@@ -417,10 +426,12 @@ public class Workout implements WorkoutComponent {
         }
     }
 
+    @Override
     public int getStepCount() {
         return steps.size();
     }
 
+    @Override
     public boolean isLastStep() {
         if (currentStepNo + 1 < steps.size())
             return false;
@@ -444,6 +455,7 @@ public class Workout implements WorkoutComponent {
         public final Step step;
     }
 
+    @Override
     public List<StepListEntry> getSteps() {
         ArrayList<StepListEntry> list = new ArrayList<StepListEntry>();
         for (Step s : steps) {
@@ -452,6 +464,7 @@ public class Workout implements WorkoutComponent {
         return list;
     }
 
+    @Override
     public Step getCurrentStep() {
         if (currentStepNo >= 0 && currentStepNo < steps.size())
             return steps.get(currentStepNo).getCurrentStep();
