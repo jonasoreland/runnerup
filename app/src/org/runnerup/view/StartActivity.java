@@ -34,7 +34,6 @@ import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -64,6 +63,7 @@ import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
 import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
+import org.runnerup.util.Constants;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
@@ -74,7 +74,6 @@ import org.runnerup.widget.TitleSpinner.OnCloseDialogListener;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Dimension;
-import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
@@ -148,8 +147,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     SQLiteDatabase mDB = null;
 
     Formatter formatter = null;
-    BroadcastReceiver catchButtonEvent = null;
-    boolean allowHardwareKey = false;
+    BroadcastReceiver startEventBroadcastReceiver = null;
     private NotificationStateManager notificationStateManager;
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
@@ -296,17 +294,17 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             }
         }
 
-        catchButtonEvent = new BroadcastReceiver() {
+        startEventBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                startButton.performClick();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startButton.performClick();
+                    }
+                });
             }
         };
-
-        // if (getAllowStartStopFromHeadsetKey()) {
-        // registerHeadsetListener();
-        // }
-
         updateTargetView();
     }
 
@@ -320,6 +318,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
              */
             stopGps();
         }
+        unRegisterStartEventListener();
     }
 
     @Override
@@ -347,33 +346,18 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         } else {
             onGpsTrackerBound();
         }
-        if (getAllowStartStopFromHeadsetKey()) {
-            unregisterHeadsetListener();
-            registerHeadsetListener();
-        }
+        registerStartEventListener();
     }
 
-    private void registerHeadsetListener() {
-        ComponentName mMediaReceiverCompName = new ComponentName(
-                getPackageName(), HeadsetButtonReceiver.class.getName());
-        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager
-                .registerMediaButtonEventReceiver(mMediaReceiverCompName);
-
+    private void registerStartEventListener() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.setPriority(2147483647);
-        intentFilter.addAction("org.runnerup.START_STOP");
-        registerReceiver(catchButtonEvent, intentFilter);
+        intentFilter.addAction(Constants.Intents.START_STOP);
+        registerReceiver(startEventBroadcastReceiver, intentFilter);
     }
 
-    private void unregisterHeadsetListener() {
-        ComponentName mMediaReceiverCompName = new ComponentName(
-                getPackageName(), HeadsetButtonReceiver.class.getName());
-        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager
-                .unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+    private void unRegisterStartEventListener() {
         try {
-            unregisterReceiver(catchButtonEvent);
+            unregisterReceiver(startEventBroadcastReceiver);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("Receiver not registered")) {
             } else {
@@ -407,12 +391,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
         return pref.getBoolean(getString(R.string.pref_startgps), false);
-    }
-
-    boolean getAllowStartStopFromHeadsetKey() {
-        Context ctx = getApplicationContext();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return pref.getBoolean(getString(R.string.pref_keystartstop_active), true);
     }
 
     private void startGps() {
@@ -459,7 +437,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
-
             if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
                 manualSaveButtonClick.onClick(v);
                 return;
@@ -507,9 +484,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 Intent intent = new Intent(StartActivity.this,
                         RunActivity.class);
                 StartActivity.this.startActivityForResult(intent, 112);
-                if (getAllowStartStopFromHeadsetKey()) {
-                    unregisterHeadsetListener();
-                }
                 return;
             }
             updateView();
@@ -987,4 +961,3 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 }
-

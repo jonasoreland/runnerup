@@ -18,22 +18,25 @@
 package org.runnerup.gpstracker;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.runnerup.R;
@@ -52,8 +55,8 @@ import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Workout;
-import org.runnerup.workout.WorkoutInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +95,7 @@ public class GpsTracker extends android.app.Service implements
     long mMaxHR = 0;
 
     boolean mWithoutGps = false;
+    private BroadcastReceiver mWorkoutBroadcastReceiver;
 
     enum State {
         INIT, LOGGING, STARTED, PAUSED,
@@ -134,6 +138,25 @@ public class GpsTracker extends android.app.Service implements
         activityOngoingState = new OngoingState(new Formatter(this), this, this);
         gpsTrackerBoundState = new GpsBoundState(this);
 
+        if (getAllowStartStopFromHeadsetKey()) {
+            registerHeadsetListener();
+        }
+        mWorkoutBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (workout == null) return;
+                String action = intent.getAction();
+                if (action.equals(Intents.START_STOP)) {
+                    if (workout.isPaused())
+                        workout.onResume(workout);
+                    else
+                        workout.onPause(workout);
+                } else if(action.equals(Intents.NEW_LAP)) {
+                    workout.onNewLap();
+                }
+            }
+        };
+
         wakelock(false);
     }
 
@@ -156,6 +179,8 @@ public class GpsTracker extends android.app.Service implements
             mDBHelper = null;
         }
 
+        unregisterHeadsetListener();
+        unRegisterWorkoutBroadcastsListener();
         stopLogging();
     }
 
@@ -300,6 +325,7 @@ public class GpsTracker extends android.app.Service implements
         mActivityLastLocation = null;
         setNextLocationType(DB.LOCATION.TYPE_START); // New location update will
                                                      // be tagged with START
+        registerWorkoutBroadcastsListener();
     }
 
     public void startOrResume() {
@@ -709,5 +735,42 @@ public class GpsTracker extends android.app.Service implements
 
     public double getHeartbeats() {
         return mHeartbeats;
+    }
+
+    private boolean getAllowStartStopFromHeadsetKey() {
+        Context ctx = getApplicationContext();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return pref.getBoolean(getString(R.string.pref_keystartstop_active), true);
+    }
+
+    private void registerHeadsetListener() {
+        ComponentName mMediaReceiverCompName = new ComponentName(
+                getPackageName(), HeadsetButtonReceiver.class.getName());
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
+
+    private void unregisterHeadsetListener() {
+        ComponentName mMediaReceiverCompName = new ComponentName(
+                getPackageName(), HeadsetButtonReceiver.class.getName());
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
+
+    private void registerWorkoutBroadcastsListener() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intents.START_STOP);
+        registerReceiver(mWorkoutBroadcastReceiver, intentFilter);
+    }
+
+    private void unRegisterWorkoutBroadcastsListener() {
+        try {
+            unregisterReceiver(mWorkoutBroadcastReceiver);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("Receiver not registered")) {
+            } else {
+                throw e;
+            }
+        }
     }
 }
