@@ -47,10 +47,8 @@ import org.runnerup.util.Constants.DB;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
 import android.os.Build;
 import android.util.Pair;
 
@@ -320,10 +318,6 @@ public class FormCrawler {
 
     public Status upload(SQLiteDatabase db, long mID) {
         return Status.OK;
-    }
-
-    public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter,
-            double mElapsedTimeMillis) {
     }
 
     /**

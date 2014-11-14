@@ -25,8 +25,10 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
+import org.runnerup.gpstracker.WorkoutProvider;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.Scope;
 
 import android.annotation.TargetApi;
 import android.app.IntentService;
@@ -37,24 +39,30 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Build;
+import android.preference.PreferenceManager;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunnerUpLive extends FormCrawler implements Uploader {
+public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
 
     public static final String NAME = "RunnerUp LIVE";
     public static String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+    private final Context context;
+    private double mMinLiveLogDelayMillis = 5000;
 
     long id = 0;
     private String username = null;
     private String password = null;
     private String postUrl = POST_URL;
     private Formatter formatter;
+    private long mTimeLastLog;
 
-    RunnerUpLive(UploadManager uploadManager) {
-        Resources res = uploadManager.getResources();
-        SharedPreferences prefs = uploadManager.getPreferences(null);
+    RunnerUpLive(Context context) {
+        this.context = context;
+
+        Resources res = context.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         postUrl = prefs.getString(res.getString(R.string.pref_runneruplive_serveradress), POST_URL);
-        formatter = new Formatter(uploadManager.getContext());
+        formatter = new Formatter(context);
     }
 
     @Override
@@ -145,11 +153,22 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
     }
 
     @Override
-    public void liveLog(Context context, Location location, int type, double mElapsedDistanceMeter,
-            double mElapsedTimeMillis) {
+    public void liveLog(WorkoutProvider workoutProvider, int type) {
+
+        if (type == DB.LOCATION.TYPE_GPS) {
+            if (System.currentTimeMillis()-mTimeLastLog < mMinLiveLogDelayMillis) {
+                return;
+            }
+        }
+        
+        mTimeLastLog = System.currentTimeMillis();
         int externalType = translateType(type);
-        long elapsedDistanceMeter = Math.round(mElapsedDistanceMeter);
+        long elapsedDistanceMeter = Math.round(workoutProvider.getWorkoutInfo().getDistance(Scope.WORKOUT));
+        long elapsedTimeMillis = Math.round(workoutProvider.getWorkoutInfo().getTime(Scope.WORKOUT));
+
         Intent msgIntent = new Intent(context, LiveService.class);
+        Location location = workoutProvider.getLastKnownLocation();
+
         msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
         msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
         msgIntent.putExtra(LiveService.PARAM_IN_ALTITUDE, location.getAltitude());
@@ -159,11 +178,11 @@ public class RunnerUpLive extends FormCrawler implements Uploader {
         msgIntent.putExtra(
                 LiveService.PARAM_IN_ELAPSED_TIME,
                 formatter.formatElapsedTime(Formatter.TXT_LONG,
-                        Math.round(mElapsedTimeMillis / 1000)));
+                        Math.round(elapsedTimeMillis / 1000)));
         msgIntent.putExtra(
                 LiveService.PARAM_IN_PACE,
-                formatter.formatPace(Formatter.TXT_SHORT, mElapsedTimeMillis
-                        / (1000 * mElapsedDistanceMeter)));
+                formatter.formatPace(Formatter.TXT_SHORT, elapsedDistanceMeter > 0 ? elapsedTimeMillis
+                        / (1000 * elapsedDistanceMeter) : 0));
         msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
         msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
         msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);

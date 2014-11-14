@@ -33,12 +33,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.LiveLogger;
 import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
 import org.runnerup.notification.GpsBoundState;
@@ -52,6 +53,7 @@ import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +69,7 @@ import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
-        LocationListener, Constants, CurrentTrackerInformation {
+        LocationListener, Constants, WorkoutProvider {
     public static final int MAX_HR_AGE = 3000; // 3s
 
     private Handler handler = new Handler();
@@ -113,13 +115,12 @@ public class GpsTracker extends android.app.Service implements
     SQLiteDatabase mDB = null;
     PersistentGpsLoggerListener mDBWriter = null;
     PowerManager.WakeLock mWakeLock = null;
-    List<Uploader> liveLoggers = new ArrayList<Uploader>();
+    List<LiveLogger> liveLoggers = new ArrayList<LiveLogger>();
 
     private Workout workout = null;
 
     private double mMinLiveLogDelayMillis = 5000;
 
-    private double mElapsedTimeMillisSinceLiveLog = 0;
     private NotificationStateManager notificationStateManager;
 
     private NotificationState gpsTrackerBoundState;
@@ -163,7 +164,8 @@ public class GpsTracker extends android.app.Service implements
         w.setGpsTracker(this);
     }
 
-    public Workout getWorkout() {
+    @Override
+    public Workout getWorkoutInfo() {
         return this.workout;
     }
 
@@ -429,7 +431,7 @@ public class GpsTracker extends android.app.Service implements
                 Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-            liveLog(mLastLocation, DB.LOCATION.TYPE_END, mElapsedDistance, mElapsedTimeMillis);
+            liveLog(DB.LOCATION.TYPE_END);
         } else {
             ContentValues tmp = new ContentValues();
             tmp.put("deleted", 1);
@@ -437,7 +439,7 @@ public class GpsTracker extends android.app.Service implements
                 Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-            liveLog(mLastLocation, DB.LOCATION.TYPE_DISCARD, mElapsedDistance, mElapsedTimeMillis);
+            liveLog(DB.LOCATION.TYPE_DISCARD);
         }
         notificationStateManager.cancelNotification();
         stopLogging();
@@ -450,16 +452,15 @@ public class GpsTracker extends android.app.Service implements
         mLocationType = newType;
     }
 
-    @Override
     public double getTime() {
         return mElapsedTimeMillis / 1000;
     }
 
-    @Override
     public double getDistance() {
         return mElapsedDistance;
     }
 
+    @Override
     public Location getLastKnownLocation() {
         return mLastLocation;
     }
@@ -505,7 +506,6 @@ public class GpsTracker extends android.app.Service implements
                 }
                 mElapsedTimeMillis += timeDiff;
                 mElapsedDistance += distDiff;
-                mElapsedTimeMillisSinceLiveLog += timeDiff;
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
                     mHeartbeatMillis += timeDiff; // TODO handle loss of HRM
@@ -520,6 +520,7 @@ public class GpsTracker extends android.app.Service implements
             switch (mLocationType) {
                 case DB.LOCATION.TYPE_START:
                 case DB.LOCATION.TYPE_RESUME:
+                    liveLog(mLocationType);
                     setNextLocationType(DB.LOCATION.TYPE_GPS);
                     break;
                 case DB.LOCATION.TYPE_GPS:
@@ -530,23 +531,17 @@ public class GpsTracker extends android.app.Service implements
                     assert (false);
                     break;
             }
-            liveLog(arg0, mLocationType, mElapsedDistance, mElapsedTimeMillis);
+            liveLog(mLocationType);
 
             notificationStateManager.displayNotificationState(activityOngoingState);
         }
         mLastLocation = arg0;
     }
 
-    private void liveLog(Location arg0, int type, double distance, double time) {
-        if (type == DB.LOCATION.TYPE_GPS) {
-            if (mElapsedTimeMillisSinceLiveLog < mMinLiveLogDelayMillis) {
-                return;
-            }
-            mElapsedTimeMillisSinceLiveLog = 0;
-        }
+    private void liveLog(int type) {
 
-        for (Uploader l : liveLoggers) {
-            l.liveLog(this, arg0, type, distance, time);
+        for (LiveLogger l : liveLoggers) {
+            l.liveLog(this, type);
         }
     }
 
@@ -689,12 +684,10 @@ public class GpsTracker extends android.app.Service implements
         return getCurrentHRValue(System.currentTimeMillis(), 3000);
     }
 
-    @Override
     public Double getCurrentSpeed() {
         return getCurrentSpeed(System.currentTimeMillis(), 3000);
     }
 
-    @Override
     public Double getCurrentPace() {
         Double speed = getCurrentSpeed();
         if (speed == null)
