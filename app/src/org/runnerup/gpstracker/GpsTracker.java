@@ -95,7 +95,6 @@ public class GpsTracker extends android.app.Service implements
     long mMaxHR = 0;
 
     boolean mWithoutGps = false;
-    private BroadcastReceiver mWorkoutBroadcastReceiver;
 
     enum State {
         INIT, LOGGING, STARTED, PAUSED,
@@ -141,21 +140,6 @@ public class GpsTracker extends android.app.Service implements
         if (getAllowStartStopFromHeadsetKey()) {
             registerHeadsetListener();
         }
-        mWorkoutBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (workout == null) return;
-                String action = intent.getAction();
-                if (action.equals(Intents.START_STOP)) {
-                    if (workout.isPaused())
-                        workout.onResume(workout);
-                    else
-                        workout.onPause(workout);
-                } else if(action.equals(Intents.NEW_LAP)) {
-                    workout.onNewLap();
-                }
-            }
-        };
 
         wakelock(false);
     }
@@ -756,6 +740,22 @@ public class GpsTracker extends android.app.Service implements
         AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
     }
+
+    private BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (workout == null) return;
+            String action = intent.getAction();
+            if (action.equals(Intents.START_STOP)) {
+                if (workout.isPaused())
+                    workout.onResume(workout);
+                else
+                    workout.onPause(workout);
+            } else if (action.equals(Intents.NEW_LAP)) {
+                workout.onNewLap();
+            }
+        }
+    };
 
     private void registerWorkoutBroadcastsListener() {
         IntentFilter intentFilter = new IntentFilter();

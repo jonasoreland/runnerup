@@ -147,7 +147,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     SQLiteDatabase mDB = null;
 
     Formatter formatter = null;
-    BroadcastReceiver startEventBroadcastReceiver = null;
     private NotificationStateManager notificationStateManager;
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
@@ -294,17 +293,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             }
         }
 
-        startEventBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        startButton.performClick();
-                    }
-                });
-            }
-        };
         updateTargetView();
     }
 
@@ -348,6 +336,17 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
         registerStartEventListener();
     }
+    private BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startButton.performClick();
+                }
+            });
+        }
+    };
 
     private void registerStartEventListener() {
         IntentFilter intentFilter = new IntentFilter();
