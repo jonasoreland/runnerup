@@ -16,12 +16,15 @@
  */
 package org.runnerup.hr;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import java.util.UUID;
 
 /**
  * Created by jonas on 11/1/14.
  */
-public class BLEBase {
+public abstract class BtHRBase implements HRProvider {
     static final UUID HRP_SERVICE = UUID
             .fromString("0000180D-0000-1000-8000-00805f9b34fb");
     static final UUID BATTERY_SERVICE = UUID
@@ -36,4 +39,25 @@ public class BLEBase {
             .fromString("00002A19-0000-1000-8000-00805f9b34fb");
     static final UUID CCC = UUID
             .fromString("00002902-0000-1000-8000-00805f9b34fb");
+
+    protected HRProvider.HRClient hrClient;
+    protected Handler hrClientHandler;
+
+    public void log (final String msg) {
+        if (hrClient != null) {
+            if(Looper.myLooper() == Looper.getMainLooper()) {
+                hrClient.log(this, msg);
+            } else {
+                hrClientHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (hrClient != null)
+                            hrClient.log(BtHRBase.this, msg);
+                    }
+                });
+            }
+        }
+        else
+            System.err.println(msg);
+    }
 }

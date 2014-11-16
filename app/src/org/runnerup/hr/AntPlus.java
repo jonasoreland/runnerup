@@ -35,14 +35,12 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultReceiver;
 
-public class AntPlus implements HRProvider {
+public class AntPlus extends BtHRBase {
 
     static final String NAME = "AntPlus";
     static final String DISPLAY_NAME = "ANT+";
 
     Context ctx;
-    HRClient hrClient;
-    Handler hrClientHandler;
     int hrValue;
     long hrTimestamp;
 
@@ -84,10 +82,10 @@ public class AntPlus implements HRProvider {
 
     @Override
     public void open(Handler handler, HRClient hrClient) {
-        System.err.println("open()");
+        log("open()");
         this.hrClientHandler = handler;
         this.hrClient = hrClient;
-        System.err.println("onOpenResult()");
+        log("onOpenResult()");
         hrClient.onOpenResult(true);
     }
 
@@ -125,7 +123,7 @@ public class AntPlus implements HRProvider {
     @Override
     public void startScan() {
         stopScan();
-        System.err.println("startScan()");
+        log("startScan()");
         mIsScanning = true;
         mScanDevices.clear();
         hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(ctx, 0, scanReceiver);
@@ -134,7 +132,7 @@ public class AntPlus implements HRProvider {
     @Override
     public void stopScan() {
         if (mIsScanning || hrScanCtrl != null)
-            System.err.println("stopScan()");
+            log("stopScan()");
 
         mIsScanning = false;
         if (hrScanCtrl != null) {
@@ -148,7 +146,7 @@ public class AntPlus implements HRProvider {
 
         @Override
         public void onSearchResult(final AsyncScanResultDeviceInfo arg0) {
-            System.err.println("onSearchResult(" + arg0 + ")");
+            log("onSearchResult(" + arg0 + ")");
             if (hrClient == null)
                 return;
 
@@ -186,7 +184,7 @@ public class AntPlus implements HRProvider {
 
         @Override
         public void onSearchStopped(RequestAccessResult arg0) {
-            System.err.println("onSearchStopped(" + arg0 + ")");
+            log("onSearchStopped(" + arg0 + ")");
         }
     };
 
@@ -208,7 +206,7 @@ public class AntPlus implements HRProvider {
         public void onResultReceived(AntPlusHeartRatePcc arg0,
                 RequestAccessResult arg1, DeviceState arg2) {
 
-            System.err.println("onResultReceived(" + arg0 + ", " + arg1 + ", " + arg2 + ")");
+            log("onResultReceived(" + arg0 + ", " + arg1 + ", " + arg2 + ")");
 
             antDevice = arg0;
             switch (arg1) {
@@ -266,7 +264,7 @@ public class AntPlus implements HRProvider {
 
         @Override
         public void onDeviceStateChange(DeviceState arg0) {
-            System.err.println("onDeviceStateChange(" + arg0 + ")");
+            log("onDeviceStateChange(" + arg0 + ")");
             switch (arg0) {
                 case CLOSED:
                     break;

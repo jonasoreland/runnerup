@@ -33,6 +33,15 @@ import android.preference.PreferenceManager;
 public class HRManager {
 
     public static HRProvider getHRProvider(Context ctx, String src) {
+        int retries = 3;
+        HRProvider provider = getHRProviderImpl(ctx, src);
+        if (provider != null && retries > 0) {
+            return new RetryingHRProviderProxy(provider, retries);
+        }
+        return provider;
+    }
+
+    private static HRProvider getHRProviderImpl(Context ctx, String src) {
         System.err.println("getHRProvider(" + src + ")");
         if (src.contentEquals(SamsungBLEHRProvider.NAME)) {
             if (!SamsungBLEHRProvider.checkLibrary())

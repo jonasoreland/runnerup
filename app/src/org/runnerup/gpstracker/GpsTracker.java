@@ -655,6 +655,10 @@ public class GpsTracker extends android.app.Service implements
                 @Override
                 public void onCloseResult(boolean closeOK) {
                 }
+
+                @Override
+                public void log(HRProvider src, String msg) {
+                }
             });
         }
     }

@@ -43,6 +43,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -101,6 +102,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
 
         tvLog = (TextView) findViewById(R.id.hr_log);
+        tvLog.setMovementMethod(new ScrollingMovementMethod());
         tvBTName = (TextView) findViewById(R.id.hr_device);
         tvHR = (TextView) findViewById(R.id.hr_value);
         tvBatteryLevel = (TextView) findViewById(R.id.hr_battery);
@@ -138,8 +140,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
     private void log(String msg) {
         logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
-        if (logBuffer.length() > 500) {
-            logBuffer.setLength(500);
+        if (logBuffer.length() > 5000) {
+            logBuffer.setLength(5000);
         }
         tvLog.setText(logBuffer.toString());
     }
@@ -590,6 +592,11 @@ public class HRSettingsActivity extends Activity implements HRClient {
     @Override
     public void onCloseResult(boolean closeOK) {
         log(hrProvider.getProviderName() + "::onCloseResult(" + closeOK + ")");
+    }
+
+    @Override
+    public void log(HRProvider src, String msg) {
+        log(src.getProviderName() + ": " + msg);
     }
 
     @Override
