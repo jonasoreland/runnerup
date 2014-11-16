@@ -157,4 +157,9 @@ public interface Constants {
             public static final int FEED_TYPE_EVENT_DATE_HEADER = 0;
         }
     }
+
+    public interface Intents {
+        String START_STOP = "org.runnerup.START_STOP";
+        String NEW_LAP = "org.runnerup.NEW_LAP";
+    }
 }
