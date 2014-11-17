@@ -117,6 +117,7 @@ public abstract class Bt20Base extends BtHRBase {
 
     public void disconnect() {
         reset();
+        hrClient.onDisconnectResult(true);
     }
 
     private void reset() {
@@ -483,6 +484,19 @@ public abstract class Bt20Base extends BtHRBase {
                             log("hrValue: " + hrValue + " => reportConnected");
                             reportConnected(true);
                         }
+
+                        if (hrValue == 0) {
+                            closeStream(inputStream);
+                            closeSocket(bluetoothSocket);
+                            if (mIsConnecting) {
+                                reportConnected(false);
+                                return;
+                            } else if (mIsConnected) {
+                                reportDisconnected(true);
+                                return;
+                            }
+                            break;
+                        }
                     }
 
                     if (bytesUsed > 0) {
@@ -493,7 +507,11 @@ public abstract class Bt20Base extends BtHRBase {
                         bytesInBuffer = 0;
                     }
                 } catch (IOException e) {
-                    reportDisconnected(bluetoothDevice, deviceName, e);
+                    closeStream(inputStream);
+                    closeSocket(bluetoothSocket);
+                    if (mIsConnecting)
+                        reportConnected(false);
+                    reportDisconnected(true);
                     break;
                 }
             }
@@ -511,10 +529,8 @@ public abstract class Bt20Base extends BtHRBase {
         }
     }
 
-    public void reportDisconnected(final BluetoothDevice bluetoothDevice,
-            final String btDeviceName, final IOException e) {
-        log("reportDisconnect()");
-        e.printStackTrace();
+    public void reportDisconnected(final boolean ok) {
+        log("reportDisconnect(" + ok + ")");
         if (hrClientHandler != null) {
             hrClientHandler.post(new Runnable() {
 
@@ -525,16 +541,7 @@ public abstract class Bt20Base extends BtHRBase {
                         return;
                     }
 
-                    if (mIsConnected) {
-                        /**
-                         * reconnect
-                         */
-                        log("reportDisconnect() => reconnecting");
-                        connect(Bt20Base.createDeviceRef(getProviderName(), bluetoothDevice));
-                        return;
-                    } else {
-                        log("reportDisconnect() mIsConnected != true");
-                    }
+                    hrClient.onDisconnectResult(ok);
                 }
             });
         } else {
