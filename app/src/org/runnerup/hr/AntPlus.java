@@ -61,7 +61,6 @@ public class AntPlus extends BtHRBase {
             Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return false;
     }
@@ -251,8 +250,18 @@ public class AntPlus extends BtHRBase {
         public void onNewHeartRateData(long arg0, EnumSet<EventFlag> arg1,
                 int arg2, long arg3) {
 
+            if (arg2 == 0) {
+                log("got hrValue == 0 => aborting");
+                if (mIsConnecting)
+                    reportConnected(false);
+                else if (mIsConnected)
+                    reportDisconnected(true);
+                return;
+            }
+
             hrValue = arg2;
             hrTimestamp = System.currentTimeMillis();
+
             if (mIsConnecting) {
                 reportConnected(true);
             }
@@ -319,6 +328,15 @@ public class AntPlus extends BtHRBase {
                     mIsConnecting = false;
                     hrClient.onConnectResult(b);
                 }
+            }
+        });
+    }
+
+    protected void reportDisconnected(final boolean b) {
+        hrClientHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                hrClient.onDisconnectResult(b);
             }
         });
     }
