@@ -17,10 +17,6 @@
 
 package org.runnerup.hr;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -35,6 +31,10 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 @TargetApi(18)
 public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
@@ -471,9 +471,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
                 if (CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN) {
                     log("CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN");
-                    new Thread() {
+                    hrClientHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            log("before connect");
                             btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
                             if (btGatt == null) {
                                 reportConnectFailed("connectGatt returned null");
@@ -481,7 +482,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                                 log("connectGatt: " + btGatt);
                             }
                         }
-                    };
+                    });
                 } else {
                     btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
                     if (btGatt == null) {

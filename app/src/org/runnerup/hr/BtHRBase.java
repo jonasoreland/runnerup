@@ -43,7 +43,7 @@ public abstract class BtHRBase implements HRProvider {
     protected HRProvider.HRClient hrClient;
     protected Handler hrClientHandler;
 
-    public void log (final String msg) {
+    protected void log (final String msg) {
         if (hrClient != null) {
             if(Looper.myLooper() == Looper.getMainLooper()) {
                 hrClient.log(this, msg);

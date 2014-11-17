@@ -17,9 +17,6 @@
 
 package org.runnerup.hr;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -34,6 +31,9 @@ import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultRecei
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultReceiver;
+
+import java.util.EnumSet;
+import java.util.HashSet;
 
 public class AntPlus extends BtHRBase {
 

@@ -1,11 +1,8 @@
 package org.runnerup.hr;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.os.Handler;
 import android.os.Looper;
-
-import org.runnerup.util.Constants;
 
 /**
  * Created by jonas on 11/9/14.
@@ -38,30 +35,65 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     };
 
     private int attempt = 0;
-    private int maxRetries = 3;
+    private int kMaxConnectRetries = 3;
+    private int kMaxReconnectRetires = 10;
     private HRProvider provider;
     private HRClient client = null;
     private Handler handler = null;
     private State state = State.CLOSED;
     private State requestedState = State.CLOSED;
 
-    private final int kConnectTimeout = 2000;
-    private final int kResetBtTimeoutMillis = 3000;
+    private int getMaxRetries() {
+        switch(state) {
+            case OPENING:
+            case OPENED:
+            case SCANNING:
+            case CONNECTED:
+            case DISCONNECTING:
+            case CLOSING:
+            case CLOSED:
+            case ERROR:
+                return 0;
+            case CONNECTING:
+                return kMaxConnectRetries;
+            case RECONNECTING:
+                return kMaxReconnectRetires;
+        }
+        return 0;
+    }
 
     private boolean checkMaxAttempts() {
         attempt++;
-        if (attempt > maxRetries)
+        if (attempt > getMaxRetries())
             return false;
         return true;
+    }
+
+    private int getRetryDelayMillis() {
+        switch(state) {
+            case OPENING:
+            case OPENED:
+            case SCANNING:
+            case CONNECTED:
+            case DISCONNECTING:
+            case CLOSING:
+            case CLOSED:
+            case ERROR:
+                return 0;
+            case CONNECTING:
+                return 750 * (attempt - 1);
+            case RECONNECTING:
+                return 3000 * (attempt < 6 ? attempt : 6);
+        }
+        return 0;
     }
 
     private void resetAttempts() {
         attempt = 0;
     }
 
-    public RetryingHRProviderProxy(HRProvider src, int retries) {
+    public RetryingHRProviderProxy(HRProvider src) {
         this.provider = src;
-        this.maxRetries = retries;
     }
 
     @Override
@@ -203,73 +235,19 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
                 client.onConnectResult(false);
                 return;
             }
-            if (attempt == 1 || attempt == 3) {
-                log("retry connect");
-                provider.connect(connectRef);
-                return;
-            }
 
-            // before attempt 2, we turnOnOff BT
-            log("resetBt");
-            turnOnOffBt(new Runnable() {
+            int delayMillis = getRetryDelayMillis();
+            log("retry in " + delayMillis + "ms");
+            handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if ((state == State.CONNECTING || state == State.RECONNECTING) &&
-                            requestedState == State.CONNECTED)
-                        log("retry connect after resetBt");
-                        provider.connect(connectRef);
+                    log("retry connect");
+                    provider.connect(connectRef);
                 }
-            });
+            }, delayMillis);
+
             return;
         }
-    }
-
-    void turnOnOffBt(final Runnable runnable) {
-        turnOffBt(new Runnable() {
-            @Override
-            public void run() {
-                turnOnBt(runnable);
-            }
-        });
-    }
-
-    void turnOffBt(final Runnable runnable) {
-        final BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
-        if (bt.isEnabled() == false) {
-            runnable.run();
-            return;
-        }
-        bt.disable();
-        waitBtState(false, runnable, kResetBtTimeoutMillis /2);
-    }
-
-
-
-    void turnOnBt(final Runnable runnable) {
-        final BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
-        if (bt.isEnabled() == true) {
-            runnable.run();
-            return;
-        }
-        bt.enable();
-        waitBtState(true, runnable, kResetBtTimeoutMillis /2);
-    }
-
-    void waitBtState(final boolean state, final Runnable runnable, final int maxMillis) {
-        final BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
-        handler.postDelayed(new Runnable() {
-            int count = maxMillis / 500;
-
-            @Override
-            public void run() {
-                if (bt.isEnabled() == state || count == 0) {
-                    runnable.run();
-                    return;
-                }
-                count--;
-                handler.postDelayed(this, 500);
-            }
-        }, 500);
     }
 
     @Override
@@ -299,6 +277,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
     @Override
     public void onDisconnectResult(boolean disconnectOK) {
+        log("onDisonncetResult("+disconnectOK+")");
         if (disconnectOK && state == State.CONNECTED && requestedState == State.CONNECTED) {
             /* this is unwanted disconnect, silently disconnect/connect */
             state = State.DISCONNECTING;
@@ -335,7 +314,6 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
         str.append("[ RetryingHRProviderProxy: ").
                 append(provider.getProviderName()).
                 append(", attempt: ").append(Integer.toString(attempt)).
-                append(", retries: ").append(Integer.toString(maxRetries)).
                 append(" ]");
 
         str.append(", state: " + state + ", request: " + requestedState +

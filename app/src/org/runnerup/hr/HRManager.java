@@ -17,11 +17,6 @@
 
 package org.runnerup.hr;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.runnerup.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,14 +24,18 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import org.runnerup.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRManager {
 
     public static HRProvider getHRProvider(Context ctx, String src) {
-        int retries = 3;
         HRProvider provider = getHRProviderImpl(ctx, src);
-        if (provider != null && retries > 0) {
-            return new RetryingHRProviderProxy(provider, retries);
+        if (provider != null) {
+            return new RetryingHRProviderProxy(provider);
         }
         return provider;
     }
