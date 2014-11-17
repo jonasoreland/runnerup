@@ -186,6 +186,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 }
             } catch (Exception e) {
                 log("onCharacteristicChanged => " + e);
+                if (mIsConnecting)
+                    reportConnectFailed("Exception in onCharacteristicChanged: " + e);
+                else if (mIsConnected)
+                    reportDisconnected();
             }
         }
 
@@ -220,6 +224,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 }
             } catch (Exception e) {
                 log("onCharacteristicRead => " + e);
+                reportConnectFailed("Exception in onCharacteristicRead: " + e);
             }
         }
 
@@ -274,8 +279,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     return;
                 }
                 log("onConnectionStateChange => WHAT TO DO??");
-            } catch (Exception e){
+            } catch (Exception e) {
                 log("onConnectionStateChange => " + e);
+                reportConnectFailed("Exception in onConnectionStateChange: " + e);
             }
         }
 
