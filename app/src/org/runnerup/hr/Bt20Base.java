@@ -17,14 +17,6 @@
 
 package org.runnerup.hr;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -35,13 +27,21 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 /**
  * Base class for BT 2.0 HR providers. It has a thread for connecting with a
  * bluetooth device and a thread for performing data transmission when
  * connected.
  */
 @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
-public abstract class Bt20Base implements HRProvider {
+public abstract class Bt20Base extends BtHRBase {
 
     public boolean isEnabled() {
         return isEnabledImpl();
@@ -89,9 +89,6 @@ public abstract class Bt20Base implements HRProvider {
         // context = ctx;
     }
 
-    private HRClient hrClient;
-    private Handler hrClientHandler;
-
     @Override
     public void open(Handler handler, HRClient hrClient) {
         this.hrClient = hrClient;
@@ -120,6 +117,7 @@ public abstract class Bt20Base implements HRProvider {
 
     public void disconnect() {
         reset();
+        hrClient.onDisconnectResult(true);
     }
 
     private void reset() {
@@ -251,17 +249,18 @@ public abstract class Bt20Base implements HRProvider {
                                 bluetoothSocket);
                         connectedThread.start();
                     } else {
+                        log("closeSocket");
                         closeSocket(bluetoothSocket);
                     }
                 }
             });
         } else {
+            log("closeSocket");
             closeSocket(bluetoothSocket);
         }
     }
 
     protected static void closeSocket(BluetoothSocket bluetoothSocket) {
-        System.err.println("closeSocket(" + bluetoothSocket + ")");
         if (bluetoothSocket != null) {
             try {
                 bluetoothSocket.close();
@@ -283,7 +282,7 @@ public abstract class Bt20Base implements HRProvider {
     }
 
     private void reportConnected(final boolean result) {
-        System.err.println("reportConnected(" + result + ") mIsConnecting: " + mIsConnecting
+        log("reportConnected(" + result + ") mIsConnecting: " + mIsConnecting
                 + ", mIsConnected: " + mIsConnected + ", hrClient: " + hrClient);
         if (hrClient != null) {
             hrClientHandler.post(new Runnable() {
@@ -307,10 +306,10 @@ public abstract class Bt20Base implements HRProvider {
         }
     }
 
-    static BluetoothSocket tryConnect(final BluetoothDevice device, int i)
+    static BluetoothSocket tryConnect(BtHRBase base, final BluetoothDevice device, int i)
             throws IOException {
         BluetoothSocket sock = null;
-        System.err.println("tryConnect(method: " + i + ")");
+        base.log("tryConnect(method: " + i + ")");
 
         switch (i) {
             case 0:
@@ -348,6 +347,7 @@ public abstract class Bt20Base implements HRProvider {
             sock.connect();
             return sock;
         } catch (IOException ex) {
+            base.log("closeSocket");
             closeSocket(sock);
             throw ex;
         }
@@ -380,7 +380,7 @@ public abstract class Bt20Base implements HRProvider {
                     break;
                 }
                 try {
-                    bluetoothSocket = tryConnect(bluetoothDevice, i);
+                    bluetoothSocket = tryConnect(Bt20Base.this, bluetoothDevice, i);
                     break;
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -388,14 +388,14 @@ public abstract class Bt20Base implements HRProvider {
             }
 
             if (bluetoothSocket == null) {
-                System.err.println("connect failed!");
+                log("connect failed!");
                 reportConnected(false);
                 return;
 
             }
 
             if (btAdapter == null) {
-                System.err.println("btAdapter == null in connect thread. giving up");
+                log("btAdapter == null in connect thread. giving up");
                 closeSocket(bluetoothSocket);
                 synchronized (Bt20Base.this) {
                     connectThread = null;
@@ -412,7 +412,7 @@ public abstract class Bt20Base implements HRProvider {
                 connectThread = null;
             }
 
-            System.err.println("connected => " + bluetoothSocket);
+            log("connected => " + bluetoothSocket);
             // Start the connected thread
             connected(bluetoothSocket, bluetoothDevice, deviceName);
             bluetoothSocket = null;
@@ -446,7 +446,7 @@ public abstract class Bt20Base implements HRProvider {
             try {
                 tmp = bluetoothSocket.getInputStream();
             } catch (IOException e) {
-                System.err.println("socket.getInputStream(): " + e);
+                log("socket.getInputStream(): " + e);
                 closeSocket(bluetoothSocket);
             }
             inputStream = tmp;
@@ -481,8 +481,21 @@ public abstract class Bt20Base implements HRProvider {
                         hrTimestamp = System.currentTimeMillis();
 
                         if (hrValue > 0 && mIsConnecting) {
-                            System.err.println("hrValue: " + hrValue + " => reportConnected");
+                            log("hrValue: " + hrValue + " => reportConnected");
                             reportConnected(true);
+                        }
+
+                        if (hrValue == 0) {
+                            closeStream(inputStream);
+                            closeSocket(bluetoothSocket);
+                            if (mIsConnecting) {
+                                reportConnected(false);
+                                return;
+                            } else if (mIsConnected) {
+                                reportDisconnected(true);
+                                return;
+                            }
+                            break;
                         }
                     }
 
@@ -490,11 +503,15 @@ public abstract class Bt20Base implements HRProvider {
                         System.arraycopy(buffer, bytesUsed, buffer, 0, bytesInBuffer - bytesUsed);
                         bytesInBuffer -= bytesUsed;
                     } else if (bytesUsed == 0 && bytesInBuffer == buffer.length) {
-                        System.err.println("reset");
+                        log("reset");
                         bytesInBuffer = 0;
                     }
                 } catch (IOException e) {
-                    reportDisconnected(bluetoothDevice, deviceName, e);
+                    closeStream(inputStream);
+                    closeSocket(bluetoothSocket);
+                    if (mIsConnecting)
+                        reportConnected(false);
+                    reportDisconnected(true);
                     break;
                 }
             }
@@ -512,34 +529,23 @@ public abstract class Bt20Base implements HRProvider {
         }
     }
 
-    public void reportDisconnected(final BluetoothDevice bluetoothDevice,
-            final String btDeviceName, final IOException e) {
-        System.err.println("reportDisconnect()");
-        e.printStackTrace();
+    public void reportDisconnected(final boolean ok) {
+        log("reportDisconnect(" + ok + ")");
         if (hrClientHandler != null) {
             hrClientHandler.post(new Runnable() {
 
                 @Override
                 public void run() {
                     if (hrClient == null) {
-                        System.err.println("reportDisconnect() hrClient == null");
+                        log("reportDisconnect() hrClient == null");
                         return;
                     }
 
-                    if (mIsConnected) {
-                        /**
-                         * reconnect
-                         */
-                        System.err.println("reportDisconnect() => reconnecting");
-                        connect(Bt20Base.createDeviceRef(getProviderName(), bluetoothDevice));
-                        return;
-                    } else {
-                        System.err.println("reportDisconnect() mIsConnected != true");
-                    }
+                    hrClient.onDisconnectResult(ok);
                 }
             });
         } else {
-            System.err.println("reportDisconnect() hrClientHandler == null");
+            log("reportDisconnect() hrClientHandler == null");
         }
     }
 
@@ -617,7 +623,7 @@ public abstract class Bt20Base implements HRProvider {
                     && calcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
 
             if (!ok) {
-                System.err.println("HxM insanity! "
+                log("HxM insanity! "
                         + (buffer.length > ZEPHYR_HXM_BYTE_ETX) + " "
                         + getByte(buffer[ZEPHYR_HXM_BYTE_STX]) + "=="
                         + ZEPHYR_START_BYTE + " "

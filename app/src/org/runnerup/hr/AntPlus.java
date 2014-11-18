@@ -17,9 +17,6 @@
 
 package org.runnerup.hr;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -35,14 +32,15 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultReceiver;
 
-public class AntPlus implements HRProvider {
+import java.util.EnumSet;
+import java.util.HashSet;
+
+public class AntPlus extends BtHRBase {
 
     static final String NAME = "AntPlus";
     static final String DISPLAY_NAME = "ANT+";
 
     Context ctx;
-    HRClient hrClient;
-    Handler hrClientHandler;
     int hrValue;
     long hrTimestamp;
 
@@ -63,7 +61,6 @@ public class AntPlus implements HRProvider {
             Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return false;
     }
@@ -84,10 +81,10 @@ public class AntPlus implements HRProvider {
 
     @Override
     public void open(Handler handler, HRClient hrClient) {
-        System.err.println("open()");
+        log("open()");
         this.hrClientHandler = handler;
         this.hrClient = hrClient;
-        System.err.println("onOpenResult()");
+        log("onOpenResult()");
         hrClient.onOpenResult(true);
     }
 
@@ -125,7 +122,7 @@ public class AntPlus implements HRProvider {
     @Override
     public void startScan() {
         stopScan();
-        System.err.println("startScan()");
+        log("startScan()");
         mIsScanning = true;
         mScanDevices.clear();
         hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(ctx, 0, scanReceiver);
@@ -134,7 +131,7 @@ public class AntPlus implements HRProvider {
     @Override
     public void stopScan() {
         if (mIsScanning || hrScanCtrl != null)
-            System.err.println("stopScan()");
+            log("stopScan()");
 
         mIsScanning = false;
         if (hrScanCtrl != null) {
@@ -148,7 +145,7 @@ public class AntPlus implements HRProvider {
 
         @Override
         public void onSearchResult(final AsyncScanResultDeviceInfo arg0) {
-            System.err.println("onSearchResult(" + arg0 + ")");
+            log("onSearchResult(" + arg0 + ")");
             if (hrClient == null)
                 return;
 
@@ -186,7 +183,7 @@ public class AntPlus implements HRProvider {
 
         @Override
         public void onSearchStopped(RequestAccessResult arg0) {
-            System.err.println("onSearchStopped(" + arg0 + ")");
+            log("onSearchStopped(" + arg0 + ")");
         }
     };
 
@@ -208,7 +205,7 @@ public class AntPlus implements HRProvider {
         public void onResultReceived(AntPlusHeartRatePcc arg0,
                 RequestAccessResult arg1, DeviceState arg2) {
 
-            System.err.println("onResultReceived(" + arg0 + ", " + arg1 + ", " + arg2 + ")");
+            log("onResultReceived(" + arg0 + ", " + arg1 + ", " + arg2 + ")");
 
             antDevice = arg0;
             switch (arg1) {
@@ -253,8 +250,18 @@ public class AntPlus implements HRProvider {
         public void onNewHeartRateData(long arg0, EnumSet<EventFlag> arg1,
                 int arg2, long arg3) {
 
+            if (arg2 == 0) {
+                log("got hrValue == 0 => aborting");
+                if (mIsConnecting)
+                    reportConnected(false);
+                else if (mIsConnected)
+                    reportDisconnected(true);
+                return;
+            }
+
             hrValue = arg2;
             hrTimestamp = System.currentTimeMillis();
+
             if (mIsConnecting) {
                 reportConnected(true);
             }
@@ -266,7 +273,7 @@ public class AntPlus implements HRProvider {
 
         @Override
         public void onDeviceStateChange(DeviceState arg0) {
-            System.err.println("onDeviceStateChange(" + arg0 + ")");
+            log("onDeviceStateChange(" + arg0 + ")");
             switch (arg0) {
                 case CLOSED:
                     break;
@@ -321,6 +328,15 @@ public class AntPlus implements HRProvider {
                     mIsConnecting = false;
                     hrClient.onConnectResult(b);
                 }
+            }
+        });
+    }
+
+    protected void reportDisconnected(final boolean b) {
+        hrClientHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                hrClient.onDisconnectResult(b);
             }
         });
     }

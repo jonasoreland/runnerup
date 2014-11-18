@@ -18,15 +18,19 @@
 package org.runnerup.gpstracker;
 
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,8 +41,8 @@ import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.LiveLogger;
 import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
 import org.runnerup.notification.GpsBoundState;
@@ -51,6 +55,7 @@ import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Workout;
 
 import java.util.ArrayList;
@@ -67,7 +72,7 @@ import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
-        LocationListener, Constants, CurrentTrackerInformation {
+        LocationListener, Constants, WorkoutProvider {
     public static final int MAX_HR_AGE = 3000; // 3s
 
     private Handler handler = new Handler();
@@ -113,13 +118,12 @@ public class GpsTracker extends android.app.Service implements
     SQLiteDatabase mDB = null;
     PersistentGpsLoggerListener mDBWriter = null;
     PowerManager.WakeLock mWakeLock = null;
-    List<Uploader> liveLoggers = new ArrayList<Uploader>();
+    List<LiveLogger> liveLoggers = new ArrayList<LiveLogger>();
 
     private Workout workout = null;
 
     private double mMinLiveLogDelayMillis = 5000;
 
-    private double mElapsedTimeMillisSinceLiveLog = 0;
     private NotificationStateManager notificationStateManager;
 
     private NotificationState gpsTrackerBoundState;
@@ -132,6 +136,10 @@ public class GpsTracker extends android.app.Service implements
         notificationStateManager = new NotificationStateManager(new ForegroundNotificationDisplayStrategy(this));
         activityOngoingState = new OngoingState(new Formatter(this), this, this);
         gpsTrackerBoundState = new GpsBoundState(this);
+
+        if (getAllowStartStopFromHeadsetKey()) {
+            registerHeadsetListener();
+        }
 
         wakelock(false);
     }
@@ -155,6 +163,8 @@ public class GpsTracker extends android.app.Service implements
             mDBHelper = null;
         }
 
+        unregisterHeadsetListener();
+        unRegisterWorkoutBroadcastsListener();
         stopLogging();
     }
 
@@ -163,7 +173,8 @@ public class GpsTracker extends android.app.Service implements
         w.setGpsTracker(this);
     }
 
-    public Workout getWorkout() {
+    @Override
+    public Workout getWorkoutInfo() {
         return this.workout;
     }
 
@@ -298,6 +309,7 @@ public class GpsTracker extends android.app.Service implements
         mActivityLastLocation = null;
         setNextLocationType(DB.LOCATION.TYPE_START); // New location update will
                                                      // be tagged with START
+        registerWorkoutBroadcastsListener();
     }
 
     public void startOrResume() {
@@ -429,7 +441,7 @@ public class GpsTracker extends android.app.Service implements
                 Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-            liveLog(mLastLocation, DB.LOCATION.TYPE_END, mElapsedDistance, mElapsedTimeMillis);
+            liveLog(DB.LOCATION.TYPE_END);
         } else {
             ContentValues tmp = new ContentValues();
             tmp.put("deleted", 1);
@@ -437,7 +449,7 @@ public class GpsTracker extends android.app.Service implements
                 Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-            liveLog(mLastLocation, DB.LOCATION.TYPE_DISCARD, mElapsedDistance, mElapsedTimeMillis);
+            liveLog(DB.LOCATION.TYPE_DISCARD);
         }
         notificationStateManager.cancelNotification();
         stopLogging();
@@ -450,16 +462,15 @@ public class GpsTracker extends android.app.Service implements
         mLocationType = newType;
     }
 
-    @Override
     public double getTime() {
         return mElapsedTimeMillis / 1000;
     }
 
-    @Override
     public double getDistance() {
         return mElapsedDistance;
     }
 
+    @Override
     public Location getLastKnownLocation() {
         return mLastLocation;
     }
@@ -505,7 +516,6 @@ public class GpsTracker extends android.app.Service implements
                 }
                 mElapsedTimeMillis += timeDiff;
                 mElapsedDistance += distDiff;
-                mElapsedTimeMillisSinceLiveLog += timeDiff;
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
                     mHeartbeatMillis += timeDiff; // TODO handle loss of HRM
@@ -520,6 +530,7 @@ public class GpsTracker extends android.app.Service implements
             switch (mLocationType) {
                 case DB.LOCATION.TYPE_START:
                 case DB.LOCATION.TYPE_RESUME:
+                    liveLog(mLocationType);
                     setNextLocationType(DB.LOCATION.TYPE_GPS);
                     break;
                 case DB.LOCATION.TYPE_GPS:
@@ -530,23 +541,17 @@ public class GpsTracker extends android.app.Service implements
                     assert (false);
                     break;
             }
-            liveLog(arg0, mLocationType, mElapsedDistance, mElapsedTimeMillis);
+            liveLog(mLocationType);
 
             notificationStateManager.displayNotificationState(activityOngoingState);
         }
         mLastLocation = arg0;
     }
 
-    private void liveLog(Location arg0, int type, double distance, double time) {
-        if (type == DB.LOCATION.TYPE_GPS) {
-            if (mElapsedTimeMillisSinceLiveLog < mMinLiveLogDelayMillis) {
-                return;
-            }
-            mElapsedTimeMillisSinceLiveLog = 0;
-        }
+    private void liveLog(int type) {
 
-        for (Uploader l : liveLoggers) {
-            l.liveLog(this, arg0, type, distance, time);
+        for (LiveLogger l : liveLoggers) {
+            l.liveLog(this, type);
         }
     }
 
@@ -650,6 +655,10 @@ public class GpsTracker extends android.app.Service implements
                 @Override
                 public void onCloseResult(boolean closeOK) {
                 }
+
+                @Override
+                public void log(HRProvider src, String msg) {
+                }
             });
         }
     }
@@ -689,12 +698,10 @@ public class GpsTracker extends android.app.Service implements
         return getCurrentHRValue(System.currentTimeMillis(), 3000);
     }
 
-    @Override
     public Double getCurrentSpeed() {
         return getCurrentSpeed(System.currentTimeMillis(), 3000);
     }
 
-    @Override
     public Double getCurrentPace() {
         Double speed = getCurrentSpeed();
         if (speed == null)
@@ -716,5 +723,58 @@ public class GpsTracker extends android.app.Service implements
 
     public double getHeartbeats() {
         return mHeartbeats;
+    }
+
+    private boolean getAllowStartStopFromHeadsetKey() {
+        Context ctx = getApplicationContext();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return pref.getBoolean(getString(R.string.pref_keystartstop_active), true);
+    }
+
+    private void registerHeadsetListener() {
+        ComponentName mMediaReceiverCompName = new ComponentName(
+                getPackageName(), HeadsetButtonReceiver.class.getName());
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
+
+    private void unregisterHeadsetListener() {
+        ComponentName mMediaReceiverCompName = new ComponentName(
+                getPackageName(), HeadsetButtonReceiver.class.getName());
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
+
+    private BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (workout == null) return;
+            String action = intent.getAction();
+            if (action.equals(Intents.START_STOP)) {
+                if (workout.isPaused())
+                    workout.onResume(workout);
+                else
+                    workout.onPause(workout);
+            } else if (action.equals(Intents.NEW_LAP)) {
+                workout.onNewLap();
+            }
+        }
+    };
+
+    private void registerWorkoutBroadcastsListener() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intents.START_STOP);
+        registerReceiver(mWorkoutBroadcastReceiver, intentFilter);
+    }
+
+    private void unRegisterWorkoutBroadcastsListener() {
+        try {
+            unregisterReceiver(mWorkoutBroadcastReceiver);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("Receiver not registered")) {
+            } else {
+                throw e;
+            }
+        }
     }
 }

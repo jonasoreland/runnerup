@@ -26,6 +26,7 @@ import android.bluetooth.BluetoothProfile.ServiceListener;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 
 import com.samsung.android.sdk.bt.gatt.BluetoothGatt;
 import com.samsung.android.sdk.bt.gatt.BluetoothGattAdapter;
@@ -38,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
+public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
 
     public static boolean checkLibrary() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -61,7 +62,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
     }
 
     static final String NAME = "SamsungBLE";
-    static final String DISPLAY_NAME = "Bluetooth SMART (BLEBase)";
+    static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
 
     private Context context;
     private BluetoothAdapter btAdapter = null;
@@ -93,9 +94,6 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
     public boolean startEnableIntent(Activity activity, int requestCode) {
         return Bt20Base.startEnableIntentImpl(activity, requestCode);
     }
-
-    private HRClient hrClient;
-    private Handler hrClientHandler;
 
     private boolean mIsScanning = false;
     private boolean mIsConnected = false;
@@ -145,8 +143,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
                 btGatt = (BluetoothGatt) proxy;
 
                 if (hrClient == null) {
-                    System.err
-                            .println("hrClient == null => skip register in onServiceConnected => closeProfileProxy");
+                    log("hrClient == null => skip register in onServiceConnected => closeProfileProxy");
                     BluetoothGattAdapter.closeProfileProxy(BluetoothGattAdapter.GATT, btGatt);
                     btGatt = null;
                     return;
@@ -176,7 +173,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
                  * let's hope that unregister has been called...and that it
                  * works to call it before this callback is called
                  */
-                System.err.println("onAppRegistered: hrClientHandler == null => return");
+                log("onAppRegistered: hrClientHandler == null => return");
                 return;
             }
             hrClientHandler.post(new Runnable() {
@@ -184,7 +181,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
                 @Override
                 public void run() {
                     if (hrClient == null) {
-                        System.err.println("onAppRegistered: hrClient == null => return");
+                        log("onAppRegistered: hrClient == null => return");
                         return;
                     }
                     if (arg0 == BluetoothGatt.GATT_SUCCESS) {
@@ -199,13 +196,13 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
         @Override
         public void onCharacteristicChanged(BluetoothGattCharacteristic arg0) {
             if (!arg0.getUuid().equals(HEART_RATE_MEASUREMENT_CHARAC)) {
-                System.err.println("onCharacteristicChanged(" + arg0 + ") != HEART_RATE ??");
+                log("onCharacteristicChanged(" + arg0 + ") != HEART_RATE ??");
                 return;
             }
 
             int length = arg0.getValue().length;
             if (length == 0) {
-                System.err.println("length = 0");
+                log("length = 0");
                 return;
             }
 
@@ -214,6 +211,17 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
             } else {
                 hrValue = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
             }
+
+            if (hrValue == 0) {
+                if (mIsConnecting) {
+                    reportConnectFailed("got hrValue = 0 => reportConnectFailed");
+                    return;
+                }
+                log("got hrValue == 0 => disconnecting");
+                reportDisconnected();
+                return;
+            }
+
             hrTimestamp = System.currentTimeMillis();
 
             if (mIsConnecting) {
@@ -234,10 +242,10 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
             if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
             } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
                 batteryLevel = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-                System.err.println("Battery level: " + batteryLevel);
+                log("Battery level: " + batteryLevel);
             }
 
-            System.out.println(" => startHR()");
+            log(" => startHR()");
             // triggered from DummyReadForSecLevelCheck
             startHR();
             return;
@@ -279,9 +287,11 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
                     && btDevice.getAddress().contentEquals(arg0.getAddress())) {
             }
 
-            if (btGatt == null)
+            if (btGatt == null) {
+                log("onConnectionStateChange: btGatt == null");
                 return;
-
+            }
+            
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 btGatt.discoverServices(arg0);
             }
@@ -314,7 +324,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
         @Override
         public void onScanResult(final BluetoothDevice arg0, int arg1, byte[] scanRecord) {
             final boolean broadcast = checkIfBroadcastMode(scanRecord);
-            System.err.println("onScanResult(" + arg0.getName() + "), hrClient:" + hrClient
+            log("onScanResult(" + arg0.getName() + "), hrClient:" + hrClient
                     + ", broadcast: " + broadcast +
                     ", mIsConnecting: " + mIsConnecting + ", mIsScanning: " + mIsScanning);
 
@@ -339,7 +349,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
                     }
                 });
             } else {
-                System.err.println("checkIfBroadcastMode(" + arg0 + ") => FAIL");
+                log("checkIfBroadcastMode(" + arg0 + ") => FAIL");
             }
         }
 
@@ -349,7 +359,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
                 List list = btGatt.getServices(device);
                 for (Object _s : list) {
                     BluetoothGattService s = (BluetoothGattService) _s;
-                    if (BLEBase.BATTERY_SERVICE.equals(s.getUuid())) {
+                    if (BtHRBase.BATTERY_SERVICE.equals(s.getUuid())) {
                         hasBattery = true;
                         break;
                     }
@@ -410,11 +420,15 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
          * from Samsung HRPService.java
          */
         private void DummyReadForSecLevelCheck(BluetoothDevice device) {
-            if (btGatt == null)
+            if (btGatt == null) {
+                log("DummyReadForSecLevelCheck: btGatt == null");
                 return;
+            }
 
-            if (device == null)
+            if (device == null) {
+                log("DummyReadForSecLevelCheck: device == null");
                 return;
+            }
 
             if (hasBattery && readBatteryLevel(device)) {
                 return;
@@ -442,18 +456,18 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
     private boolean readBatteryLevel(BluetoothDevice device) {
         BluetoothGattService service = btGatt.getService(device, BATTERY_SERVICE);
         if (service == null) {
-            System.err.println("Battery service not found.");
+            log("Battery service not found.");
             return false;
         }
 
         BluetoothGattCharacteristic characteristic = service.getCharacteristic(BATTERY_LEVEL_CHARAC);
         if (characteristic == null) {
-            System.err.println("Battery characteristic not found.");
+            log("Battery characteristic not found.");
             return false;
         }
 
         if (!btGatt.readCharacteristic(characteristic)) {
-            System.err.println("readCharacteristic(" + characteristic.getUuid() + ") failed");
+            log("readCharacteristic(" + characteristic.getUuid() + ") failed");
             return false;
         }
         return true;
@@ -461,15 +475,21 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
     }
 
     private boolean enableNotification(boolean onoff, BluetoothGattCharacteristic charac) {
-        if (btGatt == null)
+        if (btGatt == null) {
+            log("enableNotfication("+onoff+ ", " + charac + "): btGatt == null");
             return false;
+        }
 
-        if (!btGatt.setCharacteristicNotification(charac, onoff))
+        if (!btGatt.setCharacteristicNotification(charac, onoff)) {
+            log("enableNotfication("+onoff+ ", " + charac + "): setCharacteristicNotification => false");
             return false;
+        }
 
         BluetoothGattDescriptor clientConfig = charac.getDescriptor(CCC);
-        if (clientConfig == null)
+        if (clientConfig == null) {
+            log("enableNotfication("+onoff+ ", " + charac + "): clientConfig == null");
             return false;
+        }
 
         if (onoff) {
             clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
@@ -539,7 +559,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
             /**
              * If device doesn't match name, scan for before connecting
              */
-            System.err.println("Scan before connect");
+            log("Scan before connect");
             startScan();
             return;
         }
@@ -560,7 +580,7 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
     }
 
     private void reportConnectFailed(String string) {
-        System.err.println("reportConnectFailed(" + string + ")");
+        log("reportConnectFailed(" + string + ")");
         if (btGatt != null && btDevice != null) {
             btGatt.cancelConnection(btDevice);
         }
@@ -608,10 +628,28 @@ public class SamsungBLEHRProvider extends BLEBase implements HRProvider {
     }
 
     private void reportDisconnectFailed(String string) {
-        System.err.println("disconnect failed: " + string);
+        log("disconnect failed: " + string);
+        reportDisconnected(false);
     }
 
     private void reportDisconnected() {
+        reportDisconnected(true);
+    }
+
+    private void reportDisconnected(final boolean ok) {
+        if (hrClient != null) {
+            if(Looper.myLooper() == Looper.getMainLooper()) {
+                hrClient.onDisconnectResult(ok);
+            } else {
+                hrClientHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (hrClient != null)
+                            hrClient.onDisconnectResult(ok);
+                    }
+                });
+            }
+        }
     }
 
     @Override

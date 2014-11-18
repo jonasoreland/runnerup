@@ -24,6 +24,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.view.KeyEvent;
 
+import org.runnerup.util.Constants;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HeadsetButtonReceiver extends BroadcastReceiver {
 
@@ -34,7 +36,7 @@ public class HeadsetButtonReceiver extends BroadcastReceiver {
                     .getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (KeyEvent.ACTION_DOWN == event.getAction()) {
                 Intent startBroadcastIntent = new Intent();
-                startBroadcastIntent.setAction("org.runnerup.START_STOP");
+                startBroadcastIntent.setAction(Constants.Intents.START_STOP);
                 context.sendBroadcast(startBroadcastIntent);
             }
         }

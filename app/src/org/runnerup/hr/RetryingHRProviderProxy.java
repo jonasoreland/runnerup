@@ -1,0 +1,337 @@
+package org.runnerup.hr;
+
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
+
+/**
+ * Created by jonas on 11/9/14.
+ *
+ * The following class handles transparent retries for flaky bluetooth
+ * The following features are implemented:
+ * - connect()
+ *   if connect fails, it's retried N times
+ *   if connect takes longer than X it's retried
+ *
+ * - connected
+ *   if loosing connection when connected,
+ *   it will auto connect
+ */
+public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient {
+
+    private HRDeviceRef connectRef;
+
+    enum State {
+        OPENING,
+        OPENED,
+        SCANNING,
+        CONNECTING,
+        CONNECTED,
+        DISCONNECTING,
+        CLOSING,
+        CLOSED,
+        ERROR,
+        RECONNECTING
+    };
+
+    private int attempt = 0;
+    private int kMaxConnectRetries = 3;
+    private int kMaxReconnectRetires = 10;
+    private HRProvider provider;
+    private HRClient client = null;
+    private Handler handler = null;
+    private State state = State.CLOSED;
+    private State requestedState = State.CLOSED;
+
+    private int getMaxRetries() {
+        switch(state) {
+            case OPENING:
+            case OPENED:
+            case SCANNING:
+            case CONNECTED:
+            case DISCONNECTING:
+            case CLOSING:
+            case CLOSED:
+            case ERROR:
+                return 0;
+            case CONNECTING:
+                return kMaxConnectRetries;
+            case RECONNECTING:
+                return kMaxReconnectRetires;
+        }
+        return 0;
+    }
+
+    private boolean checkMaxAttempts() {
+        attempt++;
+        if (attempt > getMaxRetries())
+            return false;
+        return true;
+    }
+
+    private int getRetryDelayMillis() {
+        switch(state) {
+            case OPENING:
+            case OPENED:
+            case SCANNING:
+            case CONNECTED:
+            case DISCONNECTING:
+            case CLOSING:
+            case CLOSED:
+            case ERROR:
+                return 0;
+            case CONNECTING:
+                return 750 * (attempt - 1);
+            case RECONNECTING:
+                return 3000 * (attempt < 6 ? attempt : 6);
+        }
+        return 0;
+    }
+
+    private void resetAttempts() {
+        attempt = 0;
+    }
+
+    public RetryingHRProviderProxy(HRProvider src) {
+        this.provider = src;
+    }
+
+    @Override
+    public String getName() {
+        return provider.getName();
+    }
+
+    @Override
+    public String getProviderName() { return provider.getProviderName(); }
+
+    @Override
+    public boolean isEnabled() {
+        return provider.isEnabled();
+    }
+
+    @Override
+    public boolean startEnableIntent(Activity activity, int requestCode) {
+        return provider.startEnableIntent(activity, requestCode);
+    }
+
+    @Override
+    public void open(Handler handler, HRClient hrClient) {
+        this.client = hrClient;
+        this.handler = handler;
+        this.requestedState = State.OPENED;
+        state = State.OPENING;
+        provider.open(handler, this);
+    }
+
+    @Override
+    public void onOpenResult(boolean ok) {
+        log("onOpenResult(" + ok + ")");
+
+        if (requestedState != State.OPENED) {
+            /* ignore onOpenResult in weird state */
+            return;
+        }
+
+        if (ok == true) {
+            state = State.OPENED;
+            client.onOpenResult(ok);
+        } else {
+            state = State.CLOSED;
+            client.onOpenResult(ok);
+        }
+    }
+
+    @Override
+    public void close() {
+        state = State.CLOSED;
+        requestedState = State.CLOSED;
+        if (provider != null) {
+            provider.stopScan();
+            provider.disconnect();
+            provider.close();
+        }
+        client = null;
+    }
+
+    @Override
+    public boolean isBondingDevice() {
+        return provider.isBondingDevice();
+    }
+
+    @Override
+    public boolean isScanning() { return provider.isScanning(); }
+
+    @Override
+    public boolean isConnected() { return provider.isConnected(); }
+
+    @Override
+    public boolean isConnecting() {
+        return (requestedState == State.CONNECTING);
+    }
+
+    @Override
+    public void startScan() {
+        this.state = State.SCANNING;
+        this.requestedState = State.SCANNING;
+        provider.startScan();
+    }
+
+    @Override
+    public void onScanResult(HRDeviceRef device) {
+        client.onScanResult(device);
+    }
+
+    @Override
+    public void stopScan() {
+        this.state = State.OPENED;
+        this.requestedState = State.OPENED;
+        provider.stopScan();
+    }
+
+    @Override
+    public void connect(HRDeviceRef ref) {
+        log("connect("+ref+")");
+        resetAttempts();
+        this.state = State.CONNECTING;
+        this.requestedState = State.CONNECTED;
+        this.connectRef = ref;
+        provider.connect(ref);
+    }
+
+    @Override
+    public void onConnectResult(boolean connectOK) {
+        log("onConnectResult("+connectOK+")");
+        switch (requestedState) {
+            case OPENING:
+            case OPENED:
+            case SCANNING:
+            case CONNECTING:
+            case CLOSING:
+            case CLOSED:
+            case ERROR:
+                /* weird => ignore */
+                return;
+            case CONNECTED:
+                break;
+            case DISCONNECTING:
+                /* ignore */
+                return;
+        }
+
+        if (connectOK) {
+            boolean reconnect = state == State.RECONNECTING;
+            state = State.CONNECTED;
+            requestedState = State.CONNECTED;
+            if (!reconnect) {
+                log("client.onConnectResult(true)");
+                client.onConnectResult(true);
+            }
+            return;
+        } else {
+            if (!checkMaxAttempts()) {
+                state = State.OPENED;
+                requestedState = State.OPENED;
+                log("client.onConnectResult(false)");
+                client.onConnectResult(false);
+                return;
+            }
+
+            int delayMillis = getRetryDelayMillis();
+            log("retry in " + delayMillis + "ms");
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    log("retry connect");
+                    provider.connect(connectRef);
+                }
+            }, delayMillis);
+
+            return;
+        }
+    }
+
+    @Override
+    public void disconnect() {
+        resetAttempts();
+        this.state = State.DISCONNECTING;
+        this.requestedState = State.OPENED;
+        provider.disconnect();
+    }
+
+    @Override
+    public int getHRValue() {
+        return provider.getHRValue();
+    }
+
+    @Override
+    public long getHRValueTimestamp() {
+        return provider.getHRValueTimestamp();
+    }
+
+    @Override
+    public int getBatteryLevel() {
+        return provider.getBatteryLevel();
+    }
+
+    /*** HRClient interface */
+
+    @Override
+    public void onDisconnectResult(boolean disconnectOK) {
+        log("onDisonncetResult("+disconnectOK+")");
+        if (disconnectOK && state == State.CONNECTED && requestedState == State.CONNECTED) {
+            /* this is unwanted disconnect, silently disconnect/connect */
+            state = State.DISCONNECTING;
+            provider.disconnect();
+            return;
+        }
+
+        if (state == State.DISCONNECTING && requestedState == State.CONNECTED) {
+            /* this is disconnected after unwanted disconnect, silently connect */
+            state = State.RECONNECTING;
+            provider.connect(connectRef);
+            return;
+        }
+
+        state = State.OPENED;
+        requestedState = State.OPENED;
+        client.onDisconnectResult(disconnectOK);
+    }
+
+    @Override
+    public void onCloseResult(boolean closeOK) {
+        state = State.CLOSED;
+        requestedState = State.CLOSED;
+        client.onConnectResult(closeOK);
+    }
+
+    @Override
+    public void log(HRProvider src, String msg) {
+        log(msg);
+    }
+
+    public void log(final String msg) {
+        StringBuilder str = new StringBuilder();
+        str.append("[ RetryingHRProviderProxy: ").
+                append(provider.getProviderName()).
+                append(", attempt: ").append(Integer.toString(attempt)).
+                append(" ]");
+
+        str.append(", state: " + state + ", request: " + requestedState +
+                ", " + msg);
+        String res = str.toString();
+        System.err.println(res);
+        if (client != null) {
+            if(Looper.myLooper() == Looper.getMainLooper()) {
+                client.log(this, msg);
+            } else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (client != null)
+                            client.log(RetryingHRProviderProxy.this, msg);
+                    }
+                });
+            }
+        }
+    }
+}
