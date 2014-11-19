@@ -159,7 +159,8 @@ public interface Constants {
     }
 
     public interface Intents {
-        String START_STOP = "org.runnerup.START_STOP";
-        String NEW_LAP = "org.runnerup.NEW_LAP";
+        final String START_STOP = "org.runnerup.START_STOP";
+        final String NEW_LAP = "org.runnerup.NEW_LAP";
+        final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
     }
 }

@@ -483,6 +483,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 Intent intent = new Intent(StartActivity.this,
                         RunActivity.class);
                 StartActivity.this.startActivityForResult(intent, 112);
+                notificationStateManager.cancelNotification(); // will be added by RunActivity
                 return;
             }
             updateView();

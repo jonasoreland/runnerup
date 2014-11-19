@@ -45,7 +45,6 @@ import org.runnerup.export.LiveLogger;
 import org.runnerup.export.UploadManager;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
-import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.NotificationState;
 import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.notification.OngoingState;
@@ -126,16 +125,15 @@ public class GpsTracker extends android.app.Service implements
 
     private NotificationStateManager notificationStateManager;
 
-    private NotificationState gpsTrackerBoundState;
     private NotificationState activityOngoingState;
 
     @Override
     public void onCreate() {
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getWritableDatabase();
-        notificationStateManager = new NotificationStateManager(new ForegroundNotificationDisplayStrategy(this));
+        notificationStateManager = new NotificationStateManager(
+                new ForegroundNotificationDisplayStrategy(this));
         activityOngoingState = new OngoingState(new Formatter(this), this, this);
-        gpsTrackerBoundState = new GpsBoundState(this);
 
         if (getAllowStartStopFromHeadsetKey()) {
             registerHeadsetListener();
@@ -327,10 +325,6 @@ public class GpsTracker extends android.app.Service implements
             case STARTED:
                 break;
         }
-    }
-
-    public void setGpsTrackerBound() {
-        notificationStateManager.displayNotificationState(gpsTrackerBoundState);
     }
 
     public void newLap(ContentValues tmp) {
