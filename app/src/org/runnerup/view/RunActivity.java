@@ -164,7 +164,6 @@ public class RunActivity extends Activity implements TickListener {
     void onGpsTrackerBound() {
         workout = mGpsTracker.getWorkoutInfo();
         mGpsTracker.createActivity(workout.getSport());
-        mGpsTracker.setGpsTrackerBound();
         mGpsTracker.start();
 
         SharedPreferences prefs = workout.getAudioCues();
@@ -256,6 +255,7 @@ public class RunActivity extends Activity implements TickListener {
             if (timer != null) {
                 workout.onStop(workout);
                 stopTimer(); // set timer=null;
+                mGpsTracker.stopForeground(true); // remove notification
                 Intent intent = new Intent(RunActivity.this, DetailActivity.class);
                 /**
                  * The same activity is used to show details and to save

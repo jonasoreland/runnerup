@@ -11,7 +11,7 @@ public class NotificationStateManager {
     }
 
     public void displayNotificationState(NotificationState state) {
-        if(state == null) throw new IllegalArgumentException("state is null");
+        if (state == null) throw new IllegalArgumentException("state is null");
 
         Notification notification = state.createNotification();
         strategy.notify(NOTIFICATION_ID, notification);

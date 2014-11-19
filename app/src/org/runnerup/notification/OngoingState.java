@@ -8,6 +8,7 @@ import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
 import org.runnerup.gpstracker.WorkoutProvider;
+import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
 import org.runnerup.workout.Scope;
@@ -29,7 +30,8 @@ public class OngoingState implements NotificationState {
     public Notification createNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Intent i = new Intent(context, RunActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        i.putExtra(Constants.Intents.FROM_NOTIFICATION, true);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
         WorkoutInfo workout = workoutProvider.getWorkoutInfo();
