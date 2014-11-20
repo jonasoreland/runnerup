@@ -46,7 +46,7 @@
   <string name="stop">Durdur</string>
   <string name="workout">Çalışma</string>
   <string name="target">Hedef</string>
-  <string name="gps_satellites">GPS uyduları: </string>
+  <string name="gps_satellites">GPS uyduları</string>
   <string name="cancel">İptal</string>
   <string name="select_all">Hepsini seç</string>
   <string name="clear_all">Hepsini temizle</string>
