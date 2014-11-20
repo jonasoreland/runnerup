@@ -96,7 +96,7 @@
   <string name="rest_type">"Rest type"</string>
   <string name="repetitions">"Repetitions"</string>
   <string name="date">"Date"</string>
-  <string name="gps_satellites">"GPS satellites: "</string>
+  <string name="gps_satellites">"GPS satellites"</string>
   <string name="start_gps">"Start GPS"</string>
   <string name="duration">"Duration"</string>
   <string name="duration_type">"Duration type"</string>
@@ -261,4 +261,9 @@
   <string name="heartrate_zones_distribution">Heartrate zones distribution</string>
   <string name="placeholder_battery_level">Battery: unknown</string>
   <string name="battery_level">Battery level</string>
+    <string name="activity_ready">Activity ready</string>
+    <string name="ready_to_start_running">Ready to start running!</string>
+    <string name="searching_for_gps">Searching for GPS</string>
+    <string name="activity_ongoing">Activity ongoing</string>
+    <string name="runnerup_activity_started">RunnerUp activity started</string>
 </resources>
