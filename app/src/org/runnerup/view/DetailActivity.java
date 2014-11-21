@@ -329,7 +329,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             /**
              * Laps
              */
-            String[] from = new String[]{
+            String[] from = new String[] {
                     "_id", DB.LAP.LAP, DB.LAP.INTENSITY,
                     DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.PLANNED_TIME,
                     DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE, DB.LAP.AVG_HR
@@ -370,7 +370,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             + (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
                             + (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
                             + ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
-                            + mID + " )")
+                                    + mID + " )")
                             + (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
                             + ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null"));
 
@@ -391,7 +391,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
                             && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS),
-                            DB.ACCOUNT.FLAG_UPLOAD)) {
+                                    DB.ACCOUNT.FLAG_UPLOAD)) {
                         pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     }
                 } while (c.moveToNext());
@@ -588,7 +588,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
             String name = tmp.getAsString("name");
             cb.setTag(name);
-            // only do this if not original
             if (alreadyUploadedUploaders.contains(name)) {
                 cb.setChecked(true);
                 cb.setText(getString(R.string.uploaded));
