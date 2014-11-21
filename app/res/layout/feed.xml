@@ -32,8 +32,7 @@
             android:id="@+id/feed_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="@string/placeholder_txt" />
+            android:layout_marginRight="10dp" />
 
         <ProgressBar
             android:id="@+id/feed_progress_bar"

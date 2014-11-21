@@ -31,7 +31,6 @@
             android:id="@+id/account_list_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/fun_beat"
             android:layout_weight="3" />
 
         <ImageView

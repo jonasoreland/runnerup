@@ -134,7 +134,6 @@
 	        android:inputType="text"
 	        android:key="@string/pref_runneruplive_serveradress"
 	        android:persistent="true"
-	        android:summary="@string/asdf"
 	        android:title="@string/runner_up_live_address"
 	        android:enabled="true" />
 

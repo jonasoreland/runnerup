@@ -55,8 +55,7 @@
                 android:id="@+id/hr_device"
                 style="@style/RunInfo"
                 android:layout_marginLeft="5dp"
-                android:gravity="left"
-                android:text="@string/polar_h7" />
+                android:gravity="left" />
 
             <TextView
                 android:id="@+id/hr_value"
@@ -97,7 +96,6 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="@string/placeholder_txt"
             android:scrollbars = "vertical" />
     </LinearLayout>
 

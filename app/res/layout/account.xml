@@ -35,8 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="200dp"
-            android:text="@string/fun_beat" />
+            android:layout_marginLeft="200dp" />
 
         <ImageView
             android:id="@+id/account_list_icon"

@@ -45,16 +45,7 @@
 
 
   <!-- weird stuff: should it be placeholders or even removed? -->
-  <string name="polar_h7">"Polar H7"</string>
-  <string name="troskel">"Tröskel"</string>
-  <string name="placeholder_time">"3 min"</string>
-  <string name="step_goal_value_txt">"4:00 – 4:15 min/km"</string>
-  <string name="upload_list_start_time_txt">"2013–08–12"</string>
-  <string name="placeholder_distance">"6000 m"</string>
-  <string name="zonetext_txt">"Zone 1 0–59%"</string>
-  <string name="id">"id"</string>
   <string name="ok_rats">"ok, rats"</string>
-  <string name="asdf">"asdf"</string>
 
   <!-- other -->
   <string name="google_play_services_legal_notices">"Google Play Services Legal Notices"</string>

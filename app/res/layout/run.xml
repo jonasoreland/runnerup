@@ -78,23 +78,19 @@
 
                 <TextView
                     android:id="@+id/activity_time"
-                    style="@style/RunInfo"
-                    android:text="@string/placeholder_time_txt" />
+                    style="@style/RunInfo" />
 
                 <TextView
                     android:id="@+id/activity_distance"
-                    style="@style/RunInfo"
-                    android:text="@string/placeholder_distance_txt" />
+                    style="@style/RunInfo" />
 
                 <TextView
                     android:id="@+id/activity_pace"
-                    style="@style/RunInfo"
-                    android:text="@string/placeholder_pace_txt" />
+                    style="@style/RunInfo" />
                 <TextView
                     android:id="@+id/activity_hr"
                     style="@style/RunInfo"
-                    android:layout_marginRight="3dp"
-                    android:text="@string/activity_hr_txt" />
+                    android:layout_marginRight="3dp" />
             </TableRow>
         </LinearLayout>
 
@@ -122,23 +118,19 @@
 
                 <TextView
                     android:id="@+id/interval_time"
-                    style="@style/RunInfo"
-                    android:text="@string/interval_time_txt" />
+                    style="@style/RunInfo" />
 
                 <TextView
                     android:id="@+id/intervall_distance"
-                    style="@style/RunInfo"
-                    android:text="@string/intervall_distance_txt" />
+                    style="@style/RunInfo" />
 
                 <TextView
                     android:id="@+id/interval_pace"
-                    style="@style/RunInfo"
-                    android:text="@string/interval_pace_txt" />
+                    style="@style/RunInfo" />
                 <TextView
                     android:id="@+id/interval_hr"
                     style="@style/RunInfo"
-                    android:layout_marginRight="3dp"
-                    android:text="@string/interval_hr_txt" />
+                    android:layout_marginRight="3dp" />
             </TableRow>
         </LinearLayout>
 
@@ -165,23 +157,19 @@
 
                 <TextView
                     android:id="@+id/lap_time"
-                    style="@style/RunInfo"
-                    android:text="@string/lap_time_txt" />
+                    style="@style/RunInfo" />
 
                 <TextView
                     android:id="@+id/lap_distance"
-                    style="@style/RunInfo"
-                    android:text="@string/lap_distance_txt" />
+                    style="@style/RunInfo" />
 
                 <TextView
                     android:id="@+id/lap_pace"
-                    style="@style/RunInfo"
-                    android:text="@string/lap_pace_txt" />
+                    style="@style/RunInfo" />
                 <TextView
                     android:id="@+id/lap_hr"
                     style="@style/RunInfo"
-                    android:layout_marginRight="3dp"
-                    android:text="@string/lap_hr_txt" />
+                    android:layout_marginRight="3dp" />
             </TableRow>
         </LinearLayout>
     </TableLayout>

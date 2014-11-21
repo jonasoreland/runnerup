@@ -46,16 +46,14 @@
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
-	        android:gravity="left"
-	        android:text="@string/placeholder_distance" />
+	        android:gravity="left" />
 
 	    <TextView
 	        android:id="@+id/step_pace"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
     	    android:layout_width="0dp"
-    	    android:gravity="left"
-	        android:text="@string/workout_pace_txt" />
+    	    android:gravity="left" />
 
 	</LinearLayout>
 </LinearLayout>

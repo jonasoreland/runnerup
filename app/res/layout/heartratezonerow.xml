@@ -23,14 +23,12 @@
     <TextView
         android:id="@+id/zonetext"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/zonetext_txt" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/zonefiller1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/zonefiller1_txt"
         android:visibility="invisible" />
 
     <EditText
@@ -44,7 +42,6 @@
         android:id="@+id/zonefiller2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/zonefiller1_txt"
         android:visibility="invisible" />
 
     <EditText
@@ -58,7 +55,6 @@
         android:id="@+id/zonefiller3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/zonefiller1_txt"
         android:visibility="invisible" />
 
 </TableRow>

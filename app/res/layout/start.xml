@@ -71,22 +71,19 @@
         android:id="@+id/gps_info1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/gps_info_text"
-        android:text="@string/gps_info1_txt" />
+        android:layout_toRightOf="@+id/gps_info_text" />
 
     <TextView
         android:id="@+id/gps_info2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/gps_info1"
-        android:text="@string/gps_info1_txt" />
+        android:layout_toRightOf="@+id/gps_info1" />
     <TextView
         android:id="@+id/hr_info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/gps_info2"
-        android:gravity="center"
-        android:text="" />
+        android:gravity="center" />
     </RelativeLayout>
     
     <LinearLayout
