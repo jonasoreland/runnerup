@@ -81,7 +81,6 @@
             android:id="@+id/history_list_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/id"
             android:textSize="20sp"
             android:visibility="gone" />
     </LinearLayout>

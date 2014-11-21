@@ -58,7 +58,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="50"
             android:gravity="center_vertical|right"
-            android:text="@string/placeholder_time"
             android:textColor="@android:color/black" />
     </TableRow>
 
