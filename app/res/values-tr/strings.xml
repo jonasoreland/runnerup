@@ -28,9 +28,6 @@
   <string name="metrics_elapsed_min">dk</string>
   <!--format hint stuff-->
   <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="step_goal_value_txt">4:00 – 4:15 dk/km</string>
-  <string name="upload_list_start_time_txt">2013–08–12</string>
-  <string name="placeholder_distance">6000 m</string>
   <!--other-->
   <string name="google_play_services_legal_notices">Google Play Servisi Yasal Notlar</string>
   <string name="type">Tip</string>

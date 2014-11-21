@@ -95,7 +95,6 @@
             android:layout_width="0dp"
             android:layout_weight="50"
             android:gravity="center_vertical|right"
-            android:text="@string/step_goal_value_txt"
             android:textColor="@android:color/black" />
     </TableRow>
 </TableLayout>
