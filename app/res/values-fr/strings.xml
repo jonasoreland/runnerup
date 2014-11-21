@@ -90,7 +90,7 @@
   <string name="rest_type">type de repos</string>
   <string name="repetitions">Répétitions</string>
   <string name="date">Date</string>
-  <string name="gps_satellites">Satellites GPS :</string>
+  <string name="gps_satellites">Satellites GPS</string>
   <string name="start_gps">Démarrer GPS</string>
   <string name="duration">Durée</string>
   <string name="duration_type">Type de durée</string>
