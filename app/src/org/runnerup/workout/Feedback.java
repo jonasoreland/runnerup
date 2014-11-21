@@ -17,9 +17,9 @@
 
 package org.runnerup.workout;
 
-import java.util.HashMap;
-
 import android.content.Context;
+
+import java.util.HashMap;
 
 public abstract class Feedback {
 

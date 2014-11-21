@@ -17,15 +17,8 @@
 
 package org.runnerup.view;
 
-import java.io.IOException;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.util.FileUtil;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -38,6 +31,12 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.util.FileUtil;
+
+import java.io.IOException;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class SettingsActivity extends PreferenceActivity {
@@ -82,7 +81,7 @@ public class SettingsActivity extends PreferenceActivity {
         return from;
     }
 
-    OnPreferenceClickListener onExportClick = new OnPreferenceClickListener() {
+    final OnPreferenceClickListener onExportClick = new OnPreferenceClickListener() {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
@@ -111,7 +110,7 @@ public class SettingsActivity extends PreferenceActivity {
         }
     };
 
-    OnPreferenceClickListener onImportClick = new OnPreferenceClickListener() {
+    final OnPreferenceClickListener onImportClick = new OnPreferenceClickListener() {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
@@ -139,7 +138,7 @@ public class SettingsActivity extends PreferenceActivity {
             return false;
         }
     };
-    OnPreferenceClickListener onPruneClick = new OnPreferenceClickListener() {
+    final OnPreferenceClickListener onPruneClick = new OnPreferenceClickListener() {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {

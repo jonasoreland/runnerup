@@ -17,6 +17,17 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.app.IntentService;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.location.Location;
+import android.os.Build;
+import android.preference.PreferenceManager;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -30,30 +41,19 @@ import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Scope;
 
-import android.annotation.TargetApi;
-import android.app.IntentService;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.location.Location;
-import android.os.Build;
-import android.preference.PreferenceManager;
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
 
     public static final String NAME = "RunnerUp LIVE";
-    public static String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+    public static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
     private final Context context;
-    private double mMinLiveLogDelayMillis = 5000;
+    private final double mMinLiveLogDelayMillis = 5000;
 
     long id = 0;
     private String username = null;
     private String password = null;
     private String postUrl = POST_URL;
-    private Formatter formatter;
+    private final Formatter formatter;
     private long mTimeLastLog;
 
     RunnerUpLive(Context context) {

@@ -17,16 +17,6 @@
 
 package org.runnerup.view;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.FileUtil;
-import org.runnerup.util.Formatter;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Service;
@@ -53,6 +43,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.TabHost;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.FileUtil;
+import org.runnerup.util.Formatter;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MainLayout extends TabActivity {
@@ -257,7 +257,7 @@ public class MainLayout extends TabActivity {
         return true;
     }
 
-    public OnClickListener onRateClick = new OnClickListener() {
+    public final OnClickListener onRateClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
             try {

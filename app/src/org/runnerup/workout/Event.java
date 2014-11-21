@@ -31,7 +31,7 @@ public enum Event {
     COMPLETED(5, R.string.cue_completed);
 
     int value = 0;
-    int cueId;
+    final int cueId;
 
     private Event(int val, int cueId) {
         this.value = val;

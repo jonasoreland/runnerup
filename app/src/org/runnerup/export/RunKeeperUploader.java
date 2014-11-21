@@ -17,6 +17,24 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.RunKeeper;
+import org.runnerup.export.oauth2client.OAuth2Activity;
+import org.runnerup.export.oauth2client.OAuth2Server;
+import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.workout.Sport;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -32,24 +50,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.RunKeeper;
-import org.runnerup.export.oauth2client.OAuth2Activity;
-import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Constants.DB.FEED;
-import org.runnerup.workout.Sport;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Server {
@@ -80,8 +80,8 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
     private String feed_password = null;
     private String feed_access_token = null;
 
-    static Map<Integer, Sport> runkeeper2sportMap = new HashMap<Integer, Sport>();
-    static Map<Sport, Integer> sport2runkeeperMap = new HashMap<Sport, Integer>();
+    static final Map<Integer, Sport> runkeeper2sportMap = new HashMap<Integer, Sport>();
+    static final Map<Sport, Integer> sport2runkeeperMap = new HashMap<Sport, Integer>();
     static {
         runkeeper2sportMap.put(0, Sport.RUNNING);
         runkeeper2sportMap.put(1, Sport.BIKING);

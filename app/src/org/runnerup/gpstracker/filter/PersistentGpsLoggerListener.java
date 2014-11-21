@@ -17,8 +17,6 @@
 
 package org.runnerup.gpstracker.filter;
 
-import org.runnerup.gpstracker.LocationListenerBase;
-
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,10 +24,12 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
+import org.runnerup.gpstracker.LocationListenerBase;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class PersistentGpsLoggerListener extends LocationListenerBase implements
         org.runnerup.util.Constants {
-    private java.lang.Object mLock;
+    private final java.lang.Object mLock;
     private SQLiteDatabase mDB;
     private java.lang.String mTable;
     private ContentValues mKey;

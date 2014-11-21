@@ -17,10 +17,6 @@
 
 package org.runnerup.workout.feedback;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
@@ -28,12 +24,16 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RUTextToSpeech {
 
     private static final String UTTERANCE_ID = "RUTextTospeech";
     boolean mute = false;
-    boolean trace = true;
+    final boolean trace = true;
     final TextToSpeech textToSpeech;
     final AudioManager audioManager;
     long id = (long) (System.nanoTime() + (1000 * Math.random()));
@@ -48,8 +48,8 @@ public class RUTextToSpeech {
         }
     }
 
-    HashSet<String> cueSet = new HashSet<String>();
-    ArrayList<Entry> cueList = new ArrayList<Entry>();
+    final HashSet<String> cueSet = new HashSet<String>();
+    final ArrayList<Entry> cueList = new ArrayList<Entry>();
 
     public RUTextToSpeech(TextToSpeech tts, String mute, Context context) {
         this.textToSpeech = tts;
@@ -130,7 +130,7 @@ public class RUTextToSpeech {
         return TextToSpeech.ERROR;
     }
 
-    HashSet<String> outstanding = new HashSet<String>();
+    final HashSet<String> outstanding = new HashSet<String>();
 
     void utteranceCompleted(String id) {
         outstanding.remove(id);

@@ -17,12 +17,12 @@
 
 package org.runnerup.workout.feedback;
 
-import org.runnerup.workout.Feedback;
-import org.runnerup.workout.Workout;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+
+import org.runnerup.workout.Feedback;
+import org.runnerup.workout.Workout;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class VibrationFeedback extends Feedback {

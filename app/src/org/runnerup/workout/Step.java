@@ -17,15 +17,15 @@
 
 package org.runnerup.workout;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.runnerup.util.Constants.DB;
-
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.os.Build;
+
+import org.runnerup.util.Constants.DB;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Step implements TickComponent {
@@ -57,7 +57,7 @@ public class Step implements TickComponent {
     /**
      * Triggers
      */
-    ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+    final ArrayList<Trigger> triggers = new ArrayList<Trigger>();
 
     /**
      * @return the name

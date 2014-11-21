@@ -64,7 +64,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
     static final String NAME = "SamsungBLE";
     static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
 
-    private Context context;
+    private final Context context;
     private BluetoothAdapter btAdapter = null;
     private BluetoothGatt btGatt = null;
     private BluetoothDevice btDevice = null;
@@ -136,7 +136,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         hrClientHandler = null;
     }
 
-    private ServiceListener profileServiceListener = new ServiceListener() {
+    private final ServiceListener profileServiceListener = new ServiceListener() {
         @Override
         public void onServiceConnected(int profile, BluetoothProfile proxy) {
             if (profile == BluetoothGattAdapter.GATT) {
@@ -164,7 +164,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         }
     };
 
-    private BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
+    private final BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
 
         @Override
         public void onAppRegistered(final int arg0) {

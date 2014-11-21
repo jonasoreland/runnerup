@@ -17,29 +17,6 @@
 
 package org.runnerup.view;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.text.DateFormat;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.WeakHashMap;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.UploadManager.Callback;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.feed.FeedList;
-import org.runnerup.util.Bitfield;
-import org.runnerup.util.Constants;
-import org.runnerup.util.Constants.DB.FEED;
-import org.runnerup.util.Formatter;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -62,6 +39,29 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.UploadManager.Callback;
+import org.runnerup.export.Uploader;
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.feed.FeedList;
+import org.runnerup.util.Bitfield;
+import org.runnerup.util.Constants;
+import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.util.Formatter;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.text.DateFormat;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.WeakHashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedActivity extends Activity implements Constants {
@@ -171,7 +171,7 @@ public class FeedActivity extends Activity implements Constants {
         }
     }
 
-    Callback syncDone = new Callback() {
+    final Callback syncDone = new Callback() {
         @Override
         public void run(String uploader, Status status) {
             refreshButton.setEnabled(true);
@@ -199,10 +199,10 @@ public class FeedActivity extends Activity implements Constants {
 
     class FeedListAdapter extends BaseAdapter implements Observer {
 
-        Context context;
+        final Context context;
         List<ContentValues> feed;
-        FeedList feedList;
-        LayoutInflater layoutInflator;
+        final FeedList feedList;
+        final LayoutInflater layoutInflator;
 
         FeedListAdapter(Context context, FeedList feedList) {
             this.context = context;
@@ -378,7 +378,7 @@ public class FeedActivity extends Activity implements Constants {
         }
     }
 
-    Map<String, Drawable> imageCache = Collections
+    final Map<String, Drawable> imageCache = Collections
             .synchronizedMap(new WeakHashMap<String, Drawable>());
 
     public Drawable loadImage(final ImageView iv, final String url) {

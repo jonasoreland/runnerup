@@ -32,12 +32,12 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
         CLOSED,
         ERROR,
         RECONNECTING
-    };
+    }
 
     private int attempt = 0;
-    private int kMaxConnectRetries = 3;
-    private int kMaxReconnectRetires = 10;
-    private HRProvider provider;
+    private final int kMaxConnectRetries = 3;
+    private final int kMaxReconnectRetires = 10;
+    private final HRProvider provider;
     private HRClient client = null;
     private Handler handler = null;
     private State state = State.CLOSED;

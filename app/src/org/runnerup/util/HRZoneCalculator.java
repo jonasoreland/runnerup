@@ -17,8 +17,6 @@
 
 package org.runnerup.util;
 
-import org.runnerup.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +24,8 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Pair;
+
+import org.runnerup.R;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZoneCalculator {

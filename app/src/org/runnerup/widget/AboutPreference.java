@@ -17,8 +17,6 @@
 
 package org.runnerup.widget;
 
-import org.runnerup.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -29,6 +27,8 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import org.runnerup.R;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AboutPreference extends DialogPreference {

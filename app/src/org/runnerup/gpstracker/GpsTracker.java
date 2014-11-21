@@ -44,14 +44,14 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.LiveLogger;
 import org.runnerup.export.UploadManager;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
-import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
-import org.runnerup.notification.NotificationState;
-import org.runnerup.notification.NotificationStateManager;
-import org.runnerup.notification.OngoingState;
 import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
+import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
+import org.runnerup.notification.NotificationState;
+import org.runnerup.notification.NotificationStateManager;
+import org.runnerup.notification.OngoingState;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.HeadsetButtonReceiver;
@@ -74,7 +74,7 @@ public class GpsTracker extends android.app.Service implements
         LocationListener, Constants, WorkoutProvider {
     public static final int MAX_HR_AGE = 3000; // 3s
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     /**
      * Work-around for http://code.google.com/p/android/issues/detail?id=23937
@@ -93,7 +93,7 @@ public class GpsTracker extends android.app.Service implements
     double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
     long mMaxHR = 0;
 
-    boolean mWithoutGps = false;
+    final boolean mWithoutGps = false;
 
     enum State {
         INIT, LOGGING, STARTED, PAUSED,
@@ -117,7 +117,7 @@ public class GpsTracker extends android.app.Service implements
     SQLiteDatabase mDB = null;
     PersistentGpsLoggerListener mDBWriter = null;
     PowerManager.WakeLock mWakeLock = null;
-    List<LiveLogger> liveLoggers = new ArrayList<LiveLogger>();
+    final List<LiveLogger> liveLoggers = new ArrayList<LiveLogger>();
 
     private Workout workout = null;
 
@@ -231,7 +231,7 @@ public class GpsTracker extends android.app.Service implements
         }
     }
 
-    Runnable gpsLessLocationProvider = new Runnable() {
+    final Runnable gpsLessLocationProvider = new Runnable() {
 
         int frequency_ms = 0;
         Location location = null;
@@ -739,7 +739,7 @@ public class GpsTracker extends android.app.Service implements
         mAudioManager.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
     }
 
-    private BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (workout == null) return;

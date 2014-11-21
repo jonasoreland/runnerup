@@ -26,7 +26,8 @@ public enum Sport {
     BIKING(DB.ACTIVITY.SPORT_BIKING, R.string.Biking),
     OTHER(DB.ACTIVITY.SPORT_OTHER, R.string.Other);
 
-    int dbValue, textId;
+    final int dbValue;
+    final int textId;
 
     Sport(int dbValue, int txtValue) {
         this.dbValue = dbValue;

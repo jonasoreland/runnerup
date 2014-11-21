@@ -27,7 +27,7 @@ public class TargetTrigger extends Trigger {
     boolean paused = false;
 
     int graceCount = 30; //
-    int initialGrace = 20;
+    final int initialGrace = 20;
     int minGraceCount = 30; //
 
     Scope scope = Scope.STEP;

@@ -17,10 +17,12 @@
 
 package org.runnerup.export.format;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.os.Build;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,12 +30,10 @@ import org.json.JSONObject;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.os.Build;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author jonas.oreland@gmail.com
@@ -45,7 +45,7 @@ public class FacebookCourse {
     long mID = 0;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
-    SimpleDateFormat dateFormat = new SimpleDateFormat(
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
     public FacebookCourse(Context ctx, SQLiteDatabase db) {

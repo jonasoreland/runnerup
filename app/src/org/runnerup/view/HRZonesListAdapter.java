@@ -17,8 +17,6 @@
 
 package org.runnerup.view;
 
-import org.runnerup.util.HRZones;
-
 import android.content.Context;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -26,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import org.runnerup.util.HRZones;
 
 public class HRZonesListAdapter extends BaseAdapter {
 

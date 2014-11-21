@@ -17,6 +17,11 @@
 
 package org.runnerup.workout.feedback;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.speech.tts.TextToSpeech;
+
 import org.runnerup.R;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -25,11 +30,6 @@ import org.runnerup.workout.Range;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.TargetTrigger;
 import org.runnerup.workout.Workout;
-
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.os.Build;
-import android.speech.tts.TextToSpeech;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CoachFeedback extends AudioFeedback {

@@ -17,14 +17,6 @@
 
 package org.runnerup.view;
 
-import java.util.Vector;
-
-import org.runnerup.R;
-import org.runnerup.util.Constants;
-import org.runnerup.util.HRZoneCalculator;
-import org.runnerup.util.HRZones;
-import org.runnerup.widget.TitleSpinner;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,6 +36,14 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.runnerup.R;
+import org.runnerup.util.Constants;
+import org.runnerup.util.HRZoneCalculator;
+import org.runnerup.util.HRZones;
+import org.runnerup.widget.TitleSpinner;
+
+import java.util.Vector;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZonesActivity extends Activity implements Constants {
 
@@ -53,7 +53,7 @@ public class HRZonesActivity extends Activity implements Constants {
     HRZones hrZones;
     HRZoneCalculator hrZoneCalculator;
 
-    Vector<EditText> zones = new Vector<EditText>();
+    final Vector<EditText> zones = new Vector<EditText>();
     boolean skipSave = false;
 
     View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {

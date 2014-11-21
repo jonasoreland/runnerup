@@ -17,10 +17,6 @@
 
 package org.runnerup.view;
 
-import java.util.ArrayList;
-
-import org.runnerup.util.Constants.DB;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
@@ -28,6 +24,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import org.runnerup.util.Constants.DB;
+
+import java.util.ArrayList;
 
 class AudioSchemeListAdapter extends BaseAdapter {
 
@@ -37,7 +37,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
     LayoutInflater inflater = null;
     SQLiteDatabase mDB = null;
     boolean createNewItem = true;
-    ArrayList<String> audioSchemes = new ArrayList<String>();
+    final ArrayList<String> audioSchemes = new ArrayList<String>();
 
     public AudioSchemeListAdapter(SQLiteDatabase db, LayoutInflater inflater, boolean createNew) {
         super();

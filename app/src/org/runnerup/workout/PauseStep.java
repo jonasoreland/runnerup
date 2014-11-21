@@ -17,10 +17,10 @@
 
 package org.runnerup.workout;
 
-import java.util.HashMap;
-
 import android.annotation.TargetApi;
 import android.os.Build;
+
+import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class PauseStep extends Step {

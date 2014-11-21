@@ -17,17 +17,6 @@
 
 package org.runnerup.export.format;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import org.runnerup.util.Constants.DB;
-import org.runnerup.workout.Sport;
-import org.xmlpull.v1.XmlSerializer;
-
 import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -35,6 +24,17 @@ import android.location.Location;
 import android.os.Build;
 import android.util.Pair;
 import android.util.Xml;
+
+import org.runnerup.util.Constants.DB;
+import org.runnerup.workout.Sport;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 /**
  * TCX - export an activity in TCX format
  * 

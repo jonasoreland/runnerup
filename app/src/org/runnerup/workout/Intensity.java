@@ -52,9 +52,9 @@ public enum Intensity {
      */
    RECOVERY(INTENSITY.RECOVERY, R.string.recovery) ;
 
-    int value;
-    int textId;
-    int cueId;
+    final int value;
+    final int textId;
+    final int cueId;
 
     Intensity(int val, int textId) {
         this.value = val;

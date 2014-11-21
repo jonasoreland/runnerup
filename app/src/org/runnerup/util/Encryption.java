@@ -17,6 +17,10 @@
 
 package org.runnerup.util;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+import android.util.Base64;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -34,10 +38,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import android.annotation.TargetApi;
-import android.os.Build;
-import android.util.Base64;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Encryption {

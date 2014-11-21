@@ -17,9 +17,13 @@
 
 package org.runnerup.workout;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.os.Build;
+import android.text.format.DateUtils;
+import android.util.Pair;
 
 import org.runnerup.R;
 import org.runnerup.util.Constants.DB;
@@ -33,13 +37,9 @@ import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CoachFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.os.Build;
-import android.text.format.DateUtils;
-import android.util.Pair;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutBuilder {

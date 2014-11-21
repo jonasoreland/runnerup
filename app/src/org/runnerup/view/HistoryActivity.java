@@ -17,13 +17,6 @@
 
 package org.runnerup.view;
 
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.util.Constants;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.SimpleCursorLoader;
-import org.runnerup.workout.Sport;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -42,6 +35,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.util.Constants;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.SimpleCursorLoader;
+import org.runnerup.workout.Sport;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
@@ -122,7 +122,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     }
 
     class HistoryListAdapter extends CursorAdapter {
-        LayoutInflater inflater;
+        final LayoutInflater inflater;
 
         public HistoryListAdapter(Context context, Cursor c) {
             super(context, c, true);

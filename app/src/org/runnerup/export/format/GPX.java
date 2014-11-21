@@ -17,6 +17,15 @@
 
 package org.runnerup.export.format;
 
+import android.annotation.TargetApi;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.util.Xml;
+
+import org.runnerup.util.Constants.DB;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
@@ -24,26 +33,17 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.runnerup.util.Constants.DB;
-import org.xmlpull.v1.XmlSerializer;
-
-import android.annotation.TargetApi;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.util.Xml;
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GPX {
 
-    boolean export_rest_laps = false;
+    final boolean export_rest_laps = false;
 
     enum RestLapMode {
         EMPTY_TRKSEG,
         START_STOP_TRKSEG
     }
 
-    RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
+    final RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
 
     long mID = 0;
     SQLiteDatabase mDB = null;

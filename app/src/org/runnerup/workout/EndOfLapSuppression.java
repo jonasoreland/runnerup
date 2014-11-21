@@ -39,12 +39,12 @@ public class EndOfLapSuppression extends TriggerSuppression {
     t_type suppressionType = t_type.t_Interval;
     double lapDuration = 0;
 
-    static double lapTimeLimit = 10; // seconds
-    static double lapDistanceLimit = 5; // meters
+    static final double lapTimeLimit = 10; // seconds
+    static final double lapDistanceLimit = 5; // meters
 
-    static double minTimeLimit = 3; // suppress Event.COMPLETED if lap/step is
+    static final double minTimeLimit = 3; // suppress Event.COMPLETED if lap/step is
                                     // shorter than this
-    static double minDistanceLimit = 3;// suppress Event.COMPLETED if lap/step
+    static final double minDistanceLimit = 3;// suppress Event.COMPLETED if lap/step
                                        // is shorter than this
 
     public EndOfLapSuppression(t_type type) {

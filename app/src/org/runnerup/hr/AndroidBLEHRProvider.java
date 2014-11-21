@@ -58,8 +58,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     static final UUID[] SCAN_UUIDS = {
         HRP_SERVICE
     };
-    static boolean AVOID_SCAN_WITH_UUID = false;
-    static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = false;
+    static final boolean AVOID_SCAN_WITH_UUID = false;
+    static final boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = false;
 
     static {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -69,7 +69,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
     }
 
-    private Context context;
+    private final Context context;
     private BluetoothAdapter btAdapter = null;
     private BluetoothGatt btGatt = null;
     private BluetoothDevice btDevice = null;
@@ -139,7 +139,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         hrClientHandler = null;
     }
 
-    private BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
+    private final BluetoothGattCallback btGattCallbacks = new BluetoothGattCallback() {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
@@ -460,7 +460,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         return mIsScanning;
     }
 
-    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+    private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi,
                 byte[] scanRecord) {
@@ -517,7 +517,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     };
 
-    HashSet<String> mScanDevices = new HashSet<String>();
+    final HashSet<String> mScanDevices = new HashSet<String>();
 
     @Override
     public void startScan() {

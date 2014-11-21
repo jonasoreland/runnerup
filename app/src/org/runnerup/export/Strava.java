@@ -17,12 +17,12 @@
 
 package org.runnerup.export;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,12 +31,12 @@ import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.util.Constants.DB;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Strava extends FormCrawler implements Uploader, OAuth2Server {

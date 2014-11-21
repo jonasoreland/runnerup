@@ -50,18 +50,18 @@ public class GpsStatus implements LocationListener,
     /**
      * If we get a location with accurancy <= mFixAccurancy mFixed => true
      */
-    float mFixAccurancy = 10;
+    final float mFixAccurancy = 10;
 
     /**
      * If we get fixed satellites >= mFixSatellites mFixed => true
      */
-    int mFixSatellites = 2;
+    final int mFixSatellites = 2;
 
     /**
      * If we get location updates with time difference <= mFixTime mFixed =>
      * true
      */
-    int mFixTime = 3;
+    final int mFixTime = 3;
 
     int mKnownSatellites = 0;
     int mUsedInLastFixSatellites = 0;

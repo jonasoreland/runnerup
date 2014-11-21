@@ -30,9 +30,9 @@ public class HRZonesBar extends View {
 
     enum BarOrientation {
         HORIZONTAL, VERTICAL
-    };
+    }
 
-    BarOrientation barOrientation = BarOrientation.HORIZONTAL;
+    final BarOrientation barOrientation = BarOrientation.HORIZONTAL;
 
     static final int colorLow = Color.WHITE; // Color for the zone 0
     static final int colorHigh = Color.parseColor("#ff0000"); // Color for the last zone
@@ -48,8 +48,8 @@ public class HRZonesBar extends View {
     static final int fontSize = 20; // Font size used for writing the zone numbers
     static final float separator = 2; // Separator between two zones
 
-    Paint paint = new Paint();
-    Paint fontPaint = new Paint();
+    final Paint paint = new Paint();
+    final Paint fontPaint = new Paint();
 
     double[] hrzData = null;
 

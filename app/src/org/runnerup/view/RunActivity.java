@@ -63,7 +63,7 @@ import java.util.TimerTask;
 public class RunActivity extends Activity implements TickListener {
     Workout workout = null;
     GpsTracker mGpsTracker = null;
-    Handler handler = new Handler();
+    final Handler handler = new Handler();
 
     Button pauseButton = null;
     Button stopButton = null;
@@ -93,8 +93,8 @@ public class RunActivity extends Activity implements TickListener {
         public int level;
     }
 
-    ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
-    ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+    final ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
+    final ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
     boolean simpleWorkout;
     HRZones hrZones = null;
 
@@ -250,7 +250,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    OnClickListener stopButtonClick = new OnClickListener() {
+    final OnClickListener stopButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (timer != null) {
                 workout.onStop(workout);
@@ -309,7 +309,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    OnClickListener pauseButtonClick = new OnClickListener() {
+    final OnClickListener pauseButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (workout.isPaused()) {
                 workout.onResume(workout);
@@ -330,13 +330,13 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    OnClickListener newLapButtonClick = new OnClickListener() {
+    final OnClickListener newLapButtonClick = new OnClickListener() {
         public void onClick(View v) {
             workout.onNewLap();
         }
     };
 
-    OnClickListener nextStepButtonClick = new OnClickListener() {
+    final OnClickListener nextStepButtonClick = new OnClickListener() {
         public void onClick(View v) {
             workout.onNextStep();
         }
@@ -408,7 +408,7 @@ public class RunActivity extends Activity implements TickListener {
 
     private boolean mIsBound = false;
 
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             // This is called when the connection with the service has been
             // established, giving us the service object we can use to
@@ -451,7 +451,7 @@ public class RunActivity extends Activity implements TickListener {
     }
 
     TextToSpeech mSpeech = null;
-    TextToSpeech.OnInitListener mTTSOnInitListener = new TextToSpeech.OnInitListener() {
+    final TextToSpeech.OnInitListener mTTSOnInitListener = new TextToSpeech.OnInitListener() {
 
         @Override
         public void onInit(int status) {

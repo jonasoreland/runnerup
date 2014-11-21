@@ -40,7 +40,7 @@ public class AntPlus extends BtHRBase {
     static final String NAME = "AntPlus";
     static final String DISPLAY_NAME = "ANT+";
 
-    Context ctx;
+    final Context ctx;
     int hrValue;
     long hrTimestamp;
 
@@ -140,8 +140,8 @@ public class AntPlus extends BtHRBase {
         }
     }
 
-    HashSet<String> mScanDevices = new HashSet<String>();
-    IAsyncScanResultReceiver scanReceiver = new IAsyncScanResultReceiver() {
+    final HashSet<String> mScanDevices = new HashSet<String>();
+    final IAsyncScanResultReceiver scanReceiver = new IAsyncScanResultReceiver() {
 
         @Override
         public void onSearchResult(final AsyncScanResultDeviceInfo arg0) {
@@ -199,7 +199,7 @@ public class AntPlus extends BtHRBase {
 
     AntPlusHeartRatePcc antDevice = null;
 
-    IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver = new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
+    final IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver = new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
 
         @Override
         public void onResultReceived(AntPlusHeartRatePcc arg0,
@@ -244,7 +244,7 @@ public class AntPlus extends BtHRBase {
         }
     };
 
-    IHeartRateDataReceiver heartRateDataReceiver = new IHeartRateDataReceiver() {
+    final IHeartRateDataReceiver heartRateDataReceiver = new IHeartRateDataReceiver() {
 
         @Override
         public void onNewHeartRateData(long arg0, EnumSet<EventFlag> arg1,
@@ -269,7 +269,7 @@ public class AntPlus extends BtHRBase {
 
     };
 
-    IDeviceStateChangeReceiver stateReceiver = new IDeviceStateChangeReceiver() {
+    final IDeviceStateChangeReceiver stateReceiver = new IDeviceStateChangeReceiver() {
 
         @Override
         public void onDeviceStateChange(DeviceState arg0) {

@@ -17,8 +17,6 @@
 
 package org.runnerup.widget;
 
-import org.runnerup.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -32,6 +30,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import org.runnerup.R;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class NumberPicker extends LinearLayout {
@@ -62,9 +62,9 @@ public class NumberPicker extends LinearLayout {
 
     boolean longInc = false;
     boolean longDec = false;
-    Handler longHandler = new Handler();
-    long longSpeed = 300;
-    int textSize = 25;
+    final Handler longHandler = new Handler();
+    final long longSpeed = 300;
+    final int textSize = 25;
     int digits = DIGITS;
     String fmtString = "%0" + digits + "d";
 
@@ -147,7 +147,7 @@ public class NumberPicker extends LinearLayout {
         valueText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
     }
 
-    Runnable longPressUpdater = new Runnable() {
+    final Runnable longPressUpdater = new Runnable() {
         public void run() {
             if (longInc) {
                 setValueImpl(currValue + 1);
@@ -185,7 +185,7 @@ public class NumberPicker extends LinearLayout {
         valueText.selectAll();
     }
 
-    OnClickListener buttonClick = new OnClickListener() {
+    final OnClickListener buttonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             validateInput(valueText);
@@ -213,7 +213,7 @@ public class NumberPicker extends LinearLayout {
         longHandler.post(longPressUpdater);
     }
 
-    OnLongClickListener buttonLongClick = new OnLongClickListener() {
+    final OnLongClickListener buttonLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             if (v == incButton)
@@ -224,7 +224,7 @@ public class NumberPicker extends LinearLayout {
         }
     };
 
-    OnTouchListener buttonLongTouchListener = new OnTouchListener() {
+    final OnTouchListener buttonLongTouchListener = new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_UP &&
@@ -269,7 +269,7 @@ public class NumberPicker extends LinearLayout {
         }
     }
 
-    Formatter formatter = new Formatter() {
+    final Formatter formatter = new Formatter() {
         final StringBuilder builder = new StringBuilder();
         final java.util.Formatter fmt = new java.util.Formatter(builder);
         final Object[] args = new Object[1];

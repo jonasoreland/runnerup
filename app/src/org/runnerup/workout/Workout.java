@@ -17,20 +17,20 @@
 
 package org.runnerup.workout;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.content.SharedPreferences;
+import android.os.Build;
 
 import org.runnerup.gpstracker.GpsTracker;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.content.SharedPreferences;
-import android.os.Build;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * This class is the top level object for a workout, it is being called by
@@ -44,12 +44,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     int currentStepNo = -1;
     Step currentStep = null;
     boolean paused = false;
-    ArrayList<Step> steps = new ArrayList<Step>();
+    final ArrayList<Step> steps = new ArrayList<Step>();
     int sport = DB.ACTIVITY.SPORT_RUNNING;
 
     class PendingFeedback {
         int depth = 0;
-        HashSet<Feedback> set = new HashSet<Feedback>(); // For uniquing
+        final HashSet<Feedback> set = new HashSet<Feedback>(); // For uniquing
 
         void init() {
             depth++;
@@ -78,7 +78,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
     }
 
-    PendingFeedback pendingFeedback = new PendingFeedback();
+    final PendingFeedback pendingFeedback = new PendingFeedback();
 
     GpsTracker gpsTracker = null;
     SharedPreferences audioCuePrefs;

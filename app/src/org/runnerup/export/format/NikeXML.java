@@ -17,23 +17,23 @@
 
 package org.runnerup.export.format;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Vector;
-
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Formatter;
-import org.xmlpull.v1.XmlSerializer;
-
 import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 import android.util.Xml;
+
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Formatter;
+import org.xmlpull.v1.XmlSerializer;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Vector;
 /**
  * @author jonas.oreland@gmail.com
  * 
@@ -384,7 +384,7 @@ public class NikeXML {
     class ExtendedData extends Emitter
     {
         Dim d = null;
-        StringBuffer buf = new StringBuffer();
+        final StringBuffer buf = new StringBuffer();
 
         public ExtendedData(final Dim dim) {
             d = dim;

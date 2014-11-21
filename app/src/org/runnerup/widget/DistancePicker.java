@@ -17,8 +17,6 @@
 
 package org.runnerup.widget;
 
-import org.runnerup.util.Formatter;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
@@ -27,14 +25,16 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.runnerup.util.Formatter;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DistancePicker extends LinearLayout {
 
     long baseUnitMeters;
 
-    NumberPicker unitMeters; // e.g km or mi
-    TextView unitString;
-    NumberPicker meters;
+    final NumberPicker unitMeters; // e.g km or mi
+    final TextView unitString;
+    final NumberPicker meters;
 
     public DistancePicker(Context context, AttributeSet attrs) {
         super(context, attrs);

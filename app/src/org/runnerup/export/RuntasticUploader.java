@@ -60,8 +60,8 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
     private Integer userId = null;
     private String authToken = null;
 
-    static Map<Integer, Sport> runtastic2sportMap = new HashMap<Integer, Sport>();
-    static Map<Sport, Integer> sport2runtasticMap = new HashMap<Sport, Integer>();
+    static final Map<Integer, Sport> runtastic2sportMap = new HashMap<Integer, Sport>();
+    static final Map<Sport, Integer> sport2runtasticMap = new HashMap<Sport, Integer>();
     static {
         runtastic2sportMap.put(1, Sport.RUNNING);
         runtastic2sportMap.put(3, Sport.BIKING);

@@ -17,16 +17,6 @@
 
 package org.runnerup.view;
 
-import java.util.ArrayList;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.util.Constants;
-import org.runnerup.util.Formatter;
-import org.runnerup.workout.Sport;
-
 import android.annotation.TargetApi;
 import android.app.ListActivity;
 import android.content.ContentValues;
@@ -48,6 +38,16 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.util.Constants;
+import org.runnerup.util.Formatter;
+import org.runnerup.workout.Sport;
+
+import java.util.ArrayList;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class UploadActivity extends ListActivity implements Constants {
 
@@ -59,14 +59,14 @@ public class UploadActivity extends ListActivity implements Constants {
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
-    ArrayList<ContentValues> uploadActivities = new ArrayList<ContentValues>();
+    final ArrayList<ContentValues> uploadActivities = new ArrayList<ContentValues>();
 
     int uploadCount = 0;
     Button uploadButton = null;
     CharSequence uploadButtonText = null;
 
     boolean uploading = false;
-    StringBuffer cancelUploading = new StringBuffer();
+    final StringBuffer cancelUploading = new StringBuffer();
 
     /** Called when the activity is first created. */
 
@@ -185,7 +185,7 @@ public class UploadActivity extends ListActivity implements Constants {
         }
     }
 
-    OnClickListener onActivityClick = new OnClickListener() {
+    final OnClickListener onActivityClick = new OnClickListener() {
 
         @Override
         public void onClick(View arg0) {
@@ -198,7 +198,7 @@ public class UploadActivity extends ListActivity implements Constants {
     };
 
     class UploadListAdapter extends BaseAdapter {
-        LayoutInflater inflater;
+        final LayoutInflater inflater;
 
         public UploadListAdapter(Context context) {
             super();
@@ -301,7 +301,7 @@ public class UploadActivity extends ListActivity implements Constants {
         }
     }
 
-    OnCheckedChangeListener checkedChangeClick = new OnCheckedChangeListener() {
+    final OnCheckedChangeListener checkedChangeClick = new OnCheckedChangeListener() {
 
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
@@ -320,7 +320,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
     };
 
-    OnClickListener uploadButtonClick = new OnClickListener() {
+    final OnClickListener uploadButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             ArrayList<Long> activities = new ArrayList<Long>();
@@ -339,7 +339,7 @@ public class UploadActivity extends ListActivity implements Constants {
         }
     };
 
-    UploadManager.Callback uploadCallback = new UploadManager.Callback() {
+    final UploadManager.Callback uploadCallback = new UploadManager.Callback() {
 
         @Override
         public void run(String uploader, Status status) {
@@ -352,7 +352,7 @@ public class UploadActivity extends ListActivity implements Constants {
         }
     };
 
-    OnClickListener clearAllButtonClick = new OnClickListener() {
+    final OnClickListener clearAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             for (ContentValues tmp : uploadActivities) {
@@ -363,7 +363,7 @@ public class UploadActivity extends ListActivity implements Constants {
         }
     };
 
-    OnClickListener setAllButtonClick = new OnClickListener() {
+    final OnClickListener setAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             for (ContentValues tmp : uploadActivities) {

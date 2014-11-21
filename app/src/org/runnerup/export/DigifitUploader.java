@@ -25,6 +25,16 @@
 
 package org.runnerup.export;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.TCX;
+import org.runnerup.util.Constants.DB;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,18 +57,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
-import org.runnerup.util.Constants.DB;
-
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
-
 public class DigifitUploader extends FormCrawler implements Uploader {
-    public static String DIGIFIT_URL = "http://my.digifit.com";
+    public static final String DIGIFIT_URL = "http://my.digifit.com";
 
     public static final String NAME = "Digifit";
 
@@ -416,7 +416,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
 
             return Status.OK;
         } catch (Exception ex) {
-            System.err.println(ex);
+            System.err.println(ex.toString());
             errorStatus.ex = ex;
         }
         return errorStatus;

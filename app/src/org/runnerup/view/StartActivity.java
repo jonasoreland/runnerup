@@ -132,7 +132,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     Button advancedDownloadWorkoutButton = null;
     Workout advancedWorkout = null;
     ListView advancedStepList = null;
-    WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
+    final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
 
     boolean manualSetValue = false;
     TitleSpinner manualSport = null;
@@ -336,7 +336,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
         registerStartEventListener();
     }
-    private BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             runOnUiThread(new Runnable() {
@@ -416,7 +416,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         notificationStateManager.cancelNotification();
     }
 
-    OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
+    final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
 
         @Override
         public void onTabChanged(String tabId) {
@@ -434,7 +434,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    OnClickListener startButtonClick = new OnClickListener() {
+    final OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
                 manualSaveButtonClick.onClick(v);
@@ -490,7 +490,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    OnClickListener hrButtonClick = new OnClickListener() {
+    final OnClickListener hrButtonClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
 
@@ -582,7 +582,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     }
 
     private boolean mIsBound = false;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             // This is called when the connection with the service has been
             // established, giving us the service object we can use to
@@ -649,7 +649,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         updateView();
     }
 
-    OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
+    final OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
 
         @Override
         public void onClose(TitleSpinner spinner, boolean ok) {
@@ -678,7 +678,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     }
 
-    OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
+    final OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -695,7 +695,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    OnSetValueListener intervalRestTypeSetValue = new OnSetValueListener() {
+    final OnSetValueListener intervalRestTypeSetValue = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -787,7 +787,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     }
 
-    Runnable onWorkoutChanged = new Runnable() {
+    final Runnable onWorkoutChanged = new Runnable() {
         @Override
         public void run() {
             String name = advancedWorkoutSpinner.getValue().toString();
@@ -812,7 +812,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
+    final OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -831,7 +831,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     };
 
-    OnSetValueListener onSetValueManual = new OnSetValueListener() {
+    final OnSetValueListener onSetValueManual = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -863,7 +863,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         return;
     }
 
-    OnSetValueListener onSetManualDistance = new OnSetValueListener() {
+    final OnSetValueListener onSetManualDistance = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -881,7 +881,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     };
 
-    OnSetValueListener onSetManualDuration = new OnSetValueListener() {
+    final OnSetValueListener onSetManualDuration = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -898,7 +898,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    OnClickListener manualSaveButtonClick = new OnClickListener() {
+    final OnClickListener manualSaveButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {

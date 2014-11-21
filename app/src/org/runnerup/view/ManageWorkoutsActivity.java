@@ -17,32 +17,6 @@
 
 package org.runnerup.view;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import org.runnerup.R;
-import org.runnerup.content.WorkoutFileProvider;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.UploadManager.Callback;
-import org.runnerup.export.UploadManager.WorkoutRef;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.util.Constants;
-import org.runnerup.workout.Workout;
-import org.runnerup.workout.WorkoutSerializer;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -75,6 +49,32 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.runnerup.R;
+import org.runnerup.content.WorkoutFileProvider;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.UploadManager.Callback;
+import org.runnerup.export.UploadManager.WorkoutRef;
+import org.runnerup.export.Uploader;
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.util.Constants;
+import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutSerializer;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
@@ -83,12 +83,12 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     static final String PHONE_STRING = "my phone";
 
-    HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
-    ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
-    HashMap<String, ArrayList<UploadManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<UploadManager.WorkoutRef>>();
+    final HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
+    final ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
+    final HashMap<String, ArrayList<UploadManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<UploadManager.WorkoutRef>>();
     WorkoutAccountListAdapter adapter = null;
 
-    HashSet<String> loadedProviders = new HashSet<String>();
+    final HashSet<String> loadedProviders = new HashSet<String>();
 
     boolean uploading = false;
     ExpandableListView list = null;
@@ -395,7 +395,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         return newlist;
     }
 
-    OnClickListener downloadButtonClick = new OnClickListener() {
+    final OnClickListener downloadButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -458,7 +458,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
     };
 
-    private OnClickListener deleteButtonClick = new OnClickListener() {
+    private final OnClickListener deleteButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -501,7 +501,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         listLocal();
     }
 
-    public OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
+    public final OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
             if (currentlySelectedWorkout != null) {
@@ -529,7 +529,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
     };
 
-    private OnClickListener shareButtonClick = new OnClickListener() {
+    private final OnClickListener shareButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -561,7 +561,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     class WorkoutAccountListAdapter extends BaseExpandableListAdapter {
 
-        Context context;
+        final Context context;
 
         WorkoutAccountListAdapter(Context ctx) {
             context = ctx;
@@ -675,7 +675,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             }
         }
 
-        Callback onUploaderConfiguredCallback = new Callback() {
+        final Callback onUploaderConfiguredCallback = new Callback() {
             @Override
             public void run(String uploader, Status status) {
                 System.out.println("status: " + status);
@@ -698,7 +698,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             super.onGroupExpanded(saveGroupPosition);
         }
 
-        private Callback onLoadWorkoutListCallback = new Callback() {
+        private final Callback onLoadWorkoutListCallback = new Callback() {
 
             @Override
             public void run(String uploader, Status status) {

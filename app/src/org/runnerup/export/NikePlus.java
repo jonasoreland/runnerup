@@ -17,6 +17,21 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.GPX;
+import org.runnerup.export.format.NikeXML;
+import org.runnerup.feed.FeedList;
+import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Constants.DB.FEED;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -34,21 +49,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.GPX;
-import org.runnerup.export.format.NikeXML;
-import org.runnerup.feed.FeedList;
-import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Constants.DB.FEED;
-
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class NikePlus extends FormCrawler implements Uploader {

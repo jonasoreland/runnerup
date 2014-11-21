@@ -17,6 +17,21 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.TCX;
+import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.util.Encryption;
+import org.runnerup.workout.Sport;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -31,21 +46,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
-import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Constants.DB.FEED;
-import org.runnerup.util.Encryption;
-import org.runnerup.workout.Sport;
-
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 /**
  * TODO: 1) serious cleanup needed 2) maybe reverse engineer
@@ -74,8 +74,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
     private String loginID = null;
     private String loginSecretHashed = null;
 
-    static Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer, Sport>();
-    static Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
+    static final Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer, Sport>();
+    static final Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
     static {
         funbeat2sportMap.put(25, Sport.RUNNING);
         funbeat2sportMap.put(7, Sport.BIKING);

@@ -17,17 +17,6 @@
 
 package org.runnerup.view;
 
-import org.runnerup.R;
-import org.runnerup.util.Constants.DB.DIMENSION;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.SafeParse;
-import org.runnerup.widget.NumberPicker;
-import org.runnerup.widget.TitleSpinner;
-import org.runnerup.workout.Dimension;
-import org.runnerup.workout.Intensity;
-import org.runnerup.workout.Range;
-import org.runnerup.workout.Step;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -44,18 +33,29 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.runnerup.R;
+import org.runnerup.util.Constants.DB.DIMENSION;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.SafeParse;
+import org.runnerup.widget.NumberPicker;
+import org.runnerup.widget.TitleSpinner;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Range;
+import org.runnerup.workout.Step;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StepButton extends TableLayout {
 
-    private Context mContext;
-    private TableLayout mLayout;
-    private TextView mIntensity;
-    private TextView mDurationType;
-    private TextView mDurationValue;
-    private TextView mGoalType;
-    private TextView mGoalValue;
-    private TableRow mGoalRow;
-    private Formatter formatter;
+    private final Context mContext;
+    private final TableLayout mLayout;
+    private final TextView mIntensity;
+    private final TextView mDurationType;
+    private final TextView mDurationValue;
+    private final TextView mGoalType;
+    private final TextView mGoalValue;
+    private final TableRow mGoalRow;
+    private final Formatter formatter;
     private Step step;
     private Runnable mOnChangedListener = null;
 
@@ -129,7 +129,7 @@ public class StepButton extends TableLayout {
             mLayout.setOnClickListener(onStepClickListener);
     }
 
-    OnClickListener onRepeatClickListener = new OnClickListener() {
+    final OnClickListener onRepeatClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -167,7 +167,7 @@ public class StepButton extends TableLayout {
         }
     };
 
-    OnClickListener onStepClickListener = new OnClickListener() {
+    final OnClickListener onStepClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {

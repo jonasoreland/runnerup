@@ -17,16 +17,6 @@
 
 package org.runnerup.view;
 
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.util.Bitfield;
-import org.runnerup.util.Constants;
-import org.runnerup.util.SimpleCursorLoader;
-import org.runnerup.widget.WidgetUtil;
-
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
@@ -51,6 +41,16 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.util.Bitfield;
+import org.runnerup.util.Constants;
+import org.runnerup.util.SimpleCursorLoader;
+import org.runnerup.widget.WidgetUtil;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountListActivity extends FragmentActivity implements Constants,
@@ -135,7 +135,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
     }
 
     class AccountListAdapter extends CursorAdapter {
-        LayoutInflater inflater;
+        final LayoutInflater inflater;
 
         public AccountListAdapter(Context context, Cursor c) {
             super(context, c, true);
@@ -227,7 +227,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         }
     }
 
-    OnClickListener configureButtonClick = new OnClickListener() {
+    final OnClickListener configureButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final String uploader = (String) v.getTag();
             if (uploadManager.isConfigured(uploader)) {
@@ -253,7 +253,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         }
     }
 
-    UploadManager.Callback callback = new UploadManager.Callback() {
+    final UploadManager.Callback callback = new UploadManager.Callback() {
         @Override
         public void run(String uploader, Status status) {
             if (status == Uploader.Status.OK) {

@@ -17,6 +17,21 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.EndomondoTrack;
+import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.util.Formatter;
+import org.runnerup.workout.Sport;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -37,21 +52,6 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.EndomondoTrack;
-import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Constants.DB.FEED;
-import org.runnerup.util.Formatter;
-import org.runnerup.workout.Sport;
-
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-
 /**
  * @author jonas Based on https://github.com/cpfair/tapiriik
  */
@@ -60,9 +60,9 @@ import android.os.Build;
 public class Endomondo extends FormCrawler implements Uploader {
 
     public static final String NAME = "Endomondo";
-    public static String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
-    public static String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
-    public static String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
+    public static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
+    public static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
+    public static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
 
     long id = 0;
     private String username = null;
@@ -70,8 +70,8 @@ public class Endomondo extends FormCrawler implements Uploader {
     private String deviceId = null;
     private String authToken = null;
 
-    static Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer, Sport>();
-    static Map<Sport, Integer> sport2endomondoMap = new HashMap<Sport, Integer>();
+    static final Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer, Sport>();
+    static final Map<Sport, Integer> sport2endomondoMap = new HashMap<Sport, Integer>();
     static {
         endomondo2sportMap.put(0, Sport.RUNNING);
         endomondo2sportMap.put(2, Sport.BIKING);

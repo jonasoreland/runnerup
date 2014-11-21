@@ -17,18 +17,16 @@
 
 package org.runnerup.export;
 
-import java.io.File;
-import java.util.List;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
 import org.runnerup.feed.FeedList.FeedUpdater;
 
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.util.Pair;
+import java.io.File;
+import java.util.List;
 
 public interface Uploader {
 

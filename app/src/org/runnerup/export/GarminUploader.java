@@ -17,6 +17,18 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.util.Pair;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.TCX;
+import org.runnerup.util.Constants.DB;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -32,31 +44,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
-import org.runnerup.util.Constants.DB;
-
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.util.Pair;
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GarminUploader extends FormCrawler implements Uploader {
 
     public static final String NAME = "Garmin";
 
-    public static String CHOOSE_URL = "http://connect.garmin.com/";
+    public static final String CHOOSE_URL = "http://connect.garmin.com/";
 
-    public static String START_URL = "https://connect.garmin.com/signin";
-    public static String LOGIN_URL = "https://connect.garmin.com/signin";
-    public static String CHECK_URL = "http://connect.garmin.com/user/username";
-    public static String UPLOAD_URL = "http://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
-    public static String LIST_WORKOUTS_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
-    public static String GET_WORKOUT_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
+    public static final String START_URL = "https://connect.garmin.com/signin";
+    public static final String LOGIN_URL = "https://connect.garmin.com/signin";
+    public static final String CHECK_URL = "http://connect.garmin.com/user/username";
+    public static final String UPLOAD_URL = "http://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
+    public static final String LIST_WORKOUTS_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
+    public static final String GET_WORKOUT_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
 
     long id = 0;
     private String username = null;

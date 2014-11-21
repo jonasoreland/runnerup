@@ -17,20 +17,20 @@
 
 package org.runnerup.export.format;
 
+import android.annotation.TargetApi;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.os.Build;
+
+import org.runnerup.util.Constants.DB;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import org.runnerup.util.Constants.DB;
-
-import android.annotation.TargetApi;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.os.Build;
 /**
  * @author jonas.oreland@gmail.com
  * 

@@ -17,13 +17,6 @@
 
 package org.runnerup.widget;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import org.runnerup.R;
-import org.runnerup.util.SafeParse;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -49,6 +42,13 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.runnerup.R;
+import org.runnerup.util.SafeParse;
+
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TitleSpinner extends LinearLayout {
 
@@ -70,7 +70,7 @@ public class TitleSpinner extends LinearLayout {
     private Spinner mSpinner = null;
     private CharSequence mPrompt = null;
     int mInputType = 0;
-    private Context mContext;
+    private final Context mContext;
     private OnSetValueListener mSetValueListener = null;
     private OnCloseDialogListener mCloseDialogListener = null;
     private Type mType = null;

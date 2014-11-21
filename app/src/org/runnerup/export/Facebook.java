@@ -17,15 +17,12 @@
 
 package org.runnerup.export;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,12 +32,15 @@ import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Constants.DB;
 
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 
@@ -60,17 +60,17 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
     private static final String RUN_ENDPOINT = "https://graph.facebook.com/me/fitness.runs";
     private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
 
-    boolean uploadComment = false;
-    boolean explicitly_shared = false; // Doesn't work now...don't know why...
+    final boolean uploadComment = false;
+    final boolean explicitly_shared = false; // Doesn't work now...don't know why...
 
     private long id = 0;
     private String access_token = null;
     private long token_now = 0;
     private long expire_time = 0;
     private boolean skipMapInPost = false;
-    private Context context;
+    private final Context context;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat(
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
     Facebook(Context context, UploadManager uploadManager) {

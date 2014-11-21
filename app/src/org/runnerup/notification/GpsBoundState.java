@@ -14,7 +14,7 @@ import org.runnerup.view.MainLayout;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsBoundState implements NotificationState {
-    private Notification notification;
+    private final Notification notification;
 
     public GpsBoundState(Context context) {
 

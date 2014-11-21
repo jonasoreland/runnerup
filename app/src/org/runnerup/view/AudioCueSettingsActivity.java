@@ -17,22 +17,6 @@
 
 package org.runnerup.view;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZones;
-import org.runnerup.widget.TitleSpinner;
-import org.runnerup.widget.TitleSpinner.OnSetValueListener;
-import org.runnerup.workout.Feedback;
-import org.runnerup.workout.Workout;
-import org.runnerup.workout.WorkoutBuilder;
-import org.runnerup.workout.feedback.RUTextToSpeech;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -57,6 +41,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
+import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.TitleSpinner.OnSetValueListener;
+import org.runnerup.workout.Feedback;
+import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutBuilder;
+import org.runnerup.workout.feedback.RUTextToSpeech;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCueSettingsActivity extends PreferenceActivity {
@@ -258,7 +258,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 " WHERE " + DB.AUDIO_SCHEMES.NAME + " = '" + name + "'");
     }
 
-    OnSetValueListener onSetValueListener = new OnSetValueListener() {
+    final OnSetValueListener onSetValueListener = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -335,7 +335,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         dialog.show();
     }
 
-    OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
+    final OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             Resources res = getResources();
@@ -375,12 +375,12 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     };
 
-    OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
+    final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 
         TextToSpeech tts = null;
-        ArrayList<Feedback> feedback = new ArrayList<Feedback>();
+        final ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 
-        private OnInitListener mTTSOnInitListener = new OnInitListener() {
+        private final OnInitListener mTTSOnInitListener = new OnInitListener() {
 
             @Override
             public void onInit(int arg0) {

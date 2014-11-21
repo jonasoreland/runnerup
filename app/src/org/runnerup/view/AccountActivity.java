@@ -17,16 +17,6 @@
 
 package org.runnerup.view;
 
-import java.util.ArrayList;
-
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.util.Bitfield;
-import org.runnerup.util.Constants;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,6 +42,16 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.util.Bitfield;
+import org.runnerup.util.Constants;
+
+import java.util.ArrayList;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountActivity extends Activity implements Constants {
 
@@ -61,7 +61,7 @@ public class AccountActivity extends Activity implements Constants {
 
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
-    ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
+    final ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 
     long flags;
     UploadManager uploadManager = null;
@@ -231,7 +231,7 @@ public class AccountActivity extends Activity implements Constants {
         return true;
     }
 
-    OnClickListener clearUploadsButtonClick = new OnClickListener() {
+    final OnClickListener clearUploadsButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -258,7 +258,7 @@ public class AccountActivity extends Activity implements Constants {
         }
     };
 
-    OnClickListener uploadButtonClick = new OnClickListener() {
+    final OnClickListener uploadButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
@@ -270,7 +270,7 @@ public class AccountActivity extends Activity implements Constants {
         }
     };
 
-    OnClickListener urlButtonClick = new OnClickListener() {
+    final OnClickListener urlButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String) v
@@ -279,7 +279,7 @@ public class AccountActivity extends Activity implements Constants {
         }
     };
 
-    OnCheckedChangeListener sendCBChecked = new OnCheckedChangeListener() {
+    final OnCheckedChangeListener sendCBChecked = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             ContentValues tmp = new ContentValues();
@@ -301,14 +301,14 @@ public class AccountActivity extends Activity implements Constants {
         }
     };
 
-    OnClickListener okButtonClick = new OnClickListener() {
+    final OnClickListener okButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();
         }
     };
 
-    OnClickListener disconnectButtonClick = new OnClickListener() {
+    final OnClickListener disconnectButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final CharSequence items[] = {
                 "Clear uploads (from phone)"
@@ -346,13 +346,13 @@ public class AccountActivity extends Activity implements Constants {
         }
     };
 
-    UploadManager.Callback callback = new UploadManager.Callback() {
+    final UploadManager.Callback callback = new UploadManager.Callback() {
         @Override
         public void run(String uploader, Status status) {
         }
     };
 
-    UploadManager.Callback disconnectCallback = new UploadManager.Callback() {
+    final UploadManager.Callback disconnectCallback = new UploadManager.Callback() {
         @Override
         public void run(String uploader, Status status) {
             finish();

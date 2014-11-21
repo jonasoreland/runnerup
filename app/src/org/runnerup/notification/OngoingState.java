@@ -14,7 +14,6 @@ import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
 import org.runnerup.workout.Scope;
-import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutInfo;
 
 @TargetApi(Build.VERSION_CODES.FROYO)

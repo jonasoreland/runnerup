@@ -17,16 +17,16 @@
 
 package org.runnerup.export;
 
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.util.Constants.DB;
-
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 
 public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 

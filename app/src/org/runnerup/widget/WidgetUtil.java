@@ -17,8 +17,6 @@
 
 package org.runnerup.widget;
 
-import org.runnerup.R;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,6 +27,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.runnerup.R;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class WidgetUtil {

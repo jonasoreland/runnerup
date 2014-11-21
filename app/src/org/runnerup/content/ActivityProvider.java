@@ -17,22 +17,6 @@
 
 package org.runnerup.content;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.List;
-
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.format.FacebookCourse;
-import org.runnerup.export.format.GPX;
-import org.runnerup.export.format.GoogleStaticMap;
-import org.runnerup.export.format.NikeXML;
-import org.runnerup.export.format.TCX;
-
 import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -43,6 +27,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Pair;
+
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.format.FacebookCourse;
+import org.runnerup.export.format.GPX;
+import org.runnerup.export.format.GoogleStaticMap;
+import org.runnerup.export.format.NikeXML;
+import org.runnerup.export.format.TCX;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityProvider extends ContentProvider {

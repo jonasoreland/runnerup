@@ -17,6 +17,17 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.TCX;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Encryption;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -27,17 +38,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Encryption;
-
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MapMyRunUploader extends FormCrawler implements Uploader {

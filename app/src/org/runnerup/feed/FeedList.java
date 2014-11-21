@@ -17,6 +17,15 @@
 
 package org.runnerup.feed;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+
+import org.runnerup.db.DBHelper;
+import org.runnerup.util.Constants;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -26,22 +35,13 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.runnerup.db.DBHelper;
-import org.runnerup.util.Constants;
-
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedList extends Observable implements Constants {
 
     static final int MAX_ITEMS = 50;
     static final long TIME_MARGIN = 5 * 60; // 5 minutes
 
-    DBHelper mDBHelper;
+    final DBHelper mDBHelper;
     List<ContentValues> list = new ArrayList<ContentValues>();
     boolean filterDuplicates = true;
 

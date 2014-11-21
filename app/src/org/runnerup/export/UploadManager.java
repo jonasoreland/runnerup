@@ -17,30 +17,6 @@
 
 package org.runnerup.export;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.BuildConfig;
-import org.runnerup.R;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.Uploader.AuthMethod;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.feed.FeedList;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Encryption;
-import org.runnerup.workout.WorkoutSerializer;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -66,6 +42,30 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.BuildConfig;
+import org.runnerup.R;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.Uploader.AuthMethod;
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.feed.FeedList;
+import org.runnerup.util.Constants.DB;
+import org.runnerup.util.Encryption;
+import org.runnerup.workout.WorkoutSerializer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class UploadManager {
 
@@ -75,8 +75,8 @@ public class UploadManager {
     private SQLiteDatabase mDB = null;
     private Activity activity = null;
     private Context context = null;
-    private Map<String, Uploader> uploaders = new HashMap<String, Uploader>();
-    private Map<Long, Uploader> uploadersById = new HashMap<Long, Uploader>();
+    private final Map<String, Uploader> uploaders = new HashMap<String, Uploader>();
+    private final Map<Long, Uploader> uploadersById = new HashMap<Long, Uploader>();
     private ProgressDialog mSpinner = null;
 
     public interface Callback {
@@ -371,7 +371,7 @@ public class UploadManager {
 
         new AsyncTask<Uploader, String, Uploader.Status>() {
 
-            ContentValues config = new ContentValues();
+            final ContentValues config = new ContentValues();
 
             @Override
             protected Uploader.Status doInBackground(Uploader... params) {
@@ -479,7 +479,7 @@ public class UploadManager {
         }.execute(uploader);
     }
 
-    private Callback disableUploaderCallback = new Callback() {
+    private final Callback disableUploaderCallback = new Callback() {
         @Override
         public void run(String uploader, Status status) {
             nextUploader();

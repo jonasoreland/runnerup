@@ -17,14 +17,14 @@
 
 package org.runnerup.util;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import android.annotation.TargetApi;
-import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FileUtil {

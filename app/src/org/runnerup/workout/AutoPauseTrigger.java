@@ -17,11 +17,11 @@
 
 package org.runnerup.workout;
 
-import org.runnerup.gpstracker.GpsTracker;
-
 import android.annotation.TargetApi;
 import android.location.Location;
 import android.os.Build;
+
+import org.runnerup.gpstracker.GpsTracker;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AutoPauseTrigger extends Trigger {

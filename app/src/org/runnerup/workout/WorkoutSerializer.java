@@ -17,6 +17,20 @@
 
 package org.runnerup.workout;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.preference.PreferenceManager;
+import android.util.Pair;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.R;
+import org.runnerup.export.FormCrawler;
+import org.runnerup.util.SafeParse;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -28,20 +42,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.R;
-import org.runnerup.export.FormCrawler;
-import org.runnerup.util.SafeParse;
-
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.preference.PreferenceManager;
-import android.util.Pair;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class WorkoutSerializer {
@@ -172,7 +172,7 @@ public class WorkoutSerializer {
         }
     }
 
-    private static Pair<Dimension, Double> NullDimensionPair = new Pair<Dimension, Double>(null,
+    private static final Pair<Dimension, Double> NullDimensionPair = new Pair<Dimension, Double>(null,
             0.0);
 
     private static Pair<Dimension, Double> getDuration(JSONObject obj, Intensity intensity)
@@ -274,7 +274,7 @@ public class WorkoutSerializer {
         return val;
     }
 
-    private static Pair<Dimension, Range> NullTargetPair = new Pair<Dimension, Range>(null, null);
+    private static final Pair<Dimension, Range> NullTargetPair = new Pair<Dimension, Range>(null, null);
 
     private static Pair<Dimension, Range> getTarget(JSONObject obj) {
         String targetTypeKey = getString(obj, "targetTypeKey");

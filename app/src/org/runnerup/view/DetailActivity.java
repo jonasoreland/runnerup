@@ -17,27 +17,6 @@
 
 package org.runnerup.view;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-
-import org.runnerup.R;
-import org.runnerup.content.ActivityProvider;
-import org.runnerup.content.WorkoutFileProvider;
-import org.runnerup.db.ActivityCleaner;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Feature;
-import org.runnerup.util.Bitfield;
-import org.runnerup.util.Constants;
-import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZones;
-import org.runnerup.widget.TitleSpinner;
-import org.runnerup.widget.WidgetUtil;
-import org.runnerup.workout.Intensity;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -57,7 +36,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,7 +52,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
@@ -93,19 +70,40 @@ import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 
+import org.runnerup.R;
+import org.runnerup.content.ActivityProvider;
+import org.runnerup.content.WorkoutFileProvider;
+import org.runnerup.db.ActivityCleaner;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.UploadManager;
+import org.runnerup.export.Uploader;
+import org.runnerup.export.Uploader.Feature;
+import org.runnerup.util.Bitfield;
+import org.runnerup.util.Constants;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
+import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.Intensity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DetailActivity extends FragmentActivity implements Constants {
 
     long mID = 0;
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
-    HashSet<String> pendingUploaders = new HashSet<String>();
-    HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
+    final HashSet<String> pendingUploaders = new HashSet<String>();
+    final HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
 
     boolean lapHrPresent = false;
     ContentValues laps[] = null;
-    ArrayList<ContentValues> reports = new ArrayList<ContentValues>();
-    ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+    final ArrayList<ContentValues> reports = new ArrayList<ContentValues>();
+    final ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
 
     int mode; // 0 == save 1 == details
     final static int MODE_SAVE = 0;
@@ -628,7 +626,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
     }
 
-    OnLongClickListener clearUploadClick = new OnLongClickListener() {
+    final OnLongClickListener clearUploadClick = new OnLongClickListener() {
 
         @Override
         public boolean onLongClick(View arg0) {
@@ -658,7 +656,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
     };
 
-    OnClickListener saveButtonClick = new OnClickListener() {
+    final OnClickListener saveButtonClick = new OnClickListener() {
         public void onClick(View v) {
             saveActivity();
             if (mode == MODE_DETAILS) {
@@ -683,7 +681,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
     };
 
-    OnClickListener discardButtonClick = new OnClickListener() {
+    final OnClickListener discardButtonClick = new OnClickListener() {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
             builder.setTitle(getString(R.string.discard_activity));
@@ -723,14 +721,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
     }
 
-    OnClickListener resumeButtonClick = new OnClickListener() {
+    final OnClickListener resumeButtonClick = new OnClickListener() {
         public void onClick(View v) {
             DetailActivity.this.setResult(RESULT_FIRST_USER);
             DetailActivity.this.finish();
         }
     };
 
-    OnClickListener uploadButtonClick = new OnClickListener() {
+    final OnClickListener uploadButtonClick = new OnClickListener() {
         public void onClick(View v) {
             uploading = true;
             uploadManager.startUploading(new UploadManager.Callback() {
@@ -743,7 +741,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
     };
 
-    public OnCheckedChangeListener onSendChecked = new OnCheckedChangeListener() {
+    public final OnCheckedChangeListener onSendChecked = new OnCheckedChangeListener() {
 
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
@@ -762,7 +760,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
     };
 
-    OnClickListener deleteButtonClick = new OnClickListener() {
+    final OnClickListener deleteButtonClick = new OnClickListener() {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     DetailActivity.this);
@@ -806,9 +804,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
     }
 
     class Route {
-        PolylineOptions path = new PolylineOptions();
-        LatLngBounds.Builder bounds = new LatLngBounds.Builder();
-        ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>(10);
+        final PolylineOptions path = new PolylineOptions();
+        final LatLngBounds.Builder bounds = new LatLngBounds.Builder();
+        final ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>(10);
 
         Route() {
             path.color(Color.RED);
@@ -820,7 +818,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         static final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
         static final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec
 
-        int interval;
+        final int interval;
         int pos = 0;
         double time[] = null;
         double distance[] = null;
@@ -964,7 +962,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         class GraphFilter {
 
             double data[] = null;
-            List<GraphViewData> source;
+            final List<GraphViewData> source;
 
             GraphFilter(List<GraphViewData> paceList) {
                 source = paceList;

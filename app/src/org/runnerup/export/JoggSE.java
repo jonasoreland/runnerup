@@ -17,6 +17,25 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.util.Base64;
+import android.util.Xml;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.format.GPX;
+import org.runnerup.util.Constants.DB;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,25 +50,6 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.format.GPX;
-import org.runnerup.util.Constants.DB;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlSerializer;
-
-import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.util.Base64;
-import android.util.Xml;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class JoggSE extends FormCrawler implements Uploader {

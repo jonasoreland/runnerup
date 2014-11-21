@@ -17,18 +17,6 @@
 
 package org.runnerup.export.oauth2client;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import org.runnerup.R;
-import org.runnerup.export.FormCrawler;
-import org.runnerup.export.FormCrawler.FormValues;
-import org.runnerup.util.Constants.DB;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -44,6 +32,18 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import org.runnerup.R;
+import org.runnerup.export.FormCrawler;
+import org.runnerup.export.FormCrawler.FormValues;
+import org.runnerup.util.Constants.DB;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 @SuppressLint("SetJavaScriptEnabled")

@@ -17,7 +17,10 @@
 
 package org.runnerup.workout.feedback;
 
-import java.util.HashMap;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.speech.tts.TextToSpeech;
 
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -25,10 +28,7 @@ import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.os.Build;
-import android.speech.tts.TextToSpeech;
+import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCountdownFeedback extends Feedback {

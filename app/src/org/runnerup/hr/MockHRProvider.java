@@ -46,7 +46,7 @@ public class MockHRProvider implements HRProvider {
         return mIsScanning;
     }
 
-    Runnable fakeScanResult = new Runnable() {
+    final Runnable fakeScanResult = new Runnable() {
         int count = 0;
 
         @Override
@@ -111,7 +111,7 @@ public class MockHRProvider implements HRProvider {
         }, 3000);
     }
 
-    Runnable hrUpdate = new Runnable() {
+    final Runnable hrUpdate = new Runnable() {
         @Override
         public void run() {
             hrValue = (int) (150 + 40 * Math.random());

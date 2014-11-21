@@ -17,12 +17,6 @@
 
 package org.runnerup.util;
 
-import java.util.Locale;
-
-import org.runnerup.R;
-import org.runnerup.workout.Dimension;
-import org.runnerup.workout.RepeatStep;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,6 +26,11 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
+
+import org.runnerup.R;
+import org.runnerup.workout.Dimension;
+
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Formatter implements OnSharedPreferenceChangeListener {

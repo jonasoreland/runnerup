@@ -28,7 +28,7 @@ public class IntervalTrigger extends Trigger {
 
     double first = 120;
     double interval = 120;
-    int count = 0; // endless
+    final int count = 0; // endless
 
     double next = 0;
 

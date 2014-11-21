@@ -17,18 +17,6 @@
 
 package org.runnerup.view;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.runnerup.R;
-import org.runnerup.hr.HRDeviceRef;
-import org.runnerup.hr.HRManager;
-import org.runnerup.hr.HRProvider;
-import org.runnerup.hr.HRProvider.HRClient;
-import org.runnerup.util.Formatter;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -60,11 +48,23 @@ import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 
+import org.runnerup.R;
+import org.runnerup.hr.HRDeviceRef;
+import org.runnerup.hr.HRManager;
+import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.HRProvider.HRClient;
+import org.runnerup.util.Formatter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRSettingsActivity extends Activity implements HRClient {
 
-    private Handler handler = new Handler();
-    private StringBuffer logBuffer = new StringBuffer();
+    private final Handler handler = new Handler();
+    private final StringBuffer logBuffer = new StringBuffer();
 
     List<HRProvider> providers = null;
     String btName;
@@ -82,7 +82,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
     Formatter formatter = null;
     GraphView graphView = null;
     GraphViewSeries graphViewSeries = null;
-    ArrayList<GraphViewData> graphViewListData = new ArrayList<GraphViewData>();
+    final ArrayList<GraphViewData> graphViewListData = new ArrayList<GraphViewData>();
     GraphViewData graphViewArrayData[] = new GraphViewData[0];
     static final int GRAPH_HISTORY_SECONDS = 180;
 
@@ -165,7 +165,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         return true;
     }
 
-    OnClickListener hrZonesClick = new OnClickListener() {
+    final OnClickListener hrZonesClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
             startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
@@ -299,7 +299,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
     }
 
-    OnClickListener scanButtonClick = new OnClickListener() {
+    final OnClickListener scanButtonClick = new OnClickListener() {
         public void onClick(View v) {
             clear();
             stopTimer();
@@ -350,7 +350,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
     class DeviceAdapter extends BaseAdapter {
 
-        ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
+        final ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
         LayoutInflater inflater = null;
         Resources resources = null;
 

@@ -17,6 +17,20 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
+import android.util.Pair;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.export.Uploader.Status;
+import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.Constants.DB;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -38,25 +52,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.util.Pair;
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FormCrawler {
 
-    protected Set<String> cookies = new HashSet<String>();
-    protected FormValues formValues = new FormValues();
+    protected final Set<String> cookies = new HashSet<String>();
+    protected final FormValues formValues = new FormValues();
 
     public FormCrawler() {
         super();
@@ -73,7 +73,7 @@ public class FormCrawler {
     }
 
     protected class StringWritable implements Writable {
-        String s;
+        final String s;
 
         public StringWritable(String s) {
             this.s = s;

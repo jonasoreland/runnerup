@@ -17,18 +17,18 @@
 
 package org.runnerup.workout;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import android.annotation.TargetApi;
-import android.os.Build;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RepeatStep extends Step {
 
     int repeatCount = 1;
-    ArrayList<Step> steps = new ArrayList<Step>();
+    final ArrayList<Step> steps = new ArrayList<Step>();
 
     int currentStep = 0;
     int currentRepeat = 0;
