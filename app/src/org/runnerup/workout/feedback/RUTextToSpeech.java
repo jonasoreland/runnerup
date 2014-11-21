@@ -183,6 +183,7 @@ public class RUTextToSpeech {
 }
 
 // separate class to handle FROYO/deprecation
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 class UtteranceCompletion {
 
     @SuppressWarnings("deprecation")
