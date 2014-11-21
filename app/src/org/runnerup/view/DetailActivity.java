@@ -115,6 +115,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
     Button saveButton = null;
     Button discardButton = null;
+    Button uploadButton = null;
     Button resumeButton = null;
     TextView activityTime = null;
     TextView activityPace = null;
@@ -164,6 +165,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         saveButton = (Button) findViewById(R.id.save_button);
         discardButton = (Button) findViewById(R.id.discard_button);
         resumeButton = (Button) findViewById(R.id.resume_button);
+        uploadButton = (Button) findViewById(R.id.upload_button);
         activityTime = (TextView) findViewById(R.id.activity_time);
         activityDistance = (TextView) findViewById(R.id.activity_distance);
         activityPace = (TextView) findViewById(R.id.activity_pace);
@@ -190,14 +192,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
         saveButton.setOnClickListener(saveButtonClick);
         if (this.mode == MODE_SAVE) {
-            discardButton.setOnClickListener(discardButtonClick);
             resumeButton.setOnClickListener(resumeButtonClick);
+            uploadButton.setVisibility(View.GONE);
+            discardButton.setOnClickListener(discardButtonClick);
         } else if (this.mode == MODE_DETAILS) {
+            resumeButton.setVisibility(View.GONE);
+            uploadButton.setOnClickListener(uploadButtonClick);
             saveButton.setEnabled(false);
             discardButton.setVisibility(View.GONE);
-            resumeButton.setVisibility(View.GONE);
-            resumeButton.setText(getString(R.string.upload_activity));
-            resumeButton.setOnClickListener(uploadButtonClick);
             WidgetUtil.setEditable(notes, false);
             sport.setEnabled(false);
         }
@@ -327,7 +329,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             /**
              * Laps
              */
-            String[] from = new String[] {
+            String[] from = new String[]{
                     "_id", DB.LAP.LAP, DB.LAP.INTENSITY,
                     DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.PLANNED_TIME,
                     DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE, DB.LAP.AVG_HR
@@ -368,7 +370,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             + (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
                             + (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
                             + ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
-                                    + mID + " )")
+                            + mID + " )")
                             + (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
                             + ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null"));
 
@@ -389,7 +391,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
                             && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS),
-                                    DB.ACCOUNT.FLAG_UPLOAD)) {
+                            DB.ACCOUNT.FLAG_UPLOAD)) {
                         pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     }
                 } while (c.moveToNext());
@@ -397,10 +399,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
             c.close();
         }
 
-        if (this.mode == MODE_DETAILS && pendingUploaders.isEmpty()) {
-            resumeButton.setVisibility(View.GONE);
-        } else {
-            resumeButton.setVisibility(View.VISIBLE);
+        if (this.mode == MODE_DETAILS) {
+            if (pendingUploaders.isEmpty()) {
+                uploadButton.setVisibility(View.GONE);
+            } else {
+                uploadButton.setVisibility(View.VISIBLE);
+            }
         }
 
         for (BaseAdapter a : adapters) {
@@ -584,6 +588,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
             String name = tmp.getAsString("name");
             cb.setTag(name);
+            // only do this if not original
             if (alreadyUploadedUploaders.contains(name)) {
                 cb.setChecked(true);
                 cb.setText(getString(R.string.uploaded));
@@ -751,14 +756,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 if (arg1 == true) {
                     boolean empty = pendingUploaders.isEmpty();
                     pendingUploaders.add((String) arg0.getTag());
-                    if (empty) {
-                        resumeButton.setVisibility(View.VISIBLE);
-                    }
                 } else {
                     pendingUploaders.remove((String) arg0.getTag());
-                    if (pendingUploaders.isEmpty()) {
-                        resumeButton.setVisibility(View.GONE);
-                    }
                 }
             }
         }
