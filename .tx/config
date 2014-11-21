@@ -4,13 +4,13 @@ lang_map = fr_CA:fr-rCA,pt_BR:pt-rBR,pt_PT:pt,zh_CN:zh-rCN,zh_HK:zh-rHK,zh_TW:zh
 minimum_perc = 10
 
 [runner-up-android.stringsxml]
-file_filter = res/values-<lang>/strings.xml
-source_file = res/values/strings.xml
+file_filter = app/res/values-<lang>/strings.xml
+source_file = app/res/values/strings.xml
 source_lang = en
 type = ANDROID
 
 [runner-up-android.cuesxml]
-file_filter = res/values-<lang>/cues.xml
-source_file = res/values/cues.xml
+file_filter = app/res/values-<lang>/cues.xml
+source_file = app/res/values/cues.xml
 source_lang = en
 type = ANDROID
