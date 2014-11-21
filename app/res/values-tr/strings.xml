@@ -23,6 +23,7 @@
   <string name="metrics_distance_meter">metre</string>
   <string name="metrics_distance_meters">metre</string>
   <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_m">m</string>
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">dk</string>
   <!--format hint stuff-->
@@ -33,6 +34,8 @@
   <!--other-->
   <string name="google_play_services_legal_notices">Google Play Servisi Yasal Notlar</string>
   <string name="type">Tip</string>
+  <string name="warmup">ısınma</string>
+  <string name="cooldown">soğuma</string>
   <string name="device">Cihaz</string>
   <string name="scan">Tara</string>
   <string name="connect">Bağlan</string>
@@ -46,7 +49,7 @@
   <string name="stop">Durdur</string>
   <string name="workout">Çalışma</string>
   <string name="target">Hedef</string>
-  <string name="gps_satellites">GPS uyduları</string>
+  <string name="gps_satellites">GPS uyduları: </string>
   <string name="cancel">İptal</string>
   <string name="select_all">Hepsini seç</string>
   <string name="clear_all">Hepsini temizle</string>
@@ -59,5 +62,6 @@
   <string name="configure_accounts">Hesapları yapılandır</string>
   <string name="refresh">Yenile</string>
   <string name="age">Yaş</string>
+  <string name="Running">Koşu</string>
   <string name="ok">Tamam</string>
 </resources>

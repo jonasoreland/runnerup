@@ -39,8 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/upload_list_check"
-            android:text="@string/running" />
+            android:layout_toLeftOf="@+id/upload_list_check" />
         
         <CheckBox
             android:id="@+id/upload_list_check"
