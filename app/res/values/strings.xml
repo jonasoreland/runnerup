@@ -250,7 +250,6 @@
   <string name="pruning_deleted_activities_from_database">Pruning deleted activities from database</string>
   <string name="prune">Prune</string>
   <string name="heartrate_zones_distribution">Heartrate zones distribution</string>
-  <string name="placeholder_battery_level">Battery: unknown</string>
   <string name="battery_level">Battery level</string>
     <string name="activity_ready">Activity ready</string>
     <string name="ready_to_start_running">Ready to start running!</string>

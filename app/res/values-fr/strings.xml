@@ -218,6 +218,5 @@
   <string name="pruning_deleted_activities_from_database">Nettoyer les activités supprimés de la base de données</string>
   <string name="prune">Nettoyer</string>
   <string name="heartrate_zones_distribution">Distribution des zones de fréq. cardiaque</string>
-  <string name="placeholder_battery_level">Batterie : inconnu</string>
   <string name="battery_level">Niveau de batterie</string>
 </resources>

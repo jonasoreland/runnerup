@@ -245,7 +245,6 @@
   <string name="pruning_deleted_activities_from_database">Verwijderde activiteiten uit de database opschonen</string>
   <string name="prune">Opschonen</string>
   <string name="heartrate_zones_distribution">Distributie hartslagzones</string>
-  <string name="placeholder_battery_level">Batterij: onbekend</string>
   <string name="battery_level">Batterijniveau</string>
   <string name="activity_ready">Activiteit is gereed</string>
   <string name="ready_to_start_running">Klaar om te beginnen met hardlopen!</string>
