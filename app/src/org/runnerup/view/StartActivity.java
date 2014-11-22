@@ -501,7 +501,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         {
             int cnt0 = mGpsStatus.getSatellitesFixed();
             int cnt1 = mGpsStatus.getSatellitesAvailable();
-            gpsInfoView1.setText("" + cnt0 + "/" + cnt1);
+            gpsInfoView1.setText(": " + cnt0 + "/" + cnt1);
         }
 
         gpsInfoView2.setText(getGpsAccuracy());
