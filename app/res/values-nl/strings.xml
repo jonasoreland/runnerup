@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -69,6 +69,7 @@
   <string name="interval">Interval</string>
   <string name="lap">Ronde</string>
   <string name="new_lap">Nieuwe ronde</string>
+  <string name="next_lap">Volgende ronde</string>
   <string name="pause">Pauze</string>
   <string name="stop">Stop</string>
   <string name="workout">Training</string>
@@ -183,7 +184,7 @@
   <string name="enable_runner_up_live">Aanzetten RunnerUpLive</string>
   <string name="headset_key_startstop">Headset-toets start/stop</string>
   <string name="activity_countdown">Aftellen activiteit</string>
-  <string name="countdown_time_s">Aftellen tijd (s)</string>
+  <string name="countdown_time_s">Aftellen tijd (en)</string>
   <string name="unit_preference">Voorkeur eenheden voor afstand</string>
   <string name="auto_start_gps">Automatisch starten gps</string>
   <string name="advanced_options">Geavanceerde opties</string>
@@ -196,7 +197,7 @@
   <string name="target_pace_grace_seconds_">Doeltempo sierlijkheid in seconden</string>
   <string name="autolap_during_intervals">Automatische rondetijd tijdens intervallen</string>
   <string name="add_countdown_after_step_that_ends_with_user_press">Aftellen toevoegen na stap die eindigt met een druk door de gebruik</string>
-  <string name="step_countdown_time_s">Aftellen stap tijd (s)</string>
+  <string name="step_countdown_time_s">Aftellen stap tijd (en)</string>
   <string name="smooth_pace_graph">Gladde tempo grafiek</string>
   <string name="smooth_pace_filter_s">Gladde tempo filter(s)</string>
   <string name="poll_interval_ms">Bijhouden interval (ms)</string>
@@ -246,4 +247,9 @@
   <string name="heartrate_zones_distribution">Distributie hartslagzones</string>
   <string name="placeholder_battery_level">Batterij: onbekend</string>
   <string name="battery_level">Batterijniveau</string>
+  <string name="activity_ready">Activiteit is gereed</string>
+  <string name="ready_to_start_running">Klaar om te beginnen met hardlopen!</string>
+  <string name="searching_for_gps">Zoeken naar GPS</string>
+  <string name="activity_ongoing">Activiteit is gaande</string>
+  <string name="runnerup_activity_started">RunnerUp activiteit gestart</string>
 </resources>
