@@ -401,10 +401,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
             c.close();
         }
 
-        if (pendingUploaders.isEmpty()) {
-            uploadButton.setVisibility(View.GONE);
-        } else {
-            uploadButton.setVisibility(View.VISIBLE);
+        if (mode == MODE_DETAILS) {
+            if (pendingUploaders.isEmpty()) {
+                uploadButton.setVisibility(View.GONE);
+            } else {
+                uploadButton.setVisibility(View.VISIBLE);
+            }
         }
 
         for (BaseAdapter a : adapters) {
@@ -752,10 +754,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 } else {
                     pendingUploaders.remove((String) arg0.getTag());
                 }
-                if (pendingUploaders.isEmpty())
-                    uploadButton.setVisibility(View.GONE);
-                else
-                    uploadButton.setVisibility(View.VISIBLE);
+
+                if (mode == MODE_DETAILS) {
+                    if (pendingUploaders.isEmpty())
+                        uploadButton.setVisibility(View.GONE);
+                    else
+                        uploadButton.setVisibility(View.VISIBLE);
+                }
             }
         }
     };
