@@ -252,6 +252,10 @@
   <string name="heartrate_zones_distribution">Heartrate zones distribution</string>
   <string name="placeholder_battery_level">Battery: unknown</string>
   <string name="battery_level">Battery level</string>
+  <string name="battery_level_low_notification_title">Warning</string>
+  <string name="battery_level_low_notification_txt">The battery level of your heart-rate monitor is low.</string>
+  <string name="pref_battery_level_low_notification_discard">batteryLevelLowDialog</string>
+  <string name="do_not_show_again">Do not show again</string>
     <string name="activity_ready">Activity ready</string>
     <string name="ready_to_start_running">Ready to start running!</string>
     <string name="searching_for_gps">Searching for GPS</string>

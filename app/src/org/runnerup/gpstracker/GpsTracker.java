@@ -719,6 +719,10 @@ public class GpsTracker extends android.app.Service implements
         return mHeartbeats;
     }
 
+    public Integer getCurrentBatteryLevel() {
+        return hrProvider.getBatteryLevel();
+    }
+
     private boolean getAllowStartStopFromHeadsetKey() {
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
