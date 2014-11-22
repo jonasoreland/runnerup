@@ -189,18 +189,17 @@ public class DetailActivity extends FragmentActivity implements Constants {
             });
         }
         saveButton.setOnClickListener(saveButtonClick);
+        uploadButton.setOnClickListener(uploadButtonClick);
         if (this.mode == MODE_SAVE) {
             resumeButton.setOnClickListener(resumeButtonClick);
-            uploadButton.setVisibility(View.GONE);
             discardButton.setOnClickListener(discardButtonClick);
+            setEdit(true);
         } else if (this.mode == MODE_DETAILS) {
             resumeButton.setVisibility(View.GONE);
-            uploadButton.setOnClickListener(uploadButtonClick);
-            saveButton.setEnabled(false);
             discardButton.setVisibility(View.GONE);
-            WidgetUtil.setEditable(notes, false);
-            sport.setEnabled(false);
+            setEdit(false);
         }
+        uploadButton.setVisibility(View.GONE);
 
         fillHeaderData();
         requery();
@@ -276,6 +275,16 @@ public class DetailActivity extends FragmentActivity implements Constants {
         hrzonesBar = new HRZonesBar(this);
     }
 
+    private void setEdit(boolean value) {
+        edit = value;
+        saveButton.setEnabled(value);
+        uploadButton.setEnabled(value);
+        WidgetUtil.setEditable(notes, value);
+        sport.setEnabled(value);
+        if (recomputeMenuItem != null)
+            recomputeMenuItem.setEnabled(value);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mode == MODE_DETAILS) {
@@ -293,13 +302,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 break;
             case R.id.menu_edit_activity:
                 if (edit == false) {
-                    edit = true;
-                    WidgetUtil.setEditable(notes, true);
+                    setEdit(true);
                     notes.requestFocus();
-                    saveButton.setEnabled(true);
-                    sport.setEnabled(true);
-                    if (recomputeMenuItem != null)
-                        recomputeMenuItem.setEnabled(true);
                     requery();
                 }
                 break;
@@ -397,12 +401,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
             c.close();
         }
 
-        if (this.mode == MODE_DETAILS) {
-            if (pendingUploaders.isEmpty()) {
-                uploadButton.setVisibility(View.GONE);
-            } else {
-                uploadButton.setVisibility(View.VISIBLE);
-            }
+        if (pendingUploaders.isEmpty()) {
+            uploadButton.setVisibility(View.GONE);
+        } else {
+            uploadButton.setVisibility(View.VISIBLE);
         }
 
         for (BaseAdapter a : adapters) {
@@ -660,12 +662,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public void onClick(View v) {
             saveActivity();
             if (mode == MODE_DETAILS) {
-                edit = false;
-                WidgetUtil.setEditable(notes, false);
-                sport.setEnabled(false);
-                saveButton.setEnabled(false);
-                if (recomputeMenuItem != null)
-                    recomputeMenuItem.setEnabled(false);
+                setEdit(false);
                 requery();
                 return;
             }
@@ -715,7 +712,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             return;
         }
         if (mode == MODE_SAVE) {
-            discardButtonClick.onClick(discardButton);
+            resumeButtonClick.onClick(resumeButton);
         } else {
             super.onBackPressed();
         }
@@ -751,11 +748,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 arg0.setChecked(true);
             } else {
                 if (arg1 == true) {
-                    boolean empty = pendingUploaders.isEmpty();
                     pendingUploaders.add((String) arg0.getTag());
                 } else {
                     pendingUploaders.remove((String) arg0.getTag());
                 }
+                if (pendingUploaders.isEmpty())
+                    uploadButton.setVisibility(View.GONE);
+                else
+                    uploadButton.setVisibility(View.VISIBLE);
             }
         }
     };
