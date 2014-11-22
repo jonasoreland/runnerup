@@ -50,7 +50,7 @@ public enum Intensity {
     /**
      *
      */
-   RECOVERY(INTENSITY.RECOVERY, R.string.recovery) ;
+   RECOVERY(INTENSITY.RECOVERY, R.string.recovery, R.string.recovery);
 
     final int value;
     final int textId;
