@@ -254,6 +254,13 @@
         	android:key="@string/pref_bt_mock"
         	android:title="@string/mock_hrm_devices" />
 
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="15"
+            android:inputType="number"
+            android:key="@string/pref_battery_level_low_threshold"
+            android:persistent="true"
+            android:title="@string/battery_level_low_threshold" />
+
     	</PreferenceScreen>
 
 	<PreferenceCategory android:title="@string/about">

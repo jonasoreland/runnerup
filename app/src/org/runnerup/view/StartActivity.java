@@ -108,7 +108,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     ImageButton hrButton = null;
     TextView hrValueText = null;
     FrameLayout hrLayout = null;
-    static final int batteryLevelLowThreshold = 15;
+
+    static final int batteryLevelHighThreshold = 75;
     boolean batteryLevelMessageShowed = false;
 
     TitleSpinner simpleAudioSpinner = null;
@@ -424,34 +425,37 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             return;
         }
 
-        final String pref = getResources().getString(R.string.pref_battery_level_low_notification_discard);
+        final String pref_key = getResources().getString(R.string.pref_battery_level_low_notification_discard);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (batteryLevel > batteryLevelLowThreshold) {
-            if (prefs.contains(pref)) {
-                prefs.edit().remove(pref).commit();
-            }
+        if ((batteryLevel > batteryLevelHighThreshold) && (prefs.contains(pref_key))) {
+            prefs.edit().remove(pref_key).commit();
             return;
         }
 
-        if (prefs.getBoolean(pref, false)) {
+        int batteryLevelLowThreshold = prefs.getInt(getResources().getString(R.string.battery_level_low_threshold), 15);
+        if (batteryLevel > batteryLevelLowThreshold) {
+            return;
+        }
+
+        if (prefs.getBoolean(pref_key, false)) {
             return;
         }
 
         AlertDialog.Builder prompt = new AlertDialog.Builder(this);
-        LayoutInflater promptInflater = LayoutInflater.from(this);
-        View messageView = promptInflater.inflate(R.layout.checkbox, null);
-        final CheckBox dontShowAgain = (CheckBox) messageView.findViewById(R.id.skip);
-        prompt.setView(messageView);
+        final CheckBox dontShowAgain = new CheckBox(this);
+        dontShowAgain.setText(getResources().getText(R.string.do_not_show_again));
+        prompt.setView(dontShowAgain);
+
         prompt.setCancelable(false);
         prompt.setMessage(getResources().getText(R.string.battery_level_low_notification_txt)
             + "\n" + getResources().getText(R.string.battery_level) + ": " + batteryLevel + "%");
-        prompt.setTitle(getResources().getText(R.string.battery_level_low_notification_title));
+        prompt.setTitle(getResources().getText(R.string.warning));
 
         prompt.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (dontShowAgain.isChecked()) {
-                    prefs.edit().putBoolean(pref, true).commit();
+                    prefs.edit().putBoolean(pref_key, true).commit();
                 }
                 return;
             }
