@@ -112,4 +112,8 @@
     <string name="pref_autopause_afterseconds">pref_autopause_afterseconds</string>
     <string name="pref_autopause_minpace">pref_autopause_minpace</string>
     <string name="pref_min_livelog_delay_millis">pref_min_livelog_delay_millis</string>
+
+    <string name="pref_battery_level_low_threshold">batterylevelLowThreshold</string>
+    <string name="pref_battery_level_high_threshold">batterylevelHighThreshold</string>
+    <string name="pref_battery_level_low_notification_discard">batteryLevelLowDialog</string>
 </resources>

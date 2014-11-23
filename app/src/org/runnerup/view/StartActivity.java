@@ -45,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -107,6 +108,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     ImageButton hrButton = null;
     TextView hrValueText = null;
     FrameLayout hrLayout = null;
+    boolean batteryLevelMessageShowed = false;
 
     TitleSpinner simpleAudioSpinner = null;
     AudioSchemeListAdapter simpleAudioListAdapter = null;
@@ -416,6 +418,51 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         notificationStateManager.cancelNotification();
     }
 
+    protected void notificationBatteryLevel(int batteryLevel) {
+        if ((batteryLevel < 0) || (batteryLevel > 100)) {
+            return;
+        }
+
+        final String pref_key = getResources().getString(R.string.pref_battery_level_low_notification_discard);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        int batteryLevelHighThreshold = prefs.getInt(getResources().getString(R.string.pref_battery_level_high_threshold), 75);
+        if ((batteryLevel > batteryLevelHighThreshold) && (prefs.contains(pref_key))) {
+            prefs.edit().remove(pref_key).commit();
+            return;
+        }
+
+        int batteryLevelLowThreshold = prefs.getInt(getResources().getString(R.string.pref_battery_level_low_threshold), 15);
+        if (batteryLevel > batteryLevelLowThreshold) {
+            return;
+        }
+
+        if (prefs.getBoolean(pref_key, false)) {
+            return;
+        }
+
+        AlertDialog.Builder prompt = new AlertDialog.Builder(this);
+        final CheckBox dontShowAgain = new CheckBox(this);
+        dontShowAgain.setText(getResources().getText(R.string.do_not_show_again));
+        prompt.setView(dontShowAgain);
+
+        prompt.setCancelable(false);
+        prompt.setMessage(getResources().getText(R.string.battery_level_low_notification_txt)
+            + "\n" + getResources().getText(R.string.battery_level) + ": " + batteryLevel + "%");
+        prompt.setTitle(getResources().getText(R.string.warning));
+
+        prompt.setPositiveButton(getResources().getText(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (dontShowAgain.isChecked()) {
+                    prefs.edit().putBoolean(pref_key, true).commit();
+                }
+                return;
+            }
+        });
+
+        prompt.show();
+    }
+
     final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
 
         @Override
@@ -558,6 +605,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             if (hrVal != null) {
                 hrButton.setEnabled(false);
                 hrValueText.setText(Integer.toString(hrVal));
+
+                if (!batteryLevelMessageShowed) {
+                    batteryLevelMessageShowed = true;
+                    notificationBatteryLevel(mGpsTracker.getCurrentBatteryLevel());
+                }
             } else {
                 hrButton.setEnabled(true);
                 hrValueText.setText("?");
