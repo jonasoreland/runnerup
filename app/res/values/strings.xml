@@ -253,6 +253,7 @@
   <string name="placeholder_battery_level">Battery: unknown</string>
   <string name="battery_level">Battery level</string>
   <string name="battery_level_low_threshold">Low HRM battery level</string>
+  <string name="battery_level_high_threshold">High HRM battery level</string>
   <string name="warning">Warning</string>
   <string name="battery_level_low_notification_txt">The battery level of your heart-rate monitor is low.</string>
   <string name="do_not_show_again">Do not show again</string>

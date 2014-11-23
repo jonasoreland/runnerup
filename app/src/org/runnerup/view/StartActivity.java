@@ -108,8 +108,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     ImageButton hrButton = null;
     TextView hrValueText = null;
     FrameLayout hrLayout = null;
-
-    static final int batteryLevelHighThreshold = 75;
     boolean batteryLevelMessageShowed = false;
 
     TitleSpinner simpleAudioSpinner = null;
@@ -428,12 +426,13 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         final String pref_key = getResources().getString(R.string.pref_battery_level_low_notification_discard);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        int batteryLevelHighThreshold = prefs.getInt(getResources().getString(R.string.pref_battery_level_high_threshold), 75);
         if ((batteryLevel > batteryLevelHighThreshold) && (prefs.contains(pref_key))) {
             prefs.edit().remove(pref_key).commit();
             return;
         }
 
-        int batteryLevelLowThreshold = prefs.getInt(getResources().getString(R.string.battery_level_low_threshold), 15);
+        int batteryLevelLowThreshold = prefs.getInt(getResources().getString(R.string.pref_battery_level_low_threshold), 15);
         if (batteryLevel > batteryLevelLowThreshold) {
             return;
         }
@@ -452,7 +451,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             + "\n" + getResources().getText(R.string.battery_level) + ": " + batteryLevel + "%");
         prompt.setTitle(getResources().getText(R.string.warning));
 
-        prompt.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        prompt.setPositiveButton(getResources().getText(R.string.ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (dontShowAgain.isChecked()) {
                     prefs.edit().putBoolean(pref_key, true).commit();
