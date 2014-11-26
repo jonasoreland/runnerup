@@ -423,16 +423,18 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             return;
         }
 
-        final String pref_key = getResources().getString(R.string.pref_battery_level_low_notification_discard);
+        final String pref_key = getString(R.string.pref_battery_level_low_notification_discard);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        int batteryLevelHighThreshold = prefs.getInt(getResources().getString(R.string.pref_battery_level_high_threshold), 75);
+        int batteryLevelHighThreshold = SafeParse.parseInt(prefs.getString(getString(
+                R.string.pref_battery_level_high_threshold), "75"), 75);
         if ((batteryLevel > batteryLevelHighThreshold) && (prefs.contains(pref_key))) {
             prefs.edit().remove(pref_key).commit();
             return;
         }
 
-        int batteryLevelLowThreshold = prefs.getInt(getResources().getString(R.string.pref_battery_level_low_threshold), 15);
+        int batteryLevelLowThreshold = SafeParse.parseInt(prefs.getString(getString(
+                R.string.pref_battery_level_low_threshold), "15"), 15);
         if (batteryLevel > batteryLevelLowThreshold) {
             return;
         }
