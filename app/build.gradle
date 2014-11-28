@@ -109,7 +109,9 @@ class DownloadTask extends DefaultTask {
 }
 
 def props = new Properties()
-props.load(new FileInputStream(rootProject.file("../release.properties")))
-android.signingConfigs.release.storePassword props.keyStorePassword
-android.signingConfigs.release.keyPassword props.keyAliasPassword
+if (rootProject.file("../release.properties").exists()) {
+    props.load(new FileInputStream(rootProject.file("../release.properties")))
+    android.signingConfigs.release.storePassword props.keyStorePassword
+    android.signingConfigs.release.keyPassword props.keyAliasPassword
+}
 
