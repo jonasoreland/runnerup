@@ -57,7 +57,7 @@ import java.io.InputStream;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MainLayout extends TabActivity {
 
-    private Drawable getDrawable(int resId) {
+    private Drawable myGetDrawable(int resId) {
         Drawable d = getResources().getDrawable(resId);
         return d;
     }
@@ -111,19 +111,19 @@ public class MainLayout extends TabActivity {
         TabHost tabHost = getTabHost(); // The activity TabHost
 
         tabHost.addTab(tabHost.newTabSpec("Start")
-                .setIndicator(getString(R.string.start), getDrawable(R.drawable.ic_tab_main))
+                .setIndicator(getString(R.string.start), myGetDrawable(R.drawable.ic_tab_main))
                 .setContent(new Intent(this, StartActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Feed")
-                .setIndicator(getString(R.string.feed), getDrawable(R.drawable.ic_tab_feed))
+                .setIndicator(getString(R.string.feed), myGetDrawable(R.drawable.ic_tab_feed))
                 .setContent(new Intent(this, FeedActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("History")
-                .setIndicator(getString(R.string.history), getDrawable(R.drawable.ic_tab_history))
+                .setIndicator(getString(R.string.history), myGetDrawable(R.drawable.ic_tab_history))
                 .setContent(new Intent(this, HistoryActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Settings")
-                .setIndicator(getString(R.string.settings), getDrawable(R.drawable.ic_tab_setup))
+                .setIndicator(getString(R.string.settings), myGetDrawable(R.drawable.ic_tab_setup))
                 .setContent(new Intent(this, SettingsActivity.class)));
 
         // Set tabs Colors
