@@ -30,8 +30,8 @@ android {
         froyo {
             minSdkVersion 8
             targetSdkVersion 18
-            versionName "1.36"
-            versionCode 36
+            versionName "1.37"
+            versionCode 73
         }
         latest {
             minSdkVersion 14
@@ -51,6 +51,8 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
+            proguardFile 'proguard.txt'
             signingConfig signingConfigs.release
         }
     }
@@ -73,7 +75,7 @@ dependencies {
 
     compile files('../GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')
-    provided files('libs/antpluginlib_2.0.0.jar')
+    compile files('libs/antpluginlib_2.0.0.jar')
 }
 
 allprojects {
