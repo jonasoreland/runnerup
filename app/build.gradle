@@ -30,7 +30,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:3.2.65'
     compile files('../GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')
-    provided files('libs/antpluginlib_2.0.0.jar')
+    compile files('libs/antpluginlib_2.0.0.jar')
 }
 
 allprojects {
