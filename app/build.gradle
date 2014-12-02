@@ -31,7 +31,7 @@ android {
             minSdkVersion 8
             targetSdkVersion 18
             versionName "1.37"
-            versionCode 73
+            versionCode 37 
         }
         latest {
             minSdkVersion 14
