@@ -36,9 +36,9 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
-import org.runnerup.gpstracker.WorkoutProvider;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.ActivityInfo;
 import org.runnerup.workout.Scope;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -153,7 +153,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
     }
 
     @Override
-    public void liveLog(WorkoutProvider workoutProvider, int type) {
+    public void liveLog(ActivityInfo activityInfo, int type) {
 
         if (type == DB.LOCATION.TYPE_GPS) {
             if (System.currentTimeMillis()-mTimeLastLog < mMinLiveLogDelayMillis) {
@@ -163,11 +163,11 @@ public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
         
         mTimeLastLog = System.currentTimeMillis();
         int externalType = translateType(type);
-        long elapsedDistanceMeter = Math.round(workoutProvider.getWorkoutInfo().getDistance(Scope.WORKOUT));
-        long elapsedTimeMillis = Math.round(workoutProvider.getWorkoutInfo().getTime(Scope.WORKOUT));
+        long elapsedDistanceMeter = Math.round(activityInfo.getDistance(Scope.WORKOUT));
+        long elapsedTimeMillis = Math.round(activityInfo.getTime(Scope.WORKOUT));
 
         Intent msgIntent = new Intent(context, LiveService.class);
-        Location location = workoutProvider.getLastKnownLocation();
+        Location location = activityInfo.getLastKnownLocation();
 
         msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
         msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());

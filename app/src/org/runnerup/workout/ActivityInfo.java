@@ -1,11 +1,11 @@
 package org.runnerup.workout;
 
-import java.util.List;
+import android.location.Location;
 
 /**
  * Created by niklas.weidemann on 2014-11-14.
  */
-public interface WorkoutInfo {
+public interface ActivityInfo {
     double get(Scope scope, Dimension d);
 
     double getDistance(Scope scope);
@@ -30,4 +30,6 @@ public interface WorkoutInfo {
     boolean isPaused();
 
     boolean isEnabled(Dimension dim, Scope scope);
+
+    Location getLastKnownLocation();
 }

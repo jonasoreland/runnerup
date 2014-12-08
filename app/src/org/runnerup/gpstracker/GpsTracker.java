@@ -71,7 +71,7 @@ import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsTracker extends android.app.Service implements
-        LocationListener, Constants, WorkoutProvider {
+        LocationListener, Constants {
     public static final int MAX_HR_AGE = 3000; // 3s
 
     private final Handler handler = new Handler();
@@ -133,7 +133,7 @@ public class GpsTracker extends android.app.Service implements
         mDB = mDBHelper.getWritableDatabase();
         notificationStateManager = new NotificationStateManager(
                 new ForegroundNotificationDisplayStrategy(this));
-        activityOngoingState = new OngoingState(new Formatter(this), this, this);
+        activityOngoingState = new OngoingState(new Formatter(this), workout, this);
 
         if (getAllowStartStopFromHeadsetKey()) {
             registerHeadsetListener();
@@ -169,11 +169,6 @@ public class GpsTracker extends android.app.Service implements
     public void setWorkout(Workout w) {
         this.workout = w;
         w.setGpsTracker(this);
-    }
-
-    @Override
-    public Workout getWorkoutInfo() {
-        return this.workout;
     }
 
     public void startLogging() {
@@ -464,7 +459,6 @@ public class GpsTracker extends android.app.Service implements
         return mElapsedDistance;
     }
 
-    @Override
     public Location getLastKnownLocation() {
         return mLastLocation;
     }
@@ -545,7 +539,7 @@ public class GpsTracker extends android.app.Service implements
     private void liveLog(int type) {
 
         for (LiveLogger l : liveLoggers) {
-            l.liveLog(this, type);
+            l.liveLog(workout, type);
         }
     }
 
@@ -774,5 +768,9 @@ public class GpsTracker extends android.app.Service implements
                 throw e;
             }
         }
+    }
+
+    public Workout getWorkout() {
+        return workout;
     }
 }

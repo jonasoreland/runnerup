@@ -20,6 +20,7 @@ package org.runnerup.workout;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Build;
 
 import org.runnerup.gpstracker.GpsTracker;
@@ -38,7 +39,7 @@ import java.util.List;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Workout implements WorkoutComponent, WorkoutInfo {
+public class Workout implements WorkoutComponent, ActivityInfo {
 
     long lap = 0;
     int currentStepNo = -1;
@@ -520,6 +521,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         public double getHeartRate(Scope scope) {
             return 150 + 25 * Math.random();
         }
+    }
+
+    @Override
+    public Location getLastKnownLocation() {
+        return gpsTracker.getLastKnownLocation();
     }
 
     public static Workout fakeWorkoutForTestingAudioCue() {

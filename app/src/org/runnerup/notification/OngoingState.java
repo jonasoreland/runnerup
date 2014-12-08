@@ -9,23 +9,22 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
-import org.runnerup.gpstracker.WorkoutProvider;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
+import org.runnerup.workout.ActivityInfo;
 import org.runnerup.workout.Scope;
-import org.runnerup.workout.WorkoutInfo;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class OngoingState implements NotificationState {
     private final Formatter formatter;
-    private final WorkoutProvider workoutProvider;
+    private final ActivityInfo activityInfo;
     private final Context context;
     private final NotificationCompat.Builder builder;
 
-    public OngoingState(Formatter formatter, WorkoutProvider workoutProvider, Context context) {
+    public OngoingState(Formatter formatter, ActivityInfo activityInfo, Context context) {
         this.formatter = formatter;
-        this.workoutProvider = workoutProvider;
+        this.activityInfo = activityInfo;
         this.context = context;
 
         builder = new NotificationCompat.Builder(context);
@@ -44,15 +43,12 @@ public class OngoingState implements NotificationState {
 
     @Override
     public Notification createNotification() {
-        WorkoutInfo workout = workoutProvider.getWorkoutInfo();
-        if (workout == null) throw new IllegalStateException("workout is null!");
-
         String distance = formatter.formatDistance(Formatter.TXT_SHORT,
-                Math.round(workout.getDistance(Scope.WORKOUT)));
+                Math.round(activityInfo.getDistance(Scope.WORKOUT)));
         String time = formatter.formatElapsedTime(Formatter.TXT_LONG,
-                Math.round(workout.getTime(Scope.WORKOUT)));
+                Math.round(activityInfo.getTime(Scope.WORKOUT)));
         String pace = formatter.formatPace(Formatter.TXT_SHORT,
-                workout.getPace(Scope.WORKOUT));
+                activityInfo.getPace(Scope.WORKOUT));
 
         String content = String.format("%s: %s %s: %s %s: %s",
                 context.getString(R.string.distance), distance,

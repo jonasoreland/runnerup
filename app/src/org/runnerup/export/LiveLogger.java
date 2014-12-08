@@ -1,10 +1,10 @@
 package org.runnerup.export;
 
-import org.runnerup.gpstracker.WorkoutProvider;
+import org.runnerup.workout.ActivityInfo;
 
 /**
  * Created by niklas.weidemann on 2014-10-13.
  */
 public interface LiveLogger {
-    public void liveLog(WorkoutProvider workoutProvider, int type);
+    public void liveLog(ActivityInfo activityInfo, int type);
 }

@@ -162,7 +162,7 @@ public class RunActivity extends Activity implements TickListener {
     }
 
     void onGpsTrackerBound() {
-        workout = mGpsTracker.getWorkoutInfo();
+        workout = mGpsTracker.getWorkout();
         mGpsTracker.createActivity(workout.getSport());
         mGpsTracker.start();
 
