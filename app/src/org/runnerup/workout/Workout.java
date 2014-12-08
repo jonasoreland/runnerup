@@ -97,19 +97,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         this.gpsTracker = gpsTracker;
     }
 
-    public boolean isEnabled(Dimension dim, Scope scope) {
-        if (dim == Dimension.HR) {
-            return gpsTracker.isHRConnected();
-        } else if (dim == Dimension.HRZ) {
-            if (hrZones == null || !hrZones.isConfigured() || !gpsTracker.isHRConnected())
-                return false;
-        } else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
-                scope == Scope.CURRENT) {
-            return gpsTracker.getCurrentSpeed() != null;
-        }
-        return true;
-    }
-
     public void onInit(Workout w) {
         assert (w == this);
         for (Step a : steps) {
@@ -200,10 +187,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         paused = true;
     }
 
-    public boolean isPaused() {
-        return paused;
-    }
-
     public void onNewLap() {
         initFeedback();
         if (currentStep != null) {
@@ -247,6 +230,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     public void onDiscard() {
         gpsTracker.completeActivity(false);
+    }
+
+    @Override
+    public boolean isPaused() {
+        return paused;
     }
 
     @Override
@@ -393,13 +381,28 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         return 0.0;
     }
 
-    private double getHeartRateZone(Scope scope) {
+    @Override
+    public double getHeartRateZone(Scope scope) {
         return hrZones.getZone(getHeartRate(scope));
     }
 
     @Override
     public int getSport() {
         return sport;
+    }
+
+    @Override
+    public boolean isEnabled(Dimension dim, Scope scope) {
+        if (dim == Dimension.HR) {
+            return gpsTracker.isHRConnected();
+        } else if (dim == Dimension.HRZ) {
+            if (hrZones == null || !hrZones.isConfigured() || !gpsTracker.isHRConnected())
+                return false;
+        } else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
+                scope == Scope.CURRENT) {
+            return gpsTracker.getCurrentSpeed() != null;
+        }
+        return true;
     }
 
     private void initFeedback() {
@@ -426,12 +429,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
     }
 
-    @Override
     public int getStepCount() {
         return steps.size();
     }
 
-    @Override
     public boolean isLastStep() {
         if (currentStepNo + 1 < steps.size())
             return false;
@@ -455,7 +456,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         public final Step step;
     }
 
-    @Override
     public List<StepListEntry> getSteps() {
         ArrayList<StepListEntry> list = new ArrayList<StepListEntry>();
         for (Step s : steps) {
@@ -464,7 +464,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         return list;
     }
 
-    @Override
     public Step getCurrentStep() {
         if (currentStepNo >= 0 && currentStepNo < steps.size())
             return steps.get(currentStepNo).getCurrentStep();

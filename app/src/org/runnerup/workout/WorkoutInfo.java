@@ -22,13 +22,12 @@ public interface WorkoutInfo {
 
     double getHeartRate(Scope scope);
 
+    double getHeartRateZone(Scope scope);
+
     int getSport();
 
-    int getStepCount();
+    /* TODO make better/more elaborate state visible... */
+    boolean isPaused();
 
-    boolean isLastStep();
-
-    List<Workout.StepListEntry> getSteps();
-
-    Step getCurrentStep();
+    boolean isEnabled(Dimension dim, Scope scope);
 }
