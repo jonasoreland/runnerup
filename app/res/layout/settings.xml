@@ -118,6 +118,20 @@
         android:entries="@array/unitEntries"
         android:entryValues="@array/unitValues" />
 
+    <ListPreference
+        android:key="pref_running_speed"
+        android:persistent="true"
+        android:title="@string/running_speed_preference"
+        android:entries="@array/runningSpeedEntries"
+        android:entryValues="@array/runningSpeedValues" />
+
+    <ListPreference
+        android:key="pref_cycle_speed"
+        android:persistent="true"
+        android:title="@string/cycle_speed_preference"
+        android:entries="@array/cycleSpeedEntries"
+        android:entryValues="@array/cycleSpeedValues" />
+
 	<CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_startgps"
