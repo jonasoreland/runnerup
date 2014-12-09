@@ -39,7 +39,7 @@ import java.util.List;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Workout implements WorkoutComponent, ActivityInfo {
+public class Workout implements WorkoutComponent, WorkoutInfo {
 
     long lap = 0;
     int currentStepNo = -1;

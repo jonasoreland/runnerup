@@ -38,7 +38,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
-import org.runnerup.workout.ActivityInfo;
+import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.Scope;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -153,7 +153,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
     }
 
     @Override
-    public void liveLog(ActivityInfo activityInfo, int type) {
+    public void liveLog(WorkoutInfo workoutInfo, int type) {
 
         if (type == DB.LOCATION.TYPE_GPS) {
             if (System.currentTimeMillis()-mTimeLastLog < mMinLiveLogDelayMillis) {
@@ -163,11 +163,11 @@ public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
         
         mTimeLastLog = System.currentTimeMillis();
         int externalType = translateType(type);
-        long elapsedDistanceMeter = Math.round(activityInfo.getDistance(Scope.WORKOUT));
-        long elapsedTimeMillis = Math.round(activityInfo.getTime(Scope.WORKOUT));
+        long elapsedDistanceMeter = Math.round(workoutInfo.getDistance(Scope.WORKOUT));
+        long elapsedTimeMillis = Math.round(workoutInfo.getTime(Scope.WORKOUT));
 
         Intent msgIntent = new Intent(context, LiveService.class);
-        Location location = activityInfo.getLastKnownLocation();
+        Location location = workoutInfo.getLastKnownLocation();
 
         msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
         msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());

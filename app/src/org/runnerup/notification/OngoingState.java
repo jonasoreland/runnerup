@@ -12,19 +12,19 @@ import org.runnerup.R;
 import org.runnerup.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
-import org.runnerup.workout.ActivityInfo;
+import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.Scope;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class OngoingState implements NotificationState {
     private final Formatter formatter;
-    private final ActivityInfo activityInfo;
+    private final WorkoutInfo workoutInfo;
     private final Context context;
     private final NotificationCompat.Builder builder;
 
-    public OngoingState(Formatter formatter, ActivityInfo activityInfo, Context context) {
+    public OngoingState(Formatter formatter, WorkoutInfo workoutInfo, Context context) {
         this.formatter = formatter;
-        this.activityInfo = activityInfo;
+        this.workoutInfo = workoutInfo;
         this.context = context;
 
         builder = new NotificationCompat.Builder(context);
@@ -44,11 +44,11 @@ public class OngoingState implements NotificationState {
     @Override
     public Notification createNotification() {
         String distance = formatter.formatDistance(Formatter.TXT_SHORT,
-                Math.round(activityInfo.getDistance(Scope.WORKOUT)));
+                Math.round(workoutInfo.getDistance(Scope.WORKOUT)));
         String time = formatter.formatElapsedTime(Formatter.TXT_LONG,
-                Math.round(activityInfo.getTime(Scope.WORKOUT)));
+                Math.round(workoutInfo.getTime(Scope.WORKOUT)));
         String pace = formatter.formatPace(Formatter.TXT_SHORT,
-                activityInfo.getPace(Scope.WORKOUT));
+                workoutInfo.getPace(Scope.WORKOUT));
 
         String content = String.format("%s: %s %s: %s %s: %s",
                 context.getString(R.string.distance), distance,
