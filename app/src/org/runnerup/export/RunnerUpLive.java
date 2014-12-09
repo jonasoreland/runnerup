@@ -36,13 +36,14 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
+import org.runnerup.gpstracker.WorkoutObserver;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.Scope;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
+public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
     public static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
@@ -153,7 +154,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader, LiveLogger {
     }
 
     @Override
-    public void liveLog(WorkoutInfo workoutInfo, int type) {
+    public void workoutEvent(WorkoutInfo workoutInfo, int type) {
 
         if (type == DB.LOCATION.TYPE_GPS) {
             if (System.currentTimeMillis()-mTimeLastLog < mMinLiveLogDelayMillis) {

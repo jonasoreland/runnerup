@@ -50,6 +50,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.Uploader.AuthMethod;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.feed.FeedList;
+import org.runnerup.gpstracker.WorkoutObserver;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.WorkoutSerializer;
@@ -1009,7 +1010,7 @@ public class UploadManager {
         }.execute(uploader);
     }
 
-    public void loadLiveLoggers(List<LiveLogger> liveLoggers) {
+    public void loadLiveLoggers(List<WorkoutObserver> liveLoggers) {
         liveLoggers.clear();
         Resources res = getResources();
         String key = res.getString(R.string.pref_runneruplive_active);
@@ -1030,8 +1031,9 @@ public class UploadManager {
                 do {
                     ContentValues config = DBHelper.get(c);
                     Uploader u = add(config);
-                    if (u.isConfigured() && u.checkSupport(Uploader.Feature.LIVE) && u instanceof LiveLogger) {
-                        liveLoggers.add((LiveLogger) u);
+                    if (u.isConfigured() && u.checkSupport(Uploader.Feature.LIVE) &&
+                            (u instanceof WorkoutObserver)) {
+                        liveLoggers.add((WorkoutObserver) u);
                     }
                 } while (c.moveToNext());
             }

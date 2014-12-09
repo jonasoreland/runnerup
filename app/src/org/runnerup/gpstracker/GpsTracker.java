@@ -41,7 +41,6 @@ import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.LiveLogger;
 import org.runnerup.export.UploadManager;
 import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.hr.HRDeviceRef;
@@ -117,7 +116,7 @@ public class GpsTracker extends android.app.Service implements
     SQLiteDatabase mDB = null;
     PersistentGpsLoggerListener mDBWriter = null;
     PowerManager.WakeLock mWakeLock = null;
-    final List<LiveLogger> liveLoggers = new ArrayList<LiveLogger>();
+    final List<WorkoutObserver> liveLoggers = new ArrayList<WorkoutObserver>();
 
     private Workout workout = null;
 
@@ -538,8 +537,8 @@ public class GpsTracker extends android.app.Service implements
 
     private void liveLog(int type) {
 
-        for (LiveLogger l : liveLoggers) {
-            l.liveLog(workout, type);
+        for (WorkoutObserver l : liveLoggers) {
+            l.workoutEvent(workout, type);
         }
     }
 
