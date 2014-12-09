@@ -42,7 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
-import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.tracker.GpsTracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;

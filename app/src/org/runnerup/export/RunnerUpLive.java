@@ -36,7 +36,7 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
-import org.runnerup.gpstracker.WorkoutObserver;
+import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.WorkoutInfo;

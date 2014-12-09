@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.runnerup.gpstracker.filter;
+package org.runnerup.tracker.filter;
 
 import android.annotation.TargetApi;
 import android.content.ContentValues;
@@ -24,7 +24,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
-import org.runnerup.gpstracker.LocationListenerBase;
+import org.runnerup.tracker.LocationListenerBase;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class PersistentGpsLoggerListener extends LocationListenerBase implements

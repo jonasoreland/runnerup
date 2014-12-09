@@ -57,8 +57,8 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.gpstracker.GpsInformation;
-import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.tracker.GpsInformation;
+import org.runnerup.tracker.GpsTracker;
 import org.runnerup.hr.MockHRProvider;
 import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
@@ -96,7 +96,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     boolean skipStopGps = false;
     GpsTracker mGpsTracker = null;
-    org.runnerup.gpstracker.GpsStatus mGpsStatus = null;
+    org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
     TabHost tabHost = null;
     Button startButton = null;
@@ -164,7 +164,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         formatter = new Formatter(this);
 
         bindGpsTracker();
-        mGpsStatus = new org.runnerup.gpstracker.GpsStatus(this);
+        mGpsStatus = new org.runnerup.tracker.GpsStatus(this);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationStateManager = new NotificationStateManager(new NotificationManagerDisplayStrategy(notificationManager));
         gpsSearchingState = new GpsSearchingState(this, this);

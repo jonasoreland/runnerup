@@ -50,7 +50,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.Uploader.AuthMethod;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.feed.FeedList;
-import org.runnerup.gpstracker.WorkoutObserver;
+import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Constants.DB;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.WorkoutSerializer;

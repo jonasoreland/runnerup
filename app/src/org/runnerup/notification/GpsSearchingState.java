@@ -9,7 +9,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
-import org.runnerup.gpstracker.GpsInformation;
+import org.runnerup.tracker.GpsInformation;
 import org.runnerup.util.Constants;
 import org.runnerup.view.MainLayout;
 

@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.runnerup.gpstracker;
+package org.runnerup.tracker;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
@@ -42,7 +42,7 @@ import android.widget.Toast;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
-import org.runnerup.gpstracker.filter.PersistentGpsLoggerListener;
+import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;

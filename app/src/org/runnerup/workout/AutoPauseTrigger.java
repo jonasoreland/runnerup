@@ -21,7 +21,7 @@ import android.annotation.TargetApi;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.gpstracker.GpsTracker;
+import org.runnerup.tracker.GpsTracker;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AutoPauseTrigger extends Trigger {

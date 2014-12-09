@@ -133,7 +133,7 @@
 		</activity>
 		
 		<service 
-		    android:name=".gpstracker.GpsTracker" >
+		    android:name=".tracker.GpsTracker" >
 		</service>
 		<service
                 android:name=".export.RunnerUpLive$LiveService">

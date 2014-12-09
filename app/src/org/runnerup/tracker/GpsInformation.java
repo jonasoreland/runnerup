@@ -1,4 +1,4 @@
-package org.runnerup.gpstracker;
+package org.runnerup.tracker;
 
 public interface GpsInformation {
     String getGpsAccuracy();

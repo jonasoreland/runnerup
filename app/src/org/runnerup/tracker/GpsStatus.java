@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.runnerup.gpstracker;
+package org.runnerup.tracker;
 
 import android.annotation.TargetApi;
 import android.content.Context;
