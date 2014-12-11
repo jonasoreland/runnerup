@@ -34,13 +34,13 @@ import org.runnerup.hr.HRProvider;
  * Created by jonas on 12/11/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-class TrackerHRM extends TrackerComponent {
+class TrackerHRM extends DefaultTrackerComponent {
 
     private final Handler handler = new Handler();
     private HRProvider hrProvider;
 
     @Override
-    ResultCode onInit(final Callback callback, final Context context) {
+    public ResultCode onInit(final Callback callback, final Context context) {
         Resources res = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
@@ -103,7 +103,7 @@ class TrackerHRM extends TrackerComponent {
     }
 
     @Override
-    ResultCode onEnd(Callback callback, Context context) {
+    public ResultCode onEnd(Callback callback, Context context) {
         if (hrProvider != null) {
             hrProvider.close();
             hrProvider = null;

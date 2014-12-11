@@ -36,7 +36,7 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
  * Created by jonas on 12/11/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-class TrackerGPS extends TrackerComponent {
+class TrackerGPS extends DefaultTrackerComponent {
 
     private final boolean mWithoutGps = false;
     private int frequency_ms = 0;
@@ -48,7 +48,7 @@ class TrackerGPS extends TrackerComponent {
     }
 
     @Override
-    ResultCode onInit(final Callback callback, Context context) {
+    public ResultCode onInit(final Callback callback, Context context) {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         frequency_ms = Integer.valueOf(preferences.getString(context.getString(
@@ -83,7 +83,7 @@ class TrackerGPS extends TrackerComponent {
     }
 
     @Override
-    ResultCode onEnd(Callback callback, Context context) {
+    public ResultCode onEnd(Callback callback, Context context) {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (mWithoutGps == false) {
             lm.removeUpdates(tracker);

@@ -29,14 +29,14 @@ import org.runnerup.workout.feedback.RUTextToSpeech;
  * Created by jonas on 12/11/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-class TrackerTTS extends TrackerComponent {
+class TrackerTTS extends DefaultTrackerComponent {
 
     private TextToSpeech tts;
     private Context context;
     private RUTextToSpeech ruTTS;
 
     @Override
-    ResultCode onInit(final Callback callback, final Context context) {
+    public ResultCode onInit(final Callback callback, final Context context) {
         this.context = context;
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
@@ -53,7 +53,7 @@ class TrackerTTS extends TrackerComponent {
     }
 
     @Override
-    ResultCode onEnd(Callback callback, Context context) {
+    public ResultCode onEnd(Callback callback, Context context) {
         if (tts != null) {
             tts.shutdown();
             tts = null;

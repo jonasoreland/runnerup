@@ -23,56 +23,58 @@ import android.os.Build;
 /**
  * Created by jonas on 12/11/14.
  *
- * This interface describes a component managed by Tracker,
- * typically a sensor but could also be a system service that
- * needs blocking initialization (with callback)
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-public interface TrackerComponent {
-
-    public enum ResultCode {
-        RESULT_OK,
-        RESULT_ERROR,
-        RESULT_ERROR_FATAL,
-        RESULT_PENDING // will call callback
-    }
-
-    public interface Callback {
-        void run(TrackerComponent component, ResultCode resultCode);
-    }
+public class DefaultTrackerComponent implements TrackerComponent {
 
     /**
      * Called by Tracker during initialization
      */
-    ResultCode onInit(Callback callback, Context context);
+    @Override
+    public ResultCode onInit(Callback callback, Context context) {
+        return ResultCode.RESULT_OK;
+    }
 
     /**
      * Called by Tracker when workout starts
      */
-    void onStart();
+    @Override
+    public void onStart() {
+    }
 
     /**
      * Called by Tracker when workout is paused
      */
-    void onPause();
+    @Override
+    public void onPause() {
+    }
 
     /**
      * Called by Tracker when workout is resumed
      */
-    void onResume();
+    @Override
+    public void onResume() {
+    }
 
     /**
      * Called by Tracker when workout is stopped
      */
-    void onStop();
+    @Override
+    public void onStop() {
+    }
 
     /**
      * Called by Tracker when workout is complete
      */
-    void onComplete(boolean discarded);
+    @Override
+    public void onComplete(boolean discarded) {
+    }
 
     /**
      * Called by tracked after workout has ended
      */
-    ResultCode onEnd(Callback callback, Context context);
+    @Override
+    public ResultCode onEnd(Callback callback, Context context) {
+        return ResultCode.RESULT_OK;
+    }
 }
