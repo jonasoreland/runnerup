@@ -68,8 +68,10 @@ public class AudioFeedback extends Feedback {
     @Override
     public void onBind(Workout s, HashMap<String, Object> bindValues) {
         super.onBind(s, bindValues);
-        textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
-        formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
+        if (bindValues.containsKey(Workout.KEY_TTS))
+            textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
+        if (bindValues.containsKey(Workout.KEY_FORMATTER))
+            formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
     }
 
     @Override
