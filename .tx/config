@@ -14,3 +14,9 @@ file_filter = app/res/values-<lang>/cues.xml
 source_file = app/res/values/cues.xml
 source_lang = en
 type = ANDROID
+
+[runner-up-android.arrayxml]
+file_filter = app/res/values-<lang>/array.xml
+source_file = app/res/values/array.xml
+source_lang = en
+type = ANDROID
