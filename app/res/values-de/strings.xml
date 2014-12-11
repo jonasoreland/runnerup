@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <string name="metrics_distance_kilometer">Kilometer</string>
+  <string name="metrics_distance_kilometers">Kilometer</string>
+  <string name="metrics_distance_mile">Meile</string>
+  <string name="metrics_distance_miles">Meilen</string>
+  <string name="metrics_distance_meter">Meter</string>
+  <string name="metrics_distance_meters">Meter</string>
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
+  <string name="metrics_beatsperminute">bpm</string>
+  <string name="metrics_heartrate">Hr</string>
+  <!--format hint stuff-->
+  <string name="maximum_heart_rate">Maximale Herzschlagfrequenz (MHR)</string>
+  <string name="target_pace_format">Angestrebe Gewschwindigkeit (HH:MM:SS)</string>
+  <string name="interval_time_format">Dauer des Invervalls (HH:MM:SS)</string>
+  <string name="interval_distance_format">Länge des Invervalls (m)</string>
+  <string name="rest_time_format">Erholungszeit (HH:MM:SS)</string>
+  <string name="rest_distance_format">Erholungsdistanz (m)</string>
+  <string name="duration_time_format">Gesamtdauer (HH:MM:SS)</string>
+  <string name="duration_distance_format">Gesamtdistanz (m)</string>
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <!--other-->
+  <string name="google_play_services_legal_notices">Rechtliche Anmerkungen (Google Play Services)</string>
+  <string name="type">Typ</string>
+  <string name="active">aktiv</string>
+  <string name="rest">ruhend</string>
+  <string name="recovery">Erholung</string>
+  <string name="warmup">Aufwärmphase</string>
+  <string name="cooldown">Abkühlphase</string>
+  <string name="repeat">wiederholen</string>
+  <string name="time">Zeit</string>
+  <string name="distance">Distanz</string>
+  <string name="speed">Geschwindigkeit</string>
+  <string name="pace">Pace</string>
+  <string name="heartrate">Herzfrequenz</string>
+  <string name="heartrate_zone">Herzfrequenz-Zone</string>
+  <string name="device">Gerät</string>
+  <string name="heart_rate">Hertsfrequenz</string>
+  <string name="scan">Scan</string>
+  <string name="connect">Verbinden</string>
+  <string name="connecting">am verbinden</string>
+  <string name="download">Download</string>
+  <string name="share">Teilen</string>
+  <string name="delete">Löschen</string>
+  <string name="total">Gesamt</string>
+  <string name="interval">Intervall</string>
+  <string name="lap">Runde</string>
+  <string name="new_lap">Neue Runde</string>
+  <string name="next_lap">Nächste Runde</string>
+  <string name="pause">Pause</string>
+  <string name="stop">Stop</string>
+  <string name="workout">Workout</string>
+  <string name="download_workouts">Workouts herunterladen</string>
+  <string name="audio_cue_settings">Einstellungen der Audio-Hinweise</string>
+  <string name="sport">Sport</string>
+  <string name="target">Ziel</string>
+  <string name="target_heart_rate_zone">Gewünschte Herzfrequenz-Zone</string>
+  <string name="interval_type">Intervall-Modus</string>
+  <string name="rest_type">Ruhe-Modus</string>
+  <string name="repetitions">Wiederholungen</string>
+  <string name="date">Datum</string>
+  <string name="gps_satellites">GPS Satelliten</string>
+  <string name="start_gps">GPS starten</string>
+  <string name="duration">Dauer</string>
+  <string name="duration_type">Dauer-Modus</string>
+  <string name="target_type">Ziel-Modus</string>
+  <string name="cancel">Abbrechen</string>
+  <string name="value">Wert</string>
+  <string name="select_all">Alles auswählen</string>
+  <string name="clear_all">Alles zurücksetzen</string>
+  <string name="username">Benutzername</string>
+  <string name="password">Passwort</string>
+  <string name="show_password">Passwort anzeigen</string>
+  <string name="intensity">Intensität</string>
+  <string name="step_intensity">Schrittintensität</string>
+  <string name="low_pace">Niedriger Pace</string>
+  <string name="high_pace">Hoher Pace</string>
+  <string name="sex">Geschlecht</string>
+  <string name="upload">hochladen</string>
+  <string name="feed">Feed</string>
+  <string name="configure">konfigurieren</string>
+  <string name="disconnect">abmelden</string>
+  <string name="resume">wiederaufnehmen</string>
+  <string name="save_activity">Aktivität speichern</string>
+  <string name="upload_activity">Aktivität hochladen</string>
+  <string name="uploaded">hochgeladen</string>
+  <string name="finished">abgeschlossen</string>
+</resources>
