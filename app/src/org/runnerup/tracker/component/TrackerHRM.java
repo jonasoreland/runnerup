@@ -1,0 +1,117 @@
+/*
+ * Copyright (C) 2014 jonas.oreland@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.runnerup.tracker.component;
+
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.os.Build;
+import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
+
+import org.runnerup.R;
+import org.runnerup.hr.HRDeviceRef;
+import org.runnerup.hr.HRManager;
+import org.runnerup.hr.HRProvider;
+
+/**
+ * Created by jonas on 12/11/14.
+ */
+@TargetApi(Build.VERSION_CODES.FROYO)
+class TrackerHRM extends TrackerComponent {
+
+    private final Handler handler = new Handler();
+    private HRProvider hrProvider;
+
+    @Override
+    ResultCode onInit(final Callback callback, final Context context) {
+        Resources res = context.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+        final String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider),
+                null);
+        final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+
+        if (btAddress == null || btProviderName == null) {
+            /* no HRM is configured, return OK directly */
+            return ResultCode.RESULT_OK;
+        }
+
+        hrProvider = HRManager.getHRProvider(context, btProviderName);
+        if (hrProvider != null) {
+            hrProvider.open(handler, new HRProvider.HRClient() {
+                @Override
+                public void onOpenResult(boolean ok) {
+                    if (!ok) {
+                        hrProvider = null;
+                    }
+                    if (hrProvider == null) {
+                        /* no functional HRM */
+                        callback.run(TrackerHRM.this, ResultCode.RESULT_ERROR);
+                        return;
+                    }
+                    hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
+                }
+
+                @Override
+                public void onScanResult(HRDeviceRef device) {
+                }
+
+                @Override
+                public void onConnectResult(boolean connectOK) {
+                    if (connectOK) {
+                        Toast.makeText(context, "Connected to HRM " + btDeviceName,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Failed to connect to HRM " + btDeviceName,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    callback.run(TrackerHRM.this,
+                            connectOK ? ResultCode.RESULT_OK : ResultCode.RESULT_ERROR);
+                }
+
+                @Override
+                public void onDisconnectResult(boolean disconnectOK) {
+                }
+
+                @Override
+                public void onCloseResult(boolean closeOK) {
+                }
+
+                @Override
+                public void log(HRProvider src, String msg) {
+                }
+            });
+        }
+        return ResultCode.RESULT_PENDING;
+    }
+
+    @Override
+    ResultCode onEnd(Callback callback, Context context) {
+        if (hrProvider != null) {
+            hrProvider.close();
+            hrProvider = null;
+        }
+        return ResultCode.RESULT_OK;
+    }
+
+    HRProvider getHrProvider() {
+        return hrProvider;
+    }
+}
