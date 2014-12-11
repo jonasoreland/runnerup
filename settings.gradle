@@ -1,2 +1,2 @@
+include ':common'
 include ':app'
-
