@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Xml;
 
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;

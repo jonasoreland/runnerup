@@ -57,7 +57,7 @@ import org.runnerup.export.UploadManager.Callback;
 import org.runnerup.export.UploadManager.WorkoutRef;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
-import org.runnerup.util.Constants;
+import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
 

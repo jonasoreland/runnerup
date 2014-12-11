@@ -29,7 +29,7 @@ import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedReader;
 import java.io.IOException;

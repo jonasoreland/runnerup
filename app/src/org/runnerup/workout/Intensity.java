@@ -18,7 +18,7 @@
 package org.runnerup.workout;
 
 import org.runnerup.R;
-import org.runnerup.util.Constants.DB.INTENSITY;
+import org.runnerup.common.util.Constants.DB.INTENSITY;
 
 public enum Intensity {
 

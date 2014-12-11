@@ -48,8 +48,8 @@ import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.feed.FeedList;
 import org.runnerup.util.Bitfield;
-import org.runnerup.util.Constants;
-import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.util.Formatter;
 
 import java.io.InputStream;

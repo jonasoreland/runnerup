@@ -24,10 +24,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 
+import org.runnerup.common.util.Constants;
+
 import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class ActivityCleaner implements org.runnerup.util.Constants {
+public class ActivityCleaner implements Constants {
     long _totalSumHr = 0;
     int _totalCount = 0;
     int _totalMaxHr = 0;

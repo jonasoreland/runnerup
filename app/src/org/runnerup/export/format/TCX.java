@@ -25,7 +25,7 @@ import android.os.Build;
 import android.util.Pair;
 import android.util.Xml;
 
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.workout.Sport;
 import org.xmlpull.v1.XmlSerializer;
 

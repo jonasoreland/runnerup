@@ -29,7 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

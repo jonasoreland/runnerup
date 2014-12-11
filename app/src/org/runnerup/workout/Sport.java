@@ -18,7 +18,7 @@
 package org.runnerup.workout;
 
 import org.runnerup.R;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 public enum Sport {
 

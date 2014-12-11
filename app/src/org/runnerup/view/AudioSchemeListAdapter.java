@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 import java.util.ArrayList;
 

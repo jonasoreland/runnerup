@@ -22,7 +22,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.JsonWriter;
 
 import java.io.IOException;

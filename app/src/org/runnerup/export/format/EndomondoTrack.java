@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 import java.io.IOException;
 import java.io.Writer;

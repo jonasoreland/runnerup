@@ -38,7 +38,7 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.util.Constants;
+import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.workout.Sport;

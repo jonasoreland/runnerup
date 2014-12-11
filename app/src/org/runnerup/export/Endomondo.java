@@ -27,8 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.EndomondoTrack;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Sport;
 

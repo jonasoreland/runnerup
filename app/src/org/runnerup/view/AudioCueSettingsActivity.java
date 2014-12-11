@@ -44,7 +44,7 @@ import android.widget.EditText;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;

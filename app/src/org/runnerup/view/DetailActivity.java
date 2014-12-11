@@ -79,7 +79,7 @@ import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Feature;
 import org.runnerup.util.Bitfield;
-import org.runnerup.util.Constants;
+import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;

@@ -24,7 +24,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.view.KeyEvent;
 
-import org.runnerup.util.Constants;
+import org.runnerup.common.util.Constants;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HeadsetButtonReceiver extends BroadcastReceiver {

@@ -28,6 +28,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.export.DigifitUploader;
 import org.runnerup.export.Endomondo;
 import org.runnerup.export.Facebook;
@@ -47,7 +48,7 @@ import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
-        org.runnerup.util.Constants {
+        Constants {
 
     private static final int DBVERSION = 26;
     private static final String DBNAME = "runnerup.db";

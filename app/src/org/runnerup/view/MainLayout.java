@@ -46,7 +46,7 @@ import android.widget.TabHost;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 

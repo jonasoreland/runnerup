@@ -24,7 +24,7 @@ import android.location.Location;
 import android.os.Build;
 
 import org.runnerup.tracker.GpsTracker;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 

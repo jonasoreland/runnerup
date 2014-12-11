@@ -34,7 +34,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.runnerup.R;
-import org.runnerup.util.Constants.DB.DIMENSION;
+import org.runnerup.common.util.Constants.DB.DIMENSION;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.widget.NumberPicker;

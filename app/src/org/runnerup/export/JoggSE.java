@@ -27,7 +27,7 @@ import android.util.Xml;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.GPX;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

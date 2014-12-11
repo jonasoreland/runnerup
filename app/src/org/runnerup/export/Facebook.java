@@ -30,7 +30,7 @@ import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.util.Bitfield;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

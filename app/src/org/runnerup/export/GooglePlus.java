@@ -26,7 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 

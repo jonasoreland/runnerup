@@ -26,7 +26,7 @@ import android.text.format.DateUtils;
 import android.util.Pair;
 
 import org.runnerup.R;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.util.SafeParse;

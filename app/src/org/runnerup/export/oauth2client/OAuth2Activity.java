@@ -36,7 +36,7 @@ import android.webkit.WebViewClient;
 import org.runnerup.R;
 import org.runnerup.export.FormCrawler;
 import org.runnerup.export.FormCrawler.FormValues;
-import org.runnerup.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

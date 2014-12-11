@@ -42,7 +42,7 @@ import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader.Status;
-import org.runnerup.util.Constants;
+import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Sport;
 

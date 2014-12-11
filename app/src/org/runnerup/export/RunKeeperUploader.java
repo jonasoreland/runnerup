@@ -31,8 +31,8 @@ import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.util.Constants.DB;
-import org.runnerup.util.Constants.DB.FEED;
+import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;

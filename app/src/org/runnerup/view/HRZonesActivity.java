@@ -37,7 +37,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.runnerup.R;
-import org.runnerup.util.Constants;
+import org.runnerup.common.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
