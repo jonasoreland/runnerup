@@ -36,7 +36,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -458,9 +457,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             //Display speed in the right format
             switch (tmp.getAsInteger(DB.ACTIVITY.SPORT)){
                 case DB.ACTIVITY.SPORT_RUNNING:
-                    Log.i("sport", "running");
                     String pref_running_speedformat = sp.getString("pref_running_speed", "pace");
-                    Log.i("pref", pref_running_speedformat);
                     if(pref_running_speedformat.contentEquals("pace")){
                         activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
                     } else {
@@ -468,7 +465,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     }
                     break;
                 case DB.ACTIVITY.SPORT_BIKING:
-                    Log.i("sport", "biking");
                     String pref_biking_speedformat = sp.getString("pref_biking_speed", "pace");
                     if(pref_biking_speedformat.contentEquals("pace")){
                         activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
