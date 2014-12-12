@@ -94,12 +94,7 @@ public class GpsTracker extends android.app.Service implements
 
     final boolean mWithoutGps = false;
 
-    enum State {
-        INIT, LOGGING, STARTED, PAUSED,
-        ERROR /* Failed to init GPS */
-    }
-
-    State state = State.INIT;
+    TrackerState state = TrackerState.INIT;
     int mLocationType = DB.LOCATION.TYPE_START;
 
     /**
@@ -171,7 +166,8 @@ public class GpsTracker extends android.app.Service implements
     }
 
     public void startLogging() {
-        assert (state == State.INIT);
+        assert (state == TrackerState.INIT);
+        state = TrackerState.INITIALIZING;
 
         wakelock(true);
         // TODO add preference
@@ -182,9 +178,9 @@ public class GpsTracker extends android.app.Service implements
 
         try {
             requestLocationUpdates();
-            state = State.LOGGING;
+            state = TrackerState.INITIALIZED;
         } catch (Exception ex) {
-            state = State.ERROR;
+            state = TrackerState.ERROR;
         }
 
         startHRMonitor();
@@ -260,8 +256,10 @@ public class GpsTracker extends android.app.Service implements
         switch (state) {
             case ERROR:
             case INIT:
+            case INITIALIZING:
+            case CLEANUP:
                 return false;
-            case LOGGING:
+            case INITIALIZED:
             case STARTED:
             case PAUSED:
                 return true;
@@ -274,7 +272,7 @@ public class GpsTracker extends android.app.Service implements
     }
 
     public long createActivity(int sport) {
-        assert (state == State.INIT);
+        assert (state == TrackerState.INIT);
         /**
          * Create an Activity instance
          */
@@ -290,8 +288,8 @@ public class GpsTracker extends android.app.Service implements
     }
 
     public void start() {
-        assert (state == State.LOGGING);
-        state = State.STARTED;
+        assert (state == TrackerState.INITIALIZED);
+        state = TrackerState.STARTED;
         mElapsedTimeMillis = 0;
         mElapsedDistance = 0;
         mHeartbeats = 0;
@@ -308,9 +306,11 @@ public class GpsTracker extends android.app.Service implements
         switch (state) {
             case INIT:
             case ERROR:
+            case INITIALIZING:
+            case CLEANUP:
                 assert (false);
                 break;
-            case LOGGING:
+            case INITIALIZED:
                 start();
                 break;
             case PAUSED:
@@ -341,7 +341,8 @@ public class GpsTracker extends android.app.Service implements
         switch (state) {
             case INIT:
             case ERROR:
-            case LOGGING:
+            case INITIALIZING:
+            case INITIALIZED:
             case PAUSED:
                 break;
             case STARTED:
@@ -376,7 +377,7 @@ public class GpsTracker extends android.app.Service implements
             Long.toString(mActivityId)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-        state = State.PAUSED;
+        state = TrackerState.PAUSED;
     }
 
     private void internalOnLocationChanged(Location arg0) {
@@ -387,14 +388,14 @@ public class GpsTracker extends android.app.Service implements
     }
 
     public boolean isPaused() {
-        return state == State.PAUSED;
+        return state == TrackerState.PAUSED;
     }
 
     public void resume() {
-        assert (state == State.PAUSED);
+        assert (state == TrackerState.PAUSED);
         // TODO: check is mLastLocation is recent enough
         mActivityLastLocation = mLastLocation;
-        state = State.STARTED;
+        state = TrackerState.STARTED;
         setNextLocationType(DB.LOCATION.TYPE_RESUME);
         if (mActivityLastLocation != null) {
             /**
@@ -405,18 +406,18 @@ public class GpsTracker extends android.app.Service implements
     }
 
     public void stopLogging() {
-        assert (state == State.PAUSED || state == State.LOGGING);
+        assert (state == TrackerState.PAUSED || state == TrackerState.INITIALIZED);
         wakelock(false);
-        if (state != State.INIT) {
+        if (state != TrackerState.INIT) {
             removeLocationUpdates();
-            state = State.INIT;
+            state = TrackerState.INIT;
         }
         liveLoggers.clear();
         stopHRMonitor();
     }
 
     public void completeActivity(boolean save) {
-        assert (state == State.PAUSED);
+        assert (state == TrackerState.PAUSED);
 
         setNextLocationType(DB.LOCATION.TYPE_END);
         if (mActivityLastLocation != null) {
@@ -485,7 +486,7 @@ public class GpsTracker extends android.app.Service implements
             arg0.setTime(arg0.getTime() + mBug23937Delta);
         }
 
-        if (state == State.STARTED) {
+        if (state == TrackerState.STARTED) {
             Integer hrValue = getCurrentHRValue(now, MAX_HR_AGE);
             if (mActivityLastLocation != null) {
                 double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
