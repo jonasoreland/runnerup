@@ -36,6 +36,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,6 +86,7 @@ import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -451,7 +453,40 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
 
         if (d != 0 && t != 0) {
-            activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+            //Display speed in the right format
+            switch (tmp.getAsInteger(DB.ACTIVITY.SPORT)){
+                case DB.ACTIVITY.SPORT_RUNNING:
+                    Log.i("sport", "running");
+                    String pref_running_speedformat = sp.getString("pref_running_speed", "pace");
+                    Log.i("pref", pref_running_speedformat);
+                    if(pref_running_speedformat.contentEquals("pace")){
+                        activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                    } else {
+                        activityPace.setText(formatter.formatSpeed(Formatter.TXT_LONG, t / d));
+                    }
+                    break;
+                case DB.ACTIVITY.SPORT_BIKING:
+                    Log.i("sport", "biking");
+                    String pref_biking_speedformat = sp.getString("pref_biking_speed", "pace");
+                    if(pref_biking_speedformat.contentEquals("pace")){
+                        activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                    } else {
+                        activityPace.setText(formatter.formatSpeed(Formatter.TXT_LONG, t / d));
+                    }
+                    break;
+                case DB.ACTIVITY.SPORT_OTHER:
+                    String pref_other_speedforamt = sp.getString("pref_running_speed", "pace");
+                    if(pref_other_speedforamt.contentEquals("pace")){
+                        activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                    } else {
+                        activityPace.setText(formatter.formatSpeed(Formatter.TXT_LONG, t / d));
+                    }
+                    break;
+                default:
+                    activityPace.setText("Error Sport");
+            }
         } else {
             activityPace.setText("");
         }
