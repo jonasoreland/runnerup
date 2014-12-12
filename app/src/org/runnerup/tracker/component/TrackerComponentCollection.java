@@ -38,8 +38,9 @@ public class TrackerComponentCollection implements TrackerComponent {
     final HashMap<String, TrackerComponent> pending =
             new HashMap<String, TrackerComponent>();
 
-    public TrackerComponent addComponent(String key, TrackerComponent component) {
-        components.put(key, new Pair<TrackerComponent, ResultCode>(component, ResultCode.RESULT_OK));
+    public TrackerComponent addComponent(TrackerComponent component) {
+        components.put(component.getName(),
+                new Pair<TrackerComponent, ResultCode>(component, ResultCode.RESULT_OK));
         return component;
     }
 
@@ -63,49 +64,22 @@ public class TrackerComponentCollection implements TrackerComponent {
         }
     }
 
+    @Override
+    public String getName() {
+        return "TrackerComponentCollection";
+    }
+
     /**
      * Called by Tracker during initialization
      */
+    @Override
     public ResultCode onInit(final Callback callback, Context context) {
-        synchronized (components) {
-            HashMap<String, Pair<TrackerComponent, ResultCode>> list =
-                    new HashMap<String, Pair<TrackerComponent, ResultCode>>();
-            list.putAll(components);
-            components.clear();
-
-            for (final String key : list.keySet()) {
-                final TrackerComponent component = list.get(key).first;
-                ResultCode res = component.onInit(new Callback() {
-                    @Override
-                    public void run(final TrackerComponent component, final ResultCode resultCode) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (components) {
-                                    TrackerComponent check = pending.remove(key);
-                                    assert(check == component);
-                                    components.put(key, new Pair<TrackerComponent, ResultCode>(
-                                            component, resultCode));
-                                    if (pending.isEmpty()) {
-                                        callback.run(TrackerComponentCollection.this,
-                                                getResult(components));
-                                    }
-                                }
-                            }
-                        });
-                    }
-                }, context);
-                if (res != ResultCode.RESULT_PENDING) {
-                    components.put(key, new Pair<TrackerComponent, ResultCode>(component, res));
-                } else {
-                    pending.put(key, component);
-                }
+        return forEach(new Func1() {
+            @Override
+            public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
+                return comp0.onInit(callback0, context0);
             }
-        }
-        if (!pending.isEmpty())
-            return ResultCode.RESULT_PENDING;
-        else
-            return getResult(components);
+        }, callback, context);
     }
 
     private ResultCode getResult(HashMap<String, Pair<TrackerComponent, ResultCode>> components) {
@@ -122,6 +96,7 @@ public class TrackerComponentCollection implements TrackerComponent {
     /**
      * Called by Tracker when workout starts
      */
+    @Override
     public void onStart() {
         for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
             if (pair.second == ResultCode.RESULT_OK) {
@@ -133,6 +108,7 @@ public class TrackerComponentCollection implements TrackerComponent {
     /**
      * Called by Tracker when workout is paused
      */
+    @Override
     public void onPause() {
         for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
             if (pair.second == ResultCode.RESULT_OK) {
@@ -144,6 +120,7 @@ public class TrackerComponentCollection implements TrackerComponent {
     /**
      * Called by Tracker when workout is resumed
      */
+    @Override
     public void onResume() {
         for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
             if (pair.second == ResultCode.RESULT_OK) {
@@ -155,6 +132,7 @@ public class TrackerComponentCollection implements TrackerComponent {
     /**
      * Called by Tracker when workout is complete
      */
+    @Override
     public void onComplete(boolean discarded) {
         for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
             if (pair.second == ResultCode.RESULT_OK) {
@@ -166,7 +144,21 @@ public class TrackerComponentCollection implements TrackerComponent {
     /**
      * Called by tracked after workout has ended
      */
+    @Override
     public ResultCode onEnd(final Callback callback, Context context) {
+        return forEach(new Func1() {
+            @Override
+            public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
+                return comp0.onEnd(callback0, context0);
+            }
+        }, callback, context);
+    }
+
+    private interface Func1 {
+        ResultCode apply(TrackerComponent component, Callback callback, Context context);
+    }
+
+    private ResultCode forEach(final Func1 func, final Callback callback, Context context) {
         synchronized (components) {
             HashMap<String, Pair<TrackerComponent, ResultCode>> list =
                     new HashMap<String, Pair<TrackerComponent, ResultCode>>();
@@ -175,7 +167,7 @@ public class TrackerComponentCollection implements TrackerComponent {
 
             for (final String key : list.keySet()) {
                 final TrackerComponent component = list.get(key).first;
-                ResultCode res = component.onEnd(new Callback() {
+                ResultCode res = func.apply(component, new Callback() {
                     @Override
                     public void run(final TrackerComponent component, final ResultCode resultCode) {
                         handler.post(new Runnable() {

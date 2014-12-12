@@ -35,6 +35,13 @@ public class TrackerTTS extends DefaultTrackerComponent {
     private Context context;
     private RUTextToSpeech ruTTS;
 
+    public static final String NAME = "TTS";
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
     @Override
     public ResultCode onInit(final Callback callback, final Context context) {
         this.context = context;

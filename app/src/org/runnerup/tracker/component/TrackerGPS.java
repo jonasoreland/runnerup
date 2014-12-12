@@ -43,6 +43,13 @@ public class TrackerGPS extends DefaultTrackerComponent {
     private Location mLastLocation;
     private final GpsTracker tracker;
 
+    public static final String NAME = "TTS";
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
     public TrackerGPS(GpsTracker tracker) {
         this.tracker = tracker;
     }

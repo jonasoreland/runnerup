@@ -39,6 +39,13 @@ public class TrackerHRM extends DefaultTrackerComponent {
     private final Handler handler = new Handler();
     private HRProvider hrProvider;
 
+    public static final String NAME = "HRM";
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
     @Override
     public ResultCode onInit(final Callback callback, final Context context) {
         Resources res = context.getResources();

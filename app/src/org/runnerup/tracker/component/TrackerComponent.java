@@ -30,20 +30,22 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public interface TrackerComponent {
 
-    public final String GPS = "GPS";
-    public final String TTS = "TTS";
-    public final String HRM = "HRM";
-
     public enum ResultCode {
         RESULT_OK,
-        RESULT_ERROR,
-        RESULT_ERROR_FATAL,
-        RESULT_PENDING // will call callback
+        RESULT_NOT_SUPPORTED, // hw not present or not configured
+        RESULT_ERROR,         // Component failed to initialize
+        RESULT_ERROR_FATAL,   // Component failed, Tracker shouldn't start
+        RESULT_PENDING        // will call callback
     }
 
     public interface Callback {
         void run(TrackerComponent component, ResultCode resultCode);
     }
+
+    /**
+     * Component name
+     */
+    public String getName();
 
     /**
      * Called by Tracker during initialization

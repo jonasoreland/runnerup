@@ -25,7 +25,12 @@ import android.os.Build;
  *
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class DefaultTrackerComponent implements TrackerComponent {
+public abstract class DefaultTrackerComponent implements TrackerComponent {
+
+    /**
+     * Component name
+     */
+    public abstract String getName();
 
     /**
      * Called by Tracker during initialization
@@ -54,13 +59,6 @@ public class DefaultTrackerComponent implements TrackerComponent {
      */
     @Override
     public void onResume() {
-    }
-
-    /**
-     * Called by Tracker when workout is stopped
-     */
-    @Override
-    public void onStop() {
     }
 
     /**
