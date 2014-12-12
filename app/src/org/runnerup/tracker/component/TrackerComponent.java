@@ -30,6 +30,10 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public interface TrackerComponent {
 
+    public final String GPS = "GPS";
+    public final String TTS = "TTS";
+    public final String HRM = "HRM";
+
     public enum ResultCode {
         RESULT_OK,
         RESULT_ERROR,
@@ -60,11 +64,6 @@ public interface TrackerComponent {
      * Called by Tracker when workout is resumed
      */
     void onResume();
-
-    /**
-     * Called by Tracker when workout is stopped
-     */
-    void onStop();
 
     /**
      * Called by Tracker when workout is complete

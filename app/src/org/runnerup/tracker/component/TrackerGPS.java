@@ -36,7 +36,7 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
  * Created by jonas on 12/11/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-class TrackerGPS extends DefaultTrackerComponent {
+public class TrackerGPS extends DefaultTrackerComponent {
 
     private final boolean mWithoutGps = false;
     private int frequency_ms = 0;

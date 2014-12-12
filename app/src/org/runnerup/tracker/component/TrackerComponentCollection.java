@@ -38,8 +38,9 @@ public class TrackerComponentCollection implements TrackerComponent {
     final HashMap<String, TrackerComponent> pending =
             new HashMap<String, TrackerComponent>();
 
-    public void addComponent(String key, TrackerComponent component) {
+    public TrackerComponent addComponent(String key, TrackerComponent component) {
         components.put(key, new Pair<TrackerComponent, ResultCode>(component, ResultCode.RESULT_OK));
+        return component;
     }
 
     public TrackerComponent getComponent(String key) {
@@ -147,17 +148,6 @@ public class TrackerComponentCollection implements TrackerComponent {
         for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
             if (pair.second == ResultCode.RESULT_OK) {
                 pair.first.onResume();
-            }
-        }
-    }
-
-    /**
-     * Called by Tracker when workout is stopped
-     */
-    public void onStop() {
-        for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
-            if (pair.second == ResultCode.RESULT_OK) {
-                pair.first.onStop();
             }
         }
     }

@@ -29,7 +29,7 @@ import org.runnerup.workout.feedback.RUTextToSpeech;
  * Created by jonas on 12/11/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-class TrackerTTS extends DefaultTrackerComponent {
+public class TrackerTTS extends DefaultTrackerComponent {
 
     private TextToSpeech tts;
     private Context context;

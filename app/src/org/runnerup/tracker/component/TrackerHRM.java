@@ -34,7 +34,7 @@ import org.runnerup.hr.HRProvider;
  * Created by jonas on 12/11/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-class TrackerHRM extends DefaultTrackerComponent {
+public class TrackerHRM extends DefaultTrackerComponent {
 
     private final Handler handler = new Handler();
     private HRProvider hrProvider;
