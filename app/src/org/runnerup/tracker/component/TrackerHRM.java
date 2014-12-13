@@ -56,8 +56,8 @@ public class TrackerHRM extends DefaultTrackerComponent {
         final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
 
         if (btAddress == null || btProviderName == null) {
-            /* no HRM is configured, return OK directly */
-            return ResultCode.RESULT_OK;
+            /* no HRM is configured, return directly */
+            return ResultCode.RESULT_NOT_SUPPORTED;
         }
 
         hrProvider = HRManager.getHRProvider(context, btProviderName);

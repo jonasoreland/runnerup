@@ -72,7 +72,7 @@ public class TrackerGPS extends DefaultTrackerComponent {
                 String list[] = {
                         GPS_PROVIDER,
                         NETWORK_PROVIDER,
-                        PASSIVE_PROVIDER};
+                        PASSIVE_PROVIDER };
                 mLastLocation = null;
                 for (String s : list) {
                     Location tmp = lm.getLastKnownLocation(s);
@@ -120,11 +120,13 @@ public class TrackerGPS extends DefaultTrackerComponent {
                 case INIT:
                 case CLEANUP:
                 case ERROR:
+                    /* end loop be returning directly here */
                     return;
                 case INITIALIZING:
                 case INITIALIZED:
                 case STARTED:
                 case PAUSED:
+                    /* continue looping */
                     break;
             }
             tracker.onLocationChanged(location);
