@@ -21,7 +21,7 @@ import android.os.Build;
 * Created by jonas on 12/12/14.
 */
 @TargetApi(Build.VERSION_CODES.FROYO)
-enum TrackerState {
+public enum TrackerState {
     INIT,         // initial state
     INITIALIZING, // initializing components
     INITIALIZED,  // initialized, ready to start
