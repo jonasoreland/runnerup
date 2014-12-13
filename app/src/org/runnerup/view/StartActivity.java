@@ -66,6 +66,7 @@ import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.tracker.TrackerState;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
@@ -398,8 +399,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         System.err.println("StartActivity.startGps()");
         if (mGpsStatus != null && !mGpsStatus.isLogging())
             mGpsStatus.start(this);
-        if (mGpsTracker != null && !mGpsTracker.isLogging())
-            mGpsTracker.startLogging();
+        if (mGpsTracker != null)
+            mGpsTracker.setup();
 
         notificationStateManager.displayNotificationState(gpsSearchingState);
     }
@@ -413,7 +414,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             mGpsStatus.stop(this);
 
         if (mGpsTracker != null)
-            mGpsTracker.stopLogging();
+            mGpsTracker.reset();
 
         notificationStateManager.cancelNotification();
     }
@@ -490,7 +491,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 return;
             } else if (mGpsStatus.isEnabled() == false) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            } else if (mGpsTracker.isLogging() == false) {
+            } else if (mGpsTracker.getState() != TrackerState.INITIALIZED) {
                 startGps();
             } else if (mGpsStatus.isFixed()) {
                 Context ctx = getApplicationContext();

@@ -42,6 +42,11 @@ import android.widget.Toast;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
+import org.runnerup.tracker.component.TrackerComponent;
+import org.runnerup.tracker.component.TrackerComponentCollection;
+import org.runnerup.tracker.component.TrackerGPS;
+import org.runnerup.tracker.component.TrackerHRM;
+import org.runnerup.tracker.component.TrackerTTS;
 import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
@@ -74,6 +79,11 @@ public class GpsTracker extends android.app.Service implements
     public static final int MAX_HR_AGE = 3000; // 3s
 
     private final Handler handler = new Handler();
+
+    TrackerComponentCollection components = new TrackerComponentCollection();
+    TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
+    TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
+    TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
 
     /**
      * Work-around for http://code.google.com/p/android/issues/detail?id=23937
@@ -127,7 +137,6 @@ public class GpsTracker extends android.app.Service implements
         mDB = mDBHelper.getWritableDatabase();
         notificationStateManager = new NotificationStateManager(
                 new ForegroundNotificationDisplayStrategy(this));
-        activityOngoingState = new OngoingState(new Formatter(this), workout, this);
 
         if (getAllowStartStopFromHeadsetKey()) {
             registerHeadsetListener();
@@ -157,7 +166,7 @@ public class GpsTracker extends android.app.Service implements
 
         unregisterHeadsetListener();
         unRegisterWorkoutBroadcastsListener();
-        stopLogging();
+        reset();
     }
 
     public void setWorkout(Workout w) {
@@ -165,109 +174,67 @@ public class GpsTracker extends android.app.Service implements
         w.setGpsTracker(this);
     }
 
-    public void startLogging() {
-        assert (state == TrackerState.INIT);
-        state = TrackerState.INITIALIZING;
+    public void setup() {
+        switch (state) {
+            case INIT:
+                break;
+            case INITIALIZING:
+            case INITIALIZED:
+                return;
+            case STARTED:
+            case PAUSED:
+            case ERROR:
+                assert(false);
+            case CLEANUP:
+                /**
+                 * if CLEANUP is in progress, setup will continue once complete
+                 */
+                state = TrackerState.INITIALIZING;
+                break;
+        }
 
         wakelock(true);
+        state = TrackerState.INITIALIZING;
+
         // TODO add preference
         mMinLiveLogDelayMillis = PreferenceManager
                 .getDefaultSharedPreferences(this).getInt(
                         getString(R.string.pref_min_livelog_delay_millis),
                         (int) mMinLiveLogDelayMillis);
 
-        try {
-            requestLocationUpdates();
-            state = TrackerState.INITIALIZED;
-        } catch (Exception ex) {
-            state = TrackerState.ERROR;
-        }
-
-        startHRMonitor();
-
         UploadManager u = new UploadManager(this);
         u.loadLiveLoggers(liveLoggers);
         u.close();
-    }
 
-    private void requestLocationUpdates() {
-        LocationManager lm = (LocationManager) this
-                .getSystemService(LOCATION_SERVICE);
-        if (mWithoutGps == false) {
-            String frequency_ms = PreferenceManager.getDefaultSharedPreferences(
-                    this).getString(getString(R.string.pref_pollInterval), "500");
-            String frequency_meters = PreferenceManager
-                    .getDefaultSharedPreferences(this).getString(
-                            getString(R.string.pref_pollDistance), "5");
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    Integer.valueOf(frequency_ms),
-                    Integer.valueOf(frequency_meters), this);
+        TrackerComponent.ResultCode result = components.onInit(onInitCallback,
+                getApplicationContext());
+        if (result == TrackerComponent.ResultCode.RESULT_PENDING) {
+            return;
         } else {
-            String list[] = { LocationManager.GPS_PROVIDER, 
-                    LocationManager.NETWORK_PROVIDER,
-                    LocationManager.PASSIVE_PROVIDER };
-            mLastLocation = null;
-            for (String s : list) {
-                Location tmp = lm.getLastKnownLocation(s);
-                if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
-                    mLastLocation = tmp;
-                }
-            }
-            mLastLocation.removeSpeed();
-            mLastLocation.removeAltitude();
-            mLastLocation.removeAccuracy();
-            mLastLocation.removeBearing();
-            gpsLessLocationProvider.run();
+            onInitCallback.run(components, result);
         }
     }
 
-    final Runnable gpsLessLocationProvider = new Runnable() {
-
-        int frequency_ms = 0;
-        Location location = null;
-        
+    private final TrackerComponent.Callback onInitCallback = new TrackerComponent.Callback() {
         @Override
-        public void run() {
-            if (location == null) {
-                location = new Location(mLastLocation);
-                mLastLocation = null;
-                String frequency_ms_str = PreferenceManager.getDefaultSharedPreferences(
-                        GpsTracker.this).getString(getString(R.string.pref_pollInterval), "500");
-                frequency_ms = Integer.valueOf(frequency_ms_str);
+        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
+            if (state == TrackerState.CLEANUP) {
+                /**
+                 * reset was called while we were initializing
+                 */
+                state = TrackerState.INITIALIZED;
+                reset();
+                return;
             }
-            location.setTime(System.currentTimeMillis());
-            if (isLogging()) {
-                onLocationChanged(location);
-                handler.postDelayed(this, frequency_ms);
+            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+                state = TrackerState.ERROR;
+            } else {
+                state = TrackerState.INITIALIZED;
             }
         }
     };
 
-    private void removeLocationUpdates() {
-        if (mWithoutGps == false) {
-            LocationManager lm = (LocationManager) this
-                    .getSystemService(LOCATION_SERVICE);
-            lm.removeUpdates(this);
-        } else {
-        }
-    }
-    
-    public boolean isLogging() {
-        switch (state) {
-            case ERROR:
-            case INIT:
-            case INITIALIZING:
-            case CLEANUP:
-                return false;
-            case INITIALIZED:
-            case STARTED:
-            case PAUSED:
-                return true;
-        }
-        return true;
-    }
-
-    public long getBug23937Delta() {
+    private long getBug23937Delta() {
         return mBug23937Delta;
     }
 
@@ -290,6 +257,7 @@ public class GpsTracker extends android.app.Service implements
     public void start() {
         assert (state == TrackerState.INITIALIZED);
         state = TrackerState.STARTED;
+        activityOngoingState = new OngoingState(new Formatter(this), workout, this);
         mElapsedTimeMillis = 0;
         mElapsedDistance = 0;
         mHeartbeats = 0;
@@ -405,16 +373,51 @@ public class GpsTracker extends android.app.Service implements
         }
     }
 
-    public void stopLogging() {
-        assert (state == TrackerState.PAUSED || state == TrackerState.INITIALIZED);
-        wakelock(false);
-        if (state != TrackerState.INIT) {
-            removeLocationUpdates();
-            state = TrackerState.INIT;
+    public void reset() {
+        switch (state) {
+            case INIT:
+                return;
+            case INITIALIZING:
+                // cleanup when INITIALIZE is complete
+                state = TrackerState.CLEANUP;
+                return;
+            case INITIALIZED:
+            case ERROR:
+            case PAUSED:
+                break;
+            case STARTED:
+                assert(false);
+                return;
+            case CLEANUP:
+                return;
         }
+
+        wakelock(false);
+        state = TrackerState.CLEANUP;
         liveLoggers.clear();
-        stopHRMonitor();
+        TrackerComponent.ResultCode res = components.onEnd(onEndCallback, getApplicationContext());
+        if (res != TrackerComponent.ResultCode.RESULT_PENDING)
+            onEndCallback.run(components, res);
     }
+
+    private final TrackerComponent.Callback onEndCallback = new TrackerComponent.Callback() {
+        @Override
+        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
+            if (state == TrackerState.INITIALIZING) {
+                /**
+                 * setup was called during cleanup
+                 */
+                state = TrackerState.INIT;
+                setup();
+                return;
+            }
+            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+                state = TrackerState.ERROR;
+            } else {
+                state = TrackerState.INIT;
+            }
+        }
+    };
 
     public void completeActivity(boolean save) {
         assert (state == TrackerState.PAUSED);
@@ -441,7 +444,7 @@ public class GpsTracker extends android.app.Service implements
             liveLog(DB.LOCATION.TYPE_DISCARD);
         }
         notificationStateManager.cancelNotification();
-        stopLogging();
+        reset();
     }
 
     void setNextLocationType(int newType) {
@@ -555,6 +558,10 @@ public class GpsTracker extends android.app.Service implements
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
     }
 
+    public TrackerState getState() {
+        return state;
+    }
+
     /**
      * Service interface stuff...
      */
@@ -589,93 +596,25 @@ public class GpsTracker extends android.app.Service implements
         }
     }
 
-    HRProvider hrProvider = null;
-    boolean btDisabled = true;
-
-    private void startHRMonitor() {
-        Resources res = getResources();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
-        final String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider),
-                null);
-        final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
-        if (btAddress == null || btProviderName == null)
-            return;
-
-        btDisabled = true;
-
-        hrProvider = HRManager.getHRProvider(this, btProviderName);
-        if (hrProvider != null) {
-            hrProvider.open(handler, new HRClient() {
-                @Override
-                public void onOpenResult(boolean ok) {
-                    if (!ok) {
-                        hrProvider = null;
-                        return;
-                    }
-                    if (hrProvider == null) {
-                        return;
-                    }
-                    hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
-                }
-
-                @Override
-                public void onScanResult(HRDeviceRef device) {
-                }
-
-                @Override
-                public void onConnectResult(boolean connectOK) {
-                    if (connectOK) {
-                        btDisabled = false;
-                        Toast.makeText(GpsTracker.this, "Connected to HRM " + btDeviceName,
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        btDisabled = true;
-                        Toast.makeText(GpsTracker.this, "Failed to connect to HRM " + btDeviceName,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onDisconnectResult(boolean disconnectOK) {
-                }
-
-                @Override
-                public void onCloseResult(boolean closeOK) {
-                }
-
-                @Override
-                public void log(HRProvider src, String msg) {
-                }
-            });
-        }
-    }
-
-    private void stopHRMonitor() {
-        if (hrProvider != null) {
-            hrProvider.close();
-            hrProvider = null;
-        }
-    }
-
     public boolean isHRConfigured() {
-        if (hrProvider != null) {
+        if (trackerHRM.getHrProvider() != null) {
             return true;
         }
         return false;
     }
 
     public boolean isHRConnected() {
-        if (hrProvider == null)
+        if (!isHRConfigured())
             return false;
 
-        return hrProvider.isConnected();
+        return trackerHRM.getHrProvider().isConnected();
     }
 
     public Integer getCurrentHRValue(long now, long maxAge) {
-        if (hrProvider == null || !hrProvider.isConnected())
+        if (!isHRConnected())
             return null;
 
+        HRProvider hrProvider = trackerHRM.getHrProvider();
         if (now > hrProvider.getHRValueTimestamp() + maxAge)
             return null;
 
@@ -714,6 +653,9 @@ public class GpsTracker extends android.app.Service implements
     }
 
     public Integer getCurrentBatteryLevel() {
+        HRProvider hrProvider = trackerHRM.getHrProvider();
+        if (hrProvider == null)
+            return null;
         return hrProvider.getBatteryLevel();
     }
 
