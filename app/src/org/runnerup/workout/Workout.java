@@ -23,7 +23,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.tracker.GpsTracker;
+import org.runnerup.tracker.Tracker;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.feedback.RUTextToSpeech;
@@ -62,7 +62,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             set.add(f);
 
             try {
-                f.emit(Workout.this, gpsTracker.getApplicationContext());
+                f.emit(Workout.this, tracker.getApplicationContext());
             } catch (Exception ex) {
                 // make sure that no small misstake crashes a workout...
                 ex.printStackTrace();
@@ -81,7 +81,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     final PendingFeedback pendingFeedback = new PendingFeedback();
 
-    GpsTracker gpsTracker = null;
+    Tracker tracker = null;
     SharedPreferences audioCuePrefs;
     HRZones hrZones = null;
     RUTextToSpeech textToSpeech = null;
@@ -94,8 +94,8 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public Workout() {
     }
 
-    public void setGpsTracker(GpsTracker gpsTracker) {
-        this.gpsTracker = gpsTracker;
+    public void setTracker(Tracker tracker) {
+        this.tracker = tracker;
     }
 
     public void onInit(Workout w) {
@@ -174,7 +174,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         } else {
             currentStep.onComplete(Scope.WORKOUT, this);
             currentStep = null;
-            gpsTracker.stop();
+            tracker.stop();
         }
     }
 
@@ -226,11 +226,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onSave() {
-        gpsTracker.completeActivity(true);
+        tracker.completeActivity(true);
     }
 
     public void onDiscard() {
-        gpsTracker.completeActivity(false);
+        tracker.completeActivity(false);
     }
 
     @Override
@@ -261,7 +261,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public double getDistance(Scope scope) {
         switch (scope) {
             case WORKOUT:
-                return gpsTracker.getDistance();
+                return tracker.getDistance();
             case STEP:
             case LAP:
                 if (currentStep != null)
@@ -278,7 +278,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public double getTime(Scope scope) {
         switch (scope) {
             case WORKOUT:
-                return gpsTracker.getTime();
+                return tracker.getTime();
             case STEP:
             case LAP:
                 if (currentStep != null)
@@ -307,7 +307,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 assert (false);
                 break;
             case CURRENT:
-                Double s = gpsTracker.getCurrentSpeed();
+                Double s = tracker.getCurrentSpeed();
                 if (s != null)
                     return s;
                 return 0;
@@ -345,7 +345,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     double getHeartbeats(Scope scope) {
         switch (scope) {
             case WORKOUT:
-                return gpsTracker.getHeartbeats();
+                return tracker.getHeartbeats();
             case STEP:
             case LAP:
                 if (currentStep != null)
@@ -361,7 +361,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public double getHeartRate(Scope scope) {
         switch (scope) {
             case CURRENT: {
-                Integer val = gpsTracker.getCurrentHRValue();
+                Integer val = tracker.getCurrentHRValue();
                 if (val == null)
                     return 0;
                 return val;
@@ -395,13 +395,13 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public boolean isEnabled(Dimension dim, Scope scope) {
         if (dim == Dimension.HR) {
-            return gpsTracker.isHRConnected();
+            return tracker.isHRConnected();
         } else if (dim == Dimension.HRZ) {
-            if (hrZones == null || !hrZones.isConfigured() || !gpsTracker.isHRConnected())
+            if (hrZones == null || !hrZones.isConfigured() || !tracker.isHRConnected())
                 return false;
         } else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
                 scope == Scope.CURRENT) {
-            return gpsTracker.getCurrentSpeed() != null;
+            return tracker.getCurrentSpeed() != null;
         }
         return true;
     }
@@ -420,11 +420,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     void newLap(ContentValues tmp) {
         tmp.put(DB.LAP.LAP, lap);
-        gpsTracker.newLap(tmp);
+        tracker.newLap(tmp);
     }
 
     void saveLap(ContentValues tmp, boolean next) {
-        gpsTracker.saveLap(tmp);
+        tracker.saveLap(tmp);
         if (next) {
             lap++;
         }
@@ -525,7 +525,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     @Override
     public Location getLastKnownLocation() {
-        return gpsTracker.getLastKnownLocation();
+        return tracker.getLastKnownLocation();
     }
 
     public static Workout fakeWorkoutForTestingAudioCue() {

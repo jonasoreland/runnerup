@@ -21,7 +21,7 @@ import android.annotation.TargetApi;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.tracker.GpsTracker;
+import org.runnerup.tracker.Tracker;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AutoPauseTrigger extends Trigger {
@@ -46,9 +46,9 @@ public class AutoPauseTrigger extends Trigger {
     }
 
     private void HandleAutoPause(Workout workout) {
-        GpsTracker gpsTracker = workout.gpsTracker;
-        Location lastLocation = gpsTracker.getLastKnownLocation();
-        Double currentSpeed = gpsTracker.getCurrentSpeed();
+        Tracker tracker = workout.gpsTracker;
+        Location lastLocation = tracker.getLastKnownLocation();
+        Double currentSpeed = tracker.getCurrentSpeed();
         if (currentSpeed == null)
             return;
         if (currentSpeed < mAutoPauseMinSpeed) {

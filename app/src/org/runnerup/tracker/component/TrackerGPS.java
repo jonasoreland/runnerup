@@ -26,7 +26,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 
 import org.runnerup.R;
-import org.runnerup.tracker.GpsTracker;
+import org.runnerup.tracker.Tracker;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
@@ -41,7 +41,7 @@ public class TrackerGPS extends DefaultTrackerComponent {
     private final boolean mWithoutGps = false;
     private int frequency_ms = 0;
     private Location mLastLocation;
-    private final GpsTracker tracker;
+    private final Tracker tracker;
 
     public static final String NAME = "GPS";
 
@@ -50,7 +50,7 @@ public class TrackerGPS extends DefaultTrackerComponent {
         return NAME;
     }
 
-    public TrackerGPS(GpsTracker tracker) {
+    public TrackerGPS(Tracker tracker) {
         this.tracker = tracker;
     }
 

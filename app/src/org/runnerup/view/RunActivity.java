@@ -42,7 +42,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
-import org.runnerup.tracker.GpsTracker;
+import org.runnerup.tracker.Tracker;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;
@@ -62,7 +62,7 @@ import java.util.TimerTask;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunActivity extends Activity implements TickListener {
     Workout workout = null;
-    GpsTracker mGpsTracker = null;
+    Tracker mTracker = null;
     final Handler handler = new Handler();
 
     Button pauseButton = null;
@@ -162,9 +162,9 @@ public class RunActivity extends Activity implements TickListener {
     }
 
     void onGpsTrackerBound() {
-        workout = mGpsTracker.getWorkout();
-        mGpsTracker.createActivity(workout.getSport());
-        mGpsTracker.start();
+        workout = mTracker.getWorkout();
+        mTracker.createActivity(workout.getSport());
+        mTracker.start();
 
         SharedPreferences prefs = workout.getAudioCues();
         final String mute = prefs.getString(getString(R.string.pref_mute), "no");
@@ -241,8 +241,8 @@ public class RunActivity extends Activity implements TickListener {
             workout.onTick();
             updateView();
 
-            if (mGpsTracker != null) {
-                Location l2 = mGpsTracker.getLastKnownLocation();
+            if (mTracker != null) {
+                Location l2 = mTracker.getLastKnownLocation();
                 if (!l2.equals(l)) {
                     l = l2;
                 }
@@ -255,14 +255,14 @@ public class RunActivity extends Activity implements TickListener {
             if (timer != null) {
                 workout.onStop(workout);
                 stopTimer(); // set timer=null;
-                mGpsTracker.stopForeground(true); // remove notification
+                mTracker.stopForeground(true); // remove notification
                 Intent intent = new Intent(RunActivity.this, DetailActivity.class);
                 /**
                  * The same activity is used to show details and to save
                  * activity they show almost the same information
                  */
                 intent.putExtra("mode", "save");
-                intent.putExtra("ID", mGpsTracker.getActivityId());
+                intent.putExtra("ID", mTracker.getActivityId());
                 RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
             }
         }
@@ -285,7 +285,7 @@ public class RunActivity extends Activity implements TickListener {
              */
             workout.onComplete(Scope.WORKOUT, workout);
             workout.onSave();
-            mGpsTracker = null;
+            mTracker = null;
             finish();
             return;
         } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -294,7 +294,7 @@ public class RunActivity extends Activity implements TickListener {
              */
             workout.onComplete(Scope.WORKOUT, workout);
             workout.onDiscard();
-            mGpsTracker = null;
+            mTracker = null;
             finish();
             return;
         } else if (resultCode == Activity.RESULT_FIRST_USER) {
@@ -371,7 +371,7 @@ public class RunActivity extends Activity implements TickListener {
         intervalDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, Math.round(id)));
         intervalPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ip));
         double ihr = workout.getHeartRate(Scope.STEP);
-        if (mGpsTracker.isHRConnected()) {
+        if (mTracker.isHRConnected()) {
             lapHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, lhr));
             intervalHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, ihr));
             activityHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, ahr));
@@ -415,8 +415,8 @@ public class RunActivity extends Activity implements TickListener {
             // interact with the service. Because we have bound to a explicit
             // service that we know is running in our own process, we can
             // cast its IBinder to a concrete class and directly access it.
-            if (mGpsTracker == null) {
-                mGpsTracker = ((GpsTracker.LocalBinder) service).getService();
+            if (mTracker == null) {
+                mTracker = ((Tracker.LocalBinder) service).getService();
                 // Tell the user about this for our demo.
                 RunActivity.this.onGpsTrackerBound();
             }
@@ -428,7 +428,7 @@ public class RunActivity extends Activity implements TickListener {
             // Because it is running in our same process, we should never
             // see this happen.
             mIsBound = false;
-            mGpsTracker = null;
+            mTracker = null;
         }
     };
 
@@ -437,7 +437,7 @@ public class RunActivity extends Activity implements TickListener {
         // class name because we want a specific service implementation that
         // we know will be running in our own process (and thus won't be
         // supporting component replacement by other applications).
-        getApplicationContext().bindService(new Intent(this, GpsTracker.class),
+        getApplicationContext().bindService(new Intent(this, Tracker.class),
                 mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }

@@ -58,7 +58,7 @@ import android.widget.TextView;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.tracker.GpsInformation;
-import org.runnerup.tracker.GpsTracker;
+import org.runnerup.tracker.Tracker;
 import org.runnerup.hr.MockHRProvider;
 import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
@@ -96,7 +96,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     final static String TAB_MANUAL = "manual";
 
     boolean skipStopGps = false;
-    GpsTracker mGpsTracker = null;
+    Tracker mTracker = null;
     org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
     TabHost tabHost = null;
@@ -332,7 +332,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             loadAdvanced(null);
         }
 
-        if (mIsBound == false || mGpsTracker == null) {
+        if (mIsBound == false || mTracker == null) {
             bindGpsTracker();
         } else {
             onGpsTrackerBound();
@@ -375,7 +375,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         stopGps();
         unbindGpsTracker();
         mGpsStatus = null;
-        mGpsTracker = null;
+        mTracker = null;
 
         mDB.close();
         mDBHelper.close();
@@ -399,8 +399,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         System.err.println("StartActivity.startGps()");
         if (mGpsStatus != null && !mGpsStatus.isLogging())
             mGpsStatus.start(this);
-        if (mGpsTracker != null)
-            mGpsTracker.setup();
+        if (mTracker != null)
+            mTracker.setup();
 
         notificationStateManager.displayNotificationState(gpsSearchingState);
     }
@@ -413,8 +413,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         if (mGpsStatus != null)
             mGpsStatus.stop(this);
 
-        if (mGpsTracker != null)
-            mGpsTracker.reset();
+        if (mTracker != null)
+            mTracker.reset();
 
         notificationStateManager.cancelNotification();
     }
@@ -491,7 +491,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 return;
             } else if (mGpsStatus.isEnabled() == false) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            } else if (mGpsTracker.getState() != TrackerState.INITIALIZED) {
+            } else if (mTracker.getState() != TrackerState.INITIALIZED) {
                 startGps();
             } else if (mGpsStatus.isFixed()) {
                 Context ctx = getApplicationContext();
@@ -528,7 +528,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
                 WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
                 mGpsStatus.stop(StartActivity.this);
-                mGpsTracker.setWorkout(w);
+                mTracker.setWorkout(w);
 
                 Intent intent = new Intent(StartActivity.this,
                         RunActivity.class);
@@ -599,11 +599,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             }
         }
 
-        if (mGpsTracker != null && mGpsTracker.isHRConfigured()) {
+        if (mTracker != null && mTracker.isHRConfigured()) {
             hrLayout.setVisibility(View.VISIBLE);
             Integer hrVal = null;
-            if (mGpsTracker.isHRConnected()) {
-                hrVal = mGpsTracker.getCurrentHRValue();
+            if (mTracker.isHRConnected()) {
+                hrVal = mTracker.getCurrentHRValue();
             }
             if (hrVal != null) {
                 hrButton.setEnabled(false);
@@ -611,7 +611,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
                 if (!batteryLevelMessageShowed) {
                     batteryLevelMessageShowed = true;
-                    notificationBatteryLevel(mGpsTracker.getCurrentBatteryLevel());
+                    notificationBatteryLevel(mTracker.getCurrentBatteryLevel());
                 }
             } else {
                 hrButton.setEnabled(true);
@@ -625,8 +625,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     @Override
     public String getGpsAccuracy() {
-        if (mGpsTracker != null) {
-            Location l = mGpsTracker.getLastKnownLocation();
+        if (mTracker != null) {
+            Location l = mTracker.getLastKnownLocation();
 
             if (l != null && l.getAccuracy() > 0) {
                 return String.format(", %s m", l.getAccuracy());
@@ -644,7 +644,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             // interact with the service. Because we have bound to a explicit
             // service that we know is running in our own process, we can
             // cast its IBinder to a concrete class and directly access it.
-            mGpsTracker = ((GpsTracker.LocalBinder) service).getService();
+            mTracker = ((Tracker.LocalBinder) service).getService();
             // Tell the user about this for our demo.
             StartActivity.this.onGpsTrackerBound();
         }
@@ -654,7 +654,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             // unexpectedly disconnected -- that is, its process crashed.
             // Because it is running in our same process, we should never
             // see this happen.
-            mGpsTracker = null;
+            mTracker = null;
         }
     };
 
@@ -663,7 +663,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         // class name because we want a specific service implementation that
         // we know will be running in our own process (and thus won't be
         // supporting component replacement by other applications).
-        getApplicationContext().bindService(new Intent(this, GpsTracker.class),
+        getApplicationContext().bindService(new Intent(this, Tracker.class),
                 mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }
@@ -688,7 +688,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
         if (requestCode == 112) {
             skipStopGps = false;
-            if (mIsBound == false || mGpsTracker == null) {
+            if (mIsBound == false || mTracker == null) {
                 bindGpsTracker();
             } else {
                 onGpsTrackerBound();

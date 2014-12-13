@@ -44,7 +44,7 @@ public class PauseStep extends Step {
     @Override
     public void onStart(Scope what, Workout s) {
         if (what == Scope.STEP) {
-            s.gpsTracker.stopOrPause();
+            s.tracker.stopOrPause();
             elapsedTime = 0;
             lastTime = android.os.SystemClock.elapsedRealtime();
             for (Trigger t : triggers) {

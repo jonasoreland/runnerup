@@ -25,11 +25,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,7 +35,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
@@ -48,10 +45,7 @@ import org.runnerup.tracker.component.TrackerGPS;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerTTS;
 import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
-import org.runnerup.hr.HRDeviceRef;
-import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
-import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
 import org.runnerup.notification.NotificationState;
 import org.runnerup.notification.NotificationStateManager;
@@ -74,7 +68,7 @@ import java.util.List;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class GpsTracker extends android.app.Service implements
+public class Tracker extends android.app.Service implements
         LocationListener, Constants {
     public static final int MAX_HR_AGE = 3000; // 3s
 
@@ -169,7 +163,7 @@ public class GpsTracker extends android.app.Service implements
 
     public void setWorkout(Workout w) {
         this.workout = w;
-        w.setGpsTracker(this);
+        w.setTracker(this);
     }
 
     public void setup() {
@@ -558,8 +552,8 @@ public class GpsTracker extends android.app.Service implements
      * Service interface stuff...
      */
     public class LocalBinder extends android.os.Binder {
-        public GpsTracker getService() {
-            return GpsTracker.this;
+        public Tracker getService() {
+            return Tracker.this;
         }
     }
 
