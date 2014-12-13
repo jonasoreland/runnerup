@@ -125,8 +125,6 @@ public class GpsTracker extends android.app.Service implements
 
     private Workout workout = null;
 
-    private double mMinLiveLogDelayMillis = 5000;
-
     private NotificationStateManager notificationStateManager;
 
     private NotificationState activityOngoingState;
@@ -195,12 +193,6 @@ public class GpsTracker extends android.app.Service implements
 
         wakelock(true);
         state = TrackerState.INITIALIZING;
-
-        // TODO add preference
-        mMinLiveLogDelayMillis = PreferenceManager
-                .getDefaultSharedPreferences(this).getInt(
-                        getString(R.string.pref_min_livelog_delay_millis),
-                        (int) mMinLiveLogDelayMillis);
 
         UploadManager u = new UploadManager(this);
         u.loadLiveLoggers(liveLoggers);
