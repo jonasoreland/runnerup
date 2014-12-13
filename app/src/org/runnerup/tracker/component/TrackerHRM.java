@@ -118,7 +118,7 @@ public class TrackerHRM extends DefaultTrackerComponent {
         return ResultCode.RESULT_OK;
     }
 
-    HRProvider getHrProvider() {
+    public HRProvider getHrProvider() {
         return hrProvider;
     }
 }
