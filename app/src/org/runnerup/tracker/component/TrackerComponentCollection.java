@@ -74,7 +74,7 @@ public class TrackerComponentCollection implements TrackerComponent {
      */
     @Override
     public ResultCode onInit(final Callback callback, Context context) {
-        return forEach(new Func1() {
+        return forEach("onInit", new Func1() {
             @Override
             public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
                 return comp0.onInit(callback0, context0);
@@ -146,7 +146,7 @@ public class TrackerComponentCollection implements TrackerComponent {
      */
     @Override
     public ResultCode onEnd(final Callback callback, Context context) {
-        return forEach(new Func1() {
+        return forEach("onEnd", new Func1() {
             @Override
             public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
                 return comp0.onEnd(callback0, context0);
@@ -158,7 +158,8 @@ public class TrackerComponentCollection implements TrackerComponent {
         ResultCode apply(TrackerComponent component, Callback callback, Context context);
     }
 
-    private ResultCode forEach(final Func1 func, final Callback callback, Context context) {
+    private ResultCode forEach(String msg, final Func1 func, final Callback callback,
+                               Context context) {
         synchronized (components) {
             HashMap<String, Pair<TrackerComponent, ResultCode>> list =
                     new HashMap<String, Pair<TrackerComponent, ResultCode>>();
