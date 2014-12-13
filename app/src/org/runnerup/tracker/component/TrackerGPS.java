@@ -43,7 +43,7 @@ public class TrackerGPS extends DefaultTrackerComponent {
     private Location mLastLocation;
     private final GpsTracker tracker;
 
-    public static final String NAME = "TTS";
+    public static final String NAME = "GPS";
 
     @Override
     public String getName() {
@@ -56,37 +56,42 @@ public class TrackerGPS extends DefaultTrackerComponent {
 
     @Override
     public ResultCode onInit(final Callback callback, Context context) {
-        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        frequency_ms = Integer.valueOf(preferences.getString(context.getString(
-                R.string.pref_pollInterval), "500"));
-        if (mWithoutGps == false) {
-            String frequency_meters = preferences.getString(context.getString(
-                    R.string.pref_pollDistance), "5");
-            lm.requestLocationUpdates(GPS_PROVIDER,
-                    frequency_ms,
-                    Integer.valueOf(frequency_meters),
-                    tracker);
-        } else {
-            String list[] = {GPS_PROVIDER,
-                    NETWORK_PROVIDER,
-                    PASSIVE_PROVIDER};
-            mLastLocation = null;
-            for (String s : list) {
-                Location tmp = lm.getLastKnownLocation(s);
-                if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
-                    mLastLocation = tmp;
+        try {
+            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            frequency_ms = Integer.valueOf(preferences.getString(context.getString(
+                    R.string.pref_pollInterval), "500"));
+            if (mWithoutGps == false) {
+                String frequency_meters = preferences.getString(context.getString(
+                        R.string.pref_pollDistance), "5");
+                lm.requestLocationUpdates(GPS_PROVIDER,
+                        frequency_ms,
+                        Integer.valueOf(frequency_meters),
+                        tracker);
+            } else {
+                String list[] = {
+                        GPS_PROVIDER,
+                        NETWORK_PROVIDER,
+                        PASSIVE_PROVIDER};
+                mLastLocation = null;
+                for (String s : list) {
+                    Location tmp = lm.getLastKnownLocation(s);
+                    if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
+                        mLastLocation = tmp;
+                    }
                 }
+                if (mLastLocation != null) {
+                    mLastLocation.removeSpeed();
+                    mLastLocation.removeAltitude();
+                    mLastLocation.removeAccuracy();
+                    mLastLocation.removeBearing();
+                }
+                gpsLessLocationProvider.run();
             }
-            if (mLastLocation != null) {
-                mLastLocation.removeSpeed();
-                mLastLocation.removeAltitude();
-                mLastLocation.removeAccuracy();
-                mLastLocation.removeBearing();
-            }
-            gpsLessLocationProvider.run();
+            return ResultCode.RESULT_OK;
+        } catch (Exception ex) {
+            return ResultCode.RESULT_ERROR;
         }
-        return ResultCode.RESULT_OK;
     }
 
     @Override
@@ -111,10 +116,19 @@ public class TrackerGPS extends DefaultTrackerComponent {
                 mLastLocation = null;
             }
             location.setTime(System.currentTimeMillis());
-            if (tracker.isLogging()) {
-                tracker.onLocationChanged(location);
-                handler.postDelayed(this, frequency_ms);
+            switch (tracker.getState()) {
+                case INIT:
+                case CLEANUP:
+                case ERROR:
+                    return;
+                case INITIALIZING:
+                case INITIALIZED:
+                case STARTED:
+                case PAUSED:
+                    break;
             }
+            tracker.onLocationChanged(location);
+            handler.postDelayed(this, frequency_ms);
         }
     };
 }
