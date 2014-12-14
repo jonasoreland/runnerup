@@ -73,6 +73,9 @@ public class CountdownFeedback extends Feedback {
 
     @Override
     public void emit(Workout w, Context ctx) {
+        if (textView == null)
+            return;
+
         double remaining = w.getRemaining(scope, dimension);
         if (remaining > 0) {
             textView.setVisibility(View.VISIBLE);
