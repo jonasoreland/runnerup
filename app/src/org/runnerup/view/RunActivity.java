@@ -166,11 +166,9 @@ public class RunActivity extends Activity implements TickListener {
         mTracker.createActivity(workout.getSport());
         mTracker.start();
 
-        SharedPreferences prefs = workout.getAudioCues();
-        final String mute = prefs.getString(getString(R.string.pref_mute), "no");
-
         HashMap<String, Object> bindValues = new HashMap<String, Object>();
-        bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech, mute, getApplicationContext()));
+        bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech,
+                workout.getMute(), getApplicationContext()));
         bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
         bindValues.put(Workout.KEY_FORMATTER, formatter);
         bindValues.put(Workout.KEY_HRZONES, hrZones);

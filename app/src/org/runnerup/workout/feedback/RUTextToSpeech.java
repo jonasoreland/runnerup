@@ -51,10 +51,14 @@ public class RUTextToSpeech {
     final HashSet<String> cueSet = new HashSet<String>();
     final ArrayList<Entry> cueList = new ArrayList<Entry>();
 
-    public RUTextToSpeech(TextToSpeech tts, String mute, Context context) {
+    public RUTextToSpeech(TextToSpeech tts, String mute_, Context context) {
+        this(tts, "yes".equalsIgnoreCase(mute_), context);
+    }
+
+    public RUTextToSpeech(TextToSpeech tts, boolean mute_, Context context) {
         this.textToSpeech = tts;
         this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        this.mute = "yes".equalsIgnoreCase(mute);
+        this.mute = mute_;
 
         if (this.mute) {
             UtteranceCompletion.setUtteranceCompletedListener(tts, this);

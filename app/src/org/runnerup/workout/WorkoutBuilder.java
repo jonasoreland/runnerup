@@ -234,7 +234,8 @@ public class WorkoutBuilder {
     }
 
     public static void addAudioCuesToWorkout(Resources res, Workout w, SharedPreferences prefs) {
-        w.setAudioCues(prefs);
+        final String mute = prefs.getString(res.getString(R.string.pref_mute), "no");
+        w.setMute("yes".equalsIgnoreCase(mute));
         addAudioCuesToWorkout(res, w.steps, prefs);
     }
 

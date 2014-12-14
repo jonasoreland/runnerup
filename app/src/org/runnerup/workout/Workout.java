@@ -47,6 +47,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     boolean paused = false;
     final ArrayList<Step> steps = new ArrayList<Step>();
     int sport = DB.ACTIVITY.SPORT_RUNNING;
+    private boolean mute;
 
     class PendingFeedback {
         int depth = 0;
@@ -535,11 +536,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         return w;
     }
 
-    public void setAudioCues(SharedPreferences prefs) {
-        audioCuePrefs = prefs;
+    public void setMute(boolean mute) {
+        this.mute = mute;
     }
 
-    public SharedPreferences getAudioCues() {
-        return audioCuePrefs;
+    public boolean getMute() {
+        return mute;
     }
 }
