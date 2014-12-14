@@ -63,6 +63,9 @@ public class TrackerTTS extends DefaultTrackerComponent {
     }
 
     @Override
+    public boolean isConnected() { return true; }
+
+    @Override
     public void onBind(HashMap<String, Object> bindValues) {
         Context ctx = (Context) bindValues.get(TrackerComponent.KEY_CONTEXT);
         Boolean mute = (Boolean) bindValues.get(Workout.KEY_MUTE);

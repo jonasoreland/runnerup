@@ -65,14 +65,21 @@ public class TrackerHRM extends DefaultTrackerComponent {
             hrProvider.open(handler, new HRProvider.HRClient() {
                 @Override
                 public void onOpenResult(boolean ok) {
-                    if (!ok) {
-                        hrProvider = null;
+                    if (!hrProvider.isEnabled()) {
+                        /* no functional HRM */
+                        callback.run(TrackerHRM.this, ResultCode.RESULT_NOT_ENABLED);
+                        return;
                     }
-                    if (hrProvider == null) {
+
+                    if (!ok) {
                         /* no functional HRM */
                         callback.run(TrackerHRM.this, ResultCode.RESULT_ERROR);
                         return;
                     }
+
+                    /* return RESULT_OK and connect in background */
+                    callback.run(TrackerHRM.this, ResultCode.RESULT_OK);
+
                     hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
                 }
 
@@ -89,8 +96,6 @@ public class TrackerHRM extends DefaultTrackerComponent {
                         Toast.makeText(context, "Failed to connect to HRM " + btDeviceName,
                                 Toast.LENGTH_SHORT).show();
                     }
-                    callback.run(TrackerHRM.this,
-                            connectOK ? ResultCode.RESULT_OK : ResultCode.RESULT_ERROR);
                 }
 
                 @Override
@@ -112,6 +117,7 @@ public class TrackerHRM extends DefaultTrackerComponent {
     @Override
     public ResultCode onEnd(Callback callback, Context context) {
         if (hrProvider != null) {
+            hrProvider.disconnect();
             hrProvider.close();
             hrProvider = null;
         }
@@ -120,5 +126,12 @@ public class TrackerHRM extends DefaultTrackerComponent {
 
     public HRProvider getHrProvider() {
         return hrProvider;
+    }
+
+    @Override
+    public boolean isConnected() {
+        if (hrProvider == null)
+            return false;
+        return hrProvider.isConnected();
     }
 }

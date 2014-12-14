@@ -23,15 +23,23 @@ import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.workout.WorkoutInfo;
 
-public class TrackerWear extends DefaultTrackerComponent implements TrackerComponent, WorkoutObserver {
+import java.util.ArrayList;
+import java.util.HashSet;
+
+public class TrackerWear extends DefaultTrackerComponent
+        implements TrackerComponent, WorkoutObserver, NodeApi.NodeListener {
     private GoogleApiClient googleApiClient;
 
     public static final String NAME = "WEAR";
+    private HashSet<Node> connectedNodes;
 
     public TrackerWear() {
     }
@@ -61,6 +69,18 @@ public class TrackerWear extends DefaultTrackerComponent implements TrackerCompo
                     @Override
                     public void onConnected(Bundle connectionHint) {
                         callback.run(TrackerWear.this, ResultCode.RESULT_OK);
+
+                        /** get info about connected nodes in background */
+                        connectedNodes = new HashSet<Node>();
+                        Wearable.NodeApi.addListener(googleApiClient, TrackerWear.this);
+                        Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(
+                                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+
+                                    @Override
+                                    public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                                        connectedNodes.addAll(nodes.getNodes());
+                                    }
+                                });
                     }
 
                     @Override
@@ -80,12 +100,7 @@ public class TrackerWear extends DefaultTrackerComponent implements TrackerCompo
     }
 
     @Override
-    public ResultCode onEnd(Callback callback, Context context) {
-        if (googleApiClient != null) {
-            googleApiClient.disconnect();
-            googleApiClient = null;
-        }
-        return ResultCode.RESULT_OK;
+    public void onStart() {
     }
 
     @Override
@@ -97,5 +112,46 @@ public class TrackerWear extends DefaultTrackerComponent implements TrackerCompo
         if (!googleApiClient.isConnected()) {
             return;
         }
+    }
+
+    @Override
+    public void onComplete(boolean discarded) {
+    }
+
+    @Override
+    public boolean isConnected() {
+        if (googleApiClient == null)
+            return false;
+
+        if (!googleApiClient.isConnected())
+            return false;
+
+        if (connectedNodes == null)
+            return false;
+
+        return !connectedNodes.isEmpty();
+    }
+
+    @Override
+    public void onPeerConnected(Node node) {
+        connectedNodes.add(node);
+    }
+
+    @Override
+    public void onPeerDisconnected(Node node) {
+        connectedNodes.remove(node);
+    }
+
+    @Override
+    public ResultCode onEnd(Callback callback, Context context) {
+        if (googleApiClient != null) {
+            if (connectedNodes != null) {
+                Wearable.NodeApi.removeListener(googleApiClient, this);
+                connectedNodes = null;
+            }
+            googleApiClient.disconnect();
+            googleApiClient = null;
+        }
+        return ResultCode.RESULT_OK;
     }
 }

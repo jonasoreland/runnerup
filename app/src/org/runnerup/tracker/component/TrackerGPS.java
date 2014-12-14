@@ -95,6 +95,11 @@ public class TrackerGPS extends DefaultTrackerComponent {
     }
 
     @Override
+    public boolean isConnected() {
+        return true; // TODO gpsStatus
+    }
+
+    @Override
     public ResultCode onEnd(Callback callback, Context context) {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (mWithoutGps == false) {

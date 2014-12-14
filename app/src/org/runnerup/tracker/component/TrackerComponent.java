@@ -37,6 +37,7 @@ public interface TrackerComponent {
     public enum ResultCode {
         RESULT_OK,
         RESULT_NOT_SUPPORTED, // hw not present or not configured
+        RESULT_NOT_ENABLED,   // hw is disabled (e.g bluetooth off)
         RESULT_ERROR,         // Component failed to initialize
         RESULT_ERROR_FATAL,   // Component failed, Tracker shouldn't start
         RESULT_PENDING        // will call callback
@@ -55,6 +56,12 @@ public interface TrackerComponent {
      * Called by Tracker during initialization
      */
     ResultCode onInit(Callback callback, Context context);
+
+    /**
+     * is component connected (for some definition of connected)
+     *   the value returned here is used to show connected/not connected icons
+     */
+    boolean isConnected();
 
     /**
      * Called by Tracker before start

@@ -69,6 +69,9 @@ public class TrackerComponentCollection implements TrackerComponent {
         return "TrackerComponentCollection";
     }
 
+    @Override
+    public boolean isConnected() { return true; }
+
     /**
      * Called by Tracker during initialization
      */
@@ -173,7 +176,7 @@ public class TrackerComponentCollection implements TrackerComponent {
         ResultCode apply(TrackerComponent component, Callback callback, Context context);
     }
 
-    private ResultCode forEach(String msg, final Func1 func, final Callback callback,
+    private ResultCode forEach(final String msg, final Func1 func, final Callback callback,
                                Context context) {
         synchronized (components) {
             HashMap<String, Pair<TrackerComponent, ResultCode>> list =
@@ -190,11 +193,13 @@ public class TrackerComponentCollection implements TrackerComponent {
                             @Override
                             public void run() {
                                 synchronized (components) {
+                                    System.err.println(component.getName() + " " + msg + " => " + resultCode);
                                     TrackerComponent check = pending.remove(key);
                                     assert (check == component);
                                     components.put(key, new Pair<TrackerComponent, ResultCode>(
                                             component, resultCode));
                                     if (pending.isEmpty()) {
+                                        System.err.println(" => runCallback()");
                                         callback.run(TrackerComponentCollection.this,
                                                 getResult(components));
                                     }
@@ -203,6 +208,7 @@ public class TrackerComponentCollection implements TrackerComponent {
                         });
                     }
                 }, context);
+                System.err.println(component.getName() + " " + msg + " => " + res);
                 if (res != ResultCode.RESULT_PENDING) {
                     components.put(key, new Pair<TrackerComponent, ResultCode>(component, res));
                 } else {
@@ -212,7 +218,9 @@ public class TrackerComponentCollection implements TrackerComponent {
         }
         if (!pending.isEmpty())
             return ResultCode.RESULT_PENDING;
-        else
+        else {
+            System.err.println(" => return directly");
             return getResult(components);
+        }
     }
 }
