@@ -94,6 +94,21 @@ public class TrackerComponentCollection implements TrackerComponent {
     }
 
     /**
+     * Called by Tracker before start
+     *   Component shall populate bindValues
+     *   with objects that will then be passed
+     *   to workout
+     */
+    @Override
+    public void onBind(HashMap<String, Object> bindValues) {
+        for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
+            if (pair.second == ResultCode.RESULT_OK) {
+                pair.first.onBind(bindValues);
+            }
+        }
+    }
+
+    /**
      * Called by Tracker when workout starts
      */
     @Override

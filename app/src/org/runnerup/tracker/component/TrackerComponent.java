@@ -20,6 +20,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
+import java.util.HashMap;
+
 /**
  * Created by jonas on 12/11/14.
  *
@@ -51,6 +53,14 @@ public interface TrackerComponent {
      * Called by Tracker during initialization
      */
     ResultCode onInit(Callback callback, Context context);
+
+    /**
+     * Called by Tracker before start
+     *   Component shall populate bindValues
+     *   with objects that will then be passed
+     *   to workout
+     */
+    void onBind(HashMap<String, Object> bindValues);
 
     /**
      * Called by Tracker when workout starts
