@@ -106,8 +106,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onBind(Workout w, HashMap<String, Object> bindValues) {
-        hrZones = (HRZones) bindValues.get(Workout.KEY_HRZONES);
-        textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
+        if (bindValues.contains(Workout.KEY_HRZONES))
+          hrZones = (HRZones) bindValues.get(Workout.KEY_HRZONES);
+        if (bindValues.contains(Workout.KEY_TTS))
+          textToSpeech = (RUTextToSpeech) bindValues.get(Workout.KEY_TTS);
         for (Step a : steps) {
             a.onBind(w, bindValues);
         }
