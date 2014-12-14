@@ -528,7 +528,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
                 WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
                 mGpsStatus.stop(StartActivity.this);
-                mTracker.setWorkout(w);
+
+                /**
+                 * This will start the workout!
+                 */
+                mTracker.start(w);
 
                 Intent intent = new Intent(StartActivity.this,
                         RunActivity.class);

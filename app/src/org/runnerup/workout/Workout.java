@@ -91,6 +91,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public static final String KEY_COUNTER_VIEW = "CountdownView";
     public static final String KEY_FORMATTER = "Formatter";
     public static final String KEY_HRZONES = "HrZones";
+    public static final String KEY_MUTE = "mute";
 
     public Workout() {
     }

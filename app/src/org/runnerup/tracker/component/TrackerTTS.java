@@ -23,7 +23,10 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import org.runnerup.R;
+import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
+
+import java.util.HashMap;
 
 /**
  * Created by jonas on 12/11/14.
@@ -57,6 +60,13 @@ public class TrackerTTS extends DefaultTrackerComponent {
             }
         });
         return ResultCode.RESULT_PENDING;
+    }
+
+    @Override
+    public void onBind(HashMap<String, Object> bindValues) {
+        Context ctx = (Context) bindValues.get(TrackerComponent.KEY_CONTEXT);
+        Boolean mute = (Boolean) bindValues.get(Workout.KEY_MUTE);
+        bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute, ctx));
     }
 
     @Override

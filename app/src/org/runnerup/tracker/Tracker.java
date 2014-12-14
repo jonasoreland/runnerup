@@ -52,10 +52,13 @@ import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.notification.OngoingState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.HRZones;
 import org.runnerup.workout.HeadsetButtonReceiver;
+import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -161,11 +164,6 @@ public class Tracker extends android.app.Service implements
         reset();
     }
 
-    public void setWorkout(Workout w) {
-        this.workout = w;
-        w.setTracker(this);
-    }
-
     public void setup() {
         switch (state) {
             case INIT:
@@ -224,7 +222,7 @@ public class Tracker extends android.app.Service implements
         return mBug23937Delta;
     }
 
-    public long createActivity(int sport) {
+    private long createActivity(int sport) {
         assert (state == TrackerState.INIT);
         /**
          * Create an Activity instance
@@ -240,10 +238,27 @@ public class Tracker extends android.app.Service implements
         return mActivityId;
     }
 
-    public void start() {
+    public void start(Workout workout_) {
         assert (state == TrackerState.INITIALIZED);
-        state = TrackerState.STARTED;
-        activityOngoingState = new OngoingState(new Formatter(this), workout, this);
+
+        // connect workout and tracker
+        this.workout = workout_;
+        workout.setTracker(this);
+
+        /**
+         * create the DB activity
+         */
+        createActivity(workout.getSport());
+
+        // do bindings
+        doBind();
+
+        // Let workout do initializations
+        workout.onInit(workout);
+
+        // Let components know we're starting
+        components.onStart();
+
         mElapsedTimeMillis = 0;
         mElapsedDistance = 0;
         mHeartbeats = 0;
@@ -251,28 +266,40 @@ public class Tracker extends android.app.Service implements
         mMaxHR = 0;
         // TODO: check if mLastLocation is recent enough
         mActivityLastLocation = null;
-        setNextLocationType(DB.LOCATION.TYPE_START); // New location update will
-                                                     // be tagged with START
+
+        // New location update will be tagged with START
+        setNextLocationType(DB.LOCATION.TYPE_START);
+
+        state = TrackerState.STARTED;
+
+        activityOngoingState = new OngoingState(new Formatter(this), workout, this);
+
+
         registerWorkoutBroadcastsListener();
+
+        /**
+         * And finally let workout know that we started
+         */
+        workout.onStart(Scope.WORKOUT, this.workout);
     }
 
-    public void startOrResume() {
-        switch (state) {
-            case INIT:
-            case ERROR:
-            case INITIALIZING:
-            case CLEANUP:
-                assert (false);
-                break;
-            case INITIALIZED:
-                start();
-                break;
-            case PAUSED:
-                resume();
-                break;
-            case STARTED:
-                break;
-        }
+    private void doBind() {
+        /**
+         * Let components populate bindValues
+         */
+        HashMap<String, Object> bindValues = new HashMap<String, Object>();
+        Context ctx = getApplicationContext();
+        bindValues.put(TrackerComponent.KEY_CONTEXT, ctx);
+        bindValues.put(Workout.KEY_FORMATTER, new Formatter(ctx));
+        bindValues.put(Workout.KEY_HRZONES, new HRZones(ctx));
+        bindValues.put(Workout.KEY_MUTE, new Boolean(workout.getMute()));
+
+        components.onBind(bindValues);
+
+        /**
+         * and then give them to workout
+         */
+        workout.onBind(workout, bindValues);
     }
 
     public void newLap(ContentValues tmp) {
@@ -346,6 +373,20 @@ public class Tracker extends android.app.Service implements
     }
 
     public void resume() {
+        switch (state) {
+            case INIT:
+            case ERROR:
+            case INITIALIZING:
+            case CLEANUP:
+            case INITIALIZED:
+                assert (false);
+                return;
+            case PAUSED:
+                break;
+            case STARTED:
+                return;
+        }
+
         assert (state == TrackerState.PAUSED);
         // TODO: check is mLastLocation is recent enough
         mActivityLastLocation = mLastLocation;
@@ -379,6 +420,12 @@ public class Tracker extends android.app.Service implements
         }
 
         wakelock(false);
+
+        if (workout != null) {
+            workout.setTracker(null);
+            workout = null;
+        }
+
         state = TrackerState.CLEANUP;
         liveLoggers.clear();
         TrackerComponent.ResultCode res = components.onEnd(onEndCallback, getApplicationContext());

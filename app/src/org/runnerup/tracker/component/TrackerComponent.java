@@ -32,6 +32,8 @@ import java.util.HashMap;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public interface TrackerComponent {
 
+    public static final String KEY_CONTEXT = "KEY_CONTEXT";
+
     public enum ResultCode {
         RESULT_OK,
         RESULT_NOT_SUPPORTED, // hw not present or not configured
@@ -63,7 +65,7 @@ public interface TrackerComponent {
     void onBind(HashMap<String, Object> bindValues);
 
     /**
-     * Called by Tracker when workout starts
+     * Called by Tracker just before workout starts
      */
     void onStart();
 

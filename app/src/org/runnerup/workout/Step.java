@@ -201,7 +201,7 @@ public class Step implements TickComponent {
             if (s.isPaused())
                 s.tracker.stopOrPause();
             else
-                s.tracker.startOrResume();
+                s.tracker.resume();
         } else if (what == Scope.LAP) {
             lapStartTime = time;
             lapStartDistance = dist;
@@ -314,7 +314,7 @@ public class Step implements TickComponent {
         for (Trigger t : triggers) {
             t.onResume(s);
         }
-        s.tracker.startOrResume();
+        s.tracker.resume();
     }
 
     @Override

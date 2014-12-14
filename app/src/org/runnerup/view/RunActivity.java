@@ -31,7 +31,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -104,7 +103,6 @@ public class RunActivity extends Activity implements TickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.run);
-        mSpeech = new TextToSpeech(getApplicationContext(), mTTSOnInitListener);
         formatter = new Formatter(this);
         hrZones = new HRZones(this);
 
@@ -131,6 +129,8 @@ public class RunActivity extends Activity implements TickListener {
         workoutList = (ListView) findViewById(R.id.workout_list);
         WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
         workoutList.setAdapter(adapter);
+
+        bindGpsTracker();
     }
 
     @Override
@@ -153,26 +153,23 @@ public class RunActivity extends Activity implements TickListener {
     public void onDestroy() {
         super.onDestroy();
         unbindGpsTracker();
-        if (mSpeech != null) {
-            mSpeech.shutdown();
-            mSpeech = null;
-        }
         stopTimer();
 
     }
 
     void onGpsTrackerBound() {
         workout = mTracker.getWorkout();
-        mTracker.createActivity(workout.getSport());
-        mTracker.start();
 
-        HashMap<String, Object> bindValues = new HashMap<String, Object>();
-        bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(mSpeech,
-                workout.getMute(), getApplicationContext()));
-        bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
-        bindValues.put(Workout.KEY_FORMATTER, formatter);
-        bindValues.put(Workout.KEY_HRZONES, hrZones);
-        workout.onBind(workout, bindValues);
+        {
+            /**
+             * Countdown view can't be bound until RunActivity is started
+             *   since it's not created until then
+             */
+            HashMap<String, Object> bindValues = new HashMap<String, Object>();
+            bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
+            workout.onBind(workout, bindValues);
+        }
+
         startTimer();
 
         populateWorkoutList();
@@ -190,8 +187,6 @@ public class RunActivity extends Activity implements TickListener {
             newLapButton.setOnClickListener(nextStepButtonClick);
             newLapButton.setText(getString(R.string.next_lap));
         }
-        workout.onInit(workout);
-        workout.onStart(Scope.WORKOUT, this.workout);
     }
 
     private void populateWorkoutList() {
@@ -447,18 +442,6 @@ public class RunActivity extends Activity implements TickListener {
             mIsBound = false;
         }
     }
-
-    TextToSpeech mSpeech = null;
-    final TextToSpeech.OnInitListener mTTSOnInitListener = new TextToSpeech.OnInitListener() {
-
-        @Override
-        public void onInit(int status) {
-            if (status != TextToSpeech.SUCCESS) {
-            } else {
-            }
-            bindGpsTracker();
-        }
-    };
 
     class WorkoutAdapter extends BaseAdapter {
 
