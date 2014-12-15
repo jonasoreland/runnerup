@@ -16,8 +16,10 @@
  */
 package org.runnerup.tracker.component;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,9 +33,9 @@ import com.google.android.gms.wearable.Wearable;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.workout.WorkoutInfo;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class TrackerWear extends DefaultTrackerComponent
         implements TrackerComponent, WorkoutObserver, NodeApi.NodeListener {
     private GoogleApiClient googleApiClient;
