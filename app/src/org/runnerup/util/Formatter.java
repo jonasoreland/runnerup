@@ -151,8 +151,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case HRZ:
                 return formatHeartRateZone(target, value);
             case SPEED:
-                // TODO
-                return "";
+                return formatSpeed(target, value);
         }
         return "";
     }
@@ -360,6 +359,84 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                             : R.string.cue_second));
         }
         s.append(" ").append(resources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile));
+        return s.toString();
+    }
+
+    /**
+     * Format Speed
+     *
+     * @param target
+     * @param seconds_per_meter
+     * @return
+     */
+    public String formatSpeed(int target, double seconds_per_meter) {
+        switch (target) {
+            case CUE:
+            case CUE_SHORT:
+            case CUE_LONG:
+                return cueSpeed(seconds_per_meter);
+            case TXT:
+            case TXT_SHORT:
+                return txtSpeed(seconds_per_meter, false);
+            case TXT_LONG:
+                return txtSpeed(seconds_per_meter, true);
+        }
+        return "";
+    }
+
+    /**
+     * @param speed_meter_per_second
+     * @return string suitable for printing according to settings
+     */
+    private String txtSpeed(double seconds_per_meter, boolean includeUnit) {
+        double meter_per_seconds = 1/seconds_per_meter;
+        double distance_per_seconds = meter_per_seconds / base_meters;
+        double distance_per_hour = distance_per_seconds * 3600;
+        String str = String.format("%.1f", distance_per_hour);
+        if (includeUnit == false)
+            return str;
+        else {
+            int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
+            return str + resources.getString(res) + "/h";
+        }
+    }
+
+    private String cueSpeed(double seconds_per_meter) {
+        long seconds_per_unit = Math.round(base_meters * seconds_per_meter);
+        long hours_per_unit = 0;
+        long minutes_per_unit = 0;
+        if (seconds_per_unit >= 3600) {
+            hours_per_unit = seconds_per_unit / 3600;
+            seconds_per_unit -= hours_per_unit * 3600;
+        }
+        if (seconds_per_unit >= 60) {
+            minutes_per_unit = seconds_per_unit / 60;
+            seconds_per_unit -= minutes_per_unit * 60;
+        }
+        StringBuilder s = new StringBuilder();
+        if (hours_per_unit > 0) {
+            s.append(hours_per_unit)
+                    .append(" ")
+                    .append(resources.getString(hours_per_unit > 1 ? R.string.cue_hours
+                            : R.string.cue_hour));
+        }
+        if (minutes_per_unit > 0) {
+            if (hours_per_unit > 0)
+                s.append(" ");
+            s.append(minutes_per_unit)
+                    .append(" ")
+                    .append(resources.getString(minutes_per_unit > 1 ? R.string.cue_minutes
+                            : R.string.cue_minute));
+        }
+        if (seconds_per_unit > 0) {
+            if (hours_per_unit > 0 || minutes_per_unit > 0)
+                s.append(" ");
+            s.append(seconds_per_unit)
+                    .append(" ")
+                    .append(resources.getString(seconds_per_unit > 1 ? R.string.cue_seconds
+                            : R.string.cue_second));
+        }
+        s.append(" ").append(resources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile) + "/h");
         return s.toString();
     }
 
