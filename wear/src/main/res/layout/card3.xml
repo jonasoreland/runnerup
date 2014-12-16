@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        app:layout_box="all">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewHeader2"
+                android:text="distance"
+                style="@style/Card3TextSmall" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:text="9.34"
+                style="@style/Card3TextMedium" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/border"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:layout_weight="0.9"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:id="@+id/textViewHeader1"
+                    android:text="time"
+                    style="@style/Card3TextSmall" />
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:text="52:23"
+                    style="@style/Card3TextLarge" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewHeader3"
+                android:text="pace"
+                style="@style/Card3TextSmall" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:text="5:23"
+                style="@style/Card3TextMedium" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <view
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                class="android.support.wearable.view.DotsPageIndicator"
+                android:id="@+id/dotsPageIndicator"
+                android:layout_centerInParent="true" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20sp"
+                android:layout_toRightOf="@id/dotsPageIndicator">
+
+                <ImageView
+                    android:layout_width="12sp"
+                    android:layout_height="12sp"
+                    android:id="@+id/imageView2"
+                    android:src="@drawable/heart16" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.wearable.view.BoxInsetLayout>
