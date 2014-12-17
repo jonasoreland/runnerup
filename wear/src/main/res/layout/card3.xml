@@ -80,7 +80,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/border">
 
             <TextView
                 android:id="@+id/textViewHeader3"
@@ -94,33 +95,21 @@
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:paddingLeft="40sp"
+            android:paddingRight="40sp">
 
-            <view
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                class="android.support.wearable.view.DotsPageIndicator"
-                android:id="@+id/dotsPageIndicator"
-                android:layout_centerInParent="true" />
+            <ImageView
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+                android:id="@+id/imageView2"
+                android:src="@drawable/heart16" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20sp"
-                android:layout_toRightOf="@id/dotsPageIndicator">
-
-                <ImageView
-                    android:layout_width="12sp"
-                    android:layout_height="12sp"
-                    android:id="@+id/imageView2"
-                    android:src="@drawable/heart16" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
