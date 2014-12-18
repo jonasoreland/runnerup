@@ -24,6 +24,14 @@
     <item>mi</item>
     <item>km</item>
   </string-array>
+    <string-array name="speedEntries">
+        <item>Kilometers per hour (Speed)</item>
+        <item>Minutes per Kilometers (Pace)</item>
+    </string-array>
+    <string-array name="speedValues">
+        <item>speed</item>
+        <item>pace</item>
+    </string-array>
   <!-- Note: keep in same order as DB.INTENSITY -->
   <string-array name="step_intensity_types">
     <item>Warmup</item>

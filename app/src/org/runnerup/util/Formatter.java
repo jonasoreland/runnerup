@@ -26,6 +26,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import org.runnerup.R;
 import org.runnerup.workout.Dimension;
@@ -45,6 +46,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     boolean km = true;
     String base_unit = "km";
     double base_meters = km_meters;
+
+    String speed = "speed";
 
     public final static double km_meters = 1000.0;
     public final static double mi_meters = 1609.34;
@@ -68,6 +71,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         hrZones = new HRZones(context);
 
         setUnit();
+        setSpeed();
     }
 
     @Override
@@ -75,6 +79,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             String key) {
         if (key != null && context.getString(R.string.pref_unit).contentEquals(key))
             setUnit();
+        else if(key != null && context.getString((R.string.pref_speed)).contentEquals(key))
+            setSpeed();
     }
 
     private void setUnit() {
@@ -88,6 +94,23 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             base_meters = mi_meters;
         }
     }
+    private void setSpeed() {
+        try{
+            String tmp = sharedPreferences.getString("pref_speed", null);
+            if(tmp.contentEquals("pace"))
+                speed = "pace";
+            else
+                speed = "speed";
+        }
+        catch (Exception e){
+            speed="speed";
+            Log.i("Exception", e.toString());
+        }
+        return;
+
+    }
+
+
 
     public static boolean getUseKilometers(Resources res, SharedPreferences prefs, Editor editor) {
         boolean _km = true;
@@ -309,18 +332,34 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param speed_meter_per_second
+     * @param seconds_per_meter
      * @return string suitable for printing according to settings
      */
     private String txtPace(double seconds_per_meter, boolean includeUnit) {
-        long val = Math.round(base_meters * seconds_per_meter);
-        String str = DateUtils.formatElapsedTime(val);
+        String str;
+        if(speed.contentEquals("pace")) {
+            long val = Math.round(base_meters * seconds_per_meter);
+            str = DateUtils.formatElapsedTime(val);
+        }
+        else {
+            double meter_per_seconds = 1/seconds_per_meter;
+            double distance_per_seconds = meter_per_seconds / base_meters;
+            double distance_per_hour = distance_per_seconds * 3600;
+            str = String.format("%.1f", distance_per_hour);
+        }
+
+        String ret_val = null;
         if (includeUnit == false)
-            return str;
+            ret_val =  str;
         else {
             int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
-            return str + "/" + resources.getString(res);
+            if(speed.contentEquals("pace")){
+                ret_val =  str + "/" + resources.getString(res);
+            } else {
+                ret_val = str + " " + resources.getString(res) + "/" + "h";
+            }
         }
+        return ret_val;
     }
 
     private String cuePace(double seconds_per_meter) {

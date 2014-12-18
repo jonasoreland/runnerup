@@ -118,6 +118,13 @@
         android:entries="@array/unitEntries"
         android:entryValues="@array/unitValues" />
 
+    <ListPreference
+        android:key="@string/pref_speed"
+        android:persistent="true"
+        android:title="@string/speed_preference"
+        android:entries="@array/speedEntries"
+        android:entryValues="@array/speedValues" />
+
 	<CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_startgps"
