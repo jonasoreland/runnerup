@@ -20,20 +20,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/black"
+    android:padding="0dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        app:layout_box="all">
+        android:gravity="center"
+        >
 
         <LinearLayout
+            android:id="@+id/layout2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/textViewHeader2"
@@ -48,19 +52,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:id="@+id/layout1"
+            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/border"
-            android:baselineAligned="false">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="fill_parent"
-                android:orientation="vertical"
-                android:layout_weight="0.9"
-                android:layout_gravity="center_horizontal">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/border" >
 
                 <TextView
                     android:id="@+id/textViewHeader1"
@@ -72,20 +70,20 @@
                     android:text="52:23"
                     style="@style/Card3TextLarge" />
 
-            </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:orientation="vertical"
-            android:background="@drawable/border">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/border" >
 
             <TextView
                 android:id="@+id/textViewHeader3"
-                android:text="pace"
+                android:text="lap pace"
                 style="@style/Card3TextSmall" />
 
             <TextView
@@ -96,6 +94,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layoutIcons"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
