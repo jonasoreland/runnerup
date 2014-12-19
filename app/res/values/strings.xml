@@ -186,6 +186,8 @@
   <string name="activity_countdown">Activity countdown</string>
   <string name="countdown_time_s">Countdown time (s)</string>
   <string name="unit_preference">Unit preference</string>
+    <string name="running_speed_preference">Runningspeed Preference</string>
+    <string name="cycle_speed_preference">Cyclespeed Preference</string>
   <string name="auto_start_gps">Auto start gps</string>
   <string name="advanced_options">Advanced options</string>
   <string name="runner_up_live_address">RunnerUp live address</string>
