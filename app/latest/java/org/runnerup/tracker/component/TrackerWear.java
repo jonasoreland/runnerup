@@ -21,29 +21,49 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Pair;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.WorkoutObserver;
+import org.runnerup.util.Formatter;
+import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Scope;
+import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutInfo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class TrackerWear extends DefaultTrackerComponent
-        implements TrackerComponent, WorkoutObserver, NodeApi.NodeListener {
+        implements Constants, TrackerComponent, WorkoutObserver, NodeApi.NodeListener {
+
+    private Context context;
     private GoogleApiClient googleApiClient;
+    private Formatter formatter;
 
     public static final String NAME = "WEAR";
     private HashSet<Node> connectedNodes;
 
+    private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
+
     public TrackerWear() {
+        items.add(new Pair<Scope, Dimension>(Scope.WORKOUT, Dimension.TIME));
+        items.add(new Pair<Scope, Dimension>(Scope.WORKOUT, Dimension.DISTANCE));
+        items.add(new Pair<Scope, Dimension>(Scope.LAP, Dimension.PACE));
     }
 
     @Override
@@ -66,6 +86,7 @@ public class TrackerWear extends DefaultTrackerComponent
             return ResultCode.RESULT_NOT_SUPPORTED;
         }
 
+        this.context = context;
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
@@ -102,6 +123,11 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
+    public void onBind(HashMap<String, Object> bindValues) {
+        formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
+    }
+
+    @Override
     public void onStart() {
     }
 
@@ -114,6 +140,31 @@ public class TrackerWear extends DefaultTrackerComponent
         if (!googleApiClient.isConnected()) {
             return;
         }
+
+        Bundle b = new Bundle();
+        {
+            int i = 1;
+            for (Pair<Scope, Dimension> item : items) {
+                b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
+                b.putString(Wear.RunInfo.DATA + i, formatter.format(Formatter.TXT_SHORT,
+                        item.second, workoutInfo.get(item.first, item.second)));
+                i++;
+            }
+        }
+
+        PutDataMapRequest dataMapRequest = PutDataMapRequest.create(Wear.Path.EVENT);
+        dataMapRequest.getDataMap().putAll(DataMap.fromBundle(b));
+        Wearable.DataApi.putDataItem(googleApiClient, dataMapRequest.asPutDataRequest())
+                .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                    @Override
+                    public void onResult(DataApi.DataItemResult dataItemResult) {
+                        if (!dataItemResult.getStatus().isSuccess()) {
+                            System.err.println("TrackerWear: ERROR: failed to putDataItem, " +
+                                    "status code: " + dataItemResult.getStatus().getStatusCode());
+                        }
+                    }
+                });
+
     }
 
     @Override

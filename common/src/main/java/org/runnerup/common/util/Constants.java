@@ -163,4 +163,17 @@ public interface Constants {
         final String NEW_LAP = "org.runnerup.NEW_LAP";
         final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
     }
+
+    public interface Wear {
+
+        public interface Path {
+            static final String PREFIX = "/org.runnerup";
+            static final String EVENT = PREFIX + "/event";
+        };
+
+        public interface RunInfo {
+            static final String HEADER = "HEADER/";
+            static final String DATA = "DATA/";
+        };
+    };
 }
