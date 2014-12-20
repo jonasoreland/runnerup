@@ -34,6 +34,7 @@
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:layout_marginTop">-5sp</item>
         <item name="android:layout_marginBottom">-5sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="Card3TextLarge">
         <item name="android:layout_width">wrap_content</item>
