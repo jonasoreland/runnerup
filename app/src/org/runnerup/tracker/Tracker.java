@@ -252,6 +252,10 @@ public class Tracker extends android.app.Service implements
         this.workout = workout_;
         workout.setTracker(this);
 
+        /** Add Wear to live loggers if it's active */
+        if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK)
+            liveLoggers.add(trackerWear);
+
         /**
          * create the DB activity
          */
