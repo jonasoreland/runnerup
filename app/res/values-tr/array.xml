@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <!--same order as above, same values as Intensity-->
+  <!--same order as above, same values as Dimension-->
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="types">
+    <item>Süre</item>
+    <item>Mesafe</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Erkek</item>
+    <item>Kadın</item>
+  </string-array>
+</resources>

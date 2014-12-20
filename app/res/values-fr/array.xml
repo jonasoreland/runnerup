@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <!--same order as above, same values as Intensity-->
+  <!--same order as above, same values as Dimension-->
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="types">
+    <item>Temps</item>
+    <item>Distance</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Homme</item>
+    <item>Femme</item>
+  </string-array>
+  <string-array name="targetEntries">
+    <item>aucunes</item>
+    <item>rythme</item>
+    <item>zone de fréquence cardiaque</item>
+  </string-array>
+</resources>

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Mijlen</item>
+    <item>Kilometers</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Warming-up</item>
+    <item>Actief</item>
+    <item>Rust</item>
+    <item>Herstel</item>
+    <item>Cooling-down</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Totdat gedrukt</item>
+    <item>Tijd</item>
+    <item>Afstand</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Geen</item>
+    <item>Tempo</item>
+    <item>Hartslagzone</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Hardlopen</item>
+    <item>Fietsen</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>Nee</item>
+    <item>Ja</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>nee</item>
+    <item>ja</item>
+  </string-array>
+  <string-array name="types">
+    <item>Tijd</item>
+    <item>Afstand</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Man</item>
+    <item>Vrouw</item>
+  </string-array>
+  <string-array name="targetEntries">
+    <item>geen</item>
+    <item>tempo</item>
+    <item>hartslagzone</item>
+  </string-array>
+</resources>

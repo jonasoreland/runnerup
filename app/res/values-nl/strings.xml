@@ -108,7 +108,7 @@
   <string name="upload_activity">Activiteit uploaden</string>
   <string name="uploaded">Geupload</string>
   <string name="finished">Afgelopen</string>
-  <string name="until_press">Druk totdat</string>
+  <string name="until_press">Totdat gedrukt</string>
   <string name="discard_activity">Activiteit verwijderen</string>
   <string name="configure_accounts">Accounts configureren</string>
   <string name="refresh">Veversen</string>
@@ -184,7 +184,7 @@
   <string name="enable_runner_up_live">Aanzetten RunnerUpLive</string>
   <string name="headset_key_startstop">Headset-toets start/stop</string>
   <string name="activity_countdown">Aftellen activiteit</string>
-  <string name="countdown_time_s">Aftellen tijd (en)</string>
+  <string name="countdown_time_s">Aftellen tijd (s)</string>
   <string name="unit_preference">Voorkeur eenheden voor afstand</string>
   <string name="auto_start_gps">Automatisch starten gps</string>
   <string name="advanced_options">Geavanceerde opties</string>
@@ -197,7 +197,7 @@
   <string name="target_pace_grace_seconds_">Doeltempo sierlijkheid in seconden</string>
   <string name="autolap_during_intervals">Automatische rondetijd tijdens intervallen</string>
   <string name="add_countdown_after_step_that_ends_with_user_press">Aftellen toevoegen na stap die eindigt met een druk door de gebruik</string>
-  <string name="step_countdown_time_s">Aftellen stap tijd (en)</string>
+  <string name="step_countdown_time_s">Aftellen stap tijd (s)</string>
   <string name="smooth_pace_graph">Gladde tempo grafiek</string>
   <string name="smooth_pace_filter_s">Gladde tempo filter(s)</string>
   <string name="poll_interval_ms">Bijhouden interval (ms)</string>
@@ -220,7 +220,7 @@
   <string name="total_time">Totale tijd</string>
   <string name="total_pace">Totale tempo</string>
   <string name="total_heart_rate">Totale hartslag</string>
-  <string name="total_heart_rate_zone">Totale hartslagslagzone</string>
+  <string name="total_heart_rate_zone">Totale hartslagzone</string>
   <string name="interval_distance">Interval afstand</string>
   <string name="interval_time">Interval tijd</string>
   <string name="interval_pace">Interval tempo</string>
@@ -251,4 +251,9 @@
   <string name="searching_for_gps">Zoeken naar GPS</string>
   <string name="activity_ongoing">Activiteit is gaande</string>
   <string name="runnerup_activity_started">RunnerUp activiteit gestart</string>
+  <string name="battery_level_low_threshold">Laag batterijniveau HRM </string>
+  <string name="battery_level_high_threshold">Hoog batterijniveau HRM</string>
+  <string name="warning">Waarschuwing</string>
+  <string name="battery_level_low_notification_txt">Het batterijniveau van uw hartslagmeter is laag.</string>
+  <string name="do_not_show_again">Niet meer laten zien</string>
 </resources>
