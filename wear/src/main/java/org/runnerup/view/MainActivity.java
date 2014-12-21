@@ -20,9 +20,14 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
@@ -32,29 +37,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataMapItem;
-import com.google.android.gms.wearable.Wearable;
-
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
+import org.runnerup.service.StateService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class MainActivity extends Activity
-        implements Constants, DataApi.DataListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        implements Constants {
 
     private FragmentGridPagerAdapter pageAdapter;
-    private GoogleApiClient mGoogleApiClient;
     private Bundle data;
     private long dataTimestamp;
+    private StateService mStateService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,26 +65,29 @@ public class MainActivity extends Activity
         dotsPageIndicator.setPager(pager);
         dotsPageIndicator.setDotFadeWhenIdle(false);
         dotsPageIndicator.setDotFadeOutDelay(1000 * 3600 * 24);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getApplicationContext().bindService(new Intent(this, StateService.class),
+                mStateServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onResume();
+        getApplicationContext().unbindService(mStateServiceConnection);
+        mStateService = null;
     }
 
     @Override
     protected void onStop() {
-        if (null != mGoogleApiClient && mGoogleApiClient.isConnected()) {
-            Wearable.DataApi.removeListener(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
         super.onStop();
     }
 
@@ -116,14 +116,30 @@ public class MainActivity extends Activity
         };
     }
 
+    private Bundle getData(long lastUpdateTime) {
+        if (mStateService == null) {
+            return null;
+        }
+        return mStateService.getData(lastUpdateTime);
+    }
+
     public static class RunInformationCardFragment extends Fragment {
 
-        private MainActivity mainActivity;
         List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-
         long lastUpdateTime;
         Handler handler = new Handler();
         boolean handlerOutstanding = false;
+        Runnable periodicTick = new Runnable() {
+            @Override
+            public void run() {
+                update();
+                handlerOutstanding = false;
+                if (isResumed()) {
+                    startTimer();
+                }
+            }
+        };
+        private MainActivity mainActivity;
 
         public RunInformationCardFragment() {
             super();
@@ -153,17 +169,6 @@ public class MainActivity extends Activity
             return view;
         }
 
-        Runnable periodicTick = new Runnable() {
-            @Override
-            public void run() {
-                update();
-                handlerOutstanding = false;
-                if (isResumed()) {
-                    startTimer();
-                }
-            }
-        };
-
         void startTimer() {
             if (handlerOutstanding)
                 return;
@@ -172,11 +177,12 @@ public class MainActivity extends Activity
         }
 
         private void update() {
-            if (mainActivity.dataTimestamp != lastUpdateTime &&
-                    mainActivity.data != null) {
-                lastUpdateTime = mainActivity.dataTimestamp;
-                update(mainActivity.data);
-            }
+            Bundle data = mainActivity.getData(lastUpdateTime);
+            if (data == null)
+                return;
+
+            lastUpdateTime = data.getLong(StateService.UPDATE_TIME);
+            update(data);
         }
 
         private void update(Bundle b) {
@@ -205,42 +211,17 @@ public class MainActivity extends Activity
         }
     }
 
-    ;
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Wearable.DataApi.addListener(mGoogleApiClient, this);
-        System.err.println("addListener");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        System.err.println("onConnectionFailed(" + connectionResult + ")");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        System.err.println("onConnectionSuspended(" + i + ")");
-    }
-
-    @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
-        System.err.println("onDataChanged");
-        int found = 0;
-        for (DataEvent event : dataEvents) {
-            if (event.getType() == DataEvent.TYPE_CHANGED) {
-                DataItem dataItem = event.getDataItem();
-                String path = dataItem.getUri().getPath();
-                if (!path.startsWith(Wear.Path.PREFIX)) {
-                    System.out.println("got data with path: " + path);
-                    continue;
-                }
-                found++;
-                this.data = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
+    private ServiceConnection mStateServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            if (mStateService == null) {
+                mStateService = ((StateService.LocalBinder) service).getService();
             }
         }
-        if (found > 0) {
-            this.dataTimestamp = System.currentTimeMillis();
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mStateService = null;
         }
-    }
+    };
 }

@@ -42,6 +42,14 @@
             </intent-filter>
         </activity>
 
-    </application>
+        <service android:name=".service.ListenerService">
+        <intent-filter>
+            <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+        </intent-filter>
+        </service>
+
+        <service android:name=".service.StateService"></service>
+
+</application>
 
 </manifest>
