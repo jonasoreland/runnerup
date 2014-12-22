@@ -102,7 +102,8 @@
             android:enabled="true"
             android:text="@string/start_gps"
             android:layout_weight="0.8"
-            android:drawableRight="@drawable/ic_av_play_arrow" />
+            android:drawableRight="@drawable/ic_av_play_arrow"
+            android:drawablePadding="-32dp" />
 
         <FrameLayout
             android:id="@+id/hr_layout"

@@ -318,9 +318,11 @@ public class RunActivity extends Activity implements TickListener {
         if (enabled) {
             pauseButton.setText(getString(R.string.pause));
             WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_blue));
+            pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_pause, 0);
         } else {
             pauseButton.setText(getString(R.string.resume));
             WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_green));
+            pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_play_arrow, 0);
         }
     }
 

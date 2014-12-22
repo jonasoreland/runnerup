@@ -213,7 +213,8 @@
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
             android:text="@string/resume"
-            android:drawableRight="@drawable/ic_av_play_arrow" />
+            android:drawableRight="@drawable/ic_av_play_arrow"
+            android:drawablePadding="-32dp" />
 
         <Button
             style="@style/ButtonText"

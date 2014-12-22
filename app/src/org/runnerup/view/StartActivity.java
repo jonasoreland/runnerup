@@ -570,6 +570,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
         gpsInfoView2.setText(getGpsAccuracy());
 
+        int playIcon = 0;
         if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
             gpsInfoLayout.setVisibility(View.GONE);
             startButton.setEnabled(manualSetValue);
@@ -586,6 +587,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             startButton.setText(getString(R.string.waiting_for_gps));
             notificationStateManager.displayNotificationState(gpsSearchingState);
         } else {
+            playIcon = R.drawable.ic_av_play_arrow;
             startButton.setText(getString(R.string.start_activity));
             if (!tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) || advancedWorkout != null) {
                 startButton.setEnabled(true);
@@ -594,6 +596,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             }
             notificationStateManager.displayNotificationState(gpsBoundState);
         }
+        startButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, playIcon, 0);
         gpsInfoLayout.setVisibility(View.VISIBLE);
 
         {
