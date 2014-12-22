@@ -217,7 +217,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/new_lap" />
+            android:text="@string/new_lap"
+            android:drawableRight="@drawable/ic_av_newlap" />
 
         <Button
             android:id="@+id/pause_button"
@@ -226,7 +227,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/pause" />
+            android:text="@string/pause"
+            android:drawableRight="@drawable/ic_av_pause" />
     </TableRow>
 
     <TableRow
@@ -242,7 +244,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_red"
-            android:text="@string/stop" />
+            android:text="@string/stop"
+            android:drawableRight="@drawable/ic_av_stop" />
     </TableRow>
 
 </RelativeLayout>

@@ -212,7 +212,8 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/resume" />
+            android:text="@string/resume"
+            android:drawableRight="@drawable/ic_av_play_arrow" />
 
         <Button
             style="@style/ButtonText"
