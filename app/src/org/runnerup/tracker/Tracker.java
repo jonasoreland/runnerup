@@ -641,6 +641,19 @@ public class Tracker extends android.app.Service implements
     }
 
     public boolean isComponentConfigured(String name) {
+        switch (getState()) {
+            case INIT:    // before onInit we don't know, so say no
+            case CLEANUP: // when cleaning, say no
+            case ERROR:   // on error, say no
+                return false;
+            case INITIALIZING:
+            case INITIALIZED:
+            case STARTED:
+            case PAUSED:
+                // check component
+                break;
+        }
+
         switch (components.getResultCode(name)) {
             case RESULT_OK:
             case RESULT_PENDING:
