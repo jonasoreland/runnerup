@@ -42,6 +42,7 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.tracker.Tracker;
+import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;
@@ -364,7 +365,7 @@ public class RunActivity extends Activity implements TickListener {
         intervalDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, Math.round(id)));
         intervalPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ip));
         double ihr = workout.getHeartRate(Scope.STEP);
-        if (mTracker.isHRConnected()) {
+        if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
             lapHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, lhr));
             intervalHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, ihr));
             activityHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, ahr));

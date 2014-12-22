@@ -56,17 +56,19 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
-import org.runnerup.tracker.GpsInformation;
-import org.runnerup.tracker.Tracker;
 import org.runnerup.hr.MockHRProvider;
 import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
 import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
-import org.runnerup.common.util.Constants;
-import org.runnerup.common.util.Constants.DB;
+import org.runnerup.tracker.GpsInformation;
+import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.TrackerState;
+import org.runnerup.tracker.component.TrackerHRM;
+import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
@@ -110,6 +112,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     TextView hrValueText = null;
     FrameLayout hrLayout = null;
     boolean batteryLevelMessageShowed = false;
+
+    ImageButton wearButton = null;
+    TextView wearValueText = null;
+    FrameLayout wearLayout = null;
 
     TitleSpinner simpleAudioSpinner = null;
     AudioSchemeListAdapter simpleAudioListAdapter = null;
@@ -184,6 +190,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         hrButton.setOnClickListener(hrButtonClick);
         hrValueText = (TextView) findViewById(R.id.hr_value_text);
         hrLayout = (FrameLayout) findViewById(R.id.hr_layout);
+
+        wearButton = (ImageButton) findViewById(R.id.wear_button);
+        wearValueText = (TextView) findViewById(R.id.wear_value_text);
+        wearLayout = (FrameLayout) findViewById(R.id.wear_layout);
 
         tabHost = (TabHost) findViewById(R.id.tabhost_start);
         tabHost.setup();
@@ -603,28 +613,48 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             }
         }
 
-        if (mTracker != null && mTracker.isHRConfigured()) {
-            hrLayout.setVisibility(View.VISIBLE);
-            Integer hrVal = null;
-            if (mTracker.isHRConnected()) {
-                hrVal = mTracker.getCurrentHRValue();
-            }
-            if (hrVal != null) {
-                hrButton.setEnabled(false);
-                hrValueText.setText(Integer.toString(hrVal));
+        boolean hideHR = true;
+        boolean hideWear = true;
+        if (mTracker != null) {
+            if (mTracker.isComponentConfigured(TrackerHRM.NAME)) {
+                hideHR = false;
 
-                if (!batteryLevelMessageShowed) {
-                    batteryLevelMessageShowed = true;
-                    notificationBatteryLevel(mTracker.getCurrentBatteryLevel());
+                Integer hrVal = null;
+                if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
+                    hrVal = mTracker.getCurrentHRValue();
                 }
-            } else {
-                hrButton.setEnabled(true);
-                hrValueText.setText("?");
+                if (hrVal != null) {
+                    hrButton.setEnabled(false);
+                    hrValueText.setText(Integer.toString(hrVal));
+
+                    if (!batteryLevelMessageShowed) {
+                        batteryLevelMessageShowed = true;
+                        notificationBatteryLevel(mTracker.getCurrentBatteryLevel());
+                    }
+                } else {
+                    hrButton.setEnabled(true);
+                    hrValueText.setText("?");
+                }
+            }
+            if (mTracker.isComponentConfigured(TrackerWear.NAME)) {
+                hideWear = false;
+                if (mTracker.isComponentConnected(TrackerWear.NAME)) {
+                    wearValueText.setVisibility(View.GONE);
+                } else {
+                    wearValueText.setText("?");
+                    wearValueText.setVisibility(View.VISIBLE);
+                }
             }
         }
-        else {
+        if (hideHR)
             hrLayout.setVisibility(View.GONE);
-        }
+        else
+            hrLayout.setVisibility(View.VISIBLE);
+
+        if (hideWear)
+            wearLayout.setVisibility(View.GONE);
+        else
+            wearLayout.setVisibility(View.VISIBLE);
     }
 
     @Override

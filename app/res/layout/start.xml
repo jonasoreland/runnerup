@@ -118,21 +118,34 @@
                 android:src="@drawable/heart" />
 
             <TextView
+                android:id="@+id/hr_value_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/hr_value_text" />
+                android:text="\?" />
         </FrameLayout>
 
-        <ImageButton
-            android:id="@+id/wear_button"
+        <FrameLayout
+            android:id="@+id/wear_layout"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="0.15"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            android:src="@drawable/wear"
-            android:visibility="gone"/>
+            android:layout_height="match_parent" >
+
+            <ImageButton
+                android:id="@+id/wear_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/wear" />
+
+            <TextView
+                android:id="@+id/wear_value_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="\?" />
+        </FrameLayout>
     </LinearLayout>
 
 </RelativeLayout>

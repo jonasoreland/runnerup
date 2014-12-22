@@ -25,6 +25,7 @@ import android.os.Build;
 
 import org.runnerup.tracker.Tracker;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
@@ -399,9 +400,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public boolean isEnabled(Dimension dim, Scope scope) {
         if (dim == Dimension.HR) {
-            return tracker.isHRConnected();
+            return tracker.isComponentConnected(TrackerHRM.NAME);
         } else if (dim == Dimension.HRZ) {
-            if (hrZones == null || !hrZones.isConfigured() || !tracker.isHRConnected())
+            if (hrZones == null ||
+                    !hrZones.isConfigured() ||
+                    !tracker.isComponentConnected(TrackerHRM.NAME))
                 return false;
         } else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
                 scope == Scope.CURRENT) {

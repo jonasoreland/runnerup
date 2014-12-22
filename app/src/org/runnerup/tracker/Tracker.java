@@ -640,25 +640,32 @@ public class Tracker extends android.app.Service implements
         }
     }
 
-    public boolean isHRConfigured() {
-        if (trackerHRM.getHrProvider() != null) {
-            return true;
+    public boolean isComponentConfigured(String name) {
+        switch (components.getResultCode(name)) {
+            case RESULT_OK:
+            case RESULT_PENDING:
+                return true;
+            case RESULT_NOT_SUPPORTED:
+            case RESULT_NOT_ENABLED:
+            case RESULT_ERROR:
+            case RESULT_ERROR_FATAL:
+                return false;
         }
         return false;
     }
 
-    public boolean isHRConnected() {
-        if (!isHRConfigured())
+    public boolean isComponentConnected(String name) {
+        TrackerComponent component = components.getComponent(name);
+        if (component == null)
             return false;
-
-        return trackerHRM.getHrProvider().isConnected();
+        return component.isConnected();
     }
 
     public Integer getCurrentHRValue(long now, long maxAge) {
-        if (!isHRConnected())
+        HRProvider hrProvider = trackerHRM.getHrProvider();
+        if (hrProvider == null)
             return null;
 
-        HRProvider hrProvider = trackerHRM.getHrProvider();
         if (now > hrProvider.getHRValueTimestamp() + maxAge)
             return null;
 
