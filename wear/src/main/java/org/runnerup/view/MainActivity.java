@@ -94,19 +94,27 @@ public class MainActivity extends Activity
     FragmentGridPagerAdapter createPager(FragmentManager fm) {
         return new FragmentGridPagerAdapter(fm) {
 
-            Fragment fragments[][] = new Fragment[1][1];
+            Fragment fragments[][] = new Fragment[1][2];
 
             @Override
-            public Fragment getFragment(int i, int j) {
-                if (fragments[i][j] == null) {
-                    fragments[i][j] = new RunInformationCardFragment();
+            public Fragment getFragment(int row, int col) {
+                if (fragments[col][row] == null) {
+                    switch (row) {
+                        case 0:
+                            fragments[col][row] = new RunInformationCardFragment();
+                            break;
+                        default:
+                        case 1:
+                            fragments[col][row] = new PauseResumeFragment();
+                            break;
+                    }
                 }
-                return fragments[i][j];
+                return fragments[col][row];
             }
 
             @Override
             public int getRowCount() {
-                return 1;
+                return 2;
             }
 
             @Override
