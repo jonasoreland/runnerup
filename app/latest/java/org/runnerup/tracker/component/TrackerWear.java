@@ -31,6 +31,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -104,21 +106,31 @@ public class TrackerWear extends DefaultTrackerComponent
                     public void onConnected(Bundle connectionHint) {
                         callback.run(TrackerWear.this, ResultCode.RESULT_OK);
 
+                        /* set "our" data */
+                        setData();
+
                         Wearable.MessageApi.addListener(mGoogleApiClient, TrackerWear.this);
                         Wearable.NodeApi.addListener(mGoogleApiClient, TrackerWear.this);
                         Wearable.DataApi.addListener(mGoogleApiClient, TrackerWear.this);
 
-                        /** get info about connected nodes in background */
-                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
-                                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                        /* read already existing data */
+                        readData();
 
-                                    @Override
-                                    public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                                        for (Node node : nodes.getNodes()) {
-                                            onPeerConnected(node);
+                        /** get info about connected nodes in background */
+                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).
+
+                                setResultCallback(
+                                        new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+
+                                            @Override
+                                            public void onResult (NodeApi.GetConnectedNodesResult nodes){
+                                                for (Node node : nodes.getNodes()) {
+                                                    onPeerConnected(node);
+                                                }
+                                            }
                                         }
-                                    }
-                                });
+
+                                );
                     }
 
                     @Override
@@ -135,6 +147,27 @@ public class TrackerWear extends DefaultTrackerComponent
                 .build();
         mGoogleApiClient.connect();
         return ResultCode.RESULT_PENDING;
+    }
+
+    private void readData() {
+        Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
+                .scheme(WEAR_URI_SCHEME).path(Wear.Path.WEAR_NODE_ID).build())
+                .setResultCallback(
+                        new ResultCallback<DataItemBuffer>() {
+                            @Override
+                            public void onResult(DataItemBuffer dataItems) {
+                                for (DataItem dataItem : dataItems) {
+                                    wearNode = dataItem.getUri().getHost();
+                                    System.err.println("getDataItem => wearNode:" + wearNode);
+                                }
+                                dataItems.release();
+                            }
+                        });
+    }
+
+    private void setData() {
+        Wearable.DataApi.putDataItem(mGoogleApiClient,
+                PutDataRequest.create(Constants.Wear.Path.PHONE_NODE_ID));
     }
 
     @Override
@@ -275,7 +308,7 @@ public class TrackerWear extends DefaultTrackerComponent
 
     private void setWearNode(DataEvent ev) {
         if (ev.getType() == DataEvent.TYPE_CHANGED) {
-            wearNode = new String(ev.getDataItem().getData());
+            wearNode = ev.getDataItem().getUri().getHost();
         } else if (ev.getType() == DataEvent.TYPE_DELETED) {
             wearNode = null;
         }

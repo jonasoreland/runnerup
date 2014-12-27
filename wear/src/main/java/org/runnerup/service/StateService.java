@@ -28,6 +28,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
@@ -52,10 +54,8 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     private HashSet<Node> connectedNodes = new HashSet<Node>();
 
     private String phoneNode;
-    private Node localNode;
 
     private Bundle data;
-    private long dataUpdateTime;
     private Bundle headers;
 
     @Override
@@ -67,13 +67,15 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                     @Override
                     public void onConnected(Bundle connectionHint) {
 
+                        /* set "our" data */
+                        setData();
+
                         Wearable.NodeApi.addListener(mGoogleApiClient, StateService.this);
                         Wearable.MessageApi.addListener(mGoogleApiClient, StateService.this);
                         Wearable.DataApi.addListener(mGoogleApiClient, StateService.this);
 
-                        /* get our own node id */
-                        Wearable.NodeApi.getLocalNode(mGoogleApiClient).setResultCallback(
-                                getLocalNodeResultCallback);
+                        /* read already existing data */
+                        readData();
 
                         /** get info about connected nodes in background */
                         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
@@ -108,6 +110,34 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         return mGoogleApiClient != null && mGoogleApiClient.isConnected();
     }
 
+    private void readData() {
+        Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
+                .scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.PHONE_NODE_ID).build())
+                .setResultCallback(
+                        new ResultCallback<DataItemBuffer>() {
+                            @Override
+                            public void onResult(DataItemBuffer dataItems) {
+                                for (DataItem dataItem : dataItems) {
+                                    phoneNode = dataItem.getUri().getHost();
+                                    System.err.println("getDataItem => phoneNode:" + phoneNode);
+                                }
+                                dataItems.release();
+                            }
+                        });
+    }
+
+    private void setData() {
+        Wearable.DataApi.putDataItem(mGoogleApiClient,
+                PutDataRequest.create(Constants.Wear.Path.WEAR_NODE_ID));
+    }
+
+    private void clearData() {
+        /* delete our node id */
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                        Constants.Wear.Path.WEAR_NODE_ID).build());
+    }
+
     @Override
     public void onDestroy() {
         System.err.println("StateService.onDestroy()");
@@ -117,11 +147,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 phoneNode = null;
                 connectedNodes.clear();
 
-                /* delete our node id */
-                Wearable.DataApi.deleteDataItems(mGoogleApiClient,
-                        new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
-                                Constants.Wear.Path.WEAR_NODE_ID).build());
-
+                clearData();
                 Wearable.NodeApi.removeListener(mGoogleApiClient, this);
                 Wearable.MessageApi.removeListener(mGoogleApiClient, this);
                 Wearable.DataApi.removeListener(mGoogleApiClient, this);
@@ -179,26 +205,13 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
             phoneNode = null;
     }
 
-    private ResultCallback<NodeApi.GetLocalNodeResult> getLocalNodeResultCallback =
-            new ResultCallback<NodeApi.GetLocalNodeResult>() {
-        @Override
-        public void onResult(NodeApi.GetLocalNodeResult getLocalNodeResult) {
-            if (!checkConnection())
-                return;
-
-            localNode = getLocalNodeResult.getNode();
-            Wearable.DataApi.putDataItem(mGoogleApiClient,
-                    PutDataRequest.create(Constants.Wear.Path.WEAR_NODE_ID).
-                            setData(getLocalNodeResult.getNode().getId().getBytes()));
-        }
-    };
-
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
-        System.err.println("onMessageReceived: " + messageEvent);
         if (Constants.Wear.Path.MSG_WORKOUT_EVENT.contentEquals(messageEvent.getPath())) {
             data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
             data.putLong(UPDATE_TIME, System.currentTimeMillis());
+        } else {
+            System.err.println("onMessageReceived: " + messageEvent);
         }
     }
 
