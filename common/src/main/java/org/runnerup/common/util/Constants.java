@@ -164,11 +164,34 @@ public interface Constants {
         final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
     }
 
+    public interface TRACKER_STATE {
+        public static final int INIT = 0;         // initial state
+        public static final int INITIALIZING = 1; // initializing components
+        public static final int INITIALIZED = 2;  // initialized, ready to start
+        public static final int STARTED = 3;      // Workout started
+        public static final int PAUSED = 4;       // Workout paused
+        public static final int CLEANUP = 5;      // Cleaning up components
+        public static final int ERROR = 6;        // Components failed to initialize ;
+    };
+
     public interface Wear {
 
         public interface Path {
             static final String PREFIX = "/org.runnerup";
             static final String EVENT = PREFIX + "/event";
+
+            /* Data: phone/wear nodes */
+            static final String WEAR_NODE_ID = PREFIX + "/config/wear/node_id";
+            static final String PHONE_NODE_ID = PREFIX + "/config/phone/node_id";
+
+            /* Data: Card headers */
+            static final String HEADERS = PREFIX + "/config/headers";
+
+            /* Data: Tracker/workout state */
+            static final String WORKOUT_PLAN = PREFIX + "/workout/plan";
+
+            /* Msg: workout event */
+            static final String MSG_WORKOUT_EVENT = PREFIX + "/workout/event";
         };
 
         public interface RunInfo {

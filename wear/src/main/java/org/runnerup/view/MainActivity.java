@@ -49,8 +49,6 @@ public class MainActivity extends Activity
         implements Constants {
 
     private FragmentGridPagerAdapter pageAdapter;
-    private Bundle data;
-    private long dataTimestamp;
     private StateService mStateService;
 
     @Override
@@ -131,10 +129,18 @@ public class MainActivity extends Activity
         return mStateService.getData(lastUpdateTime);
     }
 
+    private Bundle getHeaders(long lastUpdateTime) {
+        if (mStateService == null) {
+            return null;
+        }
+        return mStateService.getHeaders(lastUpdateTime);
+    }
+
     public static class RunInformationCardFragment extends Fragment {
 
         List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-        long lastUpdateTime;
+        long dataUpdateTime;
+        long headersTimestamp;
         Handler handler = new Handler();
         boolean handlerOutstanding = false;
         Runnable periodicTick = new Runnable() {
@@ -161,18 +167,18 @@ public class MainActivity extends Activity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.card3, container, false);
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "1",
+            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "0",
                     (TextView) view.findViewById(R.id.textView1)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "2",
+            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "1",
                     (TextView) view.findViewById(R.id.textView2)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "3",
+            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "2",
                     (TextView) view.findViewById(R.id.textView3)));
 
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "1",
+            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "0",
                     (TextView) view.findViewById(R.id.textViewHeader1)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "2",
+            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "1",
                     (TextView) view.findViewById(R.id.textViewHeader2)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "3",
+            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "2",
                     (TextView) view.findViewById(R.id.textViewHeader3)));
             return view;
         }
@@ -185,12 +191,17 @@ public class MainActivity extends Activity
         }
 
         private void update() {
-            Bundle data = mainActivity.getData(lastUpdateTime);
-            if (data == null)
-                return;
+            Bundle data = mainActivity.getData(dataUpdateTime);
+            if (data != null) {
+                dataUpdateTime = data.getLong(StateService.UPDATE_TIME);
+                update(data);
+            }
 
-            lastUpdateTime = data.getLong(StateService.UPDATE_TIME);
-            update(data);
+            Bundle headers = mainActivity.getHeaders(headersTimestamp);
+            if (headers != null) {
+                headersTimestamp = headers.getLong(StateService.UPDATE_TIME);
+                update(headers);
+            }
         }
 
         private void update(Bundle b) {

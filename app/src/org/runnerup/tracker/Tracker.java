@@ -143,7 +143,7 @@ public class Tracker extends android.app.Service implements
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             // >= 4.3
-            trackerWear = (TrackerWear) components.addComponent(new TrackerWear());
+            trackerWear = (TrackerWear) components.addComponent(new TrackerWear(this));
         }
     }
 

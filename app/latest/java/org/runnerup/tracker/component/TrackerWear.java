@@ -19,6 +19,7 @@ package org.runnerup.tracker.component;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
@@ -28,13 +29,18 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import org.runnerup.common.util.Constants;
+import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -47,20 +53,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
+
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class TrackerWear extends DefaultTrackerComponent
-        implements Constants, TrackerComponent, WorkoutObserver, NodeApi.NodeListener {
-
-    private Context context;
-    private GoogleApiClient googleApiClient;
-    private Formatter formatter;
+        implements Constants, TrackerComponent, WorkoutObserver, NodeApi.NodeListener,
+        MessageApi.MessageListener, DataApi.DataListener {
 
     public static final String NAME = "WEAR";
-    private HashSet<Node> connectedNodes;
+    private Tracker tracker;
+    private Context context;
+    private GoogleApiClient mGoogleApiClient;
+    private Formatter formatter;
+    private HashSet<Node> connectedNodes = new HashSet<Node>();
+    private String wearNode;
 
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
 
-    public TrackerWear() {
+    public TrackerWear(Tracker tracker) {
+        this.tracker = tracker;
         items.add(new Pair<Scope, Dimension>(Scope.WORKOUT, Dimension.TIME));
         items.add(new Pair<Scope, Dimension>(Scope.WORKOUT, Dimension.DISTANCE));
         items.add(new Pair<Scope, Dimension>(Scope.LAP, Dimension.PACE));
@@ -87,21 +98,25 @@ public class TrackerWear extends DefaultTrackerComponent
         }
 
         this.context = context;
-        googleApiClient = new GoogleApiClient.Builder(context)
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle connectionHint) {
                         callback.run(TrackerWear.this, ResultCode.RESULT_OK);
 
+                        Wearable.MessageApi.addListener(mGoogleApiClient, TrackerWear.this);
+                        Wearable.NodeApi.addListener(mGoogleApiClient, TrackerWear.this);
+                        Wearable.DataApi.addListener(mGoogleApiClient, TrackerWear.this);
+
                         /** get info about connected nodes in background */
-                        connectedNodes = new HashSet<Node>();
-                        Wearable.NodeApi.addListener(googleApiClient, TrackerWear.this);
-                        Wearable.NodeApi.getConnectedNodes(googleApiClient).setResultCallback(
+                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
                                 new ResultCallback<NodeApi.GetConnectedNodesResult>() {
 
                                     @Override
                                     public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                                        connectedNodes.addAll(nodes.getNodes());
+                                        for (Node node : nodes.getNodes()) {
+                                            onPeerConnected(node);
+                                        }
                                     }
                                 });
                     }
@@ -118,7 +133,7 @@ public class TrackerWear extends DefaultTrackerComponent
                 })
                 .addApi(Wearable.API)
                 .build();
-        googleApiClient.connect();
+        mGoogleApiClient.connect();
         return ResultCode.RESULT_PENDING;
     }
 
@@ -129,32 +144,18 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void onStart() {
+        Bundle b = new Bundle();
+        int i = 0;
+        for (Pair<Scope, Dimension> item : items) {
+            b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
+            i++;
+        }
+        setData(Wear.Path.HEADERS, b);
     }
 
-    @Override
-    public void workoutEvent(WorkoutInfo workoutInfo, int type) {
-
-        if (googleApiClient == null)
-            return;
-
-        if (!googleApiClient.isConnected()) {
-            return;
-        }
-
-        Bundle b = new Bundle();
-        {
-            int i = 1;
-            for (Pair<Scope, Dimension> item : items) {
-                b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
-                b.putString(Wear.RunInfo.DATA + i, formatter.format(Formatter.TXT_SHORT,
-                        item.second, workoutInfo.get(item.first, item.second)));
-                i++;
-            }
-        }
-
-        PutDataMapRequest dataMapRequest = PutDataMapRequest.create(Wear.Path.EVENT);
-        dataMapRequest.getDataMap().putAll(DataMap.fromBundle(b));
-        Wearable.DataApi.putDataItem(googleApiClient, dataMapRequest.asPutDataRequest())
+    private void setData(String path, Bundle b) {
+        Wearable.DataApi.putDataItem(mGoogleApiClient,
+                PutDataRequest.create(path).setData(DataMap.fromBundle(b).toByteArray()))
                 .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
                     @Override
                     public void onResult(DataApi.DataItemResult dataItemResult) {
@@ -164,25 +165,49 @@ public class TrackerWear extends DefaultTrackerComponent
                         }
                     }
                 });
+    }
 
+    @Override
+    public void workoutEvent(WorkoutInfo workoutInfo, int type) {
+        if (!isConnected())
+            return;
+
+        Bundle b = new Bundle();
+        {
+            int i = 0;
+            for (Pair<Scope, Dimension> item : items) {
+                b.putString(Wear.RunInfo.DATA + i, formatter.format(Formatter.TXT_SHORT,
+                        item.second, workoutInfo.get(item.first, item.second)));
+                i++;
+            }
+        }
+
+        Wearable.MessageApi.sendMessage(mGoogleApiClient, wearNode, Wear.Path.MSG_WORKOUT_EVENT,
+                DataMap.fromBundle(b).toByteArray());
     }
 
     @Override
     public void onComplete(boolean discarded) {
+        /* clear HEADERS */
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                        Wear.Path.HEADERS).build());
+
+        /* clear WORKOUT PLAN */
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                        Wear.Path.WORKOUT_PLAN).build());
     }
 
     @Override
     public boolean isConnected() {
-        if (googleApiClient == null)
+        if (mGoogleApiClient == null)
             return false;
 
-        if (!googleApiClient.isConnected())
+        if (!mGoogleApiClient.isConnected())
             return false;
 
-        if (connectedNodes == null)
-            return false;
-
-        return !connectedNodes.isEmpty();
+        return wearNode != null;
     }
 
     @Override
@@ -193,18 +218,66 @@ public class TrackerWear extends DefaultTrackerComponent
     @Override
     public void onPeerDisconnected(Node node) {
         connectedNodes.remove(node);
+        if (node.getId().contentEquals(wearNode))
+            wearNode = null;
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent messageEvent) {
+        System.err.println("onMessageReceived: " + messageEvent);
     }
 
     @Override
     public ResultCode onEnd(Callback callback, Context context) {
-        if (googleApiClient != null) {
-            if (connectedNodes != null) {
-                Wearable.NodeApi.removeListener(googleApiClient, this);
-                connectedNodes = null;
+        if (mGoogleApiClient != null) {
+            if (mGoogleApiClient.isConnected()) {
+                clearData();
+                wearNode = null;
+
+                Wearable.MessageApi.removeListener(mGoogleApiClient, this);
+                Wearable.NodeApi.removeListener(mGoogleApiClient, this);
+                Wearable.DataApi.removeListener(mGoogleApiClient, this);
+                connectedNodes.clear();
             }
-            googleApiClient.disconnect();
-            googleApiClient = null;
+            mGoogleApiClient.disconnect();
+            mGoogleApiClient = null;
         }
         return ResultCode.RESULT_OK;
+    }
+
+    private void clearData() {
+        /* clear our node id */
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                        Wear.Path.PHONE_NODE_ID).build());
+
+        /* clear HEADERS */
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                        Wear.Path.HEADERS).build());
+
+        /* clear WORKOUT PLAN */
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                        Wear.Path.WORKOUT_PLAN).build());
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        for (DataEvent ev : dataEvents) {
+            System.err.println("onDataChanged: " + ev.getDataItem().getUri());
+            String path = ev.getDataItem().getUri().getPath();
+            if (Constants.Wear.Path.WEAR_NODE_ID.contentEquals(path)) {
+                setWearNode(ev);
+            }
+        }
+    }
+
+    private void setWearNode(DataEvent ev) {
+        if (ev.getType() == DataEvent.TYPE_CHANGED) {
+            wearNode = new String(ev.getDataItem().getData());
+        } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+            wearNode = null;
+        }
     }
 }

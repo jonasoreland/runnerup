@@ -17,37 +17,26 @@
 package org.runnerup.service;
 
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.WearableListenerService;
-
-import org.runnerup.common.util.Constants;
 
 public class ListenerService extends WearableListenerService {
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+    public void onCreate() {
+        super.onCreate();
+        System.err.println("ListenerService.onCreate()");
     }
 
     @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
-        for (DataEvent event : dataEvents) {
-            if (event.getType() == DataEvent.TYPE_CHANGED) {
-                DataItem dataItem = event.getDataItem();
-                String path = dataItem.getUri().getPath();
-                if (!path.startsWith(Constants.Wear.Path.PREFIX)) {
-                    System.out.println("got data with path: " + path);
-                    continue;
-                }
-                Intent i = new Intent(StateService.ACTION);
-                i.putExtras(DataMapItem.fromDataItem(dataItem).getDataMap().toBundle());
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
-            }
-        }
+    public void onDestroy() {
+        super.onDestroy();
+        System.err.println("ListenerService.onDestroy()");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        System.err.println("ListenerService.onStart()");
+        return super.onStartCommand(intent, flags, startId);
     }
 }
