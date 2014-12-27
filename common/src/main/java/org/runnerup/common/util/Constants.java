@@ -178,7 +178,6 @@ public interface Constants {
 
         public interface Path {
             static final String PREFIX = "/org.runnerup";
-            static final String EVENT = PREFIX + "/event";
 
             /* Data: phone/wear nodes */
             static final String WEAR_NODE_ID = PREFIX + "/config/wear/node_id";
