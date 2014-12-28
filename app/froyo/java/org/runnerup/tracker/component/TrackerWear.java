@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 
+import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.workout.WorkoutInfo;
 
@@ -28,7 +29,7 @@ public class TrackerWear extends DefaultTrackerComponent implements WorkoutObser
 
     public static final String NAME = "WEAR";
 
-    public TrackerWear() {
+    public TrackerWear(Tracker tracker) {
     }
 
     @Override
