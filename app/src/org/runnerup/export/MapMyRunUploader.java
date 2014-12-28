@@ -21,12 +21,14 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Encryption;
+import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -38,6 +40,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class MapMyRunUploader extends FormCrawler implements Uploader {
@@ -55,6 +59,16 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
     private String md5pass = null;
     private String user_id = null;
     private String user_key = null;
+
+    static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<Integer, Sport>();
+    static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<Sport, Integer>();
+    static {
+        mapmyrun2sportMap.put(16, Sport.RUNNING);
+        mapmyrun2sportMap.put(11, Sport.BIKING);
+        for (Integer i : mapmyrun2sportMap.keySet()) {
+            sport2mapmyrunMap.put(mapmyrun2sportMap.get(i), i);
+        }
+    }
 
     MapMyRunUploader(UploadManager uploadManager) {
         if (CONSUMER_KEY == null) {
@@ -228,7 +242,8 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
         Exception ex = null;
         try {
             StringWriter writer = new StringWriter();
-            tcx.export(mID, writer);
+            Pair<String, Sport> res = tcx.exportWithSport(mID, writer);
+            Sport sport = res.second;
 
             conn = (HttpURLConnection) new URL(IMPORT_URL).openConnection();
             conn.setDoOutput(true);
@@ -259,7 +274,9 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
                 final String workout_key = result.getString("workout_key");
                 final JSONObject workout = result.getJSONObject("workout");
                 final String raw_workout_date = workout.getString("raw_workout_date");
-                final String workout_type_id = workout.getString("workout_type_id");
+                String workout_type_id = workout.getString("workout_type_id");
+                if (sport != null && sport2mapmyrunMap.containsKey(sport))
+                    workout_type_id = sport2mapmyrunMap.get(sport).toString();
 
                 kv.clear();
                 kv.put("consumer_key", CONSUMER_KEY);
