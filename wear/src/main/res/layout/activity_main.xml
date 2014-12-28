@@ -26,11 +26,55 @@
         android:layout_height="match_parent"
         android:keepScreenOn="true" />
 
+    <LinearLayout
+        android:id="@+id/vert_page_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:orientation="vertical">
+
+        <Button
+            android:layout_margin="1dp"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/dot" />
+
+        <Button
+            android:layout_margin="1dp"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/dot" />
+
+
+        <Button
+            android:layout_margin="1dp"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/dot" />
+
+        <Button
+            android:layout_margin="1dp"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/dot" />
+
+        <Button
+            android:layout_margin="1dp"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/dot" />
+
+    </LinearLayout>
+
     <android.support.wearable.view.DotsPageIndicator
         android:id="@+id/page_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom" >
-    </android.support.wearable.view.DotsPageIndicator>
+        android:layout_gravity="center_horizontal|bottom" />
 
 </FrameLayout>

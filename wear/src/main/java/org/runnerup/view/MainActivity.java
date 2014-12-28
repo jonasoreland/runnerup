@@ -35,11 +35,13 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.service.StateService;
+import org.runnerup.widget.MyDotsPageIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,10 +61,16 @@ public class MainActivity extends Activity
         pageAdapter = createPager(getFragmentManager());
         pager.setAdapter(pageAdapter);
 
+        LinearLayout verticalDotsPageIndicator = (LinearLayout) findViewById(R.id.vert_page_indicator);
+        MyDotsPageIndicator dot2 = new MyDotsPageIndicator(verticalDotsPageIndicator);
+
         DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
         dotsPageIndicator.setDotFadeWhenIdle(false);
         dotsPageIndicator.setDotFadeOutDelay(1000 * 3600 * 24);
+        dotsPageIndicator.setOnPageChangeListener(dot2);
+        dotsPageIndicator.setOnAdapterChangeListener(dot2);
+        dot2.setPager(pager);
     }
 
     @Override
