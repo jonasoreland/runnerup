@@ -19,22 +19,27 @@ package org.runnerup.view;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.Wearable;
+import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.tracker.TrackerStateListener;
 
-public class PauseResumeFragment extends Fragment {
+public class PauseResumeFragment extends Fragment implements TrackerStateListener {
 
-    private GoogleApiClient mGoogleApiClient;
+    private static final long SCROLL_DELAY = 1500; // 1.5s
+    private Handler handler = new Handler();
+    private TextView mButtonPauseResumeTxt;
     private CircledImageView mButtonPauseResume;
+    private TextView mButtonNewLapTxt;
     private CircledImageView mButtonNewLap;
+    private MainActivity activity;
+    private long clickCount = 0;
 
     public PauseResumeFragment() {
     }
@@ -42,23 +47,6 @@ public class PauseResumeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle connectionHint) {
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int cause) {
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult result) {
-                    }
-                })
-                .addApi(Wearable.API)
-                .build();
     }
 
     @Override
@@ -67,25 +55,95 @@ public class PauseResumeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mButtonPauseResume = (CircledImageView) view.findViewById(R.id.icon_resume);
+        mButtonPauseResume.setOnClickListener(pauseButtonClick);
+        mButtonPauseResumeTxt = (TextView) view.findViewById(R.id.txt_resume);
         mButtonNewLap = (CircledImageView) view.findViewById(R.id.icon_newlap);
+        mButtonNewLap.setOnClickListener(newLapButtonClick);
+        mButtonNewLapTxt = (TextView) view.findViewById(R.id.txt_newlap);
 
         return view;
     }
 
+    private void updateView(TrackerState state) {
+        if (state != null) {
+            switch (state) {
+                case INIT:
+                case INITIALIZING:
+                case INITIALIZED:
+                case CLEANUP:
+                case ERROR:
+                    break;
+                case STARTED:
+                    mButtonNewLap.setEnabled(true);
+                    mButtonPauseResume.setEnabled(true);
+                    mButtonPauseResume.setImageResource(R.drawable.ic_av_pause);
+                    mButtonPauseResumeTxt.setText(getText(R.string.pause));
+                    return;
+                case PAUSED:
+                    mButtonNewLap.setEnabled(true);
+                    mButtonPauseResume.setEnabled(true);
+                    mButtonPauseResume.setImageResource(R.drawable.ic_av_play_arrow);
+                    mButtonPauseResumeTxt.setText(getText(R.string.resume));
+                    return;
+            }
+        }
+        mButtonNewLap.setEnabled(false);
+        mButtonPauseResume.setEnabled(false);
+    }
+
+    private View.OnClickListener pauseButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            clickCount++;
+            activity.getStateService().sendPauseResume();
+            TrackerState state = activity.getTrackerState();
+            if (state == TrackerState.STARTED)
+                updateView(TrackerState.PAUSED);
+            else if (state == TrackerState.PAUSED) {
+                updateView(TrackerState.STARTED);
+                // When resuming...scroll to RunInfo screen in 1.5 seconds
+                final long saveClickCount = clickCount;
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (saveClickCount != clickCount)
+                            return;
+                        PauseResumeFragment.this.activity.scrollToRunInfo();
+                    }
+                }, SCROLL_DELAY);
+            }
+        }
+    };
+
+    private View.OnClickListener newLapButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            clickCount++;
+            activity.getStateService().sendNewLap();
+        }
+    };
+
     @Override
     public void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
+        activity.registerTrackerStateListener(this);
+        updateView(this.activity.getTrackerState());
     }
 
     @Override
     public void onPause() {
+        activity.unregisterTrackerStateListener(this);
         super.onPause();
-        mGoogleApiClient.disconnect();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        this.activity = (MainActivity) activity;
+    }
+
+    @Override
+    public void onTrackerStateChange(TrackerState oldState, TrackerState newState) {
+        updateView(newState);
     }
 }

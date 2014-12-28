@@ -43,6 +43,7 @@ import com.google.android.gms.wearable.Wearable;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.Tracker;
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -177,13 +178,23 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void onStart() {
-        Bundle b = new Bundle();
-        int i = 0;
-        for (Pair<Scope, Dimension> item : items) {
-            b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
-            i++;
+        {
+            Bundle b = new Bundle();
+            int i = 0;
+            for (Pair<Scope, Dimension> item : items) {
+                b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
+                i++;
+            }
+            setData(Wear.Path.HEADERS, b);
         }
-        setData(Wear.Path.HEADERS, b);
+
+        setTrackerState(tracker.getState());
+    }
+
+    void setTrackerState(TrackerState val) {
+        Bundle b = new Bundle();
+        b.putInt(Wear.TrackerState.STATE, val.getValue());
+        setData(Wear.Path.TRACKER_STATE, b);
     }
 
     private void setData(String path, Bundle b) {
@@ -204,6 +215,17 @@ public class TrackerWear extends DefaultTrackerComponent
     public void workoutEvent(WorkoutInfo workoutInfo, int type) {
         if (!isConnected())
             return;
+
+        switch (type) {
+            case DB.LOCATION.TYPE_START:
+            case DB.LOCATION.TYPE_RESUME:
+                setTrackerState(TrackerState.STARTED);
+                break;
+            case DB.LOCATION.TYPE_PAUSE:
+                setTrackerState(TrackerState.PAUSED);
+            case DB.LOCATION.TYPE_END:
+                break;
+        }
 
         Bundle b = new Bundle();
         {
@@ -230,6 +252,8 @@ public class TrackerWear extends DefaultTrackerComponent
         Wearable.DataApi.deleteDataItems(mGoogleApiClient,
                 new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
                         Wear.Path.WORKOUT_PLAN).build());
+
+        setTrackerState(TrackerState.CLEANUP);
     }
 
     @Override
@@ -258,6 +282,17 @@ public class TrackerWear extends DefaultTrackerComponent
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         System.err.println("onMessageReceived: " + messageEvent);
+        if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
+            if (tracker.getState() == TrackerState.STARTED)
+                tracker.getWorkout().onPause(tracker.getWorkout());
+        } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
+            if (tracker.getState() == TrackerState.PAUSED)
+                tracker.getWorkout().onResume(tracker.getWorkout());
+        } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
+            if (tracker.getState() == TrackerState.STARTED ||
+                    tracker.getState() == TrackerState.PAUSED)
+                tracker.getWorkout().onNewLapOrNextStep();
+        }
     }
 
     @Override
@@ -293,6 +328,11 @@ public class TrackerWear extends DefaultTrackerComponent
         Wearable.DataApi.deleteDataItems(mGoogleApiClient,
                 new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
                         Wear.Path.WORKOUT_PLAN).build());
+
+        /* clear TRACKER_STATE */
+        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                        Wear.Path.TRACKER_STATE).build());
     }
 
     @Override

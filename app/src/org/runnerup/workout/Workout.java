@@ -202,6 +202,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         emitFeedback();
     }
 
+    public void onNewLapOrNextStep() {
+        if (currentStepNo + 1 < steps.size()) {
+            onNextStep();
+        } else {
+            onNewLap();
+        }
+    }
+
     public void onStop(Workout w) {
 
         initFeedback();

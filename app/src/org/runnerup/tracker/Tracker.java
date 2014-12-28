@@ -37,6 +37,7 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 
 import org.runnerup.R;
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.tracker.component.TrackerComponent;

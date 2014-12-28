@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.runnerup.tracker;
+package org.runnerup.common.tracker;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -42,7 +42,7 @@ public enum TrackerState {
         return value;
     }
 
-    TrackerState valueOf(int val) {
+    public static TrackerState valueOf(int val) {
         switch (val) {
             case Constants.TRACKER_STATE.INIT:
                 return INIT;
@@ -60,5 +60,13 @@ public enum TrackerState {
                 return ERROR;
         }
         return null;
+    }
+
+    public static boolean equals(TrackerState oldVal, TrackerState newVal) {
+        if (oldVal != null && newVal != null)
+            return oldVal.getValue() == newVal.getValue();
+        if (oldVal == null && newVal == null)
+            return true;
+        return false;
     }
 }

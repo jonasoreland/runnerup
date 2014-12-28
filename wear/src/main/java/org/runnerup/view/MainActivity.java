@@ -24,6 +24,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,6 +40,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
@@ -48,16 +51,22 @@ import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class MainActivity extends Activity
-        implements Constants {
+        implements Constants, TrackerStateListener {
 
+    private GridViewPager pager;
     private FragmentGridPagerAdapter pageAdapter;
     private StateService mStateService;
+    private ArrayList<TrackerStateListener> trackerStateListeners =
+            new ArrayList<TrackerStateListener>();
+
+    private static final int RUN_INFO_ROW = 0;
+    private static final int PAUSE_RESUME_ROW = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
+        pager = (GridViewPager) findViewById(R.id.pager);
         pageAdapter = createPager(getFragmentManager());
         pager.setAdapter(pageAdapter);
 
@@ -88,6 +97,9 @@ public class MainActivity extends Activity
     @Override
     protected void onPause() {
         super.onResume();
+        if (mStateService != null) {
+            mStateService.registerTrackerStateListener(this);
+        }
         getApplicationContext().unbindService(mStateServiceConnection);
         mStateService = null;
     }
@@ -106,11 +118,11 @@ public class MainActivity extends Activity
             public Fragment getFragment(int row, int col) {
                 if (fragments[col][row] == null) {
                     switch (row) {
-                        case 0:
+                        case RUN_INFO_ROW:
                             fragments[col][row] = new RunInformationCardFragment();
                             break;
                         default:
-                        case 1:
+                        case PAUSE_RESUME_ROW:
                             fragments[col][row] = new PauseResumeFragment();
                             break;
                     }
@@ -142,6 +154,15 @@ public class MainActivity extends Activity
             return null;
         }
         return mStateService.getHeaders(lastUpdateTime);
+    }
+
+    public StateService getStateService() {
+        return mStateService;
+    }
+
+    public void scrollToRunInfo() {
+        Point curr = pager.getCurrentItem();
+        pager.scrollTo(RUN_INFO_ROW, curr.y);
     }
 
     public static class RunInformationCardFragment extends Fragment {
@@ -243,6 +264,7 @@ public class MainActivity extends Activity
         public void onServiceConnected(ComponentName name, IBinder service) {
             if (mStateService == null) {
                 mStateService = ((StateService.LocalBinder) service).getService();
+                mStateService.registerTrackerStateListener(MainActivity.this);
             }
         }
 
@@ -251,4 +273,38 @@ public class MainActivity extends Activity
             mStateService = null;
         }
     };
+
+    public TrackerState getTrackerState() {
+        if (mStateService == null)
+            return null;
+        synchronized (trackerStateListeners) {
+            return mStateService.getTrackerState();
+        }
+    }
+
+    @Override
+    public void onTrackerStateChange(final TrackerState oldState, final TrackerState newState) {
+        synchronized (trackerStateListeners) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (TrackerStateListener l : trackerStateListeners) {
+                        l.onTrackerStateChange(oldState, newState);
+                    }
+                }
+            });
+        };
+    }
+
+    public void registerTrackerStateListener(TrackerStateListener listener) {
+        synchronized (trackerStateListeners) {
+            trackerStateListeners.add(listener);
+        }
+    }
+
+    public void unregisterTrackerStateListener(TrackerStateListener listener) {
+        synchronized (trackerStateListeners) {
+            trackerStateListeners.remove(listener);
+        }
+    }
 }

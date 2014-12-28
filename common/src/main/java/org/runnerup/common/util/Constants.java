@@ -187,15 +187,25 @@ public interface Constants {
             static final String HEADERS = PREFIX + "/config/headers";
 
             /* Data: Tracker/workout state */
+            static final String TRACKER_STATE = PREFIX + "tracker/state";
             static final String WORKOUT_PLAN = PREFIX + "/workout/plan";
 
             /* Msg: workout event */
             static final String MSG_WORKOUT_EVENT = PREFIX + "/workout/event";
+
+            /* Msg: pause/resume from wear to phone */
+            static final String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
+            static final String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
+            static final String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
         };
 
         public interface RunInfo {
             static final String HEADER = "HEADER/";
             static final String DATA = "DATA/";
+        };
+
+        public interface TrackerState {
+            static final String STATE = "state";
         };
     };
 }

@@ -39,8 +39,11 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
@@ -57,6 +60,9 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     private Bundle data;
     private Bundle headers;
+    private TrackerState trackerState;
+    private ArrayList<TrackerStateListener> trackerStateListeners =
+            new ArrayList<TrackerStateListener>();
 
     @Override
     public void onCreate() {
@@ -124,6 +130,20 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                                 dataItems.release();
                             }
                         });
+        Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
+                .scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.TRACKER_STATE).build())
+                .setResultCallback(
+                        new ResultCallback<DataItemBuffer>() {
+                            @Override
+                            public void onResult(DataItemBuffer dataItems) {
+                                for (DataItem dataItem : dataItems) {
+                                    TrackerState newState = getTrackerStateFromDataItem(dataItem);
+                                    if (newState != null)
+                                        setTrackerState(newState);
+                                }
+                                dataItems.release();
+                            }
+                        });
     }
 
     private void setData() {
@@ -141,7 +161,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     @Override
     public void onDestroy() {
         System.err.println("StateService.onDestroy()");
-
+        trackerStateListeners.clear();
         if (mGoogleApiClient != null) {
             if (mGoogleApiClient.isConnected()) {
                 phoneNode = null;
@@ -224,6 +244,8 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 setPhoneNode(ev);
             } else if (Constants.Wear.Path.HEADERS.contentEquals(path)) {
                 setHeaders(ev);
+            } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
+                setTrackerState(ev);
             }
         }
     }
@@ -243,5 +265,73 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         } else {
             headers = null;
         }
+    }
+
+    static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
+        if (!dataItem.isDataValid())
+            return null;
+
+        Bundle b = DataMap.fromByteArray(dataItem.getData()).toBundle();
+        if (b.containsKey(Constants.Wear.TrackerState.STATE)) {
+            return TrackerState.valueOf(b.getInt(Constants.Wear.TrackerState.STATE));
+        }
+        return null;
+    }
+
+    private void setTrackerState(DataEvent ev) {
+        TrackerState newVal = null;
+        if (ev.getType() == DataEvent.TYPE_CHANGED) {
+            newVal = getTrackerStateFromDataItem(ev.getDataItem());
+            if (newVal == null) {
+                // This is weird. TrackerState is set to a invalid value...skip out
+                return;
+            }
+        } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+            // trackerState being deleted
+            newVal = null;
+        }
+        setTrackerState(newVal);
+    }
+
+    private void setTrackerState(TrackerState newVal) {
+        TrackerState oldVal = trackerState;
+        trackerState = newVal;
+        if (!TrackerState.equals(oldVal, newVal)) {
+            for (TrackerStateListener l : trackerStateListeners) {
+                l.onTrackerStateChange(oldVal, newVal);
+            }
+        }
+    }
+
+    public TrackerState getTrackerState() {
+        return trackerState;
+    }
+
+    public void registerTrackerStateListener(TrackerStateListener listener) {
+        trackerStateListeners.add(listener);
+    }
+
+    public void unregisterTrackerStateListener(TrackerStateListener listener) {
+        trackerStateListeners.remove(listener);
+    }
+
+    public void sendPauseResume() {
+        if (!checkConnection())
+            return;
+
+        if (getTrackerState() == TrackerState.STARTED) {
+            Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
+                    Constants.Wear.Path.MSG_CMD_WORKOUT_PAUSE, null);
+        } else {
+            Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
+                    Constants.Wear.Path.MSG_CMD_WORKOUT_RESUME, null);
+        }
+    }
+    public void sendNewLap() {
+        if (!checkConnection())
+            return;
+
+        Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
+                    Constants.Wear.Path.MSG_CMD_WORKOUT_NEW_LAP, null);
     }
 }

@@ -66,7 +66,7 @@ import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.tracker.GpsInformation;
 import org.runnerup.tracker.Tracker;
-import org.runnerup.tracker.TrackerState;
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.util.Formatter;
