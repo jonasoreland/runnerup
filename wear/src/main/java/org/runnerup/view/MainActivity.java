@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.tracker.TrackerStateHolder;
 import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
 import org.runnerup.service.StateService;
@@ -56,8 +57,7 @@ public class MainActivity extends Activity
     private GridViewPager pager;
     private FragmentGridPagerAdapter pageAdapter;
     private StateService mStateService;
-    private ArrayList<TrackerStateListener> trackerStateListeners =
-            new ArrayList<TrackerStateListener>();
+    private TrackerStateHolder trackerState = new TrackerStateHolder();
 
     private static final int RUN_INFO_ROW = 0;
     private static final int PAUSE_RESUME_ROW = 1;
@@ -277,34 +277,32 @@ public class MainActivity extends Activity
     public TrackerState getTrackerState() {
         if (mStateService == null)
             return null;
-        synchronized (trackerStateListeners) {
+        synchronized (trackerState) {
             return mStateService.getTrackerState();
         }
     }
 
     @Override
     public void onTrackerStateChange(final TrackerState oldState, final TrackerState newState) {
-        synchronized (trackerStateListeners) {
+        synchronized (trackerState) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    for (TrackerStateListener l : trackerStateListeners) {
-                        l.onTrackerStateChange(oldState, newState);
-                    }
+                    trackerState.set(newState);
                 }
             });
         };
     }
 
     public void registerTrackerStateListener(TrackerStateListener listener) {
-        synchronized (trackerStateListeners) {
-            trackerStateListeners.add(listener);
+        synchronized (trackerState) {
+            trackerState.registerTrackerStateListener(listener);
         }
     }
 
     public void unregisterTrackerStateListener(TrackerStateListener listener) {
-        synchronized (trackerStateListeners) {
-            trackerStateListeners.remove(listener);
+        synchronized (trackerState) {
+            trackerState.unregisterTrackerStateListener(listener);
         }
     }
 }

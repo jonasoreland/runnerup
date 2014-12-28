@@ -40,10 +40,10 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.tracker.TrackerStateHolder;
 import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
@@ -60,9 +60,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     private Bundle data;
     private Bundle headers;
-    private TrackerState trackerState;
-    private ArrayList<TrackerStateListener> trackerStateListeners =
-            new ArrayList<TrackerStateListener>();
+    private final TrackerStateHolder trackerState = new TrackerStateHolder();
 
     @Override
     public void onCreate() {
@@ -161,7 +159,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     @Override
     public void onDestroy() {
         System.err.println("StateService.onDestroy()");
-        trackerStateListeners.clear();
+        trackerState.clearListeners();
         if (mGoogleApiClient != null) {
             if (mGoogleApiClient.isConnected()) {
                 phoneNode = null;
@@ -294,25 +292,19 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     }
 
     private void setTrackerState(TrackerState newVal) {
-        TrackerState oldVal = trackerState;
-        trackerState = newVal;
-        if (!TrackerState.equals(oldVal, newVal)) {
-            for (TrackerStateListener l : trackerStateListeners) {
-                l.onTrackerStateChange(oldVal, newVal);
-            }
-        }
+        trackerState.set(newVal);
     }
 
     public TrackerState getTrackerState() {
-        return trackerState;
+        return trackerState.get();
     }
 
     public void registerTrackerStateListener(TrackerStateListener listener) {
-        trackerStateListeners.add(listener);
+        trackerState.registerTrackerStateListener(listener);
     }
 
     public void unregisterTrackerStateListener(TrackerStateListener listener) {
-        trackerStateListeners.remove(listener);
+        trackerState.unregisterTrackerStateListener(listener);
     }
 
     public void sendPauseResume() {
