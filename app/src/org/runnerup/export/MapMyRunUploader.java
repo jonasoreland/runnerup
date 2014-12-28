@@ -63,8 +63,10 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
     static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<Integer, Sport>();
     static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<Sport, Integer>();
     static {
-        mapmyrun2sportMap.put(16, Sport.RUNNING);
-        mapmyrun2sportMap.put(11, Sport.BIKING);
+        // V3 API (what we use): 16 is Walking (specifically a long walk)
+        // V7 API is different: 11: Biking, 16: Running, 9: Walk
+        mapmyrun2sportMap.put(1, Sport.RUNNING);
+        mapmyrun2sportMap.put(3, Sport.BIKING);
         for (Integer i : mapmyrun2sportMap.keySet()) {
             sport2mapmyrunMap.put(mapmyrun2sportMap.get(i), i);
         }
