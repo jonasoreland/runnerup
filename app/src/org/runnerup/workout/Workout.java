@@ -47,6 +47,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     Step currentStep = null;
     boolean paused = false;
     final ArrayList<Step> steps = new ArrayList<Step>();
+    final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<WorkoutStepListener>();
     int sport = DB.ACTIVITY.SPORT_RUNNING;
     private boolean mute;
 
@@ -140,7 +141,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
         currentStepNo = 0;
         if (steps.size() > 0) {
-            currentStep = steps.get(currentStepNo);
+            setCurrentStep(steps.get(currentStepNo));
         }
 
         if (currentStep != null) {
@@ -150,6 +151,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
 
         emitFeedback();
+    }
+
+    private void setCurrentStep(Step step) {
+        Step oldStep = currentStep;
+        currentStep = step;
+        for (WorkoutStepListener l : stepListeners) {
+            l.onStepChanged(oldStep, step);
+        }
     }
 
     public void onTick() {
@@ -173,12 +182,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             currentStepNo++;
 
         if (currentStepNo < steps.size()) {
-            currentStep = steps.get(currentStepNo);
+            setCurrentStep(steps.get(currentStepNo));
             currentStep.onStart(Scope.STEP, this);
             currentStep.onStart(Scope.LAP, this);
         } else {
             currentStep.onComplete(Scope.WORKOUT, this);
-            currentStep = null;
+            setCurrentStep(null);
             tracker.stop();
         }
     }
@@ -203,7 +212,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onNewLapOrNextStep() {
-        if (currentStepNo + 1 < steps.size()) {
+        if (!isLastStep()) {
             onNextStep();
         } else {
             onNewLap();
@@ -234,7 +243,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             currentStep.onComplete(Scope.STEP, this);
             currentStep.onComplete(Scope.WORKOUT, this);
         }
-        currentStep = null;
+        setCurrentStep(null);
         currentStepNo = -1;
     }
 
@@ -484,6 +493,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         if (currentStepNo >= 0 && currentStepNo < steps.size())
             return steps.get(currentStepNo).getCurrentStep();
         return null;
+    }
+
+    public void registerWorkoutStepListener(WorkoutStepListener listener) {
+        stepListeners.add(listener);
+    }
+
+    public void unregisterWorkoutStepListener(WorkoutStepListener listener) {
+        stepListeners.remove(listener);
     }
 
     private static class FakeWorkout extends Workout {
