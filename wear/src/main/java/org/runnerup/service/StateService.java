@@ -54,7 +54,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     private final IBinder mBinder = new LocalBinder();
     private GoogleApiClient mGoogleApiClient;
-    private HashSet<Node> connectedNodes = new HashSet<Node>();
+    private final HashSet<Node> connectedNodes = new HashSet<Node>();
 
     private String phoneNode;
 

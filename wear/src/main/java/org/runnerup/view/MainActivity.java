@@ -41,7 +41,6 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
-import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
@@ -55,9 +54,8 @@ public class MainActivity extends Activity
         implements Constants, ValueModel.ChangeListener<TrackerState> {
 
     private GridViewPager pager;
-    private FragmentGridPagerAdapter pageAdapter;
     private StateService mStateService;
-    private ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
+    final private ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
 
     private static final int RUN_INFO_ROW = 0;
     private static final int PAUSE_RESUME_ROW = 1;
@@ -67,7 +65,7 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pager = (GridViewPager) findViewById(R.id.pager);
-        pageAdapter = createPager(getFragmentManager());
+        FragmentGridPagerAdapter pageAdapter = createPager(getFragmentManager());
         pager.setAdapter(pageAdapter);
 
         LinearLayout verticalDotsPageIndicator = (LinearLayout) findViewById(R.id.vert_page_indicator);
@@ -98,7 +96,7 @@ public class MainActivity extends Activity
     protected void onPause() {
         super.onResume();
         if (mStateService != null) {
-            mStateService.registerTrackerStateListener(this);
+            mStateService.unregisterTrackerStateListener(this);
         }
         getApplicationContext().unbindService(mStateServiceConnection);
         mStateService = null;
@@ -291,7 +289,7 @@ public class MainActivity extends Activity
                     trackerState.set(newState);
                 }
             });
-        };
+        }
     }
 
     public void registerTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
