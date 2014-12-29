@@ -488,6 +488,7 @@ public class Tracker extends android.app.Service implements
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
             liveLog(DB.LOCATION.TYPE_DISCARD);
         }
+        components.onComplete(!save);
         notificationStateManager.cancelNotification();
         reset();
     }
