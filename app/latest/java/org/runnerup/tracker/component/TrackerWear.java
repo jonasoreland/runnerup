@@ -48,8 +48,10 @@ import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Scope;
+import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutInfo;
+import org.runnerup.workout.WorkoutStepListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +63,7 @@ import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class TrackerWear extends DefaultTrackerComponent
         implements Constants, TrackerComponent, WorkoutObserver, NodeApi.NodeListener,
-        MessageApi.MessageListener, DataApi.DataListener {
+        MessageApi.MessageListener, DataApi.DataListener, WorkoutStepListener {
 
     public static final String NAME = "WEAR";
     private Tracker tracker;
@@ -189,6 +191,8 @@ public class TrackerWear extends DefaultTrackerComponent
         }
 
         setTrackerState(tracker.getState());
+
+        tracker.getWorkout().registerWorkoutStepListener(this);
     }
 
     void setTrackerState(TrackerState val) {
@@ -242,7 +246,14 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
+    public void onStepChanged(Step oldStep, Step newStep) {
+        // Update headers according to type of newStep
+    }
+
+    @Override
     public void onComplete(boolean discarded) {
+        tracker.getWorkout().unregisterWorkoutStepListener(this);
+
         /* clear HEADERS */
         Wearable.DataApi.deleteDataItems(mGoogleApiClient,
                 new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
