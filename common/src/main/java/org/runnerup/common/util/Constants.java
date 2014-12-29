@@ -187,7 +187,7 @@ public interface Constants {
             static final String HEADERS = PREFIX + "/config/headers";
 
             /* Data: Tracker/workout state */
-            static final String TRACKER_STATE = PREFIX + "tracker/state";
+            static final String TRACKER_STATE = PREFIX + "/tracker/state";
             static final String WORKOUT_PLAN = PREFIX + "/workout/plan";
 
             /* Msg: workout event */
