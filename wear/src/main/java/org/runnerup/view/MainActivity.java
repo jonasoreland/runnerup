@@ -41,9 +41,9 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
-import org.runnerup.common.tracker.TrackerStateHolder;
 import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
 
@@ -52,12 +52,12 @@ import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class MainActivity extends Activity
-        implements Constants, TrackerStateListener {
+        implements Constants, ValueModel.ChangeListener<TrackerState> {
 
     private GridViewPager pager;
     private FragmentGridPagerAdapter pageAdapter;
     private StateService mStateService;
-    private TrackerStateHolder trackerState = new TrackerStateHolder();
+    private ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
 
     private static final int RUN_INFO_ROW = 0;
     private static final int PAUSE_RESUME_ROW = 1;
@@ -283,7 +283,7 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public void onTrackerStateChange(final TrackerState oldState, final TrackerState newState) {
+    public void onValueChanged(final TrackerState oldState, final TrackerState newState) {
         synchronized (trackerState) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -294,15 +294,15 @@ public class MainActivity extends Activity
         };
     }
 
-    public void registerTrackerStateListener(TrackerStateListener listener) {
+    public void registerTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
         synchronized (trackerState) {
-            trackerState.registerTrackerStateListener(listener);
+            trackerState.registerChangeListener(listener);
         }
     }
 
-    public void unregisterTrackerStateListener(TrackerStateListener listener) {
+    public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
         synchronized (trackerState) {
-            trackerState.unregisterTrackerStateListener(listener);
+            trackerState.unregisterChangeListener(listener);
         }
     }
 }

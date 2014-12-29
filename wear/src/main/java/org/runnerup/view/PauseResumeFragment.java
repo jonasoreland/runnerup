@@ -28,9 +28,9 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
-import org.runnerup.common.tracker.TrackerStateListener;
+import org.runnerup.common.util.ValueModel;
 
-public class PauseResumeFragment extends Fragment implements TrackerStateListener {
+public class PauseResumeFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private static final long SCROLL_DELAY = 1500; // 1.5s
     private Handler handler = new Handler();
@@ -143,7 +143,7 @@ public class PauseResumeFragment extends Fragment implements TrackerStateListene
     }
 
     @Override
-    public void onTrackerStateChange(TrackerState oldState, TrackerState newState) {
+    public void onValueChanged(TrackerState oldState, TrackerState newState) {
         updateView(newState);
     }
 }

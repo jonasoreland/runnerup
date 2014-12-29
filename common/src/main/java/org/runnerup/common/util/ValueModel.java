@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2014 jonas.oreland@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.runnerup.common.util;
+
+import java.util.ArrayList;
+
+/**
+ * Created by jonas on 12/29/14.
+ */
+public class ValueModel<T> {
+
+    private T value;
+    final private ArrayList<ChangeListener<T>> listeners =
+            new ArrayList<ChangeListener<T>>();
+
+    public interface ChangeListener<T> {
+        void onValueChanged(T oldValue, T newValue);
+    };
+
+    public ValueModel() {
+        value = null;
+    }
+
+    public ValueModel(T value) {
+        this.value = value;
+    }
+
+    public void set(T newValue) {
+        if (value == null && newValue == null) {
+            return;
+        } else if (value != null && newValue != null) {
+            if (value.equals(newValue))
+                return;
+        }
+
+        T oldValue = value;
+        value = newValue;
+        for (ChangeListener<T> l : listeners) {
+            l.onValueChanged(oldValue, newValue);
+        }
+    }
+
+    public T get() {
+        return value;
+    }
+
+    public void registerChangeListener(ChangeListener<T> listener) {
+        listeners.add(listener);
+    }
+
+    public void unregisterChangeListener(ChangeListener<T> listener) {
+        listeners.remove(listener);
+    }
+
+    public void clearListeners() {
+        listeners.clear();
+    }
+}

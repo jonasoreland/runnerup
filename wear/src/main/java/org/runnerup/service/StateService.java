@@ -40,9 +40,9 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import org.runnerup.common.tracker.TrackerState;
-import org.runnerup.common.tracker.TrackerStateHolder;
 import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.ValueModel;
 
 import java.util.HashSet;
 
@@ -60,7 +60,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     private Bundle data;
     private Bundle headers;
-    private final TrackerStateHolder trackerState = new TrackerStateHolder();
+    private final ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
 
     @Override
     public void onCreate() {
@@ -299,12 +299,12 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         return trackerState.get();
     }
 
-    public void registerTrackerStateListener(TrackerStateListener listener) {
-        trackerState.registerTrackerStateListener(listener);
+    public void registerTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
+        trackerState.registerChangeListener(listener);
     }
 
-    public void unregisterTrackerStateListener(TrackerStateListener listener) {
-        trackerState.unregisterTrackerStateListener(listener);
+    public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
+        trackerState.unregisterChangeListener(listener);
     }
 
     public void sendPauseResume() {
