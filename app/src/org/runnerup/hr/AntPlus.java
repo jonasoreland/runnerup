@@ -31,6 +31,7 @@ import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultRecei
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultReceiver;
+import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
@@ -41,7 +42,7 @@ public class AntPlus extends BtHRBase {
     static final String NAME = "AntPlus";
     static final String DISPLAY_NAME = "ANT+";
 
-    final Context ctx;
+    final Context context;
     int hrValue;
     long hrTimestamp;
 
@@ -53,6 +54,7 @@ public class AntPlus extends BtHRBase {
     private boolean mIsScanning = false;
     private boolean mIsConnected = false;
     private boolean mIsConnecting = false;
+    private PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle;
 
     public static boolean checkLibrary(Context ctx) {
         try {
@@ -67,7 +69,7 @@ public class AntPlus extends BtHRBase {
     }
 
     public AntPlus(Context ctx) {
-        this.ctx = ctx;
+        this.context = ctx;
     }
 
     @Override
@@ -85,7 +87,6 @@ public class AntPlus extends BtHRBase {
         log("open()");
         this.hrClientHandler = handler;
         this.hrClient = hrClient;
-        log("onOpenResult()");
         hrClient.onOpenResult(true);
     }
 
@@ -126,7 +127,7 @@ public class AntPlus extends BtHRBase {
         log("startScan()");
         mIsScanning = true;
         mScanDevices.clear();
-        hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(ctx, 0, scanReceiver);
+        hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(context, 0, scanReceiver);
     }
 
     @Override
@@ -161,7 +162,8 @@ public class AntPlus extends BtHRBase {
                     ref.deviceName.equals(connectRef.deviceName)) {
 
                 stopScan();
-                AntPlusHeartRatePcc.requestAccess(ctx, arg0.getAntDeviceNumber(), 0,
+                releaseHandle = AntPlusHeartRatePcc.requestAccess(context,
+                        arg0.getAntDeviceNumber(), 0,
                         resultReceiver, stateReceiver);
                 return;
             }
@@ -192,9 +194,10 @@ public class AntPlus extends BtHRBase {
     public void connect(HRDeviceRef ref) {
         stopScan();
         disconnectImpl();
+        log("connect(" + Integer.parseInt(ref.deviceAddress) + ")");
         connectRef = ref;
         mIsConnecting = true;
-        AntPlusHeartRatePcc.requestAccess(ctx, Integer.parseInt(ref.deviceAddress), 0,
+        releaseHandle = AntPlusHeartRatePcc.requestAccess(context, Integer.parseInt(ref.deviceAddress), 0,
                 resultReceiver, stateReceiver);
     }
 
@@ -225,19 +228,17 @@ public class AntPlus extends BtHRBase {
             }
 
             switch (arg2) {
+                case UNRECOGNIZED:
                 case CLOSED:
-                    break;
                 case DEAD:
-                    break;
                 case PROCESSING_REQUEST:
-                    break;
                 case SEARCHING:
-                    break;
+                    reportConnectFailed(arg1);
+                    return;
                 case TRACKING:
                     break;
-                case UNRECOGNIZED:
-                    break;
                 default:
+                    // ???
                     break;
             }
 
@@ -290,11 +291,8 @@ public class AntPlus extends BtHRBase {
                     break;
                 case DEAD:
                     if (mIsConnected) {
-                        /** silent reconnect */
-                        antDevice = null;
-                        AntPlusHeartRatePcc.requestAccess(ctx,
-                                Integer.parseInt(connectRef.deviceAddress), 0,
-                                resultReceiver, stateReceiver);
+                        /** don't silent reconnect, let upper lay handle that */
+                        reportDisconnected(true);
                         return;
                     }
                     if (mIsConnecting) {
@@ -312,7 +310,6 @@ public class AntPlus extends BtHRBase {
                     break;
             }
         }
-
     };
 
     private void reportConnectFailed(RequestAccessResult arg1) {
@@ -334,7 +331,10 @@ public class AntPlus extends BtHRBase {
         hrClientHandler.post(new Runnable() {
             @Override
             public void run() {
-                if (mIsConnecting) {
+                if (hrClient == null) {
+                    disconnectImpl();
+                    return;
+                } else if (mIsConnecting) {
                     mIsConnected = b;
                     mIsConnecting = false;
                     hrClient.onConnectResult(b);
@@ -344,10 +344,12 @@ public class AntPlus extends BtHRBase {
     }
 
     protected void reportDisconnected(final boolean b) {
+        disconnectImpl();
         hrClientHandler.post(new Runnable() {
             @Override
             public void run() {
-                hrClient.onDisconnectResult(b);
+                if (hrClient != null)
+                    hrClient.onDisconnectResult(b);
             }
         });
     }
@@ -369,10 +371,15 @@ public class AntPlus extends BtHRBase {
     }
 
     private void disconnectImpl() {
+        log("disconnectImpl");
         stopScan();
         if (antDevice != null) {
             antDevice.releaseAccess();
             antDevice = null;
+        }
+        if (releaseHandle != null) {
+            releaseHandle.close();
+            releaseHandle = null;
         }
         mIsConnecting = false;
         mIsConnected = false;
