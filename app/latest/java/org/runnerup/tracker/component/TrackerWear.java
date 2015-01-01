@@ -42,6 +42,7 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.ValueModel;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.tracker.WorkoutObserver;
@@ -63,7 +64,7 @@ import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class TrackerWear extends DefaultTrackerComponent
         implements Constants, TrackerComponent, WorkoutObserver, NodeApi.NodeListener,
-        MessageApi.MessageListener, DataApi.DataListener, WorkoutStepListener {
+        MessageApi.MessageListener, DataApi.DataListener, WorkoutStepListener, ValueModel.ChangeListener<TrackerState> {
 
     public static final String NAME = "WEAR";
     private Tracker tracker;
@@ -102,6 +103,7 @@ public class TrackerWear extends DefaultTrackerComponent
             return ResultCode.RESULT_NOT_SUPPORTED;
         }
 
+        tracker.registerTrackerStateListener(this);
         this.context = context;
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -263,8 +265,6 @@ public class TrackerWear extends DefaultTrackerComponent
         Wearable.DataApi.deleteDataItems(mGoogleApiClient,
                 new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
                         Wear.Path.WORKOUT_PLAN).build());
-
-        setTrackerState(TrackerState.CLEANUP);
     }
 
     @Override
@@ -321,6 +321,7 @@ public class TrackerWear extends DefaultTrackerComponent
             mGoogleApiClient.disconnect();
             mGoogleApiClient = null;
         }
+        tracker.unregisterTrackerStateListener(this);
         return ResultCode.RESULT_OK;
     }
 
@@ -363,5 +364,10 @@ public class TrackerWear extends DefaultTrackerComponent
         } else if (ev.getType() == DataEvent.TYPE_DELETED) {
             wearNode = null;
         }
+    }
+
+    @Override
+    public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+        setTrackerState(newValue);
     }
 }
