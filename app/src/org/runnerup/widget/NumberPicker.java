@@ -71,12 +71,6 @@ public class NumberPicker extends LinearLayout {
     public NumberPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        if (attrs != null) {
-            TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
-            processAttributes(arr);
-            arr.recycle();
-        }
-
         createValueText(context);
         createButton(context, '+');
         createButton(context, '-');
@@ -86,9 +80,15 @@ public class NumberPicker extends LinearLayout {
                 LayoutParams.WRAP_CONTENT));
         addViews();
         updateView();
+
+        if (attrs != null) {
+            TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
+            processAttributes(arr);
+            arr.recycle();
+        }
     }
 
-    public void processAttributes(TypedArray arr) {
+    private void processAttributes(TypedArray arr) {
         if (arr == null)
             return;
 

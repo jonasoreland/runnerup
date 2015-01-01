@@ -121,28 +121,28 @@ public class TitleSpinner extends LinearLayout {
 
         if (type == null || "spinner".contentEquals(type)) {
             mType = Type.TS_SPINNER;
-            setupSpinner(context, arr, defaultValue);
+            setupSpinner(context, attrs, arr, defaultValue);
         } else if ("spinner_txt".contentEquals(type)) {
             mType = Type.TS_SPINNER_TXT;
-            setupSpinner(context, arr, defaultValue);
+            setupSpinner(context, attrs, arr, defaultValue);
         } else if ("edittext".contentEquals(type)) {
             mType = Type.TS_EDITTEXT;
-            setupEditText(context, arr, defaultValue);
+            setupEditText(context, attrs, arr, defaultValue);
         } else if ("datepicker".contentEquals(type)) {
             mType = Type.TS_DATEPICKER;
-            setupDatePicker(context, arr, defaultValue);
+            setupDatePicker(context, attrs, arr, defaultValue);
         } else if ("timepicker".contentEquals(type)) {
             mType = Type.TS_TIMEPICKER;
-            setupTimePicker(context, arr, defaultValue);
+            setupTimePicker(context, attrs, arr, defaultValue);
         } else if ("durationpicker".contentEquals(type)) {
             mType = Type.TS_DURATIONPICKER;
-            setupDurationPicker(context, arr, defaultValue);
+            setupDurationPicker(context, attrs, arr, defaultValue);
         } else if ("distancepicker".contentEquals(type)) {
             mType = Type.TS_DISTANCEPICKER;
-            setupDistancePicker(context, arr, defaultValue);
+            setupDistancePicker(context, attrs, arr, defaultValue);
         } else if ("numberpicker".contentEquals(type)) {
             mType = Type.TS_NUMBERPICKER;
-            setupNumberPicker(context, arr, defaultValue);
+            setupNumberPicker(context, attrs, arr, defaultValue);
         } else {
             arr = null; // force null pointer exception
         }
@@ -156,11 +156,12 @@ public class TitleSpinner extends LinearLayout {
         arr.recycle(); // Do this when done.
     }
 
-    private void setupEditText(final Context context, TypedArray arr, CharSequence defaultValue) {
+    private void setupEditText(final Context context, final AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
         mInputType = arr.getInt(R.styleable.TitleSpinner_android_inputType,
                 EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         mValue.setText(defaultValue);
 
+        final EditText edit = new EditText(context, attrs);
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
@@ -172,20 +173,23 @@ public class TitleSpinner extends LinearLayout {
                     alert.setMessage(mPrompt);
                 }
 
-                final EditText edit = new EditText(context);
                 edit.setText(mValue.getText());
                 edit.setInputType(mInputType);
-                alert.setView(edit);
+                final LinearLayout layout = createLayout(context);
+                layout.addView(edit);
+                alert.setView(layout);
                 alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(edit.getText().toString());
                         dialog.dismiss();
+                        layout.removeView(edit);
                         onClose(true);
                     }
                 });
                 alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
+                        layout.removeView(edit);
                         onClose(false);
                     }
                 });
@@ -195,7 +199,7 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupSpinner(Context context, TypedArray arr, CharSequence defaultValue) {
+    private void setupSpinner(Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
         if (mPrompt != null) {
             mSpinner.setPrompt(mPrompt);
         }
@@ -249,7 +253,16 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupDatePicker(final Context context, TypedArray arr, CharSequence defaultValue) {
+    private static LinearLayout createLayout(Context context) {
+        final LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
+        layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+        return layout;
+    }
+
+    private void setupDatePicker(final Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
         if (defaultValue != null && "today".contentEquals(defaultValue)) {
             DateFormat df = android.text.format.DateFormat.getDateFormat(context);
             defaultValue = df.format(new Date());
@@ -259,6 +272,8 @@ public class TitleSpinner extends LinearLayout {
         } else {
             mValue.setText("");
         }
+
+        final DatePicker datePicker = new DatePicker(context, attrs);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
@@ -271,12 +286,14 @@ public class TitleSpinner extends LinearLayout {
                     alert.setMessage(mPrompt);
                 }
 
-                final DatePicker datePicker = new DatePicker(context);
-                alert.setView(datePicker);
+                final LinearLayout layout = createLayout(context);
+                layout.addView(datePicker);
+                alert.setView(layout);
                 alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(datePicker));
                         dialog.dismiss();
+                        layout.removeView(datePicker);
                         onClose(true);
                     }
 
@@ -290,6 +307,7 @@ public class TitleSpinner extends LinearLayout {
                 alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
+                        layout.removeView(datePicker);
                         onClose(false);
                     }
                 });
@@ -299,7 +317,7 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupTimePicker(final Context context, TypedArray arr, CharSequence defaultValue) {
+    private void setupTimePicker(final Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
         if (defaultValue != null && "now".contentEquals(defaultValue)) {
             DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
             defaultValue = df.format(new Date());
@@ -309,6 +327,8 @@ public class TitleSpinner extends LinearLayout {
         } else {
             mValue.setText("");
         }
+
+        final TimePicker timePicker = new TimePicker(context, attrs);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
@@ -321,13 +341,15 @@ public class TitleSpinner extends LinearLayout {
                     alert.setMessage(mPrompt);
                 }
 
-                final TimePicker timePicker = new TimePicker(context);
                 timePicker.setIs24HourView(true);
-                alert.setView(timePicker);
+                final LinearLayout layout = createLayout(context);
+                layout.addView(timePicker);
+                alert.setView(layout);
                 alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(timePicker));
                         dialog.dismiss();
+                        layout.removeView(timePicker);
                         onClose(true);
                     }
 
@@ -342,6 +364,7 @@ public class TitleSpinner extends LinearLayout {
                 alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
+                        layout.removeView(timePicker);
                         onClose(false);
                     }
                 });
@@ -351,13 +374,14 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupDurationPicker(final Context context, TypedArray arr,
-            CharSequence defaultValue) {
+    private void setupDurationPicker(final Context context, final AttributeSet attrs, TypedArray arr,
+                                     CharSequence defaultValue) {
         if (defaultValue != null) {
             mValue.setText(defaultValue);
         } else {
             mValue.setText("");
         }
+
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
@@ -370,29 +394,27 @@ public class TitleSpinner extends LinearLayout {
                     alert.setMessage(mPrompt);
                 }
 
-                final DurationPicker timePicker = new DurationPicker(context, null);
-                timePicker.setEpochTime(SafeParse.parseSeconds(mValue.getText().toString(), 0));
-
-                final LinearLayout layout = new LinearLayout(context);
-                layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                        LayoutParams.MATCH_PARENT));
-                layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
-                layout.addView(timePicker);
+                final DurationPicker picker = new DurationPicker(context, attrs);
+                picker.setEpochTime(SafeParse.parseSeconds(mValue.getText().toString(), 0));
+                final LinearLayout layout = createLayout(context);
+                layout.addView(picker);
                 alert.setView(layout);
                 alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(timePicker));
+                        setValue(getValue(picker));
                         dialog.dismiss();
+                        layout.removeView(picker);
                         onClose(true);
                     }
 
                     private String getValue(DurationPicker dp) {
-                        return DateUtils.formatElapsedTime(timePicker.getEpochTime());
+                        return DateUtils.formatElapsedTime(picker.getEpochTime());
                     }
                 });
                 alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
+                        layout.removeView(picker);
                         onClose(false);
                     }
                 });
@@ -402,13 +424,15 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupDistancePicker(final Context context, TypedArray arr,
-            CharSequence defaultValue) {
+    private void setupDistancePicker(final Context context, AttributeSet attrs, TypedArray arr,
+                                     CharSequence defaultValue) {
         if (defaultValue != null) {
             mValue.setText(defaultValue);
         } else {
             mValue.setText("");
         }
+
+        final DistancePicker distancePicker = new DistancePicker(context, attrs);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
@@ -421,20 +445,17 @@ public class TitleSpinner extends LinearLayout {
                     alert.setMessage(mPrompt);
                 }
 
-                final DistancePicker distancePicker = new DistancePicker(context, null);
                 distancePicker.setDistance((long) SafeParse.parseDouble(
                         mValue.getText().toString(), 0));
 
-                final LinearLayout layout = new LinearLayout(context);
-                layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                        LayoutParams.MATCH_PARENT));
-                layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+                final LinearLayout layout = createLayout(context);
                 layout.addView(distancePicker);
                 alert.setView(layout);
                 alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(distancePicker));
                         dialog.dismiss();
+                        layout.removeView(distancePicker);
                         onClose(true);
                     }
 
@@ -445,6 +466,7 @@ public class TitleSpinner extends LinearLayout {
                 alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
+                        layout.removeView(distancePicker);
                         onClose(false);
                     }
                 });
@@ -454,21 +476,20 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupNumberPicker(final Context context, final TypedArray arr, CharSequence defaultValue) {
+    private void setupNumberPicker(final Context context, AttributeSet attrs, final TypedArray arr, CharSequence defaultValue) {
         if (defaultValue != null) {
             mValue.setText(defaultValue);
         } else {
             mValue.setText("");
         }
 
+        final NumberPicker numberPicker = new NumberPicker(context, attrs);
+        numberPicker.setOrientation(VERTICAL);
+
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NumberPicker numberPicker = new NumberPicker(context, null);
-                numberPicker.processAttributes(arr);
-                numberPicker.setOrientation(VERTICAL);
-
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
@@ -478,16 +499,14 @@ public class TitleSpinner extends LinearLayout {
 
                 numberPicker.setValue(SafeParse.parseInt(mValue.getText().toString(), 0));
 
-                final LinearLayout layout = new LinearLayout(context);
-                layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                        LayoutParams.MATCH_PARENT));
-                layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+                final LinearLayout layout = createLayout(context);
                 layout.addView(numberPicker);
                 alert.setView(layout);
                 alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(numberPicker));
                         dialog.dismiss();
+                        layout.removeView(numberPicker);
                         onClose(true);
                     }
 
@@ -498,6 +517,7 @@ public class TitleSpinner extends LinearLayout {
                 alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
+                        layout.removeView(numberPicker);
                         onClose(false);
                     }
                 });
