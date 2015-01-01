@@ -74,7 +74,7 @@ dependencies {
 
     compile files('../GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')
-    compile files('libs/antpluginlib_2.0.0.jar')
+    compile files('libs/antpluginlib_3.1.0.jar')
 
     compile project(':common')
 }
@@ -93,8 +93,8 @@ task downloadSamsungBleSdk(type: DownloadTask) {
 preBuild.dependsOn downloadSamsungBleSdk
 
 task downloadAntPluginLib(type: DownloadTask) {
-    sourceUrl = 'https://github.com/ant-wireless/Android_API_ANTPlus/raw/master/antpluginlib_2.0.0.jar'
-    target = file('libs/antpluginlib_2.0.0.jar')
+    sourceUrl = 'https://github.com/ant-wireless/ANT-Android-SDKs/raw/master/ANT%2B_Android_SDK/API/antpluginlib_3-1-0.jar'
+    target = file('libs/antpluginlib_3.1.0.jar')
 }
 preBuild.dependsOn downloadAntPluginLib
 

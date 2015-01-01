@@ -32,6 +32,7 @@ import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.AsyncScanResultDeviceInfo;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController.IAsyncScanResultReceiver;
 
+import java.math.BigDecimal;
 import java.util.EnumSet;
 import java.util.HashSet;
 
@@ -248,7 +249,18 @@ public class AntPlus extends BtHRBase {
 
         @Override
         public void onNewHeartRateData(long arg0, EnumSet<EventFlag> arg1,
-                int arg2, long arg3) {
+                int arg2, long arg3, BigDecimal bigDecimal, AntPlusHeartRatePcc.DataState dataState) {
+
+            switch (dataState) {
+                case LIVE_DATA:
+                    break;
+                case INITIAL_VALUE:
+                    break;
+                case ZERO_DETECTED:
+                    break;
+                case UNRECOGNIZED:
+                    break;
+            }
 
             if (arg2 == 0) {
                 log("got hrValue == 0 => aborting");
@@ -266,7 +278,6 @@ public class AntPlus extends BtHRBase {
                 reportConnected(true);
             }
         }
-
     };
 
     final IDeviceStateChangeReceiver stateReceiver = new IDeviceStateChangeReceiver() {
