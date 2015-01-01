@@ -38,6 +38,7 @@ import android.preference.PreferenceManager;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.tracker.component.TrackerComponent;
@@ -104,7 +105,7 @@ public class Tracker extends android.app.Service implements
 
     final boolean mWithoutGps = false;
 
-    TrackerState state = TrackerState.INIT;
+    final ValueModel<TrackerState> state = new ValueModel<TrackerState>(TrackerState.INIT);
     int mLocationType = DB.LOCATION.TYPE_START;
 
     /**
@@ -173,7 +174,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public void setup() {
-        switch (state) {
+        switch (state.get()) {
             case INIT:
                 break;
             case INITIALIZING:
@@ -187,12 +188,12 @@ public class Tracker extends android.app.Service implements
                 /**
                  * if CLEANUP is in progress, setup will continue once complete
                  */
-                state = TrackerState.INITIALIZING;
+                state.set(TrackerState.INITIALIZING);
                 break;
         }
 
         wakelock(true);
-        state = TrackerState.INITIALIZING;
+        state.set(TrackerState.INITIALIZING);
 
         UploadManager u = new UploadManager(this);
         u.loadLiveLoggers(liveLoggers);
@@ -210,18 +211,18 @@ public class Tracker extends android.app.Service implements
     private final TrackerComponent.Callback onInitCallback = new TrackerComponent.Callback() {
         @Override
         public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (state == TrackerState.CLEANUP) {
+            if (state.get() == TrackerState.CLEANUP) {
                 /**
                  * reset was called while we were initializing
                  */
-                state = TrackerState.INITIALIZED;
+                state.set(TrackerState.INITIALIZED);
                 reset();
                 return;
             }
             if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
-                state = TrackerState.ERROR;
+                state.set(TrackerState.ERROR);
             } else {
-                state = TrackerState.INITIALIZED;
+                state.set(TrackerState.INITIALIZED);
             }
         }
     };
@@ -231,7 +232,7 @@ public class Tracker extends android.app.Service implements
     }
 
     private long createActivity(int sport) {
-        assert (state == TrackerState.INIT);
+        assert (state.get() == TrackerState.INIT);
         /**
          * Create an Activity instance
          */
@@ -247,7 +248,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public void start(Workout workout_) {
-        assert (state == TrackerState.INITIALIZED);
+        assert (state.get() == TrackerState.INITIALIZED);
 
         // connect workout and tracker
         this.workout = workout_;
@@ -282,7 +283,7 @@ public class Tracker extends android.app.Service implements
         // New location update will be tagged with START
         setNextLocationType(DB.LOCATION.TYPE_START);
 
-        state = TrackerState.STARTED;
+        state.set(TrackerState.STARTED);
 
         activityOngoingState = new OngoingState(new Formatter(this), workout, this);
 
@@ -331,7 +332,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public void stopOrPause() {
-        switch (state) {
+        switch (state.get()) {
             case INIT:
             case ERROR:
             case INITIALIZING:
@@ -370,7 +371,7 @@ public class Tracker extends android.app.Service implements
             Long.toString(mActivityId)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-        state = TrackerState.PAUSED;
+        state.set(TrackerState.PAUSED);
     }
 
     private void internalOnLocationChanged(Location arg0) {
@@ -381,11 +382,11 @@ public class Tracker extends android.app.Service implements
     }
 
     public boolean isPaused() {
-        return state == TrackerState.PAUSED;
+        return state.get() == TrackerState.PAUSED;
     }
 
     public void resume() {
-        switch (state) {
+        switch (state.get()) {
             case INIT:
             case ERROR:
             case INITIALIZING:
@@ -399,10 +400,10 @@ public class Tracker extends android.app.Service implements
                 return;
         }
 
-        assert (state == TrackerState.PAUSED);
+        assert (state.get() == TrackerState.PAUSED);
         // TODO: check is mLastLocation is recent enough
         mActivityLastLocation = mLastLocation;
-        state = TrackerState.STARTED;
+        state.set(TrackerState.STARTED);
         setNextLocationType(DB.LOCATION.TYPE_RESUME);
         if (mActivityLastLocation != null) {
             /**
@@ -413,12 +414,12 @@ public class Tracker extends android.app.Service implements
     }
 
     public void reset() {
-        switch (state) {
+        switch (state.get()) {
             case INIT:
                 return;
             case INITIALIZING:
                 // cleanup when INITIALIZE is complete
-                state = TrackerState.CLEANUP;
+                state.set(TrackerState.CLEANUP);
                 return;
             case INITIALIZED:
             case ERROR:
@@ -438,7 +439,7 @@ public class Tracker extends android.app.Service implements
             workout = null;
         }
 
-        state = TrackerState.CLEANUP;
+        state.set(TrackerState.CLEANUP);
         liveLoggers.clear();
         TrackerComponent.ResultCode res = components.onEnd(onEndCallback, getApplicationContext());
         if (res != TrackerComponent.ResultCode.RESULT_PENDING)
@@ -448,24 +449,24 @@ public class Tracker extends android.app.Service implements
     private final TrackerComponent.Callback onEndCallback = new TrackerComponent.Callback() {
         @Override
         public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (state == TrackerState.INITIALIZING) {
+            if (state.get() == TrackerState.INITIALIZING) {
                 /**
                  * setup was called during cleanup
                  */
-                state = TrackerState.INIT;
+                state.set(TrackerState.INIT);
                 setup();
                 return;
             }
             if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
-                state = TrackerState.ERROR;
+                state.set(TrackerState.ERROR);
             } else {
-                state = TrackerState.INIT;
+                state.set(TrackerState.INIT);
             }
         }
     };
 
     public void completeActivity(boolean save) {
-        assert (state == TrackerState.PAUSED);
+        assert (state.get() == TrackerState.PAUSED);
 
         setNextLocationType(DB.LOCATION.TYPE_END);
         if (mActivityLastLocation != null) {
@@ -535,7 +536,7 @@ public class Tracker extends android.app.Service implements
             arg0.setTime(arg0.getTime() + mBug23937Delta);
         }
 
-        if (state == TrackerState.STARTED) {
+        if (state.get() == TrackerState.STARTED) {
             Integer hrValue = getCurrentHRValue(now, MAX_HR_AGE);
             if (mActivityLastLocation != null) {
                 double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
@@ -605,7 +606,15 @@ public class Tracker extends android.app.Service implements
     }
 
     public TrackerState getState() {
-        return state;
+        return state.get();
+    }
+
+    public void registerTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
+        state.registerChangeListener(listener);
+    }
+
+    public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
+        state.unregisterChangeListener(listener);
     }
 
     /**
