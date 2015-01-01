@@ -49,7 +49,13 @@ public class ValueModel<T> {
 
         T oldValue = value;
         value = newValue;
-        for (ChangeListener<T> l : listeners) {
+
+        /**
+         * iterate over copy so that this can be modified during iteration
+         * (i.e by onValueChanged())
+         */
+        ArrayList<ChangeListener<T>> copy = new ArrayList<ChangeListener<T>>(listeners);
+        for (ChangeListener<T> l : copy) {
             l.onValueChanged(oldValue, newValue);
         }
     }
