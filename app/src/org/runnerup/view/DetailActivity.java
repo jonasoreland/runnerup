@@ -143,6 +143,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
+        WidgetUtil.addLegacyOverflowButton(getWindow());
+
         Intent intent = getIntent();
         mID = intent.getLongExtra("ID", -1);
         String mode = intent.getStringExtra("mode");

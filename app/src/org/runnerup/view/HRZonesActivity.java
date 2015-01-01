@@ -41,6 +41,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.widget.WidgetUtil;
 
 import java.util.Vector;
 
@@ -75,6 +76,7 @@ public class HRZonesActivity extends Activity implements Constants {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.heartratezones);
+        WidgetUtil.addLegacyOverflowButton(getWindow());
 
         hrZones = new HRZones(this);
         hrZoneCalculator = new HRZoneCalculator(this);

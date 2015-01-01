@@ -45,10 +45,11 @@ import android.webkit.WebView;
 import android.widget.TabHost;
 
 import org.runnerup.R;
-import org.runnerup.db.DBHelper;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
+import org.runnerup.widget.WidgetUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,6 +131,7 @@ public class MainLayout extends TabActivity {
         tabHost.setBackgroundColor(Color.BLACK);
         tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
         tabHost.setCurrentTab(0);
+        WidgetUtil.addLegacyOverflowButton(getWindow());
 
         if (upgradeState == UpgradeState.UPGRADE) {
             whatsNew();

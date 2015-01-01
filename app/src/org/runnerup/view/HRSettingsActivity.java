@@ -54,6 +54,7 @@ import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Formatter;
+import org.runnerup.widget.WidgetUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +93,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hr_settings);
+        WidgetUtil.addLegacyOverflowButton(getWindow());
 
         providers = HRManager.getHRProviderList(this);
         deviceAdapter = new DeviceAdapter(this);

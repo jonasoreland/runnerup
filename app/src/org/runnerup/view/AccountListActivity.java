@@ -70,6 +70,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.account_list);
+        WidgetUtil.addLegacyOverflowButton(getWindow());
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();

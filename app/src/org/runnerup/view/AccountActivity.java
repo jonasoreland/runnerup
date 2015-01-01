@@ -49,6 +49,7 @@ import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.common.util.Constants;
+import org.runnerup.widget.WidgetUtil;
 
 import java.util.ArrayList;
 
@@ -72,6 +73,7 @@ public class AccountActivity extends Activity implements Constants {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.account);
+        WidgetUtil.addLegacyOverflowButton(getWindow());
 
         Intent intent = getIntent();
         uploader = intent.getStringExtra("uploader");

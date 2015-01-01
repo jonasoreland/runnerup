@@ -25,6 +25,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -66,6 +68,19 @@ public class WidgetUtil {
             v.setBackgroundDrawable(d);
         } else {
             v.setBackground(d);
+        }
+    }
+
+    public static void addLegacyOverflowButton(Window window) {
+        if (window.peekDecorView() == null) {
+            return;
+        }
+
+        try {
+            window.addFlags(WindowManager.LayoutParams.class.getField("FLAG_NEEDS_MENU_KEY").getInt(null));
+        } catch (NoSuchFieldException e) {
+            // Ignore since this field won't exist in most versions of Android
+        } catch (IllegalAccessException e) {
         }
     }
 }
