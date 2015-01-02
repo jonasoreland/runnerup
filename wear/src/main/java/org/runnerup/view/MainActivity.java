@@ -107,37 +107,64 @@ public class MainActivity extends Activity
         super.onStop();
     }
 
-    FragmentGridPagerAdapter createPager(FragmentManager fm) {
-        return new FragmentGridPagerAdapter(fm) {
+    private class PagerAdapter extends  FragmentGridPagerAdapter implements ValueModel.ChangeListener<TrackerState> {
+        int rows = 1;
+        int cols = 1;
+        Fragment fragments[][] = new Fragment[1][2];
 
-            Fragment fragments[][] = new Fragment[1][2];
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+            trackerState.registerChangeListener(this);
+            update(trackerState.get());
+        }
 
-            @Override
-            public Fragment getFragment(int row, int col) {
-                if (fragments[col][row] == null) {
-                    switch (row) {
-                        case RUN_INFO_ROW:
-                            fragments[col][row] = new RunInformationCardFragment();
-                            break;
-                        default:
-                        case PAUSE_RESUME_ROW:
-                            fragments[col][row] = new PauseResumeFragment();
-                            break;
-                    }
+        @Override
+        public Fragment getFragment(int row, int col) {
+            if (fragments[col][row] == null) {
+                switch (row) {
+                    case RUN_INFO_ROW:
+                        fragments[col][row] = new RunInformationCardFragment();
+                        break;
+                    default:
+                    case PAUSE_RESUME_ROW:
+                        fragments[col][row] = new PauseResumeFragment();
+                        break;
                 }
-                return fragments[col][row];
             }
+            return fragments[col][row];
+        }
 
-            @Override
-            public int getRowCount() {
-                return 2;
-            }
+        @Override
+        public int getRowCount() {
+            return rows;
+        }
 
-            @Override
-            public int getColumnCount(int i) {
-                return 1;
+        @Override
+        public int getColumnCount(int i) {
+            return cols;
+        }
+
+        @Override
+        public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+            update(newValue);
+            notifyDataSetChanged();
+        }
+
+        private void update(TrackerState newValue) {
+            if (newValue == null) {
+                rows = 1;
+                cols = 1;
+                fragments[0][0] = new ConnectToPhoneFragment();
+            } else {
+                fragments[0][0] = null;
+                rows = 2;
+                cols = 1;
             }
-        };
+        }
+    }
+
+    FragmentGridPagerAdapter createPager(FragmentManager fm) {
+        return new PagerAdapter(fm);
     }
 
     private Bundle getData(long lastUpdateTime) {
@@ -286,7 +313,9 @@ public class MainActivity extends Activity
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    trackerState.set(newState);
+                    synchronized (trackerState) {
+                        trackerState.set(newState);
+                    }
                 }
             });
         }

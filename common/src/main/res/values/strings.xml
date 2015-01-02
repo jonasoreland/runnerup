@@ -256,4 +256,6 @@
   <string name="warning">Warning</string>
   <string name="battery_level_low_notification_txt">The battery level of your heart-rate monitor is low.</string>
   <string name="do_not_show_again">Do not show again</string>
+
+  <string name="waiting_for_phone">Waiting for phone</string>
 </resources>
