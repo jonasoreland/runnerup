@@ -22,10 +22,13 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -66,5 +69,10 @@ public class HeadsetButtonReceiver extends BroadcastReceiver {
                 context.sendBroadcast(startBroadcastIntent);
             }
         }
+    }
+
+    public static boolean getAllowStartStopFromHeadsetKey(Context ctx) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return pref.getBoolean(ctx.getString(R.string.pref_keystartstop_active), true);
     }
 }

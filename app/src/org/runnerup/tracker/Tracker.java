@@ -21,7 +21,6 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
@@ -30,9 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 
-import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
@@ -137,7 +134,7 @@ public class Tracker extends android.app.Service implements
         notificationStateManager = new NotificationStateManager(
                 new ForegroundNotificationDisplayStrategy(this));
 
-        if (getAllowStartStopFromHeadsetKey()) {
+        if (HeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(getApplicationContext())) {
             registerHeadsetListener();
         }
 
@@ -744,12 +741,6 @@ public class Tracker extends android.app.Service implements
         if (hrProvider == null)
             return null;
         return hrProvider.getBatteryLevel();
-    }
-
-    private boolean getAllowStartStopFromHeadsetKey() {
-        Context ctx = getApplicationContext();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return pref.getBoolean(getString(R.string.pref_keystartstop_active), true);
     }
 
     private void registerHeadsetListener() {
