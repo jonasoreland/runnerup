@@ -105,6 +105,7 @@ public class Tracker extends android.app.Service implements
 
     final boolean mWithoutGps = false;
 
+    TrackerState nextState; //
     final ValueModel<TrackerState> state = new ValueModel<TrackerState>(TrackerState.INIT);
     int mLocationType = DB.LOCATION.TYPE_START;
 
@@ -188,8 +189,8 @@ public class Tracker extends android.app.Service implements
                 /**
                  * if CLEANUP is in progress, setup will continue once complete
                  */
-                state.set(TrackerState.INITIALIZING);
-                break;
+                nextState = TrackerState.INITIALIZING;
+                return;
         }
 
         wakelock(true);
@@ -211,21 +212,38 @@ public class Tracker extends android.app.Service implements
     private final TrackerComponent.Callback onInitCallback = new TrackerComponent.Callback() {
         @Override
         public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (state.get() == TrackerState.CLEANUP) {
-                /**
-                 * reset was called while we were initializing
-                 */
-                state.set(TrackerState.INITIALIZED);
-                reset();
-                return;
-            }
             if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
                 state.set(TrackerState.ERROR);
             } else {
                 state.set(TrackerState.INITIALIZED);
             }
+
+            handleNextState();
         }
     };
+
+    private void handleNextState() {
+        if (nextState == null)
+            return;
+
+        TrackerState tmp = nextState;
+        nextState = null;
+
+        if (tmp == TrackerState.INITIALIZING) {
+            /**
+             * setup was called during cleanup
+             */
+            setup();
+            return;
+        }
+        if (tmp == TrackerState.CLEANUP) {
+            /**
+             * reset was called while we were initializing
+             */
+            reset();
+            return;
+        }
+    }
 
     private long getBug23937Delta() {
         return mBug23937Delta;
@@ -419,7 +437,7 @@ public class Tracker extends android.app.Service implements
                 return;
             case INITIALIZING:
                 // cleanup when INITIALIZE is complete
-                state.set(TrackerState.CLEANUP);
+                nextState = TrackerState.CLEANUP;
                 return;
             case INITIALIZED:
             case ERROR:
@@ -449,19 +467,13 @@ public class Tracker extends android.app.Service implements
     private final TrackerComponent.Callback onEndCallback = new TrackerComponent.Callback() {
         @Override
         public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (state.get() == TrackerState.INITIALIZING) {
-                /**
-                 * setup was called during cleanup
-                 */
-                state.set(TrackerState.INIT);
-                setup();
-                return;
-            }
             if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
                 state.set(TrackerState.ERROR);
             } else {
                 state.set(TrackerState.INIT);
             }
+
+            handleNextState();
         }
     };
 
