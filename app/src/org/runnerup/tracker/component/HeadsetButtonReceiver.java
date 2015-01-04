@@ -15,12 +15,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.runnerup.workout;
+package org.runnerup.tracker.component;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Build;
 import android.view.KeyEvent;
 
@@ -28,6 +30,30 @@ import org.runnerup.common.util.Constants;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HeadsetButtonReceiver extends BroadcastReceiver {
+
+    public static void registerHeadsetListener(Context context) {
+        registerHeadsetListener(context, HeadsetButtonReceiver.class);
+    }
+
+    protected static void registerHeadsetListener(Context context,
+                                               Class<? extends BroadcastReceiver> class_) {
+        ComponentName mMediaReceiverCompName = new ComponentName(
+                context.getPackageName(), class_.getName());
+        AudioManager mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
+
+    public static void unregisterHeadsetListener(Context context) {
+        unregisterHeadsetListener(context, HeadsetButtonReceiver.class);
+    }
+
+    protected static void unregisterHeadsetListener(Context context,
+                                                 Class<? extends BroadcastReceiver> class_) {
+        ComponentName mMediaReceiverCompName = new ComponentName(
+                context.getPackageName(), class_.getName());
+        AudioManager mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -41,5 +67,4 @@ public class HeadsetButtonReceiver extends BroadcastReceiver {
             }
         }
     }
-
 }

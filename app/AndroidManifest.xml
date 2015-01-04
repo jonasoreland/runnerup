@@ -140,7 +140,7 @@
  		</service>
  		
 		<receiver
-		    android:name=".workout.HeadsetButtonReceiver"
+		    android:name=".tracker.component.HeadsetButtonReceiver"
 		    android:enabled="true" >
 		    <intent-filter>
 		        <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />

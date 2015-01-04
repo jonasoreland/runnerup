@@ -19,7 +19,6 @@ package org.runnerup.tracker;
 
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +27,6 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,9 +36,16 @@ import android.preference.PreferenceManager;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
+import org.runnerup.hr.HRProvider;
+import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
+import org.runnerup.notification.NotificationState;
+import org.runnerup.notification.NotificationStateManager;
+import org.runnerup.notification.OngoingState;
+import org.runnerup.tracker.component.HeadsetButtonReceiver;
 import org.runnerup.tracker.component.TrackerComponent;
 import org.runnerup.tracker.component.TrackerComponentCollection;
 import org.runnerup.tracker.component.TrackerGPS;
@@ -48,15 +53,8 @@ import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerTTS;
 import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
-import org.runnerup.hr.HRProvider;
-import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
-import org.runnerup.notification.NotificationState;
-import org.runnerup.notification.NotificationStateManager;
-import org.runnerup.notification.OngoingState;
-import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
-import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
@@ -753,17 +751,11 @@ public class Tracker extends android.app.Service implements
     }
 
     private void registerHeadsetListener() {
-        ComponentName mMediaReceiverCompName = new ComponentName(
-                getPackageName(), HeadsetButtonReceiver.class.getName());
-        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.registerMediaButtonEventReceiver(mMediaReceiverCompName);
+        HeadsetButtonReceiver.registerHeadsetListener(this);
     }
 
     private void unregisterHeadsetListener() {
-        ComponentName mMediaReceiverCompName = new ComponentName(
-                getPackageName(), HeadsetButtonReceiver.class.getName());
-        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
+        HeadsetButtonReceiver.unregisterHeadsetListener(this);
     }
 
     private final BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
