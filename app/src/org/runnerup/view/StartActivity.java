@@ -363,7 +363,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     private void registerStartEventListener() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.Intents.START_STOP);
+        intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
         registerReceiver(startEventBroadcastReceiver, intentFilter);
     }
 

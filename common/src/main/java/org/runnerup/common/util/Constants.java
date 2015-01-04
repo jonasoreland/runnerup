@@ -159,9 +159,10 @@ public interface Constants {
     }
 
     public interface Intents {
-        final String START_STOP = "org.runnerup.START_STOP";
+        final String PAUSE_RESUME = "org.runnerup.PAUSE_RESUME";
         final String NEW_LAP = "org.runnerup.NEW_LAP";
         final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
+        final String START_WORKOUT = "org.runnerup.START_WORKOUT";
     }
 
     public interface TRACKER_STATE {

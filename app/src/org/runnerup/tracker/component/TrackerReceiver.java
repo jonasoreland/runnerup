@@ -67,7 +67,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(Constants.Intents.START_STOP)) {
+            if (action.equals(Constants.Intents.PAUSE_RESUME)) {
                 if (tracker.getState() == TrackerState.PAUSED)
                     tracker.getWorkout().onResume(tracker.getWorkout());
                 else if (tracker.getState() == TrackerState.STARTED)
@@ -80,7 +80,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
     private void registerWorkoutBroadcastsListener() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.Intents.START_STOP);
+        intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
         context.registerReceiver(mWorkoutBroadcastReceiver, intentFilter);
     }
 
