@@ -224,6 +224,11 @@ public class Tracker extends android.app.Service implements
         if (nextState == null)
             return;
 
+        /* if last phase ended in error,
+         * don't continue with a new */
+        if (state.get() == TrackerState.ERROR)
+            return;
+
         TrackerState tmp = nextState;
         nextState = null;
 
