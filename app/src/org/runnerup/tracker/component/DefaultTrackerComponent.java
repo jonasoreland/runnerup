@@ -42,6 +42,11 @@ public abstract class DefaultTrackerComponent implements TrackerComponent {
         return ResultCode.RESULT_OK;
     }
 
+    @Override
+    public boolean isConnected() {
+        return true;
+    }
+
     /**
      * Called by Tracker before start
      *   Component shall populate bindValues

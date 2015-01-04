@@ -18,11 +18,9 @@
 package org.runnerup.tracker;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
@@ -50,6 +48,7 @@ import org.runnerup.tracker.component.TrackerComponent;
 import org.runnerup.tracker.component.TrackerComponentCollection;
 import org.runnerup.tracker.component.TrackerGPS;
 import org.runnerup.tracker.component.TrackerHRM;
+import org.runnerup.tracker.component.TrackerReceiver;
 import org.runnerup.tracker.component.TrackerTTS;
 import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
@@ -82,6 +81,8 @@ public class Tracker extends android.app.Service implements
     TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
     TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
     TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
+    TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(
+            new TrackerReceiver(this));
     TrackerWear trackerWear; // created if version is sufficient
 
     /**
@@ -168,7 +169,6 @@ public class Tracker extends android.app.Service implements
         }
 
         unregisterHeadsetListener();
-        unRegisterWorkoutBroadcastsListener();
         reset();
     }
 
@@ -307,9 +307,6 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.STARTED);
 
         activityOngoingState = new OngoingState(new Formatter(this), workout, this);
-
-
-        registerWorkoutBroadcastsListener();
 
         /**
          * And finally let workout know that we started
@@ -761,39 +758,6 @@ public class Tracker extends android.app.Service implements
 
     private void unregisterHeadsetListener() {
         HeadsetButtonReceiver.unregisterHeadsetListener(this);
-    }
-
-    private final BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (workout == null) return;
-            String action = intent.getAction();
-            if (action.equals(Intents.START_STOP)) {
-                if (workout.isPaused())
-                    workout.onResume(workout);
-                else
-                    workout.onPause(workout);
-            } else if (action.equals(Intents.NEW_LAP)) {
-                workout.onNewLap();
-            }
-        }
-    };
-
-    private void registerWorkoutBroadcastsListener() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intents.START_STOP);
-        registerReceiver(mWorkoutBroadcastReceiver, intentFilter);
-    }
-
-    private void unRegisterWorkoutBroadcastsListener() {
-        try {
-            unregisterReceiver(mWorkoutBroadcastReceiver);
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("Receiver not registered")) {
-            } else {
-                throw e;
-            }
-        }
     }
 
     public Workout getWorkout() {
