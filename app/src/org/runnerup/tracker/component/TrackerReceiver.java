@@ -55,14 +55,12 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
     @Override
     public void onStart() {
-        super.onStart();
         registerWorkoutBroadcastsListener();
     }
 
     @Override
     public void onComplete(boolean discarded) {
         unregisterWorkoutBroadcastsListener();
-        super.onComplete(discarded);
     }
 
     private final BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
@@ -93,5 +91,4 @@ public class TrackerReceiver extends DefaultTrackerComponent {
             e.printStackTrace();
         }
     }
-
 }
