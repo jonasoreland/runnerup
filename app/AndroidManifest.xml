@@ -146,7 +146,15 @@
 		        <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
 		    </intent-filter>
 		</receiver>
-		
+
+        <receiver
+            android:name=".view.StartActivityHeadsetButtonReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
+            </intent-filter>
+        </receiver>
+
 		<uses-library
 		    android:name="com.samsung.android.sdk.bt"
 			android:required="false" />

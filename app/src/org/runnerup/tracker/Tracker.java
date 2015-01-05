@@ -40,7 +40,6 @@ import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
 import org.runnerup.notification.NotificationState;
 import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.notification.OngoingState;
-import org.runnerup.tracker.component.HeadsetButtonReceiver;
 import org.runnerup.tracker.component.TrackerComponent;
 import org.runnerup.tracker.component.TrackerComponentCollection;
 import org.runnerup.tracker.component.TrackerGPS;
@@ -134,10 +133,6 @@ public class Tracker extends android.app.Service implements
         notificationStateManager = new NotificationStateManager(
                 new ForegroundNotificationDisplayStrategy(this));
 
-        if (HeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(getApplicationContext())) {
-            registerHeadsetListener();
-        }
-
         wakelock(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -165,7 +160,6 @@ public class Tracker extends android.app.Service implements
             mDBHelper = null;
         }
 
-        unregisterHeadsetListener();
         reset();
     }
 
@@ -741,14 +735,6 @@ public class Tracker extends android.app.Service implements
         if (hrProvider == null)
             return null;
         return hrProvider.getBatteryLevel();
-    }
-
-    private void registerHeadsetListener() {
-        HeadsetButtonReceiver.registerHeadsetListener(this);
-    }
-
-    private void unregisterHeadsetListener() {
-        HeadsetButtonReceiver.unregisterHeadsetListener(this);
     }
 
     public Workout getWorkout() {

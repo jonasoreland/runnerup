@@ -35,6 +35,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
     private Tracker tracker;
     private Context context;
+    private boolean headsetRegistered = false;
 
     public static final String NAME = "Receiver";
 
@@ -56,11 +57,19 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     @Override
     public void onStart() {
         registerWorkoutBroadcastsListener();
+        if (HeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(context)) {
+            headsetRegistered = true;
+            HeadsetButtonReceiver.registerHeadsetListener(context);
+        }
     }
 
     @Override
     public void onComplete(boolean discarded) {
         unregisterWorkoutBroadcastsListener();
+        if (headsetRegistered) {
+            headsetRegistered = false;
+            HeadsetButtonReceiver.unregisterHeadsetListener(context);
+        }
     }
 
     private final BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
