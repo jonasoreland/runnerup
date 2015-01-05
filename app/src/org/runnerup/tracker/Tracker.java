@@ -170,10 +170,13 @@ public class Tracker extends android.app.Service implements
             case INITIALIZING:
             case INITIALIZED:
                 return;
+            case CONNECTING:
+            case CONNECTED:
             case STARTED:
             case PAUSED:
             case ERROR:
                 assert(false);
+                return;
             case CLEANUP:
                 /**
                  * if CLEANUP is in progress, setup will continue once complete
@@ -347,6 +350,9 @@ public class Tracker extends android.app.Service implements
             case INITIALIZING:
             case INITIALIZED:
             case PAUSED:
+            case CONNECTING:
+            case CONNECTED:
+            case CLEANUP:
                 break;
             case STARTED:
                 stop();
@@ -401,6 +407,8 @@ public class Tracker extends android.app.Service implements
             case INITIALIZING:
             case CLEANUP:
             case INITIALIZED:
+            case CONNECTING:
+            case CONNECTED:
                 assert (false);
                 return;
             case PAUSED:
@@ -433,6 +441,9 @@ public class Tracker extends android.app.Service implements
             case INITIALIZED:
             case ERROR:
             case PAUSED:
+            case CONNECTING:
+            case CONNECTED:
+                // it's ok to "abort" connecting
                 break;
             case STARTED:
                 assert(false);
@@ -662,6 +673,8 @@ public class Tracker extends android.app.Service implements
                 return false;
             case INITIALIZING:
             case INITIALIZED:
+            case CONNECTING:
+            case CONNECTED:
             case STARTED:
             case PAUSED:
                 // check component

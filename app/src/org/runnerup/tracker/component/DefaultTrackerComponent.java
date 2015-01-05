@@ -43,8 +43,17 @@ public abstract class DefaultTrackerComponent implements TrackerComponent {
     }
 
     @Override
+    public ResultCode onConnecting(Callback callback) {
+        return ResultCode.RESULT_OK;
+    }
+
+    @Override
     public boolean isConnected() {
         return true;
+    }
+
+    @Override
+    public void onConnected() {
     }
 
     /**

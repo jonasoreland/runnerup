@@ -58,10 +58,21 @@ public interface TrackerComponent {
     ResultCode onInit(Callback callback, Context context);
 
     /**
+     * Called by Tracker when connecting
+     */
+    ResultCode onConnecting(Callback callback);
+
+    /**
      * is component connected (for some definition of connected)
      *   the value returned here is used to show connected/not connected icons
      */
     boolean isConnected();
+
+    /**
+     * Called by Tracker when all "mandatory" components are connected, i.e
+     *   we're ready to start
+     */
+    void onConnected();
 
     /**
      * Called by Tracker before start
