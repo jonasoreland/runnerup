@@ -307,6 +307,14 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         trackerState.unregisterChangeListener(listener);
     }
 
+    public void sendStart() {
+        if (!checkConnection())
+            return;
+
+        Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
+                Constants.Wear.Path.MSG_CMD_WORKOUT_START, null);
+    }
+
     public void sendPauseResume() {
         if (!checkConnection())
             return;

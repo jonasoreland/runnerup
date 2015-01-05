@@ -151,15 +151,30 @@ public class MainActivity extends Activity
         }
 
         private void update(TrackerState newValue) {
-            if (newValue == null) {
-                rows = 1;
-                cols = 1;
-                fragments[0][0] = new ConnectToPhoneFragment();
-            } else {
-                fragments[0][0] = null;
-                rows = 2;
-                cols = 1;
+            if (newValue != null) {
+                switch (newValue) {
+                    case INIT:
+                    case INITIALIZING:
+                    case CLEANUP:
+                    case ERROR:
+                        /* handle same way is newValue == null */
+                        break;
+                    case INITIALIZED:
+                        rows = 1;
+                        cols = 1;
+                        fragments[0][0] = new StartFragment();
+                        return;
+                    case STARTED:
+                    case PAUSED:
+                        fragments[0][0] = null;
+                        rows = 2;
+                        cols = 1;
+                        return;
+                }
             }
+            rows = 1;
+            cols = 1;
+            fragments[0][0] = new ConnectToPhoneFragment();
         }
     }
 
