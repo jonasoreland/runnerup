@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    <string name="cue_workout">dystans</string>
+    <string name="cue_activity">czas</string>
+    <string name="cue_lap">okrążenie</string>
+    <string name="cue_warmup">rozgrzewka</string>
+    <string name="cue_cooldown">uspokojenie</string>
+    <string name="cue_current">aktualny</string>
+    <string name="cue_recovery">regeneracja</string>
+    <string name="cue_hour">godzina</string>
+    <string name="cue_hours">godziny</string>
+    <string name="cue_minute">minuta</string>
+    <string name="cue_minutes">minuty</string>
+    <string name="cue_second">sekunda</string>
+    <string name="cue_seconds">sekundy</string>
+    <string name="cue_meter">metr</string>
+    <string name="cue_meters">metry</string>
+    <string name="cue_kilometer">kilometr</string>
+    <string name="cue_kilometers">kilometry</string>
+    <string name="cue_mile">mila</string>
+    <string name="cue_miles">mile</string>
+    <string name="cue_perkilometer">na kilometr</string>
+    <string name="cue_permile">na mile</string>
+    <string name="cue_started">rozpoczęte</string>
+    <string name="cue_paused">zatrzymana</string>
+    <string name="cue_resumed">wznowiona</string>
+    <string name="cue_stopped">zatrzymana</string>
+    <string name="cue_completed">zakończony</string>
+    <string name="cue_speedup">przyśpiesz</string>
+    <string name="cue_slowdown">zwolnij</string>
+</resources>
