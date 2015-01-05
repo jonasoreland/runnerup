@@ -34,6 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center"
+            android:gravity="center"
             android:orientation="vertical">
 
             <android.support.wearable.view.CircledImageView
@@ -49,7 +50,6 @@
                 android:id="@+id/txt_newlap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:text="@string/new_lap"
                 android:textColor="@color/white"
                 android:textSize="16sp"
@@ -60,6 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center"
+            android:gravity="center"
             android:orientation="vertical">
 
             <android.support.wearable.view.CircledImageView
@@ -75,7 +76,6 @@
                 android:id="@+id/txt_resume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:text="@string/resume"
                 android:textColor="@color/white"
                 android:textSize="16sp"
