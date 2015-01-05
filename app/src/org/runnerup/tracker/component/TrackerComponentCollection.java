@@ -85,6 +85,25 @@ public class TrackerComponentCollection implements TrackerComponent {
         }, callback, context);
     }
 
+    @Override
+    public ResultCode onConnecting(final Callback callback) {
+        return forEach("onConnecting", new Func1() {
+            @Override
+            public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
+                return comp0.onConnecting(callback0);
+            }
+        }, callback, null);
+    }
+
+    @Override
+    public void onConnected() {
+        for (Pair<TrackerComponent, ResultCode> pair : components.values()) {
+            if (pair.second == ResultCode.RESULT_OK) {
+                pair.first.onConnected();
+            }
+        }
+    }
+
     private ResultCode getResult(HashMap<String, Pair<TrackerComponent, ResultCode>> components) {
         ResultCode res = ResultCode.RESULT_OK;
         for (Pair<TrackerComponent,ResultCode> pair : components.values()) {
