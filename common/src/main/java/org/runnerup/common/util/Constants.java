@@ -198,6 +198,7 @@ public interface Constants {
             static final String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
             static final String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
             static final String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
+            static final String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
         };
 
         public interface RunInfo {
