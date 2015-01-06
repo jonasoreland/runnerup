@@ -30,8 +30,9 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
 
-public class StartFragment extends Fragment {
+public class StartFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
+    private TextView mTxt;
     private CircledImageView mButton;
     private MainActivity activity;
 
@@ -50,8 +51,32 @@ public class StartFragment extends Fragment {
 
         mButton = (CircledImageView) view.findViewById(R.id.icon_start);
         mButton.setOnClickListener(startButtonClick);
+        mTxt = (TextView) view.findViewById(R.id.txt_start);
 
         return view;
+    }
+
+    private void updateView(TrackerState state) {
+        switch (state) {
+            case INIT:
+            case INITIALIZING:
+            case INITIALIZED:
+                mTxt.setText(getString(R.string.start_gps));
+                break;
+            case CONNECTING:
+                break;
+            case CONNECTED:
+                mTxt.setText(getString(R.string.start_activity));
+                break;
+            case STARTED:
+                break;
+            case PAUSED:
+                break;
+            case CLEANUP:
+                break;
+            case ERROR:
+                break;
+        }
     }
 
     private View.OnClickListener startButtonClick = new View.OnClickListener() {
@@ -64,10 +89,13 @@ public class StartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        activity.registerTrackerStateListener(this);
+        updateView(this.activity.getTrackerState());
     }
 
     @Override
     public void onPause() {
+        activity.unregisterTrackerStateListener(this);
         super.onPause();
     }
 
@@ -75,5 +103,10 @@ public class StartFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = (MainActivity) activity;
+    }
+
+    @Override
+    public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+        updateView(newValue);
     }
 }

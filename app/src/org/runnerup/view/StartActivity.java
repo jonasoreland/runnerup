@@ -421,6 +421,23 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         if (getAutoStartGps()) {
             startGps();
         } else {
+            switch (mTracker.getState()) {
+                case INIT:
+                case CLEANUP:
+                    mTracker.setup();
+                    break;
+                case INITIALIZING:
+                case INITIALIZED:
+                    break;
+                case CONNECTING:
+                case CONNECTED:
+                case STARTED:
+                case PAUSED:
+                    assert(false);
+                    return;
+                case ERROR:
+                    break;
+            }
         }
         updateView();
     }

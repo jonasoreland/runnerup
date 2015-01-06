@@ -26,7 +26,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 
 import org.runnerup.R;
+import org.runnerup.tracker.GpsStatus;
 import org.runnerup.tracker.Tracker;
+import org.runnerup.util.TickListener;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
@@ -36,7 +38,7 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
  * Created by jonas on 12/11/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class TrackerGPS extends DefaultTrackerComponent {
+public class TrackerGPS extends DefaultTrackerComponent implements TickListener {
 
     private final boolean mWithoutGps = false;
     private int frequency_ms = 0;
@@ -44,6 +46,8 @@ public class TrackerGPS extends DefaultTrackerComponent {
     private final Tracker tracker;
 
     public static final String NAME = "GPS";
+    private GpsStatus mGpsStatus;
+    private Callback mConnectCallback;
 
     @Override
     public String getName() {
@@ -68,6 +72,10 @@ public class TrackerGPS extends DefaultTrackerComponent {
                         frequency_ms,
                         Integer.valueOf(frequency_meters),
                         tracker);
+                mGpsStatus = new GpsStatus(context);
+                mGpsStatus.start(this);
+                mConnectCallback = callback;
+                return ResultCode.RESULT_PENDING;
             } else {
                 String list[] = {
                         GPS_PROVIDER,
@@ -87,8 +95,10 @@ public class TrackerGPS extends DefaultTrackerComponent {
                     mLastLocation.removeBearing();
                 }
                 gpsLessLocationProvider.run();
+                return ResultCode.RESULT_OK;
             }
-            return ResultCode.RESULT_OK;
+
+
         } catch (Exception ex) {
             return ResultCode.RESULT_ERROR;
         }
@@ -99,15 +109,27 @@ public class TrackerGPS extends DefaultTrackerComponent {
         if (mWithoutGps)
             return true;
 
-        // TODO move gpsStatus into here...
-        return true;
+        if (mGpsStatus == null)
+            return false;
+
+        return mGpsStatus.isFixed();
     }
 
     @Override
     public ResultCode onEnd(Callback callback, Context context) {
-        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (mWithoutGps == false) {
-            lm.removeUpdates(tracker);
+            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            try {
+                lm.removeUpdates(tracker);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (mGpsStatus != null) {
+                mGpsStatus.stop(this);
+            }
+            mGpsStatus = null;
+            mConnectCallback = null;
         }
 
         return ResultCode.RESULT_OK;
@@ -142,4 +164,24 @@ public class TrackerGPS extends DefaultTrackerComponent {
             handler.postDelayed(this, frequency_ms);
         }
     };
+
+    @Override
+    public void onTick() {
+        if (mGpsStatus == null)
+            return;
+
+        if (!mGpsStatus.isFixed())
+            return;
+
+        if (mConnectCallback == null)
+            return;
+
+        Callback tmp = mConnectCallback;
+
+        mConnectCallback = null;
+        mGpsStatus.stop(this);
+        //note: Don't reset mGpsStatus, it's used for isConnected()
+
+        tmp.run(this, ResultCode.RESULT_OK);
+    }
 }
