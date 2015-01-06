@@ -164,6 +164,16 @@ public class MainActivity extends Activity
                         cols = 1;
                         fragments[0][0] = new StartFragment();
                         return;
+                    case CONNECTING:
+                        rows = 1;
+                        cols = 1;
+                        fragments[0][0] = new SearchingFragment();
+                        return;
+                    case CONNECTED:
+                        rows = 1;
+                        cols = 1;
+                        fragments[0][0] = new StartFragment();
+                        return;
                     case STARTED:
                     case PAUSED:
                         fragments[0][0] = null;
