@@ -47,7 +47,7 @@ public class TrackerHRM extends DefaultTrackerComponent {
     }
 
     @Override
-    public ResultCode onInit(final Callback callback, final Context context) {
+    public ResultCode onConnecting(final Callback callback, final Context context) {
         Resources res = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);

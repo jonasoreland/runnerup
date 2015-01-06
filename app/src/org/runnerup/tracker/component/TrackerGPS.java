@@ -55,7 +55,7 @@ public class TrackerGPS extends DefaultTrackerComponent {
     }
 
     @Override
-    public ResultCode onInit(final Callback callback, Context context) {
+    public ResultCode onConnecting(final Callback callback, Context context) {
         try {
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -96,7 +96,11 @@ public class TrackerGPS extends DefaultTrackerComponent {
 
     @Override
     public boolean isConnected() {
-        return true; // TODO gpsStatus
+        if (mWithoutGps)
+            return true;
+
+        // TODO move gpsStatus into here...
+        return true;
     }
 
     @Override
