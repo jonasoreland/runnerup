@@ -386,7 +386,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         return;
 
                     if (mTracker.getState() == TrackerState.INIT /* this will start gps */||
-                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/) {
+                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
+                        mTracker.getState() == TrackerState.CONNECTED) {
                         startButton.performClick();
                     }
                 }
@@ -434,8 +435,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         System.err.println("StartActivity.startGps()");
         if (mGpsStatus != null && !mGpsStatus.isLogging())
             mGpsStatus.start(this);
-        if (mTracker != null)
-            mTracker.setup();
+
+        if (mTracker != null) {
+            mTracker.connect();
+        }
 
         notificationStateManager.displayNotificationState(gpsSearchingState);
     }
@@ -526,7 +529,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 return;
             } else if (mGpsStatus.isEnabled() == false) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            } else if (mTracker.getState() != TrackerState.INITIALIZED) {
+            } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
             } else if (mGpsStatus.isFixed()) {
                 Context ctx = getApplicationContext();

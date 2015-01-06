@@ -185,12 +185,7 @@ public class Tracker extends android.app.Service implements
                 return;
         }
 
-        wakelock(true);
         state.set(TrackerState.INITIALIZING);
-
-        UploadManager u = new UploadManager(this);
-        u.loadLiveLoggers(liveLoggers);
-        u.close();
 
         TrackerComponent.ResultCode result = components.onInit(onInitCallback,
                 getApplicationContext());
@@ -240,7 +235,63 @@ public class Tracker extends android.app.Service implements
             reset();
             return;
         }
+        if (tmp == TrackerState.CONNECTING) {
+            connect();
+            return;
+        }
     }
+
+    public void connect() {
+        System.err.println("Tracker.connect() - state: " + state.get());
+        switch (state.get()) {
+            case INIT:
+                setup();
+            case INITIALIZING:
+                nextState = TrackerState.CONNECTING;
+                System.err.println(" => nextState: " + nextState);
+                return;
+            case INITIALIZED:
+                break;
+            case CONNECTING:
+            case CONNECTED:
+                return;
+            case STARTED:
+            case PAUSED:
+            case ERROR:
+            case CLEANUP:
+                assert(false);
+                return;
+        }
+
+        state.set(TrackerState.CONNECTING);
+
+        wakelock(true);
+
+        UploadManager u = new UploadManager(this);
+        u.loadLiveLoggers(liveLoggers);
+        u.close();
+
+        TrackerComponent.ResultCode result = components.onConnecting(onConnectCallback,
+                getApplicationContext());
+        if (result == TrackerComponent.ResultCode.RESULT_PENDING) {
+            return;
+        } else {
+            onConnectCallback.run(components, result);
+        }
+    }
+
+    private final TrackerComponent.Callback onConnectCallback = new TrackerComponent.Callback() {
+        @Override
+        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
+            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+                state.set(TrackerState.ERROR);
+            } else {
+                state.set(TrackerState.CONNECTED);
+            }
+            /* now we're connected */
+            components.onConnected();
+        }
+    };
 
     private long getBug23937Delta() {
         return mBug23937Delta;
@@ -263,7 +314,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public void start(Workout workout_) {
-        assert (state.get() == TrackerState.INITIALIZED);
+        assert (state.get() == TrackerState.CONNECTED);
 
         // connect workout and tracker
         this.workout = workout_;
