@@ -103,7 +103,8 @@ public interface TrackerComponent {
     void onComplete(boolean discarded);
 
     /**
-     * Called by tracked after workout has ended
+     * Called by tracker when shutting down
+     * can be called while CONNECTING (but not while INITIALIZING)
      */
     ResultCode onEnd(Callback callback, Context context);
 }
