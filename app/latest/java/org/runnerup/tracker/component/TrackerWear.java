@@ -18,6 +18,7 @@ package org.runnerup.tracker.component;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -303,6 +304,14 @@ public class TrackerWear extends DefaultTrackerComponent
             if (tracker.getState() == TrackerState.STARTED ||
                     tracker.getState() == TrackerState.PAUSED)
                 tracker.getWorkout().onNewLapOrNextStep();
+        } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
+            /* send broadcast to StartActivity
+             * note: skip state checking, do that in StartActivity instead
+             */
+            Intent startBroadcastIntent = new Intent();
+            startBroadcastIntent.setAction(Constants.Intents.START_WORKOUT);
+            context.sendBroadcast(startBroadcastIntent);
+            return;
         }
     }
 

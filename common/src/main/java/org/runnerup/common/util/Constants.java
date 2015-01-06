@@ -159,19 +159,22 @@ public interface Constants {
     }
 
     public interface Intents {
-        final String START_STOP = "org.runnerup.START_STOP";
+        final String PAUSE_RESUME = "org.runnerup.PAUSE_RESUME";
         final String NEW_LAP = "org.runnerup.NEW_LAP";
         final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
+        final String START_WORKOUT = "org.runnerup.START_WORKOUT";
     }
 
     public interface TRACKER_STATE {
         public static final int INIT = 0;         // initial state
         public static final int INITIALIZING = 1; // initializing components
-        public static final int INITIALIZED = 2;  // initialized, ready to start
+        public static final int INITIALIZED = 2;  // initialized
         public static final int STARTED = 3;      // Workout started
         public static final int PAUSED = 4;       // Workout paused
         public static final int CLEANUP = 5;      // Cleaning up components
         public static final int ERROR = 6;        // Components failed to initialize ;
+        public static final int CONNECTING = 7;
+        public static final int CONNECTED = 8;
     };
 
     public interface Wear {
@@ -197,6 +200,7 @@ public interface Constants {
             static final String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
             static final String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
             static final String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
+            static final String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
         };
 
         public interface RunInfo {

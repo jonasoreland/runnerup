@@ -36,6 +36,8 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -146,20 +148,54 @@ public class MainActivity extends Activity
 
         @Override
         public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+            if ((TrackerState.equals(TrackerState.PAUSED, oldValue) &&
+                 TrackerState.equals(TrackerState.STARTED, newValue)) ||
+                (TrackerState.equals(TrackerState.PAUSED, newValue) &&
+                            TrackerState.equals(TrackerState.STARTED, oldValue))) {
+                /* no need to various updates */
+                return;
+            }
+
             update(newValue);
             notifyDataSetChanged();
         }
 
         private void update(TrackerState newValue) {
-            if (newValue == null) {
-                rows = 1;
-                cols = 1;
-                fragments[0][0] = new ConnectToPhoneFragment();
-            } else {
-                fragments[0][0] = null;
-                rows = 2;
-                cols = 1;
+            if (newValue != null) {
+                switch (newValue) {
+                    case INIT:
+                    case INITIALIZING:
+                    case CLEANUP:
+                    case ERROR:
+                        /* handle same way is newValue == null */
+                        break;
+                    case INITIALIZED:
+                        rows = 1;
+                        cols = 1;
+                        fragments[0][0] = new StartFragment();
+                        return;
+                    case CONNECTING:
+                        rows = 1;
+                        cols = 1;
+                        fragments[0][0] = new SearchingFragment();
+                        return;
+                    case CONNECTED:
+                        rows = 1;
+                        cols = 1;
+                        fragments[0][0] = new StartFragment();
+                        return;
+                    case STARTED:
+                    case PAUSED:
+                        fragments[0][0] = null;
+                        rows = 2;
+                        cols = 1;
+                        return;
+                }
             }
+            rows = 1;
+            cols = 1;
+            fragments[0][0] = new ConnectToPhoneFragment();
+            return;
         }
     }
 
@@ -190,7 +226,7 @@ public class MainActivity extends Activity
         pager.scrollTo(RUN_INFO_ROW, curr.y);
     }
 
-    public static class RunInformationCardFragment extends Fragment {
+    public static class RunInformationCardFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
         List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
         long dataUpdateTime;
@@ -270,10 +306,13 @@ public class MainActivity extends Activity
         public void onResume() {
             super.onResume();
             startTimer();
+            mainActivity.registerTrackerStateListener(this);
+            onValueChanged(null, mainActivity.getTrackerState());
         }
 
         @Override
         public void onPause() {
+            mainActivity.unregisterTrackerStateListener(this);
             super.onPause();
         }
 
@@ -281,6 +320,26 @@ public class MainActivity extends Activity
         public void onAttach(Activity activity) {
             super.onAttach(activity);
             mainActivity = (MainActivity) activity;
+        }
+
+        @Override
+        public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+            if (newValue == null)
+                return;
+
+            if (textViews.size() == 0)
+                return;
+
+            if (newValue == TrackerState.PAUSED) {
+                Animation anim = new AlphaAnimation(0, 1);
+                anim.setDuration(500);
+                anim.setStartOffset(20);
+                anim.setRepeatMode(Animation.REVERSE);
+                anim.setRepeatCount(Animation.INFINITE);
+                textViews.get(0).second.startAnimation(anim);
+            } else {
+                textViews.get(0).second.clearAnimation();
+            }
         }
     }
 

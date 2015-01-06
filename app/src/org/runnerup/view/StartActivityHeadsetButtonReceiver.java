@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com, weides@gmail.com
+ * Copyright (C) 2014 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,20 +14,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package org.runnerup.workout;
+package org.runnerup.view;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.view.KeyEvent;
 
 import org.runnerup.common.util.Constants;
+import org.runnerup.tracker.component.HeadsetButtonReceiver;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HeadsetButtonReceiver extends BroadcastReceiver {
+public class StartActivityHeadsetButtonReceiver extends HeadsetButtonReceiver {
+
+    public static void registerHeadsetListener(Context context) {
+        registerHeadsetListener(context, StartActivityHeadsetButtonReceiver.class);
+    }
+
+    public static void unregisterHeadsetListener(Context context) {
+        unregisterHeadsetListener(context, StartActivityHeadsetButtonReceiver.class);
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -36,10 +43,9 @@ public class HeadsetButtonReceiver extends BroadcastReceiver {
                     .getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (KeyEvent.ACTION_DOWN == event.getAction()) {
                 Intent startBroadcastIntent = new Intent();
-                startBroadcastIntent.setAction(Constants.Intents.START_STOP);
+                startBroadcastIntent.setAction(Constants.Intents.START_WORKOUT);
                 context.sendBroadcast(startBroadcastIntent);
             }
         }
     }
-
 }

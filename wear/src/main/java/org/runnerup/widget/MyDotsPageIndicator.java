@@ -77,6 +77,11 @@ public class MyDotsPageIndicator implements GridViewPager.OnPageChangeListener, 
     @Override
     public void onDataSetChanged() {
         layout.removeAllViews();
+
+        /* skip dot for only 1 row */
+        if (pager.getAdapter().getRowCount() <= 1)
+            return;
+
         for (int i = 0; i < pager.getAdapter().getRowCount(); i++) {
             Button b = new Button(layout.getContext());
             layout.addView(configDot(b, false));

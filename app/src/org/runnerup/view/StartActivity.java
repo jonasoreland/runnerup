@@ -56,6 +56,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
@@ -66,7 +67,6 @@ import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.tracker.GpsInformation;
 import org.runnerup.tracker.Tracker;
-import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.util.Formatter;
@@ -159,6 +159,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     private NotificationStateManager notificationStateManager;
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
+    private boolean headsetRegistered = false;
 
     /** Called when the activity is first created. */
 
@@ -310,16 +311,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        if (getAutoStartGps()) {
-            /**
-             * If autoStartGps, then stop it during pause
-             */
-            stopGps();
-        }
-        unRegisterStartEventListener();
+    public void onStart() {
+        super.onStart();
+        registerStartEventListener();
     }
 
     @Override
@@ -347,41 +341,28 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         } else {
             onGpsTrackerBound();
         }
-        registerStartEventListener();
-    }
-    private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    startButton.performClick();
-                }
-            });
-        }
-    };
-
-    private void registerStartEventListener() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.Intents.START_STOP);
-        registerReceiver(startEventBroadcastReceiver, intentFilter);
     }
 
-    private void unRegisterStartEventListener() {
-        try {
-            unregisterReceiver(startEventBroadcastReceiver);
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("Receiver not registered")) {
-            } else {
-                // unexpected, re-throw
-                throw e;
-            }
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (getAutoStartGps()) {
+            /**
+             * If autoStartGps, then stop it during pause
+             */
+            stopGps();
         }
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        unregisterStartEventListener();
+    }
+
+    @Override
     public void onDestroy() {
-        super.onDestroy();
         stopGps();
         unbindGpsTracker();
         mGpsStatus = null;
@@ -389,12 +370,74 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
         mDB.close();
         mDBHelper.close();
+        super.onDestroy();
+    }
+
+    private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mTracker == null)
+                        return;
+
+                    if (!startButton.isEnabled())
+                        return;
+
+                    if (mTracker.getState() == TrackerState.INIT /* this will start gps */||
+                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
+                        mTracker.getState() == TrackerState.CONNECTED) {
+                        startButton.performClick();
+                    }
+                }
+            });
+        }
+    };
+
+    private void registerStartEventListener() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.Intents.START_WORKOUT);
+        registerReceiver(startEventBroadcastReceiver, intentFilter);
+
+        if (StartActivityHeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(this)) {
+            headsetRegistered = true;
+            StartActivityHeadsetButtonReceiver.registerHeadsetListener(this);
+        }
+    }
+
+    private void unregisterStartEventListener() {
+        try {
+            unregisterReceiver(startEventBroadcastReceiver);
+        } catch (Exception e) {
+        }
+        if (headsetRegistered) {
+            headsetRegistered = false;
+            StartActivityHeadsetButtonReceiver.unregisterHeadsetListener(this);
+        }
     }
 
     void onGpsTrackerBound() {
         if (getAutoStartGps()) {
             startGps();
         } else {
+            switch (mTracker.getState()) {
+                case INIT:
+                case CLEANUP:
+                    mTracker.setup();
+                    break;
+                case INITIALIZING:
+                case INITIALIZED:
+                    break;
+                case CONNECTING:
+                case CONNECTED:
+                case STARTED:
+                case PAUSED:
+                    assert(false);
+                    return;
+                case ERROR:
+                    break;
+            }
         }
         updateView();
     }
@@ -409,8 +452,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         System.err.println("StartActivity.startGps()");
         if (mGpsStatus != null && !mGpsStatus.isLogging())
             mGpsStatus.start(this);
-        if (mTracker != null)
-            mTracker.setup();
+
+        if (mTracker != null) {
+            mTracker.connect();
+        }
 
         notificationStateManager.displayNotificationState(gpsSearchingState);
     }
@@ -501,7 +546,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 return;
             } else if (mGpsStatus.isEnabled() == false) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            } else if (mTracker.getState() != TrackerState.INITIALIZED) {
+            } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
             } else if (mGpsStatus.isFixed()) {
                 Context ctx = getApplicationContext();
@@ -538,6 +583,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
                 WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
                 mGpsStatus.stop(StartActivity.this);
+
+                /**
+                 * unregister receivers
+                 */
+                unregisterStartEventListener();
 
                 /**
                  * This will start the workout!
@@ -715,6 +765,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        registerStartEventListener();
+
         if (data != null) {
             if (data.getStringExtra("url") != null)
                 System.err.println("data.getStringExtra(\"url\") => " + data.getStringExtra("url"));

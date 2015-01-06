@@ -28,7 +28,9 @@ import org.runnerup.common.util.Constants;
 public enum TrackerState {
     INIT(Constants.TRACKER_STATE.INIT),                // initial state
     INITIALIZING(Constants.TRACKER_STATE.INITIALIZING),// initializing components
-    INITIALIZED(Constants.TRACKER_STATE.INITIALIZED),  // initialized, ready to start
+    INITIALIZED(Constants.TRACKER_STATE.INITIALIZED),  // initialized
+    CONNECTING(Constants.TRACKER_STATE.CONNECTING),    // connecting to e.g GPS
+    CONNECTED(Constants.TRACKER_STATE.CONNECTED),      // connected, ready to start
     STARTED(Constants.TRACKER_STATE.STARTED),          // Workout started
     PAUSED(Constants.TRACKER_STATE.PAUSED),            // Workout paused
     CLEANUP(Constants.TRACKER_STATE.CLEANUP),          // Cleaning up components
@@ -60,6 +62,10 @@ public enum TrackerState {
                 return CLEANUP;
             case Constants.TRACKER_STATE.ERROR:
                 return ERROR;
+            case Constants.TRACKER_STATE.CONNECTING:
+                return CONNECTING;
+            case Constants.TRACKER_STATE.CONNECTED:
+                return CONNECTED;
         }
         return null;
     }

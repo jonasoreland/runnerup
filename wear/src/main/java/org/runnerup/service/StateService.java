@@ -307,6 +307,14 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         trackerState.unregisterChangeListener(listener);
     }
 
+    public void sendStart() {
+        if (!checkConnection())
+            return;
+
+        Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
+                Constants.Wear.Path.MSG_CMD_WORKOUT_START, null);
+    }
+
     public void sendPauseResume() {
         if (!checkConnection())
             return;
@@ -314,7 +322,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         if (getTrackerState() == TrackerState.STARTED) {
             Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
                     Constants.Wear.Path.MSG_CMD_WORKOUT_PAUSE, null);
-        } else {
+        } else if (getTrackerState() == TrackerState.PAUSED) {
             Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
                     Constants.Wear.Path.MSG_CMD_WORKOUT_RESUME, null);
         }

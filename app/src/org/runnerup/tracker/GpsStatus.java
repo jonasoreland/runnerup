@@ -72,6 +72,7 @@ public class GpsStatus implements LocationListener,
     }
 
     public void start(TickListener listener) {
+        clear(true);
         this.listener = listener;
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         try {
@@ -93,7 +94,6 @@ public class GpsStatus implements LocationListener,
             locationManager.removeUpdates(this);
             locationManager = null;
         }
-        clear();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class GpsStatus implements LocationListener,
     @Override
     public void onProviderDisabled(String provider) {
         if (provider.equalsIgnoreCase("gps")) {
-            clear();
+            clear(true);
             if (listener != null)
                 listener.onTick();
         }
@@ -126,7 +126,7 @@ public class GpsStatus implements LocationListener,
     @Override
     public void onProviderEnabled(String provider) {
         if (provider.equalsIgnoreCase("gps")) {
-            clear();
+            clear(false);
             if (listener != null)
                 listener.onTick();
         }
@@ -137,7 +137,7 @@ public class GpsStatus implements LocationListener,
         if (provider.equalsIgnoreCase("gps")) {
             if (status == LocationProvider.OUT_OF_SERVICE
                     || status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
-                clear();
+                clear(true);
             }
             if (listener != null)
                 listener.onTick();
@@ -169,8 +169,10 @@ public class GpsStatus implements LocationListener,
             listener.onTick();
     }
 
-    private void clear() {
-        mIsFixed = false;
+    private void clear(boolean resetIsFixed) {
+        if (resetIsFixed) {
+            mIsFixed = false;
+        }
         mKnownSatellites = 0;
         mUsedInLastFixSatellites = 0;
         for (int i = 0; i < HIST_LEN; i++)

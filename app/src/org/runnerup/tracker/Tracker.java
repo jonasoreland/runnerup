@@ -18,45 +18,38 @@
 package org.runnerup.tracker;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 
-import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
-import org.runnerup.tracker.component.TrackerComponent;
-import org.runnerup.tracker.component.TrackerComponentCollection;
-import org.runnerup.tracker.component.TrackerGPS;
-import org.runnerup.tracker.component.TrackerHRM;
-import org.runnerup.tracker.component.TrackerTTS;
-import org.runnerup.tracker.component.TrackerWear;
-import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
 import org.runnerup.notification.NotificationState;
 import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.notification.OngoingState;
-import org.runnerup.common.util.Constants;
+import org.runnerup.tracker.component.TrackerComponent;
+import org.runnerup.tracker.component.TrackerComponentCollection;
+import org.runnerup.tracker.component.TrackerGPS;
+import org.runnerup.tracker.component.TrackerHRM;
+import org.runnerup.tracker.component.TrackerReceiver;
+import org.runnerup.tracker.component.TrackerTTS;
+import org.runnerup.tracker.component.TrackerWear;
+import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
-import org.runnerup.workout.HeadsetButtonReceiver;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
@@ -84,6 +77,8 @@ public class Tracker extends android.app.Service implements
     TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
     TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
     TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
+    TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(
+            new TrackerReceiver(this));
     TrackerWear trackerWear; // created if version is sufficient
 
     /**
@@ -105,6 +100,7 @@ public class Tracker extends android.app.Service implements
 
     final boolean mWithoutGps = false;
 
+    TrackerState nextState; //
     final ValueModel<TrackerState> state = new ValueModel<TrackerState>(TrackerState.INIT);
     int mLocationType = DB.LOCATION.TYPE_START;
 
@@ -137,10 +133,6 @@ public class Tracker extends android.app.Service implements
         notificationStateManager = new NotificationStateManager(
                 new ForegroundNotificationDisplayStrategy(this));
 
-        if (getAllowStartStopFromHeadsetKey()) {
-            registerHeadsetListener();
-        }
-
         wakelock(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -168,8 +160,6 @@ public class Tracker extends android.app.Service implements
             mDBHelper = null;
         }
 
-        unregisterHeadsetListener();
-        unRegisterWorkoutBroadcastsListener();
         reset();
     }
 
@@ -180,24 +170,22 @@ public class Tracker extends android.app.Service implements
             case INITIALIZING:
             case INITIALIZED:
                 return;
+            case CONNECTING:
+            case CONNECTED:
             case STARTED:
             case PAUSED:
             case ERROR:
                 assert(false);
+                return;
             case CLEANUP:
                 /**
                  * if CLEANUP is in progress, setup will continue once complete
                  */
-                state.set(TrackerState.INITIALIZING);
-                break;
+                nextState = TrackerState.INITIALIZING;
+                return;
         }
 
-        wakelock(true);
         state.set(TrackerState.INITIALIZING);
-
-        UploadManager u = new UploadManager(this);
-        u.loadLiveLoggers(liveLoggers);
-        u.close();
 
         TrackerComponent.ResultCode result = components.onInit(onInitCallback,
                 getApplicationContext());
@@ -211,19 +199,97 @@ public class Tracker extends android.app.Service implements
     private final TrackerComponent.Callback onInitCallback = new TrackerComponent.Callback() {
         @Override
         public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (state.get() == TrackerState.CLEANUP) {
-                /**
-                 * reset was called while we were initializing
-                 */
-                state.set(TrackerState.INITIALIZED);
-                reset();
-                return;
-            }
             if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
                 state.set(TrackerState.ERROR);
             } else {
                 state.set(TrackerState.INITIALIZED);
             }
+
+            handleNextState();
+        }
+    };
+
+    private void handleNextState() {
+        if (nextState == null)
+            return;
+
+        /* if last phase ended in error,
+         * don't continue with a new */
+        if (state.get() == TrackerState.ERROR)
+            return;
+
+        TrackerState tmp = nextState;
+        nextState = null;
+
+        if (tmp == TrackerState.INITIALIZING) {
+            /**
+             * setup was called during cleanup
+             */
+            setup();
+            return;
+        }
+        if (tmp == TrackerState.CLEANUP) {
+            /**
+             * reset was called while we were initializing
+             */
+            reset();
+            return;
+        }
+        if (tmp == TrackerState.CONNECTING) {
+            connect();
+            return;
+        }
+    }
+
+    public void connect() {
+        System.err.println("Tracker.connect() - state: " + state.get());
+        switch (state.get()) {
+            case INIT:
+                setup();
+            case INITIALIZING:
+                nextState = TrackerState.CONNECTING;
+                System.err.println(" => nextState: " + nextState);
+                return;
+            case INITIALIZED:
+                break;
+            case CONNECTING:
+            case CONNECTED:
+                return;
+            case STARTED:
+            case PAUSED:
+            case ERROR:
+            case CLEANUP:
+                assert(false);
+                return;
+        }
+
+        state.set(TrackerState.CONNECTING);
+
+        wakelock(true);
+
+        UploadManager u = new UploadManager(this);
+        u.loadLiveLoggers(liveLoggers);
+        u.close();
+
+        TrackerComponent.ResultCode result = components.onConnecting(onConnectCallback,
+                getApplicationContext());
+        if (result == TrackerComponent.ResultCode.RESULT_PENDING) {
+            return;
+        } else {
+            onConnectCallback.run(components, result);
+        }
+    }
+
+    private final TrackerComponent.Callback onConnectCallback = new TrackerComponent.Callback() {
+        @Override
+        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
+            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+                state.set(TrackerState.ERROR);
+            } else {
+                state.set(TrackerState.CONNECTED);
+            }
+            /* now we're connected */
+            components.onConnected();
         }
     };
 
@@ -248,7 +314,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public void start(Workout workout_) {
-        assert (state.get() == TrackerState.INITIALIZED);
+        assert (state.get() == TrackerState.CONNECTED);
 
         // connect workout and tracker
         this.workout = workout_;
@@ -286,9 +352,6 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.STARTED);
 
         activityOngoingState = new OngoingState(new Formatter(this), workout, this);
-
-
-        registerWorkoutBroadcastsListener();
 
         /**
          * And finally let workout know that we started
@@ -338,6 +401,9 @@ public class Tracker extends android.app.Service implements
             case INITIALIZING:
             case INITIALIZED:
             case PAUSED:
+            case CONNECTING:
+            case CONNECTED:
+            case CLEANUP:
                 break;
             case STARTED:
                 stop();
@@ -392,6 +458,8 @@ public class Tracker extends android.app.Service implements
             case INITIALIZING:
             case CLEANUP:
             case INITIALIZED:
+            case CONNECTING:
+            case CONNECTED:
                 assert (false);
                 return;
             case PAUSED:
@@ -419,11 +487,14 @@ public class Tracker extends android.app.Service implements
                 return;
             case INITIALIZING:
                 // cleanup when INITIALIZE is complete
-                state.set(TrackerState.CLEANUP);
+                nextState = TrackerState.CLEANUP;
                 return;
             case INITIALIZED:
             case ERROR:
             case PAUSED:
+            case CONNECTING:
+            case CONNECTED:
+                // it's ok to "abort" connecting
                 break;
             case STARTED:
                 assert(false);
@@ -449,19 +520,13 @@ public class Tracker extends android.app.Service implements
     private final TrackerComponent.Callback onEndCallback = new TrackerComponent.Callback() {
         @Override
         public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (state.get() == TrackerState.INITIALIZING) {
-                /**
-                 * setup was called during cleanup
-                 */
-                state.set(TrackerState.INIT);
-                setup();
-                return;
-            }
             if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
                 state.set(TrackerState.ERROR);
             } else {
                 state.set(TrackerState.INIT);
             }
+
+            handleNextState();
         }
     };
 
@@ -659,6 +724,8 @@ public class Tracker extends android.app.Service implements
                 return false;
             case INITIALIZING:
             case INITIALIZED:
+            case CONNECTING:
+            case CONNECTED:
             case STARTED:
             case PAUSED:
                 // check component
@@ -732,59 +799,6 @@ public class Tracker extends android.app.Service implements
         if (hrProvider == null)
             return null;
         return hrProvider.getBatteryLevel();
-    }
-
-    private boolean getAllowStartStopFromHeadsetKey() {
-        Context ctx = getApplicationContext();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        return pref.getBoolean(getString(R.string.pref_keystartstop_active), true);
-    }
-
-    private void registerHeadsetListener() {
-        ComponentName mMediaReceiverCompName = new ComponentName(
-                getPackageName(), HeadsetButtonReceiver.class.getName());
-        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.registerMediaButtonEventReceiver(mMediaReceiverCompName);
-    }
-
-    private void unregisterHeadsetListener() {
-        ComponentName mMediaReceiverCompName = new ComponentName(
-                getPackageName(), HeadsetButtonReceiver.class.getName());
-        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.unregisterMediaButtonEventReceiver(mMediaReceiverCompName);
-    }
-
-    private final BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (workout == null) return;
-            String action = intent.getAction();
-            if (action.equals(Intents.START_STOP)) {
-                if (workout.isPaused())
-                    workout.onResume(workout);
-                else
-                    workout.onPause(workout);
-            } else if (action.equals(Intents.NEW_LAP)) {
-                workout.onNewLap();
-            }
-        }
-    };
-
-    private void registerWorkoutBroadcastsListener() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intents.START_STOP);
-        registerReceiver(mWorkoutBroadcastReceiver, intentFilter);
-    }
-
-    private void unRegisterWorkoutBroadcastsListener() {
-        try {
-            unregisterReceiver(mWorkoutBroadcastReceiver);
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("Receiver not registered")) {
-            } else {
-                throw e;
-            }
-        }
     }
 
     public Workout getWorkout() {

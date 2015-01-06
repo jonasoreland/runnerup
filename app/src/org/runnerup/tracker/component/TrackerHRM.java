@@ -47,7 +47,7 @@ public class TrackerHRM extends DefaultTrackerComponent {
     }
 
     @Override
-    public ResultCode onInit(final Callback callback, final Context context) {
+    public ResultCode onConnecting(final Callback callback, final Context context) {
         Resources res = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
@@ -78,6 +78,7 @@ public class TrackerHRM extends DefaultTrackerComponent {
                     }
 
                     /* return RESULT_OK and connect in background */
+                    // TODO: make it possible to make HRM mandatory i.e don't connect in background
                     callback.run(TrackerHRM.this, ResultCode.RESULT_OK);
 
                     hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
@@ -115,6 +116,13 @@ public class TrackerHRM extends DefaultTrackerComponent {
     }
 
     @Override
+    public boolean isConnected() {
+        if (hrProvider == null)
+            return false;
+        return hrProvider.isConnected();
+    }
+
+    @Override
     public ResultCode onEnd(Callback callback, Context context) {
         if (hrProvider != null) {
             hrProvider.disconnect();
@@ -126,12 +134,5 @@ public class TrackerHRM extends DefaultTrackerComponent {
 
     public HRProvider getHrProvider() {
         return hrProvider;
-    }
-
-    @Override
-    public boolean isConnected() {
-        if (hrProvider == null)
-            return false;
-        return hrProvider.isConnected();
     }
 }

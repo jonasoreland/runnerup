@@ -72,6 +72,8 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
                 case INITIALIZED:
                 case CLEANUP:
                 case ERROR:
+                case CONNECTING:
+                case CONNECTED:
                     break;
                 case STARTED:
                     mButtonNewLap.setEnabled(true);
