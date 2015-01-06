@@ -86,13 +86,13 @@ public class TrackerComponentCollection implements TrackerComponent {
     }
 
     @Override
-    public ResultCode onConnecting(final Callback callback) {
+    public ResultCode onConnecting(final Callback callback, Context context) {
         return forEach("onConnecting", new Func1() {
             @Override
             public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
-                return comp0.onConnecting(callback0);
+                return comp0.onConnecting(callback0, context0);
             }
-        }, callback, null);
+        }, callback, context);
     }
 
     @Override

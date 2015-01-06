@@ -60,7 +60,7 @@ public interface TrackerComponent {
     /**
      * Called by Tracker when connecting
      */
-    ResultCode onConnecting(Callback callback);
+    ResultCode onConnecting(Callback callback, Context context);
 
     /**
      * is component connected (for some definition of connected)

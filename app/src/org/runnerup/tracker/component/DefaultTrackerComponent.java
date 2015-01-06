@@ -43,7 +43,7 @@ public abstract class DefaultTrackerComponent implements TrackerComponent {
     }
 
     @Override
-    public ResultCode onConnecting(Callback callback) {
+    public ResultCode onConnecting(Callback callback, Context context) {
         return ResultCode.RESULT_OK;
     }
 
