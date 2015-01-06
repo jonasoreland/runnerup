@@ -55,12 +55,16 @@ public class CountdownFeedback extends Feedback {
 
     @Override
     public void onStart(Workout s) {
-        textView.setVisibility(View.VISIBLE);
+        if (textView != null) {
+            textView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onEnd(Workout s) {
-        textView.setVisibility(View.GONE);
+        if (textView != null) {
+            textView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -85,5 +89,4 @@ public class CountdownFeedback extends Feedback {
             textView.setVisibility(View.INVISIBLE);
         }
     }
-
 }
