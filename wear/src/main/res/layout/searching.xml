@@ -41,7 +41,7 @@
                 android:id="@+id/icon_searching"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_av_location"
+                android:foreground="@drawable/searching_animation"
                 app:circle_border_width="0dp"
                 app:circle_color="@color/action_button"
                 app:circle_radius="32dp" />

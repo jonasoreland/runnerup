@@ -18,6 +18,7 @@ package org.runnerup.view;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
@@ -43,6 +44,10 @@ public class SearchingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.searching, container, false);
         super.onViewCreated(view, savedInstanceState);
+
+        mButton = (CircledImageView) view.findViewById(R.id.icon_searching);
+        AnimationDrawable frameAnimation = (AnimationDrawable) mButton.getForeground();
+        frameAnimation.start();
 
         return view;
     }

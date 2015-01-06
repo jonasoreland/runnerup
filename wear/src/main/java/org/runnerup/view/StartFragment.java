@@ -57,6 +57,8 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
     }
 
     private void updateView(TrackerState state) {
+        if (state == null)
+            return;
         switch (state) {
             case INIT:
             case INITIALIZING:
