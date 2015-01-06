@@ -133,7 +133,7 @@ public class Tracker extends android.app.Service implements
         notificationStateManager = new NotificationStateManager(
                 new ForegroundNotificationDisplayStrategy(this));
 
-        wakelock(false);
+        wakeLock(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             // >= 4.3
@@ -265,7 +265,7 @@ public class Tracker extends android.app.Service implements
 
         state.set(TrackerState.CONNECTING);
 
-        wakelock(true);
+        wakeLock(true);
 
         UploadManager u = new UploadManager(this);
         u.loadLiveLoggers(liveLoggers);
@@ -503,7 +503,7 @@ public class Tracker extends android.app.Service implements
                 return;
         }
 
-        wakelock(false);
+        wakeLock(false);
 
         if (workout != null) {
             workout.setTracker(null);
@@ -698,7 +698,7 @@ public class Tracker extends android.app.Service implements
         return mBinder;
     }
 
-    private void wakelock(boolean get) {
+    private void wakeLock(boolean get) {
         if (mWakeLock != null) {
             if (mWakeLock.isHeld()) {
                 mWakeLock.release();
