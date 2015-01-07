@@ -40,7 +40,6 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import org.runnerup.common.tracker.TrackerState;
-import org.runnerup.common.tracker.TrackerStateListener;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 
