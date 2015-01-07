@@ -44,7 +44,7 @@ public class PauseStep extends Step {
     @Override
     public void onStart(Scope what, Workout s) {
         if (what == Scope.STEP) {
-            s.tracker.stopOrPause();
+            s.tracker.pause();
             elapsedTime = 0;
             lastTime = android.os.SystemClock.elapsedRealtime();
             for (Trigger t : triggers) {

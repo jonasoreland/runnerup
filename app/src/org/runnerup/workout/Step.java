@@ -199,7 +199,7 @@ public class Step implements TickComponent {
             stepStartDistance = dist;
             stepStartHeartbeats = beats;
             if (s.isPaused())
-                s.tracker.stopOrPause();
+                s.tracker.pause();
             else
                 s.tracker.resume();
         } else if (what == Scope.LAP) {
@@ -250,11 +250,10 @@ public class Step implements TickComponent {
 
     @Override
     public void onStop(Workout s) {
+        s.tracker.stop();
         for (Trigger t : triggers) {
             t.onStop(s);
         }
-
-        s.tracker.stopOrPause();
 
         /**
          * Save current lap so that it shows in DetailActivity
@@ -274,7 +273,7 @@ public class Step implements TickComponent {
 
     @Override
     public void onPause(Workout s) {
-        s.tracker.stopOrPause();
+        s.tracker.pause();
         for (Trigger t : triggers) {
             t.onPause(s);
         }

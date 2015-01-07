@@ -175,6 +175,7 @@ public class Tracker extends android.app.Service implements
             case STARTED:
             case PAUSED:
             case ERROR:
+            case STOPPED:
                 assert(false);
                 return;
             case CLEANUP:
@@ -259,6 +260,7 @@ public class Tracker extends android.app.Service implements
             case PAUSED:
             case ERROR:
             case CLEANUP:
+            case STOPPED:
                 assert(false);
                 return;
         }
@@ -394,7 +396,7 @@ public class Tracker extends android.app.Service implements
         mDB.update(DB.LAP.TABLE, tmp, "_id = ?", key);
     }
 
-    public void stopOrPause() {
+    public void pause() {
         switch (state.get()) {
             case INIT:
             case ERROR:
@@ -404,26 +406,12 @@ public class Tracker extends android.app.Service implements
             case CONNECTING:
             case CONNECTED:
             case CLEANUP:
-                break;
+            case STOPPED:
+                return;
             case STARTED:
-                stop();
+                break;
         }
-    }
-
-    private ContentValues createActivityRow() {
-        ContentValues tmp = new ContentValues();
-        tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-        tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
-        if (mHeartbeatMillis > 0) {
-            long avgHR = Math.round((60 * 1000 * mHeartbeats) / mHeartbeatMillis); // BPM
-            tmp.put(Constants.DB.ACTIVITY.AVG_HR, avgHR);
-        }
-        if (mMaxHR > 0)
-            tmp.put(Constants.DB.ACTIVITY.MAX_HR, mMaxHR);
-        return tmp;
-    }
-
-    public void stop() {
+        state.set(TrackerState.PAUSED);
         setNextLocationType(DB.LOCATION.TYPE_PAUSE);
         if (mActivityLastLocation != null) {
             /**
@@ -432,12 +420,36 @@ public class Tracker extends android.app.Service implements
             internalOnLocationChanged(mActivityLastLocation);
         }
 
-        ContentValues tmp = createActivityRow();
-        String key[] = {
-            Long.toString(mActivityId)
-        };
-        mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-        state.set(TrackerState.PAUSED);
+        saveActivity();
+        components.onPause();
+    }
+
+    public void stop() {
+        switch (state.get()) {
+            case INIT:
+            case ERROR:
+            case INITIALIZING:
+            case INITIALIZED:
+            case CONNECTING:
+            case CONNECTED:
+            case CLEANUP:
+            case STOPPED:
+                return;
+            case PAUSED:
+            case STARTED:
+                break;
+        }
+        state.set(TrackerState.STOPPED);
+        setNextLocationType(DB.LOCATION.TYPE_PAUSE);
+        if (mActivityLastLocation != null) {
+            /**
+             * This saves mLastLocation as a PAUSE location
+             */
+            internalOnLocationChanged(mActivityLastLocation);
+        }
+
+        saveActivity();
+        components.onPause(); // TODO add new callback for this
     }
 
     private void internalOnLocationChanged(Location arg0) {
@@ -445,10 +457,6 @@ public class Tracker extends android.app.Service implements
         mBug23937Delta = 0;
         onLocationChanged(arg0);
         mBug23937Delta = save;
-    }
-
-    public boolean isPaused() {
-        return state.get() == TrackerState.PAUSED;
     }
 
     public void resume() {
@@ -463,12 +471,12 @@ public class Tracker extends android.app.Service implements
                 assert (false);
                 return;
             case PAUSED:
+            case STOPPED:
                 break;
             case STARTED:
                 return;
         }
 
-        assert (state.get() == TrackerState.PAUSED);
         // TODO: check is mLastLocation is recent enough
         mActivityLastLocation = mLastLocation;
         state.set(TrackerState.STARTED);
@@ -494,6 +502,7 @@ public class Tracker extends android.app.Service implements
             case PAUSED:
             case CONNECTING:
             case CONNECTED:
+            case STOPPED:
                 // it's ok to "abort" connecting
                 break;
             case STARTED:
@@ -531,7 +540,8 @@ public class Tracker extends android.app.Service implements
     };
 
     public void completeActivity(boolean save) {
-        assert (state.get() == TrackerState.PAUSED);
+        assert (state.get() == TrackerState.PAUSED ||
+                state.get() == TrackerState.STOPPED);
 
         setNextLocationType(DB.LOCATION.TYPE_END);
         if (mActivityLastLocation != null) {
@@ -539,11 +549,7 @@ public class Tracker extends android.app.Service implements
         }
 
         if (save) {
-            ContentValues tmp = createActivityRow();
-            String key[] = {
-                Long.toString(mActivityId)
-            };
-            mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
+            saveActivity();
             liveLog(DB.LOCATION.TYPE_END);
         } else {
             ContentValues tmp = new ContentValues();
@@ -557,6 +563,23 @@ public class Tracker extends android.app.Service implements
         components.onComplete(!save);
         notificationStateManager.cancelNotification();
         reset();
+    }
+
+    private void saveActivity() {
+        ContentValues tmp = new ContentValues();
+        tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+        tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
+        if (mHeartbeatMillis > 0) {
+            long avgHR = Math.round((60 * 1000 * mHeartbeats) / mHeartbeatMillis); // BPM
+            tmp.put(Constants.DB.ACTIVITY.AVG_HR, avgHR);
+        }
+        if (mMaxHR > 0)
+            tmp.put(Constants.DB.ACTIVITY.MAX_HR, mMaxHR);
+
+        String key[] = {
+                Long.toString(mActivityId)
+        };
+        mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
     }
 
     void setNextLocationType(int newType) {
@@ -728,6 +751,7 @@ public class Tracker extends android.app.Service implements
             case CONNECTED:
             case STARTED:
             case PAUSED:
+            case STOPPED:
                 // check component
                 break;
         }
