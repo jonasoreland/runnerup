@@ -33,6 +33,7 @@ public enum TrackerState {
     CONNECTED(Constants.TRACKER_STATE.CONNECTED),      // connected, ready to start
     STARTED(Constants.TRACKER_STATE.STARTED),          // Workout started
     PAUSED(Constants.TRACKER_STATE.PAUSED),            // Workout paused
+    STOPPED(Constants.TRACKER_STATE.STOPPED),          // Workout stopped (i.e save screen open)
     CLEANUP(Constants.TRACKER_STATE.CLEANUP),          // Cleaning up components
     ERROR(Constants.TRACKER_STATE.ERROR);              // Components failed to initialize
 
@@ -66,6 +67,8 @@ public enum TrackerState {
                 return CONNECTING;
             case Constants.TRACKER_STATE.CONNECTED:
                 return CONNECTED;
+            case Constants.TRACKER_STATE.STOPPED:
+                return STOPPED;
         }
         return null;
     }

@@ -175,6 +175,7 @@ public interface Constants {
         public static final int ERROR = 6;        // Components failed to initialize ;
         public static final int CONNECTING = 7;
         public static final int CONNECTED = 8;
+        public static final int STOPPED = 9;
     };
 
     public interface Wear {
