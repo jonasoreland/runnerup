@@ -190,6 +190,11 @@ public class MainActivity extends Activity
                         rows = 2;
                         cols = 1;
                         return;
+                    case STOPPED:
+                        fragments[0][1] = new StoppedFragment();
+                        rows = 2;
+                        cols = 1;
+                        return;
                 }
             }
             rows = 1;
