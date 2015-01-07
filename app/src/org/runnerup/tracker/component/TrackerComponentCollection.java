@@ -79,8 +79,12 @@ public class TrackerComponentCollection implements TrackerComponent {
     public ResultCode onInit(final Callback callback, Context context) {
         return forEach("onInit", new Func1() {
             @Override
-            public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
-                return comp0.onInit(callback0, context0);
+            public ResultCode apply(TrackerComponent comp0, ResultCode currentResultCode,
+                                    Callback callback0, Context context0) {
+                if (currentResultCode == ResultCode.RESULT_OK)
+                    return comp0.onInit(callback0, context0);
+                else
+                    return currentResultCode;
             }
         }, callback, context);
     }
@@ -89,8 +93,12 @@ public class TrackerComponentCollection implements TrackerComponent {
     public ResultCode onConnecting(final Callback callback, Context context) {
         return forEach("onConnecting", new Func1() {
             @Override
-            public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
-                return comp0.onConnecting(callback0, context0);
+            public ResultCode apply(TrackerComponent comp0, ResultCode currentResultCode,
+                                    Callback callback0, Context context0) {
+                if (currentResultCode == ResultCode.RESULT_OK)
+                    return comp0.onConnecting(callback0, context0);
+                else
+                    return currentResultCode;
             }
         }, callback, context);
     }
@@ -185,14 +193,17 @@ public class TrackerComponentCollection implements TrackerComponent {
     public ResultCode onEnd(final Callback callback, Context context) {
         return forEach("onEnd", new Func1() {
             @Override
-            public ResultCode apply(TrackerComponent comp0, Callback callback0, Context context0) {
+            public ResultCode apply(TrackerComponent comp0, ResultCode currentResultCode,
+                                    Callback callback0, Context context0) {
+                // Ignore current result code, always run onEnd()
                 return comp0.onEnd(callback0, context0);
             }
         }, callback, context);
     }
 
     private interface Func1 {
-        ResultCode apply(TrackerComponent component, Callback callback, Context context);
+        ResultCode apply(TrackerComponent component, ResultCode currentResultCode,
+                         Callback callback, Context context);
     }
 
     private ResultCode forEach(final String msg, final Func1 func, final Callback callback,
@@ -204,8 +215,10 @@ public class TrackerComponentCollection implements TrackerComponent {
             components.clear();
 
             for (final String key : list.keySet()) {
-                final TrackerComponent component = list.get(key).first;
-                ResultCode res = func.apply(component, new Callback() {
+                final Pair<TrackerComponent, ResultCode> p = list.get(key);
+                final TrackerComponent component = p.first;
+                final ResultCode currentResultCode = p.second;
+                ResultCode res = func.apply(component, currentResultCode, new Callback() {
                     @Override
                     public void run(final TrackerComponent component, final ResultCode resultCode) {
                         handler.post(new Runnable() {
