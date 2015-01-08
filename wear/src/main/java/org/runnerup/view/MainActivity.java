@@ -27,19 +27,11 @@ import android.content.ServiceConnection;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
-import android.util.Pair;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
@@ -47,9 +39,6 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class MainActivity extends Activity
@@ -67,7 +56,7 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pager = (GridViewPager) findViewById(R.id.pager);
-        FragmentGridPagerAdapter pageAdapter = createPager(getFragmentManager());
+        FragmentGridPagerAdapter pageAdapter = new PagerAdapter(getFragmentManager());
         pager.setAdapter(pageAdapter);
 
         LinearLayout verticalDotsPageIndicator = (LinearLayout) findViewById(R.id.vert_page_indicator);
@@ -113,6 +102,8 @@ public class MainActivity extends Activity
         int rows = 1;
         int cols = 1;
 
+        PauseResumeFragment pauseResumeFragment;
+
         public PagerAdapter(FragmentManager fm) {
             super(fm);
             update(trackerState.get());
@@ -139,14 +130,16 @@ public class MainActivity extends Activity
                 case STARTED:
                 case PAUSED:
                 case STOPPED:
-                    if (row == RUN_INFO_ROW)
-                        return new RunInformationCardFragment();
-                    else if (row == PAUSE_RESUME_ROW)
-                    {
+                    if (row == RUN_INFO_ROW) {
+                        return new RunInfoFragment();
+                    } else if (row == PAUSE_RESUME_ROW) {
                         if (trackerState.get() == TrackerState.STOPPED)
                             return new StoppedFragment();
-                        else
-                            return new PauseResumeFragment();
+                        else {
+                            if (pauseResumeFragment == null)
+                                pauseResumeFragment = new PauseResumeFragment();
+                            return pauseResumeFragment;
+                        }
                     }
             }
             return new ConnectToPhoneFragment();
@@ -197,14 +190,14 @@ public class MainActivity extends Activity
         return new PagerAdapter(fm);
     }
 
-    private Bundle getData(long lastUpdateTime) {
+    Bundle getData(long lastUpdateTime) {
         if (mStateService == null) {
             return null;
         }
         return mStateService.getData(lastUpdateTime);
     }
 
-    private Bundle getHeaders(long lastUpdateTime) {
+    Bundle getHeaders(long lastUpdateTime) {
         if (mStateService == null) {
             return null;
         }
@@ -218,127 +211,6 @@ public class MainActivity extends Activity
     public void scrollToRunInfo() {
         Point curr = pager.getCurrentItem();
         pager.setCurrentItem(RUN_INFO_ROW, curr.x, true);
-    }
-
-    public static class RunInformationCardFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
-
-        List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-        long dataUpdateTime;
-        long headersTimestamp;
-        Handler handler = new Handler();
-        boolean handlerOutstanding = false;
-        Runnable periodicTick = new Runnable() {
-            @Override
-            public void run() {
-                update();
-                handlerOutstanding = false;
-                if (isResumed()) {
-                    startTimer();
-                }
-            }
-        };
-        private MainActivity mainActivity;
-
-        public RunInformationCardFragment() {
-            super();
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.card3, container, false);
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "0",
-                    (TextView) view.findViewById(R.id.textView1)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "1",
-                    (TextView) view.findViewById(R.id.textView2)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.DATA + "2",
-                    (TextView) view.findViewById(R.id.textView3)));
-
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "0",
-                    (TextView) view.findViewById(R.id.textViewHeader1)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "1",
-                    (TextView) view.findViewById(R.id.textViewHeader2)));
-            textViews.add(new Pair<String, TextView>(Wear.RunInfo.HEADER + "2",
-                    (TextView) view.findViewById(R.id.textViewHeader3)));
-            return view;
-        }
-
-        void startTimer() {
-            if (handlerOutstanding)
-                return;
-            handlerOutstanding = true;
-            handler.postDelayed(periodicTick, 1000);
-        }
-
-        private void update() {
-            Bundle data = mainActivity.getData(dataUpdateTime);
-            if (data != null) {
-                dataUpdateTime = data.getLong(StateService.UPDATE_TIME);
-                update(data);
-            }
-
-            Bundle headers = mainActivity.getHeaders(headersTimestamp);
-            if (headers != null) {
-                headersTimestamp = headers.getLong(StateService.UPDATE_TIME);
-                update(headers);
-            }
-        }
-
-        private void update(Bundle b) {
-            for (Pair<String, TextView> tv : textViews) {
-                if (b.containsKey(tv.first)) {
-                    tv.second.setText(b.getString(tv.first));
-                }
-            }
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-            startTimer();
-            mainActivity.registerTrackerStateListener(this);
-            update();
-            onValueChanged(null, mainActivity.getTrackerState());
-        }
-
-        @Override
-        public void onPause() {
-            mainActivity.unregisterTrackerStateListener(this);
-            super.onPause();
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            mainActivity = (MainActivity) activity;
-        }
-
-        @Override
-        public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
-            if (!isAdded())
-                return;
-
-            if (newValue == null)
-                return;
-
-            if (textViews.size() == 0)
-                return;
-
-            if (newValue == TrackerState.PAUSED || newValue == TrackerState.STOPPED) {
-                Animation anim = new AlphaAnimation(0, 1);
-                anim.setDuration(500);
-                anim.setStartOffset(20);
-                anim.setRepeatMode(Animation.REVERSE);
-                anim.setRepeatCount(Animation.INFINITE);
-                textViews.get(0).second.startAnimation(anim);
-            } else {
-                textViews.get(0).second.clearAnimation();
-            }
-        }
     }
 
     private ServiceConnection mStateServiceConnection = new ServiceConnection() {
