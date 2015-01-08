@@ -90,7 +90,8 @@ public class ConnectToPhoneFragment extends Fragment implements ValueModel.Chang
 
     @Override
     public void onValueChanged(TrackerState oldState, TrackerState newState) {
-        updateView(newState);
+        if (isAdded())
+            updateView(newState);
     }
 
     private DelayedConfirmationView.DelayedConfirmationListener mListener = new DelayedConfirmationView.DelayedConfirmationListener() {

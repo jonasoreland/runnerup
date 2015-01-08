@@ -112,28 +112,44 @@ public class MainActivity extends Activity
     private class PagerAdapter extends  FragmentGridPagerAdapter implements ValueModel.ChangeListener<TrackerState> {
         int rows = 1;
         int cols = 1;
-        Fragment fragments[][] = new Fragment[1][2];
 
         public PagerAdapter(FragmentManager fm) {
             super(fm);
-            trackerState.registerChangeListener(this);
             update(trackerState.get());
+            trackerState.registerChangeListener(this);
         }
 
         @Override
         public Fragment getFragment(int row, int col) {
-            if (fragments[col][row] == null) {
-                switch (row) {
-                    case RUN_INFO_ROW:
-                        fragments[col][row] = new RunInformationCardFragment();
-                        break;
-                    default:
-                    case PAUSE_RESUME_ROW:
-                        fragments[col][row] = new PauseResumeFragment();
-                        break;
-                }
+            if (trackerState.get() == null)
+                return new ConnectToPhoneFragment();
+
+            switch (trackerState.get()) {
+                case INIT:
+                case INITIALIZING:
+                case CLEANUP:
+                case ERROR:
+                    return new ConnectToPhoneFragment();
+                case INITIALIZED:
+                    return new StartFragment();
+                case CONNECTING:
+                    return new SearchingFragment();
+                case CONNECTED:
+                    return new StartFragment();
+                case STARTED:
+                case PAUSED:
+                case STOPPED:
+                    if (row == RUN_INFO_ROW)
+                        return new RunInformationCardFragment();
+                    else if (row == PAUSE_RESUME_ROW)
+                    {
+                        if (trackerState.get() == TrackerState.STOPPED)
+                            return new StoppedFragment();
+                        else
+                            return new PauseResumeFragment();
+                    }
             }
-            return fragments[col][row];
+            return new ConnectToPhoneFragment();
         }
 
         @Override
@@ -148,59 +164,32 @@ public class MainActivity extends Activity
 
         @Override
         public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
-            if ((TrackerState.equals(TrackerState.PAUSED, oldValue) &&
-                 TrackerState.equals(TrackerState.STARTED, newValue)) ||
-                (TrackerState.equals(TrackerState.PAUSED, newValue) &&
-                            TrackerState.equals(TrackerState.STARTED, oldValue))) {
-                /* no need to various updates */
-                return;
-            }
-
             update(newValue);
             notifyDataSetChanged();
         }
 
         private void update(TrackerState newValue) {
-            if (newValue != null) {
-                switch (newValue) {
-                    case INIT:
-                    case INITIALIZING:
-                    case CLEANUP:
-                    case ERROR:
-                        /* handle same way is newValue == null */
-                        break;
-                    case INITIALIZED:
-                        rows = 1;
-                        cols = 1;
-                        fragments[0][0] = new StartFragment();
-                        return;
-                    case CONNECTING:
-                        rows = 1;
-                        cols = 1;
-                        fragments[0][0] = new SearchingFragment();
-                        return;
-                    case CONNECTED:
-                        rows = 1;
-                        cols = 1;
-                        fragments[0][0] = new StartFragment();
-                        return;
-                    case STARTED:
-                    case PAUSED:
-                        fragments[0][0] = null;
-                        rows = 2;
-                        cols = 1;
-                        return;
-                    case STOPPED:
-                        fragments[0][1] = new StoppedFragment();
-                        rows = 2;
-                        cols = 1;
-                        return;
-                }
+            if (newValue == null) {
+                cols = rows = 1;
+                return;
             }
-            rows = 1;
-            cols = 1;
-            fragments[0][0] = new ConnectToPhoneFragment();
-            return;
+            switch (newValue) {
+                case INIT:
+                case INITIALIZING:
+                case CLEANUP:
+                case ERROR:
+                case INITIALIZED:
+                case CONNECTING:
+                case CONNECTED:
+                    cols = rows = 1;
+                    break;
+                case STARTED:
+                case PAUSED:
+                case STOPPED:
+                    cols = 1;
+                    rows = 2;
+                    break;
+            }
         }
     }
 
@@ -228,7 +217,7 @@ public class MainActivity extends Activity
 
     public void scrollToRunInfo() {
         Point curr = pager.getCurrentItem();
-        pager.scrollTo(RUN_INFO_ROW, curr.y);
+        pager.setCurrentItem(RUN_INFO_ROW, curr.x, true);
     }
 
     public static class RunInformationCardFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
@@ -312,6 +301,7 @@ public class MainActivity extends Activity
             super.onResume();
             startTimer();
             mainActivity.registerTrackerStateListener(this);
+            update();
             onValueChanged(null, mainActivity.getTrackerState());
         }
 
@@ -329,13 +319,16 @@ public class MainActivity extends Activity
 
         @Override
         public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+            if (!isAdded())
+                return;
+
             if (newValue == null)
                 return;
 
             if (textViews.size() == 0)
                 return;
 
-            if (newValue == TrackerState.PAUSED) {
+            if (newValue == TrackerState.PAUSED || newValue == TrackerState.STOPPED) {
                 Animation anim = new AlphaAnimation(0, 1);
                 anim.setDuration(500);
                 anim.setStartOffset(20);

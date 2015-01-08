@@ -97,6 +97,7 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
         @Override
         public void onClick(View v) {
             clickCount++;
+            System.err.println("clickCount => " + clickCount);
             activity.getStateService().sendPauseResume();
             TrackerState state = activity.getTrackerState();
             if (state == TrackerState.STARTED)
@@ -108,6 +109,7 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        System.err.println("clickCount: " + clickCount + ", saveClickCount: " + saveClickCount);
                         if (saveClickCount != clickCount)
                             return;
                         PauseResumeFragment.this.activity.scrollToRunInfo();
@@ -146,6 +148,7 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
 
     @Override
     public void onValueChanged(TrackerState oldState, TrackerState newState) {
-        updateView(newState);
+        if (isAdded())
+            updateView(newState);
     }
 }
