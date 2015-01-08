@@ -17,13 +17,27 @@
 package org.runnerup.service;
 
 import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.WearableListenerService;
+
+import org.runnerup.R;
+import org.runnerup.common.util.Constants;
+import org.runnerup.view.MainActivity;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class ListenerService extends WearableListenerService {
+
+    private int notificationId = 10;
 
     @Override
     public void onCreate() {
@@ -41,5 +55,47 @@ public class ListenerService extends WearableListenerService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         System.err.println("ListenerService.onStart()");
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        for (DataEvent ev : dataEvents) {
+            System.err.println("onDataChanged: " + ev.getDataItem().getUri());
+            String path = ev.getDataItem().getUri().getPath();
+            if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
+                handleNotification(ev);
+            }
+        }
+    }
+
+    private void handleNotification(DataEvent ev) {
+        if (ev.getType() == DataEvent.TYPE_CHANGED) {
+            showNotification();
+        } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+            dismissNotification();
+        }
+    }
+
+    private void showNotification() {
+        // this intent will open the activity when the user taps the "open" action on the notification
+        Intent viewIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingViewIntent = PendingIntent.getActivity(this, 0, viewIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.start))
+                .setContentIntent(pendingViewIntent)
+                .setOngoing(true)
+                .setLocalOnly(true);
+
+        Notification notification = builder.build();
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(notificationId, notification);
+    }
+
+    private void dismissNotification() {
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.cancel(notificationId);
     }
 }
