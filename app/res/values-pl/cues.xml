@@ -14,27 +14,15 @@
     ~
     ~  You should have received a copy of the GNU General Public License
     ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-    <string name="cue_workout">dystans</string>
-    <string name="cue_activity">czas</string>
+    <string name="cue_workout">Trening</string>
+    <string name="cue_activity">Interwał</string>
     <string name="cue_lap">okrążenie</string>
     <string name="cue_warmup">rozgrzewka</string>
     <string name="cue_cooldown">uspokojenie</string>
     <string name="cue_current">aktualny</string>
     <string name="cue_recovery">regeneracja</string>
-    <string name="cue_hour">godzina</string>
-    <string name="cue_hours">godziny</string>
-    <string name="cue_minute">minuta</string>
-    <string name="cue_minutes">minuty</string>
-    <string name="cue_second">sekunda</string>
-    <string name="cue_seconds">sekundy</string>
-    <string name="cue_meter">metr</string>
-    <string name="cue_meters">metry</string>
-    <string name="cue_kilometer">kilometr</string>
-    <string name="cue_kilometers">kilometry</string>
-    <string name="cue_mile">mila</string>
-    <string name="cue_miles">mile</string>
     <string name="cue_perkilometer">na kilometr</string>
-    <string name="cue_permile">na mile</string>
+    <string name="cue_permile">na milę</string>
     <string name="cue_started">rozpoczęte</string>
     <string name="cue_paused">zatrzymana</string>
     <string name="cue_resumed">wznowiona</string>
@@ -42,4 +30,34 @@
     <string name="cue_completed">zakończony</string>
     <string name="cue_speedup">przyśpiesz</string>
     <string name="cue_slowdown">zwolnij</string>
+    <plurals name="cue_hour">
+        <item quantity="one">godzina</item>
+        <item quantity="few">godziny</item>
+        <item quantity="many">godzin</item>
+    </plurals>
+    <plurals name="cue_minute">
+        <item quantity="one">minuta</item>
+        <item quantity="few">minuty</item>
+        <item quantity="many">minut</item>
+    </plurals>
+    <plurals name="cue_second">
+        <item quantity="one">sekunda</item>
+        <item quantity="few">sekundy</item>
+        <item quantity="many">sekund</item>
+    </plurals>
+    <plurals name="cue_meter">
+        <item quantity="one">metr</item>
+        <item quantity="few">metry</item>
+        <item quantity="many">metrów</item>
+    </plurals>
+    <plurals name="cue_kilometer">
+        <item quantity="one">kilometr</item>
+        <item quantity="few">kilometry</item>
+        <item quantity="many">kilometrów</item>
+    </plurals>
+    <plurals name="cue_mile">
+        <item quantity="one">mila</item>
+        <item quantity="few">mile</item>
+        <item quantity="many">mil</item>
+    </plurals>
 </resources>

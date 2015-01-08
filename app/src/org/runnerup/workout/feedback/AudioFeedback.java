@@ -50,6 +50,13 @@ public class AudioFeedback extends Feedback {
         this.dimension = null;
     }
 
+    public AudioFeedback(Scope scope) {
+        super();
+        this.scope = scope;
+        this.event = null;
+        this.dimension = null;
+    }
+
     public AudioFeedback(Scope scope, Dimension dimension) {
         super();
         this.scope = scope;
@@ -101,8 +108,9 @@ public class AudioFeedback extends Feedback {
             msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());
         } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
             double val = w.get(scope, dimension); // SI
-            msg = res.getString(scope.getCueId()) + " "
-                    + formatter.format(Formatter.CUE_LONG, dimension, val);
+            msg = res.getString(dimension.getTextId()) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
+        } else if (scope != null && dimension == null) {
+            msg = res.getString(scope.getCueId());
         }
         return msg;
     }
