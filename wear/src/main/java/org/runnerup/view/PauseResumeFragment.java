@@ -16,8 +16,10 @@
  */
 package org.runnerup.view;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.wearable.view.CircledImageView;
@@ -30,6 +32,7 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
 
+@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class PauseResumeFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private static final long SCROLL_DELAY = 1500; // 1.5s

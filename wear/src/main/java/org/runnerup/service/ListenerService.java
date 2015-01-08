@@ -16,10 +16,13 @@
  */
 package org.runnerup.service;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 
 import com.google.android.gms.wearable.WearableListenerService;
 
+@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class ListenerService extends WearableListenerService {
 
     @Override

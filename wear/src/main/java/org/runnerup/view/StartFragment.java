@@ -16,8 +16,10 @@
  */
 package org.runnerup.view;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
@@ -29,6 +31,7 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
 
+@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class StartFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private TextView mTxt;

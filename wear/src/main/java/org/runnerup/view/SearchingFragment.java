@@ -16,9 +16,11 @@
  */
 package org.runnerup.view;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import android.view.ViewGroup;
 
 import org.runnerup.R;
 
+@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class SearchingFragment extends Fragment {
 
     private CircledImageView mButton;
