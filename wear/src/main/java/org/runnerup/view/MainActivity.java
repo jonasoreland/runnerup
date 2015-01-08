@@ -186,10 +186,6 @@ public class MainActivity extends Activity
         }
     }
 
-    FragmentGridPagerAdapter createPager(FragmentManager fm) {
-        return new PagerAdapter(fm);
-    }
-
     Bundle getData(long lastUpdateTime) {
         if (mStateService == null) {
             return null;
