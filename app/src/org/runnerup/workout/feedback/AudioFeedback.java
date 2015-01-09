@@ -112,8 +112,8 @@ public class AudioFeedback extends Feedback {
         } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
             double val = w.get(scope, dimension); // SI
             MessageFormat sentence = new MessageFormat(res.getString(scope.getCueId()));
-            ChoiceFormat fileform = new ChoiceFormat(res.getString(R.string.cue_hrz_pattern));
-            sentence.setFormatByArgumentIndex(1, fileform);
+            ChoiceFormat cueDimensionPattern = new ChoiceFormat(res.getString(R.string.cue_dimension_pattern));
+            sentence.setFormatByArgumentIndex(1, cueDimensionPattern);
             msg = sentence.format(new Object[] {formatter.format(Formatter.CUE_LONG, dimension, val), dimension.getValue(), res.getString(dimension.getTextId())});
         }
         return msg;

@@ -14,11 +14,15 @@
     ~
     ~  You should have received a copy of the GNU General Public License
     ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <!--<string name="cue_workout">activity</string>-->
     <string name="cue_workout">"activity {1} {0}"</string>
     <string name="cue_activity">interval {1} {0}</string>
     <string name="cue_lap">lap {1} {0}</string>
-    <string name="cue_hrz_pattern">1#|2#|3#|4#|5#|6#{2}</string>
+    <!-- Pattern for inclusion of dimension in the audio cue
+         {1} is the dimension id, {2} is the actual dimension name
+         For dimension id see Constants.java
+         To include the dimension into the cue change e.g. 1# into 1#{2}
+    -->
+    <string name="cue_dimension_pattern">1#|2#|3#|4#|5#|6#{2}</string>
     <string name="cue_warmup">warm up</string>
     <string name="cue_cooldown">cool down</string>
     <string name="cue_current">current</string>
