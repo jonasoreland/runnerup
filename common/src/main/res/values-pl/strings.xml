@@ -29,7 +29,7 @@
     <plurals name="metrics_distance_meter">
         <item quantity="one">metr</item>
         <item quantity="few">metry</item>
-        <item quantity="many">metówr</item>
+        <item quantity="many">metrów</item>
     </plurals>
     <string name="metrics_distance_km">km</string>
     <string name="metrics_distance_mi">mi</string>

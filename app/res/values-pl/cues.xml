@@ -14,9 +14,10 @@
     ~
     ~  You should have received a copy of the GNU General Public License
     ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-    <string name="cue_workout">Trening</string>
-    <string name="cue_activity">Interwał</string>
-    <string name="cue_lap">okrążenie</string>
+    <string name="cue_workout">{1} {0}</string>
+    <string name="cue_activity">{1} interwału {0}</string>
+    <string name="cue_lap">{1} okrążenia {0}</string>
+    <string name="cue_hrz_pattern">1#{2}|2#{2}|3#{2}|4#{2}|5#{2}|6#{2}</string>
     <string name="cue_warmup">rozgrzewka</string>
     <string name="cue_cooldown">uspokojenie</string>
     <string name="cue_current">aktualny</string>

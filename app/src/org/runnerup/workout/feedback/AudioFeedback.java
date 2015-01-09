@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
+import org.runnerup.R;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Event;
@@ -31,6 +32,8 @@ import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
+import java.text.MessageFormat;
+import java.text.ChoiceFormat;
 import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -108,9 +111,10 @@ public class AudioFeedback extends Feedback {
             msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());
         } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
             double val = w.get(scope, dimension); // SI
-            msg = res.getString(dimension.getTextId()) + " " + formatter.format(Formatter.CUE_LONG, dimension, val);
-        } else if (scope != null && dimension == null) {
-            msg = res.getString(scope.getCueId());
+            MessageFormat sentence = new MessageFormat(res.getString(scope.getCueId()));
+            ChoiceFormat fileform = new ChoiceFormat(res.getString(R.string.cue_hrz_pattern));
+            sentence.setFormatByArgumentIndex(1, fileform);
+            msg = sentence.format(new Object[] {formatter.format(Formatter.CUE_LONG, dimension, val), dimension.getValue(), res.getString(dimension.getTextId())});
         }
         return msg;
     }
