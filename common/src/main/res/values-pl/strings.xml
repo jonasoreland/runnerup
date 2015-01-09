@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <string name="metrics_distance_kilometer">kilometr</string>
+  <string name="metrics_distance_kilometers">kilometry</string>
+  <string name="metrics_distance_mile">mila</string>
+  <string name="metrics_distance_miles">mile</string>
+  <string name="metrics_distance_meter">metr</string>
+  <string name="metrics_distance_meters">metry</string>
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
+  <string name="metrics_beatsperminute">bpm</string>
+  <string name="metrics_heartrate">Hr</string>
+  <!--format hint stuff-->
+  <string name="maximum_heart_rate">Maksymalne tętno (MHR)</string>
+  <string name="target_pace_format">Tempo (HH:MM:SS)</string>
+  <string name="interval_time_format">Czas (HH:MM:SS)</string>
+  <string name="interval_distance_format">Dystans (m)</string>
+  <string name="rest_time_format">Czas (HH:MM:SS)</string>
+  <string name="rest_distance_format">Dystans (m)</string>
+  <string name="duration_time_format">Czas trwania (HH:MM:SS)</string>
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <!--other-->
+  <string name="google_play_services_legal_notices">Informacje prawne - Google Play Services</string>
+  <string name="type">Rodzaj</string>
+  <string name="active">aktywność</string>
+  <string name="rest">odpoczynek</string>
+  <string name="recovery">regeneracja</string>
+  <string name="warmup">rozgrzewka</string>
+  <string name="cooldown">uspokojenie</string>
+  <string name="repeat">powtórzenia</string>
+  <string name="time">czas</string>
+  <string name="distance">dystans</string>
+  <string name="speed">prędkość</string>
+  <string name="pace">tempo</string>
+  <string name="heartrate">tętno</string>
+  <string name="heartrate_zone">strefa tętna</string>
+  <string name="device">Urządzenie</string>
+  <string name="heart_rate">Tętno</string>
+  <string name="scan">Skanuj</string>
+  <string name="connect">Połącz</string>
+  <string name="connecting">Łącze</string>
+  <string name="download">Pobierz</string>
+  <string name="share">Udostępnij</string>
+  <string name="delete">Usuń</string>
+  <string name="total">Całkowity</string>
+  <string name="interval">Interwały</string>
+  <string name="lap">Okrążenie</string>
+  <string name="new_lap">Nowe okrążenie</string>
+  <string name="next_lap">Następne okrążenie</string>
+  <string name="pause">Pauza</string>
+  <string name="stop">Stop</string>
+  <string name="workout">Trening</string>
+  <string name="download_workouts">Pobierz treningi</string>
+  <string name="audio_cue_settings">Ustawienia kominikatów</string>
+  <string name="sport">Dyscyplina</string>
+  <string name="target">Cel</string>
+  <string name="target_heart_rate_zone">Docelowa strefa tętna</string>
+  <string name="interval_type">Interwał</string>
+  <string name="rest_type">Odpoczynek</string>
+  <string name="repetitions">Powtórzenia</string>
+  <string name="date">Data</string>
+  <string name="gps_satellites">Satelity GPS</string>
+  <string name="start_gps">Uruchom GPS</string>
+  <string name="duration">Czas trwania</string>
+  <string name="cancel">Anuluj</string>
+  <string name="value">wartość</string>
+  <string name="select_all">Wybierz wszystkie</string>
+  <string name="clear_all">Wyczyść wszystkie</string>
+  <string name="username">Użytkownik</string>
+  <string name="password">Hasło</string>
+  <string name="show_password">Pokaż hasło</string>
+  <string name="intensity">intensywność</string>
+  <string name="step_intensity">Intensywność</string>
+  <string name="low_pace">Min. tętno</string>
+  <string name="high_pace">Max. tętno</string>
+  <string name="sex">Płeć</string>
+  <string name="upload">synchronizuj</string>
+  <string name="configure">Konfiguruj</string>
+  <string name="disconnect">Rozłącz</string>
+  <string name="resume">Wznów</string>
+  <string name="save_activity">Zapisz aktywność</string>
+  <string name="upload_activity">Synchronizuj aktywność</string>
+  <string name="uploaded">Zsynchronizowane</string>
+  <string name="finished">Zakończone</string>
+  <string name="until_press">Do przyciśnięcia</string>
+  <string name="discard_activity">Usuń aktywność</string>
+  <string name="configure_accounts">Konfiguruj konta</string>
+  <string name="refresh">Odśwież</string>
+  <string name="age">Wiek</string>
+  <string name="Running">Bieganie</string>
+  <string name="Biking">Kolarstwo</string>
+  <string name="Other">Inne</string>
+  <string name="unknown">Nieznane</string>
+  <string name="edit">edytuj</string>
+  <string name="synchronizing">Sychronizuje:</string>
+  <string name="ok">OK</string>
+  <string name="table_format">Tabela</string>
+  <string name="upload_missing_workouts">Synchronizuje brakujące aktywności</string>
+  <string name="disconnect_account">Odłącz konto</string>
+  <string name="edit_activity">Edytuj aktywność</string>
+  <string name="share_activity">Udostępnij aktywność</string>
+  <string name="delete_activity">Usuń aktywność</string>
+  <string name="recompute_activity">Przelicz aktywność</string>
+  <string name="configure_heart_rate_zones">Ustaw strefy tętna</string>
+  <string name="clear_heart_rate_zone_settings">Wyczyść ustawienia stref tętna</string>
+  <string name="manage_accounts">Zarządzaj kontami</string>
+  <string name="manage_audio_cues">Zarządzaj wskazówkami</string>
+  <string name="manage_workouts">Zarządzaj treningami</string>
+  <string name="settings">Ustawienia</string>
+  <string name="what_s_new">Co nowego</string>
+  <string name="rate_runner_up">Oceń RunnerUp</string>
+  <string name="enable_gps">Włącz GPS</string>
+  <string name="waiting_for_gps">Oczekuje na GPS</string>
+  <string name="start_activity">Rozpocznij</string>
+  <string name="clear_hr_settings">Wyczyść ustawienia HRM</string>
+  <string name="heart_rate_monitor_is_not_supported_for_your_device">HRM nie jest obsługiwany przez twoje urządzenie</string>
+  <string name="select_type_of_bluetooth_device">Wybierz rodzaj urządzenia Bluetooth</string>
+  <string name="scanning">Skanuje</string>
+  <string name="failed_to_load_workout">Błąd przy ładowaniu treningu</string>
+  <string name="icon_list">Lista ikon</string>
+  <string name="problem">Problem</string>
+  <string name="edit_step">Edycja etapu</string>
+  <string name="create_new_audio_cue_scheme">Utwórz schemat wskazówek audio</string>
+  <string name="loading">Ładuje...</string>
+  <string name="saving">Zapisuje</string>
+  <string name="cancelling_please_wait">Anuluje...</string>
+  <string name="try_again_later">spróbuj później</string>
+  <string name="are_you_sure">Jesteś pewien?</string>
+  <string name="configure_audio_cues">Konfiguruj wskazówki audio</string>
+  <string name="downloadeditremove_workouts">Pobierz/edytuj/usuń treningi</string>
+  <string name="export_database_to_sdcard_eg_for_upgrade">Eksportuj bazę danych na kartę SD (np. przed aktualizacjią)</string>
+  <string name="import_database_from_sdcard_eg_after_upgrade">Importuj bazę danych z karty SD (np. po aktualizacji)</string>
+  <string name="test_audio_cue">Test wskazówek audio</string>
+  <string name="accounts">Konta</string>
+  <string name="audio_cues">Wskazówki audio</string>
+  <string name="heart_rate_monitor">Pulsometr</string>
+  <string name="heart_rate_zones">Strefy tętna</string>
+  <string name="autolap">Auto-okrążenie</string>
+  <string name="autolap_m">Auto-okrążenie (m)</string>
+  <string name="autopause">Autopauza</string>
+  <string name="enable_runner_up_live">Włącz RunnerUpLive</string>
+  <string name="activity_countdown">Odliczanie</string>
+  <string name="countdown_time_s">Czas odliczania (s)</string>
+  <string name="unit_preference">Jednostki</string>
+  <string name="auto_start_gps">Automatycznie uruchom GPS</string>
+  <string name="advanced_options">Ustawienia zaawansowane</string>
+  <string name="runner_up_live_address">Adres RunnerUpLive</string>
+  <string name="autopause_after_s">Autopauza po (s)</string>
+  <string name="autopause_min_pace_minkm">Autopauza przy tempie (min/km)</string>
+  <string name="autolap_during_intervals">Auto-okrążenie przy interwałach</string>
+  <string name="smooth_pace_graph">Wygładzaj wykres tempa</string>
+  <string name="smooth_pace_filter_s">Filtr wygładzający</string>
+  <string name="poll_interval_ms">Pomiar co (ms)</string>
+  <string name="poll_distance_m">Pomiar co (m)</string>
+  <string name="export">Eksportuj</string>
+  <string name="import_">Importuj</string>
+  <string name="experimental_hrm_devices">Eksperymentalne urządzenia HRM</string>
+  <string name="mock_hrm_devices">Imituj urządzenie HRM</string>
+  <string name="about">O...</string>
+  <string name="about_runner_up">O RunnerUp</string>
+  <string name="triggers">Wyzwalacze</string>
+  <string name="time_triggered_audio_cue">Wskazówki wyzwalane czasowo</string>
+  <string name="cue_interval_s">Interwał wskazówek (s)</string>
+  <string name="distance_triggered_audio_cue">Wskazówki wyzwalane dystansem</string>
+  <string name="cue_intervall_m">Interwał wskazówek (m)</string>
+  <string name="end_of_lap_audio_cue">Wskazówki na koniec okrążenia</string>
+  <string name="mute_music_during_audio_cues">Wycisz muzykę podczas wskazówek</string>
+  <string name="cue_information">Informacje wskazówek</string>
+  <string name="total_distance">Dystans całkowity</string>
+  <string name="total_time">Czas całkowity</string>
+  <string name="total_pace">Tempo całkowite</string>
+  <string name="total_heart_rate">Tętno całkowite</string>
+  <string name="total_heart_rate_zone">Strefa tętna całkowita</string>
+  <string name="interval_distance">Odległość interwału</string>
+  <string name="interval_time">Czas interwału</string>
+  <string name="interval_pace">Tempo interwału</string>
+  <string name="interval_heart_rate">Tętno intewału</string>
+  <string name="interval_heart_rate_zone">Strefa tętna interwału</string>
+  <string name="lap_distance">Dystans okrążenia</string>
+  <string name="lap_time">Czas okrążenia</string>
+  <string name="lap_pace">Tempo okrążenia</string>
+  <string name="lap_heart_rate">Tętno okrążenia</string>
+  <string name="lap_heart_rate_zone">Strefa tętna okrążenia</string>
+  <string name="misc_cues">Różne wskazówki</string>
+  <string name="android_text_to_speech_settings">Ustawienia syntezatora mowy Android</string>
+  <string name="start">Start</string>
+  <string name="history">Historia</string>
+  <string name="basic">Podstawowy</string>
+  <string name="advanced">Rozszerzony</string>
+  <string name="manual">Ręczny</string>
+  <string name="add_workout_notes">Dodaj notatki</string>
+  <string name="heartrate_zones_distribution">Rozkład stref tętna</string>
+  <string name="battery_level">Poziom baterii</string>
+  <string name="searching_for_gps">Szukam GPS</string>
+  <string name="battery_level_low_threshold">Niski poziom baterii HRM</string>
+  <string name="battery_level_high_threshold">Wysoki poziom baterii HRM</string>
+  <string name="battery_level_low_notification_txt">Poziom baterii twojego pulsometru jest niski</string>
+  <string name="do_not_show_again">Nie pokazuj ponownie</string>
+</resources>
