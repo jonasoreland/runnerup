@@ -53,13 +53,6 @@ public class AudioFeedback extends Feedback {
         this.dimension = null;
     }
 
-    public AudioFeedback(Scope scope) {
-        super();
-        this.scope = scope;
-        this.event = null;
-        this.dimension = null;
-    }
-
     public AudioFeedback(Scope scope, Dimension dimension) {
         super();
         this.scope = scope;

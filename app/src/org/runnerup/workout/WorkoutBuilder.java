@@ -669,82 +669,67 @@ public class WorkoutBuilder {
     public static void addFeedbackFromPreferences(SharedPreferences prefs,
             Resources res, ArrayList<Feedback> feedback) {
 
-        ArrayList<Feedback> subList = new ArrayList<Feedback>();
         /**** TOTAL ****/
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
-            subList.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
+            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_time), false)) {
-            subList.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
+            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
         }
         if (Dimension.SPEED_CUE_ENABLED
                 && prefs.getBoolean(res.getString(R.string.cueinfo_total_speed), false)) {
-            subList.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
+            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
-            subList.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
+            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_hr), false)) {
-            subList.add(new AudioFeedback(Scope.WORKOUT, Dimension.HR));
+            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.HR));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_hrz), false)) {
-            subList.add(new AudioFeedback(Scope.WORKOUT, Dimension.HRZ));
-        }
-        if(subList.size() > 0) {
-            feedback.add(new AudioFeedback(Scope.WORKOUT));
-            feedback.addAll(subList);
-            subList.clear();
+            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.HRZ));
         }
 
         /**** STEP ****/
         if (prefs.getBoolean(res.getString(R.string.cueinfo_step_distance), false)) {
-            subList.add(new AudioFeedback(Scope.STEP, Dimension.DISTANCE));
+            feedback.add(new AudioFeedback(Scope.STEP, Dimension.DISTANCE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_step_time), false)) {
-            subList.add(new AudioFeedback(Scope.STEP, Dimension.TIME));
+            feedback.add(new AudioFeedback(Scope.STEP, Dimension.TIME));
         }
         if (Dimension.SPEED_CUE_ENABLED
                 && prefs.getBoolean(res.getString(R.string.cueinfo_step_speed), false)) {
-            subList.add(new AudioFeedback(Scope.STEP, Dimension.SPEED));
+            feedback.add(new AudioFeedback(Scope.STEP, Dimension.SPEED));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_step_pace), false)) {
-            subList.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
+            feedback.add(new AudioFeedback(Scope.STEP, Dimension.PACE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_step_hr), false)) {
-            subList.add(new AudioFeedback(Scope.STEP, Dimension.HR));
+            feedback.add(new AudioFeedback(Scope.STEP, Dimension.HR));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_step_hrz), false)) {
-            subList.add(new AudioFeedback(Scope.STEP, Dimension.HRZ));
+            feedback.add(new AudioFeedback(Scope.STEP, Dimension.HRZ));
         }
-        if(subList.size() > 0) {
-            feedback.add(new AudioFeedback(Scope.STEP));
-            feedback.addAll(subList);
-            subList.clear();
-        }
+
         /**** LAP ****/
         if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_distance), false)) {
-            subList.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
+            feedback.add(new AudioFeedback(Scope.LAP, Dimension.DISTANCE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_time), false)) {
-            subList.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
+            feedback.add(new AudioFeedback(Scope.LAP, Dimension.TIME));
         }
         if (Dimension.SPEED_CUE_ENABLED
                 && prefs.getBoolean(res.getString(R.string.cueinfo_lap_speed), false)) {
-            subList.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
+            feedback.add(new AudioFeedback(Scope.LAP, Dimension.SPEED));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_pace), false)) {
-            subList.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
+            feedback.add(new AudioFeedback(Scope.LAP, Dimension.PACE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_hr), false)) {
-            subList.add(new AudioFeedback(Scope.LAP, Dimension.HR));
+            feedback.add(new AudioFeedback(Scope.LAP, Dimension.HR));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_hrz), false)) {
-            subList.add(new AudioFeedback(Scope.LAP, Dimension.HRZ));
-        }
-        if(subList.size() > 0) {
-            feedback.add(new AudioFeedback(Scope.LAP));
-            feedback.addAll(subList);
-            subList.clear();
+            feedback.add(new AudioFeedback(Scope.LAP, Dimension.HRZ));
         }
     }
 }
