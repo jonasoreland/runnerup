@@ -188,7 +188,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             includeDimension = true;
             s.append(hours)
                     .append(" ")
-                    .append(resources.getString(hours > 1 ? R.string.cue_hours : R.string.cue_hour));
+                    .append(resources.getQuantityString(R.plurals.cue_hour, (int)hours));
         }
         if (minutes > 0) {
             if (hours > 0)
@@ -196,8 +196,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             includeDimension = true;
             s.append(minutes)
                     .append(" ")
-                    .append(resources.getString(minutes > 1 ? R.string.cue_minutes
-                            : R.string.cue_minute));
+                    .append(resources.getQuantityString(R.plurals.cue_minute, (int)minutes));
         }
         if (seconds > 0) {
             if (hours > 0 || minutes > 0)
@@ -206,8 +205,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             if (includeDimension) {
                 s.append(seconds)
                         .append(" ")
-                        .append(resources.getString(seconds > 1 ? R.string.cue_seconds
-                                : R.string.cue_second));
+                        .append(resources.getQuantityString(R.plurals.cue_second, (int)seconds));
             } else {
                 s.append(seconds);
             }
@@ -250,7 +248,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * Format heart rate
      *
      * @param target
-     * @param bpm
+     * @param heart_rate
      * @return
      */
     public String formatHeartRate(int target, double heart_rate) {
@@ -339,24 +337,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (hours_per_unit > 0) {
             s.append(hours_per_unit)
                     .append(" ")
-                    .append(resources.getString(hours_per_unit > 1 ? R.string.cue_hours
-                            : R.string.cue_hour));
+                    .append(resources.getQuantityString(R.plurals.cue_hour, (int)hours_per_unit));
         }
         if (minutes_per_unit > 0) {
             if (hours_per_unit > 0)
                 s.append(" ");
             s.append(minutes_per_unit)
                     .append(" ")
-                    .append(resources.getString(minutes_per_unit > 1 ? R.string.cue_minutes
-                            : R.string.cue_minute));
+                    .append(resources.getQuantityString(R.plurals.cue_minute, (int)minutes_per_unit));
         }
         if (seconds_per_unit > 0) {
             if (hours_per_unit > 0 || minutes_per_unit > 0)
                 s.append(" ");
             s.append(seconds_per_unit)
                     .append(" ")
-                    .append(resources.getString(seconds_per_unit > 1 ? R.string.cue_seconds
-                            : R.string.cue_second));
+                    .append(resources.getQuantityString(R.plurals.cue_second, (int)seconds_per_unit));
         }
         s.append(" ").append(resources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile));
         return s.toString();
@@ -417,24 +412,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (hours_per_unit > 0) {
             s.append(hours_per_unit)
                     .append(" ")
-                    .append(resources.getString(hours_per_unit > 1 ? R.string.cue_hours
-                            : R.string.cue_hour));
+                    .append(resources.getQuantityString(R.plurals.cue_hour, (int)hours_per_unit));
         }
         if (minutes_per_unit > 0) {
             if (hours_per_unit > 0)
                 s.append(" ");
             s.append(minutes_per_unit)
                     .append(" ")
-                    .append(resources.getString(minutes_per_unit > 1 ? R.string.cue_minutes
-                            : R.string.cue_minute));
+                    .append(resources.getQuantityString(R.plurals.cue_minute, (int)minutes_per_unit));
         }
         if (seconds_per_unit > 0) {
             if (hours_per_unit > 0 || minutes_per_unit > 0)
                 s.append(" ");
             s.append(seconds_per_unit)
                     .append(" ")
-                    .append(resources.getString(seconds_per_unit > 1 ? R.string.cue_seconds
-                            : R.string.cue_second));
+                    .append(resources.getQuantityString(R.plurals.cue_second, (int)seconds_per_unit));
         }
         s.append(" ").append(resources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile) + "/h");
         return s.toString();
@@ -479,39 +471,24 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private String cueDistance(long meters, boolean txt) {
         double base_val = km_meters; // 1km
         double decimals = 2;
-        int res_base = R.string.cue_kilometer;
-        int res_base_multi = R.string.cue_kilometers;
-        if (km == false) {
+        if (!km) {
             base_val = mi_meters;
-            res_base = R.string.cue_mile;
-            res_base_multi = R.string.cue_miles;
-        }
-
-        int res_meter = R.string.cue_meter;
-        int res_meters = R.string.cue_meters;
-
-        if (txt) {
-            if (km) {
-                res_base = R.string.metrics_distance_km;
-                res_base_multi = R.string.metrics_distance_km;
-            } else {
-                res_base = R.string.metrics_distance_mi;
-                res_base_multi = R.string.metrics_distance_mi;
-            }
-
-            res_meter = R.string.metrics_distance_m;
-            res_meters = R.string.metrics_distance_m;
         }
 
         StringBuilder s = new StringBuilder();
         if (meters >= base_val) {
             double base = ((double) meters) / base_val;
-            double val = round(base, decimals);
-            s.append(val).append(" ")
-                    .append(resources.getString(base > 1 ? res_base_multi : res_base));
+            int val = (int) round(base, decimals);
+            if(txt) {
+                s.append(val).append(" ")
+                        .append(km ? "km" : "mi");
+            } else {
+                s.append(val).append(" ")
+                        .append(resources.getQuantityString(R.plurals.cue_kilometer, val));
+            }
         } else {
             s.append(meters);
-            s.append(" ").append(resources.getString(meters > 1 ? res_meters : res_meter));
+            s.append(" ").append(txt ? "m" : resources.getQuantityString(R.plurals.cue_meter, (int)meters));
         }
         return s.toString();
     }
