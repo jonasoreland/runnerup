@@ -117,8 +117,15 @@
 			</intent-filter>
 		</activity>
 
-		<provider android:name=".content.WorkoutFileProvider" android:authorities="org.runnerup.workout.file.provider" tools:ignore="ExportedContentProvider"/>
-		<provider android:name=".content.ActivityProvider" android:authorities="org.runnerup.activity.provider" tools:ignore="ExportedContentProvider"/>
+        <provider android:name=".content.WorkoutFileProvider"
+            android:authorities="org.runnerup.workout.file.provider"
+            android:grantUriPermissions="true"
+            tools:ignore="ExportedContentProvider" />
+
+        <provider android:name=".content.ActivityProvider"
+            android:authorities="org.runnerup.activity.provider"
+            android:grantUriPermissions="true"
+            tools:ignore="ExportedContentProvider" />
 				
 		<activity android:name=".export.oauth2client.OAuth2Activity"
 		    android:screenOrientation="portrait" >
