@@ -20,18 +20,6 @@
   <string name="cue_warmup">ısınma</string>
   <string name="cue_cooldown">soğuma</string>
   <string name="cue_current">şimdiki</string>
-  <string name="cue_hour">saat</string>
-  <string name="cue_hours">saat</string>
-  <string name="cue_minute">dakika</string>
-  <string name="cue_minutes">dakika</string>
-  <string name="cue_second">saniye</string>
-  <string name="cue_seconds">saniye</string>
-  <string name="cue_meter">metre</string>
-  <string name="cue_meters">metre</string>
-  <string name="cue_kilometer">kilometre</string>
-  <string name="cue_kilometers">kilometre</string>
-  <string name="cue_mile">mil</string>
-  <string name="cue_miles">mil</string>
   <string name="cue_perkilometer">kilometre başına</string>
   <string name="cue_permile">mil başına</string>
   <string name="cue_started">başlandı</string>
@@ -41,4 +29,22 @@
   <string name="cue_completed">tamamlandı</string>
   <string name="cue_speedup">hızlan</string>
   <string name="cue_slowdown">yavaşla</string>
+  <plurals name="cue_hour">
+    <item quantity="one">saat</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">dakika</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">saniye</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">metre</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilometre</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">mil</item>
+  </plurals>
 </resources>

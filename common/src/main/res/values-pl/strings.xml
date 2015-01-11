@@ -16,12 +16,21 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
-  <string name="metrics_distance_kilometer">kilometr</string>
-  <string name="metrics_distance_kilometers">kilometry</string>
-  <string name="metrics_distance_mile">mila</string>
-  <string name="metrics_distance_miles">mile</string>
-  <string name="metrics_distance_meter">metr</string>
-  <string name="metrics_distance_meters">metry</string>
+  <plurals name="metrics_distance_kilometer">
+    <item quantity="one">kilometr</item>
+    <item quantity="few">kilometry</item>
+    <item quantity="many">kilometrów</item>
+  </plurals>
+  <plurals name="metrics_distance_mile">
+    <item quantity="one">mila</item>
+    <item quantity="few">mile</item>
+    <item quantity="many">mil</item>
+  </plurals>
+  <plurals name="metrics_distance_meter">
+    <item quantity="one">metr</item>
+    <item quantity="few">metry</item>
+    <item quantity="many">metrów</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
@@ -29,7 +38,7 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
-  <string name="metrics_beatsperminute">bpm</string>
+  <string name="metrics_beatsperminute">uderzeń na minutę</string>
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="maximum_heart_rate">Maksymalne tętno (MHR)</string>
@@ -64,7 +73,7 @@
   <string name="share">Udostępnij</string>
   <string name="delete">Usuń</string>
   <string name="total">Całkowity</string>
-  <string name="interval">Interwały</string>
+  <string name="interval">Interwałowy</string>
   <string name="lap">Okrążenie</string>
   <string name="new_lap">Nowe okrążenie</string>
   <string name="next_lap">Następne okrążenie</string>
@@ -75,7 +84,7 @@
   <string name="audio_cue_settings">Ustawienia kominikatów</string>
   <string name="sport">Dyscyplina</string>
   <string name="target">Cel</string>
-  <string name="target_heart_rate_zone">Docelowa strefa tętna</string>
+  <string name="target_heart_rate_zone">Strefa tętna</string>
   <string name="interval_type">Interwał</string>
   <string name="rest_type">Odpoczynek</string>
   <string name="repetitions">Powtórzenia</string>
@@ -204,7 +213,7 @@
   <string name="lap_heart_rate_zone">Strefa tętna okrążenia</string>
   <string name="misc_cues">Różne wskazówki</string>
   <string name="android_text_to_speech_settings">Ustawienia syntezatora mowy Android</string>
-  <string name="start">Start</string>
+  <string name="start">Trening</string>
   <string name="history">Historia</string>
   <string name="basic">Podstawowy</string>
   <string name="advanced">Rozszerzony</string>
