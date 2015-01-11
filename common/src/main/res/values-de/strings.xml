@@ -16,18 +16,18 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
-    <plurals name="metrics_distance_kilometer">
-        <item quantity="one">Kilometer</item>
-        <item quantity="other">Kilometer</item>
-    </plurals>
-    <plurals name="metrics_distance_mile">
-        <item quantity="one">Meile</item>
-        <item quantity="other">Meilen</item>
-    </plurals>
-    <plurals name="metrics_distance_meter">
-        <item quantity="one">Meter</item>
-        <item quantity="other">Meter</item>
-    </plurals>
+  <plurals name="metrics_distance_kilometer">
+    <item quantity="one">Kilometer</item>
+    <item quantity="other">Kilometer</item>
+  </plurals>
+  <plurals name="metrics_distance_mile">
+    <item quantity="one">Meile</item>
+    <item quantity="other">Meilen</item>
+  </plurals>
+  <plurals name="metrics_distance_meter">
+    <item quantity="one">Meter</item>
+    <item quantity="other">Meter</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>

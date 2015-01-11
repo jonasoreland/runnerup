@@ -30,34 +30,34 @@
   <string name="cue_completed">zakończony</string>
   <string name="cue_speedup">przyśpiesz</string>
   <string name="cue_slowdown">zwolnij</string>
-    <plurals name="cue_hour">
-        <item quantity="one">godzina</item>
-        <item quantity="few">godziny</item>
-        <item quantity="many">godzin</item>
-    </plurals>
-    <plurals name="cue_minute">
-        <item quantity="one">minuta</item>
-        <item quantity="few">minuty</item>
-        <item quantity="many">minut</item>
-    </plurals>
-    <plurals name="cue_second">
-        <item quantity="one">sekunda</item>
-        <item quantity="few">sekundy</item>
-        <item quantity="many">sekund</item>
-    </plurals>
-    <plurals name="cue_meter">
-        <item quantity="one">metr</item>
-        <item quantity="few">metry</item>
-        <item quantity="many">metrów</item>
-    </plurals>
-    <plurals name="cue_kilometer">
-        <item quantity="one">kilometr</item>
-        <item quantity="few">kilometry</item>
-        <item quantity="many">kilometrów</item>
-    </plurals>
-    <plurals name="cue_mile">
-        <item quantity="one">mila</item>
-        <item quantity="few">mile</item>
-        <item quantity="many">mil</item>
-    </plurals>
+  <plurals name="cue_hour">
+    <item quantity="one">godzina</item>
+    <item quantity="few">godziny</item>
+    <item quantity="many">godzin</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minuta</item>
+    <item quantity="few">minuty</item>
+    <item quantity="many">minut</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">sekunda</item>
+    <item quantity="few">sekundy</item>
+    <item quantity="many">sekund</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">metr</item>
+    <item quantity="few">metry</item>
+    <item quantity="many">metrów</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilometr</item>
+    <item quantity="few">kilometry</item>
+    <item quantity="many">kilometrów</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">mila</item>
+    <item quantity="few">mile</item>
+    <item quantity="many">mil</item>
+  </plurals>
 </resources>

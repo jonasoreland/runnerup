@@ -1,56 +1,56 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-    ~
-    ~  This program is free software: you can redistribute it and/or modify
-    ~  it under the terms of the GNU General Public License as published by
-    ~  the Free Software Foundation, either version 3 of the License, or
-    ~  (at your option) any later version.
-    ~
-    ~  This program is distributed in the hope that it will be useful,
-    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ~  GNU General Public License for more details.
-    ~
-    ~  You should have received a copy of the GNU General Public License
-    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-    <string name="cue_workout">actividad</string>
-    <string name="cue_activity">intervalo</string>
-    <string name="cue_lap">vuelta</string>
-    <string name="cue_warmup">calentamiento</string>
-    <string name="cue_cooldown">enfriamiento</string>
-    <string name="cue_current">actual</string>
-    <string name="cue_perkilometer">por kilómetro</string>
-    <string name="cue_permile">por milla</string>
-    <string name="cue_started">empezado</string>
-    <string name="cue_paused">en pausa</string>
-    <string name="cue_resumed">reanudado</string>
-    <string name="cue_stopped">parado</string>
-    <string name="cue_completed">completado</string>
-    <string name="cue_speedup">acelerar</string>
-    <string name="cue_slowdown">decelerar</string>
-    <plurals name="cue_hour">
-        <item quantity="one">horas</item>
-        <item quantity="other">horas</item>
-    </plurals>
-    <plurals name="cue_minute">
-        <item quantity="one">minuto</item>
-        <item quantity="other">minutos</item>
-    </plurals>
-    <plurals name="cue_second">
-        <item quantity="one">segundo</item>
-        <item quantity="other">segundos</item>
-    </plurals>
-    <plurals name="cue_meter">
-        <item quantity="one">metro</item>
-        <item quantity="other">metros</item>
-    </plurals>
-    <plurals name="cue_kilometer">
-        <item quantity="one">kilómetro</item>
-        <item quantity="other">kilómetros</item>
-    </plurals>
-    <plurals name="cue_mile">
-        <item quantity="one">milla</item>
-        <item quantity="other">millas</item>
-    </plurals>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_workout">actividad</string>
+  <string name="cue_activity">intervalo</string>
+  <string name="cue_lap">vuelta</string>
+  <string name="cue_warmup">calentamiento</string>
+  <string name="cue_cooldown">enfriamiento</string>
+  <string name="cue_current">actual</string>
+  <string name="cue_perkilometer">por kilómetro</string>
+  <string name="cue_permile">por milla</string>
+  <string name="cue_started">empezado</string>
+  <string name="cue_paused">en pausa</string>
+  <string name="cue_resumed">reanudado</string>
+  <string name="cue_stopped">parado</string>
+  <string name="cue_completed">completado</string>
+  <string name="cue_speedup">acelerar</string>
+  <string name="cue_slowdown">decelerar</string>
+  <plurals name="cue_hour">
+    <item quantity="one">horas</item>
+    <item quantity="other">horas</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minuto</item>
+    <item quantity="other">minutos</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">segundo</item>
+    <item quantity="other">segundos</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">metro</item>
+    <item quantity="other">metros</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilómetro</item>
+    <item quantity="other">kilómetros</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">milla</item>
+    <item quantity="other">millas</item>
+  </plurals>
 </resources>
