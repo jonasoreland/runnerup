@@ -294,16 +294,19 @@ public class TrackerWear extends DefaultTrackerComponent
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         System.err.println("onMessageReceived: " + messageEvent);
+        Workout workout = tracker.getWorkout();
         if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
-            if (tracker.getState() == TrackerState.STARTED)
-                tracker.getWorkout().onPause(tracker.getWorkout());
+            if (!workout.isPaused()) {
+                workout.onPause(workout);
+            }
         } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
-            if (tracker.getState() == TrackerState.PAUSED)
-                tracker.getWorkout().onResume(tracker.getWorkout());
+            if (workout.isPaused()) {
+                workout.onResume(workout);
+            }
         } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
             if (tracker.getState() == TrackerState.STARTED ||
                     tracker.getState() == TrackerState.PAUSED)
-                tracker.getWorkout().onNewLapOrNextStep();
+                workout.onNewLapOrNextStep();
         } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
             /* send broadcast to StartActivity
              * note: skip state checking, do that in StartActivity instead
