@@ -36,6 +36,7 @@ public interface TrackerComponent {
 
     public enum ResultCode {
         RESULT_OK,
+        RESULT_UNKNOWN,       // we don't know if hw is present
         RESULT_NOT_SUPPORTED, // hw not present or not configured
         RESULT_NOT_ENABLED,   // hw is disabled (e.g bluetooth off)
         RESULT_ERROR,         // Component failed to initialize

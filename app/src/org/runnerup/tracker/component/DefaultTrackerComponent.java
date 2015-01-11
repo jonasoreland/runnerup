@@ -39,12 +39,12 @@ public abstract class DefaultTrackerComponent implements TrackerComponent {
      */
     @Override
     public ResultCode onInit(Callback callback, Context context) {
-        return ResultCode.RESULT_OK;
+        return ResultCode.RESULT_UNKNOWN;
     }
 
     @Override
     public ResultCode onConnecting(Callback callback, Context context) {
-        return ResultCode.RESULT_OK;
+        return ResultCode.RESULT_NOT_SUPPORTED;
     }
 
     @Override

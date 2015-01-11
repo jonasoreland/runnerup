@@ -95,7 +95,8 @@ public class TrackerComponentCollection implements TrackerComponent {
             @Override
             public ResultCode apply(TrackerComponent comp0, ResultCode currentResultCode,
                                     Callback callback0, Context context0) {
-                if (currentResultCode == ResultCode.RESULT_OK)
+                if (currentResultCode == ResultCode.RESULT_OK ||
+                    currentResultCode == ResultCode.RESULT_UNKNOWN)
                     return comp0.onConnecting(callback0, context0);
                 else
                     return currentResultCode;
@@ -115,10 +116,12 @@ public class TrackerComponentCollection implements TrackerComponent {
     private ResultCode getResult(HashMap<String, Pair<TrackerComponent, ResultCode>> components) {
         ResultCode res = ResultCode.RESULT_OK;
         for (Pair<TrackerComponent,ResultCode> pair : components.values()) {
-            if (pair.second == ResultCode.RESULT_ERROR_FATAL)
-                res = ResultCode.RESULT_ERROR_FATAL;
-            else if (pair.second == ResultCode.RESULT_ERROR)
+            if (pair.second == ResultCode.RESULT_ERROR_FATAL) {
+                // can't get any worse than this
+                return ResultCode.RESULT_ERROR_FATAL;
+            } else if (pair.second == ResultCode.RESULT_ERROR) {
                 res = ResultCode.RESULT_ERROR;
+            }
         }
         return res;
     }
