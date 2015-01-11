@@ -671,7 +671,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         if (mTracker != null) {
             if (mTracker.isComponentConfigured(TrackerHRM.NAME)) {
                 hideHR = false;
-
                 Integer hrVal = null;
                 if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
                     hrVal = mTracker.getCurrentHRValue();
