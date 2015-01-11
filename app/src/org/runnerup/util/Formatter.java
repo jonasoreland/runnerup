@@ -481,7 +481,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             int val = (int) round(base, decimals);
             if (txt) {
                 s.append(val).append(" ")
-                        .append(km ? "km" : "mi");
+                        .append(resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
                 s.append(val).append(" ")
                         .append(resources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, val));

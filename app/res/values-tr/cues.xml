@@ -30,21 +30,21 @@
   <string name="cue_speedup">hızlan</string>
   <string name="cue_slowdown">yavaşla</string>
   <plurals name="cue_hour">
-    <item quantity="one">saat</item>
+    <item quantity="other">saat</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">dakika</item>
+    <item quantity="other">dakika</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">saniye</item>
+    <item quantity="other">saniye</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">metre</item>
+    <item quantity="other">metre</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilometre</item>
+    <item quantity="other">kilometre</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">mil</item>
+    <item quantity="other">mil</item>
   </plurals>
 </resources>

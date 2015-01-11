@@ -77,6 +77,8 @@ dependencies {
     compile files('libs/antpluginlib_3.1.0.jar')
 
     compile project(':common')
+
+    latestWearApp project(':wear')
 }
 
 allprojects {
