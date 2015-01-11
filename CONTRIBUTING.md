@@ -43,3 +43,4 @@ To build the app using Android Studio, see [this guide](Documentation/howto-buil
 1. Each PR should contain one logical change
 2. Each PR should either contain 100% new code/features or be small enough so that it can be review quite quickly
 3. If a PR gets to big, it should be split into several PRs, where e.g the first ones are refactorings needed later
+4. Be sure only to modify lines you actually change. Keep reformattings and similar in separate PR.
