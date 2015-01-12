@@ -1,3 +1,6 @@
 [submodule "GraphView"]
 	path = GraphView
 	url = https://github.com/jjoe64/GraphView
+[submodule "ANT-Android-SDKs"]
+	path = ANT-Android-SDKs
+	url = https://github.com/ant-wireless/ANT-Android-SDKs
