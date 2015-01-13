@@ -62,8 +62,10 @@
   <string name="pace">Tempo</string>
   <string name="heartrate">Herzfrequenz</string>
   <string name="heartrate_zone">Herzfrequenz-Zone</string>
+  <string name="zone">Zone</string>
   <string name="device">Gerät</string>
   <string name="heart_rate">Hertsfrequenz</string>
+  <string name="pace_chart">Tempo</string>
   <string name="scan">Scan</string>
   <string name="connect">Verbinden</string>
   <string name="connecting">am verbinden</string>

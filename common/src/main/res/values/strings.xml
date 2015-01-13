@@ -63,8 +63,10 @@
   <string name="pace">pace</string>
   <string name="heartrate">heart rate</string>
   <string name="heartrate_zone">heart rate zone</string>
+  <string name="zone">Zone</string>
   <string name="device">Device</string>
   <string name="heart_rate">Heart rate</string>
+  <string name="pace_chart">Pace</string>
   <string name="scan">Scan</string>
   <string name="connect">Connect</string>
   <string name="connecting">Connecting</string>
@@ -107,6 +109,11 @@
   <string name="sex">Sex</string>
   <string name="upload">upload</string>
   <string name="feed">feed</string>
+  <string name="tab_notes">Notes</string>
+  <string name="tab_laps">Laps</string>
+  <string name="tab_map">Map</string>
+  <string name="tab_graph">Graph</string>
+  <string name="tab_upload">Upload</string>
   <string name="configure">Configure</string>
   <string name="disconnect">Disconnect</string>
   <string name="resume">Resume</string>
