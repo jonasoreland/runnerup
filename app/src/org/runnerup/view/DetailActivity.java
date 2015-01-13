@@ -211,27 +211,27 @@ public class DetailActivity extends FragmentActivity implements Constants {
         TabHost th = (TabHost) findViewById(R.id.tabhost);
         th.setup();
         TabSpec tabSpec = th.newTabSpec("notes");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Notes"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_notes)));
         tabSpec.setContent(R.id.tab_main);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("laps");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Laps"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_laps)));
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("map");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Map"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_map)));
         tabSpec.setContent(R.id.tab_map);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("graph");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Graph"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_graph)));
         tabSpec.setContent(R.id.tab_graph);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("share");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, "Upload"));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_upload)));
         tabSpec.setContent(R.id.tab_upload);
         th.addTab(tabSpec);
 
