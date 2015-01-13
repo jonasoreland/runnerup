@@ -66,6 +66,7 @@
   <string name="zone">Zone</string>
   <string name="device">Apparaat</string>
   <string name="heart_rate">Hartslag</string>
+  <string name="pace_chart">Tempo</string>
   <string name="scan">Zoeken</string>
   <string name="connect">Verbinden</string>
   <string name="connecting">Verbinding maken</string>

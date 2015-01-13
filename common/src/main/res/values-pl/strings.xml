@@ -67,6 +67,7 @@
   <string name="zone">Strefa</string>
   <string name="device">Urządzenie</string>
   <string name="heart_rate">Tętno</string>
+  <string name="pace_chart">Tempo</string>
   <string name="scan">Skanuj</string>
   <string name="connect">Połącz</string>
   <string name="connecting">Łącze</string>

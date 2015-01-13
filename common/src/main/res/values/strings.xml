@@ -66,6 +66,7 @@
   <string name="zone">Zone</string>
   <string name="device">Device</string>
   <string name="heart_rate">Heart rate</string>
+  <string name="pace_chart">Pace</string>
   <string name="scan">Scan</string>
   <string name="connect">Connect</string>
   <string name="connecting">Connecting</string>
