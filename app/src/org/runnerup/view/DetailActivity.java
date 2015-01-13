@@ -251,7 +251,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
         graphTab = (LinearLayout) findViewById(R.id.tab_graph);
         {
-            graphView = new LineGraphView(this, "Pace") {
+            graphView = new LineGraphView(this, getString(R.string.pace_chart)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
                     if (!isValueX) {
@@ -261,7 +261,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 }
             };
 
-            graphView2 = new LineGraphView(this, "HRM") {
+            graphView2 = new LineGraphView(this, getString(R.string.heart_rate)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
                     if (!isValueX) {

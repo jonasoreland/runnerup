@@ -122,7 +122,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         formatter = new Formatter(this);
         {
             LinearLayout graphLayout = (LinearLayout) findViewById(R.id.hr_graph_layout);
-            graphView = new LineGraphView(this, "Heart rate") {
+            graphView = new LineGraphView(this, getString(R.string.heart_rate)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
                     if (!isValueX) {
