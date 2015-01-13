@@ -64,6 +64,7 @@
   <string name="pace">tempo</string>
   <string name="heartrate">tętno</string>
   <string name="heartrate_zone">strefa tętna</string>
+  <string name="zone">Strefa</string>
   <string name="device">Urządzenie</string>
   <string name="heart_rate">Tętno</string>
   <string name="scan">Skanuj</string>

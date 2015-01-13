@@ -63,6 +63,7 @@
   <string name="pace">tempo</string>
   <string name="heartrate">hartslag</string>
   <string name="heartrate_zone">hartslagzone</string>
+  <string name="zone">Zone</string>
   <string name="device">Apparaat</string>
   <string name="heart_rate">Hartslag</string>
   <string name="scan">Zoeken</string>

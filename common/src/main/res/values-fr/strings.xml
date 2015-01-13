@@ -63,6 +63,7 @@
   <string name="pace">rythme</string>
   <string name="heartrate">fréq. cardiaque</string>
   <string name="heartrate_zone">zone de fréq. cardiaque</string>
+  <string name="zone">Zone</string>
   <string name="device">Appareil</string>
   <string name="heart_rate">Fréquence Cardiaque</string>
   <string name="scan">Scanner</string>

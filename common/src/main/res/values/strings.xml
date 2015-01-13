@@ -63,6 +63,7 @@
   <string name="pace">pace</string>
   <string name="heartrate">heart rate</string>
   <string name="heartrate_zone">heart rate zone</string>
+  <string name="zone">Zone</string>
   <string name="device">Device</string>
   <string name="heart_rate">Heart rate</string>
   <string name="scan">Scan</string>
