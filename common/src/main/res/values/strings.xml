@@ -109,6 +109,11 @@
   <string name="sex">Sex</string>
   <string name="upload">upload</string>
   <string name="feed">feed</string>
+  <string name="tab_notes">Notes</string>
+  <string name="tab_laps">Laps</string>
+  <string name="tab_map">Map</string>
+  <string name="tab_graph">Graph</string>
+  <string name="tab_upload">Upload</string>
   <string name="configure">Configure</string>
   <string name="disconnect">Disconnect</string>
   <string name="resume">Resume</string>

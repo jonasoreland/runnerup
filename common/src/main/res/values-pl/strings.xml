@@ -106,9 +106,14 @@
   <string name="low_pace">Min. tętno</string>
   <string name="high_pace">Max. tętno</string>
   <string name="sex">Płeć</string>
-  <string name="upload">synchronizuj</string>
+  <string name="upload">Synchronizuj</string>
   <string name="configure">Konfiguruj</string>
   <string name="disconnect">Rozłącz</string>
+  <string name="tab_notes">Notatki</string>
+  <string name="tab_laps">Okrążenia</string>
+  <string name="tab_map">Mapa</string>
+  <string name="tab_graph">Wykres</string>
+  <string name="tab_upload">Eksport</string>
   <string name="resume">Wznów</string>
   <string name="save_activity">Zapisz aktywność</string>
   <string name="upload_activity">Synchronizuj aktywność</string>
