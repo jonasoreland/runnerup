@@ -49,6 +49,7 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
@@ -76,6 +77,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private String wearNode;
 
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
+    private Step currentStep;
 
     public TrackerWear(Tracker tracker) {
         this.tracker = tracker;
@@ -198,7 +200,7 @@ public class TrackerWear extends DefaultTrackerComponent
         tracker.getWorkout().registerWorkoutStepListener(this);
     }
 
-    void setTrackerState(TrackerState val) {
+    private void setTrackerState(TrackerState val) {
         Bundle b = new Bundle();
         b.putInt(Wear.TrackerState.STATE, val.getValue());
         setData(Wear.Path.TRACKER_STATE, b);
@@ -250,12 +252,36 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void onStepChanged(Step oldStep, Step newStep) {
-        // Update headers according to type of newStep
+        if (currentStep == null) {
+            // first step
+        }
+        currentStep = newStep;
+
+        if (currentStep == null) {
+            return; // this is end
+        }
+
+        // Update headers
+        {
+            Bundle b = new Bundle();
+            int i = 0;
+            for (Pair<Scope, Dimension> item : items) {
+                b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
+                i++;
+            }
+
+            if (currentStep != null && currentStep.isPauseStep()) {
+                b.putBoolean(Wear.RunInfo.PAUSE_STEP, true);
+            }
+
+            setData(Wear.Path.HEADERS, b);
+        }
     }
 
     @Override
     public void onComplete(boolean discarded) {
         tracker.getWorkout().unregisterWorkoutStepListener(this);
+        currentStep = null;
 
         /* clear HEADERS */
         Wearable.DataApi.deleteDataItems(mGoogleApiClient,

@@ -207,6 +207,7 @@ public interface Constants {
         public interface RunInfo {
             static final String HEADER = "HEADER/";
             static final String DATA = "DATA/";
+            static final String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
         };
 
         public interface TrackerState {
