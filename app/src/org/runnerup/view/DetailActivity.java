@@ -866,9 +866,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
             Resources res = getResources();
             Context ctx = getApplicationContext();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-            int zone = prefs.getInt(res.getString(R.string.pref_basic_target_hrz), 0);
-            if (zone > 0) {
-                this.hrCalc = new HRZones(res, prefs);
+            this.hrCalc = new HRZones(res, prefs);
+            if (hrCalc.isConfigured()) {
                 this.hrzHist = new double[hrCalc.getCount() + 1];
                 for (int i = 0; i < this.hrzHist.length; i++) {
                     this.hrzHist[i] = 0;
