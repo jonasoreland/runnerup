@@ -478,13 +478,13 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         StringBuilder s = new StringBuilder();
         if (meters >= base_val) {
             double base = ((double) meters) / base_val;
-            int val = (int) round(base, decimals);
+            double val = round(base, decimals);
             if (txt) {
                 s.append(val).append(" ")
                         .append(resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
                 s.append(val).append(" ")
-                        .append(resources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, val));
+                        .append(resources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val));
             }
         } else {
             s.append(meters);
