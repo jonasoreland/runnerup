@@ -22,10 +22,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
 
-import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.Tracker;
+import org.runnerup.workout.Workout;
 
 /**
  * Created by jonas on 12/11/14.
@@ -56,7 +57,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
     @Override
     public void onStart() {
-        registerWorkoutBroadcastsListener();
+        registerReceivers();
         if (HeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(context)) {
             headsetRegistered = true;
             HeadsetButtonReceiver.registerHeadsetListener(context);
@@ -65,37 +66,95 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
     @Override
     public void onComplete(boolean discarded) {
-        unregisterWorkoutBroadcastsListener();
+        unregisterReceivers();
         if (headsetRegistered) {
             headsetRegistered = false;
             HeadsetButtonReceiver.unregisterHeadsetListener(context);
         }
     }
 
-    private final BroadcastReceiver mWorkoutBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(Constants.Intents.PAUSE_RESUME)) {
-                if (tracker.getState() == TrackerState.PAUSED)
-                    tracker.getWorkout().onResume(tracker.getWorkout());
-                else if (tracker.getState() == TrackerState.STARTED)
-                    tracker.getWorkout().onPause(tracker.getWorkout());
-            } else if (action.equals(Constants.Intents.NEW_LAP)) {
-                tracker.getWorkout().onNewLap();
-            }
+            TrackerReceiver.this.onReceive(context, intent);
         }
     };
 
-    private void registerWorkoutBroadcastsListener() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
-        context.registerReceiver(mWorkoutBroadcastReceiver, intentFilter);
+    private final BroadcastReceiver mLocalBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            TrackerReceiver.this.onReceive(context, intent);
+        }
+    };
+
+    private void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        switch (tracker.getState()) {
+            case INIT:
+            case INITIALIZING:
+            case INITIALIZED:
+            case CONNECTING:
+            case STOPPED:
+            case CLEANUP:
+            case ERROR:
+            case CONNECTED:
+                return;
+            case STARTED:
+            case PAUSED:
+                break;
+        }
+
+        Workout workout = tracker.getWorkout();
+        if (workout == null)
+            return;
+
+        if (Constants.Intents.PAUSE_RESUME.contentEquals(action)) {
+            if (workout.isPaused())
+                workout.onResume(workout);
+            else
+                workout.onPause(workout);
+            return;
+        } else if (Constants.Intents.NEW_LAP.contentEquals(action)) {
+            workout.onNewLapOrNextStep();
+            return;
+        } else if (Constants.Intents.PAUSE_WORKOUT.contentEquals(action)) {
+            if (workout.isPaused())
+                return;
+            workout.onPause(workout);
+            return;
+        } else if (Constants.Intents.RESUME_WORKOUT.contentEquals(action)) {
+            if (workout.isPaused())
+                workout.onResume(workout);
+            return;
+        }
     }
 
-    private void unregisterWorkoutBroadcastsListener() {
+
+    private void registerReceivers() {
+        {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
+            context.registerReceiver(mBroadcastReceiver, intentFilter);
+        }
+
+        {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Constants.Intents.NEW_LAP);
+            intentFilter.addAction(Constants.Intents.PAUSE_WORKOUT);
+            intentFilter.addAction(Constants.Intents.RESUME_WORKOUT);
+            LocalBroadcastManager.getInstance(context).registerReceiver(
+                    mLocalBroadcastReceiver, intentFilter);
+        }
+    }
+
+    private void unregisterReceivers() {
         try {
-            context.unregisterReceiver(mWorkoutBroadcastReceiver);
+            context.unregisterReceiver(mBroadcastReceiver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(mLocalBroadcastReceiver);
         } catch (Exception e) {
             e.printStackTrace();
         }

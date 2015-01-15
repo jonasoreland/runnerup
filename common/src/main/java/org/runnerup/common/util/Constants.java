@@ -163,6 +163,8 @@ public interface Constants {
         final String NEW_LAP = "org.runnerup.NEW_LAP";
         final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
         final String START_WORKOUT = "org.runnerup.START_WORKOUT";
+        final String PAUSE_WORKOUT = "org.runnerup.PAUSE_WORKOUT";
+        final String RESUME_WORKOUT = "org.runnerup.RESUME_WORKOUT";
     }
 
     public interface TRACKER_STATE {

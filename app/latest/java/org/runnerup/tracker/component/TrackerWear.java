@@ -23,6 +23,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,14 +44,13 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.tracker.Tracker;
-import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
-import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
@@ -75,6 +76,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private Formatter formatter;
     private HashSet<Node> connectedNodes = new HashSet<Node>();
     private String wearNode;
+    private final Handler handler = new Handler();
 
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
     private Step currentStep;
@@ -201,6 +203,7 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     private void setTrackerState(TrackerState val) {
+        System.err.println("setTrackerState("+val+")");
         Bundle b = new Bundle();
         b.putInt(Wear.TrackerState.STATE, val.getValue());
         setData(Wear.Path.TRACKER_STATE, b);
@@ -318,30 +321,31 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
+    public void onMessageReceived(final MessageEvent messageEvent) {
         System.err.println("onMessageReceived: " + messageEvent);
-        Workout workout = tracker.getWorkout();
+        //note: skip state checking, do that in receiver instead
         if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
-            if (!workout.isPaused()) {
-                workout.onPause(workout);
-            }
+            sendLocalBroadcast(Constants.Intents.PAUSE_WORKOUT);
+            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
-            if (workout.isPaused()) {
-                workout.onResume(workout);
-            }
+            sendLocalBroadcast(Intents.RESUME_WORKOUT);
+            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
-            if (tracker.getState() == TrackerState.STARTED ||
-                    tracker.getState() == TrackerState.PAUSED)
-                workout.onNewLapOrNextStep();
+            sendLocalBroadcast(Intents.NEW_LAP);
+            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
-            /* send broadcast to StartActivity
-             * note: skip state checking, do that in StartActivity instead
-             */
+            /* send broadcast to StartActivity */
             Intent startBroadcastIntent = new Intent();
             startBroadcastIntent.setAction(Constants.Intents.START_WORKOUT);
             context.sendBroadcast(startBroadcastIntent);
             return;
         }
+    }
+
+    private void sendLocalBroadcast(String action) {
+        Intent intent = new Intent();
+        intent.setAction(action);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     @Override
@@ -386,7 +390,7 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
+    public void onDataChanged(final DataEventBuffer dataEvents) {
         for (DataEvent ev : dataEvents) {
             System.err.println("onDataChanged: " + ev.getDataItem().getUri());
             String path = ev.getDataItem().getUri().getPath();
