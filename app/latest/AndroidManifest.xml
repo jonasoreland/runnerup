@@ -21,8 +21,6 @@
         <uses-sdk
             android:minSdkVersion="9" />
 
-        <uses-feature android:name="android.hardware.type.watch" />
-        
 	<application
 	    android:icon="@drawable/icon"
 	    android:label="@string/app_name">
