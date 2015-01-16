@@ -46,7 +46,9 @@ public class AudioFeedback extends Feedback {
     Intensity intensity = null;
     RUTextToSpeech textToSpeech;
     Formatter formatter;
-
+    int cueCase = 0;
+    final int nounKeyBase = 10;
+    final int verbKeyBase = 100;
 
 
     public AudioFeedback(Scope scope, Event event) {
@@ -54,6 +56,7 @@ public class AudioFeedback extends Feedback {
         this.scope = scope;
         this.event = event;
         this.dimension = null;
+        this.cueCase = Constants.CUE_CASE.EVENT;
     }
 
     public AudioFeedback(Scope scope, Dimension dimension) {
@@ -61,6 +64,7 @@ public class AudioFeedback extends Feedback {
         this.scope = scope;
         this.event = null;
         this.dimension = dimension;
+        this.cueCase = Constants.CUE_CASE.DIMENSION;
     }
 
     public AudioFeedback(Intensity intensity, Event event) {
@@ -69,6 +73,7 @@ public class AudioFeedback extends Feedback {
         this.dimension = null;
         this.intensity = intensity;
         this.event = event;
+        this.cueCase = Constants.CUE_CASE.INTENSITY;
     }
 
     @Override
@@ -98,12 +103,9 @@ public class AudioFeedback extends Feedback {
         return true;
     }
 
-    protected String getCue(Workout w, Context ctx) {
+    protected String getCue(Workout w, Context ctx, double val) {
         String msg = null;
         Resources res = ctx.getResources();
-
-        int nounKey = 10;
-        int verbKey = 100;
 
         if (event != null && scope != null) {
             MessageFormat sentence = new MessageFormat(res.getString(R.string.cue_event_pattern));
@@ -114,7 +116,7 @@ public class AudioFeedback extends Feedback {
             ChoiceFormat cueVerbPattern = new ChoiceFormat(res.getString(event.getCueId()));
             sentence.setFormatByArgumentIndex(1, cueVerbPattern);
 
-            msg = sentence.format(new Object[] {nounKey * Constants.CUE_CASE.EVENT, verbKey * event.getValue() + scope.getValue()});
+            msg = sentence.format(new Object[] {getCueNounKey(), getCueVerbKey()});
 
         } else if (event != null && intensity != null) {
             MessageFormat sentence = new MessageFormat(res.getString(R.string.cue_event_pattern));
@@ -122,7 +124,7 @@ public class AudioFeedback extends Feedback {
             ChoiceFormat cueVerbPattern = new ChoiceFormat(res.getString(event.getCueId()));
             sentence.setFormatByArgumentIndex(1, cueVerbPattern);
 
-            msg = sentence.format(new Object[] {res.getString(intensity.getCueId()), verbKey * event.getValue() + intensity.getValue() * Constants.CUE_CASE.INTENSITY});
+            msg = sentence.format(new Object[] {res.getString(intensity.getCueId()), getCueVerbKey()});
 
         } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
             MessageFormat sentence = new MessageFormat(res.getString(R.string.cue_interval_pattern));
@@ -133,15 +135,40 @@ public class AudioFeedback extends Feedback {
             ChoiceFormat cueNounPattern = new ChoiceFormat(res.getString(scope.getCueId()));
             sentence.setFormatByArgumentIndex(0, cueNounPattern);
 
-            double val = w.get(scope, dimension); // SI
-            msg = sentence.format(new Object[] {nounKey * Constants.CUE_CASE.DIMENSION, dimension.getValue(), formatter.format(Formatter.CUE_LONG, dimension, val), res.getString(dimension.getTextId())});
+            //double val = w.get(scope, dimension); // SI
+            msg = sentence.format(new Object[] {getCueNounKey(), dimension.getValue(), formatter.format(Formatter.CUE_LONG, dimension, val), res.getString(dimension.getTextId())});
         }
         return msg;
     }
 
+    private int getCueNounKey() {
+        switch (cueCase) {
+            case Constants.CUE_CASE.EVENT:
+            case Constants.CUE_CASE.DIMENSION:
+                return nounKeyBase * cueCase;//10,20,30
+            case Constants.CUE_CASE.INTENSITY:
+                return -1;
+            default:
+                return 0;
+        }
+    }
+
+    private int getCueVerbKey() {
+        switch (cueCase) {
+            case Constants.CUE_CASE.EVENT:
+                return verbKeyBase * event.getValue() + scope.getValue();//101,102,103,104
+            case Constants.CUE_CASE.DIMENSION:
+                return -1;
+            case Constants.CUE_CASE.INTENSITY:
+                return verbKeyBase * event.getValue() + (intensity.getValue()+2) * cueCase;//106,109,112,115,118,121
+            default:
+                return 0;
+        }
+    }
+
     @Override
     public void emit(Workout w, Context ctx) {
-        String msg = getCue(w, ctx);
+        String msg = getCue(w, ctx, w.get(scope, dimension));
         if (msg != null) {
             textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
         }

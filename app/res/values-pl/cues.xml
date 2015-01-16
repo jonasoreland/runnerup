@@ -26,7 +26,7 @@
   <string name="cue_recovery">regeneracja</string>
   <string name="cue_perkilometer">na kilometr</string>
   <string name="cue_permile">na milę</string>
-  <string name="cue_started">101#rozpoczęty|102#rozpoczęty|103#rozpoczęte|106#rozpoczęta|109#rozpoczęte</string>
+  <string name="cue_started">101#rozpoczęty|102#rozpoczęty|103#rozpoczęte|112#rozpoczęta|115#rozpoczęte</string>
   <string name="cue_paused">201#wstrzymany|202#wstrzymany|203#wstrzymane</string>
   <string name="cue_resumed">301#wznowiony|302#wznowiony|303#wznowione</string>
   <string name="cue_stopped">401#zatrzymany|402#zatrzymany|403#zatrzymane</string>

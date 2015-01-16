@@ -31,7 +31,7 @@
   <string name="cue_recovery">recovery</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>
-  <string name="cue_started">101#started|102#started|103#started|106#started|109#started</string>
+  <string name="cue_started">101#started|102#started|103#started|112#started|115#started</string>
   <string name="cue_paused">201#paused|202#paused|203#paused</string>
   <string name="cue_resumed">301#resumed|302#resumed|303#resumed</string>
   <string name="cue_stopped">401#stopped|402#stopped|403#stopped</string>
