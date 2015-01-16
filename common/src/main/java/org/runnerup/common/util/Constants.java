@@ -180,6 +180,12 @@ public interface Constants {
         public static final int STOPPED = 9;
     };
 
+    public interface  CUE_CASE {
+        public static final int DIMENSION = 1;
+        public static final int EVENT = 2;
+        public static final int INTENSITY = 3;
+    }
+
     public interface Wear {
 
         public interface Path {

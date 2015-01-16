@@ -23,6 +23,8 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
+import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Event;
@@ -31,6 +33,8 @@ import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
 
+import java.text.ChoiceFormat;
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -42,6 +46,8 @@ public class AudioFeedback extends Feedback {
     Intensity intensity = null;
     RUTextToSpeech textToSpeech;
     Formatter formatter;
+
+
 
     public AudioFeedback(Scope scope, Event event) {
         super();
@@ -95,14 +101,40 @@ public class AudioFeedback extends Feedback {
     protected String getCue(Workout w, Context ctx) {
         String msg = null;
         Resources res = ctx.getResources();
+
+        int nounKey = 10;
+        int verbKey = 100;
+
         if (event != null && scope != null) {
-            msg = res.getString(scope.getCueId()) + " " + res.getString(event.getCueId());
+            MessageFormat sentence = new MessageFormat(res.getString(R.string.cue_event_pattern));
+
+            ChoiceFormat cueNounPattern = new ChoiceFormat(res.getString(scope.getCueId()));
+            sentence.setFormatByArgumentIndex(0, cueNounPattern);
+
+            ChoiceFormat cueVerbPattern = new ChoiceFormat(res.getString(event.getCueId()));
+            sentence.setFormatByArgumentIndex(1, cueVerbPattern);
+
+            msg = sentence.format(new Object[] {nounKey * Constants.CUE_CASE.EVENT, verbKey * event.getValue() + scope.getValue()});
+
         } else if (event != null && intensity != null) {
-            msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());
+            MessageFormat sentence = new MessageFormat(res.getString(R.string.cue_event_pattern));
+
+            ChoiceFormat cueVerbPattern = new ChoiceFormat(res.getString(event.getCueId()));
+            sentence.setFormatByArgumentIndex(1, cueVerbPattern);
+
+            msg = sentence.format(new Object[] {res.getString(intensity.getCueId()), verbKey * event.getValue() + intensity.getValue() * Constants.CUE_CASE.INTENSITY});
+
         } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
+            MessageFormat sentence = new MessageFormat(res.getString(R.string.cue_interval_pattern));
+
+            ChoiceFormat cueDimensionPattern = new ChoiceFormat(res.getString(R.string.cue_dimension_pattern));
+            sentence.setFormatByArgumentIndex(1, cueDimensionPattern);
+
+            ChoiceFormat cueNounPattern = new ChoiceFormat(res.getString(scope.getCueId()));
+            sentence.setFormatByArgumentIndex(0, cueNounPattern);
+
             double val = w.get(scope, dimension); // SI
-            msg = res.getString(scope.getCueId()) + " "
-                    + formatter.format(Formatter.CUE_LONG, dimension, val);
+            msg = sentence.format(new Object[] {nounKey * Constants.CUE_CASE.DIMENSION, dimension.getValue(), formatter.format(Formatter.CUE_LONG, dimension, val), res.getString(dimension.getTextId())});
         }
         return msg;
     }
