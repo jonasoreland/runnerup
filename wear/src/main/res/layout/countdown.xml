@@ -25,9 +25,9 @@
 
     <FrameLayout
         android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_height="96dp"
         android:layout_gravity="center"
-        android:background="@drawable/circle"
+        android:background="@drawable/countdown_background"
         android:padding="5dp"
         app:layout_box="all">
 
@@ -38,5 +38,4 @@
         android:layout_gravity="center"
         style="@style/Countdown" />
     </FrameLayout>
-
 </android.support.wearable.view.BoxInsetLayout>
