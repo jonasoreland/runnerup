@@ -44,7 +44,7 @@
                 android:src="@drawable/ic_av_play_arrow"
                 app:circle_border_width="0dp"
                 app:circle_color="@color/action_button"
-                app:circle_radius="32dp" />
+                app:circle_radius="@dimen/one_button_radius" />
 
             <TextView
                 android:id="@+id/txt_start"
