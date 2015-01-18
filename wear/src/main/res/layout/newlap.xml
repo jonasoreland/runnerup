@@ -41,7 +41,7 @@
                 android:id="@+id/icon_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_av_play_arrow"
+                android:src="@drawable/ic_av_newlap"
                 app:circle_border_width="0dp"
                 app:circle_color="@color/action_button"
                 app:circle_radius="32dp" />
@@ -50,7 +50,7 @@
                 android:id="@+id/txt_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/resume"
+                android:text="@string/new_lap"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
