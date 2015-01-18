@@ -210,6 +210,7 @@ public interface Constants {
             static final String HEADER = "HEADER/";
             static final String DATA = "DATA/";
             static final String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
+            static final String COUNTDOWN = "COUNTDOWN";   // Stored in DATA
         };
 
         public interface TrackerState {
