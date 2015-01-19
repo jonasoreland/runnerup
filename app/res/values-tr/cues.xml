@@ -14,19 +14,19 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_workout">aktivite</string>
-  <string name="cue_activity">aralık</string>
-  <string name="cue_lap">tur</string>
+  <string name="cue_workout">0&#60;aktivite</string>
+  <string name="cue_activity">0&#60;aralık</string>
+  <string name="cue_lap">0&#60;tur</string>
   <string name="cue_warmup">ısınma</string>
   <string name="cue_cooldown">soğuma</string>
   <string name="cue_current">şimdiki</string>
   <string name="cue_perkilometer">kilometre başına</string>
   <string name="cue_permile">mil başına</string>
-  <string name="cue_started">başlandı</string>
-  <string name="cue_paused">duraklatıldı</string>
-  <string name="cue_resumed">devam edildi</string>
-  <string name="cue_stopped">durduruldu</string>
-  <string name="cue_completed">tamamlandı</string>
+  <string name="cue_started">0&#60;başlandı</string>
+  <string name="cue_paused">0&#60;duraklatıldı</string>
+  <string name="cue_resumed">0&#60;devam edildi</string>
+  <string name="cue_stopped">0&#60;durduruldu</string>
+  <string name="cue_completed">0&#60;tamamlandı</string>
   <string name="cue_speedup">hızlan</string>
   <string name="cue_slowdown">yavaşla</string>
   <plurals name="cue_hour">

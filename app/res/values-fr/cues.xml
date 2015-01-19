@@ -14,20 +14,20 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_workout">activité</string>
-  <string name="cue_activity">intervalle</string>
-  <string name="cue_lap">tour</string>
+  <string name="cue_workout">0&#60;activité</string>
+  <string name="cue_activity">0&#60;intervalle</string>
+  <string name="cue_lap">0&#60;tour</string>
   <string name="cue_warmup">échauffement</string>
   <string name="cue_cooldown">refroidissement</string>
   <string name="cue_current">courant</string>
   <string name="cue_recovery">récupération</string>
   <string name="cue_perkilometer">par kilomètre</string>
   <string name="cue_permile">par mille</string>
-  <string name="cue_started">démarré</string>
-  <string name="cue_paused">pausé</string>
-  <string name="cue_resumed">repris</string>
-  <string name="cue_stopped">stoppé</string>
-  <string name="cue_completed">terminé</string>
+  <string name="cue_started">0&#60;démarré</string>
+  <string name="cue_paused">0&#60;pausé</string>
+  <string name="cue_resumed">0&#60;repris</string>
+  <string name="cue_stopped">0&#60;stoppé</string>
+  <string name="cue_completed">0&#60;terminé</string>
   <string name="cue_speedup">accéléré</string>
   <string name="cue_slowdown">ralentir</string>
   <plurals name="cue_hour">

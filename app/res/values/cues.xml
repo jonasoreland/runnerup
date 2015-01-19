@@ -16,9 +16,9 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="cue_interval_pattern">{0} {1} {2}</string>
   <string name="cue_event_pattern">{0} {1}</string>
-  <string name="cue_workout">10#activity|20#activity</string>
-  <string name="cue_activity">10#interval|20#interval</string>
-  <string name="cue_lap">10#lap|20#lap</string>
+  <string name="cue_workout">0&#60;activity</string>
+  <string name="cue_activity">0&#60;interval</string>
+  <string name="cue_lap">0&#60;lap</string>
   <!-- Pattern for inclusion of dimension in the audio cue
        {1} is the dimension id, {2} is the actual dimension name
        For dimension id see Constants.java
@@ -31,11 +31,11 @@
   <string name="cue_recovery">recovery</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>
-  <string name="cue_started">101#started|102#started|103#started|112#started|115#started</string>
-  <string name="cue_paused">201#paused|202#paused|203#paused</string>
-  <string name="cue_resumed">301#resumed|302#resumed|303#resumed</string>
-  <string name="cue_stopped">401#stopped|402#stopped|403#stopped</string>
-  <string name="cue_completed">501#completed|502#completed|503#completed</string>
+  <string name="cue_started">0&#60;started</string>
+  <string name="cue_paused">0&#60;paused</string>
+  <string name="cue_resumed">0&#60;resumed</string>
+  <string name="cue_stopped">0&#60;stopped</string>
+  <string name="cue_completed">0&#60;completed</string>
   <string name="cue_speedup">speed up</string>
   <string name="cue_slowdown">slow down</string>
   <plurals name="cue_hour">
