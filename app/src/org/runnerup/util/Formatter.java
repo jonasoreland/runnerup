@@ -28,8 +28,12 @@ import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.feedback.AudioFeedback;
 
+import java.text.ChoiceFormat;
+import java.text.MessageFormat;
 import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -56,6 +60,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public static final int TXT = 4; // same as TXT_SHORT
     public static final int TXT_SHORT = 5; // brief for printing
     public static final int TXT_LONG = 6; // long for printing
+
+    private static final int nounKeyBase = 10;
+    private static final int verbKeyBase = 100;
 
     public Formatter(Context ctx) {
         context = ctx;
@@ -540,5 +547,67 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public static double getUnitMeters(Context mContext) {
         return getUnitMeters(mContext.getResources(),
                 PreferenceManager.getDefaultSharedPreferences(mContext));
+    }
+
+
+    private static int getCueNounKey(AudioFeedback feedback) {
+        switch (feedback.getCueCase()) {
+            case Constants.CUE_CASE.EVENT:
+            case Constants.CUE_CASE.DIMENSION:
+                return nounKeyBase * feedback.getCueCase();//10,20,30
+            case Constants.CUE_CASE.INTENSITY:
+                return -1;
+            default:
+                return 0;
+        }
+    }
+
+    private static int getCueVerbKey(AudioFeedback feedback) {
+        switch (feedback.getCueCase()) {
+            case Constants.CUE_CASE.EVENT:
+                return verbKeyBase * feedback.getEvent().getValue() + feedback.getScope().getValue();//101,102,103,104
+            case Constants.CUE_CASE.DIMENSION:
+                return -1;
+            case Constants.CUE_CASE.INTENSITY:
+                return verbKeyBase * feedback.getEvent().getValue() + (feedback.getIntensity().getValue()+2) * feedback.getCueCase();//106,109,112,115,118,121
+            default:
+                return 0;
+        }
+    }
+
+    public String formatCueSentence(MessageFormat sentence, double val, AudioFeedback feedback) {
+
+        ChoiceFormat cueNounPattern, cueVerbPattern, cueDimensionPattern;
+
+        switch (feedback.getCueCase()) {
+            case Constants.CUE_CASE.EVENT:
+
+                cueNounPattern = new ChoiceFormat(resources.getString(feedback.getScope().getCueId()));
+                sentence.setFormatByArgumentIndex(0, cueNounPattern);
+
+                cueVerbPattern = new ChoiceFormat(resources.getString(feedback.getEvent().getCueId()));
+                sentence.setFormatByArgumentIndex(1, cueVerbPattern);
+
+                return sentence.format(new Object[] {getCueNounKey(feedback), getCueVerbKey(feedback)});
+
+            case Constants.CUE_CASE.DIMENSION:
+
+                cueDimensionPattern = new ChoiceFormat(resources.getString(R.string.cue_dimension_pattern));
+                sentence.setFormatByArgumentIndex(1, cueDimensionPattern);
+
+                cueNounPattern = new ChoiceFormat(resources.getString(feedback.getScope().getCueId()));
+                sentence.setFormatByArgumentIndex(0, cueNounPattern);
+
+                return sentence.format(new Object[] {getCueNounKey(feedback), feedback.getDimension().getValue(), format(Formatter.CUE_LONG, feedback.getDimension(), val), resources.getString(feedback.getDimension().getTextId())});
+
+            case Constants.CUE_CASE.INTENSITY:
+
+                cueVerbPattern = new ChoiceFormat(resources.getString(feedback.getEvent().getCueId()));
+                sentence.setFormatByArgumentIndex(1, cueVerbPattern);
+
+                return sentence.format(new Object[] {resources.getString(feedback.getIntensity().getCueId()), getCueVerbKey(feedback)});
+            default:
+                return "";
+        }
     }
 }
