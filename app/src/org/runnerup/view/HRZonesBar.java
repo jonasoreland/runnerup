@@ -25,14 +25,10 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.view.View;
 
+import org.runnerup.R;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZonesBar extends View {
-
-    enum BarOrientation {
-        HORIZONTAL, VERTICAL
-    }
-
-    final BarOrientation barOrientation = BarOrientation.HORIZONTAL;
 
     static final int colorLow = Color.WHITE; // Color for the zone 0
     static final int colorHigh = Color.parseColor("#ff0000"); // Color for the last zone
@@ -43,10 +39,10 @@ public class HRZonesBar extends View {
             Color.green(colorHigh) - dColorLow[1],
             Color.blue(colorHigh) - dColorLow[2]};
 
-    static final float border = 5; // Border around the bar
-    static final float barHeight = 40; // Height of the bar
-    static final int fontSize = 20; // Font size used for writing the zone numbers
-    static final float separator = 2; // Separator between two zones
+    static final float borderSize = 10; // Border around the bar
+    static final float separatorSize = 2; // Separator between two zones
+    static final int maxBorderHeight = 60;
+    static final double chartSize = 0.8;
 
     final Paint paint = new Paint();
     final Paint fontPaint = new Paint();
@@ -55,16 +51,6 @@ public class HRZonesBar extends View {
 
     public HRZonesBar (Context ctx) {
         super(ctx);
-    }
-
-    /**
-     * Returns black or white, depending on which color would contrast best with the provided color.
-     * Code taken from https://github.com/MatthewYork/Colours
-     */
-    public static int blackOrWhiteContrastingColor(int color) {
-        int[] rgbArray = new int[]{Color.red(color), Color.green(color), Color.blue(color)};
-        double a = 1 - ((0.00299 * (double) rgbArray[0]) + (0.00587 * (double) rgbArray[1]) + (0.00114 * (double) rgbArray[2]));
-        return a < 0.5 ? Color.BLACK : Color.WHITE;
     }
 
     public void pushHrzData (double[] data) {
@@ -76,70 +62,61 @@ public class HRZonesBar extends View {
             return;
         }
 
+        //calculate bar height and chart offset
+        int actualHeight = getHeight()-getTop();
+        float calculatedBarHeight = (actualHeight- borderSize *2-5* separatorSize)/hrzData.length; // Height of the bar
+        calculatedBarHeight = calculatedBarHeight>maxBorderHeight ? maxBorderHeight : calculatedBarHeight;
+        int offsetY = (int) ((actualHeight - 6*calculatedBarHeight - 5* separatorSize)/2);
+
         canvas.drawColor(Color.TRANSPARENT);
 
+        // Font size and style
+        int fontSize = (int)calculatedBarHeight/2;
         fontPaint.setTextSize(fontSize);
         fontPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         fontPaint.setColor(Color.BLACK);
         fontPaint.setStyle(Paint.Style.FILL);
+        fontPaint.setTextAlign(Paint.Align.LEFT);
 
         paint.setStrokeWidth(0);
         paint.setStyle(Paint.Style.FILL);
 
-        float left = 0;
-        float totWidth = 0;
-        if (barOrientation == BarOrientation.HORIZONTAL) {
-            totWidth = getWidth() - border * 2;
-            left = border;
-        } else if (barOrientation == BarOrientation.VERTICAL) {
-            totWidth = getHeight() - border * 2;
-            left = getHeight() - border;
-        }
-
-        for (double aHrzData : hrzData) {
-            if (aHrzData > 0) {
-                totWidth -= separator;
-            }
-        }
-        if (totWidth <= 0) {
+        float totalWidth = 0;
+        totalWidth = getWidth() - borderSize * 2;
+        if (totalWidth <= 0) {
             System.err.println("Not enough space to display the heart-rate zone bar");
             return;
         }
 
-        for (int i = 0; i < hrzData.length; i++) {
-            if (hrzData[i] <= 0) {
-                continue;
-            }
+        //calculate sum for percentage calculation
+        double sum = 0;
+        for (double aHrzData : hrzData) {
+            sum += aHrzData;
+        }
 
+        for (int i = 0; i < hrzData.length; i++) {
             int rectColor = Color.rgb(dColorLow[0] + (i * dColorDiff[0]) / hrzData.length,
                     dColorLow[1] + (i * dColorDiff[1]) / hrzData.length,
                     dColorLow[2] + (i * dColorDiff[2]) / hrzData.length);
             paint.setColor(rectColor);
-            fontPaint.setColor(blackOrWhiteContrastingColor(rectColor));
+            fontPaint.setColor(Color.BLACK);
 
-            float len = (float) (totWidth * hrzData[i]);
-            if (barOrientation == BarOrientation.HORIZONTAL) {
-                canvas.drawRect(left, border, left + len, barHeight + border, paint);
-            } else if (barOrientation == BarOrientation.VERTICAL) {
-                canvas.drawRect(border, left - len, barHeight + border, left, paint);
-            }
+            //calculate per cent value of Zone duration
+            double hrzPart = hrzData[i] / sum;
+            float percent = Math.round((float)hrzPart * 100);
 
-            float textLen = fontPaint.measureText("Z" + i);
-            if ((barOrientation == BarOrientation.HORIZONTAL) && (textLen < len)) {
-                canvas.drawText("Z" + i, left + (len - textLen) / 2, border + (barHeight + fontSize) / 2, fontPaint);
-            } else if ((barOrientation == BarOrientation.VERTICAL) && (fontSize < len)) {
-                canvas.drawText("Z" + i, border + (barHeight - textLen) / 2, left + (fontSize - len) / 2, fontPaint);
-            }
+            //calculate text and bar length
+            String zoneName = getResources().getString(R.string.zone) + " " + i;
+            float textLen = fontPaint.measureText(zoneName);
+            float barLen = (float) (totalWidth * chartSize * hrzPart);
 
-            if (barOrientation == BarOrientation.HORIZONTAL) {
-                left += len + separator;
-            } else if (barOrientation == BarOrientation.VERTICAL) {
-                left -= len + separator;
+            //draw actual values and bars
+            canvas.drawText(zoneName, borderSize, offsetY + (i+1)* borderSize + calculatedBarHeight*(i+1)-fontSize/2, fontPaint);
+            canvas.drawText(percent + "%", (float) (chartSize*totalWidth+ borderSize), offsetY + (i+1)* borderSize + calculatedBarHeight*(i+1)-fontSize/2, fontPaint);
+
+            if (hrzPart >= 0) {
+                canvas.drawRect(borderSize + textLen, offsetY + i*calculatedBarHeight + (i+1)* borderSize, borderSize + textLen + barLen, offsetY + (i+1)*calculatedBarHeight + (i+1)* borderSize, paint);
             }
         }
-    }
-
-    public int getTotalBarHeight() {
-        return (int) Math.floor(border * 2 + barHeight);
     }
 }
