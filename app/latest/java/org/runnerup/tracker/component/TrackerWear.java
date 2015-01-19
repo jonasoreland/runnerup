@@ -76,7 +76,9 @@ public class TrackerWear extends DefaultTrackerComponent
     private Formatter formatter;
     private HashSet<Node> connectedNodes = new HashSet<Node>();
     private String wearNode;
+
     private final Handler handler = new Handler();
+    private Bundle workoutEvent;
 
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
     private Step currentStep;
@@ -249,8 +251,16 @@ public class TrackerWear extends DefaultTrackerComponent
             }
         }
 
-        Wearable.MessageApi.sendMessage(mGoogleApiClient, wearNode, Wear.Path.MSG_WORKOUT_EVENT,
-                DataMap.fromBundle(b).toByteArray());
+        workoutEvent = b;
+        sendWorkoutEvent();
+    }
+
+    private void sendWorkoutEvent() {
+        if (workoutEvent != null) {
+            Wearable.MessageApi.sendMessage(mGoogleApiClient, wearNode, Wear.Path.MSG_WORKOUT_EVENT,
+                    DataMap.fromBundle(workoutEvent).toByteArray());
+        }
+        workoutEvent = null;
     }
 
     @Override
