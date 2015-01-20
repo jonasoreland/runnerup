@@ -78,7 +78,10 @@ public class TrackerWear extends DefaultTrackerComponent
     private String wearNode;
 
     private final Handler handler = new Handler();
-    private Bundle workoutEvent;
+    private Bundle lastCreatedWorkoutEvent;
+    private Bundle lastSentWorkoutEvent;
+    private long tickFrequency = 1000;
+    private boolean mWorkoutSenderRunning = false;
 
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
     private Step currentStep;
@@ -200,7 +203,6 @@ public class TrackerWear extends DefaultTrackerComponent
         }
 
         setTrackerState(tracker.getState());
-
         tracker.getWorkout().registerWorkoutStepListener(this);
     }
 
@@ -227,9 +229,6 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void workoutEvent(WorkoutInfo workoutInfo, int type) {
-        if (!isConnected())
-            return;
-
         switch (type) {
             case DB.LOCATION.TYPE_START:
             case DB.LOCATION.TYPE_RESUME:
@@ -251,24 +250,43 @@ public class TrackerWear extends DefaultTrackerComponent
             }
         }
 
-        workoutEvent = b;
-        sendWorkoutEvent();
+        lastCreatedWorkoutEvent = b;
     }
 
     private void sendWorkoutEvent() {
-        if (workoutEvent != null) {
+        if (lastCreatedWorkoutEvent != null && isConnected()) {
             Wearable.MessageApi.sendMessage(mGoogleApiClient, wearNode, Wear.Path.MSG_WORKOUT_EVENT,
-                    DataMap.fromBundle(workoutEvent).toByteArray());
+                    DataMap.fromBundle(lastCreatedWorkoutEvent).toByteArray());
+            lastSentWorkoutEvent = lastCreatedWorkoutEvent;
+            lastCreatedWorkoutEvent = null;
         }
-        workoutEvent = null;
     }
+
+    private Runnable workoutEventSender = new Runnable() {
+        @Override
+        public void run() {
+            sendWorkoutEvent();
+            mWorkoutSenderRunning = false;
+
+            if (!isConnected())
+                return;
+
+            if (currentStep == null)
+                return;
+
+            mWorkoutSenderRunning = true;
+            handler.postDelayed(workoutEventSender, tickFrequency);
+        }
+    };
 
     @Override
     public void onStepChanged(Step oldStep, Step newStep) {
-        if (currentStep == null) {
-            // first step
-        }
         currentStep = newStep;
+
+        if (!mWorkoutSenderRunning) {
+            // this starts workout sender
+            workoutEventSender.run();
+        }
 
         if (currentStep == null) {
             return; // this is end
@@ -413,6 +431,13 @@ public class TrackerWear extends DefaultTrackerComponent
     private void setWearNode(DataEvent ev) {
         if (ev.getType() == DataEvent.TYPE_CHANGED) {
             wearNode = ev.getDataItem().getUri().getHost();
+            if (lastCreatedWorkoutEvent == null) {
+                lastCreatedWorkoutEvent = lastSentWorkoutEvent;
+            }
+            if (!mWorkoutSenderRunning)
+                workoutEventSender.run();
+            else
+                sendWorkoutEvent();
         } else if (ev.getType() == DataEvent.TYPE_DELETED) {
             wearNode = null;
         }
