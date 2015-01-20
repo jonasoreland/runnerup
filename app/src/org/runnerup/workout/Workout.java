@@ -481,6 +481,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         public final Step step;
     }
 
+    public void addStep(Step s) {
+        steps.add(s);
+    }
+
+
     public List<StepListEntry> getSteps() {
         ArrayList<StepListEntry> list = new ArrayList<StepListEntry>();
         for (Step s : steps) {

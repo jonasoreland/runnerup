@@ -386,7 +386,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         return;
 
                     if (mTracker.getState() == TrackerState.INIT /* this will start gps */||
-                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
+                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a advancedWorkoutSpinner*/ ||
                         mTracker.getState() == TrackerState.CONNECTED) {
                         startButton.performClick();
                     }
@@ -590,7 +590,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 unregisterStartEventListener();
 
                 /**
-                 * This will start the workout!
+                 * This will start the advancedWorkoutSpinner!
                  */
                 mTracker.start(w);
 
@@ -895,7 +895,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         return mGpsStatus.getSatellitesFixed();
     }
 
-    class WorkoutStepsAdapter extends BaseAdapter {
+    final class WorkoutStepsAdapter extends BaseAdapter {
 
         List<StepListEntry> steps = new ArrayList<StepListEntry>();
 

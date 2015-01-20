@@ -43,6 +43,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -50,6 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
@@ -57,7 +59,6 @@ import org.runnerup.export.UploadManager.Callback;
 import org.runnerup.export.UploadManager.WorkoutRef;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
-import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -82,6 +83,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     SQLiteDatabase mDB = null;
 
     static final String PHONE_STRING = "my phone";
+    public final static String WORKOUT_NAME = "";
 
     final HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
     final ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
@@ -96,6 +98,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     Button downloadButton = null;
     Button deleteButton = null;
     Button shareButton = null;
+    Button createButton = null;
 
     UploadManager uploadManager = null;
 
@@ -115,6 +118,16 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         downloadButton.setOnClickListener(downloadButtonClick);
         deleteButton = (Button) findViewById(R.id.delete_workout_button);
         deleteButton.setOnClickListener(deleteButtonClick);
+        createButton = (Button) findViewById(R.id.create_workout_button);
+        createButton.setOnClickListener(createButtonClick);
+//        createButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
+//                ManageWorkoutsActivity.this.startActivityForResult(intent, 113);
+//            }
+//        });
+
         shareButton = (Button) findViewById(R.id.share_workout_button);
         shareButton.setOnClickListener(shareButtonClick);
 
@@ -192,7 +205,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Import workout: " + fileName);
+        builder.setTitle("Import advancedWorkoutSpinner: " + fileName);
         builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -287,6 +300,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             downloadButton.setEnabled(false);
             deleteButton.setEnabled(false);
             shareButton.setEnabled(false);
+            createButton.setEnabled(true);
             return;
         }
 
@@ -395,6 +409,40 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         return newlist;
     }
 
+
+    final OnClickListener createButtonClick = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            final Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
+
+            builder.setTitle("Create new Workout");
+            builder.setMessage("Set advancedWorkoutSpinner name");
+
+            // Set an EditText view to get user input
+            final EditText input = new EditText(ManageWorkoutsActivity.this);
+            builder.setView(input);
+
+            builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    String value = input.getText().toString();
+                    intent.putExtra(WORKOUT_NAME, value);
+                    startActivity(intent);
+
+                }
+            });
+
+            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.dismiss();
+                }
+            });
+
+            builder.show();
+        }
+    };
+
     final OnClickListener downloadButtonClick = new OnClickListener() {
 
         @Override
@@ -407,7 +455,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             if (contains(local, selected)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
                 builder.setTitle("Downloading " + selected.workoutName + " will overwrite "
-                        + PHONE_STRING + " workout with same name");
+                        + PHONE_STRING + " advancedWorkoutSpinner with same name");
                 builder.setMessage(getString(R.string.are_you_sure));
                 builder.setPositiveButton(getString(R.string.yes),
                         new DialogInterface.OnClickListener() {
@@ -467,7 +515,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
-            builder.setTitle("Delete workout " + selected.workoutName);
+            builder.setTitle("Delete advancedWorkoutSpinner " + selected.workoutName);
             builder.setMessage(getString(R.string.are_you_sure));
             builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
@@ -541,13 +589,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
 
-            intent.putExtra(Intent.EXTRA_SUBJECT, "RunnerUp workout: " + name);
-            intent.putExtra(Intent.EXTRA_TEXT, "Hi\nHere is a workout I think you might like.");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "RunnerUp advancedWorkoutSpinner: " + name);
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi\nHere is a advancedWorkoutSpinner I think you might like.");
 
             intent.setType(WorkoutFileProvider.MIME);
             Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name);
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-            context.startActivity(Intent.createChooser(intent, "Share workout..."));
+            context.startActivity(Intent.createChooser(intent, "Share advancedWorkoutSpinner..."));
         }
     };
 
