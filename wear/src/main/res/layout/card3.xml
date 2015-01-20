@@ -46,7 +46,7 @@
 
             <TextView
                 android:id="@+id/textView2"
-                android:text="9.34"
+                android:text="-.--"
                 style="@style/Card3TextMedium" />
 
         </LinearLayout>
@@ -67,7 +67,7 @@
 
                 <TextView
                     android:id="@+id/textView1"
-                    android:text="52:23"
+                    android:text="--:--"
                     style="@style/Card3TextLarge" />
 
         </LinearLayout>
@@ -88,7 +88,7 @@
 
             <TextView
                 android:id="@+id/textView3"
-                android:text="5:23"
+                android:text="-:--"
                 style="@style/Card3TextMedium" />
 
         </LinearLayout>
