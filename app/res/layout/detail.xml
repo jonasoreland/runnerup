@@ -142,12 +142,12 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        android:background="#ffcccccc">
+                        android:background="@color/black">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/heartrate_zones_distribution"
-                            android:textColor="@color/black"
+                            android:textColor="@android:color/white"
                             android:layout_gravity="center"
                             android:textAlignment="center"/>
                     </LinearLayout>
