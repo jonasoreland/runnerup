@@ -20,6 +20,7 @@ package org.runnerup.view;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -27,8 +28,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +46,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.activity.ExternalActivitySerializer;
+import org.runnerup.activity.SportActivity;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.Downloader;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
@@ -51,7 +57,10 @@ import org.runnerup.util.Bitfield;
 import org.runnerup.common.util.Constants;
 import org.runnerup.widget.WidgetUtil;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountActivity extends Activity implements Constants {
@@ -196,6 +205,16 @@ public class AccountActivity extends Activity implements Constants {
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 addRow("Include map in post", cb);
             }
+
+            {
+                Button btn = (Button) findViewById(R.id.account_download_button);
+                if(uploader.checkSupport(Uploader.Feature.DOWNLOAD)) {
+                    btn.setVisibility(View.VISIBLE);
+                    btn.setOnClickListener(downloadButtonClick);
+                }else{
+                    btn.setVisibility(View.GONE);
+                }
+            }
         }
         mCursors.add(c);
     }
@@ -269,6 +288,78 @@ public class AccountActivity extends Activity implements Constants {
             if (uploaderIcon != null)
                 intent.putExtra("uploaderIcon", uploaderIcon.intValue());
             AccountActivity.this.startActivityForResult(intent, 113);
+        }
+    };
+
+    final OnClickListener downloadButtonClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final ProgressDialog mSpinner = new ProgressDialog(AccountActivity.this);
+            mSpinner.setCancelable(false);
+            mSpinner.show();
+
+
+            mSpinner.setMessage("Downloading Activities");
+
+
+            Uploader activityProvider = uploadManager.getUploader(uploaderID);
+            if(activityProvider instanceof Downloader) {
+                final Downloader downloader =  (Downloader)activityProvider;
+                new AsyncTask<Downloader, String, Status>() {
+
+                    @Override
+                    protected Uploader.Status doInBackground(Downloader... params) {
+                        try {
+                            List<Pair<String, String>> list = new ArrayList<Pair<String, String>>();
+                            Uploader.Status status = params[0].listActivities(list);
+                            if (status == Uploader.Status.OK) {
+                                HashMap<String, Long> extIdsMap = DBHelper.getActivityIdsByType(mDB, params[0].getName());
+                                for (Pair<String, String> keyNamePair : list) {
+                                    publishProgress(keyNamePair.second);
+                                    File f = ExternalActivitySerializer.getFile(AccountActivity.this, keyNamePair.first);
+                                    if (f.exists()) {
+                                        f.delete();
+                                        Long activityId= extIdsMap.get(keyNamePair.first);
+                                        if(activityId != null) {
+                                            DBHelper.deleteActivity(mDB, activityId);
+                                        }
+                                    }
+                                    params[0].downloadActivity(f, keyNamePair.first);
+                                    SportActivity sportActivity= params[0].getActivitySerializer().deserialize(f);
+                                    DBHelper.createActivity(mDB, sportActivity);
+                                }
+                            }
+
+                            return status;
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            return Uploader.Status.ERROR;
+                        }
+                    }
+
+                    @Override
+                    protected void onProgressUpdate(String... values) {
+                        mSpinner.setMessage("Loading " + values[0]);
+                    }
+
+                    @Override
+                    protected void onPostExecute(Uploader.Status result) {
+                        switch (result) {
+                            case CANCEL:
+                            case ERROR:
+                            case INCORRECT_USAGE:
+                            case SKIP:
+                                break;
+                            case OK:
+                                break;
+                            case NEED_AUTH:
+                                break;
+                        }
+                        mSpinner.dismiss();
+                    }
+                }.execute(downloader);
+            }
+
         }
     };
 

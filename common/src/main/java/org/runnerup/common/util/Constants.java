@@ -32,6 +32,8 @@ public interface Constants {
             public static final String MAX_HR = "avg_hr";
             public static final String AVG_HR = "max_hr";
             public static final String AVG_CADENCE = "avg_cadence";
+            public static final String TYPE = "activity_type";
+            public static final String EXTERNAL_ID = "external_id";
             public static final int SPORT_RUNNING = 0;
             public static final int SPORT_BIKING = 1;
             public static final int SPORT_OTHER = 2; // unknown
