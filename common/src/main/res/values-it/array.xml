@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Miglia</item>
+    <item>Chilometri</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Riscaldamento</item>
+    <item>Attivo</item>
+    <item>Riposo</item>
+    <item>Recupero</item>
+    <item>Defaticamento</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Dall\'ultima pressione</item>
+    <item>Tempo</item>
+    <item>Distanza</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Nessuno</item>
+    <item>Ritmo</item>
+    <item>Zona BPM</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Corsa</item>
+    <item>Bici</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>No</item>
+    <item>Sì</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>no</item>
+    <item>sì</item>
+  </string-array>
+  <string-array name="types">
+    <item>Tempo</item>
+    <item>Distanza</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Uomo</item>
+    <item>Donna</item>
+  </string-array>
+  <string-array name="targetEntries">
+    <item>alcuno</item>
+    <item>ritmo</item>
+    <item>zona bpm</item>
+  </string-array>
+</resources>
