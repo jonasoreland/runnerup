@@ -32,32 +32,38 @@
   <string name="cue_slowdown">zwolnij</string>
   <plurals name="cue_hour">
     <item quantity="one">godzina</item>
-    <item quantity="few">godzin</item>
+    <item quantity="few">godziny</item>
+    <item quantity="many">godzin</item>
     <item quantity="other">godziny</item>
   </plurals>
   <plurals name="cue_minute">
     <item quantity="one">minuta</item>
-    <item quantity="few">minut</item>
+    <item quantity="few">minuty</item>
+    <item quantity="many">minut</item>
     <item quantity="other">minuty</item>
   </plurals>
   <plurals name="cue_second">
     <item quantity="one">sekunda</item>
-    <item quantity="few">sekund</item>
+    <item quantity="few">sekundy</item>
+    <item quantity="many">sekund</item>
     <item quantity="other">sekundy</item>
   </plurals>
   <plurals name="cue_meter">
     <item quantity="one">metr</item>
-    <item quantity="few">metrów</item>
-    <item quantity="other">metry</item>
+    <item quantity="few">metry</item>
+    <item quantity="many">metrów</item>
+    <item quantity="other">metra</item>
   </plurals>
   <plurals name="cue_kilometer">
     <item quantity="one">kilometr</item>
-    <item quantity="few">kilometrów</item>
-    <item quantity="other">kilometry</item>
+    <item quantity="few">kilometry</item>
+    <item quantity="many">kilometrów</item>
+    <item quantity="other">kilometra</item>
   </plurals>
   <plurals name="cue_mile">
     <item quantity="one">mila</item>
-    <item quantity="few">mil</item>
-    <item quantity="other">mile</item>
+    <item quantity="few">mile</item>
+    <item quantity="many">mil</item>
+    <item quantity="other">mili</item>
   </plurals>
 </resources>

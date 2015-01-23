@@ -18,18 +18,21 @@
   <!--metrics stuff-->
   <plurals name="metrics_distance_kilometer">
     <item quantity="one">kilometr</item>
-    <item quantity="few">kilometrów</item>
-    <item quantity="other">kilometry</item>
+    <item quantity="few">kilometry</item>
+    <item quantity="many">kilometrów</item>
+    <item quantity="other">kilometra</item>
   </plurals>
   <plurals name="metrics_distance_mile">
     <item quantity="one">mila</item>
-    <item quantity="few">mil</item>
-    <item quantity="other">mile</item>
+    <item quantity="few">mile</item>
+    <item quantity="many">mil</item>
+    <item quantity="other">mili</item>
   </plurals>
   <plurals name="metrics_distance_meter">
     <item quantity="one">metr</item>
-    <item quantity="few">metrów</item>
-    <item quantity="other">metry</item>
+    <item quantity="few">metry</item>
+    <item quantity="many">metrów</item>
+    <item quantity="other">metra</item>
   </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
