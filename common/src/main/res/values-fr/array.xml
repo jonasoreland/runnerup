@@ -1,10 +1,47 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Miles</item>
+    <item>Kilomètres</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Échauffement</item>
+    <item>Active</item>
+    <item>Repos</item>
+    <item>Récupération</item>
+    <item>Refroidissement</item>
+  </string-array>
   <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Jusqu\'à l\'appui</item>
+    <item>Temps</item>
+    <item>Distance</item>
+  </string-array>
   <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Aucun</item>
+    <item>Rythme</item>
+    <item>Zone cardiaque</item>
+  </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Course à pied</item>
+    <item>Vélo</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>Non</item>
+    <item>Oui</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>non</item>
+    <item>oui</item>
+  </string-array>
   <string-array name="types">
     <item>Temps</item>
     <item>Distance</item>

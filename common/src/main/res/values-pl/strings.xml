@@ -18,18 +18,18 @@
   <!--metrics stuff-->
   <plurals name="metrics_distance_kilometer">
     <item quantity="one">kilometr</item>
-    <item quantity="few">kilometry</item>
-    <item quantity="many">kilometrów</item>
+    <item quantity="few">kilometrów</item>
+    <item quantity="other">kilometry</item>
   </plurals>
   <plurals name="metrics_distance_mile">
     <item quantity="one">mila</item>
-    <item quantity="few">mile</item>
-    <item quantity="many">mil</item>
+    <item quantity="few">mil</item>
+    <item quantity="other">mile</item>
   </plurals>
   <plurals name="metrics_distance_meter">
     <item quantity="one">metr</item>
-    <item quantity="few">metry</item>
-    <item quantity="many">metrów</item>
+    <item quantity="few">metrów</item>
+    <item quantity="other">metry</item>
   </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -48,7 +48,9 @@
   <string name="rest_time_format">Czas (HH:MM:SS)</string>
   <string name="rest_distance_format">Dystans (m)</string>
   <string name="duration_time_format">Czas trwania (HH:MM:SS)</string>
+  <string name="duration_distance_format">Dystans (m)</string>
   <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="ok_rats">ok, rats</string>
   <!--other-->
   <string name="google_play_services_legal_notices">Informacje prawne - Google Play Services</string>
   <string name="type">Rodzaj</string>
@@ -94,6 +96,8 @@
   <string name="gps_satellites">Satelity GPS</string>
   <string name="start_gps">Uruchom GPS</string>
   <string name="duration">Czas trwania</string>
+  <string name="duration_type">Duration type</string>
+  <string name="target_type">Target type</string>
   <string name="cancel">Anuluj</string>
   <string name="value">wartość</string>
   <string name="select_all">Wybierz wszystkie</string>
@@ -107,13 +111,14 @@
   <string name="high_pace">Max. tętno</string>
   <string name="sex">Płeć</string>
   <string name="upload">Synchronizuj</string>
-  <string name="configure">Konfiguruj</string>
-  <string name="disconnect">Rozłącz</string>
+  <string name="feed">kanał</string>
   <string name="tab_notes">Notatki</string>
   <string name="tab_laps">Okrążenia</string>
   <string name="tab_map">Mapa</string>
   <string name="tab_graph">Wykres</string>
   <string name="tab_upload">Eksport</string>
+  <string name="configure">Konfiguruj</string>
+  <string name="disconnect">Rozłącz</string>
   <string name="resume">Wznów</string>
   <string name="save_activity">Zapisz aktywność</string>
   <string name="upload_activity">Synchronizuj aktywność</string>
@@ -130,8 +135,10 @@
   <string name="unknown">Nieznane</string>
   <string name="edit">edytuj</string>
   <string name="synchronizing">Sychronizuje:</string>
+  <string name="synchronizing_feed">aktualizuje kanał</string>
   <string name="ok">OK</string>
   <string name="table_format">Tabela</string>
+  <string name="clear_uploads">Usuń aktywności</string>
   <string name="upload_missing_workouts">Synchronizuje brakujące aktywności</string>
   <string name="disconnect_account">Odłącz konto</string>
   <string name="edit_activity">Edytuj aktywność</string>
@@ -158,6 +165,14 @@
   <string name="problem">Problem</string>
   <string name="edit_step">Edycja etapu</string>
   <string name="create_new_audio_cue_scheme">Utwórz schemat wskazówek audio</string>
+  <string name="great">Udało się!</string>
+  <string name="ok_darn">OK, darn!</string>
+  <string name="yes">Tak</string>
+  <string name="create">Utwórz</string>
+  <string name="darn">Darn!</string>
+  <string name="dismiss">Zamknij</string>
+  <string name="no_way">No way</string>
+  <string name="no">Nie</string>
   <string name="loading">Ładuje...</string>
   <string name="saving">Zapisuje</string>
   <string name="cancelling_please_wait">Anuluje...</string>
@@ -165,8 +180,15 @@
   <string name="are_you_sure">Jesteś pewien?</string>
   <string name="configure_audio_cues">Konfiguruj wskazówki audio</string>
   <string name="downloadeditremove_workouts">Pobierz/edytuj/usuń treningi</string>
+  <string name="note_you_need_to_connect_to_the_account_too">Aby aktywować musisz połączyć się z kontem</string>
+  <string name="use_your_headset_to_startpauseresume_runner_up">Użyj słuchawek do rozpoczynania/wstrzymania treningu</string>
+  <string name="convert_rest_step_with_type_distance_to_recovery_step_for_interval_tab">Konwertuj interwał \"odpoczynek (dystans)\" na interwał \"regeneracja\" na zakładce \"Interwałowy\"</string>
+  <string name="convert_rest_step_with_type_distance_to_recovery_step_for_advanced_tab">Konwertuj interwał \"odpoczynek (dystans)\" na interwał \"regeneracja\" na zakładce \"Rozszerzony\"</string>
+  <string name="mm_31_kz_5_13_sg_5">mm(31);kz(5,13);sg(5)</string>
   <string name="export_database_to_sdcard_eg_for_upgrade">Eksportuj bazę danych na kartę SD (np. przed aktualizacjią)</string>
   <string name="import_database_from_sdcard_eg_after_upgrade">Importuj bazę danych z karty SD (np. po aktualizacji)</string>
+  <string name="coach_to_help_you_reach_target_if_having_set_target">Trener wspomoże Cię w osiągnięciu założonego celu</string>
+  <string name="keep_silent_when_workout_startpauseresumestop">Wyłącz powiadomienia przy rozpoczynaniu/wznawianiu/etc. treningu.</string>
   <string name="test_audio_cue">Test wskazówek audio</string>
   <string name="accounts">Konta</string>
   <string name="audio_cues">Wskazówki audio</string>
@@ -176,6 +198,7 @@
   <string name="autolap_m">Auto-okrążenie (m)</string>
   <string name="autopause">Autopauza</string>
   <string name="enable_runner_up_live">Włącz RunnerUpLive</string>
+  <string name="headset_key_startstop">Sterowanie słuchawkami (start/stop/pauza)</string>
   <string name="activity_countdown">Odliczanie</string>
   <string name="countdown_time_s">Czas odliczania (s)</string>
   <string name="unit_preference">Jednostki</string>
@@ -184,7 +207,13 @@
   <string name="runner_up_live_address">Adres RunnerUpLive</string>
   <string name="autopause_after_s">Autopauza po (s)</string>
   <string name="autopause_min_pace_minkm">Autopauza przy tempie (min/km)</string>
+  <string name="convert_rest_on_interval_tab">Konwertuj odpoczynek na zakładce \"Interwałowy\"</string>
+  <string name="convert_rest_on_advanced_tab">Konwertuj odpoczynek na zakładce \"Rozszerzony\"</string>
+  <string name="target_pace_moving_average_seconds_">Target pace moving average seconds</string>
+  <string name="target_pace_grace_seconds_">Target pace grace seconds</string>
   <string name="autolap_during_intervals">Auto-okrążenie przy interwałach</string>
+  <string name="add_countdown_after_step_that_ends_with_user_press">Dodaj odliczanie po interwale zakończonym przez kliknięcie</string>
+  <string name="step_countdown_time_s">Odliczanie przed kolejnym interwałem (s)</string>
   <string name="smooth_pace_graph">Wygładzaj wykres tempa</string>
   <string name="smooth_pace_filter_s">Filtr wygładzający</string>
   <string name="poll_interval_ms">Pomiar co (ms)</string>
@@ -219,6 +248,9 @@
   <string name="lap_heart_rate">Tętno okrążenia</string>
   <string name="lap_heart_rate_zone">Strefa tętna okrążenia</string>
   <string name="misc_cues">Różne wskazówki</string>
+  <string name="target_coaching">Wskazówki trenera</string>
+  <string name="skip_event_audio_cues">Pomiń wskazówki przy zdarzeniach</string>
+  <string name="push">Naciśnij</string>
   <string name="android_text_to_speech_settings">Ustawienia syntezatora mowy Android</string>
   <string name="start">Trening</string>
   <string name="history">Historia</string>
@@ -226,11 +258,20 @@
   <string name="advanced">Rozszerzony</string>
   <string name="manual">Ręczny</string>
   <string name="add_workout_notes">Dodaj notatki</string>
+  <string name="pruning_deleted_activities_from_database">Usuwa zapisane aktywności z bazy danych</string>
+  <string name="prune">Wyczyść</string>
   <string name="heartrate_zones_distribution">Rozkład stref tętna</string>
   <string name="battery_level">Poziom baterii</string>
+  <string name="activity_ready">Gotowy</string>
+  <string name="ready_to_start_running">Czas rozpocząć trening!</string>
   <string name="searching_for_gps">Szukam GPS</string>
+  <string name="activity_ongoing">Trening w toku</string>
+  <string name="runnerup_activity_started">RunnerUp trening rozpoczęty</string>
   <string name="battery_level_low_threshold">Niski poziom baterii HRM</string>
   <string name="battery_level_high_threshold">Wysoki poziom baterii HRM</string>
+  <string name="warning">Uwaga</string>
   <string name="battery_level_low_notification_txt">Poziom baterii twojego pulsometru jest niski</string>
   <string name="do_not_show_again">Nie pokazuj ponownie</string>
+  <string name="waiting_for_phone">Oczekuję na telefon</string>
+  <string name="saving_on_phone">Zapisuję w telefonie</string>
 </resources>

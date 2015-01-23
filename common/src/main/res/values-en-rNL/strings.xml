@@ -109,6 +109,11 @@
   <string name="sex">Geslacht</string>
   <string name="upload">upload</string>
   <string name="feed">feed</string>
+  <string name="tab_notes">Notities</string>
+  <string name="tab_laps">Rondes</string>
+  <string name="tab_map">Kaart</string>
+  <string name="tab_graph">Grafiek</string>
+  <string name="tab_upload">Upload</string>
   <string name="configure">Configureer</string>
   <string name="disconnect">Verbinding verbreken</string>
   <string name="resume">Doorgaan</string>
@@ -264,4 +269,6 @@
   <string name="warning">Waarschuwing</string>
   <string name="battery_level_low_notification_txt">Het batterijniveau van uw hartslagmeter is laag.</string>
   <string name="do_not_show_again">Niet meer laten zien</string>
+  <string name="waiting_for_phone">Wachten op smartphone</string>
+  <string name="saving_on_phone">Opslaan op smartphone</string>
 </resources>
