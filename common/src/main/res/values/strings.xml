@@ -16,12 +16,18 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
-  <string name="metrics_distance_kilometer">kilometer</string>
-  <string name="metrics_distance_kilometers">kilometers</string>
-  <string name="metrics_distance_mile">mile</string>
-  <string name="metrics_distance_miles">miles</string>
-  <string name="metrics_distance_meter">meter</string>
-  <string name="metrics_distance_meters">meters</string>
+  <plurals name="metrics_distance_kilometer">
+    <item quantity="one">kilometer</item>
+    <item quantity="other">kilometers</item>
+  </plurals>
+  <plurals name="metrics_distance_mile">
+    <item quantity="one">mile</item>
+    <item quantity="other">miles</item>
+  </plurals>
+  <plurals name="metrics_distance_meter">
+    <item quantity="one">meter</item>
+    <item quantity="other">meters</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
@@ -57,8 +63,10 @@
   <string name="pace">pace</string>
   <string name="heartrate">heart rate</string>
   <string name="heartrate_zone">heart rate zone</string>
+  <string name="zone">Zone</string>
   <string name="device">Device</string>
   <string name="heart_rate">Heart rate</string>
+  <string name="pace_chart">Pace</string>
   <string name="scan">Scan</string>
   <string name="connect">Connect</string>
   <string name="connecting">Connecting</string>
@@ -67,6 +75,7 @@
   <string name="delete">Delete</string>
   <string name="total">Total</string>
   <string name="interval">Interval</string>
+  <string name="remaining">Remaining</string>
   <string name="lap">Lap</string>
   <string name="new_lap">New lap</string>
   <string name="next_lap">Next lap</string>
@@ -101,6 +110,11 @@
   <string name="sex">Sex</string>
   <string name="upload">upload</string>
   <string name="feed">feed</string>
+  <string name="tab_notes">Notes</string>
+  <string name="tab_laps">Laps</string>
+  <string name="tab_map">Map</string>
+  <string name="tab_graph">Graph</string>
+  <string name="tab_upload">Upload</string>
   <string name="configure">Configure</string>
   <string name="disconnect">Disconnect</string>
   <string name="resume">Resume</string>

@@ -165,6 +165,8 @@ public interface Constants {
         final String NEW_LAP = "org.runnerup.NEW_LAP";
         final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
         final String START_WORKOUT = "org.runnerup.START_WORKOUT";
+        final String PAUSE_WORKOUT = "org.runnerup.PAUSE_WORKOUT";
+        final String RESUME_WORKOUT = "org.runnerup.RESUME_WORKOUT";
     }
 
     public interface TRACKER_STATE {
@@ -209,6 +211,8 @@ public interface Constants {
         public interface RunInfo {
             static final String HEADER = "HEADER/";
             static final String DATA = "DATA/";
+            static final String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
+            static final String COUNTDOWN = "COUNTDOWN";   // Stored in DATA
         };
 
         public interface TrackerState {

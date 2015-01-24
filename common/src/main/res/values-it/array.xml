@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string-array name="unitEntries">
-    <item>Miles</item>
-    <item>Kilomètres</item>
+    <item>Miglia</item>
+    <item>Chilometri</item>
   </string-array>
   <string-array name="unitValues">
     <item>mi</item>
@@ -10,49 +10,49 @@
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
-    <item>Échauffement</item>
-    <item>Active</item>
-    <item>Repos</item>
-    <item>Récupération</item>
-    <item>Refroidissement</item>
+    <item>Riscaldamento</item>
+    <item>Attivo</item>
+    <item>Riposo</item>
+    <item>Recupero</item>
+    <item>Defaticamento</item>
   </string-array>
   <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
-    <item>Jusqu\'à l\'appui</item>
-    <item>Temps</item>
-    <item>Distance</item>
+    <item>Dall\'ultima pressione</item>
+    <item>Tempo</item>
+    <item>Distanza</item>
   </string-array>
   <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
-    <item>Aucun</item>
-    <item>Rythme</item>
-    <item>Zone cardiaque</item>
+    <item>Nessuno</item>
+    <item>Ritmo</item>
+    <item>Zona BPM</item>
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
-    <item>Course à pied</item>
-    <item>Vélo</item>
+    <item>Corsa</item>
+    <item>Bici</item>
   </string-array>
   <string-array name="muteEntries">
-    <item>Non</item>
-    <item>Oui</item>
+    <item>No</item>
+    <item>Sì</item>
   </string-array>
   <string-array name="muteValues">
-    <item>non</item>
-    <item>oui</item>
+    <item>no</item>
+    <item>sì</item>
   </string-array>
   <string-array name="types">
-    <item>Temps</item>
-    <item>Distance</item>
+    <item>Tempo</item>
+    <item>Distanza</item>
   </string-array>
   <string-array name="sexes">
-    <item>Homme</item>
-    <item>Femme</item>
+    <item>Uomo</item>
+    <item>Donna</item>
   </string-array>
   <string-array name="targetEntries">
-    <item>aucunes</item>
-    <item>rythme</item>
-    <item>zone de fréquence cardiaque</item>
+    <item>alcuno</item>
+    <item>ritmo</item>
+    <item>zona bpm</item>
   </string-array>
 </resources>

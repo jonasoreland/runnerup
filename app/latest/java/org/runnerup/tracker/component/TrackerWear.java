@@ -23,6 +23,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,10 +44,10 @@ import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.tracker.Tracker;
-import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -75,7 +77,14 @@ public class TrackerWear extends DefaultTrackerComponent
     private HashSet<Node> connectedNodes = new HashSet<Node>();
     private String wearNode;
 
+    private final Handler handler = new Handler();
+    private Bundle lastCreatedWorkoutEvent;
+    private Bundle lastSentWorkoutEvent;
+    private long tickFrequency = 1000;
+    private boolean mWorkoutSenderRunning = false;
+
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
+    private Step currentStep;
 
     public TrackerWear(Tracker tracker) {
         this.tracker = tracker;
@@ -194,11 +203,11 @@ public class TrackerWear extends DefaultTrackerComponent
         }
 
         setTrackerState(tracker.getState());
-
         tracker.getWorkout().registerWorkoutStepListener(this);
     }
 
-    void setTrackerState(TrackerState val) {
+    private void setTrackerState(TrackerState val) {
+        System.err.println("setTrackerState("+val+")");
         Bundle b = new Bundle();
         b.putInt(Wear.TrackerState.STATE, val.getValue());
         setData(Wear.Path.TRACKER_STATE, b);
@@ -220,9 +229,6 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void workoutEvent(WorkoutInfo workoutInfo, int type) {
-        if (!isConnected())
-            return;
-
         switch (type) {
             case DB.LOCATION.TYPE_START:
             case DB.LOCATION.TYPE_RESUME:
@@ -244,18 +250,69 @@ public class TrackerWear extends DefaultTrackerComponent
             }
         }
 
-        Wearable.MessageApi.sendMessage(mGoogleApiClient, wearNode, Wear.Path.MSG_WORKOUT_EVENT,
-                DataMap.fromBundle(b).toByteArray());
+        lastCreatedWorkoutEvent = b;
     }
+
+    private void sendWorkoutEvent() {
+        if (lastCreatedWorkoutEvent != null && isConnected()) {
+            Wearable.MessageApi.sendMessage(mGoogleApiClient, wearNode, Wear.Path.MSG_WORKOUT_EVENT,
+                    DataMap.fromBundle(lastCreatedWorkoutEvent).toByteArray());
+            lastSentWorkoutEvent = lastCreatedWorkoutEvent;
+            lastCreatedWorkoutEvent = null;
+        }
+    }
+
+    private Runnable workoutEventSender = new Runnable() {
+        @Override
+        public void run() {
+            sendWorkoutEvent();
+            mWorkoutSenderRunning = false;
+
+            if (!isConnected())
+                return;
+
+            if (currentStep == null)
+                return;
+
+            mWorkoutSenderRunning = true;
+            handler.postDelayed(workoutEventSender, tickFrequency);
+        }
+    };
 
     @Override
     public void onStepChanged(Step oldStep, Step newStep) {
-        // Update headers according to type of newStep
+        currentStep = newStep;
+
+        if (!mWorkoutSenderRunning) {
+            // this starts workout sender
+            workoutEventSender.run();
+        }
+
+        if (currentStep == null) {
+            return; // this is end
+        }
+
+        // Update headers
+        {
+            Bundle b = new Bundle();
+            int i = 0;
+            for (Pair<Scope, Dimension> item : items) {
+                b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
+                i++;
+            }
+
+            if (currentStep != null && currentStep.isPauseStep()) {
+                b.putBoolean(Wear.RunInfo.PAUSE_STEP, true);
+            }
+
+            setData(Wear.Path.HEADERS, b);
+        }
     }
 
     @Override
     public void onComplete(boolean discarded) {
         tracker.getWorkout().unregisterWorkoutStepListener(this);
+        currentStep = null;
 
         /* clear HEADERS */
         Wearable.DataApi.deleteDataItems(mGoogleApiClient,
@@ -292,27 +349,31 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
+    public void onMessageReceived(final MessageEvent messageEvent) {
         System.err.println("onMessageReceived: " + messageEvent);
+        //note: skip state checking, do that in receiver instead
         if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
-            if (tracker.getState() == TrackerState.STARTED)
-                tracker.getWorkout().onPause(tracker.getWorkout());
+            sendLocalBroadcast(Constants.Intents.PAUSE_WORKOUT);
+            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
-            if (tracker.getState() == TrackerState.PAUSED)
-                tracker.getWorkout().onResume(tracker.getWorkout());
+            sendLocalBroadcast(Intents.RESUME_WORKOUT);
+            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
-            if (tracker.getState() == TrackerState.STARTED ||
-                    tracker.getState() == TrackerState.PAUSED)
-                tracker.getWorkout().onNewLapOrNextStep();
+            sendLocalBroadcast(Intents.NEW_LAP);
+            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
-            /* send broadcast to StartActivity
-             * note: skip state checking, do that in StartActivity instead
-             */
+            /* send broadcast to StartActivity */
             Intent startBroadcastIntent = new Intent();
             startBroadcastIntent.setAction(Constants.Intents.START_WORKOUT);
             context.sendBroadcast(startBroadcastIntent);
             return;
         }
+    }
+
+    private void sendLocalBroadcast(String action) {
+        Intent intent = new Intent();
+        intent.setAction(action);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     @Override
@@ -357,7 +418,7 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
+    public void onDataChanged(final DataEventBuffer dataEvents) {
         for (DataEvent ev : dataEvents) {
             System.err.println("onDataChanged: " + ev.getDataItem().getUri());
             String path = ev.getDataItem().getUri().getPath();
@@ -370,6 +431,13 @@ public class TrackerWear extends DefaultTrackerComponent
     private void setWearNode(DataEvent ev) {
         if (ev.getType() == DataEvent.TYPE_CHANGED) {
             wearNode = ev.getDataItem().getUri().getHost();
+            if (lastCreatedWorkoutEvent == null) {
+                lastCreatedWorkoutEvent = lastSentWorkoutEvent;
+            }
+            if (!mWorkoutSenderRunning)
+                workoutEventSender.run();
+            else
+                sendWorkoutEvent();
         } else if (ev.getType() == DataEvent.TYPE_DELETED) {
             wearNode = null;
         }

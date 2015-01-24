@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <android.support.wearable.view.CircledImageView
@@ -50,7 +50,6 @@
                 android:id="@+id/txt_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:text="@string/searching_for_gps"
                 android:textColor="@color/white"
                 android:textSize="16sp"

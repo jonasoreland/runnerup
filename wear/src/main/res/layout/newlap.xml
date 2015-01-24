@@ -38,19 +38,19 @@
             android:orientation="vertical">
 
             <android.support.wearable.view.CircledImageView
-                android:id="@+id/icon_resume"
+                android:id="@+id/icon_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/go_to_phone_animation"
+                android:src="@drawable/ic_av_newlap"
                 app:circle_border_width="0dp"
                 app:circle_color="@color/action_button"
-                app:circle_radius="32dp" />
+                app:circle_radius="@dimen/one_button_radius" />
 
             <TextView
-                android:id="@+id/txt_resume"
+                android:id="@+id/txt_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/saving_on_phone"
+                android:text="@string/new_lap"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />

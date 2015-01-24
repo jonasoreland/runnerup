@@ -729,6 +729,71 @@ public abstract class Bt20Base extends BtHRBase {
         }
     }
 
+    public static class StHRMv1 extends Bt20Base {
+
+        static final int FRAME_SIZE = 17;
+        static final byte START_BYTE = (byte) 250;
+        public static final String NAME = "SportTracker HRM v1";
+
+        public StHRMv1(Context ctx) {
+            super(ctx);
+        }
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public String getProviderName() {
+            return NAME;
+        }
+
+        @Override
+        public int getFrameSize() {
+            return FRAME_SIZE;
+        }
+
+        private boolean startOfMessage(byte buffer[], int bytesInBuffer, int pos) {
+            if (bytesInBuffer < pos + FRAME_SIZE)
+                return false;
+
+            int b0 = getByte(buffer[pos + 0]);
+            int b1 = getByte(buffer[pos + 1]);
+            int b2 = getByte(buffer[pos + 2]);
+            if (b0 != START_BYTE) {
+                log("b0("+b0+") != START_BYTE");
+                return false;
+            }
+
+            if ((0xFF - b1) != b2) {
+                log("b1: + b1, b2: " + b2);
+                return false;
+            }
+
+            int len = b1 >> 2;
+            if (bytesInBuffer < pos + len) {
+                log("len: " + len);
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer hrVal[]) {
+            hrVal[0] = null;
+            for (int i = 0; i < bytesInBuffer; i++) {
+                if (startOfMessage(buffer, bytesInBuffer, i)) {
+                    int bytesUsed = getByte(buffer[i + 1]) >> 2;
+                    hrVal[0] = getByte(buffer[i + 5]);
+                    return bytesUsed;
+                }
+            }
+            return 0;
+        }
+    }
+
     static public int getByte(byte b) {
         return b & 0xFF;
     }

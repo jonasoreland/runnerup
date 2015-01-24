@@ -206,6 +206,7 @@ public class Tracker extends android.app.Service implements
                 state.set(TrackerState.INITIALIZED);
             }
 
+            System.err.println("state.set(" + getState() + ")");
             handleNextState();
         }
     };
@@ -746,6 +747,9 @@ public class Tracker extends android.app.Service implements
             case ERROR:   // on error, say no
                 return false;
             case INITIALIZING:
+                // If we're initializing...say no
+                if (components.getResultCode(name) == TrackerComponent.ResultCode.RESULT_PENDING)
+                    return false;
             case INITIALIZED:
             case CONNECTING:
             case CONNECTED:

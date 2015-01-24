@@ -20,18 +20,6 @@
   <string name="cue_warmup">calentamiento</string>
   <string name="cue_cooldown">enfriamiento</string>
   <string name="cue_current">actual</string>
-  <string name="cue_hour">horas</string>
-  <string name="cue_hours">horas</string>
-  <string name="cue_minute">minuto</string>
-  <string name="cue_minutes">minutos</string>
-  <string name="cue_second">segundo</string>
-  <string name="cue_seconds">segundos</string>
-  <string name="cue_meter">metro</string>
-  <string name="cue_meters">metros</string>
-  <string name="cue_kilometer">kilómetro</string>
-  <string name="cue_kilometers">kilómetros</string>
-  <string name="cue_mile">milla</string>
-  <string name="cue_miles">millas</string>
   <string name="cue_perkilometer">por kilómetro</string>
   <string name="cue_permile">por milla</string>
   <string name="cue_started">empezado</string>
@@ -41,4 +29,28 @@
   <string name="cue_completed">completado</string>
   <string name="cue_speedup">acelerar</string>
   <string name="cue_slowdown">decelerar</string>
+  <plurals name="cue_hour">
+    <item quantity="one">horas</item>
+    <item quantity="other">horas</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minuto</item>
+    <item quantity="other">minutos</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">segundo</item>
+    <item quantity="other">segundos</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">metro</item>
+    <item quantity="other">metros</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilómetro</item>
+    <item quantity="other">kilómetros</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">milla</item>
+    <item quantity="other">millas</item>
+  </plurals>
 </resources>

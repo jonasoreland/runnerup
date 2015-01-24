@@ -16,12 +16,18 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
-  <string name="metrics_distance_kilometer">kilometer</string>
-  <string name="metrics_distance_kilometers">kilometers</string>
-  <string name="metrics_distance_mile">mijl</string>
-  <string name="metrics_distance_miles">mijlen</string>
-  <string name="metrics_distance_meter">meter</string>
-  <string name="metrics_distance_meters">meters</string>
+  <plurals name="metrics_distance_kilometer">
+    <item quantity="one">kilometer</item>
+    <item quantity="other">kilometers</item>
+  </plurals>
+  <plurals name="metrics_distance_mile">
+    <item quantity="one">mijl</item>
+    <item quantity="other">mijlen</item>
+  </plurals>
+  <plurals name="metrics_distance_meter">
+    <item quantity="one">meter</item>
+    <item quantity="other">meters</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
@@ -57,8 +63,10 @@
   <string name="pace">tempo</string>
   <string name="heartrate">hartslag</string>
   <string name="heartrate_zone">hartslagzone</string>
+  <string name="zone">Zone</string>
   <string name="device">Apparaat</string>
   <string name="heart_rate">Hartslag</string>
+  <string name="pace_chart">Tempo</string>
   <string name="scan">Zoeken</string>
   <string name="connect">Verbinden</string>
   <string name="connecting">Verbinding maken</string>
@@ -101,6 +109,11 @@
   <string name="sex">Geslacht</string>
   <string name="upload">upload</string>
   <string name="feed">feed</string>
+  <string name="tab_notes">Notities</string>
+  <string name="tab_laps">Rondes</string>
+  <string name="tab_map">Kaart</string>
+  <string name="tab_graph">Grafiek</string>
+  <string name="tab_upload">Upload</string>
   <string name="configure">Configureer</string>
   <string name="disconnect">Verbinding verbreken</string>
   <string name="resume">Doorgaan</string>
@@ -256,4 +269,6 @@
   <string name="warning">Waarschuwing</string>
   <string name="battery_level_low_notification_txt">Het batterijniveau van uw hartslagmeter is laag.</string>
   <string name="do_not_show_again">Niet meer laten zien</string>
+  <string name="waiting_for_phone">Wachten op smartphone</string>
+  <string name="saving_on_phone">Opslaan op smartphone</string>
 </resources>

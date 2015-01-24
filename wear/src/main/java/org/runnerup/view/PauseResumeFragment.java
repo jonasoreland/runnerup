@@ -54,7 +54,7 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.pause_resume, container, false);
+        View view = inflater.inflate(R.layout.newlap_pause_resume, container, false);
         super.onViewCreated(view, savedInstanceState);
 
         mButtonPauseResume = (CircledImageView) view.findViewById(R.id.icon_resume);

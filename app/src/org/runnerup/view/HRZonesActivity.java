@@ -63,7 +63,7 @@ public class HRZonesActivity extends Activity implements Constants {
         EditText lo = (EditText) row.findViewById(R.id.zonelo);
         EditText hi = (EditText) row.findViewById(R.id.zonehi);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
-        tv.setText("Zone " + zone + " " + lim.first + "% - " + lim.second + "%");
+        tv.setText(getString(R.string.zone) + " " + zone + " " + lim.first + "% - " + lim.second + "%");
         lo.setTag("zone" + zone + "lo");
         hi.setTag("zone" + zone + "hi");
         zones.add(lo);
