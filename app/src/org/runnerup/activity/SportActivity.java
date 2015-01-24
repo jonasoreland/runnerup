@@ -3,6 +3,9 @@ package org.runnerup.activity;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.Column;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by itdog on 21.01.15.
  */
@@ -31,6 +34,16 @@ public class SportActivity extends BaseEntity{
     private String type;
     @Column(name = Constants.DB.ACTIVITY.EXTERNAL_ID)
     private String externalId;
+    private List<Lap> laps = new ArrayList<Lap>();
+    private List<LocationData> locationData = new ArrayList<LocationData>();
+
+    public List<Lap> laps() {
+        return laps;
+    }
+
+    public List<LocationData> locationData() {
+        return locationData;
+    }
 
     public long getId() {
         return id;

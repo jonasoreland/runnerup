@@ -28,6 +28,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import org.runnerup.R;
+import org.runnerup.activity.Lap;
+import org.runnerup.activity.LocationData;
 import org.runnerup.activity.SportActivity;
 import org.runnerup.common.util.Constants;
 import org.runnerup.export.DigifitUploader;
@@ -44,7 +46,6 @@ import org.runnerup.export.RunnerUpLive;
 import org.runnerup.export.RunningAHEAD;
 import org.runnerup.export.RuntasticUploader;
 import org.runnerup.export.Strava;
-import org.runnerup.export.Uploader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -584,6 +585,15 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static void createActivity(SQLiteDatabase db, SportActivity sportActivity) {
-        db.insert(DB.ACTIVITY.TABLE, null, sportActivity.map());
+        sportActivity.setId(db.insert(DB.ACTIVITY.TABLE, null, sportActivity.map()));
+        for(Lap lap: sportActivity.laps()){
+            lap.setActivityId(sportActivity.getId());
+            lap.setId(db.insert(DB.LAP.TABLE, null, lap.map()));
+        }
+
+        for(LocationData location: sportActivity.locationData()){
+            location.setActivityId(sportActivity.getId());
+            location.setId(db.insert(DB.LOCATION.TABLE, null, location.map()));
+        }
     }
 }

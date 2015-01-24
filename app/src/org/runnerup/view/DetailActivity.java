@@ -71,6 +71,7 @@ import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
@@ -79,7 +80,6 @@ import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Feature;
 import org.runnerup.util.Bitfield;
-import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
@@ -122,6 +122,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
     TitleSpinner sport = null;
     EditText notes = null;
     MenuItem recomputeMenuItem = null;
+    String activityType = "internal";
 
     View mapViewLayout = null;
     GoogleMap map = null;
@@ -422,7 +423,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         String[] from = new String[] {
                 DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT,
-                DB.ACTIVITY.SPORT
+                DB.ACTIVITY.SPORT, DB.ACTIVITY.TYPE
         };
 
         Cursor c = mDB.query(DB.ACTIVITY.TABLE, from, "_id == " + mID, null,
@@ -464,6 +465,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
         if (tmp.containsKey(DB.ACTIVITY.SPORT)) {
             sport.setValue(tmp.getAsInteger(DB.ACTIVITY.SPORT));
+        }
+
+        if (tmp.containsKey(DB.ACTIVITY.TYPE)) {
+            activityType = tmp.getAsString(DB.ACTIVITY.TYPE);
         }
     }
 
