@@ -585,15 +585,17 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static void createActivity(SQLiteDatabase db, SportActivity sportActivity) {
-        sportActivity.setId(db.insert(DB.ACTIVITY.TABLE, null, sportActivity.map()));
-        for(Lap lap: sportActivity.laps()){
-            lap.setActivityId(sportActivity.getId());
-            lap.setId(db.insert(DB.LAP.TABLE, null, lap.map()));
-        }
+        if(sportActivity!=null) {
+            sportActivity.setId(db.insert(DB.ACTIVITY.TABLE, null, sportActivity.map()));
+            for (Lap lap : sportActivity.laps()) {
+                lap.setActivityId(sportActivity.getId());
+                lap.setId(db.insert(DB.LAP.TABLE, null, lap.map()));
+            }
 
-        for(LocationData location: sportActivity.locationData()){
-            location.setActivityId(sportActivity.getId());
-            location.setId(db.insert(DB.LOCATION.TABLE, null, location.map()));
+            for (LocationData location : sportActivity.locationData()) {
+                location.setActivityId(sportActivity.getId());
+                location.setId(db.insert(DB.LOCATION.TABLE, null, location.map()));
+            }
         }
     }
 }

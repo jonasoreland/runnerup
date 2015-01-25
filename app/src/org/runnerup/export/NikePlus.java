@@ -28,13 +28,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.activity.ExternalActivitySerializer;
 import org.runnerup.activity.NikeActivitySerializer;
-import org.runnerup.db.DBHelper;
+import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.NikeXML;
 import org.runnerup.feed.FeedList;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.common.util.Constants.DB;
-import org.runnerup.common.util.Constants.DB.FEED;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -592,7 +591,8 @@ public class NikePlus extends FormCrawler implements Uploader, Downloader {
                 JSONObject pagination = obj.getJSONObject("paging");
                 for (int i = 0; ; i++) {
                     obj = arr.optJSONObject(i);
-                    if (obj == null)
+
+                    if (obj == null || !obj.getString("status").equals("COMPLETE"))
                         break;
                     list.add(new Pair<String, String>(obj.getString("activityId"), obj
                             .getString("startTime")));

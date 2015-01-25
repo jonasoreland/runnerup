@@ -942,16 +942,18 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         Double.MAX_VALUE, 0, 0
                 };
                 for (int i = 0; i < this.time.length; i++) {
-                    double pace = this.time[i] / this.distance[i];
-                    if (pace > max_pace[0]) {
-                        max_pace[0] = pace;
-                        max_pace[1] = this.time[i];
-                        max_pace[2] = this.distance[i];
-                    }
-                    if (pace < min_pace[0]) {
-                        min_pace[0] = pace;
-                        min_pace[1] = this.time[i];
-                        min_pace[2] = this.distance[i];
+                    if (this.distance[i] > 0) {
+                        double pace = this.time[i] / this.distance[i];
+                        if (pace > max_pace[0]) {
+                            max_pace[0] = pace;
+                            max_pace[1] = this.time[i];
+                            max_pace[2] = this.distance[i];
+                        }
+                        if (pace < min_pace[0]) {
+                            min_pace[0] = pace;
+                            min_pace[1] = this.time[i];
+                            min_pace[2] = this.distance[i];
+                        }
                     }
                 }
                 avg_time -= (max_pace[1] + min_pace[1]);

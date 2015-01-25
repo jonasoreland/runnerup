@@ -18,11 +18,11 @@ public class LocationData extends BaseEntity{
     @Column(name = Constants.DB.LOCATION.TIME)
     private Long time;
     @Column(name = Constants.DB.LOCATION.LATITUDE)
-    private Float latitude;
+    private Double latitude;
     @Column(name = Constants.DB.LOCATION.LONGITUDE)
-    private Float longitude;
+    private Double longitude;
     @Column(name = Constants.DB.LOCATION.ALTITUDE)
-    private Float altitude;
+    private Double altitude;
     @Column(name = Constants.DB.LOCATION.ACCURANCY)
     private Float accurancy;
     @Column(name = Constants.DB.LOCATION.SPEED)
@@ -74,27 +74,27 @@ public class LocationData extends BaseEntity{
         this.type = type;
     }
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public Float getAltitude() {
+    public Double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(Float altitude) {
+    public void setAltitude(Double altitude) {
         this.altitude = altitude;
     }
 
