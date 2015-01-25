@@ -120,13 +120,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         deleteButton.setOnClickListener(deleteButtonClick);
         createButton = (Button) findViewById(R.id.create_workout_button);
         createButton.setOnClickListener(createButtonClick);
-//        createButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
-//                ManageWorkoutsActivity.this.startActivityForResult(intent, 113);
-//            }
-//        });
 
         shareButton = (Button) findViewById(R.id.share_workout_button);
         shareButton.setOnClickListener(shareButtonClick);
@@ -295,6 +288,14 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         return;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        listLocal();
+    }
+
+
     private void handleButtons() {
         if (currentlySelectedWorkout == null) {
             downloadButton.setEnabled(false);
@@ -417,8 +418,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
 
-            builder.setTitle("Create new Workout");
-            builder.setMessage("Set advancedWorkoutSpinner name");
+            builder.setTitle("Create new workout");
+            builder.setMessage("Set workout name");
 
             // Set an EditText view to get user input
             final EditText input = new EditText(ManageWorkoutsActivity.this);
@@ -455,7 +456,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             if (contains(local, selected)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
                 builder.setTitle("Downloading " + selected.workoutName + " will overwrite "
-                        + PHONE_STRING + " advancedWorkoutSpinner with same name");
+                        + PHONE_STRING + " workout with same name");
                 builder.setMessage(getString(R.string.are_you_sure));
                 builder.setPositiveButton(getString(R.string.yes),
                         new DialogInterface.OnClickListener() {
@@ -515,7 +516,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
-            builder.setTitle("Delete advancedWorkoutSpinner " + selected.workoutName);
+            builder.setTitle("Delete workout " + selected.workoutName);
             builder.setMessage(getString(R.string.are_you_sure));
             builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
@@ -589,13 +590,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
 
-            intent.putExtra(Intent.EXTRA_SUBJECT, "RunnerUp advancedWorkoutSpinner: " + name);
-            intent.putExtra(Intent.EXTRA_TEXT, "Hi\nHere is a advancedWorkoutSpinner I think you might like.");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "RunnerUp workout: " + name);
+            intent.putExtra(Intent.EXTRA_TEXT, "Hi\nHere is a workout I think you might like.");
 
             intent.setType(WorkoutFileProvider.MIME);
             Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name);
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-            context.startActivity(Intent.createChooser(intent, "Share advancedWorkoutSpinner..."));
+            context.startActivity(Intent.createChooser(intent, "Share workout..."));
         }
     };
 

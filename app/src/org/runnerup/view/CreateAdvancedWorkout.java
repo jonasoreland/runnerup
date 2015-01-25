@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import org.json.JSONException;
 import org.runnerup.R;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.workout.RepeatStep;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
@@ -30,6 +32,7 @@ public class CreateAdvancedWorkout extends Activity {
     TitleSpinner advancedWorkoutSpinner = null;
     Button addStepButton = null;
     Button saveWorkoutButton = null;
+    Button addRepeatButton = null;
     ListView advancedStepList = null;
     final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
 
@@ -52,14 +55,14 @@ public class CreateAdvancedWorkout extends Activity {
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 
+        addRepeatButton = (Button) findViewById(R.id.add_repeat_button);
+        addRepeatButton.setOnClickListener(addRepeatButtonClick);
 
         addStepButton = (Button) findViewById(R.id.add_step_button);
         addStepButton.setOnClickListener(addStepButtonClick);
 
         saveWorkoutButton = (Button) findViewById(R.id.workout_save_button);
         saveWorkoutButton.setOnClickListener(saveWorkoutButtonClick);
-
-
 
 
         try {
@@ -112,10 +115,47 @@ public class CreateAdvancedWorkout extends Activity {
             button.setStep(entry.step);
             button.setPadding(entry.level * 7, 0, 0, 0);
             button.setOnChangedListener(onWorkoutChanged);
+
+            if(entry.step instanceof RepeatStep) {
+                button.setOnLongClickListener(onRepeatLongClick);
+            } else {
+                button.setOnLongClickListener(onLongClick);
+            }
             button.setSelected(true);
             return button;
         }
     }
+
+    final View.OnLongClickListener onRepeatLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View view) {
+            Step s = new Step();
+            StepButton clicked = (StepButton) view.getParent();
+            RepeatStep rs = (RepeatStep) clicked.getStep();
+            rs.getSteps().add(s);
+            advancedWorkoutStepsAdapter.steps = advancedWorkout.getSteps();
+            advancedWorkoutStepsAdapter.notifyDataSetChanged();
+            return true;
+        }
+    };
+
+    final View.OnLongClickListener onLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View view) {
+            StepButton clicked = (StepButton) view.getParent();
+            Step s = clicked.getStep();
+
+
+
+            advancedWorkout.getSteps().remove(s);
+            advancedWorkoutStepsAdapter.steps = advancedWorkout.getSteps();
+            advancedWorkoutStepsAdapter.notifyDataSetChanged();
+
+            return true;
+
+
+        }
+    };
 
     final Runnable onWorkoutChanged = new Runnable() {
         @Override
@@ -166,5 +206,16 @@ public class CreateAdvancedWorkout extends Activity {
         }
     };
 
+    final View.OnClickListener addRepeatButtonClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            RepeatStep rs = new RepeatStep();
+            rs.setRepeatCount(1);
+            advancedWorkout.addStep(rs);
+            advancedWorkoutStepsAdapter.steps = advancedWorkout.getSteps();
+            advancedWorkoutStepsAdapter.notifyDataSetChanged();
+        }
+    };
 
 }

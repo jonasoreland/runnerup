@@ -275,4 +275,5 @@
   <string name="saving_on_phone">Saving on phone</string>
   <string name="save">Save</string>
   <string name="add_step">Add step</string>
+  <string name="add_repeat_step">Add repeat</string>
 </resources>

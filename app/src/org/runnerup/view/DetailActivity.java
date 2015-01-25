@@ -171,7 +171,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         activityPace = (TextView) findViewById(R.id.activity_pace);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
-        notes.setHint("Notes about your advancedWorkoutSpinner");
+        notes.setHint("Notes about your workout");
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
@@ -1379,7 +1379,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 + "/" + mID
                                 + "/" + "activity." + fmt);
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        context.startActivity(Intent.createChooser(intent, "Share advancedWorkoutSpinner..."));
+                        context.startActivity(Intent.createChooser(intent, "Share workout..."));
 
                     }
                 });

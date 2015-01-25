@@ -386,7 +386,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         return;
 
                     if (mTracker.getState() == TrackerState.INIT /* this will start gps */||
-                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a advancedWorkoutSpinner*/ ||
+                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
                         mTracker.getState() == TrackerState.CONNECTED) {
                         startButton.performClick();
                     }

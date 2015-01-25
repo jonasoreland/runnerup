@@ -486,6 +486,7 @@ public class WorkoutSerializer {
         ArrayList<jsonstep> stepList = new ArrayList<jsonstep>();
         int no = 1;
         int group = 1;
+        Workout.StepListEntry prev = null;
         for (Workout.StepListEntry e : workout.getSteps()) {
             jsonstep s = new jsonstep();
             s.step = e.step;
@@ -502,8 +503,12 @@ public class WorkoutSerializer {
                 group++;
                 stepStack.push(s);
             }
+            if (e.parent == null && prev != null && prev.parent != null) {
+                group++;
+            }
             s.group = group;
             stepList.add(s);
+            prev = e;
         }
 
         JSONArray steps = new JSONArray();

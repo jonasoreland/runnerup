@@ -28,6 +28,11 @@ import java.util.List;
 public class RepeatStep extends Step {
 
     int repeatCount = 1;
+
+    public ArrayList<Step> getSteps() {
+        return steps;
+    }
+
     final ArrayList<Step> steps = new ArrayList<Step>();
 
     int currentStep = 0;
