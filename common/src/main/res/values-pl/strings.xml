@@ -278,4 +278,9 @@
   <string name="do_not_show_again">Nie pokazuj ponownie</string>
   <string name="waiting_for_phone">Oczekuję na telefon</string>
   <string name="saving_on_phone">Zapisuję w telefonie</string>
+  <string name="save">Zapisz</string>
+  <string name="add_step">Dodaj krok</string>
+  <string name="add_repeat_step">Dodaj powtórzenie</string>
+  <string name="discard">Anuluj</string>
+  <string name="failed_to_create_workout">Błąd przy zapisie treningu</string>
 </resources>

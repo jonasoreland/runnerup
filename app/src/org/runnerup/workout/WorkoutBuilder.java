@@ -585,7 +585,7 @@ public class WorkoutBuilder {
 
     public static void prepareWorkout(Resources res, SharedPreferences prefs, Workout w,
             boolean basic) {
-        List<StepListEntry> steps = w.getSteps();
+        List<StepListEntry> steps = w.getStepList();
 
         /**
          * Add/remove autolap

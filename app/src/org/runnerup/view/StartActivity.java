@@ -590,7 +590,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 unregisterStartEventListener();
 
                 /**
-                 * This will start the workout!
+                 * This will start the advancedWorkoutSpinner!
                  */
                 mTracker.start(w);
 
@@ -866,7 +866,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             return;
         try {
             advancedWorkout = WorkoutSerializer.readFile(ctx, name);
-            advancedWorkoutStepsAdapter.steps = advancedWorkout.getSteps();
+            advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
             advancedWorkoutStepsAdapter.notifyDataSetChanged();
             advancedDownloadWorkoutButton.setVisibility(View.GONE);
         } catch (Exception ex) {
@@ -895,7 +895,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         return mGpsStatus.getSatellitesFixed();
     }
 
-    class WorkoutStepsAdapter extends BaseAdapter {
+    final class WorkoutStepsAdapter extends BaseAdapter {
 
         List<StepListEntry> steps = new ArrayList<StepListEntry>();
 
