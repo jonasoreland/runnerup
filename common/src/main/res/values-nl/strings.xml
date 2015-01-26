@@ -28,6 +28,10 @@
     <item quantity="one">meter</item>
     <item quantity="other">meters</item>
   </plurals>
+  <plurals name="metrics_beatsperminute">
+    <item quantity="one">bpm</item>
+    <item quantity="other">bpm</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
@@ -35,7 +39,6 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
-  <string name="metrics_beatsperminute">bpm</string>
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="maximum_heart_rate">Maximale hartslag (HFmax)</string>
