@@ -866,7 +866,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             return;
         try {
             advancedWorkout = WorkoutSerializer.readFile(ctx, name);
-            advancedWorkoutStepsAdapter.steps = advancedWorkout.getSteps();
+            advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
             advancedWorkoutStepsAdapter.notifyDataSetChanged();
             advancedDownloadWorkoutButton.setVisibility(View.GONE);
         } catch (Exception ex) {

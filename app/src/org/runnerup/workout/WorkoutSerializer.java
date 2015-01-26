@@ -487,7 +487,7 @@ public class WorkoutSerializer {
         int no = 1;
         int group = 1;
         Workout.StepListEntry prev = null;
-        for (Workout.StepListEntry e : workout.getSteps()) {
+        for (Workout.StepListEntry e : workout.getStepList()) {
             jsonstep s = new jsonstep();
             s.step = e.step;
             s.order = no++;
