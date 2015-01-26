@@ -31,6 +31,11 @@
     <item quantity="few">metry</item>
     <item quantity="other">metrów</item>
   </plurals>
+  <plurals name="metrics_beatsperminute">
+    <item quantity="one">uderzenie na minutę</item>
+    <item quantity="few">uderzenia na minutę</item>
+    <item quantity="other">uderzeń na minutę</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
@@ -38,7 +43,6 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
-  <string name="metrics_beatsperminute">uderzeń na minutę</string>
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="maximum_heart_rate">Maksymalne tętno (MHR)</string>
