@@ -233,4 +233,10 @@
   <string name="battery_level_high_threshold">Wysoki poziom baterii HRM</string>
   <string name="battery_level_low_notification_txt">Poziom baterii twojego pulsometru jest niski</string>
   <string name="do_not_show_again">Nie pokazuj ponownie</string>
+  <string name="save">Zapisz</string>
+  <string name="add_step">Dodaj krok</string>
+  <string name="add_repeat_step">Dodaj powtórzenie</string>
+  <string name="discard">Anuluj</string>
+  <string name="failed_to_create_workout">Błąd przy zapisie treningu</string>
+  <string name="create">Utwórz</string>
 </resources>
