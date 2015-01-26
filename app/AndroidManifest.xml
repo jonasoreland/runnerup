@@ -14,173 +14,162 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
+  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.runnerup" >
+	package="org.runnerup"
+	xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk android:minSdkVersion="8" />
+        <uses-sdk
+            android:minSdkVersion="8" />
 
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
+		<uses-feature
+  			android:glEsVersion="0x00020000"
+  			android:required="true"/>
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.INTERNET" />
+		<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+		<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+		<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+		<uses-permission android:name="android.permission.WAKE_LOCK" />
+		<uses-permission android:name="android.permission.INTERNET" />
+		<permission android:name="org.runnerup.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+        <uses-permission android:name="org.runnerup.permission.MAPS_RECEIVE"/>
+    	<uses-permission android:name="android.permission.BLUETOOTH" />
+    	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        
+	<application
+	    android:icon="@drawable/icon"
+	    android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar">
 
-    <permission
-        android:name="org.runnerup.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature" />
+		<meta-data 
+		    android:name="com.google.android.maps.v2.API_KEY"
+    		android:value="AIzaSyA1hWmPZcCeQYbqTUXlxjIXrTGmi8quOKQ" />
 
-    <uses-permission android:name="org.runnerup.permission.MAPS_RECEIVE" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+           
+		<activity
+			android:name=".view.MainLayout"
+			android:label="@string/app_name"
+			android:screenOrientation="portrait" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+  		</activity>
+	
+		<activity android:name=".view.StartActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
 
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+		<activity android:name="org.runnerup.view.FeedActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
+		<activity android:name=".view.RunActivity"
+		    android:configChanges="keyboardHidden|orientation"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
+		<activity android:name=".view.SettingsActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
 
-    <application
-        android:icon="@drawable/icon"
-        android:label="@string/app_name"
-        android:theme="@android:style/Theme.NoTitleBar" >
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyA1hWmPZcCeQYbqTUXlxjIXrTGmi8quOKQ" />
+		<activity android:name=".view.AudioCueSettingsActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
+		<activity android:name=".view.DetailActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
 
-        <activity
-            android:name=".view.MainLayout"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+		<activity android:name=".view.HistoryActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.StartActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.FeedActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.RunActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.SettingsActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.AudioCueSettingsActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.DetailActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.HistoryActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.AccountListActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.AccountActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.UploadActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.ManageWorkoutsActivity"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
+		<activity android:name=".view.AccountListActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
 
-                <category android:name="android.intent.category.DEFAULT" />
+		<activity android:name=".view.AccountActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
+		<activity android:name=".view.UploadActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
+		<activity android:name=".view.ManageWorkoutsActivity"
+		    android:screenOrientation="portrait" >
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+  				<action android:name="android.intent.action.EDIT" />
+  				<category android:name="android.intent.category.DEFAULT" />
+  				<data android:mimeType="application/vnd.garmin.workout+json"/>
+			</intent-filter>
+<!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+  				<action android:name="android.intent.action.EDIT" />
+  				<category android:name="android.intent.category.DEFAULT" />
+  				<data android:mimeType="application/json"/>
+			</intent-filter>
+		</activity>
 
-                <data android:mimeType="application/vnd.garmin.workout+json" />
-            </intent-filter>
-            <!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.EDIT" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="application/json" />
-            </intent-filter>
-        </activity>
-
-        <provider
-            android:name=".content.WorkoutFileProvider"
+        <provider android:name=".content.WorkoutFileProvider"
             android:authorities="org.runnerup.workout.file.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider" />
-        <provider
-            android:name=".content.ActivityProvider"
+
+        <provider android:name=".content.ActivityProvider"
             android:authorities="org.runnerup.activity.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider" />
+				
+		<activity android:name=".export.oauth2client.OAuth2Activity"
+		    android:screenOrientation="portrait" >
+		</activity>
 
-        <activity
-            android:name=".export.oauth2client.OAuth2Activity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.HRSettingsActivity"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".view.HRZonesActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+		<activity android:name=".view.HRSettingsActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+				
+		<activity android:name=".view.HRZonesActivity"
+		    android:screenOrientation="portrait" >
+		</activity>
+		
+		<service 
+		    android:name=".tracker.Tracker" >
+		</service>
+		<service
+                android:name=".export.RunnerUpLive$LiveService">
+ 		</service>
+ 		
+		<receiver
+		    android:name=".tracker.component.HeadsetButtonReceiver"
+		    android:enabled="true" >
+		    <intent-filter>
+		        <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
+		    </intent-filter>
+		</receiver>
 
-        <service android:name=".tracker.Tracker" >
-        </service>
-        <service android:name=".export.RunnerUpLive$LiveService" >
-        </service>
-
-        <receiver
-            android:name=".tracker.component.HeadsetButtonReceiver"
-            android:enabled="true" >
-            <intent-filter>
-                <action
-                    android:name="android.intent.action.MEDIA_BUTTON"
-                    android:priority="2147483647" />
-            </intent-filter>
-        </receiver>
         <receiver
             android:name=".view.StartActivityHeadsetButtonReceiver"
             android:enabled="true" >
             <intent-filter>
-                <action
-                    android:name="android.intent.action.MEDIA_BUTTON"
-                    android:priority="2147483647" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
             </intent-filter>
         </receiver>
 
-        <uses-library
-            android:name="com.samsung.android.sdk.bt"
-            android:required="false" />
+		<uses-library
+			android:name="com.samsung.android.sdk.bt"
+			android:required="false" />
 
-        <activity
-            android:name=".view.CreateAdvancedWorkout"
-            android:screenOrientation="portrait" >
-        </activity>
-    </application>
+		<activity
+			android:name=".view.CreateAdvancedWorkout"
+			android:screenOrientation="portrait" >
+		</activity>
+	</application>
 
 </manifest>
