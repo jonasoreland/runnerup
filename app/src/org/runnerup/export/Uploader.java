@@ -29,7 +29,6 @@ import java.io.File;
 import java.util.List;
 
 public interface Uploader {
-
     enum AuthMethod {
         OAUTH2, USER_PASS
     }
@@ -43,6 +42,7 @@ public interface Uploader {
 
     enum Feature {
         WORKOUT_LIST, // list prepared workouts (e.g a interval program)
+        DOWNLOAD,
         GET_WORKOUT, // download prepared workout
         FEED, // list of activities by others (and self)
         UPLOAD, // upload activity

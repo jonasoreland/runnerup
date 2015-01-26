@@ -28,6 +28,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import org.runnerup.R;
+import org.runnerup.activity.Lap;
+import org.runnerup.activity.LocationData;
+import org.runnerup.activity.SportActivity;
 import org.runnerup.common.util.Constants;
 import org.runnerup.export.DigifitUploader;
 import org.runnerup.export.Endomondo;
@@ -45,12 +48,13 @@ import org.runnerup.export.RuntasticUploader;
 import org.runnerup.export.Strava;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 26;
+    private static final int DBVERSION = 27;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -66,7 +70,10 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACTIVITY.MAX_HR + " integer, ")
             + (DB.ACTIVITY.AVG_CADENCE + " integer, ")
             + ("deleted integer not null default 0, ")
-            + "nullColumnHack text null" + ");";
+            + "nullColumnHack text null, "
+            + (DB.ACTIVITY.TYPE + " text not null default 'internal' ,")
+            + (DB.ACTIVITY.EXTERNAL_ID + " text")
+            + ");";
 
     private static final String CREATE_TABLE_LOCATION = "create table "
             + DB.LOCATION.TABLE + " ( "
@@ -233,6 +240,13 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + " integer");
             echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column "
                     + DB.ACTIVITY.AVG_CADENCE + " integer");
+        }
+
+        if (oldVersion > 0 && oldVersion < 27 && newVersion >= 27) {
+            echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column "
+                    + DB.ACTIVITY.TYPE + " text not null default 'internal'");
+            echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column "
+                    + DB.ACTIVITY.EXTERNAL_ID + " text");
         }
 
         insertAccounts(arg0);
@@ -503,6 +517,23 @@ public class DBHelper extends SQLiteOpenHelper implements
         db.delete(DB.ACTIVITY.TABLE, "_id = ?", args);
     }
 
+    public static HashMap<String, Long> getActivityIdsByType(SQLiteDatabase db, String activityType){
+        HashMap<String, Long> result = new HashMap<String, Long>();
+        Cursor cursor = db.query(DB.ACTIVITY.TABLE,
+                            new String[] {DB.ACTIVITY.EXTERNAL_ID, "_id"},
+                            DB.ACTIVITY.TYPE + "= ?",
+                            new String[]{activityType},
+                null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            result.put(cursor.getString(0), cursor.getLong(1));
+            cursor.moveToNext();
+        }
+
+        return result;
+    }
+
     public static void purgeDeletedActivities(Context ctx, final ProgressDialog dialog,
                                               final Runnable onComplete) {
 
@@ -550,6 +581,21 @@ public class DBHelper extends SQLiteOpenHelper implements
             mDBHelper.close();
             if (onComplete != null)
                 onComplete.run();
+        }
+    }
+
+    public static void createActivity(SQLiteDatabase db, SportActivity sportActivity) {
+        if(sportActivity!=null) {
+            sportActivity.setId(db.insert(DB.ACTIVITY.TABLE, null, sportActivity.map()));
+            for (Lap lap : sportActivity.laps()) {
+                lap.setActivityId(sportActivity.getId());
+                lap.setId(db.insert(DB.LAP.TABLE, null, lap.map()));
+            }
+
+            for (LocationData location : sportActivity.locationData()) {
+                location.setActivityId(sportActivity.getId());
+                location.setId(db.insert(DB.LOCATION.TABLE, null, location.map()));
+            }
         }
     }
 }
