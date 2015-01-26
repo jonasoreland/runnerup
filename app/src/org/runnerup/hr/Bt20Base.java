@@ -732,7 +732,7 @@ public abstract class Bt20Base extends BtHRBase {
     public static class StHRMv1 extends Bt20Base {
 
         static final int FRAME_SIZE = 17;
-        static final byte START_BYTE = (byte) 250;
+        static final int START_BYTE = 250;
         public static final String NAME = "SportTracker HRM v1";
 
         public StHRMv1(Context ctx) {
@@ -762,18 +762,15 @@ public abstract class Bt20Base extends BtHRBase {
             int b1 = getByte(buffer[pos + 1]);
             int b2 = getByte(buffer[pos + 2]);
             if (b0 != START_BYTE) {
-                log("b0("+b0+") != START_BYTE");
                 return false;
             }
 
             if ((0xFF - b1) != b2) {
-                log("b1: + b1, b2: " + b2);
                 return false;
             }
 
             int len = b1 >> 2;
             if (bytesInBuffer < pos + len) {
-                log("len: " + len);
                 return false;
             }
 
