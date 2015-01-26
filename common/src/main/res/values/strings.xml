@@ -276,4 +276,6 @@
   <string name="save">Save</string>
   <string name="add_step">Add step</string>
   <string name="add_repeat_step">Add repeat</string>
+  <string name="discard">Discard</string>
+  <string name="failed_to_create_workout">Failed to create workout</string>
 </resources>
