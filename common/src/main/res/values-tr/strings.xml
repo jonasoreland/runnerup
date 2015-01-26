@@ -25,6 +25,9 @@
   <plurals name="metrics_distance_meter">
     <item quantity="other">metre</item>
   </plurals>
+  <plurals name="metrics_beatsperminute">
+    <item quantity="other">bpm</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_m">m</string>
   <string name="metrics_elapsed_m">m</string>
