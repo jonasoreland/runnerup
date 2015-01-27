@@ -14,27 +14,24 @@
     android:layout_height="wrap_content"
     android:id="@+id/new_workout_spinner"
     android:text="@string/workout"
-    runnerup:type="spinner_txt"
-    android:layout_alignParentLeft="true">
+    runnerup:type="spinner_txt">
   </org.runnerup.widget.TitleSpinner>
 
   <ListView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
     android:id="@+id/new_advnced_workout_steps"
-    android:layout_centerHorizontal="true"
-    android:background="@android:color/darker_gray"
-    android:cacheColorHint="@android:color/darker_gray"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingTop="5dp"
     android:scrollbarAlwaysDrawVerticalTrack="true"
-    android:layout_below="@+id/new_workout_spinner"/>
+    android:layout_below="@+id/new_workout_spinner"
+    android:layout_above="@+id/button_table"/>
 
   <TableLayout
-    android:layout_width="fill_parent"
+    android:id="@+id/button_table"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentBottom="true">
+    android:layout_alignParentBottom="true"
+    >
 
     <TableRow
       android:layout_width="fill_parent"
