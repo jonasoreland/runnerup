@@ -198,7 +198,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Import advancedWorkoutSpinner: " + fileName);
+        builder.setTitle("Import workout: " + fileName);
         builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -425,7 +425,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final EditText input = new EditText(ManageWorkoutsActivity.this);
             builder.setView(input);
 
-            builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     String value = input.getText().toString();
                     intent.putExtra(WORKOUT_NAME, value);
@@ -434,7 +434,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 }
             });
 
-            builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
                 }
