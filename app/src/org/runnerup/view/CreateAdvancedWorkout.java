@@ -258,6 +258,7 @@ public class CreateAdvancedWorkout extends Activity {
             try {
                 String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
                 WorkoutSerializer.writeFile(getApplicationContext(), advWorkoutName, advancedWorkout);
+                finish();
             } catch (Exception e) {
                 handleWorkoutFileException(e);
             }
