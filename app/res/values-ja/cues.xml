@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_workout">アクティビティ</string>
+  <string name="cue_activity">インターバル</string>
+  <string name="cue_lap">ラップ</string>
+  <string name="cue_warmup">ウォームアップ</string>
+  <string name="cue_cooldown">クールダウン</string>
+  <string name="cue_current">現在</string>
+  <string name="cue_recovery">リカバリー</string>
+  <string name="cue_perkilometer">キロメートル当り</string>
+  <string name="cue_permile">マイル当り</string>
+  <string name="cue_started">開始しました</string>
+  <string name="cue_paused">一時休止しました</string>
+  <string name="cue_resumed">再開しました</string>
+  <string name="cue_stopped">休止しました</string>
+  <string name="cue_completed">完了しました</string>
+  <string name="cue_speedup">スピードアップ</string>
+  <string name="cue_slowdown">スローダウン</string>
+  <plurals name="cue_hour">
+    <item quantity="other">時間</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="other">分</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="other">秒</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="other">メートル</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="other">キロメートル</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="other">マイル</item>
+  </plurals>
+</resources>

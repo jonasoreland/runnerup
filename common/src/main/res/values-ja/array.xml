@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>マイル</item>
+    <item>キロメートル</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>ウォームアップ</item>
+    <item>アクティブ</item>
+    <item>休憩</item>
+    <item>リカバリー</item>
+    <item>クールダウン</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>押すまで</item>
+    <item>時間</item>
+    <item>距離</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>なし</item>
+    <item>ペース</item>
+    <item>心拍数ゾーン</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>ランニング</item>
+    <item>サイクリング</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>いいえ</item>
+    <item>はい</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>no</item>
+    <item>yes</item>
+  </string-array>
+  <string-array name="types">
+    <item>時間</item>
+    <item>距離</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>男性</item>
+    <item>女性</item>
+  </string-array>
+  <string-array name="targetEntries">
+    <item>なし</item>
+    <item>ペース</item>
+    <item>心拍数ゾーン</item>
+  </string-array>
+</resources>

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Мили</item>
+    <item>Километры</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>Км</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Разминка</item>
+    <item>Активность</item>
+    <item>Отдых</item>
+    <item>Восстановление</item>
+    <item>Заминка</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Until pressed</item>
+    <item>Время</item>
+    <item>Дистанция</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Нет</item>
+    <item>Темп</item>
+    <item>Пульс</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Бег</item>
+    <item>Велосипед</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>Нет</item>
+    <item>Да</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>нет</item>
+    <item>да</item>
+  </string-array>
+  <string-array name="types">
+    <item>Время</item>
+    <item>Дистанция</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Мужчина</item>
+    <item>Женщина</item>
+  </string-array>
+  <string-array name="targetEntries">
+    <item>нет</item>
+    <item>темп</item>
+    <item>пульс</item>
+  </string-array>
+</resources>
