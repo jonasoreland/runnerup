@@ -63,7 +63,6 @@ public class StepButton extends TableLayout {
 
     private Step step;
     private Runnable mOnChangedListener = null;
-    private OnLongClickListener mOnRepeatLongClickListener = null;
 
     static final boolean editRepeatCount = true;
     static final boolean editStepButton = true;
@@ -94,11 +93,6 @@ public class StepButton extends TableLayout {
         }
     }
 
-    public void setOnLongClickListener(OnLongClickListener listener) {
-        mOnRepeatLongClickListener = listener;
-    }
-
-
     public void setOnChangedListener(Runnable runnable) {
         mOnChangedListener = runnable;
     }
@@ -113,9 +107,6 @@ public class StepButton extends TableLayout {
             mGoalRow.setVisibility(View.GONE);
             if (editRepeatCount)
                 mLayout.setOnClickListener(onRepeatClickListener);
-                if(mOnRepeatLongClickListener != null) {
-                    mLayout.setOnLongClickListener(mOnRepeatLongClickListener);
-                }
             return;
         }
         Dimension durationType = step.getDurationType();
@@ -141,9 +132,6 @@ public class StepButton extends TableLayout {
         }
         if (editStepButton) {
             mLayout.setOnClickListener(onStepClickListener);
-            if(mOnRepeatLongClickListener != null) {
-                mLayout.setOnLongClickListener(mOnRepeatLongClickListener);
-            }
         }
     }
 
