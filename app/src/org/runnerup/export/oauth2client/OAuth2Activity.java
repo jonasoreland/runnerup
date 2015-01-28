@@ -24,6 +24,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -34,9 +35,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.FormCrawler;
 import org.runnerup.export.FormCrawler.FormValues;
-import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -189,54 +190,69 @@ public class OAuth2Activity extends Activity {
 
                     Bundle b = mArgs;
                     String code = u.getQueryParameter("code");
-                    String token_url = b.getString(OAuth2ServerCredentials.TOKEN_URL);
-                    FormValues fv = new FormValues();
+                    final String token_url = b.getString(OAuth2ServerCredentials.TOKEN_URL);
+                    final FormValues fv = new FormValues();
                     fv.put("client_id", b.getString(OAuth2ServerCredentials.CLIENT_ID));
                     fv.put("client_secret", b.getString(OAuth2ServerCredentials.CLIENT_SECRET));
                     fv.put("grant_type", "authorization_code");
                     fv.put("redirect_uri", b.getString(OAuth2ServerCredentials.REDIRECT_URI));
                     fv.put("code", code);
 
-                    HttpURLConnection conn = null;
-
-                    Intent res = new Intent();
-                    int resultCode = Activity.RESULT_OK;
+                    final Intent res = new Intent();
                     res.putExtra("url", token_url);
-                    try {
-                        URL newurl = new URL(token_url);
-                        conn = (HttpURLConnection) newurl.openConnection();
-                        conn.setDoOutput(true);
-                        conn.setRequestMethod("POST");
-                        conn.setRequestProperty("Content-Type",
-                                "application/x-www-form-urlencoded");
-                        {
-                            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                            fv.write(wr);
-                            wr.flush();
-                            wr.close();
-                        }
-                        StringBuilder obj = new StringBuilder();
-                        BufferedReader in = new BufferedReader(new InputStreamReader(conn
-                                .getInputStream()));
-                        char buf[] = new char[1024];
-                        int len;
-                        while ((len = in.read(buf)) != -1) {
-                            obj.append(buf, 0, len);
+
+                    new AsyncTask<String, String, Integer>() {
+                        @Override
+                        protected void onPreExecute() {
+                            super.onPreExecute();
                         }
 
-                        res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
-                    } catch (Exception ex) {
-                        ex.printStackTrace(System.err);
-                        res.putExtra("ex", ex.toString());
-                        resultCode = Activity.RESULT_CANCELED;
-                    }
+                        @Override
+                        protected Integer doInBackground(String... params) {
+                            int resultCode = Activity.RESULT_OK;
+                            HttpURLConnection conn = null;
 
-                    if (conn != null) {
-                        conn.disconnect();
-                    }
+                            try {
+                                URL newUrl = new URL(token_url);
+                                conn = (HttpURLConnection) newUrl.openConnection();
+                                conn.setDoOutput(true);
+                                conn.setRequestMethod("POST");
+                                conn.setRequestProperty("Content-Type",
+                                        "application/x-www-form-urlencoded");
+                                {
+                                    OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+                                    fv.write(wr);
+                                    wr.flush();
+                                    wr.close();
+                                }
+                                StringBuilder obj = new StringBuilder();
+                                BufferedReader in = new BufferedReader(new InputStreamReader(conn
+                                        .getInputStream()));
+                                char buf[] = new char[1024];
+                                int len;
+                                while ((len = in.read(buf)) != -1) {
+                                    obj.append(buf, 0, len);
+                                }
 
-                    setResult(resultCode, res);
-                    finish();
+                                res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
+                            } catch (Exception ex) {
+                                ex.printStackTrace(System.err);
+                                res.putExtra("ex", ex.toString());
+                                resultCode = Activity.RESULT_CANCELED;
+                            }
+
+                            if (conn != null) {
+                                conn.disconnect();
+                            }
+
+                            return resultCode;
+                        }
+                        @Override
+                        protected void onPostExecute(Integer resultCode) {
+                            setResult(resultCode, res);
+                            finish();
+                        }
+                    }.execute();
                 }
             }
 
