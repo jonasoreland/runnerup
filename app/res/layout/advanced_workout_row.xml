@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content">
+
+  <TableRow
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/workout_row">
+
+    <Button
+      android:layout_width="30dp"
+      android:layout_height="30dp"
+      android:text="@string/minus_sign"
+      android:id="@+id/del_button"
+      android:paddingTop="5dp"
+      android:paddingBottom="5dp"
+      android:layout_gravity="center"
+      android:gravity="center_vertical|center_horizontal"
+      />
+
+    <view
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      class="org.runnerup.view.StepButton"
+      android:id="@+id/workout_step_button"
+      android:layout_weight="1"/>
+
+    <Button
+      android:layout_width="30dp"
+      android:layout_height="30dp"
+      android:text="@string/plus_sign"
+      android:id="@+id/add_button"
+      android:paddingTop="5dp"
+      android:paddingBottom="5dp"
+      android:layout_gravity="center"
+      android:gravity="center_vertical|center_horizontal"
+      />
+  </TableRow>
+
+</LinearLayout>

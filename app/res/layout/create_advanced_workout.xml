@@ -14,7 +14,8 @@
     android:layout_height="wrap_content"
     android:id="@+id/new_workout_spinner"
     android:text="@string/workout"
-    runnerup:type="spinner_txt">
+    runnerup:type="spinner_txt"
+    android:orientation="horizontal">
   </org.runnerup.widget.TitleSpinner>
 
   <ListView
