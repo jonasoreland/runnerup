@@ -118,5 +118,5 @@ public class PauseStep extends Step {
     }
 
     @Override
-    public boolean isPauseStep() { return false; }
+    public boolean isPauseStep() { return true; }
 }
