@@ -63,6 +63,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     private Bundle data;
     private Bundle headers;
     private final ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
+    private final ValueModel<Boolean> pauseStep = new ValueModel<Boolean>();
 
     @Override
     public void onCreate() {
@@ -259,12 +260,15 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     }
 
     private void setHeaders(DataEvent ev) {
+        boolean pause = false;
         if (ev.getType() == DataEvent.TYPE_CHANGED) {
             headers = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
             headers.putLong(UPDATE_TIME, System.currentTimeMillis());
+            pause = headers.getBoolean(Constants.Wear.RunInfo.PAUSE_STEP, false);
         } else {
             headers = null;
         }
+        pauseStep.set(pause);
     }
 
     static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
@@ -307,6 +311,18 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
         trackerState.unregisterChangeListener(listener);
+    }
+
+    public Boolean getPauseStep() {
+        return pauseStep.get();
+    }
+
+    public void registerPauseStepListener(ValueModel.ChangeListener<Boolean> listener) {
+        pauseStep.registerChangeListener(listener);
+    }
+
+    public void unregisterPauseStepListener(ValueModel.ChangeListener<Boolean> listener) {
+        pauseStep.unregisterChangeListener(listener);
     }
 
     public void sendStart() {
