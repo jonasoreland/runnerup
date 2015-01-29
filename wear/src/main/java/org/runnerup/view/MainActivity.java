@@ -156,7 +156,8 @@ public class MainActivity extends Activity
         }
 
         @Override
-        public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+        public void onValueChanged(ValueModel<TrackerState> obj,
+                                   TrackerState oldValue, TrackerState newValue) {
             update(newValue);
             notifyDataSetChanged();
         }
@@ -233,7 +234,8 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public void onValueChanged(final TrackerState oldState, final TrackerState newState) {
+    public void onValueChanged(ValueModel<TrackerState> obj,
+                               final TrackerState oldState, final TrackerState newState) {
         synchronized (trackerState) {
             runOnUiThread(new Runnable() {
                 @Override

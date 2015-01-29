@@ -128,7 +128,7 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
         mainActivity.registerTrackerStateListener(this);
         reset();
         update();
-        onValueChanged(null, mainActivity.getTrackerState());
+        onValueChanged(null, null, mainActivity.getTrackerState());
     }
 
     @Override
@@ -144,7 +144,8 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
     }
 
     @Override
-    public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+    public void onValueChanged(ValueModel<TrackerState> obj,
+                               TrackerState oldValue, TrackerState newValue) {
         if (!isAdded())
             return;
 

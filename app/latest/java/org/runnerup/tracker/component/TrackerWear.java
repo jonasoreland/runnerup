@@ -444,7 +444,8 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
-    public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+    public void onValueChanged(ValueModel<TrackerState> instance,
+                               TrackerState oldValue, TrackerState newValue) {
         setTrackerState(newValue);
     }
 }
