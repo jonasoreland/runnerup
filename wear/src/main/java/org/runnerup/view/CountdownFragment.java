@@ -75,7 +75,7 @@ public class CountdownFragment extends Fragment {
         if (handlerOutstanding)
             return;
         handlerOutstanding = true;
-        handler.postDelayed(periodicTick, 1000);
+        handler.postDelayed(periodicTick, 500);
     }
 
     private void reset() {
