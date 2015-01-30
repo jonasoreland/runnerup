@@ -31,7 +31,7 @@ import java.util.List;
 public interface Uploader {
 
     enum AuthMethod {
-        OAUTH2, USER_PASS
+        OAUTH2, USER_PASS, GOOGLE_API
     }
 
     enum Status {
