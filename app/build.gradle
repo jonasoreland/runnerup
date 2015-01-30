@@ -28,7 +28,7 @@ android {
 
     productFlavors {
         froyo {
-            minSdkVersion 8
+            minSdkVersion 9
             targetSdkVersion 18
             versionName "1.39"
             versionCode 39 
@@ -67,10 +67,10 @@ android {
 
 dependencies {
     latestCompile 'com.android.support:support-v4:20.0.0'
-    latestCompile 'com.google.android.gms:play-services:6.1.11'
+    latestCompile 'com.google.android.gms:play-services:6.5.+'
 
     froyoCompile 'com.android.support:support-v4:19.1.+'
-    froyoCompile 'com.google.android.gms:play-services:3.2.65'
+    froyoCompile 'com.google.android.gms:play-services:6.5.+'
 
     compile files('../GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')
