@@ -81,10 +81,12 @@ public class TrackerWear extends DefaultTrackerComponent
     private Bundle lastCreatedWorkoutEvent;
     private Bundle lastSentWorkoutEvent;
     private long tickFrequency = 1000;
+    private long tickFrequencyPause = 500; // so that seconds does show "slowly"
     private boolean mWorkoutSenderRunning = false;
 
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
     private Step currentStep;
+    private boolean pauseStep;
 
     public TrackerWear(Tracker tracker) {
         this.tracker = tracker;
@@ -254,7 +256,27 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     private void sendWorkoutEvent() {
-        if (lastCreatedWorkoutEvent != null && isConnected()) {
+        if (!isConnected())
+            return;
+
+        /* special handling of pauseStep */
+        if (pauseStep) {
+            if (lastCreatedWorkoutEvent == null)
+                lastCreatedWorkoutEvent = lastSentWorkoutEvent;
+            if (lastCreatedWorkoutEvent != null) {
+                Dimension dim = currentStep.getDurationType();
+                if (dim != null) {
+                    double remaining = tracker.getWorkout().getRemaining(Scope.STEP, dim);
+                    if (remaining < 0) {
+                        remaining = 0;
+                    }
+                    lastCreatedWorkoutEvent.putString(Wear.RunInfo.COUNTDOWN,
+                            formatter.formatRemaining(Formatter.TXT_SHORT, dim, remaining));
+                }
+            }
+        }
+
+        if (lastCreatedWorkoutEvent != null) {
             Wearable.MessageApi.sendMessage(mGoogleApiClient, wearNode, Wear.Path.MSG_WORKOUT_EVENT,
                     DataMap.fromBundle(lastCreatedWorkoutEvent).toByteArray());
             lastSentWorkoutEvent = lastCreatedWorkoutEvent;
@@ -275,7 +297,8 @@ public class TrackerWear extends DefaultTrackerComponent
                 return;
 
             mWorkoutSenderRunning = true;
-            handler.postDelayed(workoutEventSender, tickFrequency);
+            handler.postDelayed(workoutEventSender,
+                    pauseStep ? tickFrequencyPause : tickFrequency);
         }
     };
 
@@ -301,7 +324,9 @@ public class TrackerWear extends DefaultTrackerComponent
                 i++;
             }
 
+            pauseStep = false;
             if (currentStep != null && currentStep.isPauseStep()) {
+                pauseStep = true;
                 b.putBoolean(Wear.RunInfo.PAUSE_STEP, true);
             }
 
@@ -314,15 +339,7 @@ public class TrackerWear extends DefaultTrackerComponent
         tracker.getWorkout().unregisterWorkoutStepListener(this);
         currentStep = null;
 
-        /* clear HEADERS */
-        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
-                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
-                        Wear.Path.HEADERS).build());
-
-        /* clear WORKOUT PLAN */
-        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
-                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
-                        Wear.Path.WORKOUT_PLAN).build());
+        clearData(/* don't clear own node id */ false);
     }
 
     @Override
@@ -344,7 +361,7 @@ public class TrackerWear extends DefaultTrackerComponent
     @Override
     public void onPeerDisconnected(Node node) {
         connectedNodes.remove(node);
-        if (node.getId().contentEquals(wearNode))
+        if (wearNode != null && node.getId().contentEquals(wearNode))
             wearNode = null;
     }
 
@@ -353,7 +370,7 @@ public class TrackerWear extends DefaultTrackerComponent
         System.err.println("onMessageReceived: " + messageEvent);
         //note: skip state checking, do that in receiver instead
         if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
-            sendLocalBroadcast(Constants.Intents.PAUSE_WORKOUT);
+            sendLocalBroadcast(Intents.PAUSE_WORKOUT);
             return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
             sendLocalBroadcast(Intents.RESUME_WORKOUT);
@@ -364,7 +381,7 @@ public class TrackerWear extends DefaultTrackerComponent
         } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
             /* send broadcast to StartActivity */
             Intent startBroadcastIntent = new Intent();
-            startBroadcastIntent.setAction(Constants.Intents.START_WORKOUT);
+            startBroadcastIntent.setAction(Intents.START_WORKOUT);
             context.sendBroadcast(startBroadcastIntent);
             return;
         }
@@ -380,7 +397,7 @@ public class TrackerWear extends DefaultTrackerComponent
     public ResultCode onEnd(Callback callback, Context context) {
         if (mGoogleApiClient != null) {
             if (mGoogleApiClient.isConnected()) {
-                clearData();
+                clearData(true);
                 wearNode = null;
 
                 Wearable.MessageApi.removeListener(mGoogleApiClient, this);
@@ -395,11 +412,13 @@ public class TrackerWear extends DefaultTrackerComponent
         return ResultCode.RESULT_OK;
     }
 
-    private void clearData() {
+    private void clearData(boolean self) {
+        if (self) {
         /* clear our node id */
-        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
-                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
-                        Wear.Path.PHONE_NODE_ID).build());
+            Wearable.DataApi.deleteDataItems(mGoogleApiClient,
+                    new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
+                            Wear.Path.PHONE_NODE_ID).build());
+        }
 
         /* clear HEADERS */
         Wearable.DataApi.deleteDataItems(mGoogleApiClient,
