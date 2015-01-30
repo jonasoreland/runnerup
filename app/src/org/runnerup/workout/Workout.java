@@ -155,14 +155,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     private void setCurrentStep(Step step) {
         Step oldStep = currentStep;
-        if (step == null) {
-            currentStep = step;
-        } else {
-            currentStep = step.getCurrentStep();
-        }
+        currentStep = step;
 
+        Step newStep = (step == null) ? null : step.getCurrentStep();
         for (WorkoutStepListener l : stepListeners) {
-            l.onStepChanged(oldStep, currentStep);
+            l.onStepChanged(oldStep, newStep);
         }
     }
 
