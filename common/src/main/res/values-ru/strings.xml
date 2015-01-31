@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <plurals name="metrics_distance_kilometer">
+    <item quantity="one">километр</item>
+    <item quantity="few">километра</item>
+    <item quantity="other">километров</item>
+  </plurals>
+  <plurals name="metrics_distance_mile">
+    <item quantity="one">миля</item>
+    <item quantity="few">мили</item>
+    <item quantity="other">миль</item>
+  </plurals>
+  <plurals name="metrics_distance_meter">
+    <item quantity="one">метр</item>
+    <item quantity="few">метра</item>
+    <item quantity="other">метров</item>
+  </plurals>
+  <plurals name="metrics_beatsperminute">
+    <item quantity="one">удар в минуту</item>
+    <item quantity="few">удара в минуту</item>
+    <item quantity="other">ударов в минуту</item>
+  </plurals>
+  <string name="metrics_distance_km">км</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_m">м</string>
+  <string name="metrics_elapsed_h">ч.</string>
+  <string name="metrics_elapsed_m">мин.</string>
+  <string name="metrics_elapsed_min">мин.</string>
+  <string name="metrics_elapsed_s">сек.</string>
+  <string name="metrics_heartrate">Уд. в мин.</string>
+  <!--format hint stuff-->
+  <string name="maximum_heart_rate">Максимальная ЧСС (МЧСС)</string>
+  <string name="target_pace_format">Целевой темп (чч:мм:сс)</string>
+  <string name="interval_time_format">Интервал - время (чч:мм:сс)</string>
+  <string name="interval_distance_format">Интервал - дистанция (м)</string>
+  <string name="rest_time_format">Время отдыха (чч:мм:сс)</string>
+  <string name="rest_distance_format">Дистанция отдыха (м)</string>
+  <string name="duration_time_format">Длительность (чч:мм:сс)</string>
+  <string name="duration_distance_format">Дистанция (м)</string>
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <!--other-->
+  <string name="google_play_services_legal_notices">Юридическая информация</string>
+  <string name="rest">отдых</string>
+  <string name="recovery">восстановление</string>
+  <string name="repeat">повторять</string>
+  <string name="time">время</string>
+  <string name="distance">дистанция</string>
+  <string name="speed">скорость</string>
+  <string name="pace">темп</string>
+  <string name="heartrate">пульс</string>
+  <string name="heartrate_zone">зоны ЧСС</string>
+  <string name="zone">Зона</string>
+  <string name="device">Устройство</string>
+  <string name="heart_rate">Пульс</string>
+  <string name="pace_chart">Темп</string>
+  <string name="scan">Сканирование</string>
+  <string name="connect">Подключение</string>
+  <string name="connecting">Подключаюсь</string>
+  <string name="download">Загрузка</string>
+  <string name="share">Публикация</string>
+  <string name="delete">Удалить</string>
+  <string name="total">Общее</string>
+  <string name="interval">Интервал</string>
+  <string name="remaining">Осталось</string>
+  <string name="lap">Круг</string>
+  <string name="new_lap">Новый круг</string>
+  <string name="next_lap">Следующий круг</string>
+  <string name="target">Цель</string>
+  <string name="target_heart_rate_zone">Целевая зона ЧСС</string>
+  <string name="interval_type">Тип интервала</string>
+  <string name="rest_type">Тип отдыха</string>
+  <string name="repetitions">Повторения</string>
+  <string name="date">Дата</string>
+  <string name="gps_satellites">Спутники GPS, ГЛОНАСС</string>
+  <string name="start_gps">Старт GPS</string>
+  <string name="duration">Подолжительность</string>
+  <string name="target_type">Тип цели</string>
+  <string name="cancel">Отмена</string>
+  <string name="value">значение</string>
+  <string name="select_all">Выбрать все</string>
+  <string name="clear_all">Снять выделение</string>
+  <string name="username">Логин</string>
+  <string name="password">Пароль</string>
+  <string name="show_password">Показать пароль</string>
+  <string name="intensity">интенсивность</string>
+  <string name="low_pace">Низкий темп</string>
+  <string name="high_pace">Высокий темп</string>
+  <string name="sex">Пол</string>
+  <string name="upload">выгрузить</string>
+  <string name="tab_notes">Примечания</string>
+  <string name="tab_laps">Круги</string>
+  <string name="tab_map">Карта</string>
+  <string name="tab_graph">График</string>
+  <string name="tab_upload">Выгрузить</string>
+  <string name="configure">Настройки</string>
+  <string name="disconnect">Отключиться</string>
+  <string name="resume">Вернуться</string>
+  <string name="save_activity">Сохранить</string>
+  <string name="upload_activity">Выгрузить тренировку</string>
+  <string name="uploaded">Выгружено</string>
+  <string name="finished">Завершено</string>
+  <string name="discard_activity">Отменить тренировку</string>
+  <string name="configure_accounts">Настройки аккаунтов</string>
+  <string name="refresh">Обновить</string>
+  <string name="age">Возраст</string>
+  <string name="Running">Бег</string>
+  <string name="Biking">Велосипед</string>
+  <string name="Other">Другое</string>
+  <string name="unknown">Неизвестно</string>
+  <string name="edit">правка</string>
+  <string name="synchronizing">Синхронизация:</string>
+  <string name="ok">ОК</string>
+  <string name="disconnect_account">Отключить аккаунт</string>
+  <string name="edit_activity">Редактировать тренировку</string>
+  <string name="share_activity">Опубликовать тренировку</string>
+  <string name="delete_activity">Удалить тренировку</string>
+  <string name="recompute_activity">Пересчитать тренировку</string>
+  <string name="configure_heart_rate_zones">Настройка зон ЧСС</string>
+  <string name="clear_heart_rate_zone_settings">Очистить зоны ЧСС</string>
+  <string name="manage_accounts">Настройка аккаунтов</string>
+  <string name="manage_audio_cues">Настройка звукового сопровождения</string>
+  <string name="manage_workouts">Управление тренировкой</string>
+  <string name="settings">Настройки</string>
+  <string name="what_s_new">Что нового</string>
+  <string name="rate_runner_up">Оценить RunnerUp</string>
+  <string name="enable_gps">Включить GPS</string>
+  <string name="waiting_for_gps">Ожидание GPS</string>
+  <string name="start_activity">Старт тренировки</string>
+  <string name="clear_hr_settings">Восстановить настройки ЧСС</string>
+  <string name="heart_rate_monitor_is_not_supported_for_your_device">Датчик HRM не поддерживается твоим устройством</string>
+  <string name="select_type_of_bluetooth_device">Выбор типа устройства Bluetooth</string>
+  <string name="scanning">Поиск</string>
+  <string name="failed_to_load_workout">Не удалось загрузить тренировку!!!</string>
+  <string name="problem">Проблемы</string>
+  <string name="create_new_audio_cue_scheme">Создать голосовую схему</string>
+  <string name="great">Круто!</string>
+  <string name="yes">Да</string>
+  <string name="create">Создать</string>
+  <string name="no">Нет</string>
+  <string name="loading">Загрузка...</string>
+  <string name="saving">Сохранение</string>
+  <string name="cancelling_please_wait">Отмена... подождите</string>
+  <string name="try_again_later">попытайся позже</string>
+  <string name="are_you_sure">Уверен?</string>
+  <string name="configure_audio_cues">Настройка голосового сопровождения</string>
+  <string name="downloadeditremove_workouts">Загрузка/редактирование/удаление тренировки</string>
+  <string name="note_you_need_to_connect_to_the_account_too">Внимание, нужно подключиться к аккаунту</string>
+  <string name="use_your_headset_to_startpauseresume_runner_up">Пользуйся кнопкой гарнитуры для пуска/остановки RunnerUp</string>
+  <string name="export_database_to_sdcard_eg_for_upgrade">Экспорт базы данных на карту памяти (перед обновлением)</string>
+  <string name="import_database_from_sdcard_eg_after_upgrade">Импорт базы данных с карты памяти (после обновления)</string>
+  <string name="coach_to_help_you_reach_target_if_having_set_target">Помощь голосового тренера в достижении цели (если задана цель тренировки)</string>
+  <string name="keep_silent_when_workout_startpauseresumestop">Не озвучивать старт/паузу/возобновление/стоп</string>
+  <string name="test_audio_cue">Проверить голосовые настройки</string>
+  <string name="accounts">Аккаунты</string>
+  <string name="audio_cues">Голосовые схемы</string>
+  <string name="heart_rate_monitor">Датчик сердечных сокращений HRM</string>
+  <string name="heart_rate_zones">Зоны ЧСС</string>
+  <string name="autolap">Авто круг</string>
+  <string name="autolap_m">Авто круг (м)</string>
+  <string name="autopause">Авто пауза</string>
+  <string name="enable_runner_up_live">Включить RunnerUpLive</string>
+  <string name="headset_key_startstop">Кнопка гарнитуры старт/стоп</string>
+  <string name="activity_countdown">Отсчёт</string>
+  <string name="countdown_time_s">Отсчитывать время (c)</string>
+  <string name="unit_preference">Единицы измерений</string>
+  <string name="auto_start_gps">Автоматически включать GPS</string>
+  <string name="advanced_options">Продвинутые настройки</string>
+  <string name="runner_up_live_address">RunnerUp live адрес сервера</string>
+  <string name="autopause_after_s">Автопауза - после N секунд (с) </string>
+  <string name="autopause_min_pace_minkm">Автопауза - минимальный темп (минут/км)</string>
+  <string name="target_pace_moving_average_seconds_">Целевой темп скользящих средних секунд</string>
+  <string name="add_countdown_after_step_that_ends_with_user_press">Добавить обратный отсчет перед стартом</string>
+  <string name="step_countdown_time_s">Время обратного отсчёта (с)</string>
+  <string name="smooth_pace_graph">Сглаживание графика темпа</string>
+  <string name="poll_interval_ms">Интервал опроса (миллисекунд)</string>
+  <string name="poll_distance_m">Дистанция опроса (м)</string>
+  <string name="export">Экспорт</string>
+  <string name="import_">Импорт</string>
+  <string name="experimental_hrm_devices">Экспериментальные HRM датчики</string>
+  <string name="about">О приложении</string>
+  <string name="about_runner_up">О RunnerUp</string>
+  <string name="triggers">Срабатывание голосового тренера</string>
+  <string name="time_triggered_audio_cue">Инструктаж через временные интервалы</string>
+  <string name="cue_interval_s">Каждые N секунд (с)</string>
+  <string name="distance_triggered_audio_cue">Инструктаж через интервалы дистанции</string>
+  <string name="cue_intervall_m">Каждые N метров (м)</string>
+  <string name="end_of_lap_audio_cue">Озвучивать завершение круга</string>
+  <string name="mute_music_during_audio_cues">Приглушить музыку во время озвучивания сообщений</string>
+  <string name="cue_information">Озвучиваемая информация</string>
+  <string name="total_distance">Общая дистанция</string>
+  <string name="total_time">Общее время</string>
+  <string name="total_pace">Средний темп</string>
+  <string name="total_heart_rate">Средняя ЧСС</string>
+  <string name="total_heart_rate_zone">Зона ЧСС</string>
+  <string name="interval_distance">Интервал: дистанция</string>
+  <string name="interval_time">Интервал: время</string>
+  <string name="interval_pace">Интервал: средний темп</string>
+  <string name="interval_heart_rate">Интервал: средняя ЧСС</string>
+  <string name="interval_heart_rate_zone">Интервал: зона ЧСС</string>
+  <string name="lap_distance">Круг: дистанция</string>
+  <string name="lap_time">Круг: время</string>
+  <string name="lap_pace">Круг: средний темп</string>
+  <string name="lap_heart_rate">Круг: средняя ЧСС</string>
+  <string name="lap_heart_rate_zone">Круг: зона ЧСС</string>
+  <string name="misc_cues">Прочие голосовые команды</string>
+  <string name="target_coaching">Эмуляция тренера</string>
+  <string name="skip_event_audio_cues">Не озвучивать</string>
+  <string name="push">Воспроизвести голос тренера</string>
+  <string name="android_text_to_speech_settings">Выбор языка голосового тренера</string>
+  <string name="start">Старт</string>
+  <string name="basic">Базовая</string>
+  <string name="advanced">Продвинутая</string>
+  <string name="manual">Настраиваемая</string>
+  <string name="add_workout_notes">Добавить примечание</string>
+  <string name="pruning_deleted_activities_from_database">Очистить базу данных от удалённых тренировок</string>
+  <string name="battery_level">Уровень заряда</string>
+  <string name="searching_for_gps">Поиск спутников GPS</string>
+  <string name="runnerup_activity_started">RunnerUp начал тренировку</string>
+  <string name="battery_level_low_threshold">Низкий уровень заряда датчика HRM</string>
+  <string name="battery_level_high_threshold">Высокий уровень заряда датчика HRM</string>
+  <string name="warning">Предупреждение</string>
+  <string name="battery_level_low_notification_txt">Датчик HRM требует замены батарейки</string>
+  <string name="do_not_show_again">Не показывать снова</string>
+</resources>

@@ -44,13 +44,14 @@ import com.google.android.gms.wearable.Wearable;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.view.MainActivity;
 
 import java.util.HashSet;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-public class StateService extends Service implements NodeApi.NodeListener, MessageApi.MessageListener, DataApi.DataListener {
+public class StateService extends Service implements NodeApi.NodeListener, MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Boolean> {
 
     public static final String UPDATE_TIME = "UPDATE_TIME";
 
@@ -63,6 +64,8 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     private Bundle data;
     private Bundle headers;
     private final ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
+    private final ValueModel<Boolean> pauseStep = new ValueModel<Boolean>();
+    private MainActivity pauseStepListener;
 
     @Override
     public void onCreate() {
@@ -108,6 +111,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
+        this.pauseStep.registerChangeListener(this);
 
         System.err.println("StateService.onCreate()");
     }
@@ -184,6 +188,12 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         return mBinder;
     }
 
+    @Override
+    public void onValueChanged(ValueModel<Boolean> instance, Boolean oldValue, Boolean newValue) {
+        if (pauseStepListener != null)
+            pauseStepListener.onPauseStepChanged(oldValue, newValue);
+    }
+
     public class LocalBinder extends android.os.Binder {
         public StateService getService() {
             return StateService.this;
@@ -255,16 +265,21 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
             phoneNode = new String(ev.getDataItem().getData());
         } else if (ev.getType() == DataEvent.TYPE_DELETED) {
             phoneNode = null;
+            resetState();
         }
     }
 
     private void setHeaders(DataEvent ev) {
+        boolean pause = false;
         if (ev.getType() == DataEvent.TYPE_CHANGED) {
             headers = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
             headers.putLong(UPDATE_TIME, System.currentTimeMillis());
+            pause = headers.getBoolean(Constants.Wear.RunInfo.PAUSE_STEP, false);
         } else {
             headers = null;
+            resetState();
         }
+        pauseStep.set(pause);
     }
 
     static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
@@ -289,8 +304,14 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         } else if (ev.getType() == DataEvent.TYPE_DELETED) {
             // trackerState being deleted
             newVal = null;
+            resetState();
         }
         setTrackerState(newVal);
+    }
+
+    private void resetState() {
+        data = null;
+        headers = null;
     }
 
     private void setTrackerState(TrackerState newVal) {
@@ -307,6 +328,18 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
         trackerState.unregisterChangeListener(listener);
+    }
+
+    public Boolean getPauseStep() {
+        return pauseStep.get();
+    }
+
+    public void registerPauseStepListener(MainActivity listener) {
+        this.pauseStepListener = listener;
+    }
+
+    public void unregisterPauseStepListener(MainActivity listener) {
+        this.pauseStepListener = null;
     }
 
     public void sendStart() {

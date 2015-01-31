@@ -89,7 +89,8 @@ public class ConnectToPhoneFragment extends Fragment implements ValueModel.Chang
     }
 
     @Override
-    public void onValueChanged(TrackerState oldState, TrackerState newState) {
+    public void onValueChanged(ValueModel<TrackerState> obj,
+                               TrackerState oldState, TrackerState newState) {
         if (isAdded())
             updateView(newState);
     }

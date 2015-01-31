@@ -28,7 +28,7 @@ public class ValueModel<T> {
             new ArrayList<ChangeListener<T>>();
 
     public interface ChangeListener<T> {
-        void onValueChanged(T oldValue, T newValue);
+        void onValueChanged(ValueModel<T> instance, T oldValue, T newValue);
     };
 
     public ValueModel() {
@@ -56,7 +56,7 @@ public class ValueModel<T> {
          */
         ArrayList<ChangeListener<T>> copy = new ArrayList<ChangeListener<T>>(listeners);
         for (ChangeListener<T> l : copy) {
-            l.onValueChanged(oldValue, newValue);
+            l.onValueChanged(this, oldValue, newValue);
         }
     }
 

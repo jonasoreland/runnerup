@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_lap">круг</string>
+  <string name="cue_current">текущий</string>
+  <string name="cue_recovery">восстановление</string>
+  <string name="cue_perkilometer">за километр</string>
+  <string name="cue_permile">за милю</string>
+  <string name="cue_started">стартанул</string>
+  <string name="cue_paused">пауза</string>
+  <string name="cue_resumed">начал движение</string>
+  <string name="cue_stopped">остановился</string>
+  <string name="cue_completed">завершена</string>
+  <string name="cue_speedup">быстрее</string>
+  <string name="cue_slowdown">медленнее</string>
+  <plurals name="cue_hour">
+    <item quantity="one">час</item>
+    <item quantity="few">часа</item>
+    <item quantity="other">часов</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">минута</item>
+    <item quantity="few">минуты</item>
+    <item quantity="other">минут</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">секунда</item>
+    <item quantity="few">секунды</item>
+    <item quantity="other">секунд</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">метр</item>
+    <item quantity="few">метра</item>
+    <item quantity="other">метров</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">километр</item>
+    <item quantity="few">километра</item>
+    <item quantity="other">километров</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">миля</item>
+    <item quantity="few">мили</item>
+    <item quantity="other">миль</item>
+  </plurals>
+</resources>

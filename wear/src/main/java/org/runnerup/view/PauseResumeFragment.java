@@ -148,7 +148,8 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
     }
 
     @Override
-    public void onValueChanged(TrackerState oldState, TrackerState newState) {
+    public void onValueChanged(ValueModel<TrackerState> obj,
+                               TrackerState oldState, TrackerState newState) {
         if (isAdded())
             updateView(newState);
     }

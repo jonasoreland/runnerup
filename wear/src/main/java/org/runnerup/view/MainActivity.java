@@ -41,12 +41,12 @@ import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-public class MainActivity extends Activity
-        implements Constants, ValueModel.ChangeListener<TrackerState> {
+public class MainActivity extends Activity implements Constants, ValueModel.ChangeListener<TrackerState> {
 
     private GridViewPager pager;
     private StateService mStateService;
     final private ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
+    private boolean pauseStep = false;
 
     private static final int RUN_INFO_ROW = 0;
     private static final int PAUSE_RESUME_ROW = 1;
@@ -88,6 +88,7 @@ public class MainActivity extends Activity
         super.onResume();
         if (mStateService != null) {
             mStateService.unregisterTrackerStateListener(this);
+            mStateService.unregisterPauseStepListener(this);
         }
         getApplicationContext().unbindService(mStateServiceConnection);
         mStateService = null;
@@ -98,7 +99,8 @@ public class MainActivity extends Activity
         super.onStop();
     }
 
-    private class PagerAdapter extends  FragmentGridPagerAdapter implements ValueModel.ChangeListener<TrackerState> {
+    private class PagerAdapter extends FragmentGridPagerAdapter
+            implements ValueModel.ChangeListener<TrackerState> {
         int rows = 1;
         int cols = 1;
 
@@ -131,14 +133,18 @@ public class MainActivity extends Activity
                 case PAUSED:
                 case STOPPED:
                     if (row == RUN_INFO_ROW) {
-                        return new RunInfoFragment();
+                        if (pauseStep && col == 0)
+                            return new CountdownFragment();
+                        else
+                            return new RunInfoFragment();
                     } else if (row == PAUSE_RESUME_ROW) {
                         if (trackerState.get() == TrackerState.STOPPED)
                             return new StoppedFragment();
                         else {
-                            if (pauseResumeFragment == null)
-                                pauseResumeFragment = new PauseResumeFragment();
-                            return pauseResumeFragment;
+                            return new PauseResumeFragment();
+//                            if (pauseResumeFragment == null)
+//                                pauseResumeFragment = new PauseResumeFragment();
+//                            return pauseResumeFragment;
                         }
                     }
             }
@@ -152,13 +158,23 @@ public class MainActivity extends Activity
 
         @Override
         public int getColumnCount(int i) {
+            if (pauseStep)
+                return cols + 1;
             return cols;
         }
 
         @Override
-        public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+        public void onValueChanged(ValueModel<TrackerState> obj,
+                                   TrackerState oldValue, TrackerState newValue) {
             update(newValue);
             notifyDataSetChanged();
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+
+            pauseResumeFragment = null;
+            super.notifyDataSetChanged();
         }
 
         private void update(TrackerState newValue) {
@@ -215,6 +231,7 @@ public class MainActivity extends Activity
             if (mStateService == null) {
                 mStateService = ((StateService.LocalBinder) service).getService();
                 mStateService.registerTrackerStateListener(MainActivity.this);
+                mStateService.registerPauseStepListener(MainActivity.this);
             }
         }
 
@@ -233,7 +250,8 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public void onValueChanged(final TrackerState oldState, final TrackerState newState) {
+    public void onValueChanged(ValueModel<TrackerState> obj,
+                               final TrackerState oldState, final TrackerState newState) {
         synchronized (trackerState) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -255,6 +273,23 @@ public class MainActivity extends Activity
     public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
         synchronized (trackerState) {
             trackerState.unregisterChangeListener(listener);
+        }
+    }
+
+    public void onPauseStepChanged(final Boolean oldValue, final Boolean newValue) {
+        synchronized (trackerState) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (trackerState) {
+                        if (newValue == null)
+                            pauseStep = false;
+                        else
+                            pauseStep = newValue;
+                        pager.getAdapter().notifyDataSetChanged();
+                    }
+                }
+            });
         }
     }
 }

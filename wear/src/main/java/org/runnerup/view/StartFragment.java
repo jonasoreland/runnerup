@@ -110,7 +110,8 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
     }
 
     @Override
-    public void onValueChanged(TrackerState oldValue, TrackerState newValue) {
+    public void onValueChanged(ValueModel<TrackerState> obj,
+                               TrackerState oldValue, TrackerState newValue) {
         if (isAdded())
             updateView(newValue);
     }
