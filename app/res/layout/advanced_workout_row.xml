@@ -18,6 +18,13 @@
       android:paddingBottom="5dp"
       android:layout_gravity="center"
       android:gravity="center_vertical|center_horizontal"
+      android:background="@drawable/btn_red"
+      android:textColor="@color/btn_text_color"
+      android:textStyle="bold"
+      android:shadowColor="#000000"
+      android:shadowDx="1"
+      android:shadowDy="1"
+      android:shadowRadius="2"
       />
 
     <view
@@ -36,6 +43,13 @@
       android:paddingBottom="5dp"
       android:layout_gravity="center"
       android:gravity="center_vertical|center_horizontal"
+      android:background="@drawable/btn_green"
+      android:textColor="@color/btn_text_color"
+      android:textStyle="bold"
+      android:shadowColor="#000000"
+      android:shadowDx="1"
+      android:shadowDy="1"
+      android:shadowRadius="2"
       />
   </TableRow>
 

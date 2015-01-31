@@ -114,7 +114,7 @@ public class CreateAdvancedWorkout extends Activity {
             StepButton button = (StepButton) convertView.findViewById(R.id.workout_step_button);
 
             button.setStep(entry.step);
-            button.setPadding(entry.level * 7, 0, 0, 0);
+            button.setPadding(entry.level * 12, 0, 0, 0);
             button.setOnChangedListener(onWorkoutChanged);
 
             Button add = (Button) convertView.findViewById(R.id.add_button);
@@ -175,11 +175,7 @@ public class CreateAdvancedWorkout extends Activity {
                         new DialogInterface.OnMultiChoiceClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
-                                if (isChecked) {
-                                    dontAskAgain = true;
-                                } else {
-                                    dontAskAgain = false;
-                                }
+                                dontAskAgain = isChecked;
                             }
                         });
 
