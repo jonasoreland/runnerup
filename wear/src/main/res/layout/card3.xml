@@ -93,6 +93,7 @@
 
         </LinearLayout>
 
+<!--
         <LinearLayout
             android:id="@+id/layoutIcons"
             android:orientation="horizontal"
@@ -109,6 +110,7 @@
                 android:src="@drawable/heart16" />
 
         </LinearLayout>
+-->
 
     </LinearLayout>
 
