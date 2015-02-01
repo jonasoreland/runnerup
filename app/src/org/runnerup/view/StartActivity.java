@@ -548,7 +548,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
-            } else if (mGpsStatus.isFixed()) {
+            } else if (mTracker.getState() == TrackerState.CONNECTED) {
                 Context ctx = getApplicationContext();
                 SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
                 SharedPreferences audioPref = null;

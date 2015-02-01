@@ -317,6 +317,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public void start(Workout workout_) {
+        System.err.println("Tracker.start() state: " + state.get());
         assert (state.get() == TrackerState.CONNECTED);
 
         // connect workout and tracker
