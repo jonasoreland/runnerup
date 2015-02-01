@@ -33,6 +33,7 @@ import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.GoogleStaticMap;
 import org.runnerup.export.format.NikeXML;
+import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.format.TCX;
 
 import java.io.BufferedOutputStream;
@@ -54,6 +55,7 @@ public class ActivityProvider extends ContentProvider {
     public static final String NIKE_MIME = "application/nike+xml";
     public static final String MAPS_MIME = "application/maps";
     public static final String FACEBOOK_COURSE_MIME = "application/facebook.course";
+    public static final String RUNKEEPER_MIME = "application/runkeeper+xml";
 
     // UriMatcher used to match against incoming requests
     static final int GPX = 1;
@@ -61,6 +63,7 @@ public class ActivityProvider extends ContentProvider {
     static final int NIKE = 3;
     static final int MAPS = 4;
     static final int FACEBOOK_COURSE = 5;
+    static final int RUNKEEPER = 6;
     private UriMatcher uriMatcher;
 
     @Override
@@ -71,6 +74,7 @@ public class ActivityProvider extends ContentProvider {
         uriMatcher.addURI(AUTHORITY, "nike+xml/#/*", NIKE);
         uriMatcher.addURI(AUTHORITY, "maps/#/*", MAPS);
         uriMatcher.addURI(AUTHORITY, "facebook.course/#/*", FACEBOOK_COURSE);
+        uriMatcher.addURI(AUTHORITY, "runkeeper/#/*", RUNKEEPER);
         return true;
     }
 
@@ -114,6 +118,7 @@ public class ActivityProvider extends ContentProvider {
             case NIKE:
             case MAPS:
             case FACEBOOK_COURSE:
+            case RUNKEEPER:
                 final List<String> list = uri.getPathSegments();
                 final String id = list.get(list.size() - 2);
                 final long activityId = Long.parseLong(id);
@@ -150,6 +155,9 @@ public class ActivityProvider extends ContentProvider {
                         final boolean includeMap = true;
                         String str = map.export(activityId, includeMap, null).toString();
                         out.second.write(str.getBytes());
+                    } else if (res == RUNKEEPER) {
+                        RunKeeper map = new RunKeeper(mDB);
+                        map.export(activityId, new OutputStreamWriter(out.second));
                     }
                     out.second.flush();
                     out.second.close();
