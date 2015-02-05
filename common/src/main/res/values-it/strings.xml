@@ -16,6 +16,22 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
+  <plurals name="metrics_distance_kilometer">
+    <item quantity="one">chilometro</item>
+    <item quantity="other">chilometri</item>
+  </plurals>
+  <plurals name="metrics_distance_mile">
+    <item quantity="one">miglio</item>
+    <item quantity="other">miglia</item>
+  </plurals>
+  <plurals name="metrics_distance_meter">
+    <item quantity="one">metro</item>
+    <item quantity="other">metri</item>
+  </plurals>
+  <plurals name="metrics_beatsperminute">
+    <item quantity="one">bpm</item>
+    <item quantity="other">bpm</item>
+  </plurals>
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
@@ -50,8 +66,10 @@
   <string name="pace">ritmo</string>
   <string name="heartrate">frequenza cardiaca</string>
   <string name="heartrate_zone">zona bpm</string>
+  <string name="zone">Zona</string>
   <string name="device">Dispositivo</string>
   <string name="heart_rate">Frequenza cardiaca</string>
+  <string name="pace_chart">Ritmo</string>
   <string name="scan">Ricerca</string>
   <string name="connect">Connetti</string>
   <string name="connecting">Collegando</string>
@@ -60,6 +78,7 @@
   <string name="delete">Elimina</string>
   <string name="total">Totale</string>
   <string name="interval">Intervallo</string>
+  <string name="remaining">Rimanente</string>
   <string name="lap">Giro</string>
   <string name="new_lap">Nuovo giro</string>
   <string name="next_lap">Prossimo giro</string>
@@ -94,6 +113,11 @@
   <string name="sex">Sesso</string>
   <string name="upload">carica</string>
   <string name="feed">feed</string>
+  <string name="tab_notes">Note</string>
+  <string name="tab_laps">Giri</string>
+  <string name="tab_map">Mappa</string>
+  <string name="tab_graph">Grafico</string>
+  <string name="tab_upload">Carica</string>
   <string name="configure">Configura</string>
   <string name="disconnect">Disconnetti</string>
   <string name="resume">Riprendi</string>
@@ -159,6 +183,8 @@
   <string name="downloadeditremove_workouts">Scarica/modifica/rimuovi allenamenti</string>
   <string name="note_you_need_to_connect_to_the_account_too">Attento, devi anche connettere l\'account</string>
   <string name="use_your_headset_to_startpauseresume_runner_up">Usa gli auricolari per avviare/sospendere/riprendere RunnerUp</string>
+  <string name="convert_rest_step_with_type_distance_to_recovery_step_for_interval_tab">Converti il tratto di riposo di tipo distanza in tratto di recupero per la scheda Intervallo</string>
+  <string name="convert_rest_step_with_type_distance_to_recovery_step_for_advanced_tab">Converti il tratto di riposo di tipo distanza in tratto di recupero per la scheda Avanzato</string>
   <string name="export_database_to_sdcard_eg_for_upgrade">Esporta database su sdcard (ad esempio prima di un aggiornamento di sistema)</string>
   <string name="import_database_from_sdcard_eg_after_upgrade">Importa database su sdcard (ad esempio dopo un aggiornamento di sistema)</string>
   <string name="coach_to_help_you_reach_target_if_having_set_target">Allenatore (ti aiuta a raggiungere l\'obiettivo - se fissato)</string>
@@ -181,6 +207,8 @@
   <string name="runner_up_live_address">Indirizzo RunnerUpLive</string>
   <string name="autopause_after_s">Pausa automatica dopo (s)</string>
   <string name="autopause_min_pace_minkm">Autopausa al di sotto del passo minimo (min/km)</string>
+  <string name="convert_rest_on_interval_tab">Converti riposo nella scheda Intervallo</string>
+  <string name="convert_rest_on_advanced_tab">Converti riposo nella scheda Avanzato</string>
   <string name="target_pace_moving_average_seconds_">Intervallo media mobile ritmo obiettivo</string>
   <string name="autolap_during_intervals">Giri automatici durante intervalli</string>
   <string name="add_countdown_after_step_that_ends_with_user_press">Aggiungi countdown dopo passo che termina con intervento utente</string>

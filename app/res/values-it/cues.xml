@@ -30,4 +30,28 @@
   <string name="cue_completed">completato</string>
   <string name="cue_speedup">accelera</string>
   <string name="cue_slowdown">rallenta</string>
+  <plurals name="cue_hour">
+    <item quantity="one">ora</item>
+    <item quantity="other">ore</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minuto</item>
+    <item quantity="other">minuti</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">secondo</item>
+    <item quantity="other">secondi</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">metro</item>
+    <item quantity="other">metri</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">chilometro</item>
+    <item quantity="other">chilometri</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">miglio</item>
+    <item quantity="other">miglia</item>
+  </plurals>
 </resources>
