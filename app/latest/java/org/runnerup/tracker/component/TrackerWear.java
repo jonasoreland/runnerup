@@ -263,16 +263,19 @@ public class TrackerWear extends DefaultTrackerComponent
         if (pauseStep) {
             if (lastCreatedWorkoutEvent == null)
                 lastCreatedWorkoutEvent = lastSentWorkoutEvent;
-            if (lastCreatedWorkoutEvent != null) {
-                Dimension dim = currentStep.getDurationType();
-                if (dim != null) {
-                    double remaining = tracker.getWorkout().getRemaining(Scope.STEP, dim);
-                    if (remaining < 0) {
-                        remaining = 0;
-                    }
-                    lastCreatedWorkoutEvent.putString(Wear.RunInfo.COUNTDOWN,
-                            formatter.formatRemaining(Formatter.TXT_SHORT, dim, remaining));
+
+            if (lastCreatedWorkoutEvent == null) {
+                lastCreatedWorkoutEvent = new Bundle();
+            }
+
+            Dimension dim = currentStep.getDurationType();
+            if (dim != null) {
+                double remaining = tracker.getWorkout().getRemaining(Scope.STEP, dim);
+                if (remaining < 0) {
+                    remaining = 0;
                 }
+                lastCreatedWorkoutEvent.putString(Wear.RunInfo.COUNTDOWN,
+                        formatter.formatRemaining(Formatter.TXT_SHORT, dim, remaining));
             }
         }
 
