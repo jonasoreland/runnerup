@@ -29,6 +29,7 @@ public class GpsBoundState implements NotificationState {
         builder.setContentText(context.getString(R.string.ready_to_start_running));
         builder.setSmallIcon(R.drawable.icon);
         builder.setOnlyAlertOnce(true);
+        builder.setLocalOnly(true);
 
         notification = builder.build();
     }
