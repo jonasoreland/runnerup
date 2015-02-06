@@ -28,6 +28,16 @@ import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.common.util.Constants.DB;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+
 public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 
     public static final String NAME = "Google+";
@@ -35,30 +45,46 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    protected String mClientId = null;
+    protected String mClientSecret = null;
 
-    public static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
-    public static final String TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
-    public static final String REDIRECT_URI = "http://localhost";
+    protected String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
+    protected String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
+    protected String sRedirectUrl = "http://localhost";
 
-    public static final String SCOPES =
-            "https://www.googleapis.com/auth/plus.me " +
-                    "https://www.googleapis.com/auth/plus.login " +
-                    "https://www.googleapis.com/auth/plus.stream.write";
+    private static final String SCOPES = "https://www.googleapis.com/auth/plus.me " +
+            "https://www.googleapis.com/auth/plus.login " +
+            "https://www.googleapis.com/auth/plus.stream.write";
 
     private long id = 0;
+
+    public String getAccessToken() {
+        return access_token;
+    }
+
+    public String getRefreshToken() {
+        return refresh_token;
+    }
+
+    public long getTokenNow() {
+        return token_now;
+    }
+
+    public long getExpireTime() {
+        return expire_time;
+    }
+
     private String access_token = null;
     private String refresh_token = null;
     private long token_now = 0;
     private long expire_time = 0;
 
     GooglePlus(UploadManager uploadManager) {
-        if (CLIENT_ID == null || CLIENT_SECRET == null) {
+        if (getClientId() == null || getClientSecret() == null) {
             try {
                 JSONObject tmp = new JSONObject(uploadManager.loadData(this));
-                CLIENT_ID = tmp.getString("CLIENT_ID");
-                CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
+                this.setClientId(tmp.getString("CLIENT_ID"));
+                this.setClientSecret(tmp.getString("CLIENT_SECRET"));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -67,32 +93,42 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 
     @Override
     public String getClientId() {
-        return CLIENT_ID;
+        return mClientId;
+    }
+
+    private void setClientId(String clientId) {
+        this.mClientId = clientId;
     }
 
     @Override
     public String getRedirectUri() {
-        return REDIRECT_URI;
+        return sRedirectUrl;
     }
 
     @Override
     public String getClientSecret() {
-        return CLIENT_SECRET;
+        return mClientSecret;
+    }
+
+    private void setClientSecret(String clientSecret) {
+        this.mClientSecret = clientSecret;
     }
 
     @Override
     public String getAuthUrl() {
-        return AUTH_URL;
+        return sAuthUrl;
     }
 
     @Override
     public String getTokenUrl() {
-        return TOKEN_URL;
+        return sTokenUrl;
     }
+
+    public String getScopes() { return SCOPES; }
 
     @Override
     public String getAuthExtra() {
-        return "scope=" + FormCrawler.URLEncode(SCOPES)
+        return "scope=" + FormCrawler.URLEncode(getScopes())
                 + "&request_visible_actions="
                 + FormCrawler.URLEncode("http://schemas.google.com/AddActivity");
     }
@@ -184,21 +220,19 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
         token_now = 0;
     }
 
-    public static final long ONE_DAY = 24 * 60 * 60;
-
     @Override
     public Status connect() {
         Status s = Status.NEED_AUTH;
         s.authMethod = AuthMethod.OAUTH2;
-        if (access_token == null)
+        if (getAccessToken() == null)
             return s;
 
-        long diff = (System.currentTimeMillis() - token_now) / 1000;
-        if (diff > ONE_DAY) {
-            return s;
+        long diff = (System.currentTimeMillis() - getTokenNow());
+        if (diff > getExpireTime() * 1000) {
+            return refreshToken();
         }
 
-        return Uploader.Status.OK;
+        return Status.OK;
     }
 
     @Override
@@ -218,5 +252,52 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 
     @Override
     public void logout() {
+    }
+
+    public Status refreshToken() {
+        Status s = Status.OK;
+        HttpURLConnection conn = null;
+
+        final FormValues fv = new FormValues();
+        fv.put("client_id", getClientId());
+        fv.put("client_secret", getClientSecret());
+        fv.put("grant_type", "refresh_token");
+        fv.put("refresh_token", getRefreshToken());
+
+        try {
+            URL url = new URL(getTokenUrl());
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            postData(conn, fv);
+
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            JSONObject obj = parse(in);
+            conn.disconnect();
+
+            access_token = obj.getString("access_token");
+            expire_time = obj.getLong("expires_in");
+            token_now = System.currentTimeMillis();
+
+            return s;
+        } catch (MalformedURLException e) {
+            s = Status.ERROR;
+            s.ex = e;
+        } catch (ProtocolException e) {
+            s = Status.ERROR;
+            s.ex = e;
+        } catch (IOException e) {
+            s = Status.ERROR;
+            s.ex = e;
+        } catch (JSONException e) {
+            s.ex = e;
+        }
+
+        if (s.ex != null)
+            s.ex.printStackTrace();
+
+        return s;
     }
 }
