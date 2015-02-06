@@ -30,12 +30,14 @@ import java.util.List;
 
 public interface Uploader {
 
+
+
     enum AuthMethod {
-        OAUTH2, USER_PASS, GOOGLE_API
+        OAUTH2, USER_PASS
     }
 
     enum Status {
-        OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP, NEED_AUTH;
+        OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP, NEED_AUTH, NEED_REFRESH;
 
         public Exception ex = null;
         public AuthMethod authMethod = null;
@@ -142,5 +144,8 @@ public interface Uploader {
      * @return
      */
     public Status getFeed(FeedUpdater feedUpdater);
+
+
+    public Status refreshToken();
 
 }
