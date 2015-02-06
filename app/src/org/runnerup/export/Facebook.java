@@ -44,6 +44,11 @@ import java.util.Locale;
 
 public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
+
     public static final String NAME = "Facebook";
 
     /**

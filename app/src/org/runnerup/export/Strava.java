@@ -243,4 +243,9 @@ public class Strava extends FormCrawler implements Uploader, OAuth2Server {
     @Override
     public void logout() {
     }
+
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
 }

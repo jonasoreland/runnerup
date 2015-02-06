@@ -365,6 +365,11 @@ public class Endomondo extends FormCrawler implements Uploader {
         return s;
     }
 
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
+
     /*
      * {"message":{"short":"was out <0>running<\/0>.", "text":"was out
      * <0>running<\/0>. He tracked 6.64 km in 28m:56s.",

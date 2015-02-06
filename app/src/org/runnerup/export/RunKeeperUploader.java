@@ -473,6 +473,11 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         return Status.OK;
     }
 
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
+
     JSONObject requestFeed(long from) throws IOException, JSONException {
         URL newurl = new URL(FEED_URL);
         HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();

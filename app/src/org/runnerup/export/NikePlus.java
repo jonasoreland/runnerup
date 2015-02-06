@@ -344,6 +344,11 @@ public class NikePlus extends FormCrawler implements Uploader {
         }
     }
 
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
+
     JSONObject makeGetRequest(String url) throws MalformedURLException, IOException, JSONException {
         HttpURLConnection conn = null;
         try {

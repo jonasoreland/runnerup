@@ -138,6 +138,11 @@ public class DigifitUploader extends FormCrawler implements Uploader {
     }
 
     @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
+
+    @Override
     public Status connect() {
         if (!isConfigured()) {
             // user/pass needed

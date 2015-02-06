@@ -263,4 +263,9 @@ public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserv
         }
         return false;
     }
+
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
 }
