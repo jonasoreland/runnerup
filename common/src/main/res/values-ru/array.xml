@@ -11,7 +11,7 @@
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>Разминка</item>
-    <item>Активность</item>
+    <item>Движение</item>
     <item>Отдых</item>
     <item>Восстановление</item>
     <item>Заминка</item>
@@ -39,20 +39,20 @@
     <item>Да</item>
   </string-array>
   <string-array name="muteValues">
-    <item>нет</item>
-    <item>да</item>
+    <item>Нет</item>
+    <item>Да</item>
   </string-array>
   <string-array name="types">
     <item>Время</item>
     <item>Дистанция</item>
   </string-array>
   <string-array name="sexes">
-    <item>Мужчина</item>
-    <item>Женщина</item>
+    <item>Мужской</item>
+    <item>Женский</item>
   </string-array>
   <string-array name="targetEntries">
-    <item>нет</item>
-    <item>темп</item>
-    <item>пульс</item>
+    <item>Нет</item>
+    <item>Темп</item>
+    <item>Пульс</item>
   </string-array>
 </resources>
