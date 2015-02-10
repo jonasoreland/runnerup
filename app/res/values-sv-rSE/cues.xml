@@ -54,4 +54,8 @@
     <item quantity="one">mile</item>
     <item quantity="other">miles</item>
   </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">bpm</item>
+    <item quantity="other">bpm</item>
+  </plurals>
 </resources>

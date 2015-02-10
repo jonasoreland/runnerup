@@ -257,7 +257,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE_SHORT:
             case CUE_LONG:
                 return Integer.toString((int) Math.round(heart_rate)) + " "
-                        + resources.getQuantityString((int)heart_rate, R.plurals.metrics_beatsperminute);
+                        + resources.getQuantityString(R.plurals.cue_bpm, (int)heart_rate);
             case TXT:
             case TXT_SHORT:
             case TXT_LONG:
