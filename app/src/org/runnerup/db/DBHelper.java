@@ -51,7 +51,7 @@ import java.util.ArrayList;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 26;
+    private static final int DBVERSION = 27;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -450,7 +450,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             insertAccount(arg0, values);
         }
 
-        if (yet) {
+        if (DBVERSION >= 27) {
             ContentValues values = new ContentValues();
             values.put(DB.ACCOUNT.NAME, GoogleFitUploader.NAME);
             values.put(DB.ACCOUNT.FORMAT, "");
