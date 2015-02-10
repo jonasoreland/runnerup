@@ -54,4 +54,8 @@
     <item quantity="one">miglio</item>
     <item quantity="other">miglia</item>
   </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">bpm</item>
+    <item quantity="other">bpm</item>
+  </plurals>
 </resources>

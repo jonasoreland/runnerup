@@ -60,4 +60,9 @@
     <item quantity="few">mile</item>
     <item quantity="other">mil</item>
   </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">uderzenie na minutę</item>
+    <item quantity="few">uderzenia na minutę</item>
+    <item quantity="other">uderzeń na minutę</item>
+  </plurals>
 </resources>
