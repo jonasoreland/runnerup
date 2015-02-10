@@ -115,7 +115,7 @@
   <string name="high_pace">Высокий темп</string>
   <string name="sex">Пол</string>
   <string name="upload">Выгрузить</string>
-  <string name="feed">Отзыв</string>
+  <string name="feed">Выгрузка</string>
   <string name="tab_notes">Описание</string>
   <string name="tab_laps">Круги</string>
   <string name="tab_map">Карта</string>
@@ -137,9 +137,9 @@
   <string name="Biking">Велосипед</string>
   <string name="Other">Другое</string>
   <string name="unknown">Неизвестно</string>
-  <string name="edit">правка</string>
+  <string name="edit">Настройка</string>
   <string name="synchronizing">Синхронизация:</string>
-  <string name="synchronizing_feed">синхронизируем аккаунты...</string>
+  <string name="synchronizing_feed">синхронизируем фитнес аккаунты...</string>
   <string name="ok">ОК</string>
   <string name="table_format">Табличное представление</string>
   <string name="clear_uploads">Очистить загруженные</string>

@@ -18,7 +18,7 @@
   </string-array>
   <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
-    <item>Knapptryckning</item>
+    <item>Till knapptryckning</item>
     <item>Tid</item>
     <item>Distans</item>
   </string-array>
