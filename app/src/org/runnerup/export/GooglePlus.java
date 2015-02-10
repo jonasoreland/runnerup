@@ -47,15 +47,16 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
      */
     protected String mClientId = null;
     protected String mClientSecret = null;
+    protected String projectId = null;
 
     protected String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
     protected String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
+
     protected String sRedirectUrl = "http://localhost";
 
     private static final String SCOPES = "https://www.googleapis.com/auth/plus.me " +
             "https://www.googleapis.com/auth/plus.login " +
             "https://www.googleapis.com/auth/plus.stream.write";
-
     private long id = 0;
 
     public String getAccessToken() {
@@ -85,6 +86,7 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
                 JSONObject tmp = new JSONObject(uploadManager.loadData(this));
                 this.setClientId(tmp.getString("CLIENT_ID"));
                 this.setClientSecret(tmp.getString("CLIENT_SECRET"));
+                this.setProjectId(tmp.getString("PROJECT_ID"));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -100,18 +102,26 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
         this.mClientId = clientId;
     }
 
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
     @Override
     public String getRedirectUri() {
         return sRedirectUrl;
     }
 
+    private void setClientSecret(String clientSecret) {
+        this.mClientSecret = clientSecret;
+    }
+
     @Override
     public String getClientSecret() {
         return mClientSecret;
-    }
-
-    private void setClientSecret(String clientSecret) {
-        this.mClientSecret = clientSecret;
     }
 
     @Override
