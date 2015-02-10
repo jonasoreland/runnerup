@@ -47,4 +47,7 @@
   <plurals name="cue_mile">
     <item quantity="other">mil</item>
   </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="other">bpm</item>
+  </plurals>
 </resources>

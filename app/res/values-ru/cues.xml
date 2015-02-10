@@ -60,4 +60,9 @@
     <item quantity="few">мили</item>
     <item quantity="other">миль</item>
   </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">удар в минуту</item>
+    <item quantity="few">удара в минуту</item>
+    <item quantity="other">ударов в минуту</item>
+  </plurals>
 </resources>

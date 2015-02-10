@@ -16,26 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
-  <plurals name="metrics_distance_kilometer">
-    <item quantity="one">километр</item>
-    <item quantity="few">километра</item>
-    <item quantity="other">километров</item>
-  </plurals>
-  <plurals name="metrics_distance_mile">
-    <item quantity="one">миля</item>
-    <item quantity="few">мили</item>
-    <item quantity="other">миль</item>
-  </plurals>
-  <plurals name="metrics_distance_meter">
-    <item quantity="one">метр</item>
-    <item quantity="few">метра</item>
-    <item quantity="other">метров</item>
-  </plurals>
-  <plurals name="metrics_beatsperminute">
-    <item quantity="one">удар в минуту</item>
-    <item quantity="few">удара в минуту</item>
-    <item quantity="other">ударов в минуту</item>
-  </plurals>
   <string name="metrics_distance_km">км</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">м</string>
