@@ -7,19 +7,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.GoogleFitData;
-import org.runnerup.workout.WorkoutSerializer;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -40,6 +39,8 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
                     "https://www.googleapis.com/auth/fitness.location.write " +
                     "https://www.googleapis.com/auth/fitness.location.read";
 
+    private enum RequestMethod { GET, POST, PATCH, PUT; }
+
     GoogleFitUploader(Context ctx, UploadManager uploadManager) {
         super(uploadManager);
         this.context = ctx;
@@ -56,58 +57,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
-
-        Status s;
-        if ((s = connect()) != Status.OK) {
-            return s;
-        }
-
-        GoogleFitData gfd = new GoogleFitData(db, context);
-        List<String> presentDataSources = listExistingDataSources();
-
-        HttpURLConnection connect = null;
-        Exception ex = null;
-        try {
-            URL url = new URL(REST_URL);
-            connect = (HttpURLConnection) url.openConnection();
-            connect.setDoOutput(true);
-            connect.setRequestMethod("POST");
-            connect.addRequestProperty("Authorization", "Bearer " + getAccessToken());
-            connect.addRequestProperty("Content-Type", "application/json;encoding=utf-8");
-            connect.setRequestProperty("charset", "utf-8");
-
-            BufferedWriter w = new BufferedWriter(new OutputStreamWriter(connect.getOutputStream(), "UTF-8"));
-
-            List<GoogleFitData.DataSourceType> activitySources = gfd.getActivityDataSourceTypes(mID);
-            for (GoogleFitData.DataSourceType type : activitySources) {
-                if (!presentDataSources.contains(type.getDataStreamId())) {
-                    gfd.exportDataSource(type, w);
-                    w.flush();
-                    w.close();
-                }
-                if (connect.getResponseCode() == 200) {
-                    System.out.println("It's OK!!!");
-                }
-            }
-
-            connect.disconnect();
-
-            ex = new Exception(connect.getResponseMessage());
-        } catch (IOException e) {
-            ex = e;
-        }
-
-        return s;
-    }
-
-    private void updateDataSourcesFromActivity(List<GoogleFitData.DataSourceType> dataSources) {
-
-    }
-
-    @Override
     public boolean checkSupport(Feature f) {
-
         switch (f) {
             case UPLOAD:
                 return true;
@@ -118,8 +68,103 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
             case SKIP_MAP:
                 return false;
         }
-
         return false;
+    }
+
+    @Override
+    public Status upload(SQLiteDatabase db, long mID) {
+
+        Status s;
+        if ((s = connect()) != Status.OK) {
+            return s;
+        }
+
+        GoogleFitData gfd = new GoogleFitData(db, getProjectId());
+        List<String> presentDataSources = listExistingDataSources();
+        List<GoogleFitData.DataSourceType> activitySources = gfd.getActivityDataSourceTypes(mID);
+
+        s = exportActivityDataSourceTypes(gfd, presentDataSources, activitySources);
+        if (s == Status.ERROR) {
+            return s;
+        }
+
+        for (GoogleFitData.DataSourceType source : activitySources) {
+            s = exportActivityData(gfd, source, mID);
+            if(s == Status.ERROR) {
+                break;
+            }
+        }
+        return s;
+    }
+
+    private Status exportActivityData(GoogleFitData gfd, GoogleFitData.DataSourceType source, long activityId) {
+        Status status = Status.ERROR;
+        try {
+            StringWriter w = new StringWriter();
+            String suffix = gfd.exportTypeData(source, activityId, w);
+
+            HttpURLConnection connect = getHttpURLConnection(suffix, RequestMethod.PATCH);
+
+            OutputStream out = new BufferedOutputStream(connect.getOutputStream());
+            out.write(w.getBuffer().toString().getBytes());
+            out.flush();
+            out.close();
+
+            if (connect.getResponseCode() >= 300) {
+                //System.out.println(parse(connect.getErrorStream()));
+                return status;
+            } else {
+                //System.out.println(parse(connect.getInputStream()));
+                status = Status.OK;
+            }
+            connect.disconnect();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    private Status exportActivityDataSourceTypes(GoogleFitData gfd, List<String> presentDataSources, List<GoogleFitData.DataSourceType> activitySources) {
+        Status status = Status.OK;
+        try {
+            for (GoogleFitData.DataSourceType type : activitySources) {
+                if (!presentDataSources.contains(type.getDataStreamId())) {
+                    HttpURLConnection connect = getHttpURLConnection("", RequestMethod.POST);
+
+                    BufferedWriter w = new BufferedWriter(new OutputStreamWriter(connect.getOutputStream()));
+                    gfd.exportDataSource(type, w);
+                    w.flush();
+
+                    if (connect.getResponseCode() >= 300) {
+                        //System.out.println(parse(connect.getErrorStream()));
+                        return Status.ERROR;
+                    } else {
+                        //System.out.println(parse(connect.getInputStream()));
+                    }
+                    connect.disconnect();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            status = Status.ERROR;
+        }
+        return status;
+    }
+
+    private HttpURLConnection getHttpURLConnection(String suffix, RequestMethod requestMethod) throws IOException {
+        URL url = new URL(REST_URL + suffix);
+        HttpURLConnection connect = (HttpURLConnection) url.openConnection();
+        connect.setDoOutput(true);
+        connect.addRequestProperty("Authorization", "Bearer " + getAccessToken());
+        connect.addRequestProperty("Content-Type", "application/json");
+        if (requestMethod.equals(RequestMethod.PATCH)) {
+            connect.addRequestProperty("X-HTTP-Method-Override", "PATCH");
+            connect.setRequestMethod(RequestMethod.POST.name());
+        } else {
+            connect.setRequestMethod(requestMethod.name());
+        }
+        return connect;
     }
 
     @Override
@@ -128,15 +173,13 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
     }
 
     public List<String> listExistingDataSources() {
-
         HttpURLConnection conn = null;
-        Exception ex = null;
         List<String> dataStreamIds = new ArrayList<String>();
         try {
             conn = (HttpURLConnection) new URL(REST_URL).openConnection();
             conn.setRequestProperty("Authorization", "Bearer "
                     + getAccessToken());
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             final InputStream in = new BufferedInputStream(conn.getInputStream());
             final JSONObject reply = parse(in);
             int responseCode = conn.getResponseCode();
@@ -150,13 +193,11 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
                 }
                 return dataStreamIds;
             }
-            ex = new Exception(conn.getResponseMessage());
         } catch (IOException e) {
-            ex = e;
+            e.printStackTrace();
         } catch (JSONException e) {
-            ex = e;
+            e.printStackTrace();
         }
         return dataStreamIds;
     }
-
 }
