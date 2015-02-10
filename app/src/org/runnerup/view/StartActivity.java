@@ -352,6 +352,13 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
              * If autoStartGps, then stop it during pause
              */
             stopGps();
+        } else {
+            if (mTracker != null &&
+                ((mTracker.getState() == TrackerState.INITIALIZED) ||
+                 (mTracker.getState() == TrackerState.INITIALIZING))) {
+                System.err.println("mTracker.reset()");
+                mTracker.reset();
+            }
         }
     }
 
