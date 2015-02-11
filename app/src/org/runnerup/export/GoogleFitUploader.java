@@ -110,8 +110,22 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
             out.flush();
             out.close();
 
-            if (connect.getResponseCode() >= 300) {
-                //System.out.println(parse(connect.getErrorStream()));
+            int code = connect.getResponseCode();
+            if (code != 200) {
+                //JSONObject o = parse(connect.getErrorStream());
+
+                InputStream er = connect.getErrorStream();
+                String inputLine = "";
+                int data = er.read();
+                while (data != -1) {
+                    //do something with data...
+                    //System.out.println(data);
+                    inputLine = inputLine + (char)data;
+                    data = er.read();
+                    //inputLine = inputLine + (char)data;
+                }
+                er.close();
+                System.out.println(inputLine);
                 return status;
             } else {
                 //System.out.println(parse(connect.getInputStream()));
