@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import org.runnerup.export.FormCrawler;
 import org.runnerup.util.JsonWriter;
 
 import java.io.IOException;
@@ -275,7 +276,7 @@ public class GoogleFitData {
 
     private String getURLSuffix(DataSourceType source, long startTime, long endTime) {
         StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append("/").append(source.getDataStreamId()).append("/datasets/").append(startTime).append("-").append(endTime);
+        urlSuffix.append("/").append(FormCrawler.URLEncode(source.getDataStreamId())).append("/datasets/").append(startTime).append("-").append(endTime);
         return urlSuffix.toString();
     }
 
@@ -325,7 +326,12 @@ public class GoogleFitData {
                 w.beginArray();
                 for (DataTypeField field : fields) {
                     w.beginObject();
-                    w.name(field.formatDataPointValue).value(cursor.getString(cursor.getColumnIndex(field.column)));
+                    w.name(field.formatDataPointValue);
+                    if (field.formatDataPointValue == "intVal") {
+                        w.value(cursor.getInt(cursor.getColumnIndex(field.column)));
+                    } else if (field.formatDataPointValue == "fpVal") {
+                        w.value(cursor.getDouble(cursor.getColumnIndex(field.column)));
+                    }
                     w.endObject();
                 }
                 w.endArray();
@@ -373,7 +379,12 @@ public class GoogleFitData {
             w.beginArray();
             for (DataTypeField field : fields) {
                 w.beginObject();
-                w.name(field.formatDataPointValue).value(cursor.getString(cursor.getColumnIndex(field.column)));
+                w.name(field.formatDataPointValue);
+                if (field.formatDataPointValue == "intVal") {
+                    w.value(cursor.getInt(cursor.getColumnIndex(field.column)));
+                } else if (field.formatDataPointValue == "fpVal") {
+                    w.value(cursor.getDouble(cursor.getColumnIndex(field.column)));
+                }
                 w.endObject();
             }
             w.endArray();
