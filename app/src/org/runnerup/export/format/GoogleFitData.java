@@ -10,13 +10,15 @@ import org.runnerup.util.JsonWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.runnerup.common.util.Constants.*;
+import static org.runnerup.common.util.Constants.DB;
 
 /**
  * Created by LFAJER on 2015-02-03.
@@ -27,7 +29,6 @@ public class GoogleFitData {
     private static String projectId = null;
 
     private static final Map<Integer, String> activityType;
-
     static {
         Map<Integer, String> aMap = new HashMap<Integer, String>();
         aMap.put(DB.ACTIVITY.SPORT_RUNNING, "8");
@@ -241,8 +242,8 @@ public class GoogleFitData {
         cursor.moveToFirst();
 
         //time as nanos
-        long startTime = cursor.getLong(0)*1000;
-        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000;
+        long startTime = cursor.getLong(0)*1000000;
+        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000;
 
         JsonWriter w = new JsonWriter(writer);
         try {
@@ -271,12 +272,12 @@ public class GoogleFitData {
             e.printStackTrace();
         }
 
-        return getURLSuffix(source, startTime, endTime);
+        return getDataSetURLSuffix(source, startTime, endTime);
     }
 
-    private String getURLSuffix(DataSourceType source, long startTime, long endTime) {
+    private String getDataSetURLSuffix(DataSourceType source, long startTime, long endTime) {
         StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append("/").append(FormCrawler.URLEncode(source.getDataStreamId())).append("/datasets/").append(startTime).append("-").append(endTime);
+        urlSuffix.append("/dataSources/").append(FormCrawler.URLEncode(source.getDataStreamId())).append("/datasets/").append(startTime).append("-").append(endTime);
         return urlSuffix.toString();
     }
 
@@ -298,8 +299,8 @@ public class GoogleFitData {
         Cursor cursor =  mDB.query(DB.LOCATION.TABLE, pColumns.toArray(new String[pColumns.size()]) , DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
         cursor.moveToFirst();
 
-        long startTime = minMaxTime.getLong(0);
-        long endTime = minMaxTime.getLong(1);
+        long startTime = minMaxTime.getLong(0)*1000;
+        long endTime = minMaxTime.getLong(1)*1000;
 
         JsonWriter w = new JsonWriter(writer);
         try {
@@ -313,10 +314,10 @@ public class GoogleFitData {
             //export points
             do {
                 w.beginObject();
-                w.name("startTimeNanos").value(cursor.getLong(0));
+                w.name("startTimeNanos").value(cursor.getLong(0)*1000);
                 if (!cursor.isLast()) {
                     cursor.moveToNext();
-                    w.name("endTimeNanos").value(cursor.getLong(0));
+                    w.name("endTimeNanos").value(cursor.getLong(0)*1000);
                     cursor.moveToPrevious();
                 } else {
                     w.name("endTimeNanos").value(endTime);
@@ -343,7 +344,7 @@ public class GoogleFitData {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return getURLSuffix(source, startTime, endTime);
+        return getDataSetURLSuffix(source, startTime, endTime);
     }
 
     private String exportActivitySummary(DataSourceType source, long activityId, StringWriter writer) {
@@ -359,8 +360,8 @@ public class GoogleFitData {
         cursor.moveToFirst();
 
         //time as nanos
-        long startTime = cursor.getLong(0)*1000;
-        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000;
+        long startTime = cursor.getLong(0)*1000000;
+        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000;
 
         JsonWriter w = new JsonWriter(writer);
         try {
@@ -396,11 +397,46 @@ public class GoogleFitData {
             e.printStackTrace();
         }
 
-        return getURLSuffix(source, startTime, endTime);
+        return getDataSetURLSuffix(source, startTime, endTime);
     }
 
 
-    public void exportSession() {
+    public String exportSession(long activityId, Writer writer) {
+        String[] pColumns = {
+                DB.ACTIVITY.START_TIME, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT, DB.ACTIVITY.SPORT
+        };
+        Cursor cursor =  mDB.query(DB.ACTIVITY.TABLE, pColumns,"_id = " + activityId, null, null, null, null);
+        cursor.moveToFirst();
+
+        long startTime = cursor.getLong(0)*1000;
+        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000;
+
+        JsonWriter w = new JsonWriter(writer);
+        try {
+            w.beginObject();
+            w.name("id").value("RunnerUp-" + startTime + "-" + endTime);
+            w.name("name").value((cursor.getInt(3)==0 ? "Running: " : "Cycling: ") + getWorkoutName(startTime));
+            w.name("description").value(cursor.getString(3)); //comment
+            w.name("startTimeMillis").value(startTime);
+            w.name("endTimeMillis").value(endTime);
+            w.name("application");
+            w.beginObject();
+            w.name("name").value("RunnerUp");
+            w.endObject();
+            w.name("activityType").value(activityType.get(cursor.getInt(3)));
+            w.endObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "/sessions/" + "RunnerUp-" + startTime + "-" + endTime;
+
+    }
+
+    private String getWorkoutName(long startTime) {
+        Date time = new Date(startTime);
+        SimpleDateFormat sf = new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss");
+        return sf.format(time);
 
     }
 }
