@@ -242,15 +242,15 @@ public class GoogleFitData {
         cursor.moveToFirst();
 
         //time as nanos
-        long startTime = cursor.getLong(0)*1000000;
-        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000;
+        long startTime = cursor.getLong(0)*1000000000;
+        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000000;
 
         JsonWriter w = new JsonWriter(writer);
         try {
             w.beginObject();
             w.name("minStartTimeNs").value(startTime);
             w.name("maxEndTimeNs").value(endTime);
-            w.name("dataStreamId").value(source.getDataStreamId());
+            w.name("dataSourceId").value(source.getDataStreamId());
             w.name("point");
             w.beginArray();
             //export points
@@ -258,12 +258,15 @@ public class GoogleFitData {
             w.name("startTimeNanos").value(startTime);
             w.name("endTimeNanos").value(endTime);
             w.name("dataTypeName").value(source.dataType);
+            w.name("originDataSourceId").value("");
             w.name("value");
             w.beginArray();
             w.beginObject();
             w.name("intVal").value(activityType.get(cursor.getInt(2)));
             w.endObject();
             w.endArray();
+            w.name("rawTimestampNanos").value(startTime);
+            w.name("computationTimeMillis").value(System.currentTimeMillis());
             w.endObject();
             //end export points
             w.endArray();
@@ -299,29 +302,30 @@ public class GoogleFitData {
         Cursor cursor =  mDB.query(DB.LOCATION.TABLE, pColumns.toArray(new String[pColumns.size()]) , DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
         cursor.moveToFirst();
 
-        long startTime = minMaxTime.getLong(0)*1000;
-        long endTime = minMaxTime.getLong(1)*1000;
+        long startTime = minMaxTime.getLong(0)*1000000;
+        long endTime = minMaxTime.getLong(1)*1000000;
 
         JsonWriter w = new JsonWriter(writer);
         try {
             w.beginObject();
             w.name("minStartTimeNs").value(startTime);
             w.name("maxEndTimeNs").value(endTime);
-            w.name("dataStreamId").value(source.getDataStreamId());
+            w.name("dataSourceId").value(source.getDataStreamId());
             w.name("point");
             w.beginArray();
 
             //export points
             do {
                 w.beginObject();
-                w.name("startTimeNanos").value(cursor.getLong(0)*1000);
+                w.name("startTimeNanos").value(cursor.getLong(0)*1000000);
                 if (!cursor.isLast()) {
                     cursor.moveToNext();
-                    w.name("endTimeNanos").value(cursor.getLong(0)*1000);
+                    w.name("endTimeNanos").value(cursor.getLong(0)*1000000);
                     cursor.moveToPrevious();
                 } else {
                     w.name("endTimeNanos").value(endTime);
                 }
+                w.name("originDataSourceId").value("");
                 w.name("dataTypeName").value(source.dataType);
                 w.name("value");
                 w.beginArray();
@@ -336,6 +340,8 @@ public class GoogleFitData {
                     w.endObject();
                 }
                 w.endArray();
+                w.name("rawTimestampNanos").value(cursor.getLong(0)*1000000);
+                w.name("computationTimeMillis").value(System.currentTimeMillis());
                 w.endObject();
             } while (cursor.moveToNext());
             //end export points
@@ -360,15 +366,15 @@ public class GoogleFitData {
         cursor.moveToFirst();
 
         //time as nanos
-        long startTime = cursor.getLong(0)*1000000;
-        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000;
+        long startTime = cursor.getLong(0)*1000000000;
+        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000000;
 
         JsonWriter w = new JsonWriter(writer);
         try {
             w.beginObject();
             w.name("minStartTimeNs").value(startTime);
             w.name("maxEndTimeNs").value(endTime);
-            w.name("dataStreamId").value(source.getDataStreamId());
+            w.name("dataSourceId").value(source.getDataStreamId());
             w.name("point");
             w.beginArray();
             //export points
@@ -376,6 +382,7 @@ public class GoogleFitData {
             w.name("startTimeNanos").value(startTime);
             w.name("endTimeNanos").value(endTime);
             w.name("dataTypeName").value(source.dataType);
+            w.name("originDataSourceId").value("");
             w.name("value");
             w.beginArray();
             for (DataTypeField field : fields) {
@@ -389,6 +396,8 @@ public class GoogleFitData {
                 w.endObject();
             }
             w.endArray();
+            w.name("rawTimestampNanos").value(startTime);
+            w.name("computationTimeMillis").value(System.currentTimeMillis());
             w.endObject();
             //end export points
             w.endArray();
