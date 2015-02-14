@@ -181,17 +181,23 @@ public class GoogleFitData {
     public List<DataSourceType> getActivityDataSourceTypes(long activityId) {
         List<DataSourceType> neededSources = new ArrayList<DataSourceType>();
 
+        String[] pColumns = { DB.LOCATION.TIME };
+
         // First we export the location
-        neededSources.add(DataSourceType.ACTIVITY_LOCATION);
-        neededSources.add(DataSourceType.LOCATION_SUMMARY);
+        Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
+                DB.LOCATION.ACTIVITY + " = " + activityId + " AND " + DB.LOCATION.LATITUDE + " IS NOT NULL", null, null, null,
+                null);
+
+        if (cursor.getCount() > 0) {
+            neededSources.add(DataSourceType.ACTIVITY_LOCATION);
+            neededSources.add(DataSourceType.LOCATION_SUMMARY);
+        }
 
         // Than if present the heart rate
-        String[] pColumns = {
-                DB.LOCATION.TIME, DB.LOCATION.HR, DB.LOCATION.SPEED
-        };
-        Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
-                DB.LOCATION.ACTIVITY + " = " + activityId + " AND " + pColumns[1] + " IS NOT NULL", null, null, null,
+        cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
+                DB.LOCATION.ACTIVITY + " = " + activityId + " AND " + DB.LOCATION.HR + " IS NOT NULL", null, null, null,
                 null);
+
         if (cursor.getCount() > 0) {
             neededSources.add(DataSourceType.ACTIVITY_HEARTRATE);
             neededSources.add(DataSourceType.HEARTRATE_SUMMARY);
@@ -199,7 +205,7 @@ public class GoogleFitData {
 
         // Next will be the speed
         cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
-                DB.LOCATION.ACTIVITY + " = " + activityId + " AND " + pColumns[2] + " IS NOT NULL", null, null, null,
+                DB.LOCATION.ACTIVITY + " = " + activityId + " AND " + DB.LOCATION.SPEED + " IS NOT NULL", null, null, null,
                 null);
         if (cursor.getCount() > 0) {
             neededSources.add(DataSourceType.ACTIVITY_SPEED);
@@ -280,7 +286,7 @@ public class GoogleFitData {
 
     private String getDataSetURLSuffix(DataSourceType source, long startTime, long endTime) {
         StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append("/dataSources/").append(FormCrawler.URLEncode(source.getDataStreamId())).append("/datasets/").append(startTime).append("-").append(endTime);
+        urlSuffix.append("dataSources/").append(FormCrawler.URLEncode(source.getDataStreamId())).append("/datasets/").append(startTime).append("-").append(endTime);
         return urlSuffix.toString();
     }
 
@@ -429,16 +435,14 @@ public class GoogleFitData {
             w.name("startTimeMillis").value(startTime);
             w.name("endTimeMillis").value(endTime);
             w.name("application");
-            w.beginObject();
-            w.name("name").value("RunnerUp");
-            w.endObject();
+            addApplicationObject(w);
             w.name("activityType").value(activityType.get(cursor.getInt(3)));
             w.endObject();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return "/sessions/" + "RunnerUp-" + startTime + "-" + endTime;
+        return "sessions/" + "RunnerUp-" + startTime + "-" + endTime;
 
     }
 

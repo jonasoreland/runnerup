@@ -29,7 +29,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
     public static final String NAME = "GoogleFit";
     private final Context context;
 
-    public static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me";
+    public static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
 
     private static final String SCOPES =
             " https://www.googleapis.com/auth/fitness.activity.write " +
@@ -108,7 +108,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
         try {
             for (GoogleFitData.DataSourceType type : activitySources) {
                 if (!presentDataSources.contains(type.getDataStreamId())) {
-                    HttpURLConnection connect = getHttpURLConnection("/dataSources", RequestMethod.POST);
+                    HttpURLConnection connect = getHttpURLConnection("dataSources", RequestMethod.POST);
 
                     BufferedWriter w = new BufferedWriter(new OutputStreamWriter(connect.getOutputStream(), "UTF-8"));
                     gfd.exportDataSource(type, w);
@@ -218,7 +218,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
         HttpURLConnection conn = null;
         List<String> dataStreamIds = new ArrayList<String>();
         try {
-            conn = (HttpURLConnection) new URL(REST_URL + "/dataSources").openConnection();
+            conn = (HttpURLConnection) new URL(REST_URL + "dataSources").openConnection();
             conn.setRequestProperty("Authorization", "Bearer "
                     + getAccessToken());
             conn.setRequestMethod(RequestMethod.GET.name());
