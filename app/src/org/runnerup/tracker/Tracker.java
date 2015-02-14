@@ -220,26 +220,35 @@ public class Tracker extends android.app.Service implements
         if (state.get() == TrackerState.ERROR)
             return;
 
-        TrackerState tmp = nextState;
-        nextState = null;
+        if (state.get() == nextState) {
+            nextState = null;
+            return;
+        }
 
-        if (tmp == TrackerState.INITIALIZING) {
-            /**
-             * setup was called during cleanup
-             */
-            setup();
-            return;
-        }
-        if (tmp == TrackerState.CLEANUP) {
-            /**
-             * reset was called while we were initializing
-             */
-            reset();
-            return;
-        }
-        if (tmp == TrackerState.CONNECTING) {
-            connect();
-            return;
+        switch(nextState) {
+            case INIT:
+                reset();
+                break;
+            case INITIALIZING:
+                break;
+            case INITIALIZED:
+                setup();
+                break;
+            case CONNECTING:
+                break;
+            case CONNECTED:
+                connect();
+                break;
+            case STARTED:
+                break;
+            case PAUSED:
+                break;
+            case STOPPED:
+                break;
+            case CLEANUP:
+                break;
+            case ERROR:
+                break;
         }
     }
 
@@ -249,7 +258,8 @@ public class Tracker extends android.app.Service implements
             case INIT:
                 setup();
             case INITIALIZING:
-                nextState = TrackerState.CONNECTING;
+            case CLEANUP:
+                nextState = TrackerState.CONNECTED;
                 System.err.println(" => nextState: " + nextState);
                 return;
             case INITIALIZED:
@@ -260,7 +270,6 @@ public class Tracker extends android.app.Service implements
             case STARTED:
             case PAUSED:
             case ERROR:
-            case CLEANUP:
             case STOPPED:
                 assert(false);
                 return;
@@ -288,11 +297,11 @@ public class Tracker extends android.app.Service implements
         public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
             if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
                 state.set(TrackerState.ERROR);
-            } else {
+            } else if (state.get() == TrackerState.CONNECTING) {
                 state.set(TrackerState.CONNECTED);
+                /* now we're connected */
+                components.onConnected();
             }
-            /* now we're connected */
-            components.onConnected();
         }
     };
 
@@ -497,7 +506,7 @@ public class Tracker extends android.app.Service implements
                 return;
             case INITIALIZING:
                 // cleanup when INITIALIZE is complete
-                nextState = TrackerState.CLEANUP;
+                nextState = TrackerState.INIT;
                 return;
             case INITIALIZED:
             case ERROR:
@@ -505,6 +514,7 @@ public class Tracker extends android.app.Service implements
             case CONNECTING:
             case CONNECTED:
             case STOPPED:
+                nextState = TrackerState.INIT;
                 // it's ok to "abort" connecting
                 break;
             case STARTED:

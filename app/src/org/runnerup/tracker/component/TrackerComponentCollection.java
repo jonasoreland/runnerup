@@ -217,6 +217,11 @@ public class TrackerComponentCollection implements TrackerComponent {
             list.putAll(components);
             components.clear();
 
+            for (TrackerComponent component : pending.values()) {
+                list.put(component.getName(), new Pair<TrackerComponent, ResultCode>(component, ResultCode.RESULT_PENDING));
+            }
+            pending.clear();
+
             for (final String key : list.keySet()) {
                 final Pair<TrackerComponent, ResultCode> p = list.get(key);
                 final TrackerComponent component = p.first;
@@ -229,6 +234,8 @@ public class TrackerComponentCollection implements TrackerComponent {
                             public void run() {
                                 synchronized (components) {
                                     System.err.println(component.getName() + " " + msg + " => " + resultCode);
+                                    if (!pending.containsKey(key))
+                                        return;
                                     TrackerComponent check = pending.remove(key);
                                     assert (check == component);
                                     components.put(key, new Pair<TrackerComponent, ResultCode>(
