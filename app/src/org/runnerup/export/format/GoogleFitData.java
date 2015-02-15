@@ -1,17 +1,19 @@
 package org.runnerup.export.format;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import org.runnerup.R;
 import org.runnerup.export.FormCrawler;
+import org.runnerup.export.GoogleFitUploader;
 import org.runnerup.util.JsonWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -24,7 +26,11 @@ import static org.runnerup.common.util.Constants.DB;
 public class GoogleFitData {
 
     SQLiteDatabase mDB = null;
+    private final Context context;
     private static String projectId = null;
+    public static final int SECONDS_TO_MILLIS = 1000;
+    public static final int MICRO_TO_NANOS = 1000000;
+    public static final int SECONDS_TO_NANOS = 1000000000;
 
     private static final Map<Integer, Integer> activityType;
     static {
@@ -51,7 +57,6 @@ public class GoogleFitData {
     }
 
     private static final Map<DataSourceType, List<DataTypeField>> dataTypeFields;
-
     static {
         Map<DataSourceType, List<DataTypeField>> fieldsMap = new HashMap<DataSourceType, List<DataTypeField>>();
 
@@ -132,48 +137,10 @@ public class GoogleFitData {
         }
 
     }
-    public GoogleFitData(final SQLiteDatabase db, String projectId) {
+    public GoogleFitData(final SQLiteDatabase db, String projectId, Context ctx) {
         this.mDB = db;
         this.projectId = projectId;
-    }
-
-    public void exportDataSource(DataSourceType type, Writer writer) {
-        JsonWriter w = new JsonWriter(writer);
-        try {
-            w.beginObject();
-            w.name("dataStreamId").value(type.getDataStreamId());
-            w.name("dataStreamName").value(type.dataName);
-            w.name("type").value(type.sourceType);
-            w.name("dataType");
-            w.beginObject();
-            w.name("name").value(type.dataType);
-            w.name("field");
-            w.beginArray();
-            fillFieldArray(type, w);
-            w.endArray();
-            w.endObject();
-            w.name("application");
-            addApplicationObject(w);
-            w.endObject();
-            System.out.println("Creating new dataSource: " + type.getDataStreamId());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void fillFieldArray(DataSourceType type, JsonWriter w) throws IOException {
-        for(DataTypeField field : dataTypeFields.get(type)) {
-            w.beginObject();
-            w.name(field.nameValue.first).value(field.nameValue.second);
-            w.name(field.formatSourceValue.first).value(field.formatSourceValue.second);
-            w.endObject();
-        }
-    }
-
-    private void addApplicationObject(JsonWriter w) throws IOException {
-        w.beginObject();
-        w.name("name").value("RunnerUp");
-        w.endObject();
+        this.context = ctx;
     }
 
     public List<DataSourceType> getActivityDataSourceTypes(long activityId) {
@@ -216,6 +183,30 @@ public class GoogleFitData {
         return neededSources;
     }
 
+    public void exportDataSource(DataSourceType type, Writer writer) {
+        JsonWriter w = new JsonWriter(writer);
+        try {
+            w.beginObject();
+            w.name("dataStreamId").value(type.getDataStreamId());
+            w.name("dataStreamName").value(type.dataName);
+            w.name("type").value(type.sourceType);
+            w.name("dataType");
+            w.beginObject();
+            w.name("name").value(type.dataType);
+            w.name("field");
+            w.beginArray();
+            fillFieldArray(type, w);
+            w.endArray();
+            w.endObject();
+            w.name("application");
+            addApplicationObject(w);
+            w.endObject();
+            System.out.println("Creating new dataSource: " + type.getDataStreamId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String exportTypeData(DataSourceType source, long activityId, StringWriter w) {
         String requestUrl = "";
         switch(source) {
@@ -246,9 +237,8 @@ public class GoogleFitData {
         cursor.moveToFirst();
 
         //time as nanos
-        long startTime = cursor.getLong(0)*1000000000;
-        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000000;
-
+        long startTime = cursor.getLong(0) * SECONDS_TO_NANOS;
+        long endTime = (cursor.getLong(0) + cursor.getLong(1)) * SECONDS_TO_NANOS;
         JsonWriter w = new JsonWriter(writer);
         try {
             w.beginObject();
@@ -282,12 +272,6 @@ public class GoogleFitData {
         return getDataSetURLSuffix(source, startTime, endTime);
     }
 
-    private String getDataSetURLSuffix(DataSourceType source, long startTime, long endTime) {
-        StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append("dataSources/").append(FormCrawler.URLEncode(source.getDataStreamId())).append("/datasets/").append(startTime).append("-").append(endTime);
-        return urlSuffix.toString();
-    }
-
     private String exportSourceDataPoints(DataSourceType source, long activityId, StringWriter writer) {
 
         ArrayList<String> pColumns = new ArrayList<String>();
@@ -306,8 +290,8 @@ public class GoogleFitData {
         Cursor cursor =  mDB.query(DB.LOCATION.TABLE, pColumns.toArray(new String[pColumns.size()]) , DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
         cursor.moveToFirst();
 
-        long startTime = minMaxTime.getLong(0)*1000000;
-        long endTime = minMaxTime.getLong(1)*1000000;
+        long startTime = minMaxTime.getLong(0)* MICRO_TO_NANOS;
+        long endTime = minMaxTime.getLong(1)* MICRO_TO_NANOS;
 
         JsonWriter w = new JsonWriter(writer);
         try {
@@ -321,10 +305,10 @@ public class GoogleFitData {
             //export points
             do {
                 w.beginObject();
-                w.name("startTimeNanos").value(cursor.getLong(0)*1000000);
+                w.name("startTimeNanos").value(cursor.getLong(0)* MICRO_TO_NANOS);
                 if (!cursor.isLast()) {
                     cursor.moveToNext();
-                    w.name("endTimeNanos").value(cursor.getLong(0)*1000000);
+                    w.name("endTimeNanos").value(cursor.getLong(0)* MICRO_TO_NANOS);
                     cursor.moveToPrevious();
                 } else {
                     w.name("endTimeNanos").value(endTime);
@@ -335,18 +319,9 @@ public class GoogleFitData {
                 w.name("dataTypeName").value(source.dataType);
                 w.name("value");
                 w.beginArray();
-                for (DataTypeField field : fields) {
-                    w.beginObject();
-                    w.name(field.formatDataPointValue);
-                    if (field.formatDataPointValue == "intVal") {
-                        w.value(cursor.getInt(cursor.getColumnIndex(field.column)));
-                    } else if (field.formatDataPointValue == "fpVal") {
-                        w.value(cursor.getDouble(cursor.getColumnIndex(field.column)));
-                    }
-                    w.endObject();
-                }
+                writeDataPointValues(fields, cursor, w);
                 w.endArray();
-                w.name("rawTimestampNanos").value(cursor.getLong(0)*1000000);
+                w.name("rawTimestampNanos").value(cursor.getLong(0)* MICRO_TO_NANOS);
                 w.name("computationTimeMillis").value(System.currentTimeMillis());
                 w.endObject();
             } while (cursor.moveToNext());
@@ -372,8 +347,8 @@ public class GoogleFitData {
         cursor.moveToFirst();
 
         //time as nanos
-        long startTime = cursor.getLong(0)*1000000000;
-        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000000000;
+        long startTime = cursor.getLong(0)* SECONDS_TO_NANOS;
+        long endTime = (cursor.getLong(0)+cursor.getLong(1))* SECONDS_TO_NANOS;
 
         JsonWriter w = new JsonWriter(writer);
         try {
@@ -391,16 +366,7 @@ public class GoogleFitData {
             w.name("originDataSourceId").value(source.getDataStreamId());
             w.name("value");
             w.beginArray();
-            for (DataTypeField field : fields) {
-                w.beginObject();
-                w.name(field.formatDataPointValue);
-                if (field.formatDataPointValue == "intVal") {
-                    w.value(cursor.getInt(cursor.getColumnIndex(field.column)));
-                } else if (field.formatDataPointValue == "fpVal") {
-                    w.value(cursor.getDouble(cursor.getColumnIndex(field.column)));
-                }
-                w.endObject();
-            }
+            writeDataPointValues(fields, cursor, w);
             w.endArray();
             w.name("rawTimestampNanos").value(startTime);
             w.name("computationTimeMillis").value(System.currentTimeMillis());
@@ -415,6 +381,33 @@ public class GoogleFitData {
         return getDataSetURLSuffix(source, startTime, endTime);
     }
 
+    private void addApplicationObject(JsonWriter w) throws IOException {
+        w.beginObject();
+        w.name("name").value("RunnerUp");
+        w.endObject();
+    }
+
+    private void fillFieldArray(DataSourceType type, JsonWriter w) throws IOException {
+        for(DataTypeField field : dataTypeFields.get(type)) {
+            w.beginObject();
+            w.name(field.nameValue.first).value(field.nameValue.second);
+            w.name(field.formatSourceValue.first).value(field.formatSourceValue.second);
+            w.endObject();
+        }
+    }
+
+    private void writeDataPointValues(List<DataTypeField> fields, Cursor cursor, JsonWriter w) throws IOException {
+        for (DataTypeField field : fields) {
+            w.beginObject();
+            w.name(field.formatDataPointValue);
+            if (field.formatDataPointValue == "intVal") {
+                w.value(cursor.getInt(cursor.getColumnIndex(field.column)));
+            } else if (field.formatDataPointValue == "fpVal") {
+                w.value(cursor.getDouble(cursor.getColumnIndex(field.column)));
+            }
+            w.endObject();
+        }
+    }
 
     public String exportSession(long activityId, Writer writer) {
         String[] pColumns = {
@@ -423,14 +416,16 @@ public class GoogleFitData {
         Cursor cursor =  mDB.query(DB.ACTIVITY.TABLE, pColumns,"_id = " + activityId, null, null, null, null);
         cursor.moveToFirst();
 
-        long startTime = cursor.getLong(0)*1000;
-        long endTime = (cursor.getLong(0)+cursor.getLong(1))*1000;
+        long startTime = cursor.getLong(0) * SECONDS_TO_MILLIS;
+        long endTime = (cursor.getLong(0) + cursor.getLong(1)) * SECONDS_TO_MILLIS;
+
+        String[] sports = context.getResources().getStringArray(R.array.sportEntries);
 
         JsonWriter w = new JsonWriter(writer);
         try {
             w.beginObject();
             w.name("id").value("RunnerUp-" + startTime + "-" + endTime);
-            w.name("name").value((cursor.getInt(3)==0 ? "Running: " : "Cycling: ") + getWorkoutName(startTime));
+            w.name("name").value((cursor.getInt(3)==0 ? sports[0] : sports[1]) + ": " + getWorkoutName(startTime));
             w.name("description").value(cursor.getString(3)); //comment
             w.name("startTimeMillis").value(startTime);
             w.name("endTimeMillis").value(endTime);
@@ -442,12 +437,23 @@ public class GoogleFitData {
             e.printStackTrace();
         }
 
-        return "sessions/" + "RunnerUp-" + startTime + "-" + endTime;
+        return getSessionURLSuffix(startTime, endTime);
 
     }
 
     private String getWorkoutName(long startTime) {
         return DateFormat.getInstance().format(new Date(startTime));
     }
-}
 
+    private String getDataSetURLSuffix(DataSourceType source, long startTime, long endTime) {
+        StringBuilder urlSuffix = new StringBuilder();
+        urlSuffix.append(GoogleFitUploader.REST_DATASOURCE).append("/").append(FormCrawler.URLEncode(source.getDataStreamId())).append("/").append(GoogleFitUploader.REST_DATASETS).append("/").append(startTime).append("-").append(endTime);
+        return urlSuffix.toString();
+    }
+
+    private String getSessionURLSuffix(long startTime, long endTime) {
+        StringBuilder urlSuffix = new StringBuilder();
+        urlSuffix.append(GoogleFitUploader.REST_SESSIONS).append("/").append("RunnerUp-").append(startTime).append("-").append(endTime);
+        return urlSuffix.toString();
+    }
+}
