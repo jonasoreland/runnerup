@@ -913,7 +913,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             this.hr[p] = hr;
             pos = (pos + 1);
 
-            if (showHRZhist) {
+            if (showHRZhist && hr > 0) {
                 this.hrzHist[hrCalc.getZoneInt(hr)] += delta_time;
             }
 
