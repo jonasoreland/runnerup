@@ -28,11 +28,11 @@ public class GoogleFitData {
     SQLiteDatabase mDB = null;
     private static String projectId = null;
 
-    private static final Map<Integer, String> activityType;
+    private static final Map<Integer, Integer> activityType;
     static {
-        Map<Integer, String> aMap = new HashMap<Integer, String>();
-        aMap.put(DB.ACTIVITY.SPORT_RUNNING, "8");
-        aMap.put(DB.ACTIVITY.SPORT_BIKING, "1");
+        Map<Integer, Integer> aMap = new HashMap<Integer, Integer>();
+        aMap.put(DB.ACTIVITY.SPORT_RUNNING, 8);
+        aMap.put(DB.ACTIVITY.SPORT_BIKING, 1);
         activityType = Collections.unmodifiableMap(aMap);
     }
     private static class DataTypeField {
@@ -264,7 +264,7 @@ public class GoogleFitData {
             w.name("startTimeNanos").value(startTime);
             w.name("endTimeNanos").value(endTime);
             w.name("dataTypeName").value(source.dataType);
-            w.name("originDataSourceId").value("");
+            w.name("originDataSourceId").value(source.getDataStreamId());
             w.name("value");
             w.beginArray();
             w.beginObject();
@@ -331,7 +331,9 @@ public class GoogleFitData {
                 } else {
                     w.name("endTimeNanos").value(endTime);
                 }
-                w.name("originDataSourceId").value("");
+                w.name("originDataSourceId").value(source.getDataStreamId()
+
+                );
                 w.name("dataTypeName").value(source.dataType);
                 w.name("value");
                 w.beginArray();
@@ -388,7 +390,7 @@ public class GoogleFitData {
             w.name("startTimeNanos").value(startTime);
             w.name("endTimeNanos").value(endTime);
             w.name("dataTypeName").value(source.dataType);
-            w.name("originDataSourceId").value("");
+            w.name("originDataSourceId").value(source.getDataStreamId());
             w.name("value");
             w.beginArray();
             for (DataTypeField field : fields) {
