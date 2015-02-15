@@ -20,9 +20,6 @@ import java.util.Map;
 
 import static org.runnerup.common.util.Constants.DB;
 
-/**
- * Created by LFAJER on 2015-02-03.
- */
 public class GoogleFitData {
 
     SQLiteDatabase mDB = null;

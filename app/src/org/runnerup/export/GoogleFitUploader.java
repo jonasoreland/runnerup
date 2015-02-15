@@ -25,9 +25,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-/**
- * Created by LFAJER on 2015-01-29.
- */
 public class GoogleFitUploader extends GooglePlus implements Uploader {
 
     public static final String NAME = "GoogleFit";
