@@ -39,7 +39,7 @@ public class OngoingState implements NotificationState {
         builder.setSmallIcon(R.drawable.icon);
         builder.setOngoing(true);
         builder.setOnlyAlertOnce(true);
-        builder.setLocalOnly(true);
+        org.runnerup.util.NotificationCompat.setLocalOnly(builder);
     }
 
     @Override
