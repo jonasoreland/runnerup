@@ -10,6 +10,7 @@ import org.runnerup.util.JsonWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -446,10 +447,7 @@ public class GoogleFitData {
     }
 
     private String getWorkoutName(long startTime) {
-        Date time = new Date(startTime);
-        SimpleDateFormat sf = new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss");
-        return sf.format(time);
-
+        return DateFormat.getInstance().format(new Date(startTime));
     }
 }
 
