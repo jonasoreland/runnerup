@@ -54,9 +54,9 @@ public class GarminUploader extends FormCrawler implements Uploader {
     public static final String START_URL = "https://connect.garmin.com/signin";
     public static final String LOGIN_URL = "https://connect.garmin.com/signin";
     public static final String CHECK_URL = "http://connect.garmin.com/user/username";
-    public static final String UPLOAD_URL = "http://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
-    public static final String LIST_WORKOUTS_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
-    public static final String GET_WORKOUT_URL = "http://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
+    public static final String UPLOAD_URL = "https://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
+    public static final String LIST_WORKOUTS_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
+    public static final String GET_WORKOUT_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
 
     long id = 0;
     private String username = null;
@@ -230,8 +230,9 @@ public class GarminUploader extends FormCrawler implements Uploader {
         {
             conn.connect();
             getCookies(conn);
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            JSONObject obj = parse(in);
+            String str = readInputStream(conn.getInputStream());
+            System.err.println("checkLogin: str: " + str);
+            JSONObject obj = parse(str);
             conn.disconnect();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
@@ -255,7 +256,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
         s.authMethod = Uploader.AuthMethod.USER_PASS;
 
         FormValues fv = new FormValues();
-        fv.put("service", "http://connect.garmin.com/post-auth/login");
+        fv.put("service", "https://connect.garmin.com/post-auth/login");
         fv.put("clientId", "GarminConnect");
         fv.put("consumeServiceTicket", "false");
 
@@ -292,26 +293,32 @@ public class GarminUploader extends FormCrawler implements Uploader {
         start += "?ticket=".length();
         int end = html.indexOf("'", start);
         String ticket = html.substring(start, end);
+        System.err.println("ticket: " + ticket);
 
         // connection 3...
         fv.clear();
         fv.put("ticket", ticket);
 
-        conn = get("http://connect.garmin.com/post-auth/login", fv);
+        conn = get("https://connect.garmin.com/post-auth/login", fv);
         conn.setInstanceFollowRedirects(false);
         addCookies(conn);
-        expectResponse(conn, 302, "Connection 3: ");
-        List<String> fields = conn.getHeaderFields().get("location");
-        getCookies(conn);
-
-        // connection 4...
-        conn = get(fields.get(0), null);
-        conn.setInstanceFollowRedirects(false);
-        addCookies(conn);
-        expectResponse(conn, 302, "Connection 4: ");
-        getCookies(conn);
+        for (int i = 0;; i++) {
+            int code = conn.getResponseCode();
+            System.err.println("attempt: " + i + " => code: " + code);
+            getCookies(conn);
+            if (code == 200)
+                break;
+            if (code != 302)
+                break;
+            List<String> fields = conn.getHeaderFields().get("location");
+            conn.disconnect();
+            conn = get(fields.get(0), null);
+            conn.setInstanceFollowRedirects(false);
+            addCookies(conn);
+        }
         conn.disconnect();
-        return checkLogin();
+
+        return Status.OK; // return checkLogin();
     }
 
     private HttpURLConnection open(String base, FormValues fv) throws MalformedURLException,

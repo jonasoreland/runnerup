@@ -31,6 +31,7 @@ import org.runnerup.export.Uploader.Status;
 import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -334,6 +335,13 @@ public class FormCrawler {
         }
     }
 
+    public static JSONObject parse(String in) throws JSONException {
+        final Scanner s = new Scanner(in);
+        final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
+        s.close();
+        return o;
+    }
+
     public static JSONObject parse(InputStream in) throws JSONException {
         final Scanner s = new Scanner(in);
         final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
@@ -346,5 +354,15 @@ public class FormCrawler {
         final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
         s.close();
         return o;
+    }
+
+    public static String readInputStream(InputStream in) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuilder buf = new StringBuilder();
+        String s = null;
+        while ((s = reader.readLine()) != null) {
+            buf.append(s);
+        }
+        return buf.toString();
     }
 }
