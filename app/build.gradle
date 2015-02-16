@@ -28,7 +28,7 @@ android {
 
     productFlavors {
         froyo {
-            minSdkVersion 9
+            minSdkVersion 8
             targetSdkVersion 18
             versionName "1.39"
             versionCode 39 
