@@ -383,7 +383,7 @@ public class GoogleFitData {
 
     private void addApplicationObject(JsonWriter w) throws IOException {
         w.beginObject();
-        w.name("name").value("RunnerUp");
+        w.name("name").value(context.getString(R.string.app_name));
         w.endObject();
     }
 
@@ -424,8 +424,8 @@ public class GoogleFitData {
         JsonWriter w = new JsonWriter(writer);
         try {
             w.beginObject();
-            w.name("id").value("RunnerUp-" + startTime + "-" + endTime);
-            w.name("name").value((cursor.getInt(3)==0 ? sports[0] : sports[1]) + ": " + getWorkoutName(startTime));
+            w.name("id").value(context.getString(R.string.app_name) + "-" + startTime + "-" + endTime);
+            w.name("name").value((cursor.getInt(3) == 0 ? sports[0] : sports[1]) + ": " + getWorkoutName(startTime));
             w.name("description").value(cursor.getString(3)); //comment
             w.name("startTimeMillis").value(startTime);
             w.name("endTimeMillis").value(endTime);
@@ -453,7 +453,7 @@ public class GoogleFitData {
 
     private String getSessionURLSuffix(long startTime, long endTime) {
         StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append(GoogleFitUploader.REST_SESSIONS).append("/").append("RunnerUp-").append(startTime).append("-").append(endTime);
+        urlSuffix.append(GoogleFitUploader.REST_SESSIONS).append("/").append(context.getString(R.string.app_name)).append("-").append(startTime).append("-").append(endTime);
         return urlSuffix.toString();
     }
 }
