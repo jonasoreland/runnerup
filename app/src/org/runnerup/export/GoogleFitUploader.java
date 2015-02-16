@@ -115,13 +115,13 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
     }
 
     private Status exportActivityDataSourceTypes(GoogleFitData gfd, List<String> presentDataSources, List<GoogleFitData.DataSourceType> activitySources) {
-        Status status = Status.ERROR;
+        Status status = Status.OK;
         try {
             for (GoogleFitData.DataSourceType type : activitySources) {
                 if (!presentDataSources.contains(type.getDataStreamId())) {
                     StringWriter w = new StringWriter();
                     gfd.exportDataSource(type, w);
-                    status = sendData(w, REST_DATASOURCE);
+                    status = sendData(w, REST_DATASOURCE, RequestMethod.POST);
                     if (status == Status.ERROR) {
                         return status;
                     }
@@ -139,7 +139,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
         try {
             StringWriter w = new StringWriter();
             String suffix = gfd.exportTypeData(source, activityId, w);
-            status = sendData(w, suffix);
+            status = sendData(w, suffix, RequestMethod.PATCH);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -151,25 +151,23 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
         try {
             StringWriter w = new StringWriter();
             String suffix = gfd.exportSession(mID, w);
-            status = sendData(w, suffix);
+            status = sendData(w, suffix, RequestMethod.PUT);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return status;
     }
 
-    private Status sendData(StringWriter w, String suffix) throws IOException {
+    private Status sendData(StringWriter w, String suffix, RequestMethod method) throws IOException {
         Status status = Status.ERROR;
         for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++) {
-            HttpURLConnection connect = getHttpURLConnection(suffix, RequestMethod.POST);
+            HttpURLConnection connect = getHttpURLConnection(suffix, method);
             GZIPOutputStream gos = new GZIPOutputStream(connect.getOutputStream());
             gos.write(w.toString().getBytes());
             gos.flush();
             gos.close();
 
             int code = connect.getResponseCode();
-            connect.disconnect();
-
             try {
                 if (code == 500) {
                     continue;
@@ -184,6 +182,8 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+            } finally {
+                connect.disconnect();
             }
         }
         return status;
