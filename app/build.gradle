@@ -30,14 +30,14 @@ android {
         froyo {
             minSdkVersion 8
             targetSdkVersion 18
-            versionName "1.40"
-            versionCode 40 
+            versionName "1.41"
+            versionCode 41 
         }
         latest {
             minSdkVersion 14
             targetSdkVersion 20
-            versionName "1.40"
-            versionCode 40
+            versionName "1.41"
+            versionCode 41
         }
     }
 
