@@ -194,6 +194,8 @@ public class UploadManager {
             uploader = new GooglePlus(this);
         } else if (uploaderName.contentEquals(RuntasticUploader.NAME)) {
             uploader = new RuntasticUploader(this);
+        } else if (uploaderName.contentEquals(GoogleFitUploader.NAME)) {
+            uploader = new GoogleFitUploader(context, this);
         }
 
         if (uploader != null) {
@@ -240,6 +242,9 @@ public class UploadManager {
                 l.reset();
                 callback.run(name, s);
                 return;
+            case NEED_REFRESH:
+                mSpinner.show();
+                handleRefreshResult(l, l.refreshToken());
             case NEED_AUTH:
                 mSpinner.show();
                 handleAuth(new Callback() {
@@ -251,6 +256,25 @@ public class UploadManager {
                 }, l, s.authMethod);
                 return;
         }
+    }
+
+    private void handleRefreshResult(Uploader uploader, Status status) {
+        switch (status) {
+            case ERROR:
+                uploader.reset();
+                return;
+            case OK: {
+                ContentValues tmp = new ContentValues();
+                tmp.put("_id", uploader.getId());
+                tmp.put(DB.ACCOUNT.AUTH_CONFIG, uploader.getAuthConfig());
+                String args[] = {
+                        Long.toString(uploader.getId())
+                };
+                mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
+                return;
+            }
+        }
+        mSpinner.dismiss();
     }
 
     Uploader authUploader = null;
@@ -779,6 +803,7 @@ public class UploadManager {
         String key = Encryption.calculateRFC2104HMAC("RunnerUp",
                 uploader.getName());
         Encryption.decrypt(in, out, key);
+
         return out.toString();
     }
 

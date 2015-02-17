@@ -526,6 +526,11 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
         return s;
     }
 
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
+
     private void parseFeed(final FeedUpdater feedUpdater, final JSONObject reply)
             throws JSONException {
         final JSONArray arr = reply.getJSONArray("d");

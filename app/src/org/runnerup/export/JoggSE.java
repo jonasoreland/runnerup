@@ -334,4 +334,9 @@ public class JoggSE extends FormCrawler implements Uploader {
         cookies.clear();
         formValues.clear();
     }
+
+    @Override
+    public Status refreshToken() {
+        return Status.OK;
+    }
 }

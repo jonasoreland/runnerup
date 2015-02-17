@@ -34,6 +34,7 @@ import org.runnerup.export.Endomondo;
 import org.runnerup.export.Facebook;
 import org.runnerup.export.FunBeatUploader;
 import org.runnerup.export.GarminUploader;
+import org.runnerup.export.GoogleFitUploader;
 import org.runnerup.export.GooglePlus;
 import org.runnerup.export.JoggSE;
 import org.runnerup.export.MapMyRunUploader;
@@ -50,7 +51,7 @@ import java.util.ArrayList;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 26;
+    private static final int DBVERSION = 27;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -446,6 +447,16 @@ public class DBHelper extends SQLiteOpenHelper implements
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
             values.put(DB.ACCOUNT.URL, "http://www.runtastic.com");
+            insertAccount(arg0, values);
+        }
+
+        if (DBVERSION >= 27) {
+            ContentValues values = new ContentValues();
+            values.put(DB.ACCOUNT.NAME, GoogleFitUploader.NAME);
+            values.put(DB.ACCOUNT.FORMAT, "");
+            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+            values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
+            values.put(DB.ACCOUNT.URL, "https://fit.google.com");
             insertAccount(arg0, values);
         }
     }
