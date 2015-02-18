@@ -96,9 +96,7 @@ public class CoachFeedback extends AudioFeedback {
             msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
         }
         if (!"".contentEquals(msg)) {
-            textToSpeech.speak(ctx.getResources().getString(scope.getCueId())
-                    + " "
-                    + formatter.format(Formatter.CUE_LONG, dimension, val)
+            textToSpeech.speak(getCue(s, ctx, val)
                     + msg,
                     TextToSpeech.QUEUE_ADD, null);
         }

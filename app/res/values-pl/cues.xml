@@ -14,20 +14,23 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_workout">aktywność</string>
-  <string name="cue_activity">interwał</string>
-  <string name="cue_lap">okrążenie</string>
+  <string name="cue_interval_pattern">{1} {0} {2}</string>
+  <string name="cue_event_pattern">{0} {1}</string>
+  <string name="cue_workout">10#Treningu|20#Trening</string>
+  <string name="cue_activity">10#Interwału|20#interwał</string>
+  <string name="cue_lap">10#Okrążenia|20#Okrążenie</string>
+  <string name="cue_dimension_pattern">1#{3}|2#{3}|3#{3}|4#{3}|5#{3}|6#{3}</string>
   <string name="cue_warmup">rozgrzewka</string>
   <string name="cue_cooldown">uspokojenie</string>
   <string name="cue_current">aktualny</string>
   <string name="cue_recovery">regeneracja</string>
   <string name="cue_perkilometer">na kilometr</string>
   <string name="cue_permile">na milę</string>
-  <string name="cue_started">rozpoczęte</string>
-  <string name="cue_paused">zatrzymana</string>
-  <string name="cue_resumed">wznowiona</string>
-  <string name="cue_stopped">zatrzymana</string>
-  <string name="cue_completed">zakończony</string>
+  <string name="cue_started">101#rozpoczęty|102#rozpoczęty|103#rozpoczęte|112#rozpoczęta|115#rozpoczęte</string>
+  <string name="cue_paused">201#wstrzymany|202#wstrzymany|203#wstrzymane</string>
+  <string name="cue_resumed">301#wznowiony|302#wznowiony|303#wznowione</string>
+  <string name="cue_stopped">401#zatrzymany|402#zatrzymany|403#zatrzymane</string>
+  <string name="cue_completed">501#zakończony|502#zakończony|503#zakończone</string>
   <string name="cue_speedup">przyśpiesz</string>
   <string name="cue_slowdown">zwolnij</string>
   <plurals name="cue_hour">

@@ -14,20 +14,20 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_workout">activiteit</string>
-  <string name="cue_activity">interval</string>
-  <string name="cue_lap">ronde</string>
+  <string name="cue_workout">0&#60;activiteit</string>
+  <string name="cue_activity">0&#60;interval</string>
+  <string name="cue_lap">0&#60;ronde</string>
   <string name="cue_warmup">warming-up</string>
   <string name="cue_cooldown">cooling-down</string>
   <string name="cue_current">huidige</string>
   <string name="cue_recovery">herstel</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mijl</string>
-  <string name="cue_started">gestart</string>
-  <string name="cue_paused">gepauzeerd</string>
-  <string name="cue_resumed">hervatten</string>
-  <string name="cue_stopped">gestopt</string>
-  <string name="cue_completed">afgerond</string>
+  <string name="cue_started">0&#60;gestart</string>
+  <string name="cue_paused">0&#60;gepauzeerd</string>
+  <string name="cue_resumed">0&#60;hervatten</string>
+  <string name="cue_stopped">0&#60;gestopt</string>
+  <string name="cue_completed">0&#60;afgerond</string>
   <string name="cue_speedup">versnellen</string>
   <string name="cue_slowdown">vertragen</string>
   <plurals name="cue_hour">
