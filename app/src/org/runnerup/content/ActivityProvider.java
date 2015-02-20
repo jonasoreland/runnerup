@@ -22,13 +22,12 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Pair;
 
-import org.runnerup.db.DBHelper;
+import org.runnerup.content.db.provider.RunnerUpDbProvider;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.GoogleStaticMap;
@@ -132,11 +131,9 @@ public class ActivityProvider extends ContentProvider {
 
                 System.err.println("activity: " + activityId + ", file: "
                         + out.first.getAbsolutePath());
-                DBHelper mDBHelper = new DBHelper(getContext());
-                SQLiteDatabase mDB = mDBHelper.getReadableDatabase();
                 try {
                     if (res == TCX) {
-                        TCX tcx = new TCX(mDB);
+                        TCX tcx = new TCX(getContext());
                         tcx.export(activityId, new OutputStreamWriter(out.second));
                         System.err.println("export tcx");
                     } else if (res == GPX) {
@@ -144,7 +141,7 @@ public class ActivityProvider extends ContentProvider {
                         gpx.export(activityId, new OutputStreamWriter(out.second));
                         System.err.println("export gpx");
                     } else if (res == NIKE) {
-                        NikeXML xml = new NikeXML(mDB);
+                        NikeXML xml = new NikeXML(RunnerUpDbProvider.);
                         xml.export(activityId, new OutputStreamWriter(out.second));
                     } else if (res == MAPS) {
                         GoogleStaticMap map = new GoogleStaticMap(mDB);

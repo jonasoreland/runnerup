@@ -18,14 +18,19 @@
 package org.runnerup.export.format;
 
 import android.annotation.TargetApi;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Context;
 import android.location.Location;
 import android.os.Build;
 import android.util.Pair;
 import android.util.Xml;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.content.db.provider.activity.ActivityCursor;
+import org.runnerup.content.db.provider.activity.ActivitySelection;
+import org.runnerup.content.db.provider.lap.LapCursor;
+import org.runnerup.content.db.provider.lap.LapSelection;
+import org.runnerup.content.db.provider.location.LocationCursor;
+import org.runnerup.content.db.provider.location.LocationSelection;
 import org.runnerup.workout.Sport;
 import org.xmlpull.v1.XmlSerializer;
 
@@ -49,15 +54,14 @@ import java.util.TimeZone;
 public class TCX {
 
     long mID = 0;
-    SQLiteDatabase mDB = null;
     XmlSerializer mXML = null;
     String notes = null;
     SimpleDateFormat simpleDateFormat = null;
-
+    Context context = null;
     private boolean addGratuitousTrack = false;
 
-    public TCX(SQLiteDatabase mDB) {
-        this.mDB = mDB;
+    public TCX(Context ctx) {
+        context = ctx;
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -80,15 +84,10 @@ public class TCX {
     public Pair<String,Sport> exportWithSport(long activityId, Writer writer) throws IOException {
 
         Sport sport = null;
-        String[] aColumns = {
-                DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
-                DB.ACTIVITY.START_TIME, DB.ACTIVITY.SPORT
-        };
-        Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
-                + activityId, null, null, null, null);
-        cursor.moveToFirst();
-
-        long startTime = cursor.getLong(2); // epoch
+        ActivitySelection activity = new ActivitySelection();
+        ActivityCursor c = activity.id(activityId).query(context.getContentResolver());
+        c.moveToFirst();
+        long startTime = c.getStartTime(); // epoch
         try {
             mXML = Xml.newSerializer();
             mXML.setOutput(writer);
@@ -100,10 +99,10 @@ public class TCX {
                     "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
             mXML.startTag("", "Activities");
             mXML.startTag("", "Activity");
-            if (cursor.isNull(3)) {
+            if (c.getType() == null) {
                 mXML.attribute("", "Sport", "Running");
             } else {
-                switch (cursor.getInt(3)) {
+                switch (c.getType()) {
                     case DB.ACTIVITY.SPORT_RUNNING:
                         sport = Sport.RUNNING;
                         mXML.attribute("", "Sport", "Running");
@@ -122,8 +121,8 @@ public class TCX {
             mXML.text(id);
             mXML.endTag("", "Id");
             exportLaps(activityId, startTime * 1000);
-            if (!cursor.isNull(1)) {
-                notes = cursor.getString(1);
+            if (c.getComment() != null ) {
+                notes = c.getComment();
                 mXML.startTag("", "Notes");
                 mXML.text(notes);
                 mXML.endTag("", "Notes");
@@ -134,10 +133,10 @@ public class TCX {
             mXML.flush();
             mXML.endDocument();
             mXML = null;
-            cursor.close();
+            c.close();
             return new Pair<String, Sport>(id, sport);
         } catch (IOException e) {
-            cursor.close();
+            c.close();
             mXML = null;
             throw e;
         }
@@ -149,37 +148,39 @@ public class TCX {
                 DB.LAP.INTENSITY
         };
 
-        Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, DB.LAP.DISTANCE + " > 0 and "
-                + DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
+        LapSelection lap = new LapSelection();
+        LapCursor cLap = lap.id(activityId).and().distanceGt(0).query(context.getContentResolver());
+
         String[] pColumns = {
                 DB.LOCATION.LAP, DB.LOCATION.TIME,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
                 DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR
         };
-        Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
-                DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
-                null);
+
+        LocationSelection location = new LocationSelection();
+        LocationCursor cLocation = location.id(activityId).query(context.getContentResolver());
+
         boolean lok = cLap.moveToFirst();
         boolean pok = cLocation.moveToFirst();
 
         float totalDistance = 0;
         while (lok) {
-            if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
-                long lap = cLap.getLong(0);
-                while (pok && cLocation.getLong(0) != lap) {
+            if (cLap.getDistance() != 0 && cLap.getTime() != 0) {
+                int lapNumber = cLap.getLap();
+                while (pok && cLocation.getLap() != lapNumber) {
                     pok = cLocation.moveToNext();
                 }
                 mXML.startTag("", "Lap");
-                if (pok && cLocation.getLong(0) == lap) {
-                    mXML.attribute("", "StartTime", formatTime(cLocation.getLong(1)));
+                if (pok && cLocation.getLap() == lapNumber) {
+                    mXML.attribute("", "StartTime", formatTime(cLocation.getTime()));
                 } else {
                     mXML.attribute("", "StartTime", formatTime(startTime));
                 }
                 mXML.startTag("", "TotalTimeSeconds");
-                mXML.text("" + cLap.getLong(2));
+                mXML.text("" + cLap.getTime());
                 mXML.endTag("", "TotalTimeSeconds");
                 mXML.startTag("", "DistanceMeters");
-                mXML.text("" + cLap.getFloat(1));
+                mXML.text("" + cLap.getDistance());
                 mXML.endTag("", "DistanceMeters");
                 mXML.startTag("", "Calories");
                 mXML.text("0");
@@ -195,15 +196,15 @@ public class TCX {
                 long cntHR = 0;
                 int cntTrackpoints = 0;
 
-                if (pok && cLocation.getLong(0) == lap) {
+                if (pok && cLocation.getLap() == lapNumber) {
                     mXML.startTag("", "Track");
                     float last_lat = 0;
                     float last_longi = 0;
                     long last_time = 0;
-                    while (pok && cLocation.getLong(0) == lap) {
-                        long time = cLocation.getLong(1);
-                        float lat = cLocation.getFloat(2);
-                        float longi = cLocation.getFloat(3);
+                    while (pok && cLocation.getLap() == lapNumber) {
+                        long time = cLocation.getTime();
+                        float lat = cLocation.getLatitude();
+                        float longi = cLocation.getLongitude();
                         if (!(time == last_time && lat == last_lat && longi != last_longi)) {
                             cntTrackpoints++;
 
@@ -219,9 +220,9 @@ public class TCX {
                             mXML.text("" + longi);
                             mXML.endTag("", "LongitudeDegrees");
                             mXML.endTag("", "Position");
-                            if (!cLocation.isNull(4)) {
+                            if (cLocation.getAltitude() != null) {
                                 mXML.startTag("", "AltitudeMeters");
-                                mXML.text("" + cLocation.getLong(4));
+                                mXML.text("" + cLocation.getAltitude());
                                 mXML.endTag("", "AltitudeMeters");
                             }
                             float d[] = {
@@ -235,8 +236,8 @@ public class TCX {
                             mXML.startTag("", "DistanceMeters");
                             mXML.text("" + totalDistance);
                             mXML.endTag("", "DistanceMeters");
-                            if (!cLocation.isNull(6)) {
-                                int hr = cLocation.getInt(6);
+                            if (cLocation.getHr() != null) {
+                                int hr = cLocation.getHr();
                                 maxHR = hr > maxHR ? hr : maxHR;
                                 sumHR += hr;
                                 cntHR++;
