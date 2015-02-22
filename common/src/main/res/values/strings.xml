@@ -267,4 +267,5 @@
   <string name="failed_to_create_workout">Failed to create workout</string>
   <string name="plus_sign">+</string>
   <string name="minus_sign">-</string>
+  <string name="audio_cue_lang">Audio cue language</string>
 </resources>
