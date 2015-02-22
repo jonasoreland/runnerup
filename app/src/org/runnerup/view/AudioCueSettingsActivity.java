@@ -425,12 +425,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
             WorkoutBuilder.addFeedbackFromPreferences(prefs, res, feedback);
 
-            if (tts != null) {
-                mTTSOnInitListener.onInit(0);
-            } else {
-                tts = new TextToSpeech(ctx, mTTSOnInitListener);
-            }
-
+            tts = new TextToSpeech(ctx, mTTSOnInitListener);
             return false;
         }
     };
