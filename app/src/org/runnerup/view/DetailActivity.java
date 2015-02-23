@@ -1261,11 +1261,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 }
                                 m = new MarkerOptions();
                                 m.position((lastLocation = point));
-                                m.title(type == DB.LOCATION.TYPE_START ? "Start" :
-                                        type == DB.LOCATION.TYPE_END ? "Stop" :
-                                                type == DB.LOCATION.TYPE_PAUSE ? "Pause" :
-                                                        type == DB.LOCATION.TYPE_RESUME ? "Resume"
-                                                                : "<Unknown>");
+                                switch (type) {
+                                    case DB.LOCATION.TYPE_START:
+                                        m.title(getResources().getString(R.string.start));
+                                        break;
+                                    case DB.LOCATION.TYPE_END:
+                                        m.title(getResources().getString(R.string.stop));
+                                        break;
+                                    case DB.LOCATION.TYPE_PAUSE:
+                                        m.title(getResources().getString(R.string.pause));
+                                        break;
+                                    case DB.LOCATION.TYPE_RESUME:
+                                        m.title(getResources().getString(R.string.resume));
+                                        break;
+                                }
                                 m.snippet(null);
                                 m.draggable(false);
                                 route.markers.add(m);

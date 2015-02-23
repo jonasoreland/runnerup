@@ -268,4 +268,10 @@
   <string name="plus_sign">+</string>
   <string name="minus_sign">-</string>
   <string name="audio_cue_lang">Audio cue language</string>
+  <string name="Website">Website</string>
+  <string name="Automatic_upload">Automatic upload</string>
+  <string name="Live">Live</string>
+  <string name="Include_map_in_post">Include map in post</string>
+  <string name="clear_uploads_msg">Note that workouts are not removed from %1$s, only from RunnerUp list of workouts uploaded to %1$s</string>
+  <string name="clear_uploads_from_phone">Clear uploads (from phone)</string>
 </resources>
