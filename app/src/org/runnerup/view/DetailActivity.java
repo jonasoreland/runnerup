@@ -581,16 +581,17 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 return b;
             }
 
+            ContentValues tmp = reports.get(position);
+            String name = tmp.getAsString("name");
+
             LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
             View view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
             TextView tv0 = (TextView) view.findViewById(R.id.account_id);
             CheckBox cb = (CheckBox) view.findViewById(R.id.report_sent);
             TextView tv1 = (TextView) view.findViewById(R.id.account_name);
-
-            ContentValues tmp = reports.get(position);
-
-            String name = tmp.getAsString("name");
+            cb.setChecked(false);
+            cb.setEnabled(false);
             cb.setTag(name);
             if (alreadyUploadedUploaders.contains(name)) {
                 cb.setChecked(true);
@@ -603,10 +604,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 {
                     cb.setEnabled(false);
                 }
-            } else if ((tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(
-                    tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD))
-                    ||
-                    pendingUploaders.contains(name)) {
+            } else if (pendingUploaders.contains(name)) {
                 cb.setChecked(true);
             } else {
                 cb.setChecked(false);
