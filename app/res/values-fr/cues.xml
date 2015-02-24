@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="cue_workout">activité</string>
-  <string name="cue_activity">intervalle</string>
+  <string name="cue_interval">intervalle</string>
   <string name="cue_lap">tour</string>
   <string name="cue_warmup">échauffement</string>
   <string name="cue_cooldown">refroidissement</string>
