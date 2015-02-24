@@ -126,6 +126,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
     }
 
+    public String getCueString(int msgId) {
+        return cueResources.getString(msgId);
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
             String key) {

@@ -264,14 +264,14 @@ public class WorkoutBuilder {
             ev.event = Event.STARTED;
             ev.scope = Scope.STEP;
             ev.maxCounter = 1;
-            ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
+            ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
             triggers.add(ev);
 
             EventTrigger ev2 = new EventTrigger(); // for autolap
             ev2.event = Event.STARTED;
             ev2.scope = Scope.LAP;
             ev2.skipCounter = 1; // skip above
-            ev2.triggerAction.add(new AudioFeedback(Scope.LAP, Event.STARTED));
+            ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
             triggers.add(ev2);
         }
 
@@ -292,7 +292,7 @@ public class WorkoutBuilder {
                         EventTrigger ev = new EventTrigger();
                         ev.event = Event.COMPLETED;
                         ev.scope = Scope.STEP;
-                        ev.triggerAction.add(new AudioFeedback(Scope.LAP, Event.COMPLETED));
+                        ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_completed));
                         step.triggers.add(ev);
 
                         Trigger elt = hasEndOfLapTrigger(triggers);
@@ -339,7 +339,8 @@ public class WorkoutBuilder {
                         EventTrigger ev = new EventTrigger();
                         ev.event = Event.STARTED;
                         ev.scope = Scope.STEP;
-                        ev.triggerAction.add(new AudioFeedback(step.getIntensity(), Event.STARTED));
+                        ev.triggerAction.add(new AudioFeedback(step.getIntensity() == Intensity.WARMUP ?
+                                R.string.cue_warmup_started : R.string.cue_cooldown_started));
                         step.triggers.add(ev);
                     }
                     break;
@@ -484,7 +485,7 @@ public class WorkoutBuilder {
                 EventTrigger p = new EventTrigger();
                 p.event = Event.PAUSED;
                 p.scope = Scope.STEP;
-                p.triggerAction.add(new AudioFeedback(Scope.ACTIVITY, Event.PAUSED));
+                p.triggerAction.add(new AudioFeedback(R.string.cue_activity_paused));
                 list.add(p);
             }
 
@@ -492,7 +493,7 @@ public class WorkoutBuilder {
                 EventTrigger r = new EventTrigger();
                 r.event = Event.RESUMED;
                 r.scope = Scope.STEP;
-                r.triggerAction.add(new AudioFeedback(Scope.ACTIVITY, Event.RESUMED));
+                r.triggerAction.add(new AudioFeedback(R.string.cue_activity_resumed));
                 list.add(r);
             }
 
@@ -500,7 +501,7 @@ public class WorkoutBuilder {
                 EventTrigger ev = new EventTrigger();
                 ev.event = Event.STOPPED;
                 ev.scope = Scope.STEP;
-                ev.triggerAction.add(new AudioFeedback(Scope.ACTIVITY, Event.STOPPED));
+                ev.triggerAction.add(new AudioFeedback(R.string.cue_activity_stopped));
                 list.add(ev);
             }
         }
