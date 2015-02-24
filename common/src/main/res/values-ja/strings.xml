@@ -62,6 +62,7 @@
   <string name="delete">削除</string>
   <string name="total">合計</string>
   <string name="interval">インターバル</string>
+  <string name="remaining">残り</string>
   <string name="lap">ラップ</string>
   <string name="new_lap">新しいラップ</string>
   <string name="next_lap">次のラップ</string>
@@ -154,7 +155,7 @@
   <string name="yes">はい</string>
   <string name="create">作成</string>
   <string name="darn">驚いた!</string>
-  <string name="dismiss">却下</string>
+  <string name="dismiss">閉じる</string>
   <string name="no_way">とんでもない</string>
   <string name="no">いいえ</string>
   <string name="loading">ロード中...</string>
@@ -162,7 +163,7 @@
   <string name="cancelling_please_wait">キャンセル中...しばらくお待ちください</string>
   <string name="try_again_later">後で再度実行してください!</string>
   <string name="are_you_sure">よろしいですか?</string>
-  <string name="configure_audio_cues">音声合図を設定</string>
+  <string name="configure_audio_cues">音声合図の設定</string>
   <string name="downloadeditremove_workouts">ワークアウトをダウンロード/編集/削除</string>
   <string name="note_you_need_to_connect_to_the_account_too">注意、アカウントに接続する必要があります</string>
   <string name="use_your_headset_to_startpauseresume_runner_up">ヘッドセットを使用して RunnerUp を開始/一時休止/再開する</string>
@@ -192,7 +193,7 @@
   <string name="autopause_after_s">自動一時休止 ～秒後</string>
   <string name="autopause_min_pace_minkm">自動一時休止 分ペース (分/km)</string>
   <string name="convert_rest_on_interval_tab">インターバルタブの休憩を変換</string>
-  <string name="convert_rest_on_advanced_tab">高度タブの</string>
+  <string name="convert_rest_on_advanced_tab">高度タブの休憩を変換</string>
   <string name="target_pace_moving_average_seconds_">目標ペース平均移動秒</string>
   <string name="target_pace_grace_seconds_">目標ペースの猶予秒</string>
   <string name="autolap_during_intervals">インターバル中自動ラップ</string>
@@ -234,12 +235,12 @@
   <string name="misc_cues">その他の合図</string>
   <string name="target_coaching">目標コーチング</string>
   <string name="skip_event_audio_cues">イベントの音声合図をスキップ</string>
-  <string name="push">プッシュ</string>
+  <string name="push">押してください</string>
   <string name="android_text_to_speech_settings">Android 音声読み上げ設定</string>
   <string name="start">開始</string>
   <string name="history">履歴</string>
   <string name="basic">基本</string>
-  <string name="advanced">上級</string>
+  <string name="advanced">高度</string>
   <string name="manual">手動</string>
   <string name="add_workout_notes">ワークアウトメモを追加</string>
   <string name="pruning_deleted_activities_from_database">削除したアクティビティをデータベースから除去</string>
@@ -258,4 +259,11 @@
   <string name="do_not_show_again">再度表示しない</string>
   <string name="waiting_for_phone">電話の待機中</string>
   <string name="saving_on_phone">電話の保存中</string>
+  <string name="save">保存</string>
+  <string name="add_step">ステップを追加</string>
+  <string name="add_repeat_step">繰り返しを追加</string>
+  <string name="discard">破棄</string>
+  <string name="failed_to_create_workout">ワークアウトの作成に失敗しました</string>
+  <string name="plus_sign">+</string>
+  <string name="minus_sign">-</string>
 </resources>
