@@ -220,7 +220,8 @@ public class WorkoutBuilder {
 
     public static SharedPreferences getAudioCuePreferences(Context ctx, SharedPreferences pref,
             String key) {
-        return getSubPreferences(ctx, pref, key, AudioCueSettingsActivity.DEFAULT,
+        return getSubPreferences(ctx, pref, key,
+                ctx.getString(R.string.default_audio_scheme_name),
                 AudioCueSettingsActivity.SUFFIX);
     }
 
