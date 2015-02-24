@@ -274,4 +274,20 @@
   <string name="Include_map_in_post">Include map in post</string>
   <string name="clear_uploads_msg">Note that workouts are not removed from %1$s, only from RunnerUp list of workouts uploaded to %1$s</string>
   <string name="clear_uploads_from_phone">Clear uploads (from phone)</string>
+  <string name="my_phone">my phone</string>
+  <string name="Failed_to_import">Failed to import: </string>
+  <string name="Import_workout">Import workout: </string>
+  <string name="Saving_as">Saving as </string>
+  <string name="Overwrite_existing">Overwrite existing</string>
+  <string name="Create_new_workout">Create new workout</string>
+  <string name="Set_workout_name">Set workout name</string>
+  <string name="Downloading_will_overwrite">Downloading %1$s will overwrite %2$ workout with same name</string>
+  <string name="Delete_workout">Delete workout </string>
+  <string name="Share_workout_subject">RunnerUp workout: </string>
+  <string name="Share_workout_text">Hi\nHere is a workout I think you might like.</string>
+  <string name="Share_workout_chooser">Share workout...</string>
+  <string name="About_runnerup_msg">Not much to say at this point</string>
+  <string name="new_audio_scheme">New audio scheme</string>
+  <string name="default_audio_scheme_name">Default</string>
+  <string name="notes_hint">Notes about your workout</string>
 </resources>

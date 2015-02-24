@@ -280,11 +280,11 @@
 	<PreferenceCategory android:title="@string/about">
 		<org.runnerup.widget.AboutPreference
         	android:title="@string/about_runner_up"
-        	android:dialogMessage="Not much to say at this point" />
+        	android:dialogMessage="@string/About_runnerup_msg" />
 
 		<org.runnerup.widget.AboutPreference
         	android:title="@string/google_play_services_legal_notices"
-        	android:dialogMessage="Not much to say at this point" />
+        	android:dialogMessage="@string/About_runnerup_msg" />
 	</PreferenceCategory>
 
 </PreferenceScreen>

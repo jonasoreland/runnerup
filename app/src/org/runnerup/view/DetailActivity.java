@@ -171,7 +171,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         activityPace = (TextView) findViewById(R.id.activity_pace);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
-        notes.setHint("Notes about your workout");
+        notes.setHint(getString(R.string.notes_hint));
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 

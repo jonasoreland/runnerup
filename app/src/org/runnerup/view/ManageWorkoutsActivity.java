@@ -82,7 +82,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
 
-    static final String PHONE_STRING = "my phone";
+    private String PHONE_STRING = "my phone";
     public final static String WORKOUT_NAME = "";
 
     final HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
@@ -107,6 +107,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manage_workouts);
+
+        PHONE_STRING = getResources().getString(R.string.my_phone);
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
@@ -141,7 +143,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             } catch (Exception e) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.problem));
-                builder.setMessage("Failed to import: " + fileName);
+                builder.setMessage(getString(R.string.Failed_to_import) + fileName);
                 builder.setPositiveButton(getString(R.string.ok_darn),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -198,7 +200,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Import workout: " + fileName);
+        builder.setTitle(getString(R.string.Import_workout) + fileName);
         builder.setPositiveButton(getString(R.string.yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -224,7 +226,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                                 }
                                 saveName = newName;
                                 Toast.makeText(ManageWorkoutsActivity.this,
-                                        "Saving as " + saveName, Toast.LENGTH_SHORT).show();
+                                        getString(R.string.Saving_as) + saveName, Toast.LENGTH_SHORT).show();
                             }
                             saveImport(saveName, cr.openInputStream(data));
                         } catch (FileNotFoundException e) {
@@ -248,7 +250,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         if (exists) {
             String items[] = {
-                "Overwrite existing"
+                getString(R.string.Overwrite_existing)
             };
             builder.setMultiChoiceItems(items, selected,
                     new OnMultiChoiceClickListener() {
@@ -418,8 +420,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
 
-            builder.setTitle("Create new workout");
-            builder.setMessage("Set workout name");
+            builder.setTitle(getString(R.string.Create_new_workout));
+            builder.setMessage(getString(R.string.Set_workout_name));
 
             // Set an EditText view to get user input
             final EditText input = new EditText(ManageWorkoutsActivity.this);
@@ -455,8 +457,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             ArrayList<WorkoutRef> local = workouts.get(PHONE_STRING);
             if (contains(local, selected)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
-                builder.setTitle("Downloading " + selected.workoutName + " will overwrite "
-                        + PHONE_STRING + " workout with same name");
+                builder.setTitle(getString(R.string.Downloading_will_overwrite, selected.workoutName, PHONE_STRING));
                 builder.setMessage(getString(R.string.are_you_sure));
                 builder.setPositiveButton(getString(R.string.yes),
                         new DialogInterface.OnClickListener() {
@@ -516,7 +517,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
-            builder.setTitle("Delete workout " + selected.workoutName);
+            builder.setTitle(getString(R.string.Delete_workout) + selected.workoutName);
             builder.setMessage(getString(R.string.are_you_sure));
             builder.setPositiveButton(getString(R.string.yes),
                     new DialogInterface.OnClickListener() {
@@ -590,13 +591,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
 
-            intent.putExtra(Intent.EXTRA_SUBJECT, "RunnerUp workout: " + name);
-            intent.putExtra(Intent.EXTRA_TEXT, "Hi\nHere is a workout I think you might like.");
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Share_workout_subject) + name);
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.Share_workout_text));
 
             intent.setType(WorkoutFileProvider.MIME);
             Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name);
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-            context.startActivity(Intent.createChooser(intent, "Share workout..."));
+            context.startActivity(Intent.createChooser(intent, getString(R.string.Share_workout_chooser)));
         }
     };
 
