@@ -369,7 +369,7 @@ public class Tracker extends android.app.Service implements
         /**
          * And finally let workout know that we started
          */
-        workout.onStart(Scope.WORKOUT, this.workout);
+        workout.onStart(Scope.ACTIVITY, this.workout);
     }
 
     private void doBind() {

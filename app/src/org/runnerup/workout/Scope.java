@@ -24,7 +24,7 @@ import org.runnerup.R;
  */
 public enum Scope {
 
-    WORKOUT(1, R.string.cue_workout),
+    ACTIVITY(1, R.string.cue_activity),
     STEP(2, R.string.cue_interval),
     LAP(3, R.string.cue_lap),
     CURRENT(4, R.string.cue_current);

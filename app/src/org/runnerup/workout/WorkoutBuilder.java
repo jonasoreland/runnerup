@@ -356,7 +356,7 @@ public class WorkoutBuilder {
                         graceSeconds);
                 tr.scope = Scope.STEP;
                 tr.range = range;
-                tr.triggerAction.add(new CoachFeedback(Scope.WORKOUT, step.getTargetType(), range,
+                tr.triggerAction.add(new CoachFeedback(Scope.ACTIVITY, step.getTargetType(), range,
                         tr));
                 step.triggers.add(tr);
             }
@@ -484,7 +484,7 @@ public class WorkoutBuilder {
                 EventTrigger p = new EventTrigger();
                 p.event = Event.PAUSED;
                 p.scope = Scope.STEP;
-                p.triggerAction.add(new AudioFeedback(Scope.WORKOUT, Event.PAUSED));
+                p.triggerAction.add(new AudioFeedback(Scope.ACTIVITY, Event.PAUSED));
                 list.add(p);
             }
 
@@ -492,7 +492,7 @@ public class WorkoutBuilder {
                 EventTrigger r = new EventTrigger();
                 r.event = Event.RESUMED;
                 r.scope = Scope.STEP;
-                r.triggerAction.add(new AudioFeedback(Scope.WORKOUT, Event.RESUMED));
+                r.triggerAction.add(new AudioFeedback(Scope.ACTIVITY, Event.RESUMED));
                 list.add(r);
             }
 
@@ -500,7 +500,7 @@ public class WorkoutBuilder {
                 EventTrigger ev = new EventTrigger();
                 ev.event = Event.STOPPED;
                 ev.scope = Scope.STEP;
-                ev.triggerAction.add(new AudioFeedback(Scope.WORKOUT, Event.STOPPED));
+                ev.triggerAction.add(new AudioFeedback(Scope.ACTIVITY, Event.STOPPED));
                 list.add(ev);
             }
         }
@@ -672,23 +672,23 @@ public class WorkoutBuilder {
 
         /**** TOTAL ****/
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
-            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.DISTANCE));
+            feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.DISTANCE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_time), false)) {
-            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.TIME));
+            feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.TIME));
         }
         if (Dimension.SPEED_CUE_ENABLED
                 && prefs.getBoolean(res.getString(R.string.cueinfo_total_speed), false)) {
-            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.SPEED));
+            feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.SPEED));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_pace), false)) {
-            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.PACE));
+            feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.PACE));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_hr), false)) {
-            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.HR));
+            feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.HR));
         }
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_hrz), false)) {
-            feedback.add(new AudioFeedback(Scope.WORKOUT, Dimension.HRZ));
+            feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.HRZ));
         }
 
         /**** STEP ****/

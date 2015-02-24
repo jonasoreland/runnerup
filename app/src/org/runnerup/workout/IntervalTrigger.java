@@ -23,7 +23,7 @@ import android.os.Build;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class IntervalTrigger extends Trigger {
 
-    Scope scope = Scope.WORKOUT;
+    Scope scope = Scope.ACTIVITY;
     Dimension dimension = Dimension.TIME;
 
     double first = 120;

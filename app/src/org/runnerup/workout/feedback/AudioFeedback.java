@@ -37,7 +37,7 @@ import java.util.HashMap;
 public class AudioFeedback extends Feedback {
 
     Event event = Event.STARTED;
-    Scope scope = Scope.WORKOUT;
+    Scope scope = Scope.ACTIVITY;
     Dimension dimension = Dimension.DISTANCE;
     Intensity intensity = null;
     RUTextToSpeech textToSpeech;

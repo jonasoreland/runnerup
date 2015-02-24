@@ -275,7 +275,7 @@ public class RunActivity extends Activity implements TickListener {
             /**
              * they saved
              */
-            workout.onComplete(Scope.WORKOUT, workout);
+            workout.onComplete(Scope.ACTIVITY, workout);
             workout.onSave();
             mTracker = null;
             finish();
@@ -284,7 +284,7 @@ public class RunActivity extends Activity implements TickListener {
             /**
              * they discarded
              */
-            workout.onComplete(Scope.WORKOUT, workout);
+            workout.onComplete(Scope.ACTIVITY, workout);
             workout.onDiscard();
             mTracker = null;
             finish();
@@ -338,14 +338,14 @@ public class RunActivity extends Activity implements TickListener {
 
     private void updateView() {
         setPauseButtonEnabled(!workout.isPaused());
-        double ad = workout.getDistance(Scope.WORKOUT);
-        double at = workout.getTime(Scope.WORKOUT);
-        double ap = workout.getPace(Scope.WORKOUT);
+        double ad = workout.getDistance(Scope.ACTIVITY);
+        double at = workout.getTime(Scope.ACTIVITY);
+        double ap = workout.getPace(Scope.ACTIVITY);
         activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(at)));
         activityDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, Math.round(ad)));
         activityPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ap));
 
-        double ahr = workout.getHeartRate(Scope.WORKOUT);
+        double ahr = workout.getHeartRate(Scope.ACTIVITY);
         double ld = workout.getDistance(Scope.LAP);
         double lt = workout.getTime(Scope.LAP);
         double lp = workout.getPace(Scope.LAP);

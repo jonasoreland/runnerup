@@ -190,9 +190,9 @@ public class Step implements TickComponent {
 
     @Override
     public void onStart(Scope what, Workout s) {
-        double time = s.getTime(Scope.WORKOUT);
-        double dist = s.getDistance(Scope.WORKOUT);
-        double beats = s.getHeartbeats(Scope.WORKOUT);
+        double time = s.getTime(Scope.ACTIVITY);
+        double dist = s.getDistance(Scope.ACTIVITY);
+        double beats = s.getHeartbeats(Scope.ACTIVITY);
 
         if (what == Scope.STEP) {
             stepStartTime = time;
@@ -343,7 +343,7 @@ public class Step implements TickComponent {
     }
 
     public double getDistance(Workout w, Scope s) {
-        double d = w.getDistance(Scope.WORKOUT);
+        double d = w.getDistance(Scope.ACTIVITY);
         if (s == Scope.STEP) {
             return d - stepStartDistance;
         } else if (s == Scope.LAP) {
@@ -354,7 +354,7 @@ public class Step implements TickComponent {
     }
 
     public double getTime(Workout w, Scope s) {
-        double t = w.getTime(Scope.WORKOUT);
+        double t = w.getTime(Scope.ACTIVITY);
         if (s == Scope.STEP) {
             return t - stepStartTime;
         } else if (s == Scope.LAP) {
@@ -374,7 +374,7 @@ public class Step implements TickComponent {
     }
 
     public double getHeartbeats(Workout w, Scope s) {
-        double t = w.getHeartbeats(Scope.WORKOUT);
+        double t = w.getHeartbeats(Scope.ACTIVITY);
         if (s == Scope.STEP) {
             return t - stepStartHeartbeats;
         } else if (s == Scope.LAP) {

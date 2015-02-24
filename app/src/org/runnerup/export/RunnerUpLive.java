@@ -164,8 +164,8 @@ public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserv
         
         mTimeLastLog = System.currentTimeMillis();
         int externalType = translateType(type);
-        long elapsedDistanceMeter = Math.round(workoutInfo.getDistance(Scope.WORKOUT));
-        long elapsedTimeMillis = Math.round(workoutInfo.getTime(Scope.WORKOUT));
+        long elapsedDistanceMeter = Math.round(workoutInfo.getDistance(Scope.ACTIVITY));
+        long elapsedTimeMillis = Math.round(workoutInfo.getTime(Scope.ACTIVITY));
 
         Intent msgIntent = new Intent(context, LiveService.class);
         Location location = workoutInfo.getLastKnownLocation();
