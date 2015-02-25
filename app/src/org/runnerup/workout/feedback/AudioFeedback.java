@@ -36,12 +36,19 @@ import java.util.HashMap;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioFeedback extends Feedback {
 
+    int msgId = 0;
+    String msgTxt = null;
     Event event = Event.STARTED;
-    Scope scope = Scope.WORKOUT;
+    Scope scope = Scope.ACTIVITY;
     Dimension dimension = Dimension.DISTANCE;
     Intensity intensity = null;
     RUTextToSpeech textToSpeech;
     Formatter formatter;
+
+    public AudioFeedback(int msgId) {
+        super();
+        this.msgId = msgId;
+    }
 
     public AudioFeedback(Scope scope, Event event) {
         super();
@@ -95,7 +102,12 @@ public class AudioFeedback extends Feedback {
     protected String getCue(Workout w, Context ctx) {
         String msg = null;
         Resources res = ctx.getResources();
-        if (event != null && scope != null) {
+        if (msgId != 0) {
+            if (msgTxt == null) {
+                msgTxt = formatter.getCueString(msgId);
+            }
+            msg = msgTxt;
+        } else if (event != null && scope != null) {
             msg = res.getString(scope.getCueId()) + " " + res.getString(event.getCueId());
         } else if (event != null && intensity != null) {
             msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());

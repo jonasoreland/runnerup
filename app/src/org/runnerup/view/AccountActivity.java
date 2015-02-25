@@ -158,7 +158,7 @@ public class AccountActivity extends Activity implements Constants {
                 btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
                 btn.setOnClickListener(urlButtonClick);
                 btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));
-                addRow("Website:", btn);
+                addRow(getResources().getString(R.string.Website) + ":", btn);
             }
 
             flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
@@ -167,7 +167,7 @@ public class AccountActivity extends Activity implements Constants {
                 cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
                 cb.setOnCheckedChangeListener(sendCBChecked);
-                addRow("Automatic upload", cb);
+                addRow(getResources().getString(R.string.Automatic_upload), cb);
             } else {
                 Button btn = (Button) findViewById(R.id.account_upload_button);
                 btn.setVisibility(View.GONE);
@@ -186,7 +186,7 @@ public class AccountActivity extends Activity implements Constants {
                 cb.setTag(DB.ACCOUNT.FLAG_LIVE);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE));
                 cb.setOnCheckedChangeListener(sendCBChecked);
-                addRow("Live", cb);
+                addRow(getResources().getString(R.string.Live), cb);
             }
 
             if (uploader.checkSupport(Uploader.Feature.SKIP_MAP)) {
@@ -194,7 +194,7 @@ public class AccountActivity extends Activity implements Constants {
                 cb.setTag(DB.ACCOUNT.FLAG_SKIP_MAP);
                 cb.setChecked(!Bitfield.test(flags, DB.ACCOUNT.FLAG_SKIP_MAP));
                 cb.setOnCheckedChangeListener(sendCBChecked);
-                addRow("Include map in post", cb);
+                addRow(getResources().getString(R.string.Include_map_in_post), cb);
             }
         }
         mCursors.add(c);
@@ -239,8 +239,8 @@ public class AccountActivity extends Activity implements Constants {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this);
             builder.setTitle(getString(R.string.clear_uploads));
-            builder.setMessage("Note that workouts are not removed from " + uploader
-                    + ", only from RunnerUp list of workouts uploaded to " + uploader);
+            builder.setMessage(getResources().getString(R.string.clear_uploads_msg,
+                    uploader));
             builder.setPositiveButton(getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -313,7 +313,7 @@ public class AccountActivity extends Activity implements Constants {
     final OnClickListener disconnectButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final CharSequence items[] = {
-                "Clear uploads (from phone)"
+                getString(R.string.clear_uploads_from_phone)
             };
             final boolean selected[] = {
                 true

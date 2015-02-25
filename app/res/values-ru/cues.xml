@@ -14,8 +14,8 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_workout">движение</string>
-  <string name="cue_activity">интервал</string>
+  <string name="cue_activity">движение</string>
+  <string name="cue_interval">интервал</string>
   <string name="cue_lap">круг</string>
   <string name="cue_warmup">разминка</string>
   <string name="cue_cooldown">заминка</string>

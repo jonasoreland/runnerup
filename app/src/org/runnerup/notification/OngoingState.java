@@ -45,11 +45,11 @@ public class OngoingState implements NotificationState {
     @Override
     public Notification createNotification() {
         String distance = formatter.formatDistance(Formatter.TXT_SHORT,
-                Math.round(workoutInfo.getDistance(Scope.WORKOUT)));
+                Math.round(workoutInfo.getDistance(Scope.ACTIVITY)));
         String time = formatter.formatElapsedTime(Formatter.TXT_LONG,
-                Math.round(workoutInfo.getTime(Scope.WORKOUT)));
+                Math.round(workoutInfo.getTime(Scope.ACTIVITY)));
         String pace = formatter.formatPace(Formatter.TXT_SHORT,
-                workoutInfo.getPace(Scope.WORKOUT));
+                workoutInfo.getPace(Scope.ACTIVITY));
 
         String content = String.format("%s: %s %s: %s %s: %s",
                 context.getString(R.string.distance), distance,

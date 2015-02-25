@@ -171,7 +171,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         activityPace = (TextView) findViewById(R.id.activity_pace);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
-        notes.setHint("Notes about your workout");
+        notes.setHint(getString(R.string.notes_hint));
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
@@ -581,16 +581,17 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 return b;
             }
 
+            ContentValues tmp = reports.get(position);
+            String name = tmp.getAsString("name");
+
             LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
             View view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
             TextView tv0 = (TextView) view.findViewById(R.id.account_id);
             CheckBox cb = (CheckBox) view.findViewById(R.id.report_sent);
             TextView tv1 = (TextView) view.findViewById(R.id.account_name);
-
-            ContentValues tmp = reports.get(position);
-
-            String name = tmp.getAsString("name");
+            cb.setChecked(false);
+            cb.setEnabled(false);
             cb.setTag(name);
             if (alreadyUploadedUploaders.contains(name)) {
                 cb.setChecked(true);
@@ -603,10 +604,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 {
                     cb.setEnabled(false);
                 }
-            } else if ((tmp.containsKey(DB.ACCOUNT.FLAGS) && Bitfield.test(
-                    tmp.getAsLong(DB.ACCOUNT.FLAGS), DB.ACCOUNT.FLAG_UPLOAD))
-                    ||
-                    pendingUploaders.contains(name)) {
+            } else if (pendingUploaders.contains(name)) {
                 cb.setChecked(true);
             } else {
                 cb.setChecked(false);
@@ -1263,11 +1261,20 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 }
                                 m = new MarkerOptions();
                                 m.position((lastLocation = point));
-                                m.title(type == DB.LOCATION.TYPE_START ? "Start" :
-                                        type == DB.LOCATION.TYPE_END ? "Stop" :
-                                                type == DB.LOCATION.TYPE_PAUSE ? "Pause" :
-                                                        type == DB.LOCATION.TYPE_RESUME ? "Resume"
-                                                                : "<Unknown>");
+                                switch (type) {
+                                    case DB.LOCATION.TYPE_START:
+                                        m.title(getResources().getString(R.string.start));
+                                        break;
+                                    case DB.LOCATION.TYPE_END:
+                                        m.title(getResources().getString(R.string.stop));
+                                        break;
+                                    case DB.LOCATION.TYPE_PAUSE:
+                                        m.title(getResources().getString(R.string.pause));
+                                        break;
+                                    case DB.LOCATION.TYPE_RESUME:
+                                        m.title(getResources().getString(R.string.resume));
+                                        break;
+                                }
                                 m.snippet(null);
                                 m.draggable(false);
                                 route.markers.add(m);

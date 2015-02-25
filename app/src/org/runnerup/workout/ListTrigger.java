@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class ListTrigger extends Trigger {
 
     boolean remaining = false;
-    Scope scope = Scope.WORKOUT;
+    Scope scope = Scope.ACTIVITY;
     Dimension dimension = Dimension.TIME;
 
     int pos = Integer.MAX_VALUE;

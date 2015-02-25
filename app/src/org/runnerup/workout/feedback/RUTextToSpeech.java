@@ -23,10 +23,14 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.widget.TextView;
+
+import org.runnerup.util.Formatter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RUTextToSpeech {
@@ -59,6 +63,22 @@ public class RUTextToSpeech {
         this.textToSpeech = tts;
         this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         this.mute = mute_;
+        Locale locale = Formatter.getAudioLocale(context);
+        if (locale != null) {
+            int res;
+            switch((res = tts.isLanguageAvailable(locale))) {
+                case TextToSpeech.LANG_AVAILABLE:
+                case TextToSpeech.LANG_COUNTRY_AVAILABLE:
+                case TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE:
+                    res = tts.setLanguage(locale);
+                    System.err.println("setLanguage("+locale.getDisplayLanguage()+") => " + res);
+                    break;
+                case TextToSpeech.LANG_MISSING_DATA:
+                case TextToSpeech.LANG_NOT_SUPPORTED:
+                    System.err.println("setLanguage("+locale.getDisplayLanguage()+") => MISSING: " + res);
+                    break;
+            }
+        }
 
         if (this.mute) {
             UtteranceCompletion.setUtteranceCompletedListener(tts, this);

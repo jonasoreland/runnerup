@@ -145,7 +145,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
 
         if (currentStep != null) {
-            currentStep.onStart(Scope.WORKOUT, this);
+            currentStep.onStart(Scope.ACTIVITY, this);
             currentStep.onStart(Scope.STEP, this);
             currentStep.onStart(Scope.LAP, this);
         }
@@ -188,7 +188,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             currentStep.onStart(Scope.STEP, this);
             currentStep.onStart(Scope.LAP, this);
         } else {
-            currentStep.onComplete(Scope.WORKOUT, this);
+            currentStep.onComplete(Scope.ACTIVITY, this);
             setCurrentStep(null);
             tracker.stop();
         }
@@ -243,7 +243,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         if (currentStep != null) {
             currentStep.onComplete(Scope.LAP, this);
             currentStep.onComplete(Scope.STEP, this);
-            currentStep.onComplete(Scope.WORKOUT, this);
+            currentStep.onComplete(Scope.ACTIVITY, this);
         }
         setCurrentStep(null);
         currentStepNo = -1;
@@ -284,7 +284,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public double getDistance(Scope scope) {
         switch (scope) {
-            case WORKOUT:
+            case ACTIVITY:
                 return tracker.getDistance();
             case STEP:
             case LAP:
@@ -301,7 +301,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public double getTime(Scope scope) {
         switch (scope) {
-            case WORKOUT:
+            case ACTIVITY:
                 return tracker.getTime();
             case STEP:
             case LAP:
@@ -318,7 +318,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public double getSpeed(Scope scope) {
         switch (scope) {
-            case WORKOUT:
+            case ACTIVITY:
                 double d = getDistance(scope);
                 double t = getTime(scope);
                 if (t == 0)
@@ -368,7 +368,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     double getHeartbeats(Scope scope) {
         switch (scope) {
-            case WORKOUT:
+            case ACTIVITY:
                 return tracker.getHeartbeats();
             case STEP:
             case LAP:
@@ -392,7 +392,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             }
             case LAP:
             case STEP:
-            case WORKOUT:
+            case ACTIVITY:
                 break;
         }
 
@@ -526,7 +526,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
         public double getDistance(Scope scope) {
             switch (scope) {
-                case WORKOUT:
+                case ACTIVITY:
                     return (3000 + 7000 * Math.random());
                 case STEP:
                     return (300 + 700 * Math.random());
@@ -540,7 +540,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
         public double getTime(Scope scope) {
             switch (scope) {
-                case WORKOUT:
+                case ACTIVITY:
                     return (10 * 60 + 50 * 60 * Math.random());
                 case STEP:
                     return (1 * 60 + 5 * 60 * Math.random());

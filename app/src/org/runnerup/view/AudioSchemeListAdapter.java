@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
         if (position < audioSchemes.size())
             return audioSchemes.get(position);
 
-        return "New audio scheme";
+        return inflater.getContext().getString(R.string.new_audio_scheme);
     }
 
     @Override

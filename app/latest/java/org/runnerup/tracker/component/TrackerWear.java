@@ -90,8 +90,8 @@ public class TrackerWear extends DefaultTrackerComponent
 
     public TrackerWear(Tracker tracker) {
         this.tracker = tracker;
-        items.add(new Pair<Scope, Dimension>(Scope.WORKOUT, Dimension.TIME));
-        items.add(new Pair<Scope, Dimension>(Scope.WORKOUT, Dimension.DISTANCE));
+        items.add(new Pair<Scope, Dimension>(Scope.ACTIVITY, Dimension.TIME));
+        items.add(new Pair<Scope, Dimension>(Scope.ACTIVITY, Dimension.DISTANCE));
         items.add(new Pair<Scope, Dimension>(Scope.LAP, Dimension.PACE));
     }
 

@@ -14,8 +14,8 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_workout">aktivite</string>
-  <string name="cue_activity">aralık</string>
+  <string name="cue_activity">aktivite</string>
+  <string name="cue_interval">aralık</string>
   <string name="cue_lap">tur</string>
   <string name="cue_warmup">ısınma</string>
   <string name="cue_cooldown">soğuma</string>

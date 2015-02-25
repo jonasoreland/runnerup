@@ -70,7 +70,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     SQLiteDatabase mDB = null;
     MenuItem newSettings;
 
-    public static final String DEFAULT = "Default";
+    private String DEFAULT = "Default";
     public static final String SUFFIX = "_audio_cues";
     static final String PREFS_DIR = "shared_prefs";
 
@@ -80,6 +80,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getWritableDatabase();
+        DEFAULT = getString(R.string.default_audio_scheme_name);
 
         Intent intent = getIntent();
         settingsName = intent.getStringExtra("name");
@@ -275,7 +276,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             if (newValue.contentEquals(DEFAULT)) {
                 prefMgr.getSharedPreferences().edit().commit();
                 switchTo(null);
-            } else if (newValue.contentEquals("New audio scheme")) {
+            } else if (newValue.contentEquals(getString(R.string.new_audio_scheme))) {
                 createNewAudioSchemeDialog();
             } else {
                 prefMgr.getSharedPreferences().edit().commit();
@@ -425,12 +426,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
             WorkoutBuilder.addFeedbackFromPreferences(prefs, res, feedback);
 
-            if (tts != null) {
-                mTTSOnInitListener.onInit(0);
-            } else {
-                tts = new TextToSpeech(ctx, mTTSOnInitListener);
-            }
-
+            tts = new TextToSpeech(ctx, mTTSOnInitListener);
             return false;
         }
     };
