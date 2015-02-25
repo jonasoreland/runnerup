@@ -158,14 +158,12 @@ public class HRSettingsActivity extends Activity implements HRClient {
         open();
     }
 
-    int lineNo = 0;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-    private void log(String msg) {
-        logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
-        if (logBuffer.length() > 5000) {
-            logBuffer.setLength(5000);
-        }
-        tvLog.setText(logBuffer.toString());
+        close();
+        stopTimer();
     }
 
     @Override
@@ -185,6 +183,35 @@ public class HRSettingsActivity extends Activity implements HRClient {
                 break;
         }
         return true;
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            if (!hrProvider.isEnabled()) {
+                log("Bluetooth not enabled!");
+                scanButton.setEnabled(false);
+                connectButton.setEnabled(false);
+                return;
+            }
+            load();
+            open();
+            return;
+        }
+        if (requestCode == 123) {
+            startScan();
+            return;
+        }
+    }
+    
+    int lineNo = 0;
+
+    private void log(String msg) {
+        logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
+        if (logBuffer.length() > 5000) {
+            logBuffer.setLength(5000);
+        }
+        tvLog.setText(logBuffer.toString());
     }
 
     void clearHRSettings() {
@@ -261,14 +288,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
         builder.setNegativeButton(getString(R.string.ok_rats), listener);
         builder.show();
         return;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        close();
-        stopTimer();
     }
 
     private void clear() {
@@ -602,22 +621,4 @@ public class HRSettingsActivity extends Activity implements HRClient {
         log(src.getProviderName() + ": " + msg);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0) {
-            if (!hrProvider.isEnabled()) {
-                log("Bluetooth not enabled!");
-                scanButton.setEnabled(false);
-                connectButton.setEnabled(false);
-                return;
-            }
-            load();
-            open();
-            return;
-        }
-        if (requestCode == 123) {
-            startScan();
-            return;
-        }
-    }
 }
