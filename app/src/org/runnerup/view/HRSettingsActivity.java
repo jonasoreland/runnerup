@@ -370,52 +370,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
         builder.show();
     }
 
-    class DeviceAdapter extends BaseAdapter {
-
-        final ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
-        LayoutInflater inflater = null;
-        Resources resources = null;
-
-        DeviceAdapter(Context ctx) {
-            inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            resources = ctx.getResources();
-        }
-
-        @Override
-        public int getCount() {
-            return deviceList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return deviceList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row;
-            if (convertView == null) {
-                row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
-                        null);
-            } else {
-                row = convertView;
-            }
-            TextView tv = (TextView) row.findViewById(android.R.id.text1);
-            tv.setTextColor(resources.getColor(R.color.black));
-
-            HRDeviceRef btDevice = deviceList.get(position);
-            tv.setTag(btDevice);
-            tv.setText(btDevice.getName());
-
-            return tv;
-        }
-    }
-
     private void startScan() {
         log(hrProvider.getProviderName() + ".startScan()");
         updateView();
@@ -619,6 +573,52 @@ public class HRSettingsActivity extends Activity implements HRClient {
     @Override
     public void log(HRProvider src, String msg) {
         log(src.getProviderName() + ": " + msg);
+    }
+
+    class DeviceAdapter extends BaseAdapter {
+
+        final ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
+        LayoutInflater inflater = null;
+        Resources resources = null;
+
+        DeviceAdapter(Context ctx) {
+            inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            resources = ctx.getResources();
+        }
+
+        @Override
+        public int getCount() {
+            return deviceList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return deviceList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row;
+            if (convertView == null) {
+                row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
+                        null);
+            } else {
+                row = convertView;
+            }
+            TextView tv = (TextView) row.findViewById(android.R.id.text1);
+            tv.setTextColor(resources.getColor(R.color.black));
+
+            HRDeviceRef btDevice = deviceList.get(position);
+            tv.setTag(btDevice);
+            tv.setText(btDevice.getName());
+
+            return tv;
+        }
     }
 
 }
