@@ -109,6 +109,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
     };
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hr_settings);
