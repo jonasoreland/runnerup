@@ -90,6 +90,25 @@ public class HRSettingsActivity extends Activity implements HRClient {
     DeviceAdapter deviceAdapter = null;
     boolean mIsScanning = false;
 
+    final OnClickListener hrZonesClick = new OnClickListener() {
+        @Override
+        public void onClick(View arg0) {
+            startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
+        }
+    };
+    
+    final OnClickListener scanButtonClick = new OnClickListener() {
+        public void onClick(View v) {
+            clear();
+            stopTimer();
+
+            close();
+            mIsScanning = true;
+            log("select HR-provider");
+            selectProvider();
+        }
+    };
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hr_settings);
@@ -166,13 +185,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
         return true;
     }
-
-    final OnClickListener hrZonesClick = new OnClickListener() {
-        @Override
-        public void onClick(View arg0) {
-            startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
-        }
-    };
 
     void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -300,18 +312,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
             connectButton.setText(getString(R.string.connect));
         }
     }
-
-    final OnClickListener scanButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            clear();
-            stopTimer();
-
-            close();
-            mIsScanning = true;
-            log("select HR-provider");
-            selectProvider();
-        }
-    };
 
     private void selectProvider() {
         final CharSequence items[] = new CharSequence[providers.size()];
