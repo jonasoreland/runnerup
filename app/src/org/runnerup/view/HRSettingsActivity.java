@@ -90,6 +90,26 @@ public class HRSettingsActivity extends Activity implements HRClient {
     DeviceAdapter deviceAdapter = null;
     boolean mIsScanning = false;
 
+    final OnClickListener hrZonesClick = new OnClickListener() {
+        @Override
+        public void onClick(View arg0) {
+            startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
+        }
+    };
+    
+    final OnClickListener scanButtonClick = new OnClickListener() {
+        public void onClick(View v) {
+            clear();
+            stopTimer();
+
+            close();
+            mIsScanning = true;
+            log("select HR-provider");
+            selectProvider();
+        }
+    };
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hr_settings);
@@ -138,14 +158,12 @@ public class HRSettingsActivity extends Activity implements HRClient {
         open();
     }
 
-    int lineNo = 0;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-    private void log(String msg) {
-        logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
-        if (logBuffer.length() > 5000) {
-            logBuffer.setLength(5000);
-        }
-        tvLog.setText(logBuffer.toString());
+        close();
+        stopTimer();
     }
 
     @Override
@@ -166,13 +184,35 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
         return true;
     }
-
-    final OnClickListener hrZonesClick = new OnClickListener() {
-        @Override
-        public void onClick(View arg0) {
-            startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            if (!hrProvider.isEnabled()) {
+                log("Bluetooth not enabled!");
+                scanButton.setEnabled(false);
+                connectButton.setEnabled(false);
+                return;
+            }
+            load();
+            open();
+            return;
         }
-    };
+        if (requestCode == 123) {
+            startScan();
+            return;
+        }
+    }
+    
+    int lineNo = 0;
+
+    private void log(String msg) {
+        logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
+        if (logBuffer.length() > 5000) {
+            logBuffer.setLength(5000);
+        }
+        tvLog.setText(logBuffer.toString());
+    }
 
     void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -250,14 +290,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
         return;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        close();
-        stopTimer();
-    }
-
     private void clear() {
         btAddress = null;
         btName = null;
@@ -301,18 +333,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
     }
 
-    final OnClickListener scanButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            clear();
-            stopTimer();
-
-            close();
-            mIsScanning = true;
-            log("select HR-provider");
-            selectProvider();
-        }
-    };
-
     private void selectProvider() {
         final CharSequence items[] = new CharSequence[providers.size()];
         final CharSequence itemNames[] = new CharSequence[providers.size()];
@@ -348,52 +368,6 @@ public class HRSettingsActivity extends Activity implements HRClient {
                     }
                 });
         builder.show();
-    }
-
-    class DeviceAdapter extends BaseAdapter {
-
-        final ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
-        LayoutInflater inflater = null;
-        Resources resources = null;
-
-        DeviceAdapter(Context ctx) {
-            inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            resources = ctx.getResources();
-        }
-
-        @Override
-        public int getCount() {
-            return deviceList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return deviceList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row;
-            if (convertView == null) {
-                row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
-                        null);
-            } else {
-                row = convertView;
-            }
-            TextView tv = (TextView) row.findViewById(android.R.id.text1);
-            tv.setTextColor(resources.getColor(R.color.black));
-
-            HRDeviceRef btDevice = deviceList.get(position);
-            tv.setTag(btDevice);
-            tv.setText(btDevice.getName());
-
-            return tv;
-        }
     }
 
     private void startScan() {
@@ -601,22 +575,50 @@ public class HRSettingsActivity extends Activity implements HRClient {
         log(src.getProviderName() + ": " + msg);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0) {
-            if (!hrProvider.isEnabled()) {
-                log("Bluetooth not enabled!");
-                scanButton.setEnabled(false);
-                connectButton.setEnabled(false);
-                return;
-            }
-            load();
-            open();
-            return;
+    class DeviceAdapter extends BaseAdapter {
+
+        final ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
+        LayoutInflater inflater = null;
+        Resources resources = null;
+
+        DeviceAdapter(Context ctx) {
+            inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            resources = ctx.getResources();
         }
-        if (requestCode == 123) {
-            startScan();
-            return;
+
+        @Override
+        public int getCount() {
+            return deviceList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return deviceList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row;
+            if (convertView == null) {
+                row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
+                        null);
+            } else {
+                row = convertView;
+            }
+            TextView tv = (TextView) row.findViewById(android.R.id.text1);
+            tv.setTextColor(resources.getColor(R.color.black));
+
+            HRDeviceRef btDevice = deviceList.get(position);
+            tv.setTag(btDevice);
+            tv.setText(btDevice.getName());
+
+            return tv;
         }
     }
+
 }
