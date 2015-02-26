@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">HRDevice</string>
+
+
+    <string name="pref_bt_experimental">pref_bt_experimental</string>
+    <string name="pref_bt_mock">pref_bt_mock</string>
+</resources>

@@ -24,8 +24,6 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
-import org.runnerup.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
