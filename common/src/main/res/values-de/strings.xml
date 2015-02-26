@@ -159,10 +159,12 @@
   <string name="loading">Lade...</string>
   <string name="saving">Speichern</string>
   <string name="cancelling_please_wait">Abbruch... bitte warten</string>
+  <string name="try_again_later">Bitte später erneut versuchen.</string>
   <string name="are_you_sure">Bist Du sicher?</string>
   <string name="configure_audio_cues">Audio-Hinweise konfigurieren</string>
   <string name="downloadeditremove_workouts">Trainings herunterladen/bearbeiten/löschen</string>
   <string name="use_your_headset_to_startpauseresume_runner_up">Verwende Dein Headset um RunnerUp zu starten/pausieren/fortzusetzen</string>
+  <string name="mm_31_kz_5_13_sg_5">mm(31);kz(5,13);sg(5)</string>
   <string name="export_database_to_sdcard_eg_for_upgrade">Datenbankexport auf SD-Karte (z.B. für Upgrades)</string>
   <string name="import_database_from_sdcard_eg_after_upgrade">Datenbankimport von SD-Karte (z.B. nach einem Upgrade)</string>
   <string name="test_audio_cue">Audio-Hinweis testen</string>
@@ -199,6 +201,8 @@
   <string name="total_distance">Gesamtdistanz</string>
   <string name="total_time">Gesamtzeit</string>
   <string name="total_pace">Tempo gesamt</string>
+  <string name="total_heart_rate">Herzfrequenz gesamt</string>
+  <string name="total_heart_rate_zone">Herzfrequenzbereich gesamt</string>
   <string name="interval_distance">Intervall Entfernung</string>
   <string name="interval_time">Intervall Zeit</string>
   <string name="interval_pace">Intervall-Tempo</string>
@@ -211,6 +215,7 @@
   <string name="lap_heart_rate_zone">Runde Herzfrequenzzone</string>
   <string name="misc_cues">Diverse Hinweise</string>
   <string name="target_coaching">Zielcoaching</string>
+  <string name="push">Herzfrequenz total</string>
   <string name="android_text_to_speech_settings">Android Text-zu-Sprache Einstellungen</string>
   <string name="start">Beginn</string>
   <string name="history">Historie</string>
@@ -226,9 +231,18 @@
   <string name="searching_for_gps">Suche GPS</string>
   <string name="activity_ongoing">Aktivität laufend</string>
   <string name="runnerup_activity_started">RunnerUp Aktivität gestartet</string>
+  <string name="battery_level_low_threshold">Niedrige Akkukapazität</string>
+  <string name="battery_level_high_threshold">Hohe Akkukapazität</string>
   <string name="warning">Warnung</string>
   <string name="battery_level_low_notification_txt">Batteriespannung des Herzfrequenzmonitors ist niedrig!</string>
   <string name="do_not_show_again">Nicht mehr anzeigen</string>
   <string name="waiting_for_phone">Warte auf Telefon</string>
   <string name="saving_on_phone">Speichere auf Telefon</string>
+  <string name="save">Speichern</string>
+  <string name="add_step">Schritt hinzufügen</string>
+  <string name="add_repeat_step">Wiederholung hinzufügen</string>
+  <string name="discard">Verwerfen</string>
+  <string name="failed_to_create_workout">Fehler bei Anlegen des workouts</string>
+  <string name="plus_sign">+</string>
+  <string name="minus_sign">-</string>
 </resources>

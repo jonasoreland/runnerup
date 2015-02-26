@@ -118,7 +118,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
         Status status = Status.OK;
         try {
             for (GoogleFitData.DataSourceType type : activitySources) {
-                if (!presentDataSources.contains(type.getDataStreamId())) {
+                if (!presentDataSources.contains(type.getDataStreamId(gfd))) {
                     StringWriter w = new StringWriter();
                     gfd.exportDataSource(type, w);
                     status = sendData(w, REST_DATASOURCE, RequestMethod.POST);
