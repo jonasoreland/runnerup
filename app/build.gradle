@@ -72,6 +72,8 @@ dependencies {
     froyoCompile 'com.android.support:support-v4:19.1.+'
     froyoCompile 'com.google.android.gms:play-services:3.2.65'
 
+    compile files('../GraphView/public/graphview-3.1.jar')
+    
     compile project(':common')
     compile project(':hrdevice')
 
