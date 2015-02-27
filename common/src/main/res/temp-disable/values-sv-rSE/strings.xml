@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">Puls</string>
   <!--format hint stuff-->
   <string name="maximum_heart_rate">Maxpuls (MHR)</string>
-  <string name="target_pace_format">Måltakt (HH:MM:SS)</string>
+  <string name="target_pace_format">Måltempo (HH:MM:SS)</string>
   <string name="interval_time_format">Intervall tid (HH:MM:SS)</string>
   <string name="interval_distance_format">Intervall distans (m)</string>
   <string name="rest_time_format">Vilotid (HH:MM:SS)</string>
@@ -34,6 +34,7 @@
   <string name="duration_time_format">Varaktighet tid (HH:MM:SS)</string>
   <string name="duration_distance_format">Varaktighet distans (m)</string>
   <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="ok_rats">ok, nedrans</string>
   <!--other-->
   <string name="google_play_services_legal_notices">Google Play Services juridisk information</string>
   <string name="type">Typ</string>
@@ -46,7 +47,7 @@
   <string name="time">tid</string>
   <string name="distance">distans</string>
   <string name="speed">hastighet</string>
-  <string name="pace">takt</string>
+  <string name="pace">tempo</string>
   <string name="heartrate">puls</string>
   <string name="heartrate_zone">pulszon</string>
   <string name="zone">Zon</string>
@@ -67,8 +68,8 @@
   <string name="next_lap">Nästa varv</string>
   <string name="pause">Pausa</string>
   <string name="stop">Stoppa</string>
-  <string name="workout">Träningspass</string>
-  <string name="download_workouts">Ladda ned träningspass</string>
+  <string name="workout">Workout</string>
+  <string name="download_workouts">Ladda ned workout</string>
   <string name="audio_cue_settings">Ljudmeddelanden inställningar</string>
   <string name="sport">Sport</string>
   <string name="target">Mål</string>
@@ -99,7 +100,7 @@
   <string name="tab_notes">Noteringar</string>
   <string name="tab_laps">Varv</string>
   <string name="tab_map">Karta</string>
-  <string name="tab_graph">Kurva</string>
+  <string name="tab_graph">Graf</string>
   <string name="tab_upload">Ladda upp</string>
   <string name="configure">Konfigurera</string>
   <string name="disconnect">Koppla ifrån</string>
@@ -133,27 +134,27 @@
   <string name="clear_heart_rate_zone_settings">Rensa inställningar för pulszon</string>
   <string name="manage_accounts">Hantera konton</string>
   <string name="manage_audio_cues">Hantera ljudmeddelanden</string>
-  <string name="manage_workouts">Hantera träningspass</string>
+  <string name="manage_workouts">Hantera workout</string>
   <string name="settings">Inställningar</string>
   <string name="what_s_new">Nytt</string>
   <string name="rate_runner_up">Recensera RunnerUp</string>
-  <string name="enable_gps">Tillåt GPS</string>
+  <string name="enable_gps">Slå på GPS</string>
   <string name="waiting_for_gps">Väntar på GPS</string>
   <string name="start_activity">Starta aktivitet</string>
   <string name="clear_hr_settings">Rensa puls-inställningar</string>
   <string name="heart_rate_monitor_is_not_supported_for_your_device">Pulsmätare stöds inte för din enhet</string>
   <string name="select_type_of_bluetooth_device">Välj typ av Bluetooth-enhet</string>
   <string name="scanning">Skannar</string>
-  <string name="failed_to_load_workout">Misslyckades att ladda träningspass!!</string>
+  <string name="failed_to_load_workout">Misslyckades att ladda workout!!</string>
   <string name="icon_list">Ikonlista</string>
   <string name="problem">Problem</string>
   <string name="edit_step">Redigera steg</string>
   <string name="create_new_audio_cue_scheme">Skapa nytt schema för ljudmeddelande</string>
   <string name="great">Kanon!</string>
-  <string name="ok_darn">Ok... skräp!</string>
+  <string name="ok_darn">Ok... typiskt!</string>
   <string name="yes">Ja</string>
   <string name="create">Skapa</string>
-  <string name="darn">Skräp!</string>
+  <string name="darn">Nedrans!</string>
   <string name="dismiss">Avslå</string>
   <string name="no_way">Inte alls</string>
   <string name="no">Nej</string>
@@ -163,7 +164,7 @@
   <string name="try_again_later">försök igen senare!</string>
   <string name="are_you_sure">Är du säker?</string>
   <string name="configure_audio_cues">Konfigurera ljudmeddelanden</string>
-  <string name="downloadeditremove_workouts">Ladda ned/redigera/ta bort träningspass</string>
+  <string name="downloadeditremove_workouts">Ladda ned/redigera/ta bort workout</string>
   <string name="note_you_need_to_connect_to_the_account_too">Obs, du måste ansluta till kontot också</string>
   <string name="use_your_headset_to_startpauseresume_runner_up">Använd dina lurar för att starta/pausa/återuppta RunnerUp</string>
   <string name="export_database_to_sdcard_eg_for_upgrade">Exportera databas till sd-kort (t.ex. före uppgradering)</string>
@@ -178,7 +179,7 @@
   <string name="autolap">Auto-varv</string>
   <string name="autolap_m">Auto-varv (m)</string>
   <string name="autopause">Auto-paus</string>
-  <string name="enable_runner_up_live">Tillåt RunnerUpLive</string>
+  <string name="enable_runner_up_live">Slå på RunnerUpLive</string>
   <string name="headset_key_startstop">Hörlur-knapp start/stopp</string>
   <string name="activity_countdown">Nedräkning till aktivitet</string>
   <string name="countdown_time_s">Nedräkningstid (s)</string>
@@ -221,14 +222,14 @@
   <string name="target_coaching">Mål-coachning</string>
   <string name="android_text_to_speech_settings">Android text-till-tal inställningar</string>
   <string name="start">Start</string>
-  <string name="history">Histroik</string>
-  <string name="basic">Grundläggande</string>
+  <string name="history">Historik</string>
+  <string name="basic">Basic</string>
   <string name="advanced">Avancerad</string>
   <string name="manual">Manuell</string>
   <string name="add_workout_notes">Lägg till noteringar till pass</string>
   <string name="pruning_deleted_activities_from_database">Raderar borttagna aktiviteter från databas</string>
   <string name="prune">Radera</string>
-  <string name="heartrate_zones_distribution">Pulszon överföring</string>
+  <string name="heartrate_zones_distribution">Pulszon fördelning</string>
   <string name="battery_level">Batterinivå</string>
   <string name="activity_ready">Aktivitet redo</string>
   <string name="ready_to_start_running">Redo att börja springa!</string>
@@ -242,4 +243,12 @@
   <string name="do_not_show_again">Visa inte igen</string>
   <string name="waiting_for_phone">Väntar på telefon</string>
   <string name="saving_on_phone">Sparar på telefon</string>
+  <string name="save">Spara</string>
+  <string name="discard">Ta bort</string>
+  <string name="audio_cue_lang">Språk för ljudmedelanden</string>
+  <string name="Website">Hemsida</string>
+  <string name="Automatic_upload">Automatisk uppladdning</string>
+  <string name="Live">Live</string>
+  <string name="clear_uploads_msg">Notera att aktiviteterna inte tas bort från %1$s, bara från RunnerUps lista av aktiviteter för %1$s.</string>
+  <string name="clear_uploads_from_phone">Ta bort aktiviteter (från telefon)</string>
 </resources>

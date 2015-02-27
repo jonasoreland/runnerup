@@ -34,6 +34,7 @@
   <string name="duration_time_format">Длительность (чч:мм:сс)</string>
   <string name="duration_distance_format">Дистанция (м)</string>
   <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="ok_rats">ОК</string>
   <!--other-->
   <string name="google_play_services_legal_notices">Юридическая информация</string>
   <string name="type">Тип</string>
@@ -145,12 +146,15 @@
   <string name="select_type_of_bluetooth_device">Выбор типа устройства Bluetooth</string>
   <string name="scanning">Поиск</string>
   <string name="failed_to_load_workout">Не удалось загрузить тренировку!!!</string>
+  <string name="icon_list">Иконки</string>
   <string name="problem">Проблемы</string>
   <string name="edit_step">Редактирование интервала</string>
   <string name="create_new_audio_cue_scheme">Создать голосовую схему</string>
   <string name="great">Круто!</string>
+  <string name="ok_darn">ОК</string>
   <string name="yes">Да</string>
   <string name="create">Создать</string>
+  <string name="dismiss">Отклонить</string>
   <string name="no_way">Ни за что</string>
   <string name="no">Нет</string>
   <string name="loading">Загрузка...</string>
@@ -239,6 +243,7 @@
   <string name="add_workout_notes">Добавить примечание</string>
   <string name="pruning_deleted_activities_from_database">Очистить базу данных от ранее выгруженных записей</string>
   <string name="prune">Очистка базы</string>
+  <string name="heartrate_zones_distribution">Распределение тренировки по зонам ЧСС  </string>
   <string name="battery_level">Уровень заряда</string>
   <string name="activity_ready">Готово</string>
   <string name="ready_to_start_running">Готов к старту!</string>
@@ -250,5 +255,13 @@
   <string name="warning">Предупреждение</string>
   <string name="battery_level_low_notification_txt">Датчик HRM требует замены батарейки</string>
   <string name="do_not_show_again">Не показывать снова</string>
+  <string name="waiting_for_phone">Ожидание телефона</string>
   <string name="saving_on_phone">Сохранить в память телефона</string>
+  <string name="save">Сохранить</string>
+  <string name="add_step">+ Интервал</string>
+  <string name="add_repeat_step">+ Повторить</string>
+  <string name="discard">Отмена</string>
+  <string name="failed_to_create_workout">Ошибка при создании тренировки</string>
+  <string name="plus_sign">+</string>
+  <string name="minus_sign">-</string>
 </resources>

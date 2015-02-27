@@ -14,8 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_activity">attività</string>
-  <string name="cue_interval">intervallo</string>
   <string name="cue_lap">giro</string>
   <string name="cue_warmup">riscaldamento</string>
   <string name="cue_cooldown">defaticamento</string>

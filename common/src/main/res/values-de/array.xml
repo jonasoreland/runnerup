@@ -55,4 +55,6 @@
     <item>Pace</item>
     <item>Herzfrequenzbereich</item>
   </string-array>
+  <!--Audio cue languages-->
+  <!--Note: keep in same order as languagesNames-->
 </resources>

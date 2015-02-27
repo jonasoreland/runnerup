@@ -266,4 +266,27 @@
   <string name="failed_to_create_workout">ワークアウトの作成に失敗しました</string>
   <string name="plus_sign">+</string>
   <string name="minus_sign">-</string>
+  <string name="audio_cue_lang">音声合図の言語</string>
+  <string name="Website">Webサイト</string>
+  <string name="Automatic_upload">自動アップロード</string>
+  <string name="Live">ライブ</string>
+  <string name="Include_map_in_post">投稿に地図を含める</string>
+  <string name="clear_uploads_msg">%1$s から削除されないことにご注意ください。%1$s にアップロードしたワークアウトが RunnerUp のリストから削除されるだけです。</string>
+  <string name="clear_uploads_from_phone">アップロードをクリア (電話から)</string>
+  <string name="my_phone">私の電話</string>
+  <string name="Failed_to_import">インポートに失敗しました: </string>
+  <string name="Import_workout">ワークアウトをインポート: </string>
+  <string name="Saving_as">名前を付けて保存</string>
+  <string name="Overwrite_existing">既存を上書き</string>
+  <string name="Create_new_workout">新しいワークアウトを作成</string>
+  <string name="Set_workout_name">ワークアウト名を設定</string>
+  <string name="Downloading_will_overwrite">%1$s のダウンロードは %2$ ワークアウトを同じ名前で上書きします</string>
+  <string name="Delete_workout">ワークアウトを削除</string>
+  <string name="Share_workout_subject">RunnerUp ワークアウト: </string>
+  <string name="Share_workout_text">やあ\nここにあなたのお好みのワークアウトがあります。</string>
+  <string name="Share_workout_chooser">ワークアウトを共有...</string>
+  <string name="About_runnerup_msg">現時点では何もありません</string>
+  <string name="new_audio_scheme">新しい音声合図スキーム</string>
+  <string name="default_audio_scheme_name">デフォルト</string>
+  <string name="notes_hint">ワークアウトについてのメモ</string>
 </resources>
