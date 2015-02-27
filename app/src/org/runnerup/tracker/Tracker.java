@@ -466,7 +466,7 @@ public class Tracker extends android.app.Service implements
     private void internalOnLocationChanged(Location arg0) {
         long save = mBug23937Delta;
         mBug23937Delta = 0;
-        onLocationChanged(arg0);
+        onLocationChangedImpl(arg0, true); // always save this location to db
         mBug23937Delta = save;
     }
 
@@ -557,7 +557,7 @@ public class Tracker extends android.app.Service implements
 
         setNextLocationType(DB.LOCATION.TYPE_END);
         if (mActivityLastLocation != null) {
-            mDBWriter.onLocationChanged(mActivityLastLocation);
+            internalOnLocationChanged(mActivityLastLocation);
         }
 
         if (save) {
@@ -619,6 +619,10 @@ public class Tracker extends android.app.Service implements
 
     @Override
     public void onLocationChanged(Location arg0) {
+        onLocationChangedImpl(arg0, false);
+    }
+
+    private void onLocationChangedImpl(Location arg0, boolean internal) {
         long now = System.currentTimeMillis();
         if (mBug23937Checked == false) {
             long gpsTime = arg0.getTime();
@@ -636,7 +640,7 @@ public class Tracker extends android.app.Service implements
             arg0.setTime(arg0.getTime() + mBug23937Delta);
         }
 
-        if (state.get() == TrackerState.STARTED) {
+        if (internal || state.get() == TrackerState.STARTED) {
             Integer hrValue = getCurrentHRValue(now, MAX_HR_AGE);
             if (mActivityLastLocation != null) {
                 double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
@@ -687,7 +691,6 @@ public class Tracker extends android.app.Service implements
     }
 
     private void liveLog(int type) {
-
         for (WorkoutObserver l : liveLoggers) {
             l.workoutEvent(workout, type);
         }
