@@ -162,7 +162,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     private boolean headsetRegistered = false;
 
     /** Called when the activity is first created. */
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -546,6 +545,41 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
+    Workout prepareWorkout() {
+        Context ctx = getApplicationContext();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences audioPref = null;
+        Workout w = null;
+        if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
+            audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
+                    getString(R.string.pref_basic_audio));
+            Dimension target = null;
+            switch (simpleTargetType.getValueInt()) {
+                case 0: // none
+                    break;
+                case 1:
+                    target = Dimension.PACE;
+                    break;
+                case 2:
+                    target = Dimension.HRZ;
+                    break;
+            }
+            w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
+        } else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
+            audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
+                    getString(R.string.pref_interval_audio));
+            w = WorkoutBuilder.createDefaultIntervalWorkout(getResources(), pref);
+        } else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
+            audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
+                    getString(R.string.pref_advanced_audio));
+            w = advancedWorkout;
+        }
+        WorkoutBuilder.prepareWorkout(getResources(), pref, w,
+                TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
+        WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
+        return w;
+    }
+
     final OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
@@ -556,39 +590,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
             } else if (mTracker.getState() == TrackerState.CONNECTED) {
-                Context ctx = getApplicationContext();
-                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-                SharedPreferences audioPref = null;
-                Workout w = null;
-                if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
-                    audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref, "basicAudio");
-                    Dimension target = null;
-                    switch (simpleTargetType.getValueInt()) {
-                        case 0: // none
-                            break;
-                        case 1:
-                            target = Dimension.PACE;
-                            break;
-                        case 2:
-                            target = Dimension.HRZ;
-                            break;
-                    }
-                    w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
-                }
-                else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
-                    audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
-                            getResources().getString(R.string.pref_interval_audio));
-                    w = WorkoutBuilder.createDefaultIntervalWorkout(getResources(), pref);
-                }
-                else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
-                    audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
-                            getResources().getString(R.string.pref_advanced_audio));
-                    w = advancedWorkout;
-                }
-                skipStopGps = true;
-                WorkoutBuilder.prepareWorkout(getResources(), pref, w,
-                        TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
-                WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
                 mGpsStatus.stop(StartActivity.this);
 
                 /**
@@ -599,8 +600,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 /**
                  * This will start the advancedWorkoutSpinner!
                  */
-                mTracker.start(w);
+                mTracker.setWorkout(prepareWorkout());
+                mTracker.start();
 
+                skipStopGps = true;
                 Intent intent = new Intent(StartActivity.this,
                         RunActivity.class);
                 StartActivity.this.startActivityForResult(intent, 112);

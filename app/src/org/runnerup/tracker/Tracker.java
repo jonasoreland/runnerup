@@ -325,12 +325,15 @@ public class Tracker extends android.app.Service implements
         return mActivityId;
     }
 
-    public void start(Workout workout_) {
+    public void setWorkout(Workout workout) {
+        this.workout = workout;
+    }
+
+    public void start() {
         System.err.println("Tracker.start() state: " + state.get());
         assert (state.get() == TrackerState.CONNECTED);
 
         // connect workout and tracker
-        this.workout = workout_;
         workout.setTracker(this);
 
         /** Add Wear to live loggers if it's active */
