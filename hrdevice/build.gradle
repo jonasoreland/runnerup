@@ -1,4 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = "org.runnerup.hr"
+version = "1.0"
 
 android {
     compileSdkVersion 20
@@ -19,7 +23,7 @@ android {
         minSdkVersion 8
         targetSdkVersion 18
         versionCode 1
-        versionName "1.0"
+        versionName = version
     }
 
 }
@@ -49,3 +53,5 @@ class DownloadTask extends DefaultTask {
         ant.get(src: sourceUrl, dest: target)
     }
 }
+
+

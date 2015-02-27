@@ -5,6 +5,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.0-rc1'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.10.1'
+        classpath 'com.github.dcendents:android-maven-plugin:1.2'
     }
 
 }
