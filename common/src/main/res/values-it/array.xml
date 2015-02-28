@@ -55,4 +55,6 @@
     <item>ritmo</item>
     <item>zona bpm</item>
   </string-array>
+  <!--Audio cue languages-->
+  <!--Note: keep in same order as languagesNames-->
 </resources>
