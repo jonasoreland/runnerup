@@ -72,7 +72,6 @@ dependencies {
     froyoCompile 'com.android.support:support-v4:19.1.+'
     froyoCompile 'com.google.android.gms:play-services:3.2.65'
 
-    compile files('../GraphView/public/graphview-3.1.jar')
     provided files('libs/samsung_ble_sdk_200.jar')
     compile files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-1-0.jar')
 
