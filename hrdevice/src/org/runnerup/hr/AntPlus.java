@@ -37,6 +37,11 @@ import java.math.BigDecimal;
 import java.util.EnumSet;
 import java.util.HashSet;
 
+/**
+ * Provides connectivity to ANT+ modules
+ *
+ * @author jonas
+ */
 public class AntPlus extends BtHRBase {
 
     static final String NAME = "AntPlus";

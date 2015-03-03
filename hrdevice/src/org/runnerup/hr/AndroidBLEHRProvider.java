@@ -36,6 +36,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Connects to a Bluetooth Low Energy module for Android versions >= 4.3
+ *
+ * For BLE in Android versions 4.2, 4.2.1 and 4.2.2, see {@link SamsungBLEHRProvider}
+ *
+ * @author jonas
+ */
 @TargetApi(18)
 public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 

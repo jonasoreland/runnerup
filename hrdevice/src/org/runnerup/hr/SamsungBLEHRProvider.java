@@ -38,9 +38,19 @@ import com.samsung.android.sdk.bt.gatt.BluetoothGattService;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A HRProvider for BLE on Android versions 4.2, 4.2.1 and 4.2.2. For later versions, see
+ * {@link AndroidBLEHRProvider}
+ *
+ * The Samsung BLE SDK for Bluetooth Low Energy connectivity. On later versions, Android supports BLE natively
+ */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
 
+    /**
+     * @return true if device is 4.2, 4.2.1 and 4.2.2 AND the samsung ble sdk is available,
+     *          false otherwise
+     */
     public static boolean checkLibrary() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
             return false;
