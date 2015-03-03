@@ -62,6 +62,10 @@ public interface HRProvider {
     public abstract String getProviderName(); // For internal usage
 
 
+    /**
+     * @return true if the wireless module is enabled,
+     *          false otherwise
+     */
     public abstract boolean isEnabled();
 
     /**
@@ -89,7 +93,11 @@ public interface HRProvider {
     public abstract void close();
 
     /**
+     * A bonding device is a wireless module that requires devices to be
+     * paired before showing up on the scan (e.g. Bluetooth)
      *
+     * @return true if the wireless module is a bonding device,
+     *          false otherwise
      */
     public abstract boolean isBondingDevice();
 
