@@ -679,6 +679,6 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
 
     @Override
     public boolean isBondingDevice() {
-        return false;
+        return true;
     }
 }
