@@ -27,9 +27,22 @@ import android.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides instance of {@link HRProvider}
+ *
+ * @author jonas
+ */
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRManager {
 
+    /**
+     * Creates an {@link HRProvider}. This will be wrapped in a {@link RetryingHRProviderProxy}.
+     * *
+     * @param src The type of {@link HRProvider} to create. See {@link #getHRProvider(android.content.Context, String)}
+     * @return A new instance of an {@link HRProvider} or null if
+     *   A) 'src' is not a valid {@link HRProvider} type
+     *   B) the device does not support an {@link HRProvider} of type 'src'
+     */
     public static HRProvider getHRProvider(Context ctx, String src) {
         HRProvider provider = getHRProviderImpl(ctx, src);
         if (provider != null) {
@@ -38,6 +51,7 @@ public class HRManager {
         return provider;
     }
 
+    
     private static HRProvider getHRProviderImpl(Context ctx, String src) {
         System.err.println("getHRProvider(" + src + ")");
         if (src.contentEquals(SamsungBLEHRProvider.NAME)) {
@@ -82,6 +96,14 @@ public class HRManager {
         return null;
     }
 
+    /**
+     * Returns a list of {@link HRProvider}'s that are available on this device.
+     * 
+     * It is recommended to use this list only for selecting a valid {@link HRProvider}.
+     * For connecting to the device, use the instance returned by {@link #getHRProvider(android.content.Context, String)}
+     * 
+     * @return A list of all {@link HRProvider}'s that are available on this device.
+     */
     public static List<HRProvider> getHRProviderList(Context ctx) {
         Resources res = ctx.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
