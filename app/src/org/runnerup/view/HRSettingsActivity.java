@@ -49,6 +49,7 @@ import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 
 import org.runnerup.R;
+import org.runnerup.hr.HRData;
 import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
@@ -502,25 +503,31 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
     protected void readHR() {
         if (hrProvider != null) {
-            long age = hrProvider.getHRValueTimestamp();
-            int hrValue = hrProvider.getHRValue();
-            tvHR.setText(Integer.toString(hrValue));
+            HRData data = hrProvider.getHRData();
+            if(data != null) {
+                long age = data.timestamp;
+                long hrValue = 0;
+                if(data.hasHeartRate)
+                    hrValue = data.hrValue;
 
-            if (age != lastTimestamp) {
-                if (graphViewSeries == null) {
-                    timerStartTime = System.currentTimeMillis();
-                    GraphViewData empty[] = {};
-                    graphViewSeries = new GraphViewSeries(empty);
-                    graphView.addSeries(graphViewSeries);
-                }
+                tvHR.setText(Long.toString(hrValue));
 
-                graphViewListData.add(new GraphViewData((age - timerStartTime) / 1000, hrValue));
-                while (graphViewListData.size() > GRAPH_HISTORY_SECONDS) {
-                    graphViewListData.remove(0);
+                if (age != lastTimestamp) {
+                    if (graphViewSeries == null) {
+                        timerStartTime = System.currentTimeMillis();
+                        GraphViewData empty[] = {};
+                        graphViewSeries = new GraphViewSeries(empty);
+                        graphView.addSeries(graphViewSeries);
+                    }
+
+                    graphViewListData.add(new GraphViewData((age - timerStartTime) / 1000, hrValue));
+                    while (graphViewListData.size() > GRAPH_HISTORY_SECONDS) {
+                        graphViewListData.remove(0);
+                    }
+                    graphViewArrayData = graphViewListData.toArray(graphViewArrayData);
+                    graphViewSeries.resetData(graphViewArrayData);
+                    lastTimestamp = age;
                 }
-                graphViewArrayData = graphViewListData.toArray(graphViewArrayData);
-                graphViewSeries.resetData(graphViewArrayData);
-                lastTimestamp = age;
             }
         }
     }
