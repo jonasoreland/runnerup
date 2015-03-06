@@ -269,6 +269,11 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     }
 
     @Override
+    public HRData getHRData() {
+        return provider.getHRData();
+    }
+
+    @Override
     public int getBatteryLevel() {
         return provider.getBatteryLevel();
     }

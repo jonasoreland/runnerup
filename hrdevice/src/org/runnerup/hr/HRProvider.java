@@ -155,6 +155,12 @@ public interface HRProvider {
     public abstract long getHRValueTimestamp();
 
     /**
+     * @return the most recent heart rate data supplied by the device. If no device has
+     *          been connected, this will be null
+     */
+    public abstract HRData getHRData();
+
+    /**
      * @return The battery level, in percents, of the heart rate monitor device or 0 if
      *          no device has been connected or the device doesn't supply battery information
      */

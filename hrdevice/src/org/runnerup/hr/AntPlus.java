@@ -401,6 +401,13 @@ public class AntPlus extends BtHRBase {
     }
 
     @Override
+    public HRData getHRData() {
+        if(hrValue <= 0) return null;
+
+        return new HRData().setHeartRate(hrValue).setTimestampEstimate(hrTimestamp);
+    }
+
+    @Override
     public int getBatteryLevel() {
         return -1;
     }
