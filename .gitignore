@@ -34,3 +34,6 @@ build/
 *.iml
 
 lint.xml
+
+# Release signing property file
+release.properties
