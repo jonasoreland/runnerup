@@ -1,0 +1,12 @@
+# Sample release.properties.
+# Specifies the details of the keystore and key that will sign a release build
+#
+# Make a copy of this file as 'release.properties' and it will be used to sign release builds.
+# 'release.properties' will not be added to the repository
+
+# Path of keystore, either absolute or relative to the project's top directory
+keyStore=/path/to/keystore.jks
+keyStorePassword=my_keystore_password
+# The name of the alias in the keystore that you wish to use for signing
+keyAlias=runnerup
+keyAliasPassword=my_key_alias_password
