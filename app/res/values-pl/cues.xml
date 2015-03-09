@@ -14,6 +14,8 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">trening</string>
+  <string name="cue_interval">interwał</string>
   <string name="cue_lap">okrążenie</string>
   <string name="cue_warmup">rozgrzewka</string>
   <string name="cue_cooldown">uspokojenie</string>
@@ -63,4 +65,12 @@
     <item quantity="few">uderzenia na minutę</item>
     <item quantity="other">uderzeń na minutę</item>
   </plurals>
+  <string name="cue_activity_started">Trening rozpoczęty</string>
+  <string name="cue_activity_paused">Trening wstrzymany</string>
+  <string name="cue_activity_resumed">Trening wznowiony</string>
+  <string name="cue_activity_stopped">Trening zatrzymany</string>
+  <string name="cue_lap_started">Okrążenie rozpoczęte</string>
+  <string name="cue_lap_completed">Okrążenie zakończone</string>
+  <string name="cue_warmup_started">Rozgrzewka rozpoczęta</string>
+  <string name="cue_cooldown_started">Uspokojenie rozpoczęte</string>
 </resources>
