@@ -21,6 +21,8 @@ public interface Constants {
 
     public interface DB {
 
+        public static final String PRIMARY_KEY = "_id";
+
         public interface ACTIVITY {
             public static final String TABLE = "activity";
             public static final String START_TIME = "start_time";
@@ -32,6 +34,8 @@ public interface Constants {
             public static final String MAX_HR = "avg_hr";
             public static final String AVG_HR = "max_hr";
             public static final String AVG_CADENCE = "avg_cadence";
+            public static final String DELETED = "deleted";
+            public static final String NULLCOLUMNHACK = "nullColumnHack";
             public static final int SPORT_RUNNING = 0;
             public static final int SPORT_BIKING = 1;
             public static final int SPORT_OTHER = 2; // unknown
