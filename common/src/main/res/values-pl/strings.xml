@@ -62,6 +62,7 @@
   <string name="delete">Usuń</string>
   <string name="total">Całkowity</string>
   <string name="interval">Interwałowy</string>
+  <string name="remaining">Pozostało</string>
   <string name="lap">Okrążenie</string>
   <string name="new_lap">Nowe okrążenie</string>
   <string name="next_lap">Następne okrążenie</string>
@@ -263,4 +264,29 @@
   <string name="add_repeat_step">Dodaj powtórzenie</string>
   <string name="discard">Anuluj</string>
   <string name="failed_to_create_workout">Błąd przy zapisie treningu</string>
+  <string name="plus_sign">+</string>
+  <string name="minus_sign">-</string>
+  <string name="audio_cue_lang">Język komunikatów</string>
+  <string name="Website">Witryna</string>
+  <string name="Automatic_upload">Autosynchronizacja</string>
+  <string name="Live">Na żywo</string>
+  <string name="Include_map_in_post">Załącz mapę</string>
+  <string name="clear_uploads_msg">Treningi nie są usuwane z %1$s, a jedynie z listy zsynchronizowanych z %1$s w RunnerUp.</string>
+  <string name="clear_uploads_from_phone">Usuń treningi (z telefonu)</string>
+  <string name="my_phone">mój telefon</string>
+  <string name="Failed_to_import">Błąd przy imporcie</string>
+  <string name="Import_workout">Importuj trening:</string>
+  <string name="Saving_as">Zapisuje jako</string>
+  <string name="Overwrite_existing">Nadpisz istniejący</string>
+  <string name="Create_new_workout">Utwórz nowy trening</string>
+  <string name="Set_workout_name">Nazwa treningu</string>
+  <string name="Downloading_will_overwrite">Pobranie %1$s nadpisze trening %2$ z tą samą nazwą</string>
+  <string name="Delete_workout">Usuń trening</string>
+  <string name="Share_workout_subject">Trening RunnerUp:</string>
+  <string name="Share_workout_text">To jest trening, który możesz polubić.</string>
+  <string name="Share_workout_chooser">Podziel się treningiem...</string>
+  <string name="About_runnerup_msg">Nie wiele do powiedzenia w tym momencie</string>
+  <string name="new_audio_scheme">Nowy schemat wskazówek</string>
+  <string name="default_audio_scheme_name">Domyślne</string>
+  <string name="notes_hint">Notatki</string>
 </resources>
