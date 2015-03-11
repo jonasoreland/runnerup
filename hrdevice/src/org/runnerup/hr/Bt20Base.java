@@ -159,7 +159,6 @@ public abstract class Bt20Base extends BtHRBase {
         return new HRData().setHeartRate(hrValue).setTimestampEstimate(hrTimestamp);
     }
 
-
     @Override
     public int getBatteryLevel() {
         return -1;
