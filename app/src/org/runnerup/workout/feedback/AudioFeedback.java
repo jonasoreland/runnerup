@@ -108,9 +108,9 @@ public class AudioFeedback extends Feedback {
             }
             msg = msgTxt;
         } else if (event != null && scope != null) {
-            msg = res.getString(scope.getCueId()) + " " + res.getString(event.getCueId());
+            msg = formatter.getCueString(scope.getCueId()) + " " + formatter.getCueString(event.getCueId());
         } else if (event != null && intensity != null) {
-            msg = res.getString(intensity.getCueId(), "") + " " + res.getString(event.getCueId());
+            msg = formatter.getCueString(intensity.getCueId()) + " " + formatter.getCueString(event.getCueId());
         } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
             double val = w.get(scope, dimension); // SI
             msg = res.getString(scope.getCueId()) + " "
