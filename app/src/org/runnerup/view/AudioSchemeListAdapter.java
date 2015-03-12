@@ -57,8 +57,9 @@ class AudioSchemeListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        if (position == 0)
-            return "Default";
+        if (position == 0) {
+            return inflater.getContext().getString(R.string.default_audio_scheme_name);
+        }
 
         position -= 1;
 
