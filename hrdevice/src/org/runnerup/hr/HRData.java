@@ -20,13 +20,13 @@ import java.util.Arrays;
  * {@code
  * HRData data = <from_device>;
  *
- * if(data.hasHeartRate)
+ * if (data.hasHeartRate)
  *      processHeartRate(data.hrValue);
  *
- * if(data.hasRrIntervals)
+ * if (data.hasRrIntervals)
  *      processRrIntervals(data.rrIntervals);
  *
- * if(data.timeStampIsFromDevice)
+ * if (data.timeStampIsFromDevice)
  *      processTimeStampAccurate(data.timestamp)
  * else
  *      processTimeStampEstimate(data.timestamp)
