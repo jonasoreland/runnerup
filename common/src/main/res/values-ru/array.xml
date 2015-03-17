@@ -5,7 +5,7 @@
     <item>Километры</item>
   </string-array>
   <string-array name="unitValues">
-    <item>mi</item>
+    <item>Миль</item>
     <item>Км</item>
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->

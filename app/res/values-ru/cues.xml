@@ -14,11 +14,13 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_lap">круг</string>
-  <string name="cue_warmup">разминка</string>
-  <string name="cue_cooldown">заминка</string>
-  <string name="cue_current">текущий</string>
-  <string name="cue_recovery">восстановление</string>
+  <string name="cue_activity">Движение</string>
+  <string name="cue_interval">Интервал</string>
+  <string name="cue_lap">Круг</string>
+  <string name="cue_warmup">Разминка</string>
+  <string name="cue_cooldown">Заминка</string>
+  <string name="cue_current">Текущий</string>
+  <string name="cue_recovery">Восстановление</string>
   <string name="cue_perkilometer">за километр</string>
   <string name="cue_permile">за милю</string>
   <string name="cue_started">начато</string>
@@ -63,4 +65,12 @@
     <item quantity="few">удара в минуту</item>
     <item quantity="other">ударов в минуту</item>
   </plurals>
+  <string name="cue_activity_started">Начало движения</string>
+  <string name="cue_activity_paused">Пауза</string>
+  <string name="cue_activity_resumed">Продолжил движение</string>
+  <string name="cue_activity_stopped">Остановился</string>
+  <string name="cue_lap_started">Новый круг</string>
+  <string name="cue_lap_completed">Круг завершён</string>
+  <string name="cue_warmup_started">Начать разминку</string>
+  <string name="cue_cooldown_started">Начать заминку</string>
 </resources>
