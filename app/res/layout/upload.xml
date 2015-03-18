@@ -15,75 +15,99 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1_layout"
+<RelativeLayout
+  android:id="@+id/tab1_layout"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:orientation="vertical">
+
+  <LinearLayout
+    android:id="@+id/name"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:gravity="center|center_horizontal|center_vertical">
+
+    <TextView
+      android:id="@+id/account_upload_list_name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_marginLeft="200dp"/>
+
+    <ImageView
+      android:id="@+id/account_upload_list_icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentTop="true"
+      android:layout_toRightOf="@+id/account_upload_list_name"
+      android:scaleType="center"/>
+  </LinearLayout>
+
+  <ListView
+    android:id="@android:id/list"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_above="@+id/account_upload_buttons"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/name"
+    android:scrollbarAlwaysDrawVerticalTrack="true">
 
-    <LinearLayout
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center|center_horizontal|center_vertical" >
+  </ListView>
 
-        <TextView
-            android:id="@+id/account_upload_list_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="200dp" />
+  <LinearLayout
+    android:id="@+id/account_upload_buttons"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_alignParentEnd="true"
+    android:layout_above="@+id/account_action_buttons">
 
-        <ImageView
-            android:id="@+id/account_upload_list_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/account_upload_list_name"
-            android:scaleType="center" />
-    </LinearLayout>
-    
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/account_upload_buttons"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/name"
-        android:scrollbarAlwaysDrawVerticalTrack="true" >
+    <Button
+      android:id="@+id/account_upload_set_all"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/select_all"/>
 
-    </ListView>
-    
-    <LinearLayout
-        android:id="@+id/account_upload_buttons"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/account_upload_button"
-        android:orientation="horizontal" >
+    <Button
+      android:id="@+id/account_upload_clear_all"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/clear_all"/>
+  </LinearLayout>
 
-        <Button
-            android:id="@+id/account_upload_set_all"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/select_all" />
+  <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/account_action_buttons"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/account_upload_clear_all"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/clear_all" />
-    </LinearLayout>
+    <Button
+      android:id="@+id/account_upload_button"
+      style="@style/ButtonText"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/btn_blue"
+      android:text="@string/upload"
+      android:layout_above="@+id/account_download_button"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentEnd="true"/>
 
-	<Button
-        android:id="@+id/account_upload_button"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_blue"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"
-        android:text="@string/upload" />
-    
+    <Button
+      android:id="@+id/account_download_button"
+      style="@style/ButtonText"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/btn_blue"
+      android:text="@string/download"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_alignParentEnd="true"/>
+  </LinearLayout>
+
 </RelativeLayout>

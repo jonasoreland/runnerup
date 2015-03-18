@@ -76,10 +76,20 @@
         android:background="@drawable/btn_blue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/ok_account_button"
+        android:layout_above="@+id/account_download_button"
         android:text="@string/upload" />
-    
-    <Button
+
+  <Button
+    style="@style/ButtonText"
+    android:id="@+id/account_download_button"
+    android:background="@drawable/btn_blue"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="false"
+    android:text="Download"
+    android:layout_above="@+id/ok_account_button"/>
+
+  <Button
         android:id="@+id/ok_account_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_green"
@@ -87,5 +97,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="@string/ok" />
-    
+
 </RelativeLayout>
