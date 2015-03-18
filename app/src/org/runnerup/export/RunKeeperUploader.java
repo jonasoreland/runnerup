@@ -24,15 +24,20 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.common.util.Constants.DB;
-import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -46,9 +51,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -90,7 +98,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         }
     }
 
-    RunKeeperUploader(UploadManager uploadManager) {
+    public RunKeeperUploader(UploadManager uploadManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
                 JSONObject tmp = new JSONObject(uploadManager.loadData(this));
@@ -284,6 +292,105 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         return s;
     }
 
+    public Status download(SQLiteDatabase db) {
+        Status s;
+        if ((s = connect()) != Status.OK) {
+            return s;
+        }
+
+
+        /*
+        GET /fitnessActivities HTTP/1.1
+        Host: api.runkeeper.com
+        Authorization: Bearer xxxxxxxxxxxxxxxx
+        Accept: application/vnd.com.runkeeper.FitnessActivityFeed+json
+         */
+
+        //listActivities();
+
+
+        return s;
+    }
+
+    public Status listActivities(List<ActivityItem> list) {
+        Status s;
+        if ((s = connect()) != Status.OK) {
+            return s;
+        }
+
+        String requestUrl = REST_URL + fitnessActivitiesUrl;
+
+
+        while(requestUrl != null) {
+            HttpGet request = new HttpGet(requestUrl);
+            request.addHeader("Authorization", "Bearer " + access_token);
+            request.addHeader("Content-type",
+                    "application/vnd.com.runkeeper.FitnessActivityFeed+json");
+
+            HttpClient httpClient = new DefaultHttpClient();
+            try {
+                HttpResponse response = httpClient.execute(request);
+                InputStream input = response.getEntity().getContent();
+                JSONObject resp = parse(input);
+                requestUrl = parseForNext(resp, list);
+                s = Status.OK;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                requestUrl = null;
+                s = Status.ERROR;
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                requestUrl = null;
+                s = Status.ERROR;
+            }
+        }
+        return s;
+    }
+
+    private String parseForNext(JSONObject resp, List<ActivityItem> items) throws JSONException {
+
+        if (resp.has("items")) {
+            JSONArray activities = resp.getJSONArray("items");
+
+            for (int i = 0; i < activities.length(); i++) {
+                JSONObject item = activities.getJSONObject(i);
+                ActivityItem ai = new ActivityItem();
+
+                String startTime = item.getString("start_time");
+                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
+                try {
+                    ai.setStartTime(format.parse(startTime).getTime()/1000);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Float bla = Float.parseFloat(item.getString("duration"));
+                ai.setDuration(bla.longValue());
+                ai.setDistance(Float.parseFloat(item.getString("total_distance")));
+                ai.setURI(REST_URL + item.getString("uri"));
+                ai.setId(new Long(i));
+                String sport = item.getString("type");
+                if (sport.equals("Running")) {
+                    ai.setSport(Sport.RUNNING.getDbValue());
+                } else if (sport.equals("Cycling") || sport.equals("Mountain Biking")) {
+                    ai.setSport(Sport.BIKING.getDbValue());
+                } else {
+                    ai.setSport(Sport.OTHER.getDbValue());
+                }
+                items.add(ai);
+            }
+        }
+
+
+        if (resp.has("next")) {
+            return REST_URL + resp.getString("next");
+        }
+
+        return null;
+    }
+
     @Override
     public Uploader.Status upload(SQLiteDatabase db, final long mID) {
         Status s;
@@ -340,6 +447,8 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         switch (f) {
             case FEED:
             case UPLOAD:
+            case ACTIVITY_LIST:
+            case GET_ACTIVITY:
                 return true;
             case GET_WORKOUT:
             case WORKOUT_LIST:
@@ -348,6 +457,12 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
                 break;
         }
         return false;
+    }
+
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override
