@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.GoogleFitData;
 
 import java.io.IOException;
@@ -69,6 +70,16 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
                 return false;
         }
         return false;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override

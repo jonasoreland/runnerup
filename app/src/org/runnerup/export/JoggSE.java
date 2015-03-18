@@ -26,6 +26,7 @@ import android.util.Xml;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.GPX;
 import org.runnerup.common.util.Constants.DB;
 import org.w3c.dom.DOMException;
@@ -46,6 +47,7 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -326,6 +328,16 @@ public class JoggSE extends FormCrawler implements Uploader {
             ex.printStackTrace();
         }
         return s;
+
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
 
     }
 

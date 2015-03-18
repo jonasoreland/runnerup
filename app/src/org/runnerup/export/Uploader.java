@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.feed.FeedList.FeedUpdater;
 
 import java.io.File;
@@ -48,8 +49,10 @@ public interface Uploader {
         GET_WORKOUT, // download prepared workout
         FEED, // list of activities by others (and self)
         UPLOAD, // upload activity
-        LIVE // live feed of activity
-        , SKIP_MAP // skip map in upload
+        LIVE, // live feed of activity
+        SKIP_MAP, // skip map in upload
+        ACTIVITY_LIST, //list recorded activities
+        GET_ACTIVITY //downlaod recorded activity
     }
 
     /**
@@ -132,6 +135,19 @@ public interface Uploader {
      */
     public void downloadWorkout(File dst, String key) throws Exception;
 
+    /**
+     * List all recorded and online stored activities
+     *
+     * @return Status
+     */
+    public Status listActivities(List<ActivityItem> list);
+
+    /**
+     * Download a selected activity and records in the RunnerUp database
+     *
+     * @param item the ActivityItem of the activity to be downloaded
+     */
+    public void downloadActivity(ActivityItem item);
     /**
      * logout
      * 

@@ -25,6 +25,7 @@ import android.os.Build;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.NikeXML;
 import org.runnerup.feed.FeedList;
@@ -315,6 +316,16 @@ public class NikePlus extends FormCrawler implements Uploader {
                 break;
         }
         return false;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override

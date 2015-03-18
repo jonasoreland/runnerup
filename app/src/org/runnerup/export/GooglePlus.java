@@ -24,19 +24,19 @@ import android.database.sqlite.SQLiteDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.List;
 
 public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 
@@ -258,6 +258,16 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
     @Override
     public boolean checkSupport(Uploader.Feature f) {
         return false;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override

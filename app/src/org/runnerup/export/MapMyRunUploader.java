@@ -25,6 +25,7 @@ import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Encryption;
@@ -41,6 +42,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -319,6 +321,16 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
             ex.printStackTrace();
         }
         return s;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override

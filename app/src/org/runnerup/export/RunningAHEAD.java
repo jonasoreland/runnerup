@@ -26,6 +26,7 @@ import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -39,6 +40,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -251,6 +253,16 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
             ex.printStackTrace();
         }
         return s;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override

@@ -32,6 +32,7 @@ import android.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
 
@@ -135,6 +136,16 @@ public class DigifitUploader extends FormCrawler implements Uploader {
         }
 
         return false;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override
@@ -369,7 +380,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
         return _username != null && _password != null;
     }
 
-    public Status listActivities(List<Pair<String, String>> list) {
+    public Status activityList(List<Pair<String, String>> list) {
         Status errorStatus = Status.ERROR;
         Map<String, String> requestParameters = new HashMap<String, String>();
         DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US);

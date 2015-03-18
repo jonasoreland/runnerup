@@ -25,6 +25,7 @@ import android.os.Build;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.TCX;
 import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
@@ -45,6 +46,7 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -470,6 +472,16 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
         }
 
         return false;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override

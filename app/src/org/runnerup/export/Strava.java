@@ -26,6 +26,7 @@ import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -37,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Strava extends FormCrawler implements Uploader, OAuth2Server {
@@ -238,6 +240,16 @@ public class Strava extends FormCrawler implements Uploader, OAuth2Server {
             ex.printStackTrace();
         }
         return s;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override

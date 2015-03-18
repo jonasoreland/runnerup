@@ -36,11 +36,14 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.Scope;
+
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserver {
@@ -262,6 +265,16 @@ public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserv
                 break;
         }
         return false;
+    }
+
+    @Override
+    public Status listActivities(List<ActivityItem> list) {
+        return null;
+    }
+
+    @Override
+    public void downloadActivity(ActivityItem item) {
+
     }
 
     @Override
