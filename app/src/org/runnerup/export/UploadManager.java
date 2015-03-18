@@ -46,12 +46,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Uploader.AuthMethod;
 import org.runnerup.export.Uploader.Status;
+import org.runnerup.export.format.ActivityItem;
 import org.runnerup.feed.FeedList;
 import org.runnerup.tracker.WorkoutObserver;
-import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -222,6 +223,10 @@ public class UploadManager {
 
     public Uploader getUploader(long id) {
         return uploadersById.get(id);
+    }
+
+    public Uploader getUploaderByName(String name) {
+        return uploaders.get(name);
     }
 
     public void connect(final Callback callback, final String name, final boolean uploading) {
@@ -579,6 +584,27 @@ public class UploadManager {
                     + " = ?", args);
         }
     }
+
+
+    public void loadActivityList(final List<ActivityItem> items, final String uploader, final Callback callback) {
+        mSpinner.setTitle("Loading activities");
+        mSpinner.setMessage("Listing activities from " + uploader);
+        mSpinner.show();
+
+        new AsyncTask<Uploader, String, Status>() {
+            @Override
+            protected Uploader.Status doInBackground(Uploader... params) {
+                return params[0].listActivities(items);
+            }
+
+            @Override
+            protected void onPostExecute(Uploader.Status result) {
+                callback.run(uploader, result);
+                mSpinner.dismiss();
+            }
+        }.execute(uploaders.get(uploader));
+    }
+
 
     public static class WorkoutRef {
         public WorkoutRef(String uploader, String key, String name) {
