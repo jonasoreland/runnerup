@@ -142,6 +142,15 @@ public class MockHRProvider implements HRProvider {
     }
 
     @Override
+    public HRData getHRData() {
+        if (hrValue <= 0) {
+            return null;
+        }
+
+        return new HRData().setHeartRate(hrValue).setTimestampEstimate(hrTimestamp);
+    }
+
+    @Override
     public int getBatteryLevel() {
         return (int) (100 * Math.random());
     }
