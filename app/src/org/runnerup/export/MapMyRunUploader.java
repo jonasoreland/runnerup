@@ -329,7 +329,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public void downloadActivity(ActivityItem item) {
+    public Status download(SQLiteDatabase db, ActivityItem item) {
 
     }
 

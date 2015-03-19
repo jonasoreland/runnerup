@@ -292,26 +292,6 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         return s;
     }
 
-    public Status download(SQLiteDatabase db) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
-            return s;
-        }
-
-
-        /*
-        GET /fitnessActivities HTTP/1.1
-        Host: api.runkeeper.com
-        Authorization: Bearer xxxxxxxxxxxxxxxx
-        Accept: application/vnd.com.runkeeper.FitnessActivityFeed+json
-         */
-
-        //listActivities();
-
-
-        return s;
-    }
-
     public Status listActivities(List<ActivityItem> list) {
         Status s;
         if ((s = connect()) != Status.OK) {
@@ -461,8 +441,12 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
 
     @Override
-    public void downloadActivity(ActivityItem item) {
-
+    public Status download(SQLiteDatabase db, ActivityItem item) {
+        Status s;
+        if ((s = connect()) != Status.OK) {
+            return s;
+        }
+        return null;
     }
 
     @Override

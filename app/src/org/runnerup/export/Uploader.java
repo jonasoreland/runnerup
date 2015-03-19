@@ -144,10 +144,10 @@ public interface Uploader {
 
     /**
      * Download a selected activity and records in the RunnerUp database
-     *
+     *  @param db
      * @param item the ActivityItem of the activity to be downloaded
      */
-    public void downloadActivity(ActivityItem item);
+    public Status download(SQLiteDatabase db, ActivityItem item);
     /**
      * logout
      * 

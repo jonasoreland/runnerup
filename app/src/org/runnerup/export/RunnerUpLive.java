@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -273,7 +274,7 @@ public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserv
     }
 
     @Override
-    public void downloadActivity(ActivityItem item) {
+    public Status download(SQLiteDatabase db, ActivityItem item) {
 
     }
 
