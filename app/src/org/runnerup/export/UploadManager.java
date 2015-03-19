@@ -81,6 +81,8 @@ public class UploadManager {
     private final Map<Long, Uploader> uploadersById = new HashMap<Long, Uploader>();
     private ProgressDialog mSpinner = null;
 
+    public enum SyncMode { DOWNLOAD, UPLOAD; };
+
     public interface Callback {
         void run(String uploader, Uploader.Status status);
     }
@@ -585,7 +587,6 @@ public class UploadManager {
         }
     }
 
-
     public void loadActivityList(final List<ActivityItem> items, final String uploader, final Callback callback) {
         mSpinner.setTitle("Loading activities");
         mSpinner.setMessage("Listing activities from " + uploader);
@@ -856,37 +857,24 @@ public class UploadManager {
     /**
      * Upload set of activities for a specific uploader
      */
-    ArrayList<Long> uploadActivities = null;
-    Callback uploadWorkoutsCallback = null;
-    StringBuffer cancelUploading = null;
+    ArrayList<ActivityItem> syncActivitiesList = null;
+    Callback syncActivityCallback = null;
+    StringBuffer cancelSync = null;
 
-    public void uploadWorkouts(Callback uploadCallback, String uploaderName, ArrayList<Long> list,
-            final StringBuffer cancel) {
+    public void syncActivities(SyncMode mode, Callback uploadCallback, String synchronizerName, ArrayList<ActivityItem> list,
+                               final StringBuffer cancel) {
 
-        mSpinner.setTitle("Uploading activities to " + uploaderName);
-        mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        synchronized (cancel) {
-                            cancel.append('t');
-                        }
-                        mSpinner.setMessage(getResources().getString(R.string.cancelling_please_wait));
-                    }
-                });
-        mSpinner.setCancelable(false);
-        mSpinner.setCanceledOnTouchOutside(false);
-        mSpinner.setMax(list.size());
+        prepareSpinnerForSync(list, cancel, mode, synchronizerName);
 
-        load(uploaderName);
-        final Uploader uploader = uploaders.get(uploaderName);
-        if (uploader == null) {
-            uploadCallback.run(uploaderName, Status.INCORRECT_USAGE);
+        load(synchronizerName);
+        final Uploader synchronizer = uploaders.get(synchronizerName);
+        if (synchronizer == null) {
+            uploadCallback.run(synchronizerName, Status.INCORRECT_USAGE);
             return;
         }
-        cancelUploading = cancel;
-        uploadWorkoutsCallback = uploadCallback;
-        uploadActivities = list;
+        cancelSync = cancel;
+        syncActivityCallback = uploadCallback;
+        syncActivitiesList = list;
         mSpinner.show();
 
         mSpinner.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(
@@ -900,7 +888,25 @@ public class UploadManager {
                     }
                 });
 
-        uploadNextActivity(uploader);
+        syncNextActivity(synchronizer, mode);
+    }
+
+    private void prepareSpinnerForSync(ArrayList<ActivityItem> list, final StringBuffer cancel, SyncMode mode, String uploader) {
+        String msg = mode.name() + uploader;
+        mSpinner.setTitle(msg);
+        mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        synchronized (cancel) {
+                            cancel.append('t');
+                        }
+                        mSpinner.setMessage(getResources().getString(R.string.cancelling_please_wait));
+                    }
+                });
+        mSpinner.setCancelable(false);
+        mSpinner.setCanceledOnTouchOutside(false);
+        mSpinner.setMax(list.size());
     }
 
     protected boolean checkCancel(StringBuffer cancel) {
@@ -909,36 +915,45 @@ public class UploadManager {
         }
     }
 
-    void uploadNextActivity(final Uploader uploader) {
-        if (checkCancel(cancelUploading)) {
+    void syncNextActivity(final Uploader uploader, SyncMode mode) {
+        if (checkCancel(cancelSync)) {
             mSpinner.cancel();
-            uploadWorkoutsCallback.run(uploader.getName(), Uploader.Status.CANCEL);
+            syncActivityCallback.run(uploader.getName(), Uploader.Status.CANCEL);
             return;
         }
 
-        if (uploadActivities.size() == 0) {
+        if (syncActivitiesList.size() == 0) {
             mSpinner.cancel();
-            uploadWorkoutsCallback.run(uploader.getName(), Uploader.Status.OK);
+            syncActivityCallback.run(uploader.getName(), Uploader.Status.OK);
             return;
         }
 
-        mSpinner.setProgress(uploadActivities.size());
-        long id = uploadActivities.get(0);
-        uploadActivities.remove(0);
-        doUploadMulti(uploader, id);
+        mSpinner.setProgress(syncActivitiesList.size());
+        ActivityItem ai = syncActivitiesList.get(0);
+        syncActivitiesList.remove(0);
+        doSyncMulti(uploader, mode, ai);
     }
 
-    private void doUploadMulti(final Uploader uploader, final long id) {
+    private void doSyncMulti(final Uploader uploader, final SyncMode mode, final ActivityItem activityItem) {
         final ProgressDialog copySpinner = mSpinner;
         final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
-        copySpinner.setMessage(Long.toString(1 + uploadActivities.size()) + " remaining");
-        new AsyncTask<Uploader, String, Uploader.Status>() {
+        copySpinner.setMessage(Long.toString(1 + syncActivitiesList.size()) + " remaining");
+        new AsyncTask<Uploader, String, Status>() {
 
             @Override
             protected Uploader.Status doInBackground(Uploader... params) {
                 try {
-                    return uploader.upload(copyDB, id);
+                    Uploader.Status result = Uploader.Status.ERROR;
+                    switch (mode) {
+                        case UPLOAD:
+                            result = uploader.upload(copyDB, activityItem.getId());
+                            break;
+                        case DOWNLOAD:
+                            result = uploader.download(copyDB, activityItem);
+                            break;
+                    }
+                    return result;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return Uploader.Status.ERROR;
@@ -954,13 +969,13 @@ public class UploadManager {
                     case SKIP:
                         break;
                     case OK:
-                        uploadOK(uploader, copySpinner, copyDB, id);
+                        uploadOK(uploader, copySpinner, copyDB, activityItem.getId());
                         break;
                     case NEED_AUTH:
                         handleAuth(new Callback() {
                             @Override
                             public void run(String uploaderName,
-                                    org.runnerup.export.Uploader.Status status) {
+                                    Uploader.Status status) {
                                 switch (status) {
                                     case CANCEL:
                                     case SKIP:
@@ -968,11 +983,11 @@ public class UploadManager {
                                     case INCORRECT_USAGE:
                                     case NEED_AUTH: // should be handled inside
                                                     // connect "loop"
-                                        uploadActivities.clear();
-                                        uploadNextActivity(uploader);
+                                        syncActivitiesList.clear();
+                                        syncNextActivity(uploader, mode);
                                         break;
                                     case OK:
-                                        doUploadMulti(uploader, id);
+                                        doSyncMulti(uploader, mode, activityItem);
                                         break;
                                 }
                             }
@@ -980,7 +995,7 @@ public class UploadManager {
 
                         break;
                 }
-                uploadNextActivity(uploader);
+                syncNextActivity(uploader, mode);
             }
         }.execute(uploader);
     }
