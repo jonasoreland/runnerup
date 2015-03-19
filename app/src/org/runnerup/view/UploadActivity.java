@@ -57,15 +57,15 @@ public class UploadActivity extends ListActivity implements Constants {
     long uploaderID = -1;
     String uploader = null;
     Integer uploaderIcon = null;
-    Boolean downloading = Boolean.FALSE;
+    UploadManager.SyncMode syncMode = UploadManager.SyncMode.UPLOAD;
     UploadManager uploadManager = null;
 
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
-    final ArrayList<ActivityItem> syncActivities = new ArrayList<ActivityItem>();
+    final List<ActivityItem> allSyncActivities = new ArrayList<ActivityItem>();
 
-    int uploadCount = 0;
+    int syncCount = 0;
     Button actionButton = null;
     CharSequence actionButtonText = null;
 
@@ -82,7 +82,7 @@ public class UploadActivity extends ListActivity implements Constants {
         Intent intent = getIntent();
         uploader = intent.getStringExtra("uploader");
         uploaderID = intent.getLongExtra("uploaderID", -1);
-        downloading = intent.getBooleanExtra("download", Boolean.FALSE);
+        syncMode = UploadManager.SyncMode.valueOf(intent.getStringExtra("mode"));
         if (intent.hasExtra("uploaderIcon"))
             uploaderIcon = intent.getIntExtra("uploaderIcon", 0);
 
@@ -107,7 +107,7 @@ public class UploadActivity extends ListActivity implements Constants {
         {
             Button dwbtn = (Button) findViewById(R.id.account_download_button);
             Button upbtn = (Button) findViewById(R.id.account_upload_button);
-            if (downloading) {
+            if (syncMode.equals(UploadManager.SyncMode.DOWNLOAD)) {
                 dwbtn.setOnClickListener(downloadButtonClick);
                 actionButton = dwbtn;
                 actionButtonText = dwbtn.getText();
@@ -158,12 +158,11 @@ public class UploadActivity extends ListActivity implements Constants {
     }
 
     void fillData() {
-
-        if (downloading) {
+        if (syncMode.equals(UploadManager.SyncMode.DOWNLOAD)) {
             uploadManager.load(uploader);
-            uploadManager.loadActivityList(syncActivities, uploader, new UploadManager.Callback() {
+            uploadManager.loadActivityList(allSyncActivities, uploader, new UploadManager.Callback() {
                 @Override
-                public void run(String uploader, Status status) {
+                public void run(String uploaderName, Status status) {
                     filterAlreadyPresentActivities();
                     requery();
                 }
@@ -183,16 +182,16 @@ public class UploadActivity extends ListActivity implements Constants {
             Cursor c = mDB.query(DB.ACTIVITY.TABLE, from,
                     " deleted == 0 AND " + w, null,
                     null, null, "_id desc", "100");
-            syncActivities.clear();
+            allSyncActivities.clear();
             if (c.moveToFirst()) {
                 do {
                     ActivityValues ac = new ActivityValues(c);
                     ActivityItem ai = new ActivityItem(ac);
-                    syncActivities.add(ai);
+                    allSyncActivities.add(ai);
                 } while (c.moveToNext());
             }
             c.close();
-            uploadCount = syncActivities.size();
+            syncCount = allSyncActivities.size();
             requery();
         }
     }
@@ -206,7 +205,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
         Cursor c = mDB.query(DB.ACTIVITY.TABLE, from,
                 " deleted == 0", null,
-                null, null, "_id desc", "100");
+                null, null, "_id desc", null);
 
         if (c.moveToFirst()) {
             do {
@@ -217,7 +216,7 @@ public class UploadActivity extends ListActivity implements Constants {
         }
         c.close();
 
-        for (ActivityItem toDown : syncActivities) {
+        for (ActivityItem toDown : allSyncActivities) {
             for (ActivityItem present : presentActivities) {
                 if (toDown.equals(present)) {
                     toDown.setPresentFlag(Boolean.TRUE);
@@ -226,13 +225,22 @@ public class UploadActivity extends ListActivity implements Constants {
                 }
             }
         }
+        updateSyncCount();
+    }
 
+    private void updateSyncCount() {
+        syncCount = 0;
+        for (ActivityItem ai : allSyncActivities) {
+            if (ai.synchronize(syncMode)) {
+                syncCount++;
+            }
+        }
     }
 
     void requery() {
         ((BaseAdapter) this.getListAdapter()).notifyDataSetChanged();
-        if (uploadCount > 0) {
-            actionButton.setText(actionButtonText + " (" + uploadCount + ")");
+        if (syncCount > 0) {
+            actionButton.setText(actionButtonText + " (" + syncCount + ")");
             actionButton.setEnabled(true);
         } else {
             actionButton.setText(actionButtonText);
@@ -262,23 +270,23 @@ public class UploadActivity extends ListActivity implements Constants {
 
         @Override
         public int getCount() {
-            return syncActivities.size();
+            return allSyncActivities.size();
         }
 
         @Override
         public Object getItem(int arg0) {
-            return syncActivities.get(arg0);
+            return allSyncActivities.get(arg0);
         }
 
         @Override
         public long getItemId(int arg0) {
-            return syncActivities.get(arg0).getId();
+            return allSyncActivities.get(arg0).getId();
         }
 
         @Override
         public View getView(int arg0, View arg1, ViewGroup parent) {
             View view = inflater.inflate(R.layout.upload_row, parent, false);
-            ActivityItem ai = syncActivities.get(arg0);
+            ActivityItem ai = allSyncActivities.get(arg0);
 
             Float d = ai.getDistance();
             Long t = ai.getDuration();
@@ -333,16 +341,16 @@ public class UploadActivity extends ListActivity implements Constants {
                 CheckBox cb = (CheckBox) view.findViewById(R.id.upload_list_check);
                 cb.setTag(arg0);
                 cb.setOnCheckedChangeListener(checkedChangeClick);
-                cb.setChecked(!ai.getSkipFlag());
+                cb.setChecked(!ai.skipActivity());
 
-                if (ai.getPresentFlag()) {
+                if (ai.isPresent() && syncMode.equals(UploadManager.SyncMode.DOWNLOAD)) {
                     cb.setEnabled(Boolean.FALSE);
                 }
             }
 
             Long id = ai.getId();
             view.setTag(id);
-            if (!downloading) {
+            if (syncMode.equals(UploadManager.SyncMode.UPLOAD)) {
                 view.setOnClickListener(onActivityClick);
             }
 
@@ -355,15 +363,9 @@ public class UploadActivity extends ListActivity implements Constants {
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
             int pos = (Integer) arg0.getTag();
-            ActivityItem tmp = syncActivities.get(pos);
-            if (!tmp.getSkipFlag())
-                uploadCount--;
-            if (arg1) {
-                tmp.setSkipFlag(Boolean.FALSE);
-                uploadCount++;
-            } else {
-                tmp.setSkipFlag(Boolean.TRUE);
-            }
+            ActivityItem tmp = allSyncActivities.get(pos);
+            tmp.setSkipFlag(!arg1);
+            updateSyncCount();
             requery();
         }
 
@@ -372,51 +374,69 @@ public class UploadActivity extends ListActivity implements Constants {
     final OnClickListener uploadButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (syncActivities.isEmpty()) {
+            if (allSyncActivities.isEmpty()) {
                 return;
             }
-            Log.i(Constants.LOG, "Start uploading " + syncActivities.size());
+            List<ActivityItem> upload = getSelectedActivities();
+            Log.i(Constants.LOG, "Start uploading " + upload.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
-            uploadManager.syncActivities(UploadManager.SyncMode.UPLOAD, syncCallback, uploader, syncActivities, cancelSync);
+            uploadManager.syncActivities(UploadManager.SyncMode.UPLOAD, syncCallback, uploader, upload, cancelSync);
         }
     };
+
+
 
     final OnClickListener downloadButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (syncActivities.isEmpty()) {
+            if (allSyncActivities.isEmpty()) {
                 return;
             }
-            Log.i(Constants.LOG, "Start downloading " + syncActivities.size());
+            List<ActivityItem> download = getSelectedActivities();
+            Log.i(Constants.LOG, "Start downloading " + download.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
-            uploadManager.syncActivities(UploadManager.SyncMode.DOWNLOAD, syncCallback, uploader, syncActivities, cancelSync);
+            uploadManager.syncActivities(UploadManager.SyncMode.DOWNLOAD, syncCallback, uploader, download, cancelSync);
         }
     };
+
+    private List<ActivityItem> getSelectedActivities() {
+        List<ActivityItem> selected = new ArrayList<ActivityItem>();
+        for (ActivityItem tmp : allSyncActivities) {
+            if (!tmp.skipActivity())
+                selected.add(tmp);
+        }
+        return selected;
+    }
 
     final UploadManager.Callback syncCallback = new UploadManager.Callback() {
 
         @Override
-        public void run(String uploader, Status status) {
+        public void run(String uploaderName, Status status) {
             fetching = false;
             if (cancelSync.length() > 0 || status == Status.CANCEL) {
                 finish();
                 return;
             }
-            fillData();
+            if (syncMode.equals(UploadManager.SyncMode.UPLOAD)) {
+                fillData();
+            } else {
+                filterAlreadyPresentActivities();
+                requery();
+            }
         }
     };
 
     final OnClickListener clearAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            for (ActivityItem tmp : syncActivities) {
-                if (!tmp.getPresentFlag()) {
+            for (ActivityItem tmp : allSyncActivities) {
+                if (!tmp.isPresent()) {
                     tmp.setSkipFlag(Boolean.TRUE);
                 }
             }
-            uploadCount = 0;
+            updateSyncCount();
             requery();
         }
     };
@@ -424,12 +444,12 @@ public class UploadActivity extends ListActivity implements Constants {
     final OnClickListener setAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            for (ActivityItem tmp : syncActivities) {
-                if (!tmp.getPresentFlag()) {
+            for (ActivityItem tmp : allSyncActivities) {
+                if (!tmp.isPresent()) {
                     tmp.setSkipFlag(Boolean.FALSE);
                 }
             }
-            uploadCount = syncActivities.size();
+            updateSyncCount();
             requery();
         }
     };

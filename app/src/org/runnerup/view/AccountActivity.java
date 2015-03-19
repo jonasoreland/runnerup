@@ -280,7 +280,7 @@ public class AccountActivity extends Activity implements Constants {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
             intent.putExtra("uploader", uploader);
             intent.putExtra("uploaderID", uploaderID);
-            intent.putExtra("download", Boolean.FALSE);
+            intent.putExtra("mode", UploadManager.SyncMode.UPLOAD.name());
             if (uploaderIcon != null)
                 intent.putExtra("uploaderIcon", uploaderIcon.intValue());
             AccountActivity.this.startActivityForResult(intent, 113);
@@ -294,7 +294,7 @@ public class AccountActivity extends Activity implements Constants {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
             intent.putExtra("uploader", uploader);
             intent.putExtra("uploaderID", uploaderID);
-            intent.putExtra("download", Boolean.TRUE);
+            intent.putExtra("mode", UploadManager.SyncMode.DOWNLOAD.name());
             if (uploaderIcon != null)
                 intent.putExtra("uploaderIcon", uploaderIcon.intValue());
             AccountActivity.this.startActivityForResult(intent, 113);
