@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.feed.FeedList.FeedUpdater;
 
 import java.io.File;
@@ -140,14 +140,14 @@ public interface Uploader {
      *
      * @return Status
      */
-    public Status listActivities(List<ActivityItem> list);
+    public Status listActivities(List<SyncActivityItem> list);
 
     /**
      * Download a selected activity and records in the RunnerUp database
      *  @param db
      * @param item the ActivityItem of the activity to be downloaded
      */
-    public Status download(SQLiteDatabase db, ActivityItem item);
+    public Status download(SQLiteDatabase db, SyncActivityItem item);
     /**
      * logout
      * 

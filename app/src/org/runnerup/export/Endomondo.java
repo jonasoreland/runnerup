@@ -25,7 +25,7 @@ import android.os.Build;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.export.format.EndomondoTrack;
 import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
@@ -321,12 +321,12 @@ public class Endomondo extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status listActivities(List<ActivityItem> list) {
+    public Status listActivities(List<SyncActivityItem> list) {
         return Status.ERROR;
     }
 
     @Override
-    public Status download(SQLiteDatabase db, ActivityItem item) {
+    public Status download(SQLiteDatabase db, SyncActivityItem item) {
         return Status.ERROR;
     }
 

@@ -26,7 +26,7 @@ import android.net.Uri;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -386,12 +386,12 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
     }
 
     @Override
-    public Status listActivities(List<ActivityItem> list) {
+    public Status listActivities(List<SyncActivityItem> list) {
         return Status.ERROR;
     }
 
     @Override
-    public Status download(SQLiteDatabase db, ActivityItem item) {
+    public Status download(SQLiteDatabase db, SyncActivityItem item) {
         return Status.ERROR;
     }
 

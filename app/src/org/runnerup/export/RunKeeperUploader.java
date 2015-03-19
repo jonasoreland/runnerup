@@ -35,7 +35,7 @@ import org.json.JSONObject;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -294,7 +294,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         return s;
     }
 
-    public Status listActivities(List<ActivityItem> list) {
+    public Status listActivities(List<SyncActivityItem> list) {
         Status s;
         if ((s = connect()) != Status.OK) {
             return s;
@@ -331,14 +331,14 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         return s;
     }
 
-    private String parseForNext(JSONObject resp, List<ActivityItem> items) throws JSONException {
+    private String parseForNext(JSONObject resp, List<SyncActivityItem> items) throws JSONException {
 
         if (resp.has("items")) {
             JSONArray activities = resp.getJSONArray("items");
 
             for (int i = 0; i < activities.length(); i++) {
                 JSONObject item = activities.getJSONObject(i);
-                ActivityItem ai = new ActivityItem();
+                SyncActivityItem ai = new SyncActivityItem();
 
                 String startTime = item.getString("start_time");
                 SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
@@ -443,7 +443,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
 
     @Override
-    public Status download(SQLiteDatabase db, ActivityItem item) {
+    public Status download(SQLiteDatabase db, SyncActivityItem item) {
         Status s;
         if ((s = connect()) != Status.OK) {
             return s;

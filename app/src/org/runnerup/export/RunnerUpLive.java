@@ -37,7 +37,7 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
@@ -269,12 +269,12 @@ public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserv
     }
 
     @Override
-    public Status listActivities(List<ActivityItem> list) {
+    public Status listActivities(List<SyncActivityItem> list) {
         return Status.ERROR;
     }
 
     @Override
-    public Status download(SQLiteDatabase db, ActivityItem item) {
+    public Status download(SQLiteDatabase db, SyncActivityItem item) {
         return Status.ERROR;
     }
 

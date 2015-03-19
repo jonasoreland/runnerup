@@ -1,9 +1,9 @@
-package org.runnerup.export.format;
+package org.runnerup.util;
 
 import org.runnerup.db.entities.ActivityValues;
 import org.runnerup.export.UploadManager;
 
-public class ActivityItem {
+public class SyncActivityItem {
     private Long id;
 
     private Long duration;
@@ -15,7 +15,7 @@ public class ActivityItem {
     private Boolean skipFlag;
     private Boolean presentFlag;
 
-    public ActivityItem(ActivityValues ac) {
+    public SyncActivityItem(ActivityValues ac) {
         this.id = ac.getId();
         this.duration = ac.getTime();
         this.startTime = ac.getStartTime();
@@ -25,7 +25,7 @@ public class ActivityItem {
         this.presentFlag = Boolean.TRUE;
     }
 
-    public ActivityItem() {
+    public SyncActivityItem() {
         this.id = null;
         this.duration = null;
         this.startTime = null;
@@ -35,7 +35,7 @@ public class ActivityItem {
         this.presentFlag = Boolean.FALSE;
     }
 
-    public boolean equals(ActivityItem o) {
+    public boolean equals(SyncActivityItem o) {
         return this.getSport().equals(o.getSport()) &&
                this.getStartTime().equals(o.getStartTime()) &&
                this.getDistance().longValue() == o.getDistance().longValue();

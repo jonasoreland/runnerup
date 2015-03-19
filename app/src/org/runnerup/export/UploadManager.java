@@ -50,7 +50,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Uploader.AuthMethod;
 import org.runnerup.export.Uploader.Status;
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.feed.FeedList;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Encryption;
@@ -587,7 +587,7 @@ public class UploadManager {
         }
     }
 
-    public void loadActivityList(final List<ActivityItem> items, final String uploader, final Callback callback) {
+    public void loadActivityList(final List<SyncActivityItem> items, final String uploader, final Callback callback) {
         mSpinner.setTitle("Loading activities");
         mSpinner.setMessage("Listing activities from " + uploader);
         mSpinner.show();
@@ -857,11 +857,11 @@ public class UploadManager {
     /**
      * Upload set of activities for a specific uploader
      */
-    List<ActivityItem> syncActivitiesList = null;
+    List<SyncActivityItem> syncActivitiesList = null;
     Callback syncActivityCallback = null;
     StringBuffer cancelSync = null;
 
-    public void syncActivities(SyncMode mode, Callback uploadCallback, String synchronizerName, List<ActivityItem> list,
+    public void syncActivities(SyncMode mode, Callback uploadCallback, String synchronizerName, List<SyncActivityItem> list,
                                final StringBuffer cancel) {
 
         prepareSpinnerForSync(list, cancel, mode, synchronizerName);
@@ -891,7 +891,7 @@ public class UploadManager {
         syncNextActivity(synchronizer, mode);
     }
 
-    private void prepareSpinnerForSync(List<ActivityItem> list, final StringBuffer cancel, SyncMode mode, String uploader) {
+    private void prepareSpinnerForSync(List<SyncActivityItem> list, final StringBuffer cancel, SyncMode mode, String uploader) {
         String msg = mode.name() + uploader;
         mSpinner.setTitle(msg);
         mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
@@ -929,12 +929,12 @@ public class UploadManager {
         }
 
         mSpinner.setProgress(syncActivitiesList.size());
-        ActivityItem ai = syncActivitiesList.get(0);
+        SyncActivityItem ai = syncActivitiesList.get(0);
         syncActivitiesList.remove(0);
         doSyncMulti(uploader, mode, ai);
     }
 
-    private void doSyncMulti(final Uploader uploader, final SyncMode mode, final ActivityItem activityItem) {
+    private void doSyncMulti(final Uploader uploader, final SyncMode mode, final SyncActivityItem activityItem) {
         final ProgressDialog copySpinner = mSpinner;
         final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 

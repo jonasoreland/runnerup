@@ -26,7 +26,7 @@ import android.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
 
@@ -524,12 +524,12 @@ public class GarminUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status listActivities(List<ActivityItem> list) {
+    public Status listActivities(List<SyncActivityItem> list) {
         return Status.ERROR;
     }
 
     @Override
-    public Status download(SQLiteDatabase db, ActivityItem item) {
+    public Status download(SQLiteDatabase db, SyncActivityItem item) {
         return Status.ERROR;
     }
 

@@ -44,7 +44,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityValues;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader.Status;
-import org.runnerup.export.format.ActivityItem;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Sport;
 
@@ -63,7 +63,7 @@ public class UploadActivity extends ListActivity implements Constants {
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
-    final List<ActivityItem> allSyncActivities = new ArrayList<ActivityItem>();
+    final List<SyncActivityItem> allSyncActivities = new ArrayList<SyncActivityItem>();
 
     int syncCount = 0;
     Button actionButton = null;
@@ -186,7 +186,7 @@ public class UploadActivity extends ListActivity implements Constants {
             if (c.moveToFirst()) {
                 do {
                     ActivityValues ac = new ActivityValues(c);
-                    ActivityItem ai = new ActivityItem(ac);
+                    SyncActivityItem ai = new SyncActivityItem(ac);
                     allSyncActivities.add(ai);
                 } while (c.moveToNext());
             }
@@ -197,7 +197,7 @@ public class UploadActivity extends ListActivity implements Constants {
     }
 
     private void filterAlreadyPresentActivities() {
-        List<ActivityItem> presentActivities = new ArrayList<ActivityItem>();
+        List<SyncActivityItem> presentActivities = new ArrayList<SyncActivityItem>();
         final String[] from = new String[]{
                 DB.PRIMARY_KEY, DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
@@ -210,14 +210,14 @@ public class UploadActivity extends ListActivity implements Constants {
         if (c.moveToFirst()) {
             do {
                 ActivityValues av = new ActivityValues(c);
-                ActivityItem ai = new ActivityItem(av);
+                SyncActivityItem ai = new SyncActivityItem(av);
                 presentActivities.add(ai);
             } while (c.moveToNext());
         }
         c.close();
 
-        for (ActivityItem toDown : allSyncActivities) {
-            for (ActivityItem present : presentActivities) {
+        for (SyncActivityItem toDown : allSyncActivities) {
+            for (SyncActivityItem present : presentActivities) {
                 if (toDown.equals(present)) {
                     toDown.setPresentFlag(Boolean.TRUE);
                     toDown.setSkipFlag(Boolean.FALSE);
@@ -230,7 +230,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
     private void updateSyncCount() {
         syncCount = 0;
-        for (ActivityItem ai : allSyncActivities) {
+        for (SyncActivityItem ai : allSyncActivities) {
             if (ai.synchronize(syncMode)) {
                 syncCount++;
             }
@@ -286,7 +286,7 @@ public class UploadActivity extends ListActivity implements Constants {
         @Override
         public View getView(int arg0, View arg1, ViewGroup parent) {
             View view = inflater.inflate(R.layout.upload_row, parent, false);
-            ActivityItem ai = allSyncActivities.get(arg0);
+            SyncActivityItem ai = allSyncActivities.get(arg0);
 
             Float d = ai.getDistance();
             Long t = ai.getDuration();
@@ -363,7 +363,7 @@ public class UploadActivity extends ListActivity implements Constants {
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
             int pos = (Integer) arg0.getTag();
-            ActivityItem tmp = allSyncActivities.get(pos);
+            SyncActivityItem tmp = allSyncActivities.get(pos);
             tmp.setSkipFlag(!arg1);
             updateSyncCount();
             requery();
@@ -377,7 +377,7 @@ public class UploadActivity extends ListActivity implements Constants {
             if (allSyncActivities.isEmpty()) {
                 return;
             }
-            List<ActivityItem> upload = getSelectedActivities();
+            List<SyncActivityItem> upload = getSelectedActivities();
             Log.i(Constants.LOG, "Start uploading " + upload.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
@@ -393,7 +393,7 @@ public class UploadActivity extends ListActivity implements Constants {
             if (allSyncActivities.isEmpty()) {
                 return;
             }
-            List<ActivityItem> download = getSelectedActivities();
+            List<SyncActivityItem> download = getSelectedActivities();
             Log.i(Constants.LOG, "Start downloading " + download.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
@@ -401,9 +401,9 @@ public class UploadActivity extends ListActivity implements Constants {
         }
     };
 
-    private List<ActivityItem> getSelectedActivities() {
-        List<ActivityItem> selected = new ArrayList<ActivityItem>();
-        for (ActivityItem tmp : allSyncActivities) {
+    private List<SyncActivityItem> getSelectedActivities() {
+        List<SyncActivityItem> selected = new ArrayList<SyncActivityItem>();
+        for (SyncActivityItem tmp : allSyncActivities) {
             if (!tmp.skipActivity())
                 selected.add(tmp);
         }
@@ -431,7 +431,7 @@ public class UploadActivity extends ListActivity implements Constants {
     final OnClickListener clearAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            for (ActivityItem tmp : allSyncActivities) {
+            for (SyncActivityItem tmp : allSyncActivities) {
                 if (!tmp.isPresent()) {
                     tmp.setSkipFlag(Boolean.TRUE);
                 }
@@ -444,7 +444,7 @@ public class UploadActivity extends ListActivity implements Constants {
     final OnClickListener setAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            for (ActivityItem tmp : allSyncActivities) {
+            for (SyncActivityItem tmp : allSyncActivities) {
                 if (!tmp.isPresent()) {
                     tmp.setSkipFlag(Boolean.FALSE);
                 }
