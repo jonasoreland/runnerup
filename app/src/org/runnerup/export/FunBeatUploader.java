@@ -476,12 +476,12 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 
     @Override
     public Status listActivities(List<ActivityItem> list) {
-        return null;
+        return Status.ERROR;
     }
 
     @Override
     public Status download(SQLiteDatabase db, ActivityItem item) {
-
+        return Status.ERROR;
     }
 
     @Override

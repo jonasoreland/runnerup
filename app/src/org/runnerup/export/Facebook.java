@@ -387,12 +387,12 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
 
     @Override
     public Status listActivities(List<ActivityItem> list) {
-        return null;
+        return Status.ERROR;
     }
 
     @Override
     public Status download(SQLiteDatabase db, ActivityItem item) {
-
+        return Status.ERROR;
     }
 
     @Override

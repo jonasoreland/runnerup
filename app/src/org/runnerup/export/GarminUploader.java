@@ -530,7 +530,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
 
     @Override
     public Status download(SQLiteDatabase db, ActivityItem item) {
-
+        return Status.ERROR;
     }
 
     @Override
