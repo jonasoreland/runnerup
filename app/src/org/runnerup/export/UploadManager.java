@@ -857,11 +857,11 @@ public class UploadManager {
     /**
      * Upload set of activities for a specific uploader
      */
-    ArrayList<ActivityItem> syncActivitiesList = null;
+    List<ActivityItem> syncActivitiesList = null;
     Callback syncActivityCallback = null;
     StringBuffer cancelSync = null;
 
-    public void syncActivities(SyncMode mode, Callback uploadCallback, String synchronizerName, ArrayList<ActivityItem> list,
+    public void syncActivities(SyncMode mode, Callback uploadCallback, String synchronizerName, List<ActivityItem> list,
                                final StringBuffer cancel) {
 
         prepareSpinnerForSync(list, cancel, mode, synchronizerName);
@@ -891,7 +891,7 @@ public class UploadManager {
         syncNextActivity(synchronizer, mode);
     }
 
-    private void prepareSpinnerForSync(ArrayList<ActivityItem> list, final StringBuffer cancel, SyncMode mode, String uploader) {
+    private void prepareSpinnerForSync(List<ActivityItem> list, final StringBuffer cancel, SyncMode mode, String uploader) {
         String msg = mode.name() + uploader;
         mSpinner.setTitle(msg);
         mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",

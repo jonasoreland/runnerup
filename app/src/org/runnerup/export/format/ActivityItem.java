@@ -1,6 +1,7 @@
 package org.runnerup.export.format;
 
 import org.runnerup.db.entities.ActivityValues;
+import org.runnerup.export.UploadManager;
 
 public class ActivityItem {
     private Long id;
@@ -20,7 +21,7 @@ public class ActivityItem {
         this.startTime = ac.getStartTime();
         this.distance = ac.getDistance();
         this.sport = ac.getSport();
-        this.skipFlag = Boolean.TRUE;
+        this.skipFlag = Boolean.FALSE;
         this.presentFlag = Boolean.TRUE;
     }
 
@@ -41,7 +42,7 @@ public class ActivityItem {
 
     }
 
-    public Boolean getSkipFlag() {
+    public Boolean skipActivity() {
         return skipFlag;
     }
 
@@ -49,7 +50,7 @@ public class ActivityItem {
         this.skipFlag = skipFlag;
     }
 
-    public Boolean getPresentFlag() {
+    public Boolean isPresent() {
         return presentFlag;
     }
 
@@ -103,5 +104,16 @@ public class ActivityItem {
 
     public Integer getSport() {
         return sport;
+    }
+
+    public boolean synchronize(UploadManager.SyncMode syncMode) {
+        switch (syncMode) {
+            case DOWNLOAD:
+                return !this.skipActivity() && !this.isPresent();
+            case UPLOAD:
+                return !this.skipActivity() && this.isPresent();
+            default:
+                return false;
+        }
     }
 }
