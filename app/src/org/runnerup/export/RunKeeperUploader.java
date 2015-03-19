@@ -23,6 +23,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -31,6 +32,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.ActivityItem;
@@ -446,7 +448,14 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         if ((s = connect()) != Status.OK) {
             return s;
         }
-        return null;
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Log.e(Constants.LOG, "Bum");
+        }
+
+        return Status.ERROR;
     }
 
     @Override
