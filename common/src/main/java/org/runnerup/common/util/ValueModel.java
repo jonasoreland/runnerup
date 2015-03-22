@@ -65,10 +65,12 @@ public class ValueModel<T> {
     }
 
     public void registerChangeListener(ChangeListener<T> listener) {
+        if(listener == null) throw new IllegalArgumentException("listener is null");
         listeners.add(listener);
     }
 
     public void unregisterChangeListener(ChangeListener<T> listener) {
+        if(listener == null) throw new IllegalArgumentException("listener is null");
         listeners.remove(listener);
     }
 
