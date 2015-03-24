@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
+import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;
 
@@ -12,11 +13,16 @@ import java.util.ArrayList;
  */
 public class ActivityValues extends AbstractBaseValues {
 
+    public ActivityValues() {
+        super();
+    }
+
     public ActivityValues(Cursor c) {
+        super();
         try {
             toContentValues(c);
         } catch (Exception e) {
-            Log.e("RunnerUp", e.getMessage());
+            Log.e(Constants.LOG, e.getMessage());
         }
     }
 
@@ -94,7 +100,11 @@ public class ActivityValues extends AbstractBaseValues {
      * Sport type of the activity
      */
     public void setSport(Integer value) {
-        values().put(Constants.DB.ACTIVITY.SPORT, value);
+        if (value == null) {
+            values().put(Constants.DB.ACTIVITY.SPORT, Sport.OTHER.getDbValue());
+        } else {
+            values().put(Constants.DB.ACTIVITY.SPORT, value);
+        }
     }
 
     public Integer getSport() {
