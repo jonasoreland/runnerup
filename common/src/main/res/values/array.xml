@@ -102,6 +102,7 @@
       <item>Italian</item>
       <item>Polish</item>
       <item>Turkish</item>
+      <item>Portuguese</item>
   </string-array>
   <!-- Note: keep in same order as languagesNames -->
 
@@ -117,6 +118,7 @@
       <item>it</item>
       <item>pl</item>
       <item>tr</item>
+      <item>pt</item>
   </string-array>
 
 </resources>
