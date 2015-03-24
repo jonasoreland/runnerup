@@ -404,7 +404,7 @@ public class UploadActivity extends ListActivity implements Constants {
     private List<SyncActivityItem> getSelectedActivities() {
         List<SyncActivityItem> selected = new ArrayList<SyncActivityItem>();
         for (SyncActivityItem tmp : allSyncActivities) {
-            if (!tmp.skipActivity())
+            if (tmp.synchronize(syncMode))
                 selected.add(tmp);
         }
         return selected;

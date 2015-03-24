@@ -94,7 +94,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
         };
 
         return new SimpleCursorLoader(this, mDB, DB.ACTIVITY.TABLE, from, "deleted == 0", null,
-                "_id desc");
+                DB.ACTIVITY.START_TIME + " desc");
     }
 
     @Override

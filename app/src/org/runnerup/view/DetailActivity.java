@@ -895,10 +895,10 @@ public class DetailActivity extends FragmentActivity implements Constants {
             acc_time = 0;
         }
 
-        void addObservation(double delta_time, double delta_distance, double tot_distance, int hr) {
+        void addObservation(double delta_time, double delta_distance, double tot_distance, int heart) {
             if (delta_time < 500)
                 return;
-            if (hr > 0) {
+            if (heart > 0) {
                 showHR = true;
             }
 
@@ -910,11 +910,11 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
             this.time[p] = delta_time;
             this.distance[p] = delta_distance;
-            this.hr[p] = hr;
+            this.hr[p] = heart;
             pos = (pos + 1);
 
-            if (showHRZhist && hr > 0) {
-                this.hrzHist[hrCalc.getZoneInt(hr)] += delta_time;
+            if (showHRZhist && heart > 0) {
+                this.hrzHist[hrCalc.getZoneInt(heart)] += delta_time;
             }
 
             acc_time += delta_time;
