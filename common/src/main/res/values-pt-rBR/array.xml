@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Milhas</item>
+    <item>Quilômetros</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Aquecimento</item>
+    <item>Atividade</item>
+    <item>Descanso</item>
+    <item>Recuperação</item>
+    <item>Desaquecimento</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Até ser pressionado</item>
+    <item>Tempo</item>
+    <item>Distância</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Nenhuma</item>
+    <item>Ritmo</item>
+    <item>Zona de freq. cardíaca</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Corrida</item>
+    <item>Ciclismo</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>Não</item>
+    <item>Sim</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>não</item>
+    <item>sim</item>
+  </string-array>
+  <string-array name="types">
+    <item>Tempo</item>
+    <item>Distância</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Masculino</item>
+    <item>Feminino</item>
+  </string-array>
+  <string-array name="targetEntries">
+    <item>nenhuma</item>
+    <item>ritmo</item>
+    <item>zona de freq. cardíaca</item>
+  </string-array>
+  <!--Audio cue languages-->
+  <string-array name="cueLanguageNames">
+    <item>Inglês</item>
+    <item>Holandês</item>
+    <item>Alemão</item>
+    <item>Japonês</item>
+    <item>Árabe</item>
+    <item>Russo</item>
+    <item>Espanhol</item>
+    <item>Francês</item>
+    <item>Italiano</item>
+    <item>Polonês</item>
+    <item>Tuco</item>
+  </string-array>
+  <!--Note: keep in same order as languagesNames-->
+  <string-array name="cueLanguageCodes">
+    <item>en</item>
+    <item>nl</item>
+    <item>de</item>
+    <item>ja</item>
+    <item>ar</item>
+    <item>ru</item>
+    <item>es</item>
+    <item>fr</item>
+    <item>it</item>
+    <item>pl</item>
+    <item>tr</item>
+  </string-array>
+</resources>

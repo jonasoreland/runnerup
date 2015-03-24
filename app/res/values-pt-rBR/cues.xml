@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">atividade</string>
+  <string name="cue_interval">intervalo</string>
+  <string name="cue_lap">volta</string>
+  <string name="cue_warmup">aquecimento</string>
+  <string name="cue_cooldown">desaquecimento</string>
+  <string name="cue_current">atual</string>
+  <string name="cue_recovery">recuperação</string>
+  <string name="cue_perkilometer">por kilômetro</string>
+  <string name="cue_permile">por milha</string>
+  <string name="cue_started">iniciado</string>
+  <string name="cue_paused">pausado</string>
+  <string name="cue_resumed">recomeçado</string>
+  <string name="cue_stopped">parado</string>
+  <string name="cue_completed">concluído</string>
+  <string name="cue_speedup">acelerar</string>
+  <string name="cue_slowdown">desacelerar</string>
+  <plurals name="cue_hour">
+    <item quantity="one">hora</item>
+    <item quantity="other">horas</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minuto</item>
+    <item quantity="other">minutos</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">segundo</item>
+    <item quantity="other">segundos</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">metro</item>
+    <item quantity="other">metros</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">quilômetro</item>
+    <item quantity="other">quilômetros</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">milha</item>
+    <item quantity="other">milhas</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">bpm</item>
+    <item quantity="other">bpm</item>
+  </plurals>
+  <string name="cue_activity_started">atividade iniciada</string>
+  <string name="cue_activity_paused">atividade pausada</string>
+  <string name="cue_activity_resumed">atividade recomeçada</string>
+  <string name="cue_activity_stopped">atividade parada</string>
+  <string name="cue_lap_started">volta iniciada</string>
+  <string name="cue_lap_completed">volta concluída</string>
+  <string name="cue_warmup_started">aquecimento iniciado</string>
+  <string name="cue_cooldown_started">desaquecimento iniciado</string>
+</resources>
