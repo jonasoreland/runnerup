@@ -270,10 +270,10 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, new Long(mID));
         }
 
         StringWriter writer = new StringWriter();
@@ -342,7 +342,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
                 conn.disconnect();
             }
             logout();
-            return Status.OK;
+            return Pair.create(Status.OK, new Long(mID));
 
         } catch (IOException ex) {
             s.ex = ex;
@@ -357,7 +357,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             conn.disconnect();
 
         s = Status.ERROR;
-        return s;
+        return Pair.create(s, new Long(mID));
     }
 
     @Override
@@ -382,8 +382,8 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

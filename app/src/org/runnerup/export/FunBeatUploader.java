@@ -21,16 +21,17 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.util.SyncActivityItem;
-import org.runnerup.export.format.TCX;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.export.format.TCX;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Encryption;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -327,10 +328,10 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, new Long(id));
         }
 
         TCX tcx = new TCX(db);
@@ -441,9 +442,9 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 
                 conn.disconnect();
                 if (ok) {
-                    return Uploader.Status.OK;
+                    return Pair.create(Status.OK, new Long(mID));
                 } else {
-                    return Uploader.Status.CANCEL;
+                    return Pair.create(Status.CANCEL, new Long(-1));
                 }
             }
         } catch (IOException e) {
@@ -455,7 +456,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, new Long(-1));
     }
 
     @Override
@@ -480,8 +481,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

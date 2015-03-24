@@ -28,6 +28,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Pair;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -37,12 +38,12 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
-import org.runnerup.util.SyncActivityItem;
-import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
-import org.runnerup.workout.WorkoutInfo;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.Scope;
+import org.runnerup.workout.WorkoutInfo;
 
 import java.util.List;
 
@@ -274,8 +275,8 @@ public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserv
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

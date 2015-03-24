@@ -461,7 +461,7 @@ public class UploadManager {
             @Override
             protected Uploader.Status doInBackground(Uploader... params) {
                 try {
-                    return params[0].upload(copyDB, mID);
+                    return params[0].upload(copyDB, mID).first;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return Uploader.Status.ERROR;
@@ -939,12 +939,12 @@ public class UploadManager {
         final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
         copySpinner.setMessage(Long.toString(1 + syncActivitiesList.size()) + " remaining");
-        new AsyncTask<Uploader, String, Status>() {
+        new AsyncTask<Uploader, String, Pair<Status, Long>>() {
 
             @Override
-            protected Uploader.Status doInBackground(Uploader... params) {
+            protected Pair<Uploader.Status, Long> doInBackground(Uploader... params) {
                 try {
-                    Uploader.Status result = Uploader.Status.ERROR;
+                    Pair<Uploader.Status, Long> result = Pair.create(Uploader.Status.ERROR, new Long(-1));
                     switch (mode) {
                         case UPLOAD:
                             result = uploader.upload(copyDB, activityItem.getId());
@@ -956,20 +956,20 @@ public class UploadManager {
                     return result;
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    return Uploader.Status.ERROR;
+                    return Pair.create(Uploader.Status.ERROR, new Long(-1));
                 }
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
-                switch (result) {
+            protected void onPostExecute(Pair<Uploader.Status, Long> result) {
+                switch (result.first) {
                     case CANCEL:
                     case ERROR:
                     case INCORRECT_USAGE:
                     case SKIP:
                         break;
                     case OK:
-                        uploadOK(uploader, copySpinner, copyDB, activityItem.getId());
+                        uploadOK(uploader, copySpinner, copyDB, result.second);
                         break;
                     case NEED_AUTH:
                         handleAuth(new Callback() {
@@ -991,7 +991,7 @@ public class UploadManager {
                                         break;
                                 }
                             }
-                        }, uploader, result.authMethod);
+                        }, uploader, result.first.authMethod);
 
                         break;
                 }

@@ -358,10 +358,11 @@ public class GarminUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
+        Long id = new Long(mID);
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, id);
         }
 
         TCX tcx = new TCX(db);
@@ -390,7 +391,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
                 conn.disconnect();
                 JSONObject result = reply.getJSONObject("detailedImportResult");
                 if (result.getJSONArray("successes").length() == 1)
-                    return Status.OK;
+                    return Pair.create(Status.OK, id);
                 else
                     ex = new Exception("Unexpected reply: " + reply.toString());
             } else {
@@ -407,7 +408,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, id);
     }
 
     @Override
@@ -529,8 +530,8 @@ public class GarminUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

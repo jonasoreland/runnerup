@@ -235,10 +235,10 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, new Long(mID));
         }
 
         TCX tcx = new TCX(db);
@@ -307,7 +307,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
                 obj = parse(in);
                 conn.disconnect();
 
-                return Uploader.Status.OK;
+                return Pair.create(Status.OK, new Long(mID));
             }
         } catch (IOException e) {
             ex = e;
@@ -320,7 +320,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, new Long(mID));
     }
 
     @Override
@@ -329,8 +329,8 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

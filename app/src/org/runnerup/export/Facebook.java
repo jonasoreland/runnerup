@@ -23,15 +23,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.util.SyncActivityItem;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.util.Bitfield;
-import org.runnerup.common.util.Constants.DB;
+import org.runnerup.util.SyncActivityItem;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -235,10 +236,11 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
         Status s;
+        Long id = new Long(mID);
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, id);
         }
 
         FacebookCourse courseFactory = new FacebookCourse(context, db);
@@ -252,7 +254,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
             try {
                 JSONObject ret = createRun(ref, runObj);
                 System.err.println("createdRunObj: " + ret.toString());
-                return Status.OK;
+                return Pair.create(Status.OK, id);
             } catch (Exception e) {
                 System.err.println("fail1: " + e);
                 s.ex = e;
@@ -266,7 +268,7 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
         s = Status.ERROR;
         if (s.ex != null)
             s.ex.printStackTrace();
-        return s;
+        return Pair.create(s, id);
     }
 
     private JSONObject createCourse(JSONObject course) throws JSONException,
@@ -391,8 +393,8 @@ public class Facebook extends FormCrawler implements Uploader, OAuth2Server {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

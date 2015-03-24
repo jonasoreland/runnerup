@@ -21,13 +21,14 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
-import org.runnerup.util.SyncActivityItem;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
+import org.runnerup.util.SyncActivityItem;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -246,13 +247,13 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, new Long(-1));
         }
 
-        return Status.SKIP;
+        return Pair.create(Status.SKIP, new Long(-1));
     }
 
     @Override
@@ -266,8 +267,8 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

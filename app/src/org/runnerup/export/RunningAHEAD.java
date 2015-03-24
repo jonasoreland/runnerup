@@ -23,6 +23,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,10 +191,10 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, new Long(mID));
         }
 
         String URL = IMPORT_URL + "?access_token=" + access_token;
@@ -238,7 +239,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
             }
             if (responseCode == 200 && found) {
                 conn.disconnect();
-                return Status.OK;
+                return Pair.create(Status.OK, new Long(mID));
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -252,7 +253,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, new Long(mID));
     }
 
     @Override
@@ -261,8 +262,8 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override

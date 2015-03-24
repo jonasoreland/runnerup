@@ -144,8 +144,8 @@ public class DigifitUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, new Long(-1));
     }
 
     @Override
@@ -446,10 +446,10 @@ public class DigifitUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, new Long(-1));
         }
 
         Status errorStatus = Status.ERROR;
@@ -473,13 +473,13 @@ public class DigifitUploader extends FormCrawler implements Uploader {
             //
             // TODO: capture traffic from the app in order to use a better API
             // endpoint.
-            return Status.OK;
+            return Pair.create(Status.OK, new Long(mID));
         } catch (Exception ex) {
             errorStatus.ex = ex;
             System.err.println("Digifit returned: " + ex);
         }
 
-        return errorStatus;
+        return Pair.create(errorStatus, new Long(-1));
     }
 
     private void uploadFileToDigifit(String payload, String uploadUrl) throws Exception {

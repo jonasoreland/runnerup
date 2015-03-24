@@ -27,11 +27,10 @@ import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.common.util.Constants.DB;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -317,8 +316,8 @@ public class FormCrawler {
         wr.close();
     }
 
-    public Status upload(SQLiteDatabase db, long mID) {
-        return Status.OK;
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+        return Pair.create(Status.OK, new Long(mID));
     }
 
     /**
