@@ -34,7 +34,9 @@ import org.json.JSONObject;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityValues;
+import org.runnerup.db.entities.IObjectValues;
 import org.runnerup.db.entities.LapValues;
 import org.runnerup.db.entities.LocationValues;
 import org.runnerup.export.format.RunKeeper;
@@ -119,7 +121,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         POINT_TYPE.put("gps", DB.LOCATION.TYPE_GPS);
         POINT_TYPE.put("pause", DB.LOCATION.TYPE_PAUSE);
         POINT_TYPE.put("resume", DB.LOCATION.TYPE_RESUME);
-        POINT_TYPE.put("manual", Integer.valueOf("0"));
+        POINT_TYPE.put("manual", DB.LOCATION.TYPE_GPS);
     }
 
     public RunKeeperUploader(UploadManager uploadManager) {
@@ -514,7 +516,8 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         // if activity inserted properly than proceed
         if (newActivity.getId() != null && newActivity.getId() > -1) {
 
-            List<LapValues> laps = new ArrayList<LapValues>();
+            List<IObjectValues> laps = new ArrayList<IObjectValues>();
+            List<IObjectValues> locations = new ArrayList<IObjectValues>();
 
             JSONArray distance = response.getJSONArray("distance");
             JSONArray path = response.getJSONArray("path");
@@ -573,8 +576,6 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
                     countOverall++;
                 }
 
-                lv.setLap(laps.size());
-
                 meters = Float.valueOf(dist) - meters;
                 time = timePoint.getKey() - time;
                 if (time > 0) {
@@ -596,7 +597,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
 
                     // update previous lap with duration and distance
                     if (laps.size() > 1) {
-                        LapValues previousLap = laps.get(laps.size() - 2);
+                        LapValues previousLap = (LapValues) laps.get(laps.size() - 2);
                         previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
                         previousLap.setTime((int) (timePoint.getKey() / ONE_THOUSEND) - previousLap.getTime());
 
@@ -611,7 +612,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
                 }
                 // update last lap with duration and distance
                 if (!points.hasNext()) {
-                    LapValues previousLap = laps.get(laps.size() - 1);
+                    LapValues previousLap = (LapValues) laps.get(laps.size() - 1);
                     previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
                     previousLap.setTime((int) (timePoint.getKey() / ONE_THOUSEND) - previousLap.getTime());
 
@@ -620,10 +621,10 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
                         previousLap.setAvgHr(sumHr / count);
                     }
                 }
-                // insert location and end transaction unsuccessfully
-                if (lv.insert(db) < 0) {
-                    db.endTransaction();
-                }
+
+                lv.setLap(laps.size()-1);
+
+                locations.add(lv);
             }
             // calculate avg and max hr
             // update the activity
@@ -633,12 +634,18 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
             }
             newActivity.update(db);
 
-            // insert all lap objects
-            for (LapValues lap : laps) {
-                if (lap.insert(db) < 0) {
-                    db.endTransaction();
-                }
+            // insert location and end transaction unsuccessfully
+            if (DBHelper.bulkInsert(locations, db) != locations.size()) {
+                db.endTransaction();
+                return -1L;
             }
+
+            // insert all lap objects
+            if (DBHelper.bulkInsert(laps, db) != laps.size()) {
+                db.endTransaction();
+                return -1L;
+            }
+
             // successfully end transaction
             db.setTransactionSuccessful();
             db.endTransaction();

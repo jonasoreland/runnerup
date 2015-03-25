@@ -11,7 +11,7 @@ import org.runnerup.common.util.Constants;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractBaseValues {
+public abstract class AbstractBaseValues implements IObjectValues {
 
     private final ContentValues mContentValues;
 

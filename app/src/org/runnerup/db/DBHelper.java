@@ -29,6 +29,7 @@ import android.os.Build;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
+import org.runnerup.db.entities.IObjectValues;
 import org.runnerup.export.DigifitUploader;
 import org.runnerup.export.Endomondo;
 import org.runnerup.export.Facebook;
@@ -46,6 +47,7 @@ import org.runnerup.export.RuntasticUploader;
 import org.runnerup.export.Strava;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
@@ -562,5 +564,16 @@ public class DBHelper extends SQLiteOpenHelper implements
             if (onComplete != null)
                 onComplete.run();
         }
+    }
+
+    public static int bulkInsert(List<IObjectValues> objectList, SQLiteDatabase db) {
+        int result = 0;
+        for (IObjectValues obj : objectList) {
+            long id = obj.insert(db);
+            if (id != -1) {
+                result++;
+            }
+        }
+        return result;
     }
 }
