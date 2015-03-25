@@ -257,7 +257,6 @@
   <string name="warning">Warning</string>
   <string name="battery_level_low_notification_txt">The battery level of your heart-rate monitor is low.</string>
   <string name="do_not_show_again">Do not show again</string>
-
   <string name="waiting_for_phone">Waiting for phone</string>
   <string name="saving_on_phone">Saving on phone</string>
   <string name="save">Save</string>
@@ -290,4 +289,8 @@
   <string name="new_audio_scheme">New audio scheme</string>
   <string name="default_audio_scheme_name">Default</string>
   <string name="notes_hint">Notes about your workout</string>
+  <string name="downloading_from">Downloading from %1$s</string>
+  <string name="uploading_to">Uploading to %1$s</string>
+  <string name="loading_activities">Loading activities</string>
+  <string name="fetching_list">Fetching activities from %1$s</string>
 </resources>

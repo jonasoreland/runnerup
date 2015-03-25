@@ -81,7 +81,20 @@ public class UploadManager {
     private final Map<Long, Uploader> uploadersById = new HashMap<Long, Uploader>();
     private ProgressDialog mSpinner = null;
 
-    public enum SyncMode { DOWNLOAD, UPLOAD; };
+    public enum SyncMode {
+        DOWNLOAD(R.string.downloading_from),
+        UPLOAD(R.string.uploading_to);
+
+        final int textId;
+
+        SyncMode(int textId) {
+            this.textId = textId;
+        }
+
+        public int getTextId() {
+            return textId;
+        }
+    };
 
     public interface Callback {
         void run(String uploader, Uploader.Status status);
@@ -454,7 +467,7 @@ public class UploadManager {
         final ProgressDialog copySpinner = mSpinner;
         final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
-        copySpinner.setMessage("Uploading " + uploader.getName());
+        copySpinner.setMessage(getResources().getString(SyncMode.UPLOAD.getTextId(), uploader.getName()));
 
         new AsyncTask<Uploader, String, Uploader.Status>() {
 
@@ -588,8 +601,8 @@ public class UploadManager {
     }
 
     public void loadActivityList(final List<SyncActivityItem> items, final String uploader, final Callback callback) {
-        mSpinner.setTitle("Loading activities");
-        mSpinner.setMessage("Listing activities from " + uploader);
+        mSpinner.setTitle(getResources().getString(R.string.loading_activities));
+        mSpinner.setMessage(getResources().getString(R.string.fetching_list, uploader));
         mSpinner.show();
 
         new AsyncTask<Uploader, String, Status>() {
@@ -892,7 +905,7 @@ public class UploadManager {
     }
 
     private void prepareSpinnerForSync(List<SyncActivityItem> list, final StringBuffer cancel, SyncMode mode, String uploader) {
-        String msg = mode.name() + uploader;
+        String msg = getResources().getString(mode.getTextId(), uploader);
         mSpinner.setTitle(msg);
         mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
                 new OnClickListener() {

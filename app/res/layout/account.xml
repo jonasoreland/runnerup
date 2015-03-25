@@ -86,7 +86,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="false"
-    android:text="Download"
+    android:text="@string/download"
     android:layout_above="@+id/ok_account_button"/>
 
   <Button
