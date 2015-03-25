@@ -63,7 +63,7 @@ public class ActivityValues extends AbstractBaseValues {
 
     public Long getTime() {
         if (values().containsKey(Constants.DB.ACTIVITY.TIME)) {
-            return values().getAsLong(Constants.DB.ACTIVITY.TIME);
+            return Double.valueOf(values().getAsString(Constants.DB.ACTIVITY.TIME)).longValue();
         }
         return null;
     }
