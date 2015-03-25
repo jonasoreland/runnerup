@@ -204,7 +204,7 @@ public class UploadActivity extends ListActivity implements Constants {
         };
 
         Cursor c = mDB.query(DB.ACTIVITY.TABLE, from,
-                " deleted == 0", null,
+                " deleted = 0", null,
                 null, null, "_id desc", null);
 
         if (c.moveToFirst()) {
@@ -218,7 +218,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
         for (SyncActivityItem toDown : allSyncActivities) {
             for (SyncActivityItem present : presentActivities) {
-                if (toDown.equals(present)) {
+                if (toDown.isSimilarTo(present)) {
                     toDown.setPresentFlag(Boolean.TRUE);
                     toDown.setSkipFlag(Boolean.FALSE);
                     break;

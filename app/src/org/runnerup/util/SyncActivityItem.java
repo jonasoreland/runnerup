@@ -1,5 +1,8 @@
 package org.runnerup.util;
 
+import android.util.Log;
+
+import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.ActivityValues;
 import org.runnerup.export.UploadManager;
 
@@ -35,10 +38,11 @@ public class SyncActivityItem {
         this.presentFlag = Boolean.FALSE;
     }
 
-    public boolean equals(SyncActivityItem o) {
+    public boolean isSimilarTo(SyncActivityItem o) {
         return this.getSport().equals(o.getSport()) &&
-               this.getStartTime().equals(o.getStartTime()) &&
-               this.getDistance().longValue() == o.getDistance().longValue();
+               Math.abs(this.getStartTime().longValue() - o.getStartTime().longValue()) < 30 &&
+                (Math.abs(this.getDuration().longValue() - o.getDuration().longValue()) < 30 ||
+                 Math.abs(this.getDistance().longValue() - o.getDistance().longValue()) < 100);
 
     }
 
