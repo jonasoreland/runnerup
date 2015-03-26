@@ -18,7 +18,7 @@ Changes can be previewed using an emulator.
 
 ### IDE
 
-You may wish to consider [Eclipse](http://www.eclipse.org/) or [Android Studio](https://developer.android.com/sdk/installing/studio.html).
+You may wish to consider [Eclipse](http://www.eclipse.org/), [Android Studio](https://developer.android.com/sdk/installing/studio.html) or [NetBeans IDE](https://netbeans.org/).
 
 To build the app using Android Studio, see [this guide](Documentation/howto-build-with-android-studio.txt).
 
