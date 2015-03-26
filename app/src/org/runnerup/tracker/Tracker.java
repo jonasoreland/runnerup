@@ -92,7 +92,7 @@ public class Tracker extends android.app.Service implements
 	 */
     long mLapId = 0;
     long mActivityId = 0;
-    double mElapsedTimeMillis = 0;
+    long mElapsedTimeMillis = 0;
     double mElapsedDistance = 0;
     double mHeartbeats = 0;
     double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
@@ -604,7 +604,7 @@ public class Tracker extends android.app.Service implements
         mLocationType = newType;
     }
 
-    public double getTime() {
+    public long getTime() {
         return mElapsedTimeMillis / 1000;
     }
 
