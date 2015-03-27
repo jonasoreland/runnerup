@@ -26,6 +26,8 @@ Releases can be downloaded on the [Play Store](https://play.google.com/store/app
 Depending on your IDE, see according documentation:
 - for Android Studio, please see [how to build with Android Studio](Documentation/howto-build-with-android-studio.txt).
 
+- for NetBeans IDE, please see [how to build with NetBeans IDE](Documentation/howto-build-with-netbeans-ide.txt).
+
 - UPDATE: Eclipse is currently broken,
 for Eclipse, please see [how to build with Eclipse](Documentation/howto-build-with-eclipse.txt).
 

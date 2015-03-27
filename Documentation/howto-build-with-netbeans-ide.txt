@@ -1,0 +1,15 @@
+Building with NetBeans IDE is quite easy. Just follow these steps:
+
+    1. Run the following command to get all submodules:
+        git submodule init && git submodule update
+
+    2. Make sure the Android (NBAndroid) and Android Gradle Support plugins are installed in the IDE
+
+    3. Open NetBeans IDE and then open the project RunnerUp
+
+    4. Expand Subprojects and open "app"
+
+    5. On project "app" right-click and choose Build
+       The built .apk are under app/build/outputs/apk/
+
+    6. Additional tasks such as install to device are under right-click and choose Tasks

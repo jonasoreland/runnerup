@@ -35,5 +35,8 @@ build/
 
 lint.xml
 
+# NetBeans IDE project files
+/.nb-gradle/private/
+
 # Release signing property file
 release.properties
