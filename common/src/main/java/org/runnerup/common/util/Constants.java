@@ -19,6 +19,8 @@ package org.runnerup.common.util;
 
 public interface Constants {
 
+    String LOG = "org.runnerup";
+
     public interface DB {
 
         public static final String PRIMARY_KEY = "_id";

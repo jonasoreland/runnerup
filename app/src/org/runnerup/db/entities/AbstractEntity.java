@@ -11,15 +11,20 @@ import org.runnerup.common.util.Constants;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractBaseValues {
+public abstract class AbstractEntity implements DBEntity {
 
-    private final ContentValues mContentValues = new ContentValues();
+    private final ContentValues mContentValues;
 
     protected abstract List<String> getValidColumns();
 
     protected abstract String getTableName();
 
     protected abstract String getNullColumnHack();
+
+
+    public AbstractEntity() {
+        this.mContentValues = new ContentValues();
+    }
 
     /**
      * Returns the {@code ContentValues} wrapped by this object.
@@ -35,8 +40,12 @@ public abstract class AbstractBaseValues {
         return null;
     }
 
-    public void insert(SQLiteDatabase db) {
-        db.insert(getTableName(), getNullColumnHack(), values());
+    public void setId(Long value) {
+        values().put(Constants.DB.PRIMARY_KEY, value);
+    }
+
+    public long insert(SQLiteDatabase db) {
+        return db.insert(getTableName(), getNullColumnHack(), values());
     }
 
     public void update(SQLiteDatabase db) {

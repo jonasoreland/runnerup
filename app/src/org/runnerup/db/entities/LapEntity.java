@@ -1,5 +1,8 @@
 package org.runnerup.db.entities;
 
+import android.database.Cursor;
+import android.util.Log;
+
 import org.runnerup.common.util.Constants;
 
 import java.util.ArrayList;
@@ -7,17 +10,31 @@ import java.util.ArrayList;
 /**
  * Content values wrapper for the {@code lap} table.
  */
-public class LapValues extends AbstractBaseValues {
+public class LapEntity extends AbstractEntity {
+
+    public LapEntity() {
+        super();
+    }
+
+    public LapEntity(Cursor c) {
+        super();
+        try {
+            toContentValues(c);
+        } catch (Exception e) {
+            Log.e(Constants.LOG, e.getMessage());
+        }
+    }
+
     /**
      * Id of the activity the lap belongs to
      */
-    public void setActivityId(Integer value) {
+    public void setActivityId(Long value) {
         values().put(Constants.DB.LAP.ACTIVITY, value);
     }
 
-    public Integer getActivityId() {
+    public Long getActivityId() {
         if (values().containsKey(Constants.DB.LAP.ACTIVITY)) {
-            return values().getAsInteger(Constants.DB.LAP.ACTIVITY);
+            return values().getAsLong(Constants.DB.LAP.ACTIVITY);
         }
         return null;
     }
