@@ -25,8 +25,8 @@ import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.TCX;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.Sport;
 
@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class MapMyRunUploader extends FormCrawler implements Uploader {
+public class MapMyRunUploader extends FormCrawler {
 
     public static final String NAME = "MapMyRun";
     private static String CONSUMER_KEY;
@@ -233,10 +233,10 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         TCX tcx = new TCX(db);
@@ -305,7 +305,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
                 obj = parse(in);
                 conn.disconnect();
 
-                return Uploader.Status.OK;
+                return Pair.create(Status.OK, mID);
             }
         } catch (IOException e) {
             ex = e;
@@ -318,7 +318,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, mID);
     }
 
     @Override

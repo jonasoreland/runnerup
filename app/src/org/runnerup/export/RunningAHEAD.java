@@ -23,13 +23,14 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -42,7 +43,7 @@ import java.net.URL;
 import java.util.zip.GZIPOutputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server {
+public class RunningAHEAD extends FormCrawler implements OAuth2Server {
 
     public static final String NAME = "RunningAHEAD";
 
@@ -188,10 +189,10 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         String URL = IMPORT_URL + "?access_token=" + access_token;
@@ -236,7 +237,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
             }
             if (responseCode == 200 && found) {
                 conn.disconnect();
-                return Status.OK;
+                return Pair.create(Status.OK, mID);
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -250,7 +251,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, mID);
     }
 
     @Override

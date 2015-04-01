@@ -26,8 +26,8 @@ import android.util.Patterns;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.TCX;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RuntasticUploader extends FormCrawler implements Uploader {
+public class RuntasticUploader extends FormCrawler {
 
     public static final String NAME = "Runtastic";
     public static final String BASE_URL = "https://www.runtastic.com";
@@ -268,10 +268,10 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
 
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         StringWriter writer = new StringWriter();
@@ -340,7 +340,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
                 conn.disconnect();
             }
             logout();
-            return Status.OK;
+            return Pair.create(Status.OK, mID);
 
         } catch (IOException ex) {
             s.ex = ex;
@@ -355,7 +355,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             conn.disconnect();
 
         s = Status.ERROR;
-        return s;
+        return Pair.create(s, mID);
     }
 
     @Override

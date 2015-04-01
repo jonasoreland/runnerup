@@ -23,16 +23,17 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.common.util.Constants.DB;
-import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -285,10 +286,10 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, mID);
         }
 
         /**
@@ -315,7 +316,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
             conn.disconnect();
             conn = null;
             if (responseCode >= 200 && responseCode < 300) {
-                return Uploader.Status.OK;
+                return Pair.create(Uploader.Status.OK, mID);
             }
             ex = new Exception(amsg);
         } catch (MalformedURLException e) {
@@ -332,7 +333,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         }
         s = Uploader.Status.ERROR;
         s.ex = ex;
-        return s;
+        return Pair.create(s, mID);
     }
 
     @Override

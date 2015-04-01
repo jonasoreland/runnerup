@@ -22,12 +22,13 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Base64;
+import android.util.Pair;
 import android.util.Xml;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.GPX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.GPX;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -52,7 +53,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class JoggSE extends FormCrawler implements Uploader {
+public class JoggSE extends FormCrawler {
 
     public static final String NAME = "jogg.se";
     private static String MASTER_USER = null;
@@ -256,10 +257,10 @@ public class JoggSE extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(final SQLiteDatabase db, final long mID) {
+    public Pair<Status, Long> upload(final SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         Exception ex = null;
@@ -299,7 +300,7 @@ public class JoggSE extends FormCrawler implements Uploader {
             System.err.println("reply: " + e.getTextContent());
             if (e != null && e.getTextContent() != null
                     && "OK".contentEquals(e.getTextContent())) {
-                return Uploader.Status.OK;
+                return Pair.create(Status.OK, mID);
             }
             throw new Exception(e.getTextContent());
         } catch (final MalformedURLException e) {
@@ -325,7 +326,7 @@ public class JoggSE extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, mID);
 
     }
 

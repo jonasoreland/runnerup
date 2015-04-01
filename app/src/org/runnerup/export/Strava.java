@@ -23,13 +23,14 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.common.util.Constants.DB;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +40,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Strava extends FormCrawler implements Uploader, OAuth2Server {
+public class Strava extends FormCrawler implements OAuth2Server {
 
     public static final String NAME = "Strava";
 
@@ -184,10 +185,10 @@ public class Strava extends FormCrawler implements Uploader, OAuth2Server {
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         String URL = REST_URL;
@@ -223,7 +224,7 @@ public class Strava extends FormCrawler implements Uploader, OAuth2Server {
 
             if (responseCode == 201 && obj.getLong("id") > 0) {
                 conn.disconnect();
-                return Status.OK;
+                return Pair.create(Status.OK, mID);
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -237,7 +238,7 @@ public class Strava extends FormCrawler implements Uploader, OAuth2Server {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, mID);
     }
 
     @Override

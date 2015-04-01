@@ -26,8 +26,8 @@ import android.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.TCX;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -45,7 +45,7 @@ import java.net.URL;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class GarminUploader extends FormCrawler implements Uploader {
+public class GarminUploader extends FormCrawler {
 
     public static final String NAME = "Garmin";
 
@@ -357,10 +357,10 @@ public class GarminUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         TCX tcx = new TCX(db);
@@ -389,7 +389,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
                 conn.disconnect();
                 JSONObject result = reply.getJSONObject("detailedImportResult");
                 if (result.getJSONArray("successes").length() == 1)
-                    return Status.OK;
+                    return Pair.create(Status.OK, mID);
                 else
                     ex = new Exception("Unexpected reply: " + reply.toString());
             } else {
@@ -406,7 +406,7 @@ public class GarminUploader extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, mID);
     }
 
     @Override

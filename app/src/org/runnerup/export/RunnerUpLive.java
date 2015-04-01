@@ -36,14 +36,14 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
-import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
-import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.Scope;
+import org.runnerup.workout.WorkoutInfo;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunnerUpLive extends FormCrawler implements Uploader, WorkoutObserver {
+public class RunnerUpLive extends FormCrawler implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
     public static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";

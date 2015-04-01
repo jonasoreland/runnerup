@@ -2,6 +2,7 @@ package org.runnerup.export;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class GoogleFitUploader extends GooglePlus implements Uploader {
+public class GoogleFitUploader extends GooglePlus {
 
     public static final String NAME = "GoogleFit";
     public static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
@@ -34,8 +35,6 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
     private static final int MAX_ATTEMPTS = 3;
 
     private final Context context;
-
-    private enum RequestMethod { GET, POST, PATCH, PUT; }
 
     GoogleFitUploader(Context ctx, UploadManager uploadManager) {
         super(uploadManager);
@@ -77,11 +76,11 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
 
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         //export DataSource if not yet existing
@@ -91,27 +90,27 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
             presentDataSources = listExistingDataSources();
         } catch (Exception e) {
             e.printStackTrace();
-            return Status.ERROR;
+            return Pair.create(Status.ERROR, UploadManager.ERROR_ACTIVITY_ID);
         }
         List<GoogleFitData.DataSourceType> activitySources = gfd.getActivityDataSourceTypes(mID);
 
         s = exportActivityDataSourceTypes(gfd, presentDataSources, activitySources);
         if (s == Status.ERROR) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         //export all DataPoint types for activity
         for (GoogleFitData.DataSourceType source : activitySources) {
             s = exportActivityData(gfd, source, mID);
             if(s == Status.ERROR) {
-                return s;
+                return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
             }
         }
 
         //export Session
         s = exportActivitySession(gfd, mID);
 
-        return s;
+        return Pair.create(Status.ERROR, mID);
     }
 
     private Status exportActivityDataSourceTypes(GoogleFitData gfd, List<String> presentDataSources, List<GoogleFitData.DataSourceType> activitySources) {

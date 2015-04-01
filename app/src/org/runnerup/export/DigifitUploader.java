@@ -32,8 +32,8 @@ import android.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.TCX;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -57,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class DigifitUploader extends FormCrawler implements Uploader {
+public class DigifitUploader extends FormCrawler {
     public static final String DIGIFIT_URL = "http://my.digifit.com";
 
     public static final String NAME = "Digifit";
@@ -369,7 +369,7 @@ public class DigifitUploader extends FormCrawler implements Uploader {
         return _username != null && _password != null;
     }
 
-    public Status listActivities(List<Pair<String, String>> list) {
+    public Status activityList(List<Pair<String, String>> list) {
         Status errorStatus = Status.ERROR;
         Map<String, String> requestParameters = new HashMap<String, String>();
         DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US);
@@ -435,10 +435,10 @@ public class DigifitUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         Status errorStatus = Status.ERROR;
@@ -462,13 +462,13 @@ public class DigifitUploader extends FormCrawler implements Uploader {
             //
             // TODO: capture traffic from the app in order to use a better API
             // endpoint.
-            return Status.OK;
+            return Pair.create(Status.OK, mID);
         } catch (Exception ex) {
             errorStatus.ex = ex;
             System.err.println("Digifit returned: " + ex);
         }
 
-        return errorStatus;
+        return Pair.create(errorStatus, UploadManager.ERROR_ACTIVITY_ID);
     }
 
     private void uploadFileToDigifit(String payload, String uploadUrl) throws Exception {

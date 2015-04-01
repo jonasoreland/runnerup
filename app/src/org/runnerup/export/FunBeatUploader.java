@@ -21,14 +21,15 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.export.format.TCX;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.Sport;
 
@@ -53,7 +54,7 @@ import java.util.Map;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class FunBeatUploader extends FormCrawler implements Uploader {
+public class FunBeatUploader extends FormCrawler {
 
     public static final String NAME = "FunBeat";
     public static final String BASE_URL = "http://www.funbeat.se";
@@ -325,10 +326,10 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         TCX tcx = new TCX(db);
@@ -439,9 +440,9 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 
                 conn.disconnect();
                 if (ok) {
-                    return Uploader.Status.OK;
+                    return Pair.create(Status.OK, mID);
                 } else {
-                    return Uploader.Status.CANCEL;
+                    return Pair.create(Status.CANCEL, UploadManager.ERROR_ACTIVITY_ID);
                 }
             }
         } catch (IOException e) {
@@ -453,7 +454,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
     }
 
     @Override

@@ -21,16 +21,17 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.NikeXML;
 import org.runnerup.feed.FeedList;
 import org.runnerup.feed.FeedList.FeedUpdater;
-import org.runnerup.common.util.Constants.DB;
-import org.runnerup.common.util.Constants.DB.FEED;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -51,7 +52,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class NikePlus extends FormCrawler implements Uploader {
+public class NikePlus extends FormCrawler {
 
     public static final String NAME = "Nike+";
     private static String CLIENT_ID = null;
@@ -228,10 +229,10 @@ public class NikePlus extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         NikeXML nikeXML = new NikeXML(db);
@@ -286,7 +287,7 @@ public class NikePlus extends FormCrawler implements Uploader {
             amsg = conn.getResponseMessage();
             conn.disconnect();
             if (responseCode == 200) {
-                return Status.OK;
+                return Pair.create(Status.OK, mID);
             }
 
             ex = new Exception(amsg);
@@ -299,7 +300,7 @@ public class NikePlus extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, mID);
     }
 
     @Override

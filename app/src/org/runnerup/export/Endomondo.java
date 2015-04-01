@@ -21,14 +21,15 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.EndomondoTrack;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.export.format.EndomondoTrack;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Sport;
 
@@ -57,7 +58,7 @@ import java.util.zip.GZIPOutputStream;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Endomondo extends FormCrawler implements Uploader {
+public class Endomondo extends FormCrawler {
 
     public static final String NAME = "Endomondo";
     public static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
@@ -236,10 +237,10 @@ public class Endomondo extends FormCrawler implements Uploader {
     }
 
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return s;
+            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
         }
 
         EndomondoTrack tcx = new EndomondoTrack(db);
@@ -285,7 +286,7 @@ public class Endomondo extends FormCrawler implements Uploader {
             String amsg = conn.getResponseMessage();
             if (responseCode == 200 &&
                     "OK".contentEquals(res.getString("_0"))) {
-                return Status.OK;
+                return Pair.create(Status.OK, mID);
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -299,7 +300,7 @@ public class Endomondo extends FormCrawler implements Uploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+        return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
     }
 
     @Override
