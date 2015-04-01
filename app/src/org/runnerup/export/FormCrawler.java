@@ -27,11 +27,10 @@ import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.Uploader.Status;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.SyncActivityItem;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -54,7 +53,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class FormCrawler {
+public class FormCrawler implements Uploader {
 
     protected final Set<String> cookies = new HashSet<String>();
     protected final FormValues formValues = new FormValues();
@@ -279,7 +278,42 @@ public class FormCrawler {
         return Status.OK;
     }
 
+    @Override
+    public long getId() {
+        return 0;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public void init(ContentValues config) {
+
+    }
+
+    @Override
+    public String getAuthConfig() {
+        return null;
+    }
+
     public Intent getAuthIntent(Activity a) {
+        return null;
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return false;
+    }
+
+    @Override
+    public void reset() {
+
+    }
+
+    @Override
+    public Status connect() {
         return null;
     }
 
@@ -303,8 +337,23 @@ public class FormCrawler {
     public void downloadWorkout(File dst, String key) throws Exception {
     }
 
+    @Override
+    public Status listActivities(List<SyncActivityItem> list) {
+        return Status.INCORRECT_USAGE;
+    }
+
+    @Override
+    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
+        return Pair.create(Status.ERROR, -1L);
+    }
+
     public Status getFeed(FeedUpdater feedUpdater) {
         return Status.OK;
+    }
+
+    @Override
+    public Status refreshToken() {
+        return null;
     }
 
     protected void postData(HttpURLConnection conn, FormValues fv) throws IOException {
@@ -317,8 +366,8 @@ public class FormCrawler {
         wr.close();
     }
 
-    public Status upload(SQLiteDatabase db, long mID) {
-        return Status.OK;
+    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+        return Pair.create(Status.ERROR, mID);
     }
 
     /**
