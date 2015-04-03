@@ -1,4 +1,24 @@
+/*
+ * Copyright (C) 2013 jonas.oreland@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.runnerup.db.entities;
+
+import android.database.Cursor;
+import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 
@@ -7,17 +27,31 @@ import java.util.ArrayList;
 /**
  * Content values wrapper for the {@code lap} table.
  */
-public class LapValues extends AbstractBaseValues {
+public class LapEntity extends AbstractEntity {
+
+    public LapEntity() {
+        super();
+    }
+
+    public LapEntity(Cursor c) {
+        super();
+        try {
+            toContentValues(c);
+        } catch (Exception e) {
+            Log.e(Constants.LOG, e.getMessage());
+        }
+    }
+
     /**
      * Id of the activity the lap belongs to
      */
-    public void setActivityId(Integer value) {
+    public void setActivityId(Long value) {
         values().put(Constants.DB.LAP.ACTIVITY, value);
     }
 
-    public Integer getActivityId() {
+    public Long getActivityId() {
         if (values().containsKey(Constants.DB.LAP.ACTIVITY)) {
-            return values().getAsInteger(Constants.DB.LAP.ACTIVITY);
+            return values().getAsLong(Constants.DB.LAP.ACTIVITY);
         }
         return null;
     }

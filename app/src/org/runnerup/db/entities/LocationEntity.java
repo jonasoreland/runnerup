@@ -1,4 +1,24 @@
+/*
+ * Copyright (C) 2013 jonas.oreland@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.runnerup.db.entities;
+
+import android.database.Cursor;
+import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 
@@ -8,17 +28,31 @@ import java.util.List;
 /**
  * Content values wrapper for the {@code location} table.
  */
-public class LocationValues extends AbstractBaseValues {
+public class LocationEntity extends AbstractEntity {
+
+    public LocationEntity() {
+        super();
+    }
+
+    public LocationEntity(Cursor c) {
+        super();
+        try {
+            toContentValues(c);
+        } catch (Exception e) {
+            Log.e(Constants.LOG, e.getMessage());
+        }
+    }
+
     /**
      * Id of the activity the location point belongs to
      */
-    public void setActivityId(int value) {
+    public void setActivityId(Long value) {
         values().put(Constants.DB.LOCATION.ACTIVITY, value);
     }
 
-    public Integer getActivityId() {
+    public Long getActivityId() {
         if (values().containsKey(Constants.DB.LOCATION.ACTIVITY)) {
-            return values().getAsInteger(Constants.DB.LOCATION.ACTIVITY);
+            return values().getAsLong(Constants.DB.LOCATION.ACTIVITY);
         }
         return null;
     }
@@ -68,13 +102,13 @@ public class LocationValues extends AbstractBaseValues {
     /**
      * Longitude of the location
      */
-    public void setLongitude(Float value) {
+    public void setLongitude(Double value) {
         values().put(Constants.DB.LOCATION.LONGITUDE, value);
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         if (values().containsKey(Constants.DB.LOCATION.LONGITUDE)) {
-            return values().getAsFloat(Constants.DB.LOCATION.LONGITUDE);
+            return values().getAsDouble(Constants.DB.LOCATION.LONGITUDE);
         }
         return null;
     }
@@ -82,13 +116,13 @@ public class LocationValues extends AbstractBaseValues {
     /**
      * Latitude of the location
      */
-    public void setLatitude(Float value) {
+    public void setLatitude(Double value) {
         values().put(Constants.DB.LOCATION.LATITUDE, value);
     }
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         if (values().containsKey(Constants.DB.LOCATION.LATITUDE)) {
-            return values().getAsFloat(Constants.DB.LOCATION.LATITUDE);
+            return values().getAsDouble(Constants.DB.LOCATION.LATITUDE);
         }
         return null;
     }
@@ -110,13 +144,13 @@ public class LocationValues extends AbstractBaseValues {
     /**
      * Altitude of the location
      */
-    public void setAltitude(Float value) {
+    public void setAltitude(Double value) {
         values().put(Constants.DB.LOCATION.ALTITUDE, value);
     }
 
-    public Float getAltitude() {
+    public Double getAltitude() {
         if (values().containsKey(Constants.DB.LOCATION.ALTITUDE)) {
-            return values().getAsFloat(Constants.DB.LOCATION.ALTITUDE);
+            return values().getAsDouble(Constants.DB.LOCATION.ALTITUDE);
         }
         return null;
     }
