@@ -43,7 +43,7 @@ import org.runnerup.workout.Scope;
 import org.runnerup.workout.WorkoutInfo;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunnerUpLive extends FormCrawler implements WorkoutObserver {
+public class RunnerUpLive extends DefaultUploader implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
     public static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
@@ -262,10 +262,5 @@ public class RunnerUpLive extends FormCrawler implements WorkoutObserver {
                 break;
         }
         return false;
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 }

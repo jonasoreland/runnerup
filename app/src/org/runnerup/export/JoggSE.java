@@ -53,7 +53,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class JoggSE extends FormCrawler {
+public class JoggSE extends DefaultUploader {
 
     public static final String NAME = "jogg.se";
     private static String MASTER_USER = null;
@@ -328,16 +328,5 @@ public class JoggSE extends FormCrawler {
         }
         return Pair.create(s, mID);
 
-    }
-
-    @Override
-    public void logout() {
-        cookies.clear();
-        formValues.clear();
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 }

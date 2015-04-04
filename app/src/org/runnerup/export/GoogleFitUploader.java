@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.GoogleFitData;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -72,7 +73,7 @@ public class GoogleFitUploader extends GooglePlus {
 
     @Override
     public String getAuthExtra() {
-        return "scope=" + FormCrawler.URLEncode(getScopes());
+        return "scope=" + SyncHelper.URLEncode(getScopes());
     }
 
     @Override
@@ -171,11 +172,11 @@ public class GoogleFitUploader extends GooglePlus {
                 if (code == 500) {
                     continue;
                 } else if (code != 200) {
-                    System.out.println(parse(new GZIPInputStream(connect.getErrorStream())));
+                    System.out.println(SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())));
                     status = Status.ERROR;
                     break;
                 } else {
-                    System.out.println(parse(new GZIPInputStream(connect.getInputStream())));
+                    System.out.println(SyncHelper.parse(new GZIPInputStream(connect.getInputStream())));
                     status = Status.OK;
                     break;
                 }
@@ -215,7 +216,7 @@ public class GoogleFitUploader extends GooglePlus {
         List<String> dataStreamIds = new ArrayList<String>();
         try {
             conn = getHttpURLConnection(REST_DATASOURCE, RequestMethod.GET);
-            final JSONObject reply = parse(new GZIPInputStream(conn.getInputStream()));
+            final JSONObject reply = SyncHelper.parse(new GZIPInputStream(conn.getInputStream()));
             int code = conn.getResponseCode();
             conn.disconnect();
 

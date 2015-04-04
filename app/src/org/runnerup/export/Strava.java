@@ -31,6 +31,9 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
+import org.runnerup.export.util.Part;
+import org.runnerup.export.util.StringWritable;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,7 +43,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Strava extends FormCrawler implements OAuth2Server {
+public class Strava extends DefaultUploader implements OAuth2Server {
 
     public static final String NAME = "Strava";
 
@@ -208,19 +211,19 @@ public class Strava extends FormCrawler implements OAuth2Server {
                     new StringWritable("tcx"));
             Part<StringWritable> part2 = new Part<StringWritable>("file",
                     new StringWritable(writer.toString()));
-            part2.filename = "RunnerUp.tcx";
-            part2.contentType = "application/octet-stream";
+            part2.setFilename("RunnerUp.tcx");
+            part2.setContentType("application/octet-stream");
             Part<?> parts[] = {
                     part0, part1, part2
             };
-            postMulti(conn, parts);
+            SyncHelper.postMulti(conn, parts);
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             System.err.println("code: " + responseCode + ", amsg: " + amsg);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            JSONObject obj = parse(in);
+            JSONObject obj = SyncHelper.parse(in);
 
             if (responseCode == 201 && obj.getLong("id") > 0) {
                 conn.disconnect();
@@ -243,10 +246,5 @@ public class Strava extends FormCrawler implements OAuth2Server {
 
     @Override
     public void logout() {
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 }

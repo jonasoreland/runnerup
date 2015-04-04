@@ -28,6 +28,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.Part;
+import org.runnerup.export.util.StringWritable;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -45,7 +49,7 @@ import java.net.URL;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class GarminUploader extends FormCrawler {
+public class GarminUploader extends DefaultUploader {
 
     public static final String NAME = "Garmin";
 
@@ -230,9 +234,9 @@ public class GarminUploader extends FormCrawler {
         {
             conn.connect();
             getCookies(conn);
-            String str = readInputStream(conn.getInputStream());
+            String str = SyncHelper.readInputStream(conn.getInputStream());
             System.err.println("checkLogin: str: " + str);
-            JSONObject obj = parse(str);
+            JSONObject obj = SyncHelper.parse(str);
             conn.disconnect();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
@@ -279,7 +283,7 @@ public class GarminUploader extends FormCrawler {
         conn.setInstanceFollowRedirects(false);
         conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         addCookies(conn);
-        postData(conn, data);
+        SyncHelper.postData(conn, data);
         expectResponse(conn, 200, "Connection 2: ");
         getCookies(conn);
         String html = getFormValues(conn);
@@ -375,16 +379,16 @@ public class GarminUploader extends FormCrawler {
             addCookies(conn);
             Part<StringWritable> part2 = new Part<StringWritable>("data",
                     new StringWritable(writer.toString()));
-            part2.filename = "RunnerUp.tcx";
-            part2.contentType = "application/octet-stream";
+            part2.setFilename("RunnerUp.tcx");
+            part2.setContentType("application/octet-stream");
             Part<?> parts[] = {
                 part2
             };
-            postMulti(conn, parts);
+            SyncHelper.postMulti(conn, parts);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             if (responseCode == 200) {
-                JSONObject reply = parse(new BufferedReader(new InputStreamReader(
+                JSONObject reply = SyncHelper.parse(new BufferedReader(new InputStreamReader(
                         conn.getInputStream())));
                 conn.disconnect();
                 JSONObject result = reply.getJSONObject("detailedImportResult");
@@ -440,7 +444,7 @@ public class GarminUploader extends FormCrawler {
             conn.connect();
             getCookies(conn);
             InputStream in = new BufferedInputStream(conn.getInputStream());
-            JSONObject obj = parse(in);
+            JSONObject obj = SyncHelper.parse(in);
             conn.disconnect();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
@@ -520,15 +524,5 @@ public class GarminUploader extends FormCrawler {
         }
         ex.printStackTrace();
         throw ex;
-    }
-
-    @Override
-    public void logout() {
-        super.logout();
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 }

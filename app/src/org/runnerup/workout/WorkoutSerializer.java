@@ -28,7 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
-import org.runnerup.export.FormCrawler;
+import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.SafeParse;
 
 import java.io.File;
@@ -74,7 +74,7 @@ public class WorkoutSerializer {
     }
 
     public static Workout readJSON(Reader in, boolean convertRestToRecovery) throws JSONException {
-        JSONObject obj = FormCrawler.parse(in);
+        JSONObject obj = SyncHelper.parse(in);
         obj = obj.getJSONObject("com.garmin.connect.workout.json.UserWorkoutJson");
         Workout w = new Workout();
         JSONArray steps = obj.getJSONArray("workoutSteps");

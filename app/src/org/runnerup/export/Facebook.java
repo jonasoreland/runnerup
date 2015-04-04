@@ -31,6 +31,9 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
+import org.runnerup.export.util.Part;
+import org.runnerup.export.util.StringWritable;
+import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Bitfield;
 
 import java.io.BufferedInputStream;
@@ -43,12 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class Facebook extends FormCrawler implements OAuth2Server {
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
-    }
+public class Facebook extends DefaultUploader implements OAuth2Server {
 
     public static final String NAME = "Facebook";
 
@@ -279,7 +277,7 @@ public class Facebook extends FormCrawler implements OAuth2Server {
 
         Part<StringWritable> themePart = new Part<StringWritable>(
                 "access_token", new StringWritable(
-                        FormCrawler.URLEncode(access_token)));
+                        SyncHelper.URLEncode(access_token)));
         Part<StringWritable> payloadPart = new Part<StringWritable>("object",
                 new StringWritable(obj.toString()));
         Part<?> parts[] = {
@@ -291,13 +289,13 @@ public class Facebook extends FormCrawler implements OAuth2Server {
         conn.setDoOutput(true);
         conn.setDoInput(true);
         conn.setRequestMethod("POST");
-        postMulti(conn, parts);
+        SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
         String msg = conn.getResponseMessage();
 
         InputStream in = new BufferedInputStream(conn.getInputStream());
-        JSONObject ref = parse(in);
+        JSONObject ref = SyncHelper.parse(in);
 
         conn.disconnect();
         if (code != 200) {
@@ -318,7 +316,7 @@ public class Facebook extends FormCrawler implements OAuth2Server {
         String id = ref.getString("id");
         ArrayList<Part<?>> list = new ArrayList<Part<?>>();
         list.add(new Part<StringWritable>("access_token",
-                new StringWritable(FormCrawler.URLEncode(access_token))));
+                new StringWritable(SyncHelper.URLEncode(access_token))));
         list.add(new Part<StringWritable>("course",
                 new StringWritable(id)));
         if (explicitly_shared)
@@ -345,13 +343,13 @@ public class Facebook extends FormCrawler implements OAuth2Server {
         conn.setDoOutput(true);
         conn.setDoInput(true);
         conn.setRequestMethod("POST");
-        postMulti(conn, parts);
+        SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
         String msg = conn.getResponseMessage();
 
         InputStream in = new BufferedInputStream(conn.getInputStream());
-        JSONObject runRef = parse(in);
+        JSONObject runRef = SyncHelper.parse(in);
 
         conn.disconnect();
         if (code != 200) {

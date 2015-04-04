@@ -30,6 +30,10 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.NikeXML;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.Part;
+import org.runnerup.export.util.StringWritable;
+import org.runnerup.export.util.SyncHelper;
 import org.runnerup.feed.FeedList;
 import org.runnerup.feed.FeedList.FeedUpdater;
 
@@ -52,7 +56,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class NikePlus extends FormCrawler {
+public class NikePlus extends DefaultUploader {
 
     public static final String NAME = "Nike+";
     private static String CLIENT_ID = null;
@@ -202,7 +206,7 @@ public class NikePlus extends FormCrawler {
                     System.err.println("buf: " + buf.toString());
                     System.err.println("res: " + response);
                 }
-                JSONObject obj = parse(new ByteArrayInputStream(response.getBytes()));
+                JSONObject obj = SyncHelper.parse(new ByteArrayInputStream(response.getBytes()));
                 conn.disconnect();
 
                 access_token = obj.getString("access_token");
@@ -254,20 +258,20 @@ public class NikePlus extends FormCrawler {
             conn.addRequestProperty("appid", APP_ID);
             Part<StringWritable> part1 = new Part<StringWritable>("runXML",
                     new StringWritable(xml.toString()));
-            part1.filename = "runXML.xml";
-            part1.contentType = "text/plain; charset=US-ASCII";
-            part1.contentTransferEncoding = "8bit";
+            part1.setFilename("runXML.xml");
+            part1.setContentType("text/plain; charset=US-ASCII");
+            part1.setContentTransferEncoding("8bit");
 
             Part<StringWritable> part2 = new Part<StringWritable>("gpxXML",
                     new StringWritable(gpx.toString()));
-            part2.filename = "gpxXML.xml";
-            part2.contentType = "text/plain; charset=US-ASCII";
-            part2.contentTransferEncoding = "8bit";
+            part2.setFilename("gpxXML.xml");
+            part2.setContentType("text/plain; charset=US-ASCII");
+            part2.setContentTransferEncoding("8bit");
 
             Part<?> parts[] = {
                     part1, part2
             };
-            postMulti(conn, parts);
+            SyncHelper.postMulti(conn, parts);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             conn.connect();
@@ -319,11 +323,6 @@ public class NikePlus extends FormCrawler {
     }
 
     @Override
-    public void logout() {
-        super.logout();
-    }
-
-    @Override
     public Status getFeed(FeedUpdater feedUpdater) {
         Status s;
         if ((s = connect()) != Status.OK) {
@@ -345,11 +344,6 @@ public class NikePlus extends FormCrawler {
         }
     }
 
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
-    }
-
     JSONObject makeGetRequest(String url) throws MalformedURLException, IOException, JSONException {
         HttpURLConnection conn = null;
         try {
@@ -359,7 +353,7 @@ public class NikePlus extends FormCrawler {
             conn.addRequestProperty("User-Agent", USER_AGENT);
             conn.addRequestProperty("appid", APP_ID);
             final InputStream in = new BufferedInputStream(conn.getInputStream());
-            final JSONObject reply = parse(in);
+            final JSONObject reply = SyncHelper.parse(in);
             final int code = conn.getResponseCode();
             conn.disconnect();
             if (code == 200)

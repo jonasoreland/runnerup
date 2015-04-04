@@ -34,6 +34,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
+import org.runnerup.export.util.Part;
+import org.runnerup.export.util.StringWritable;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -57,7 +60,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class DigifitUploader extends FormCrawler {
+public class DigifitUploader extends DefaultUploader {
     public static final String DIGIFIT_URL = "http://my.digifit.com";
 
     public static final String NAME = "Digifit";
@@ -110,7 +113,7 @@ public class DigifitUploader extends FormCrawler {
         JSONObject response = null;
         if (conn.getResponseCode() == 200) {
             try {
-                response = parse(conn.getInputStream());
+                response = SyncHelper.parse(conn.getInputStream());
             } finally {
                 conn.disconnect();
             }
@@ -135,11 +138,6 @@ public class DigifitUploader extends FormCrawler {
         }
 
         return false;
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 
     @Override
@@ -480,15 +478,15 @@ public class DigifitUploader extends FormCrawler {
         String filename = "RunnerUp.tcx";
 
         Part<StringWritable> themePart = new Part<StringWritable>("theme", new StringWritable(
-                FormCrawler.URLEncode("site")));
+                SyncHelper.URLEncode("site")));
         Part<StringWritable> payloadPart = new Part<StringWritable>("userFiles",
                 new StringWritable(payload));
-        payloadPart.filename = filename;
-        payloadPart.contentType = "application/octet-stream";
+        payloadPart.setFilename(filename);
+        payloadPart.setContentType("application/octet-stream");
         Part<?> parts[] = {
                 themePart, payloadPart
         };
-        postMulti(conn, parts);
+        SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
         if (code != 200 && code != 302) {

@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
 import org.runnerup.R;
-import org.runnerup.export.FormCrawler;
 import org.runnerup.export.GoogleFitUploader;
+import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.JsonWriter;
 
 import java.io.IOException;
@@ -412,7 +412,7 @@ public class GoogleFitData {
 
     private String getDataSetURLSuffix(DataSourceType source, long startTime, long endTime) {
         StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append(GoogleFitUploader.REST_DATASOURCE).append("/").append(FormCrawler.URLEncode(source.getDataStreamId(this))).append("/").append(GoogleFitUploader.REST_DATASETS).append("/").append(startTime).append("-").append(endTime);
+        urlSuffix.append(GoogleFitUploader.REST_DATASOURCE).append("/").append(SyncHelper.URLEncode(source.getDataStreamId(this))).append("/").append(GoogleFitUploader.REST_DATASETS).append("/").append(startTime).append("-").append(endTime);
         return urlSuffix.toString();
     }
 

@@ -33,6 +33,8 @@ import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.SyncHelper;
 import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.workout.Sport;
 
@@ -53,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Server {
+public class RunKeeperUploader extends DefaultUploader implements Uploader, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
 
@@ -252,7 +254,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
                 conn.setRequestProperty("Authorization", "Bearer "
                         + access_token);
                 InputStream in = new BufferedInputStream(conn.getInputStream());
-                uri = parse(in).getString("fitness_activities");
+                uri = SyncHelper.parse(in).getString("fitness_activities");
             } catch (MalformedURLException e) {
                 ex = e;
             } catch (IOException e) {
@@ -377,7 +379,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
             }
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
-            JSONObject obj = parse(in);
+            JSONObject obj = SyncHelper.parse(in);
             conn.disconnect();
             feed_access_token = obj.getString("accessToken");
             return s;
@@ -448,7 +450,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
                                 c.put(FEED.NOTES, p.getString("notes"));
                         }
 
-                        setName(c, e.getString("sourceUserDisplayName"));
+                        SyncHelper.setName(c, e.getString("sourceUserDisplayName"));
                         if (e.has("sourceUserAvatarUrl")
                                 && e.getString("sourceUserAvatarUrl").length() > 0) {
                             c.put(FEED.USER_IMAGE_URL, e.getString("sourceUserAvatarUrl"));
@@ -474,11 +476,6 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         return Status.OK;
     }
 
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
-    }
-
     JSONObject requestFeed(long from) throws IOException, JSONException {
         URL newurl = new URL(FEED_URL);
         HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
@@ -500,7 +497,7 @@ public class RunKeeperUploader extends FormCrawler implements Uploader, OAuth2Se
         int responseCode = conn.getResponseCode();
         String amsg = conn.getResponseMessage();
         InputStream in = new BufferedInputStream(conn.getInputStream());
-        JSONObject obj = parse(in);
+        JSONObject obj = SyncHelper.parse(in);
 
         conn.disconnect();
         if (responseCode == 200) {
