@@ -23,7 +23,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -188,10 +187,10 @@ public class Strava extends DefaultUploader implements OAuth2Server {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
+    public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         String URL = REST_URL;
@@ -227,7 +226,9 @@ public class Strava extends DefaultUploader implements OAuth2Server {
 
             if (responseCode == 201 && obj.getLong("id") > 0) {
                 conn.disconnect();
-                return Pair.create(Status.OK, mID);
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -238,10 +239,11 @@ public class Strava extends DefaultUploader implements OAuth2Server {
 
         s = Uploader.Status.ERROR;
         s.ex = ex;
+        s.activityId = mID;
         if (ex != null) {
             ex.printStackTrace();
         }
-        return Pair.create(s, mID);
+        return s;
     }
 
     @Override

@@ -361,10 +361,10 @@ public class GarminUploader extends DefaultUploader {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+    public Status upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         TCX tcx = new TCX(db);
@@ -392,10 +392,13 @@ public class GarminUploader extends DefaultUploader {
                         conn.getInputStream())));
                 conn.disconnect();
                 JSONObject result = reply.getJSONObject("detailedImportResult");
-                if (result.getJSONArray("successes").length() == 1)
-                    return Pair.create(Status.OK, mID);
-                else
+                if (result.getJSONArray("successes").length() == 1) {
+                    s = Status.OK;
+                    s.activityId = mID;
+                    return s;
+                } else {
                     ex = new Exception("Unexpected reply: " + reply.toString());
+                }
             } else {
                 ex = new Exception(amsg);
             }
@@ -410,7 +413,7 @@ public class GarminUploader extends DefaultUploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return Pair.create(s, mID);
+        return s;
     }
 
     @Override

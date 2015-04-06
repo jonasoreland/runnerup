@@ -23,7 +23,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -288,10 +287,10 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
+    public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, mID);
+            return s;
         }
 
         /**
@@ -318,7 +317,9 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
             conn.disconnect();
             conn = null;
             if (responseCode >= 200 && responseCode < 300) {
-                return Pair.create(Uploader.Status.OK, mID);
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             }
             ex = new Exception(amsg);
         } catch (MalformedURLException e) {
@@ -335,7 +336,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         }
         s = Uploader.Status.ERROR;
         s.ex = ex;
-        return Pair.create(s, mID);
+        s.activityId = mID;
+        return s;
     }
 
     @Override

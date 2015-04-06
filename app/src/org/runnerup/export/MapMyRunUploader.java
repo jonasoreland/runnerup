@@ -235,10 +235,10 @@ public class MapMyRunUploader extends DefaultUploader {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+    public Status upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         TCX tcx = new TCX(db);
@@ -307,7 +307,9 @@ public class MapMyRunUploader extends DefaultUploader {
                 obj = SyncHelper.parse(in);
                 conn.disconnect();
 
-                return Pair.create(Status.OK, mID);
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             }
         } catch (IOException e) {
             ex = e;
@@ -317,9 +319,10 @@ public class MapMyRunUploader extends DefaultUploader {
 
         s = Uploader.Status.ERROR;
         s.ex = ex;
+        s.activityId = mID;
         if (ex != null) {
             ex.printStackTrace();
         }
-        return Pair.create(s, mID);
+        return s;
     }
 }

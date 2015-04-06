@@ -22,7 +22,6 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Base64;
-import android.util.Pair;
 import android.util.Xml;
 
 import org.json.JSONException;
@@ -257,10 +256,10 @@ public class JoggSE extends DefaultUploader {
     }
 
     @Override
-    public Pair<Status, Long> upload(final SQLiteDatabase db, final long mID) {
+    public Status upload(final SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         Exception ex = null;
@@ -300,7 +299,9 @@ public class JoggSE extends DefaultUploader {
             System.err.println("reply: " + e.getTextContent());
             if (e != null && e.getTextContent() != null
                     && "OK".contentEquals(e.getTextContent())) {
-                return Pair.create(Status.OK, mID);
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             }
             throw new Exception(e.getTextContent());
         } catch (final MalformedURLException e) {
@@ -323,10 +324,11 @@ public class JoggSE extends DefaultUploader {
 
         s = Uploader.Status.ERROR;
         s.ex = ex;
+        s.activityId = mID;
         if (ex != null) {
             ex.printStackTrace();
         }
-        return Pair.create(s, mID);
+        return s;
 
     }
 }

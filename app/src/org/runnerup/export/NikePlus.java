@@ -21,7 +21,6 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -233,10 +232,10 @@ public class NikePlus extends DefaultUploader {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+    public Status upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         NikeXML nikeXML = new NikeXML(db);
@@ -291,7 +290,9 @@ public class NikePlus extends DefaultUploader {
             amsg = conn.getResponseMessage();
             conn.disconnect();
             if (responseCode == 200) {
-                return Pair.create(Status.OK, mID);
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             }
 
             ex = new Exception(amsg);
@@ -301,10 +302,11 @@ public class NikePlus extends DefaultUploader {
 
         s = Uploader.Status.ERROR;
         s.ex = ex;
+        s.activityId = mID;
         if (ex != null) {
             ex.printStackTrace();
         }
-        return Pair.create(s, mID);
+        return s;
     }
 
     @Override

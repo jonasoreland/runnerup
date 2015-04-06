@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -232,10 +231,10 @@ public class Facebook extends DefaultUploader implements OAuth2Server {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
+    public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         FacebookCourse courseFactory = new FacebookCourse(context, db);
@@ -249,7 +248,9 @@ public class Facebook extends DefaultUploader implements OAuth2Server {
             try {
                 JSONObject ret = createRun(ref, runObj);
                 System.err.println("createdRunObj: " + ret.toString());
-                return Pair.create(Status.OK, id);
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             } catch (Exception e) {
                 System.err.println("fail1: " + e);
                 s.ex = e;
@@ -263,7 +264,7 @@ public class Facebook extends DefaultUploader implements OAuth2Server {
         s = Status.ERROR;
         if (s.ex != null)
             s.ex.printStackTrace();
-        return Pair.create(s, mID);
+        return s;
     }
 
     private JSONObject createCourse(JSONObject course) throws JSONException,

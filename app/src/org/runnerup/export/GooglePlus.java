@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -247,13 +246,13 @@ public class GooglePlus extends DefaultUploader implements Uploader, OAuth2Serve
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
+    public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
-        return Pair.create(Status.SKIP, UploadManager.ERROR_ACTIVITY_ID);
+        return Status.SKIP;
     }
 
     @Override

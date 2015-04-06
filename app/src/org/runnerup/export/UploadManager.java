@@ -475,7 +475,7 @@ public class UploadManager {
             @Override
             protected Uploader.Status doInBackground(Uploader... params) {
                 try {
-                    return params[0].upload(copyDB, mID).first;
+                    return params[0].upload(copyDB, mID);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return Uploader.Status.ERROR;
@@ -953,37 +953,34 @@ public class UploadManager {
         final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
         copySpinner.setMessage(Long.toString(1 + syncActivitiesList.size()) + " remaining");
-        new AsyncTask<Uploader, String, Pair<Status, Long>>() {
+        new AsyncTask<Uploader, String, Status>() {
 
             @Override
-            protected Pair<Uploader.Status, Long> doInBackground(Uploader... params) {
+            protected Uploader.Status doInBackground(Uploader... params) {
                 try {
-                    Pair<Uploader.Status, Long> result = Pair.create(Uploader.Status.ERROR, ERROR_ACTIVITY_ID);
                     switch (mode) {
                         case UPLOAD:
-                            result = uploader.upload(copyDB, activityItem.getId());
-                            break;
+                            return uploader.upload(copyDB, activityItem.getId());
                         case DOWNLOAD:
-                            result = uploader.download(copyDB, activityItem);
-                            break;
+                            return uploader.download(copyDB, activityItem);
                     }
-                    return result;
+                    return Uploader.Status.ERROR;
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    return Pair.create(Uploader.Status.ERROR, ERROR_ACTIVITY_ID);
+                    return Uploader.Status.ERROR;
                 }
             }
 
             @Override
-            protected void onPostExecute(Pair<Uploader.Status, Long> result) {
-                switch (result.first) {
+            protected void onPostExecute(Uploader.Status result) {
+                switch (result) {
                     case CANCEL:
                     case ERROR:
                     case INCORRECT_USAGE:
                     case SKIP:
                         break;
                     case OK:
-                        uploadOK(uploader, copySpinner, copyDB, result.second);
+                        uploadOK(uploader, copySpinner, copyDB, result.activityId);
                         break;
                     case NEED_AUTH:
                         handleAuth(new Callback() {
@@ -1005,7 +1002,7 @@ public class UploadManager {
                                         break;
                                 }
                             }
-                        }, uploader, result.first.authMethod);
+                        }, uploader, result.authMethod);
 
                         break;
                 }

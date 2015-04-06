@@ -23,7 +23,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,10 +189,10 @@ public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, final long mID) {
+    public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         String URL = IMPORT_URL + "?access_token=" + access_token;
@@ -238,7 +237,7 @@ public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
             }
             if (responseCode == 200 && found) {
                 conn.disconnect();
-                return Pair.create(Status.OK, mID);
+                return Status.OK;
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -252,7 +251,7 @@ public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return Pair.create(s, mID);
+        return s;
     }
 
     @Override

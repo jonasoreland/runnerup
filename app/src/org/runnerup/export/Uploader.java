@@ -23,8 +23,8 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-import org.runnerup.util.SyncActivityItem;
 import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.SyncActivityItem;
 
 import java.io.File;
 import java.util.List;
@@ -42,8 +42,9 @@ public interface Uploader {
         OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP, NEED_AUTH, NEED_REFRESH;
         public Exception ex = null;
         public AuthMethod authMethod = null;
-
+        public Long activityId = UploadManager.ERROR_ACTIVITY_ID;
     }
+
     enum Feature {
         WORKOUT_LIST, // list prepared workouts (e.g a interval program)
         GET_WORKOUT, // download prepared workout
@@ -109,7 +110,7 @@ public interface Uploader {
      * @param db
      * @param mID
      */
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID);
+    public Status upload(SQLiteDatabase db, long mID);
 
     /**
      * Check if an uploader supports a feature
@@ -147,7 +148,7 @@ public interface Uploader {
      *  @param db
      * @param item the ActivityItem of the activity to be downloaded
      */
-    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item);
+    public Status download(SQLiteDatabase db, SyncActivityItem item);
 
     /**
      * logout

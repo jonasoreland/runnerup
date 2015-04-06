@@ -95,8 +95,10 @@ public class DefaultUploader implements Uploader {
         return Status.OK;
     }
 
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
-        return Pair.create(Status.ERROR, mID);
+    public Status upload(SQLiteDatabase db, long mID) {
+        Status s = Status.ERROR;
+        s.activityId = mID;
+        return s;
     }
 
     public boolean checkSupport(Uploader.Feature f) {
@@ -116,8 +118,8 @@ public class DefaultUploader implements Uploader {
     }
 
     @Override
-    public Pair<Status, Long> download(SQLiteDatabase db, SyncActivityItem item) {
-        return Pair.create(Status.ERROR, -1L);
+    public Status download(SQLiteDatabase db, SyncActivityItem item) {
+        return Status.ERROR;
     }
 
     public void logout() {

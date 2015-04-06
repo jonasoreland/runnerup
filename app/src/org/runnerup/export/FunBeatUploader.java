@@ -21,7 +21,6 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -330,10 +329,10 @@ public class FunBeatUploader extends DefaultUploader {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+    public Status upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         TCX tcx = new TCX(db);
@@ -444,10 +443,12 @@ public class FunBeatUploader extends DefaultUploader {
 
                 conn.disconnect();
                 if (ok) {
-                    return Pair.create(Status.OK, mID);
+                    s = Status.OK;
+                    s.activityId = mID;
                 } else {
-                    return Pair.create(Status.CANCEL, UploadManager.ERROR_ACTIVITY_ID);
+                    s = Status.CANCEL;
                 }
+                return s;
             }
         } catch (IOException e) {
             ex = e;
@@ -458,7 +459,7 @@ public class FunBeatUploader extends DefaultUploader {
         if (ex != null) {
             ex.printStackTrace();
         }
-        return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+        return s;
     }
 
     @Override

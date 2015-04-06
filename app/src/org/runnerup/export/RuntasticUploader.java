@@ -270,10 +270,10 @@ public class RuntasticUploader extends DefaultUploader {
 
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+    public Status upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         StringWriter writer = new StringWriter();
@@ -342,11 +342,15 @@ public class RuntasticUploader extends DefaultUploader {
                 conn.disconnect();
             }
             logout();
-            return Pair.create(Status.OK, mID);
+            s = Status.OK;
+            s.activityId = mID;
+            return s;
 
         } catch (IOException ex) {
+            s = Status.ERROR;
             s.ex = ex;
         } catch (JSONException e) {
+            s = Status.ERROR;
             s.ex = e;
         }
 
@@ -356,8 +360,8 @@ public class RuntasticUploader extends DefaultUploader {
         if (conn != null)
             conn.disconnect();
 
-        s = Status.ERROR;
-        return Pair.create(s, mID);
+        s.activityId = mID;
+        return s;
     }
 
     @Override

@@ -433,10 +433,10 @@ public class DigifitUploader extends DefaultUploader {
     }
 
     @Override
-    public Pair<Status, Long> upload(SQLiteDatabase db, long mID) {
+    public Status upload(SQLiteDatabase db, long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
-            return Pair.create(s, UploadManager.ERROR_ACTIVITY_ID);
+            return s;
         }
 
         Status errorStatus = Status.ERROR;
@@ -460,13 +460,15 @@ public class DigifitUploader extends DefaultUploader {
             //
             // TODO: capture traffic from the app in order to use a better API
             // endpoint.
-            return Pair.create(Status.OK, mID);
+            s = Status.OK;
+            s.activityId = mID;
+            return s;
         } catch (Exception ex) {
             errorStatus.ex = ex;
             System.err.println("Digifit returned: " + ex);
         }
 
-        return Pair.create(errorStatus, UploadManager.ERROR_ACTIVITY_ID);
+        return errorStatus;
     }
 
     private void uploadFileToDigifit(String payload, String uploadUrl) throws Exception {
