@@ -23,8 +23,14 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 import android.util.Pair;
 
+import org.runnerup.common.util.Constants;
+import org.runnerup.db.DBHelper;
+import org.runnerup.db.entities.ActivityEntity;
+import org.runnerup.db.entities.LapEntity;
+import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.feed.FeedList.FeedUpdater;
@@ -35,13 +41,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class DefaultUploader implements Uploader {
+public abstract class DefaultUploader implements Uploader {
 
     protected final Set<String> cookies = new HashSet<String>();
     protected final FormValues formValues = new FormValues();
@@ -119,7 +126,52 @@ public class DefaultUploader implements Uploader {
 
     @Override
     public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        return Status.ERROR;
+        ActivityEntity activity = download(item);
+        return persistActivity(db, activity);
+    }
+
+    protected ActivityEntity download(SyncActivityItem item) {
+        Log.e(Constants.LOG, "No download method implemented for the synchronizer " + getName());
+        return null;
+    }
+
+    private Status persistActivity(SQLiteDatabase db, ActivityEntity activity) {
+        //no activity at all means something went wrong
+        if (activity == null) {
+            return Status.ERROR;
+        }
+        //manual activity need to have at least this information
+        if (activity.getSport() == null || activity.getStartTime() == null || activity.getTime() == null || activity.getDistance() == null) {
+            return Status.ERROR;
+        }
+
+        db.beginTransaction();
+        if (activity.insert(db) == UploadManager.ERROR_ACTIVITY_ID) {
+            db.endTransaction();
+            return Status.ERROR;
+        }
+
+        //update with activity id
+        activity.putPoints(new ArrayList<LocationEntity>(activity.getLocationPoints()));
+        // insert location and end transaction unsuccessfully
+        if (DBHelper.bulkInsert(activity.getLocationPoints(), db) != activity.getLocationPoints().size()) {
+            db.endTransaction();
+            return Status.ERROR;
+        }
+
+        //update with activity id
+        activity.putLaps(new ArrayList<LapEntity>(activity.getLaps()));
+        // insert all lap objects
+        if (DBHelper.bulkInsert(activity.getLaps(), db) != activity.getLaps().size()) {
+            db.endTransaction();
+            return Status.ERROR;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+        Status s = Status.OK;
+        s.activityId = activity.getId();
+        return s;
     }
 
     public void logout() {
