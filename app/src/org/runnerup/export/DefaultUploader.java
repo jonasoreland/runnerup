@@ -125,9 +125,8 @@ public abstract class DefaultUploader implements Uploader {
     }
 
     @Override
-    public Status download(SQLiteDatabase db, SyncActivityItem item) {
-        ActivityEntity activity = download(item);
-        return persistActivity(db, activity);
+    public final Status download(SQLiteDatabase db, SyncActivityItem item) {
+        return persistActivity(db, download(item));
     }
 
     protected ActivityEntity download(SyncActivityItem item) {
