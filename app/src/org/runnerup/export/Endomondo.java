@@ -25,10 +25,12 @@ import android.os.Build;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.EndomondoTrack;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.export.format.EndomondoTrack;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.SyncHelper;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Sport;
 
@@ -57,7 +59,7 @@ import java.util.zip.GZIPOutputStream;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Endomondo extends FormCrawler implements Uploader {
+public class Endomondo extends DefaultUploader {
 
     public static final String NAME = "Endomondo";
     public static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
@@ -285,7 +287,8 @@ public class Endomondo extends FormCrawler implements Uploader {
             String amsg = conn.getResponseMessage();
             if (responseCode == 200 &&
                     "OK".contentEquals(res.getString("_0"))) {
-                return Status.OK;
+                s.activityId = mID;
+                return s;
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -319,11 +322,6 @@ public class Endomondo extends FormCrawler implements Uploader {
     }
 
     @Override
-    public void logout() {
-        super.logout();
-    }
-
-    @Override
     public Status getFeed(FeedUpdater feedUpdater) {
         Status s;
         if ((s = connect()) != Status.OK) {
@@ -340,7 +338,7 @@ public class Endomondo extends FormCrawler implements Uploader {
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
             conn.setRequestMethod("GET");
             final InputStream in = new BufferedInputStream(conn.getInputStream());
-            final JSONObject reply = parse(in);
+            final JSONObject reply = SyncHelper.parse(in);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
 
@@ -363,11 +361,6 @@ public class Endomondo extends FormCrawler implements Uploader {
             ex.printStackTrace();
         }
         return s;
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 
     /*
@@ -403,7 +396,7 @@ public class Endomondo extends FormCrawler implements Uploader {
         c.put(FEED.ACCOUNT_ID, getId());
         c.put(FEED.EXTERNAL_ID, o.getLong("id"));
         c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-        setName(c, o.getJSONObject("from").getString("name"));
+        SyncHelper.setName(c, o.getJSONObject("from").getString("name"));
         final String IMAGE_URL = "http://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
         c.put(FEED.USER_IMAGE_URL,
                 String.format(IMAGE_URL, o.getJSONObject("from").getLong("picture")));

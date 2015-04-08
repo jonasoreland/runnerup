@@ -36,8 +36,8 @@ import android.webkit.WebViewClient;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
-import org.runnerup.export.FormCrawler;
-import org.runnerup.export.FormCrawler.FormValues;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -109,9 +109,9 @@ public class OAuth2Activity extends Activity {
 
         StringBuilder tmp = new StringBuilder();
         tmp.append(auth_url);
-        tmp.append("?client_id=").append(FormCrawler.URLEncode(client_id));
+        tmp.append("?client_id=").append(SyncHelper.URLEncode(client_id));
         tmp.append("&response_type=code");
-        tmp.append("&redirect_uri=").append(FormCrawler.URLEncode(mRedirectUri));
+        tmp.append("&redirect_uri=").append(SyncHelper.URLEncode(mRedirectUri));
         if (auth_extra != null) {
             tmp.append("&").append(auth_extra);
         }

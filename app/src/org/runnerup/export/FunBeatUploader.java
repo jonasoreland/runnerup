@@ -25,10 +25,14 @@ import android.os.Build;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.export.format.TCX;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.Part;
+import org.runnerup.export.util.StringWritable;
+import org.runnerup.export.util.SyncHelper;
+import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.Sport;
 
@@ -53,7 +57,7 @@ import java.util.Map;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class FunBeatUploader extends FormCrawler implements Uploader {
+public class FunBeatUploader extends DefaultUploader {
 
     public static final String NAME = "FunBeat";
     public static final String BASE_URL = "http://www.funbeat.se";
@@ -190,11 +194,11 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
              * Then login using a post
              */
             FormValues kv = new FormValues();
-            String viewKey = findName(formValues.keySet(), "VIEWSTATE");
-            String eventKey = findName(formValues.keySet(), "EVENTVALIDATION");
-            String userKey = findName(formValues.keySet(), "Username");
-            String passKey = findName(formValues.keySet(), "Password");
-            String loginKey = findName(formValues.keySet(), "LoginButton");
+            String viewKey = SyncHelper.findName(formValues.keySet(), "VIEWSTATE");
+            String eventKey = SyncHelper.findName(formValues.keySet(), "EVENTVALIDATION");
+            String userKey = SyncHelper.findName(formValues.keySet(), "Username");
+            String passKey = SyncHelper.findName(formValues.keySet(), "Password");
+            String loginKey = SyncHelper.findName(formValues.keySet(), "LoginButton");
             kv.put(viewKey, formValues.get(viewKey));
             kv.put(eventKey, formValues.get(eventKey));
             kv.put(userKey, username);
@@ -309,7 +313,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
             out.close();
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
-            JSONObject ret = parse(in);
+            JSONObject ret = SyncHelper.parse(in);
             conn.disconnect();
             return ret;
         } catch (JSONException ex) {
@@ -343,10 +347,10 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
             getFormValues(conn); // execute the GET
             conn.disconnect();
 
-            String viewKey = findName(formValues.keySet(), "VIEWSTATE");
-            String eventKey = findName(formValues.keySet(), "EVENTVALIDATION");
-            String fileKey = findName(formValues.keySet(), "FileUpload");
-            String uploadKey = findName(formValues.keySet(), "UploadButton");
+            String viewKey = SyncHelper.findName(formValues.keySet(), "VIEWSTATE");
+            String eventKey = SyncHelper.findName(formValues.keySet(), "EVENTVALIDATION");
+            String fileKey = SyncHelper.findName(formValues.keySet(), "FileUpload");
+            String uploadKey = SyncHelper.findName(formValues.keySet(), "UploadButton");
 
             Part<StringWritable> part1 = new Part<StringWritable>(viewKey,
                     new StringWritable(formValues.get(viewKey)));
@@ -356,8 +360,8 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 
             Part<StringWritable> part3 = new Part<StringWritable>(fileKey,
                     new StringWritable(writer.toString()));
-            part3.contentType = "application/octet-stream";
-            part3.filename = "jonas.tcx";
+            part3.setContentType("application/octet-stream");
+            part3.setFilename("jonas.tcx");
 
             Part<StringWritable> part4 = new Part<StringWritable>(uploadKey,
                     new StringWritable(formValues.get(uploadKey)));
@@ -370,7 +374,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
             addCookies(conn);
-            postMulti(conn, parts);
+            SyncHelper.postMulti(conn, parts);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             getCookies(conn);
@@ -393,10 +397,10 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
             getFormValues(conn);
             conn.disconnect();
 
-            viewKey = findName(formValues.keySet(), "VIEWSTATE");
-            eventKey = findName(formValues.keySet(), "EVENTVALIDATION");
-            String nextKey = findName(formValues.keySet(), "NextButton");
-            String hidden = findName(formValues.keySet(), "ChoicesHiddenField");
+            viewKey = SyncHelper.findName(formValues.keySet(), "VIEWSTATE");
+            eventKey = SyncHelper.findName(formValues.keySet(), "EVENTVALIDATION");
+            String nextKey = SyncHelper.findName(formValues.keySet(), "NextButton");
+            String hidden = SyncHelper.findName(formValues.keySet(), "ChoicesHiddenField");
 
             FormValues kv = new FormValues();
             kv.put(viewKey, formValues.get(viewKey));
@@ -439,10 +443,12 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
 
                 conn.disconnect();
                 if (ok) {
-                    return Uploader.Status.OK;
+                    s = Status.OK;
+                    s.activityId = mID;
                 } else {
-                    return Uploader.Status.CANCEL;
+                    s = Status.CANCEL;
                 }
+                return s;
             }
         } catch (IOException e) {
             ex = e;
@@ -473,12 +479,6 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
     }
 
     @Override
-    public void logout() {
-        cookies.clear();
-        formValues.clear();
-    }
-
-    @Override
     public Status getFeed(FeedUpdater feedUpdater) {
         Status s = Status.NEED_AUTH;
         s.authMethod = AuthMethod.USER_PASS;
@@ -501,7 +501,7 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
             out.flush();
             out.close();
             final InputStream in = new BufferedInputStream(conn.getInputStream());
-            final JSONObject reply = parse(in);
+            final JSONObject reply = SyncHelper.parse(in);
             final int code = conn.getResponseCode();
             conn.disconnect();
             if (code == 200) {
@@ -524,11 +524,6 @@ public class FunBeatUploader extends FormCrawler implements Uploader {
             conn.disconnect();
 
         return s;
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 
     private void parseFeed(final FeedUpdater feedUpdater, final JSONObject reply)

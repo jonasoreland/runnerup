@@ -25,8 +25,10 @@ import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.TCX;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Encryption;
 import org.runnerup.workout.Sport;
 
@@ -44,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class MapMyRunUploader extends FormCrawler implements Uploader {
+public class MapMyRunUploader extends DefaultUploader {
 
     public static final String NAME = "MapMyRun";
     private static String CONSUMER_KEY;
@@ -197,7 +199,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
                 wr.close();
 
                 InputStream in = new BufferedInputStream(conn.getInputStream());
-                JSONObject obj = parse(in);
+                JSONObject obj = SyncHelper.parse(in);
                 conn.disconnect();
 
                 try {
@@ -267,7 +269,7 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
                 wr.close();
 
                 InputStream in = new BufferedInputStream(conn.getInputStream());
-                JSONObject obj = parse(in);
+                JSONObject obj = SyncHelper.parse(in);
                 conn.disconnect();
 
                 JSONObject result = obj.getJSONObject("result").getJSONObject("output")
@@ -302,10 +304,12 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
                 wr.close();
 
                 in = new BufferedInputStream(conn.getInputStream());
-                obj = parse(in);
+                obj = SyncHelper.parse(in);
                 conn.disconnect();
 
-                return Uploader.Status.OK;
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             }
         } catch (IOException e) {
             ex = e;
@@ -315,19 +319,10 @@ public class MapMyRunUploader extends FormCrawler implements Uploader {
 
         s = Uploader.Status.ERROR;
         s.ex = ex;
+        s.activityId = mID;
         if (ex != null) {
             ex.printStackTrace();
         }
         return s;
-    }
-
-    @Override
-    public void logout() {
-        super.logout();
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 }

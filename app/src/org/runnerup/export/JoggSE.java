@@ -26,8 +26,8 @@ import android.util.Xml;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.GPX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.GPX;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -52,7 +52,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class JoggSE extends FormCrawler implements Uploader {
+public class JoggSE extends DefaultUploader {
 
     public static final String NAME = "jogg.se";
     private static String MASTER_USER = null;
@@ -299,7 +299,9 @@ public class JoggSE extends FormCrawler implements Uploader {
             System.err.println("reply: " + e.getTextContent());
             if (e != null && e.getTextContent() != null
                     && "OK".contentEquals(e.getTextContent())) {
-                return Uploader.Status.OK;
+                s = Status.OK;
+                s.activityId = mID;
+                return s;
             }
             throw new Exception(e.getTextContent());
         } catch (final MalformedURLException e) {
@@ -322,21 +324,11 @@ public class JoggSE extends FormCrawler implements Uploader {
 
         s = Uploader.Status.ERROR;
         s.ex = ex;
+        s.activityId = mID;
         if (ex != null) {
             ex.printStackTrace();
         }
         return s;
 
-    }
-
-    @Override
-    public void logout() {
-        cookies.clear();
-        formValues.clear();
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 }

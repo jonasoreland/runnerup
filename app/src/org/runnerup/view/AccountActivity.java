@@ -43,12 +43,12 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.UploadManager;
 import org.runnerup.export.Uploader;
 import org.runnerup.export.Uploader.Status;
 import org.runnerup.util.Bitfield;
-import org.runnerup.common.util.Constants;
 import org.runnerup.widget.WidgetUtil;
 
 import java.util.ArrayList;
@@ -78,10 +78,13 @@ public class AccountActivity extends Activity implements Constants {
         Intent intent = getIntent();
         uploader = intent.getStringExtra("uploader");
 
+
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
         uploadManager = new UploadManager(this);
         fillData();
+
+        Uploader upd = uploadManager.getUploaderByName(uploader);
 
         {
             Button btn = (Button) findViewById(R.id.ok_account_button);
@@ -94,9 +97,20 @@ public class AccountActivity extends Activity implements Constants {
         }
 
         {
+            Button btn = (Button) findViewById(R.id.account_download_button);
+            if (upd.checkSupport(Uploader.Feature.ACTIVITY_LIST) && upd.checkSupport(Uploader.Feature.GET_ACTIVITY)) {
+                btn.setOnClickListener(downloadButtonClick);
+            } else {
+                btn.setVisibility(View.GONE);
+            }
+        }
+
+        {
             Button btn = (Button) findViewById(R.id.disconnect_account_button);
             btn.setOnClickListener(disconnectButtonClick);
         }
+
+
     }
 
     @Override
@@ -266,6 +280,21 @@ public class AccountActivity extends Activity implements Constants {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
             intent.putExtra("uploader", uploader);
             intent.putExtra("uploaderID", uploaderID);
+            intent.putExtra("mode", UploadManager.SyncMode.UPLOAD.name());
+            if (uploaderIcon != null)
+                intent.putExtra("uploaderIcon", uploaderIcon.intValue());
+            AccountActivity.this.startActivityForResult(intent, 113);
+        }
+    };
+
+    final OnClickListener downloadButtonClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
+            intent.putExtra("uploader", uploader);
+            intent.putExtra("uploaderID", uploaderID);
+            intent.putExtra("mode", UploadManager.SyncMode.DOWNLOAD.name());
             if (uploaderIcon != null)
                 intent.putExtra("uploaderIcon", uploaderIcon.intValue());
             AccountActivity.this.startActivityForResult(intent, 113);

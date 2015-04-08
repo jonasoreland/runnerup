@@ -26,10 +26,11 @@ import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -42,7 +43,7 @@ import java.net.URL;
 import java.util.zip.GZIPOutputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server {
+public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
 
     public static final String NAME = "RunningAHEAD";
 
@@ -188,7 +189,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
             return s;
@@ -215,7 +216,7 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
             System.err.println("code: " + responseCode + ", amsg: " + amsg);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            JSONObject obj = parse(in);
+            JSONObject obj = SyncHelper.parse(in);
             JSONObject data = obj.getJSONObject("data");
 
             boolean found = false;
@@ -255,10 +256,5 @@ public class RunningAHEAD extends FormCrawler implements Uploader, OAuth2Server 
 
     @Override
     public void logout() {
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
     }
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2014 paradix@10g.pl
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.runnerup.export;
 
 import android.content.Context;
@@ -7,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.export.format.GoogleFitData;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -17,7 +35,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class GoogleFitUploader extends GooglePlus implements Uploader {
+public class GoogleFitUploader extends GooglePlus {
 
     public static final String NAME = "GoogleFit";
     public static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
@@ -34,8 +52,6 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
     private static final int MAX_ATTEMPTS = 3;
 
     private final Context context;
-
-    private enum RequestMethod { GET, POST, PATCH, PUT; }
 
     GoogleFitUploader(Context ctx, UploadManager uploadManager) {
         super(uploadManager);
@@ -73,7 +89,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
 
     @Override
     public String getAuthExtra() {
-        return "scope=" + FormCrawler.URLEncode(getScopes());
+        return "scope=" + SyncHelper.URLEncode(getScopes());
     }
 
     @Override
@@ -96,20 +112,23 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
         List<GoogleFitData.DataSourceType> activitySources = gfd.getActivityDataSourceTypes(mID);
 
         s = exportActivityDataSourceTypes(gfd, presentDataSources, activitySources);
-        if (s == Status.ERROR) {
+        if (s.equals(Status.ERROR)) {
             return s;
         }
 
         //export all DataPoint types for activity
         for (GoogleFitData.DataSourceType source : activitySources) {
             s = exportActivityData(gfd, source, mID);
-            if(s == Status.ERROR) {
+            if(s.equals(Status.ERROR)) {
                 return s;
             }
         }
 
         //export Session
         s = exportActivitySession(gfd, mID);
+        if (!s.equals(Status.ERROR)) {
+            s.activityId = mID;
+        }
 
         return s;
     }
@@ -172,11 +191,11 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
                 if (code == 500) {
                     continue;
                 } else if (code != 200) {
-                    System.out.println(parse(new GZIPInputStream(connect.getErrorStream())));
+                    System.out.println(SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())));
                     status = Status.ERROR;
                     break;
                 } else {
-                    System.out.println(parse(new GZIPInputStream(connect.getInputStream())));
+                    System.out.println(SyncHelper.parse(new GZIPInputStream(connect.getInputStream())));
                     status = Status.OK;
                     break;
                 }
@@ -216,7 +235,7 @@ public class GoogleFitUploader extends GooglePlus implements Uploader {
         List<String> dataStreamIds = new ArrayList<String>();
         try {
             conn = getHttpURLConnection(REST_DATASOURCE, RequestMethod.GET);
-            final JSONObject reply = parse(new GZIPInputStream(conn.getInputStream()));
+            final JSONObject reply = SyncHelper.parse(new GZIPInputStream(conn.getInputStream()));
             int code = conn.getResponseCode();
             conn.disconnect();
 

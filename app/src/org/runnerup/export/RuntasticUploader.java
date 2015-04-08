@@ -26,8 +26,10 @@ import android.util.Patterns;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.export.format.TCX;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.TCX;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.SyncHelper;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -44,7 +46,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RuntasticUploader extends FormCrawler implements Uploader {
+public class RuntasticUploader extends DefaultUploader {
 
     public static final String NAME = "Runtastic";
     public static final String BASE_URL = "https://www.runtastic.com";
@@ -203,7 +205,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
                 // String amsg = conn.getResponseMessage();
                 getCookies(conn);
                 InputStream in = new BufferedInputStream(conn.getInputStream());
-                JSONObject ret = parse(in);
+                JSONObject ret = SyncHelper.parse(in);
                 if (ret != null && ret.has("success") && ret.getBoolean("success")) {
                     Matcher matcher = Patterns.WEB_URL.matcher(ret.getString("update"));
                     while (matcher.find()) {
@@ -231,7 +233,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             }
 
             {
-                url2 = url2 + "?authenticity_token=" + URLEncode(authToken);
+                url2 = url2 + "?authenticity_token=" + SyncHelper.URLEncode(authToken);
                 conn = (HttpURLConnection) new URL(url2).openConnection();
                 conn.setInstanceFollowRedirects(false);
                 conn.setRequestMethod("GET");
@@ -239,7 +241,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
                 conn.addRequestProperty("Accept", "application/json");
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 getCookies(conn);
-                JSONObject ret = parse(in);
+                JSONObject ret = SyncHelper.parse(in);
                 userId = ret.getJSONObject("user").getInt("id");
                 conn.disconnect();
             }
@@ -283,7 +285,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             Sport sport = res.second;
             String filename = String.format("activity%s%d.tcx", Long.toString(Math.round(1000 * Math.random())), mID);
 
-            String url = UPLOAD_URL + "?authenticity_token=" + URLEncode(authToken) + "&qqfile=" +
+            String url = UPLOAD_URL + "?authenticity_token=" + SyncHelper.URLEncode(authToken) + "&qqfile=" +
                     filename;
             conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setInstanceFollowRedirects(false);
@@ -300,7 +302,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
             out.flush();
             out.close();
             InputStream in = new BufferedInputStream(conn.getInputStream());
-            JSONObject ret = parse(in);
+            JSONObject ret = SyncHelper.parse(in);
             getCookies(conn);
             if (ret == null || !ret.has("success") || !ret.getBoolean("success")) {
                 System.out.println("ret: " + ret);
@@ -333,18 +335,22 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
                 fv.put("data_import_id", import_id);
                 fv.put("sport_type_id", sport2runtasticMap.get(sport).toString());
                 fv.put("user_id", userId.toString());
-                postData(conn, fv);
+                SyncHelper.postData(conn, fv);
                 int responseCode = conn.getResponseCode();
                 String amsg = conn.getResponseMessage();
                 System.out.println("code: " + responseCode + ", html: " + getFormValues(conn));
                 conn.disconnect();
             }
             logout();
-            return Status.OK;
+            s = Status.OK;
+            s.activityId = mID;
+            return s;
 
         } catch (IOException ex) {
+            s = Status.ERROR;
             s.ex = ex;
         } catch (JSONException e) {
+            s = Status.ERROR;
             s.ex = e;
         }
 
@@ -354,7 +360,7 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
         if (conn != null)
             conn.disconnect();
 
-        s = Status.ERROR;
+        s.activityId = mID;
         return s;
     }
 
@@ -378,12 +384,6 @@ public class RuntasticUploader extends FormCrawler implements Uploader {
     public void logout() {
         userId = null;
         authToken = null;
-        cookies.clear();
-        formValues.clear();
-    }
-
-    @Override
-    public Status refreshToken() {
-        return Status.OK;
+        super.logout();
     }
 }

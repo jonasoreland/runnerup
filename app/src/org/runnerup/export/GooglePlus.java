@@ -24,21 +24,21 @@ import android.database.sqlite.SQLiteDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.util.FormValues;
+import org.runnerup.export.util.SyncHelper;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
+public class GooglePlus extends DefaultUploader implements Uploader, OAuth2Server {
 
     public static final String NAME = "Google+";
 
@@ -138,9 +138,9 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
 
     @Override
     public String getAuthExtra() {
-        return "scope=" + FormCrawler.URLEncode(getScopes())
+        return "scope=" + SyncHelper.URLEncode(getScopes())
                 + "&request_visible_actions="
-                + FormCrawler.URLEncode("http://schemas.google.com/AddActivity");
+                + SyncHelper.URLEncode("http://schemas.google.com/AddActivity");
     }
 
     @Override
@@ -246,18 +246,13 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
     }
 
     @Override
-    public Uploader.Status upload(SQLiteDatabase db, final long mID) {
+    public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
         if ((s = connect()) != Status.OK) {
             return s;
         }
 
         return Status.SKIP;
-    }
-
-    @Override
-    public boolean checkSupport(Uploader.Feature f) {
-        return false;
     }
 
     @Override
@@ -281,10 +276,10 @@ public class GooglePlus extends FormCrawler implements Uploader, OAuth2Server {
             conn.setRequestMethod("POST");
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-            postData(conn, fv);
+            SyncHelper.postData(conn, fv);
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
-            JSONObject obj = parse(in);
+            JSONObject obj = SyncHelper.parse(in);
             conn.disconnect();
 
             access_token = obj.getString("access_token");
