@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RuntasticUploader extends DefaultUploader {
+public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
     public static final String BASE_URL = "https://www.runtastic.com";
@@ -73,7 +73,7 @@ public class RuntasticUploader extends DefaultUploader {
     }
 
 
-    RuntasticUploader(UploadManager uploadManager) {
+    RuntasticSynchronizer(SyncManager syncManager) {
     }
 
     @Override

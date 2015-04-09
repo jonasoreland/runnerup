@@ -34,7 +34,7 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
+import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
 import org.runnerup.notification.NotificationState;
@@ -279,7 +279,7 @@ public class Tracker extends android.app.Service implements
 
         wakeLock(true);
 
-        UploadManager u = new UploadManager(this);
+        SyncManager u = new SyncManager(this);
         u.loadLiveLoggers(liveLoggers);
         u.close();
 

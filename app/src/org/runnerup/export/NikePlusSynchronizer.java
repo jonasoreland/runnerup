@@ -55,7 +55,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class NikePlus extends DefaultUploader {
+public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Nike+";
     private static String CLIENT_ID = null;
@@ -82,10 +82,10 @@ public class NikePlus extends DefaultUploader {
     private String access_token = null;
     private long expires_timeout = 0;
 
-    NikePlus(UploadManager uploadManager) {
+    NikePlusSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null || APP_ID == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 CLIENT_ID = tmp.getString("CLIENT_ID");
                 CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
                 APP_ID = tmp.getString("APP_ID");
@@ -163,7 +163,7 @@ public class NikePlus extends DefaultUploader {
         }
 
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
         if (username == null || password == null) {
             return s;
         }
@@ -300,7 +300,7 @@ public class NikePlus extends DefaultUploader {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
         if (ex != null) {
@@ -310,7 +310,7 @@ public class NikePlus extends DefaultUploader {
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case FEED:
             case UPLOAD:

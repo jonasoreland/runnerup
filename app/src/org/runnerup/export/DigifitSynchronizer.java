@@ -60,21 +60,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class DigifitUploader extends DefaultUploader {
+public class DigifitSynchronizer extends DefaultSynchronizer {
     public static final String DIGIFIT_URL = "http://my.digifit.com";
 
     public static final String NAME = "Digifit";
 
     public static void main(String args[]) throws Exception {
         if (args.length < 2) {
-            System.err.println("usage: DigifitUploader username password");
+            System.err.println("usage: DigifitSynchronizer username password");
             System.exit(1);
         }
 
         String username = args[0];
         String password = args[1];
 
-        DigifitUploader du = new DigifitUploader(null);
+        DigifitSynchronizer du = new DigifitSynchronizer(null);
         du.init(username, password);
 
         System.err.println(du.connect());
@@ -85,7 +85,7 @@ public class DigifitUploader extends DefaultUploader {
     private String _password;
     private String _username;
 
-    DigifitUploader(UploadManager unused) {
+    DigifitSynchronizer(SyncManager unused) {
     }
 
     private JSONObject buildRequest(String root, Map<String, String> requestParameters)
@@ -145,12 +145,12 @@ public class DigifitUploader extends DefaultUploader {
         if (!isConfigured()) {
             // user/pass needed
             Status s = Status.NEED_AUTH;
-            s.authMethod = Uploader.AuthMethod.USER_PASS;
+            s.authMethod = Synchronizer.AuthMethod.USER_PASS;
             return s;
         }
 
         if (_loggedin) {
-            return Uploader.Status.OK;
+            return Synchronizer.Status.OK;
         }
 
         JSONObject credentials = new JSONObject();
@@ -159,7 +159,7 @@ public class DigifitUploader extends DefaultUploader {
             credentials.put("password", _password);
         } catch (JSONException e) {
             e.printStackTrace();
-            return Uploader.Status.INCORRECT_USAGE;
+            return Synchronizer.Status.INCORRECT_USAGE;
         }
 
         Status errorStatus = Status.ERROR;
@@ -194,7 +194,7 @@ public class DigifitUploader extends DefaultUploader {
                     return Status.OK;
                 } else {
                     Status s = Status.NEED_AUTH;
-                    s.authMethod = Uploader.AuthMethod.USER_PASS;
+                    s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
                     System.err.println("Error: " + line);
                     return s;

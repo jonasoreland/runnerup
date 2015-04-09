@@ -42,7 +42,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Strava extends DefaultUploader implements OAuth2Server {
+public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Strava";
 
@@ -61,10 +61,10 @@ public class Strava extends DefaultUploader implements OAuth2Server {
     private long id = 0;
     private String access_token = null;
 
-    Strava(UploadManager uploadManager) {
+    StravaSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 CLIENT_ID = tmp.getString("CLIENT_ID");
                 CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
             } catch (Exception ex) {
@@ -183,7 +183,7 @@ public class Strava extends DefaultUploader implements OAuth2Server {
         if (access_token == null)
             return s;
 
-        return Uploader.Status.OK;
+        return Synchronizer.Status.OK;
     }
 
     @Override
@@ -237,7 +237,7 @@ public class Strava extends DefaultUploader implements OAuth2Server {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
         if (ex != null) {

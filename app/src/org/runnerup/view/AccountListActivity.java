@@ -44,9 +44,9 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.Synchronizer;
+import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.common.util.Constants;
 import org.runnerup.util.SimpleCursorLoader;
@@ -58,7 +58,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
 
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
-    UploadManager uploadManager = null;
+    SyncManager syncManager = null;
     boolean tabFormat = false;
 
     ListView listView;
@@ -74,7 +74,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
-        uploadManager = new UploadManager(this);
+        syncManager = new SyncManager(this);
         listView = (ListView) findViewById(R.id.account_list);
         listView.setDividerHeight(10);
         cursorAdapter = new AccountListAdapter(this, null);
@@ -87,7 +87,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         super.onDestroy();
         mDB.close();
         mDBHelper.close();
-        uploadManager.close();
+        syncManager.close();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
             ContentValues tmp = DBHelper.get(cursor);
 
             final String id = tmp.getAsString(DB.ACCOUNT.NAME);
-            final Uploader uploader = uploadManager.add(tmp);
+            final Synchronizer synchronizer = syncManager.add(tmp);
             final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
 
             ImageView im = (ImageView) view.findViewById(R.id.account_list_icon);
@@ -171,7 +171,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
 
             });
             Button b = (Button) view.findViewById(R.id.account_list_configure_button);
-            boolean configured = uploadManager.isConfigured(id);
+            boolean configured = syncManager.isConfigured(id);
             if (!tabFormat) {
                 {
                     if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
@@ -191,14 +191,14 @@ public class AccountListActivity extends FragmentActivity implements Constants,
                 im.setVisibility(View.GONE);
                 tv.setVisibility(View.VISIBLE);
                 tv.setText(id);
-                if (configured && uploader.checkSupport(Uploader.Feature.UPLOAD)) {
+                if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                     cbSend.setEnabled(true);
                     cbSend.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
                     cbSend.setVisibility(View.VISIBLE);
                 } else {
                     cbSend.setVisibility(View.INVISIBLE);
                 }
-                if (configured && uploader.checkSupport(Uploader.Feature.FEED)) {
+                if (configured && synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
                     cbFeed.setEnabled(true);
                     cbFeed.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
                     cbFeed.setVisibility(View.VISIBLE);
@@ -230,11 +230,11 @@ public class AccountListActivity extends FragmentActivity implements Constants,
 
     final OnClickListener configureButtonClick = new OnClickListener() {
         public void onClick(View v) {
-            final String uploader = (String) v.getTag();
-            if (uploadManager.isConfigured(uploader)) {
-                startActivity(uploader, true);
+            final String synchronizerName = (String) v.getTag();
+            if (syncManager.isConfigured(synchronizerName)) {
+                startActivity(synchronizerName, true);
             } else {
-                uploadManager.connect(callback, uploader, false);
+                syncManager.connect(callback, synchronizerName, false);
             }
         }
     };
@@ -254,29 +254,29 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         }
     }
 
-    final UploadManager.Callback callback = new UploadManager.Callback() {
+    final SyncManager.Callback callback = new SyncManager.Callback() {
         @Override
-        public void run(String uploader, Status status) {
-            if (status == Uploader.Status.OK) {
-                startActivity(uploader, false);
+        public void run(String synchronizerName, Status status) {
+            if (status == Synchronizer.Status.OK) {
+                startActivity(synchronizerName, false);
             }
         }
     };
 
-    void startActivity(String uploader, boolean edit) {
+    void startActivity(String synchronizer, boolean edit) {
         Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
-        intent.putExtra("uploader", uploader);
+        intent.putExtra("synchronizer", synchronizer);
         intent.putExtra("edit", edit);
         AccountListActivity.this.startActivityForResult(intent,
-                UploadManager.CONFIGURE_REQUEST + 1000);
+                SyncManager.CONFIGURE_REQUEST + 1000);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == UploadManager.CONFIGURE_REQUEST) {
-            uploadManager.onActivityResult(requestCode, resultCode, data);
-        } else if (requestCode == UploadManager.CONFIGURE_REQUEST + 1000) {
-            uploadManager.clear();
+        if (requestCode == SyncManager.CONFIGURE_REQUEST) {
+            syncManager.onActivityResult(requestCode, resultCode, data);
+        } else if (requestCode == SyncManager.CONFIGURE_REQUEST + 1000) {
+            syncManager.clear();
             getSupportLoaderManager().restartLoader(0, null, this);
         }
     }

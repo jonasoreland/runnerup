@@ -29,7 +29,7 @@ import org.runnerup.util.SyncActivityItem;
 import java.io.File;
 import java.util.List;
 
-public interface Uploader {
+public interface Synchronizer {
 
     public enum RequestMethod { GET, POST, PATCH, PUT; }
 
@@ -42,7 +42,7 @@ public interface Uploader {
         OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP, NEED_AUTH, NEED_REFRESH;
         public Exception ex = null;
         public AuthMethod authMethod = null;
-        public Long activityId = UploadManager.ERROR_ACTIVITY_ID;
+        public Long activityId = SyncManager.ERROR_ACTIVITY_ID;
     }
 
     enum Feature {
@@ -63,12 +63,12 @@ public interface Uploader {
     public long getId();
 
     /**
-     * @return name of this uploader
+     * @return name of this synchronizer
      */
     public String getName();
 
     /**
-     * Init uploader
+     * Init synchronizer
      *
      * @param config
      */
@@ -85,7 +85,7 @@ public interface Uploader {
     public Intent getAuthIntent(Activity activity);
 
     /**
-     * Is uploader configured
+     * Is synchronizer configured
      */
     public boolean isConfigured();
 
@@ -113,7 +113,7 @@ public interface Uploader {
     public Status upload(SQLiteDatabase db, long mID);
 
     /**
-     * Check if an uploader supports a feature
+     * Check if an synchronizer supports a feature
      *
      * @param f
      * @return
@@ -123,7 +123,7 @@ public interface Uploader {
     /**
      * List workouts NOTE: this is not list of activities!
      *
-     * @return list of Pair<Uploader,Workout>
+     * @return list of Pair<synchronizerName,Workout>
      */
     public Status listWorkouts(List<Pair<String, String>> list);
 

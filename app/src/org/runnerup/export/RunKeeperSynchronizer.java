@@ -70,7 +70,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunKeeperUploader extends DefaultUploader implements Uploader, OAuth2Server {
+public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
     private static Context context = null;
@@ -123,17 +123,17 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         POINT_TYPE.put("manual", DB.LOCATION.TYPE_GPS);
     }
 
-    public RunKeeperUploader(UploadManager uploadManager) {
+    public RunKeeperSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 CLIENT_ID = tmp.getString("CLIENT_ID");
                 CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
             } catch (Exception ex) {
                 Log.e(Constants.LOG, ex.getMessage());
             }
         }
-        context = uploadManager.getContext();
+        context = syncManager.getContext();
     }
 
     @Override
@@ -267,7 +267,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         }
 
         if (fitnessActivitiesUrl != null) {
-            return Uploader.Status.OK;
+            return Synchronizer.Status.OK;
         }
 
         /**
@@ -310,9 +310,9 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
 
         if (uri != null) {
             fitnessActivitiesUrl = uri;
-            return Uploader.Status.OK;
+            return Synchronizer.Status.OK;
         }
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         return s;
     }
@@ -442,14 +442,14 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         if (conn != null) {
             conn.disconnect();
         }
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
         return s;
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case FEED:
             case UPLOAD:
@@ -684,7 +684,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
     }
 
     private Status getFeedAccessToken() {
-        Uploader.Status s = Status.OK;
+        Synchronizer.Status s = Status.OK;
         HttpURLConnection conn = null;
         try {
             URL newurl = new URL(FEED_TOKEN_URL);
