@@ -48,12 +48,12 @@ import java.util.Map;
 import java.util.Set;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public abstract class DefaultUploader implements Uploader {
+public abstract class DefaultSynchronizer implements Synchronizer {
 
     protected final Set<String> cookies = new HashSet<String>();
     protected final FormValues formValues = new FormValues();
 
-    public DefaultUploader() {
+    public DefaultSynchronizer() {
         super();
         logout();
     }
@@ -97,7 +97,7 @@ public abstract class DefaultUploader implements Uploader {
         return null;
     }
 
-    /** Below are default empty methods from Uploader */
+    /** Below are default empty methods from Synchronizer */
     public Status getAuthResult(int resultCode, Intent data) {
         return Status.OK;
     }
@@ -108,7 +108,7 @@ public abstract class DefaultUploader implements Uploader {
         return s;
     }
 
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         return false;
     }
 
@@ -145,7 +145,7 @@ public abstract class DefaultUploader implements Uploader {
         }
 
         db.beginTransaction();
-        if (activity.insert(db) == UploadManager.ERROR_ACTIVITY_ID) {
+        if (activity.insert(db) == SyncManager.ERROR_ACTIVITY_ID) {
             db.endTransaction();
             return Status.ERROR;
         }

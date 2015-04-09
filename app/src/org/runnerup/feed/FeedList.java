@@ -98,7 +98,7 @@ public class FeedList extends Observable implements Constants {
         SQLiteDatabase mDB = null;
         List<ContentValues> currList = null;
         List<ContentValues> addList = null;
-        String uploader = null;
+        String synchronizer = null;
         int added = 0;
         int discarded = 0;
 
@@ -113,11 +113,11 @@ public class FeedList extends Observable implements Constants {
             addList = new ArrayList<ContentValues>(list.size());
         }
 
-        public void start(String uploaderName) {
-            uploader = uploaderName;
+        public void start(String synchronizerName) {
+            synchronizer = synchronizerName;
             added = discarded = 0;
             setChanged();
-            notifyObservers(uploaderName);
+            notifyObservers(synchronizerName);
         }
 
         // this method is called by different thread (not UI thread)
@@ -168,7 +168,7 @@ public class FeedList extends Observable implements Constants {
             mDB.close();
             mDB = null;
             prune();
-            System.err.println("FeedUpdater: " + uploader + ", added: " + added + ", discarded: "
+            System.err.println("FeedUpdater: " + synchronizer + ", added: " + added + ", discarded: "
                     + discarded);
         }
 

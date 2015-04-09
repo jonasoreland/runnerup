@@ -59,7 +59,7 @@ import java.util.zip.GZIPOutputStream;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Endomondo extends DefaultUploader {
+public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
     public static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
@@ -82,7 +82,7 @@ public class Endomondo extends DefaultUploader {
         }
     }
 
-    Endomondo(UploadManager uploadManager) {
+    EndomondoSynchronizer(SyncManager syncManager) {
     }
 
     @Override
@@ -150,7 +150,7 @@ public class Endomondo extends DefaultUploader {
         }
 
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
         if (username == null || password == null) {
             return s;
         }
@@ -213,7 +213,7 @@ public class Endomondo extends DefaultUploader {
         if (conn != null)
             conn.disconnect();
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();
@@ -297,7 +297,7 @@ public class Endomondo extends DefaultUploader {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();
@@ -306,7 +306,7 @@ public class Endomondo extends DefaultUploader {
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case UPLOAD:
             case FEED:
@@ -355,7 +355,7 @@ public class Endomondo extends DefaultUploader {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();

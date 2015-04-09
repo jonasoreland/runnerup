@@ -75,9 +75,9 @@ import org.runnerup.content.ActivityProvider;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Feature;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.Synchronizer;
+import org.runnerup.export.Synchronizer.Feature;
 import org.runnerup.util.Bitfield;
 import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
@@ -97,8 +97,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
     long mID = 0;
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
-    final HashSet<String> pendingUploaders = new HashSet<String>();
-    final HashSet<String> alreadyUploadedUploaders = new HashSet<String>();
+    final HashSet<String> pendingSynchronizers = new HashSet<String>();
+    final HashSet<String> alreadySynched = new HashSet<String>();
 
     boolean lapHrPresent = false;
     ContentValues laps[] = null;
@@ -135,7 +135,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
     LinearLayout hrzonesBarLayout;
     HRZonesBar hrzonesBar;
 
-    UploadManager uploadManager = null;
+    SyncManager syncManager = null;
     Formatter formatter = null;
 
     /** Called when the activity is first created. */
@@ -151,7 +151,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
-        uploadManager = new UploadManager(this);
+        syncManager = new SyncManager(this);
         formatter = new Formatter(this);
 
         if (mode.contentEquals("save")) {
@@ -325,7 +325,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         super.onDestroy();
         mDB.close();
         mDBHelper.close();
-        uploadManager.close();
+        syncManager.close();
     }
 
     void requery() {
@@ -379,24 +379,24 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             + ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null"));
 
             Cursor c = mDB.rawQuery(sql, null);
-            alreadyUploadedUploaders.clear();
-            pendingUploaders.clear();
+            alreadySynched.clear();
+            pendingSynchronizers.clear();
             reports.clear();
             if (c.moveToFirst()) {
                 do {
                     ContentValues tmp = DBHelper.get(c);
-                    Uploader uploader = uploadManager.add(tmp);
-                    if (!uploader.checkSupport(Feature.UPLOAD)) {
+                    Synchronizer synchronizer = syncManager.add(tmp);
+                    if (!synchronizer.checkSupport(Feature.UPLOAD)) {
                         continue;
                     }
 
                     reports.add(tmp);
                     if (tmp.containsKey("repid")) {
-                        alreadyUploadedUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
+                        alreadySynched.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
                             && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS),
                                     DB.ACCOUNT.FLAG_UPLOAD)) {
-                        pendingUploaders.add(tmp.getAsString(DB.ACCOUNT.NAME));
+                        pendingSynchronizers.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     }
                 } while (c.moveToNext());
             }
@@ -404,7 +404,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
 
         if (mode == MODE_DETAILS) {
-            if (pendingUploaders.isEmpty()) {
+            if (pendingSynchronizers.isEmpty()) {
                 uploadButton.setVisibility(View.GONE);
             } else {
                 uploadButton.setVisibility(View.VISIBLE);
@@ -575,7 +575,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         Intent i = new Intent(DetailActivity.this,
                                 AccountListActivity.class);
                         DetailActivity.this.startActivityForResult(i,
-                                UploadManager.CONFIGURE_REQUEST + 1);
+                                SyncManager.CONFIGURE_REQUEST + 1);
                     }
                 });
                 return b;
@@ -593,7 +593,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             cb.setChecked(false);
             cb.setEnabled(false);
             cb.setTag(name);
-            if (alreadyUploadedUploaders.contains(name)) {
+            if (alreadySynched.contains(name)) {
                 cb.setChecked(true);
                 cb.setText(getString(R.string.uploaded));
                 if (edit)
@@ -604,12 +604,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 {
                     cb.setEnabled(false);
                 }
-            } else if (pendingUploaders.contains(name)) {
+            } else if (pendingSynchronizers.contains(name)) {
                 cb.setChecked(true);
             } else {
                 cb.setChecked(false);
             }
-            if (mode == MODE_DETAILS && !alreadyUploadedUploaders.contains(name)) {
+            if (mode == MODE_DETAILS && !alreadySynched.contains(name)) {
                 cb.setEnabled(edit);
             } else if (mode == MODE_SAVE) {
                 cb.setEnabled(true);
@@ -644,7 +644,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            uploadManager.clearUpload(name, mID);
+                            syncManager.clearUpload(name, mID);
                             requery();
                         }
                     });
@@ -671,14 +671,14 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 return;
             }
             uploading = true;
-            uploadManager.startUploading(new UploadManager.Callback() {
+            syncManager.startUploading(new SyncManager.Callback() {
                 @Override
-                public void run(String uploader, Uploader.Status status) {
+                public void run(String synchronizerName, Synchronizer.Status status) {
                     uploading = false;
                     DetailActivity.this.setResult(RESULT_OK);
                     DetailActivity.this.finish();
                 }
-            }, pendingUploaders, mID);
+            }, pendingSynchronizers, mID);
         }
     };
 
@@ -732,13 +732,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
     final OnClickListener uploadButtonClick = new OnClickListener() {
         public void onClick(View v) {
             uploading = true;
-            uploadManager.startUploading(new UploadManager.Callback() {
+            syncManager.startUploading(new SyncManager.Callback() {
                 @Override
-                public void run(String uploader, Uploader.Status status) {
+                public void run(String synchronizerName, Synchronizer.Status status) {
                     uploading = false;
                     requery();
                 }
-            }, pendingUploaders, mID);
+            }, pendingSynchronizers, mID);
         }
     };
 
@@ -747,18 +747,18 @@ public class DetailActivity extends FragmentActivity implements Constants {
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
             final String name = (String) arg0.getTag();
-            if (alreadyUploadedUploaders.contains(name)) {
+            if (alreadySynched.contains(name)) {
                 // Only accept long clicks
                 arg0.setChecked(true);
             } else {
                 if (arg1 == true) {
-                    pendingUploaders.add((String) arg0.getTag());
+                    pendingSynchronizers.add((String) arg0.getTag());
                 } else {
-                    pendingUploaders.remove((String) arg0.getTag());
+                    pendingSynchronizers.remove((String) arg0.getTag());
                 }
 
                 if (mode == MODE_DETAILS) {
-                    if (pendingUploaders.isEmpty())
+                    if (pendingSynchronizers.isEmpty())
                         uploadButton.setVisibility(View.GONE);
                     else
                         uploadButton.setVisibility(View.VISIBLE);
@@ -796,8 +796,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == UploadManager.CONFIGURE_REQUEST) {
-            uploadManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SyncManager.CONFIGURE_REQUEST) {
+            syncManager.onActivityResult(requestCode, resultCode, data);
         }
         requery();
     }

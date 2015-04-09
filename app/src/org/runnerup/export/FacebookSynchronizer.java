@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class Facebook extends DefaultUploader implements OAuth2Server {
+public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Facebook";
 
@@ -76,11 +76,11 @@ public class Facebook extends DefaultUploader implements OAuth2Server {
     final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
-    Facebook(Context context, UploadManager uploadManager) {
+    FacebookSynchronizer(Context context, SyncManager syncManager) {
         this.context = context;
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 CLIENT_ID = tmp.getString("CLIENT_ID");
                 CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
             } catch (Exception ex) {
@@ -227,7 +227,7 @@ public class Facebook extends DefaultUploader implements OAuth2Server {
             return s;
         }
 
-        return Uploader.Status.OK;
+        return Synchronizer.Status.OK;
     }
 
     @Override
@@ -271,7 +271,7 @@ public class Facebook extends DefaultUploader implements OAuth2Server {
             IOException, Exception {
         JSONObject obj = new JSONObject();
         /* create a facebook course instance */
-        obj.put("fb:app_id", Facebook.CLIENT_ID);
+        obj.put("fb:app_id", FacebookSynchronizer.CLIENT_ID);
         obj.put("og:type", "fitness.course");
         obj.put("og:title", "a RunnerUp course");
         obj.put("fitness", course);
@@ -368,7 +368,7 @@ public class Facebook extends DefaultUploader implements OAuth2Server {
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case SKIP_MAP:
             case UPLOAD:

@@ -54,11 +54,11 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.UploadManager.Callback;
-import org.runnerup.export.UploadManager.WorkoutRef;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.SyncManager.Callback;
+import org.runnerup.export.SyncManager.WorkoutRef;
+import org.runnerup.export.Synchronizer;
+import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -85,9 +85,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     private String PHONE_STRING = "my phone";
     public final static String WORKOUT_NAME = "";
 
-    final HashSet<UploadManager.WorkoutRef> pendingWorkouts = new HashSet<UploadManager.WorkoutRef>();
+    final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<SyncManager.WorkoutRef>();
     final ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
-    final HashMap<String, ArrayList<UploadManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<UploadManager.WorkoutRef>>();
+    final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<SyncManager.WorkoutRef>>();
     WorkoutAccountListAdapter adapter = null;
 
     final HashSet<String> loadedProviders = new HashSet<String>();
@@ -100,7 +100,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     Button shareButton = null;
     Button createButton = null;
 
-    UploadManager uploadManager = null;
+    SyncManager syncManager = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -112,7 +112,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
-        uploadManager = new UploadManager(this);
+        syncManager = new SyncManager(this);
         adapter = new WorkoutAccountListAdapter(this);
         list = (ExpandableListView) findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
@@ -308,7 +308,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
 
         WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
-        if (PHONE_STRING.contentEquals(selected.uploader)) {
+        if (PHONE_STRING.contentEquals(selected.synchronizer)) {
             downloadButton.setEnabled(false);
             deleteButton.setEnabled(true);
             shareButton.setEnabled(true);
@@ -320,11 +320,11 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     }
 
     void listLocal() {
-        ArrayList<UploadManager.WorkoutRef> newlist = new ArrayList<UploadManager.WorkoutRef>();
+        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<SyncManager.WorkoutRef>();
         String[] list = org.runnerup.view.WorkoutListAdapter.load(this);
         if (list != null) {
             for (String s : list) {
-                newlist.add(new UploadManager.WorkoutRef(PHONE_STRING, null, s));
+                newlist.add(new SyncManager.WorkoutRef(PHONE_STRING, null, s));
             }
         }
 
@@ -338,11 +338,11 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         super.onDestroy();
         mDB.close();
         mDBHelper.close();
-        uploadManager.close();
+        syncManager.close();
     }
 
     void requery() {
-        ContentValues alluploaders[] = null;
+        ContentValues allSynchronizers[] = null;
         {
             /**
              * Accounts/reports
@@ -359,7 +359,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             + (" FROM " + DB.ACCOUNT.TABLE + " acc "));
 
             Cursor c = mDB.rawQuery(sql, null);
-            alluploaders = DBHelper.toArray(c);
+            allSynchronizers = DBHelper.toArray(c);
             c.close();
         }
 
@@ -369,13 +369,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         phone.put(DB.ACCOUNT.NAME, PHONE_STRING);
         providers.add(phone);
 
-        for (ContentValues tmp : alluploaders) {
-            Uploader uploader = uploadManager.add(tmp);
-            if (uploader != null && uploader.checkSupport(Uploader.Feature.WORKOUT_LIST)) {
+        for (ContentValues tmp : allSynchronizers) {
+            Synchronizer synchronizer = syncManager.add(tmp);
+            if (synchronizer != null && synchronizer.checkSupport(Synchronizer.Feature.WORKOUT_LIST)) {
                 providers.add(tmp);
 
-                workouts.remove(uploader.getName());
-                workouts.put(uploader.getName(), new ArrayList<WorkoutRef>());
+                workouts.remove(synchronizer.getName());
+                workouts.put(synchronizer.getName(), new ArrayList<WorkoutRef>());
             }
         }
 
@@ -397,15 +397,15 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         boolean match(T t);
     }
 
-    ArrayList<UploadManager.WorkoutRef> filter(List<UploadManager.WorkoutRef> list,
-            Filter<UploadManager.WorkoutRef> f) {
-        ArrayList<UploadManager.WorkoutRef> newlist = new ArrayList<UploadManager.WorkoutRef>();
+    ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
+            Filter<SyncManager.WorkoutRef> f) {
+        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<SyncManager.WorkoutRef>();
         return filter(list, newlist, f);
     }
 
-    ArrayList<UploadManager.WorkoutRef> filter(List<UploadManager.WorkoutRef> list,
-            ArrayList<WorkoutRef> newlist, Filter<UploadManager.WorkoutRef> f) {
-        for (UploadManager.WorkoutRef w : list) {
+    ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
+            ArrayList<WorkoutRef> newlist, Filter<SyncManager.WorkoutRef> f) {
+        for (SyncManager.WorkoutRef w : list) {
             if (f.match(w))
                 newlist.add(w);
         }
@@ -486,9 +486,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             uploading = true;
             HashSet<WorkoutRef> list = new HashSet<WorkoutRef>();
             list.add((WorkoutRef) currentlySelectedWorkout.getTag());
-            uploadManager.loadWorkouts(list, new UploadManager.Callback() {
+            syncManager.loadWorkouts(list, new SyncManager.Callback() {
                 @Override
-                public void run(String uploader, Uploader.Status status) {
+                public void run(String synchronizerName, Synchronizer.Status status) {
                     uploading = false;
                     currentlySelectedWorkout = null;
                     listLocal();
@@ -569,9 +569,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     OnClickListener loadWorkoutButtonClick = new OnClickListener() {
         public void onClick(View v) {
             uploading = true;
-            uploadManager.loadWorkouts(pendingWorkouts, new UploadManager.Callback() {
+            syncManager.loadWorkouts(pendingWorkouts, new SyncManager.Callback() {
                 @Override
-                public void run(String uploader, Status status) {
+                public void run(String synchronizerName, Status status) {
                     uploading = false;
                     listLocal();
                 }
@@ -603,8 +603,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == UploadManager.CONFIGURE_REQUEST) {
-            uploadManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SyncManager.CONFIGURE_REQUEST) {
+            syncManager.onActivityResult(requestCode, resultCode, data);
         }
         requery();
     }
@@ -717,30 +717,30 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             uploading = true;
             saveGroupPosition = groupPosition;
 
-            if (!uploadManager.isConfigured(provider)) {
-                uploadManager.connect(onUploaderConfiguredCallback, provider, false);
+            if (!syncManager.isConfigured(provider)) {
+                syncManager.connect(onSynchronizerConfiguredCallback, provider, false);
             }
             else {
-                onUploaderConfiguredCallback.run(provider, Uploader.Status.OK);
+                onSynchronizerConfiguredCallback.run(provider, Synchronizer.Status.OK);
             }
         }
 
-        final Callback onUploaderConfiguredCallback = new Callback() {
+        final Callback onSynchronizerConfiguredCallback = new Callback() {
             @Override
-            public void run(String uploader, Status status) {
+            public void run(String synchronizerName, Status status) {
                 System.out.println("status: " + status);
-                if (status != Uploader.Status.OK) {
+                if (status != Synchronizer.Status.OK) {
                     uploading = false;
                     return;
                 }
 
-                ArrayList<WorkoutRef> list = workouts.get(uploader);
+                ArrayList<WorkoutRef> list = workouts.get(synchronizerName);
                 list.clear();
 
                 HashSet<String> tmp = new HashSet<String>();
-                tmp.add(uploader);
+                tmp.add(synchronizerName);
 
-                uploadManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);
+                syncManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);
             }
         };
 
@@ -751,7 +751,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         private final Callback onLoadWorkoutListCallback = new Callback() {
 
             @Override
-            public void run(String uploader, Status status) {
+            public void run(String synchronizerName, Status status) {
                 uploading = false;
                 if (status == Status.OK) {
                     loadedProviders.add(getProvider(saveGroupPosition));
@@ -767,7 +767,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             String provider = getProvider(groupPosition);
             if (currentlySelectedWorkout != null) {
                 WorkoutRef ref = (WorkoutRef) currentlySelectedWorkout.getTag();
-                if (ref.uploader.contentEquals(provider)) {
+                if (ref.synchronizer.contentEquals(provider)) {
                     currentlySelectedWorkout.setChecked(false);
                     currentlySelectedWorkout = null;
                 }

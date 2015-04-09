@@ -43,7 +43,7 @@ import org.runnerup.workout.Scope;
 import org.runnerup.workout.WorkoutInfo;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunnerUpLive extends DefaultUploader implements WorkoutObserver {
+public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
     public static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
@@ -57,7 +57,7 @@ public class RunnerUpLive extends DefaultUploader implements WorkoutObserver {
     private final Formatter formatter;
     private long mTimeLastLog;
 
-    RunnerUpLive(Context context) {
+    RunnerUpLiveSynchronizer(Context context) {
         this.context = context;
 
         Resources res = context.getResources();
@@ -125,7 +125,7 @@ public class RunnerUpLive extends DefaultUploader implements WorkoutObserver {
         }
 
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
         if (username == null || password == null) {
             return s;
         }
@@ -250,7 +250,7 @@ public class RunnerUpLive extends DefaultUploader implements WorkoutObserver {
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case LIVE:
                 return true;
