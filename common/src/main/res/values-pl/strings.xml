@@ -95,7 +95,7 @@
   <string name="low_pace">Min. tętno</string>
   <string name="high_pace">Max. tętno</string>
   <string name="sex">Płeć</string>
-  <string name="upload">Wyślij</string>
+  <string name="upload">Synchronizuj</string>
   <string name="feed">kanał</string>
   <string name="tab_notes">Notatki</string>
   <string name="tab_laps">Okrążenia</string>
