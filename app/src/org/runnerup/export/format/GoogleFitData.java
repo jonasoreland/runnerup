@@ -23,7 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
 import org.runnerup.R;
-import org.runnerup.export.GoogleFitUploader;
+import org.runnerup.export.GoogleFitSynchronizer;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.JsonWriter;
 
@@ -429,13 +429,13 @@ public class GoogleFitData {
 
     private String getDataSetURLSuffix(DataSourceType source, long startTime, long endTime) {
         StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append(GoogleFitUploader.REST_DATASOURCE).append("/").append(SyncHelper.URLEncode(source.getDataStreamId(this))).append("/").append(GoogleFitUploader.REST_DATASETS).append("/").append(startTime).append("-").append(endTime);
+        urlSuffix.append(GoogleFitSynchronizer.REST_DATASOURCE).append("/").append(SyncHelper.URLEncode(source.getDataStreamId(this))).append("/").append(GoogleFitSynchronizer.REST_DATASETS).append("/").append(startTime).append("-").append(endTime);
         return urlSuffix.toString();
     }
 
     private String getSessionURLSuffix(long startTime, long endTime) {
         StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append(GoogleFitUploader.REST_SESSIONS).append("/").append(mContext.getString(R.string.app_name)).append("-").append(startTime).append("-").append(endTime);
+        urlSuffix.append(GoogleFitSynchronizer.REST_SESSIONS).append("/").append(mContext.getString(R.string.app_name)).append("-").append(startTime).append("-").append(endTime);
         return urlSuffix.toString();
     }
 

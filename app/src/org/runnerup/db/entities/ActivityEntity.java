@@ -24,18 +24,25 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Content values wrapper for the {@code activity} table.
  */
 public class ActivityEntity extends AbstractEntity {
 
+    private List<LapEntity> laps;
+
+    private List<LocationEntity> locationPoints;
+
     public ActivityEntity() {
         super();
+        laps = new ArrayList<LapEntity>();
+        locationPoints = new ArrayList<LocationEntity>();
     }
 
     public ActivityEntity(Cursor c) {
-        super();
+        this();
         try {
             toContentValues(c);
         } catch (Exception e) {
@@ -223,4 +230,60 @@ public class ActivityEntity extends AbstractEntity {
     protected String getNullColumnHack() {
         return Constants.DB.ACTIVITY.NULLCOLUMNHACK;
     }
+
+    public void addLap(LapEntity lap) {
+        if (lap.getActivityId() != null && (this.getId() == null || !lap.getActivityId().equals(this.getId()))) {
+            throw new IllegalArgumentException("Foreign key of lap (" + lap.getActivityId() + ") doesn't match the activity primary key (" + this.getId() + ")");
+        }
+
+        if (lap.getActivityId() == null && this.getId() != null) {
+            lap.setActivityId(this.getId());
+        }
+
+        getLaps().add(lap);
+    }
+
+    public void addLaps(List<LapEntity> laps) {
+        for (LapEntity lap : laps) {
+            this.addLap(lap);
+        }
+    }
+
+    public void putLaps(List<LapEntity> laps) {
+        this.getLaps().clear();
+        this.addLaps(laps);
+    }
+
+    public List<LapEntity> getLaps() {
+        return laps;
+    }
+
+    public void addPoint(LocationEntity point) {
+        if (point.getActivityId() != null && (this.getId() == null || !point.getActivityId().equals(this.getId()))) {
+            throw new IllegalArgumentException("Foreign key of point (" + point.getActivityId() + ") doesn't match the activity primary key (" + this.getId() + ")");
+        }
+
+        if (point.getActivityId() == null && this.getId() != null) {
+            point.setActivityId(this.getId());
+        }
+
+        getLocationPoints().add(point);
+    }
+
+    public void addPoints(List<LocationEntity> points) {
+        for (LocationEntity point : points) {
+            this.addPoint(point);
+        }
+    }
+
+    public void putPoints(List<LocationEntity> points) {
+        this.getLocationPoints().clear();
+        this.addPoints(points);
+    }
+
+    public List<LocationEntity> getLocationPoints() {
+        return locationPoints;
+    }
+
+
 }

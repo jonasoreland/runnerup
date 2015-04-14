@@ -1,7 +1,7 @@
 package org.runnerup.util;
 
 import org.runnerup.db.entities.ActivityEntity;
-import org.runnerup.export.UploadManager;
+import org.runnerup.export.SyncManager;
 
 public class SyncActivityItem {
     private Long id;
@@ -107,7 +107,7 @@ public class SyncActivityItem {
         return sport;
     }
 
-    public boolean synchronize(UploadManager.SyncMode syncMode) {
+    public boolean synchronize(SyncManager.SyncMode syncMode) {
         switch (syncMode) {
             case DOWNLOAD:
                 return !this.skipActivity() && !this.isPresent();

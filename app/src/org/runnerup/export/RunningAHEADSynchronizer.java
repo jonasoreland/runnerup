@@ -43,7 +43,7 @@ import java.net.URL;
 import java.util.zip.GZIPOutputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
+public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "RunningAHEAD";
 
@@ -63,10 +63,10 @@ public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
     private long id = 0;
     private String access_token = null;
 
-    RunningAHEAD(UploadManager uploadManager) {
+    RunningAHEADSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 CLIENT_ID = tmp.getString("CLIENT_ID");
                 CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
             } catch (Exception ex) {
@@ -185,7 +185,7 @@ public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
         if (access_token == null)
             return s;
 
-        return Uploader.Status.OK;
+        return Synchronizer.Status.OK;
     }
 
     @Override
@@ -233,7 +233,7 @@ public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
                 }
             }
             if (!found) {
-                System.err.println("Unhandled response from RunningAHEAD: " + obj);
+                System.err.println("Unhandled response from RunningAHEADSynchronizer: " + obj);
             }
             if (responseCode == 200 && found) {
                 conn.disconnect();
@@ -246,7 +246,7 @@ public class RunningAHEAD extends DefaultUploader implements OAuth2Server {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();

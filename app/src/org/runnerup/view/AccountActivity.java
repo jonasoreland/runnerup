@@ -45,9 +45,9 @@ import android.widget.TextView;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.Synchronizer;
+import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.widget.WidgetUtil;
 
@@ -56,16 +56,16 @@ import java.util.ArrayList;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountActivity extends Activity implements Constants {
 
-    long uploaderID = -1;
-    String uploader = null;
-    Integer uploaderIcon = null;
+    long synchronizerID = -1;
+    String synchrnizer = null;
+    Integer synchronizerIcon = null;
 
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     final ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 
     long flags;
-    UploadManager uploadManager = null;
+    SyncManager syncManager = null;
 
     /** Called when the activity is first created. */
 
@@ -76,15 +76,15 @@ public class AccountActivity extends Activity implements Constants {
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         Intent intent = getIntent();
-        uploader = intent.getStringExtra("uploader");
+        synchrnizer = intent.getStringExtra("synchronizer");
 
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
-        uploadManager = new UploadManager(this);
+        syncManager = new SyncManager(this);
         fillData();
 
-        Uploader upd = uploadManager.getUploaderByName(uploader);
+        Synchronizer upd = syncManager.getSynchronizerByName(synchrnizer);
 
         {
             Button btn = (Button) findViewById(R.id.ok_account_button);
@@ -98,7 +98,7 @@ public class AccountActivity extends Activity implements Constants {
 
         {
             Button btn = (Button) findViewById(R.id.account_download_button);
-            if (upd.checkSupport(Uploader.Feature.ACTIVITY_LIST) && upd.checkSupport(Uploader.Feature.GET_ACTIVITY)) {
+            if (upd.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) && upd.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
                 btn.setOnClickListener(downloadButtonClick);
             } else {
                 btn.setVisibility(View.GONE);
@@ -122,7 +122,7 @@ public class AccountActivity extends Activity implements Constants {
             c.close();
         }
         mCursors.clear();
-        uploadManager.close();
+        syncManager.close();
     }
 
     void fillData() {
@@ -140,15 +140,15 @@ public class AccountActivity extends Activity implements Constants {
         };
 
         String args[] = {
-            uploader
+                synchrnizer
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?", args,
                 null, null, null);
 
         if (c.moveToFirst()) {
             ContentValues tmp = DBHelper.get(c);
-            uploaderID = tmp.getAsLong("_id");
-            Uploader uploader = uploadManager.add(tmp);
+            synchronizerID = tmp.getAsLong("_id");
+            Synchronizer synchronizer = syncManager.add(tmp);
 
             {
                 ImageView im = (ImageView) findViewById(R.id.account_list_icon);
@@ -161,7 +161,7 @@ public class AccountActivity extends Activity implements Constants {
                     im.setVisibility(View.VISIBLE);
                     tv.setVisibility(View.GONE);
                     im.setBackgroundResource(tmp.getAsInteger(DB.ACCOUNT.ICON));
-                    uploaderIcon = tmp.getAsInteger(DB.ACCOUNT.ICON);
+                    synchronizerIcon = tmp.getAsInteger(DB.ACCOUNT.ICON);
                 }
             }
 
@@ -176,7 +176,7 @@ public class AccountActivity extends Activity implements Constants {
             }
 
             flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-            if (uploader.checkSupport(Uploader.Feature.UPLOAD)) {
+            if (synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
@@ -187,7 +187,7 @@ public class AccountActivity extends Activity implements Constants {
                 btn.setVisibility(View.GONE);
             }
 
-            if (uploader.checkSupport(Uploader.Feature.FEED)) {
+            if (synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_FEED);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
@@ -195,7 +195,7 @@ public class AccountActivity extends Activity implements Constants {
                 addRow("Feed", cb);
             }
 
-            if (uploader.checkSupport(Uploader.Feature.LIVE)) {
+            if (synchronizer.checkSupport(Synchronizer.Feature.LIVE)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_LIVE);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE));
@@ -203,7 +203,7 @@ public class AccountActivity extends Activity implements Constants {
                 addRow(getResources().getString(R.string.Live), cb);
             }
 
-            if (uploader.checkSupport(Uploader.Feature.SKIP_MAP)) {
+            if (synchronizer.checkSupport(Synchronizer.Feature.SKIP_MAP)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_SKIP_MAP);
                 cb.setChecked(!Bitfield.test(flags, DB.ACCOUNT.FLAG_SKIP_MAP));
@@ -254,11 +254,11 @@ public class AccountActivity extends Activity implements Constants {
                     AccountActivity.this);
             builder.setTitle(getString(R.string.clear_uploads));
             builder.setMessage(getResources().getString(R.string.clear_uploads_msg,
-                    uploader));
+                    synchrnizer));
             builder.setPositiveButton(getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            uploadManager.clearUploads(callback, uploader);
+                            syncManager.clearUploads(callback, synchrnizer);
                         }
                     });
 
@@ -278,11 +278,11 @@ public class AccountActivity extends Activity implements Constants {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("uploader", uploader);
-            intent.putExtra("uploaderID", uploaderID);
-            intent.putExtra("mode", UploadManager.SyncMode.UPLOAD.name());
-            if (uploaderIcon != null)
-                intent.putExtra("uploaderIcon", uploaderIcon.intValue());
+            intent.putExtra("synchronizer", synchrnizer);
+            intent.putExtra("synchronizerID", synchronizerID);
+            intent.putExtra("mode", SyncManager.SyncMode.UPLOAD.name());
+            if (synchronizerIcon != null)
+                intent.putExtra("synchronizerIcon", synchronizerIcon.intValue());
             AccountActivity.this.startActivityForResult(intent, 113);
         }
     };
@@ -292,11 +292,11 @@ public class AccountActivity extends Activity implements Constants {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("uploader", uploader);
-            intent.putExtra("uploaderID", uploaderID);
-            intent.putExtra("mode", UploadManager.SyncMode.DOWNLOAD.name());
-            if (uploaderIcon != null)
-                intent.putExtra("uploaderIcon", uploaderIcon.intValue());
+            intent.putExtra("synchronizer", synchrnizer);
+            intent.putExtra("synchronizerID", synchronizerID);
+            intent.putExtra("mode", SyncManager.SyncMode.DOWNLOAD.name());
+            if (synchronizerIcon != null)
+                intent.putExtra("synchronizerIcon", synchronizerIcon.intValue());
             AccountActivity.this.startActivityForResult(intent, 113);
         }
     };
@@ -326,7 +326,7 @@ public class AccountActivity extends Activity implements Constants {
             }
             tmp.put(DB.ACCOUNT.FLAGS, flags);
             String args[] = {
-                uploader
+                    synchrnizer
             };
             mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
         }
@@ -353,7 +353,7 @@ public class AccountActivity extends Activity implements Constants {
             builder.setPositiveButton(getString(R.string.ok),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            uploadManager.disableUploader(disconnectCallback, uploader,
+                            syncManager.disableSynchronizer(disconnectCallback, synchrnizer,
                                     selected[0]);
                         }
                     });
@@ -377,15 +377,15 @@ public class AccountActivity extends Activity implements Constants {
         }
     };
 
-    final UploadManager.Callback callback = new UploadManager.Callback() {
+    final SyncManager.Callback callback = new SyncManager.Callback() {
         @Override
-        public void run(String uploader, Status status) {
+        public void run(String synchronizerName, Status status) {
         }
     };
 
-    final UploadManager.Callback disconnectCallback = new UploadManager.Callback() {
+    final SyncManager.Callback disconnectCallback = new SyncManager.Callback() {
         @Override
-        public void run(String uploader, Status status) {
+        public void run(String synchronizerName, Status status) {
             finish();
         }
     };

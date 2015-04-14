@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class MapMyRunUploader extends DefaultUploader {
+public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "MapMyRun";
     private static String CONSUMER_KEY;
@@ -74,10 +74,10 @@ public class MapMyRunUploader extends DefaultUploader {
         }
     }
 
-    MapMyRunUploader(UploadManager uploadManager) {
+    MapMyRunSynchronizer(SyncManager syncManager) {
         if (CONSUMER_KEY == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 CONSUMER_KEY = tmp.getString("CONSUMER_KEY");
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -166,7 +166,7 @@ public class MapMyRunUploader extends DefaultUploader {
         }
 
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
         if (username == null || password == null) {
             return s;
         }
@@ -208,7 +208,7 @@ public class MapMyRunUploader extends DefaultUploader {
                     user_id = user.getString("user_id");
                     user_key = user.getString("user_key");
                     md5pass = pass;
-                    return Uploader.Status.OK;
+                    return Synchronizer.Status.OK;
                 } catch (JSONException e) {
                     System.err.println("obj: " + obj);
                     throw e;
@@ -317,7 +317,7 @@ public class MapMyRunUploader extends DefaultUploader {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
         if (ex != null) {

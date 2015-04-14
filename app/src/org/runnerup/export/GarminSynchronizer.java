@@ -49,7 +49,7 @@ import java.net.URL;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class GarminUploader extends DefaultUploader {
+public class GarminSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Garmin";
 
@@ -67,7 +67,7 @@ public class GarminUploader extends DefaultUploader {
     private String password = null;
     private boolean isConnected = false;
 
-    GarminUploader(UploadManager uploadManager) {
+    GarminSynchronizer(SyncManager syncManager) {
     }
 
     @Override
@@ -125,7 +125,7 @@ public class GarminUploader extends DefaultUploader {
     @Override
     public Status connect() {
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
         if (username == null || password == null) {
             return s;
         }
@@ -145,7 +145,7 @@ public class GarminUploader extends DefaultUploader {
             String amsg = conn.getResponseMessage();
             getCookies(conn);
 
-            System.err.println("GarminUploader.connect() CHOOSE_URL => code: " + responseCode
+            System.err.println("GarminSynchronizer.connect() CHOOSE_URL => code: " + responseCode
                     + ", msg: " + amsg);
 
             if (responseCode == 200) {
@@ -164,7 +164,7 @@ public class GarminUploader extends DefaultUploader {
         if (conn != null)
             conn.disconnect();
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();
@@ -174,7 +174,7 @@ public class GarminUploader extends DefaultUploader {
 
     private Status connectOld() throws MalformedURLException, IOException, JSONException {
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
         HttpURLConnection conn = null;
 
@@ -187,7 +187,7 @@ public class GarminUploader extends DefaultUploader {
             String amsg = conn.getResponseMessage();
             getCookies(conn);
             if (responseCode != 200) {
-                System.err.println("GarminUploader::connect() - got " + responseCode + ", msg: "
+                System.err.println("GarminSynchronizer::connect() - got " + responseCode + ", msg: "
                         + amsg);
             }
         }
@@ -244,20 +244,20 @@ public class GarminUploader extends DefaultUploader {
             // logged in
             if (obj.optString("username", "").length() > 0) {
                 isConnected = true;
-                return Uploader.Status.OK;
+                return Synchronizer.Status.OK;
             } else {
-                System.err.println("GarminUploader::connect() missing username, obj: "
+                System.err.println("GarminSynchronizer::connect() missing username, obj: "
                         + obj.toString() + ", code: " + responseCode + ", msg: " + amsg);
             }
             Status s = Status.NEED_AUTH;
-            s.authMethod = Uploader.AuthMethod.USER_PASS;
+            s.authMethod = Synchronizer.AuthMethod.USER_PASS;
             return s;
         }
     }
 
     private Status connectNew() throws MalformedURLException, IOException, JSONException {
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
         FormValues fv = new FormValues();
         fv.put("service", "https://connect.garmin.com/post-auth/login");
@@ -408,7 +408,7 @@ public class GarminUploader extends DefaultUploader {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();
@@ -417,7 +417,7 @@ public class GarminUploader extends DefaultUploader {
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case WORKOUT_LIST:
             case GET_WORKOUT:
@@ -470,7 +470,7 @@ public class GarminUploader extends DefaultUploader {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();

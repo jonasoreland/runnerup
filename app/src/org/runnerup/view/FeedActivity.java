@@ -42,10 +42,10 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.UploadManager.Callback;
-import org.runnerup.export.Uploader;
-import org.runnerup.export.Uploader.Status;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.SyncManager.Callback;
+import org.runnerup.export.Synchronizer;
+import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.feed.FeedList;
 import org.runnerup.util.Bitfield;
 import org.runnerup.common.util.Constants;
@@ -67,7 +67,7 @@ import java.util.WeakHashMap;
 public class FeedActivity extends Activity implements Constants {
 
     DBHelper mDBHelper = null;
-    UploadManager uploadManager = null;
+    SyncManager syncManager = null;
     Formatter formatter = null;
 
     FeedList feed = null;
@@ -87,7 +87,7 @@ public class FeedActivity extends Activity implements Constants {
         setContentView(R.layout.feed);
 
         mDBHelper = new DBHelper(this);
-        uploadManager = new UploadManager(this);
+        syncManager = new SyncManager(this);
         formatter = new Formatter(this);
         feed = new FeedList(mDBHelper);
         feed.load(); // load from DB
@@ -105,7 +105,7 @@ public class FeedActivity extends Activity implements Constants {
                 feed.getList().clear();
                 feedAdapter.feed.clear();
                 feedAdapter.notifyDataSetInvalidated();
-                uploadManager.clear();
+                syncManager.clear();
                 startSync();
             }
         });
@@ -128,7 +128,7 @@ public class FeedActivity extends Activity implements Constants {
     StringBuffer cancelSync = null;
 
     void startSync() {
-        uploadManager.clear();
+        syncManager.clear();
         HashSet<String> set = new HashSet<String>();
         String[] from = new String[] {
                 "_id",
@@ -143,12 +143,12 @@ public class FeedActivity extends Activity implements Constants {
         if (c.moveToFirst()) {
             do {
                 final ContentValues tmp = DBHelper.get(c);
-                final Uploader uploader = uploadManager.add(tmp);
+                final Synchronizer synchronizer = syncManager.add(tmp);
                 final String name = tmp.getAsString(DB.ACCOUNT.NAME);
                 final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-                if (uploadManager.isConfigured(name) &&
+                if (syncManager.isConfigured(name) &&
                         Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED) &&
-                        uploader.checkSupport(Uploader.Feature.FEED)) {
+                        synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
                     set.add(name);
                 }
             } while (c.moveToNext());
@@ -163,7 +163,7 @@ public class FeedActivity extends Activity implements Constants {
             refreshButton.setEnabled(false);
             feedStatus.setText(getString(R.string.synchronizing_feed));
             cancelSync = new StringBuffer();
-            uploadManager.syncronizeFeed(syncDone, set, feed, cancelSync);
+            syncManager.syncronizeFeed(syncDone, set, feed, cancelSync);
         } else {
             feedHeader.setVisibility(View.GONE);
             refreshButton.setVisibility(View.GONE);
@@ -173,7 +173,7 @@ public class FeedActivity extends Activity implements Constants {
 
     final Callback syncDone = new Callback() {
         @Override
-        public void run(String uploader, Status status) {
+        public void run(String synchronizerName, Status status) {
             refreshButton.setEnabled(true);
             feedHeader.setVisibility(View.GONE);
         }
@@ -188,7 +188,7 @@ public class FeedActivity extends Activity implements Constants {
     public void onDestroy() {
         super.onDestroy();
         mDBHelper.close();
-        uploadManager.close();
+        syncManager.close();
         feedAdapter.close();
     }
 
@@ -256,7 +256,7 @@ public class FeedActivity extends Activity implements Constants {
                 TextView tv2 = (TextView) v.findViewById(R.id.feed_activity_summary);
                 TextView tv3 = (TextView) v.findViewById(R.id.feed_activity_notes);
 
-                String src = uploadManager.getUploader(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
+                String src = syncManager.getSynchronizer(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
                 if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {
                     loadImage(iv, fixUrl(tmp.getAsString(DB.FEED.USER_IMAGE_URL)));
                 } else {
@@ -372,8 +372,8 @@ public class FeedActivity extends Activity implements Constants {
                 feedAdapter.notifyDataSetInvalidated();
                 feedAdapter.notifyDataSetChanged();
             } else {
-                String uploader = (String) data;
-                feedStatus.setText(getString(R.string.synchronizing) + " " + uploader);
+                String synchronizerName = (String) data;
+                feedStatus.setText(getString(R.string.synchronizing) + " " + synchronizerName);
             }
         }
     }

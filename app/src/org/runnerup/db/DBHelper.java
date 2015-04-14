@@ -30,21 +30,21 @@ import android.os.Build;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
-import org.runnerup.export.DigifitUploader;
-import org.runnerup.export.Endomondo;
-import org.runnerup.export.Facebook;
-import org.runnerup.export.FunBeatUploader;
-import org.runnerup.export.GarminUploader;
-import org.runnerup.export.GoogleFitUploader;
-import org.runnerup.export.GooglePlus;
-import org.runnerup.export.JoggSE;
-import org.runnerup.export.MapMyRunUploader;
-import org.runnerup.export.NikePlus;
-import org.runnerup.export.RunKeeperUploader;
-import org.runnerup.export.RunnerUpLive;
-import org.runnerup.export.RunningAHEAD;
-import org.runnerup.export.RuntasticUploader;
-import org.runnerup.export.Strava;
+import org.runnerup.export.DigifitSynchronizer;
+import org.runnerup.export.EndomondoSynchronizer;
+import org.runnerup.export.FacebookSynchronizer;
+import org.runnerup.export.FunBeatSynchronizer;
+import org.runnerup.export.GarminSynchronizer;
+import org.runnerup.export.GoogleFitSynchronizer;
+import org.runnerup.export.GooglePlusSynchronizer;
+import org.runnerup.export.JoggSESynchronizer;
+import org.runnerup.export.MapMyRunSynchronizer;
+import org.runnerup.export.NikePlusSynchronizer;
+import org.runnerup.export.RunKeeperSynchronizer;
+import org.runnerup.export.RunnerUpLiveSynchronizer;
+import org.runnerup.export.RunningAHEADSynchronizer;
+import org.runnerup.export.RuntasticSynchronizer;
+import org.runnerup.export.StravaSynchronizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -312,7 +312,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, GarminUploader.NAME);
+            values.put(DB.ACCOUNT.NAME, GarminSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
@@ -323,7 +323,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         if (yet)
         {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunKeeperUploader.NAME);
+            values.put(DB.ACCOUNT.NAME, RunKeeperSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "runkeeper");
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
             values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
@@ -333,7 +333,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, JoggSE.NAME);
+            values.put(DB.ACCOUNT.NAME, JoggSESynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "gpx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a5_jogg);
@@ -343,7 +343,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, FunBeatUploader.NAME);
+            values.put(DB.ACCOUNT.NAME, FunBeatSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
@@ -353,7 +353,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, MapMyRunUploader.NAME);
+            values.put(DB.ACCOUNT.NAME, MapMyRunSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a3_mapmyrun_logo);
@@ -363,7 +363,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, NikePlus.NAME);
+            values.put(DB.ACCOUNT.NAME, NikePlusSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "nikeplus,gpx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a4_nikeplus);
@@ -373,7 +373,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, Endomondo.NAME);
+            values.put(DB.ACCOUNT.NAME, EndomondoSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "endomondotrack");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a6_endomondo);
@@ -383,7 +383,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunningAHEAD.NAME);
+            values.put(DB.ACCOUNT.NAME, RunningAHEADSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
             values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
@@ -393,7 +393,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, DigifitUploader.NAME);
+            values.put(DB.ACCOUNT.NAME, DigifitSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a9_digifit);
@@ -403,7 +403,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, Strava.NAME);
+            values.put(DB.ACCOUNT.NAME, StravaSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a10_strava);
@@ -413,7 +413,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunnerUpLive.NAME);
+            values.put(DB.ACCOUNT.NAME, RunnerUpLiveSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "");
             values.put(DB.ACCOUNT.AUTH_METHOD, "none");
             values.put(DB.ACCOUNT.ICON, R.drawable.a8_runneruplive);
@@ -424,7 +424,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (yet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, Facebook.NAME);
+            values.put(DB.ACCOUNT.NAME, FacebookSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "");
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
             values.put(DB.ACCOUNT.ICON, R.drawable.a11_facebook);
@@ -434,7 +434,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (notyet) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, GooglePlus.NAME);
+            values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "");
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
             values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
@@ -444,7 +444,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (DBVERSION >= 26) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RuntasticUploader.NAME);
+            values.put(DB.ACCOUNT.NAME, RuntasticSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
@@ -454,7 +454,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (DBVERSION >= 27) {
             ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, GoogleFitUploader.NAME);
+            values.put(DB.ACCOUNT.NAME, GoogleFitSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "");
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
             values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
@@ -566,7 +566,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
-    public static int bulkInsert(List<DBEntity> objectList, SQLiteDatabase db) {
+    public static int bulkInsert(List<? extends DBEntity> objectList, SQLiteDatabase db) {
         int result = 0;
         for (DBEntity obj : objectList) {
             long id = obj.insert(db);
