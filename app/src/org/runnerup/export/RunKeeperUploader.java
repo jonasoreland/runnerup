@@ -22,14 +22,18 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
@@ -98,7 +102,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
     private String feed_password = null;
     private String feed_access_token = null;
 
-    private static final int ONE_THOUSEND = 1000;
+    private static final int ONE_THOUSAND = 1000;
 
     static final Map<Integer, Sport> RK2SPORT = new HashMap<Integer, Sport>();
     static {
@@ -366,7 +370,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                 String startTime = item.getString("start_time");
                 SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
                 try {
-                    ai.setStartTime(format.parse(startTime).getTime()/ONE_THOUSEND);
+                    // milliseconds to seconds
+                    ai.setStartTime(format.parse(startTime).getTime() / ONE_THOUSAND);
                 } catch (ParseException e) {
                     Log.e(Constants.LOG, e.getMessage());
                     return null;
@@ -569,19 +574,21 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
             meters = Float.valueOf(dist) - meters;
             time = timePoint.getKey() - time;
             if (time > 0) {
-                float speed = meters / ((float)time / ONE_THOUSEND);
+                //convert time from milliseconds to seconds
+                float speed = meters / ((float)time / ONE_THOUSAND);
                 BigDecimal s = new BigDecimal(speed);
                 s = s.setScale(2, BigDecimal.ROUND_UP);
                 lv.setSpeed(s.floatValue());
             }
 
             // create lap if distance greater than configured lap distance
-            double unitMeters = Formatter.getUnitMeters(context);
+            double unitMeters = getLapLength();
             if (Float.valueOf(dist) >= unitMeters * laps.size()) {
                 LapEntity newLap = new LapEntity();
                 newLap.setLap(laps.size());
                 newLap.setDistance(Float.valueOf(dist));
-                newLap.setTime(timePoint.getKey().intValue() / ONE_THOUSEND);
+                //convert time from milliseconds to seconds
+                newLap.setTime(timePoint.getKey().intValue() / ONE_THOUSAND);
                 newLap.setActivityId(newActivity.getId());
                 laps.add(newLap);
 
@@ -589,7 +596,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                 if (laps.size() > 1) {
                     LapEntity previousLap = laps.get(laps.size() - 2);
                     previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
-                    previousLap.setTime((int) (timePoint.getKey() / ONE_THOUSEND) - previousLap.getTime());
+                    //convert time from milliseconds to seconds
+                    previousLap.setTime((int) (timePoint.getKey() / ONE_THOUSAND) - previousLap.getTime());
 
                     if (hr != null && hr.length() > 0) {
                         previousLap.setMaxHr(maxHr);
@@ -604,7 +612,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
             if (!points.hasNext()) {
                 LapEntity previousLap = laps.get(laps.size() - 1);
                 previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
-                previousLap.setTime((int) (timePoint.getKey() / ONE_THOUSEND) - previousLap.getTime());
+                //convert time from milliseconds to seconds
+                previousLap.setTime((int) (timePoint.getKey() / ONE_THOUSAND) - previousLap.getTime());
 
                 if (hr != null && hr.length() > 0) {
                     previousLap.setMaxHr(maxHr);
@@ -629,13 +638,30 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         return newActivity;
     }
 
+    private double getLapLength() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Resources res = context.getResources();
+        double lapLength = Formatter.getUnitMeters(context);
+        if (prefs.getBoolean(res.getString(R.string.pref_autolap_active), false)) {
+            String autoLap = prefs.getString(res.getString(R.string.pref_autolap), String.valueOf(lapLength));
+            try {
+                lapLength = Double.parseDouble(autoLap);
+            } catch (NumberFormatException e) {
+                return lapLength;
+            }
+            return lapLength;
+        }
+        return lapLength;
+    }
+
     private SortedMap<Long, HashMap<String, String>> createPointsMap(JSONArray distance, JSONArray path, JSONArray hr) throws JSONException {
         SortedMap<Long, HashMap<String, String>> result = new TreeMap<Long, HashMap<String, String>>();
 
         if (distance != null && distance.length() > 0) {
             for (int i = 0; i < distance.length(); i++) {
                 JSONObject o = distance.getJSONObject(i);
-                Long key = (long) (Float.valueOf(o.getString("timestamp"))*ONE_THOUSEND);
+                //key as time in milliseconds
+                Long key = (long) (Float.valueOf(o.getString("timestamp")) * ONE_THOUSAND);
                 HashMap<String, String> value = new HashMap<String, String>();
                 String valueMapKey = "distance";
                 String valueMapValue = o.getString(valueMapKey);
@@ -647,7 +673,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         if (path != null && path.length() > 0) {
             for (int i = 0; i < path.length(); i++) {
                 JSONObject o = path.getJSONObject(i);
-                Long key = (long) (Float.valueOf(o.getString("timestamp"))*ONE_THOUSEND);
+                //key as time in milliseconds
+                Long key = (long) (Float.valueOf(o.getString("timestamp")) * ONE_THOUSAND);
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
                     value = new HashMap<String, String>();
@@ -664,7 +691,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         if (hr != null && hr.length() > 0) {
             for (int i = 0; i < hr.length(); i++) {
                 JSONObject o = hr.getJSONObject(i);
-                Long key = (long) (Float.valueOf(o.getString("timestamp"))*ONE_THOUSEND);
+                //key as time in milliseconds
+                Long key = (long) (Float.valueOf(o.getString("timestamp")) * ONE_THOUSAND);
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
                     value = new HashMap<String, String>();
