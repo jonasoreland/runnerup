@@ -20,21 +20,34 @@ package org.runnerup.export;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.db.entities.ActivityEntity;
+import org.runnerup.db.entities.LapEntity;
+import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.feed.FeedList.FeedUpdater;
+import org.runnerup.util.Formatter;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -44,35 +57,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunKeeperUploader extends DefaultUploader implements Uploader, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
-
+    private static Context context = null;
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://runkeeper.com/apps/authorize";
-    public static final String TOKEN_URL = "https://runkeeper.com/apps/token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runkeeper";
+    private static final String AUTH_URL = "https://runkeeper.com/apps/authorize";
+    private static final String TOKEN_URL = "https://runkeeper.com/apps/token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/runkeeper";
 
-    public static String REST_URL = "https://api.runkeeper.com";
+    private static String REST_URL = "https://api.runkeeper.com";
 
-    public static final String FEED_TOKEN_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/login";
-    public static final String FEED_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/getFeedItems";
-    public static final String FEED_ITEM_TYPES = "[ 0 ]"; // JSON array
+    private static final String FEED_TOKEN_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/login";
+    private static final String FEED_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/getFeedItems";
+    private static final String FEED_ITEM_TYPES = "[ 0 ]"; // JSON array
 
     private long id = 0;
     private String access_token = null;
@@ -82,26 +103,40 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
     private String feed_password = null;
     private String feed_access_token = null;
 
-    static final Map<Integer, Sport> runkeeper2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2runkeeperMap = new HashMap<Sport, Integer>();
+    static final Map<Integer, Sport> RK2SPORT = new HashMap<Integer, Sport>();
     static {
-        runkeeper2sportMap.put(0, Sport.RUNNING);
-        runkeeper2sportMap.put(1, Sport.BIKING);
-        for (Integer i : runkeeper2sportMap.keySet()) {
-            sport2runkeeperMap.put(runkeeper2sportMap.get(i), i);
-        }
+        RK2SPORT.put(0, Sport.RUNNING);
+        RK2SPORT.put(1, Sport.BIKING);
     }
 
-    RunKeeperUploader(UploadManager uploadManager) {
+    static final Map<String, Integer> SPORT_MAP = new HashMap<String, Integer>();
+    static {
+        SPORT_MAP.put("Running", Sport.RUNNING.getDbValue());
+        SPORT_MAP.put("Cycling", Sport.BIKING.getDbValue());
+        SPORT_MAP.put("Mountain Biking", Sport.BIKING.getDbValue());
+    }
+
+    static final Map<String, Integer> POINT_TYPE = new HashMap<String, Integer>();
+    static {
+        POINT_TYPE.put("start", DB.LOCATION.TYPE_START);
+        POINT_TYPE.put("end", DB.LOCATION.TYPE_END);
+        POINT_TYPE.put("gps", DB.LOCATION.TYPE_GPS);
+        POINT_TYPE.put("pause", DB.LOCATION.TYPE_PAUSE);
+        POINT_TYPE.put("resume", DB.LOCATION.TYPE_RESUME);
+        POINT_TYPE.put("manual", DB.LOCATION.TYPE_GPS);
+    }
+
+    public RunKeeperUploader(UploadManager uploadManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
                 JSONObject tmp = new JSONObject(uploadManager.loadData(this));
                 CLIENT_ID = tmp.getString("CLIENT_ID");
                 CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.e(Constants.LOG, ex.getMessage());
             }
         }
+        context = uploadManager.getContext();
     }
 
     @Override
@@ -166,16 +201,14 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                     feed_password = null;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(Constants.LOG, e.getMessage());
             }
         }
     }
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-        return true;
+        return access_token != null;
     }
 
     @Override
@@ -192,7 +225,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                 tmp.put("password", null);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(Constants.LOG, e.getMessage());
         }
 
         return tmp.toString();
@@ -211,7 +244,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                 access_token = new JSONObject(authConfig).getString("access_token");
                 return Status.OK;
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(Constants.LOG, e.getMessage());
             }
         }
 
@@ -233,7 +266,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         }
 
         if (feed_access_token == null && (feed_username != null && feed_password != null)) {
-            return getFeedAccessToken(feed_username, feed_password);
+            return getFeedAccessToken();
         }
 
         if (fitnessActivitiesUrl != null) {
@@ -259,8 +292,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
             } catch (IOException e) {
                 if (REST_URL.contains("https")) {
                     REST_URL = REST_URL.replace("https", "http");
-                    e.printStackTrace();
-                    System.err.println(" => retry with REST_URL: " + REST_URL);
+                    Log.e(Constants.LOG, e.getMessage());
+                    Log.e(Constants.LOG, " => retry with REST_URL: " + REST_URL);
                     continue; // retry
                 }
                 ex = e;
@@ -274,8 +307,9 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
             conn.disconnect();
         }
 
-        if (ex != null)
-            ex.printStackTrace();
+        if (ex != null) {
+            Log.e(Constants.LOG, ex.getMessage());
+        }
 
         if (uri != null) {
             fitnessActivitiesUrl = uri;
@@ -284,6 +318,82 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         s = Uploader.Status.ERROR;
         s.ex = ex;
         return s;
+    }
+
+    public Status listActivities(List<SyncActivityItem> list) {
+        Status s = connect();
+        if (s != Status.OK) {
+            return s;
+        }
+
+        String requestUrl = REST_URL + fitnessActivitiesUrl;
+        while(requestUrl != null) {
+            try {
+                URL nextUrl = new URL(requestUrl);
+                HttpURLConnection conn = (HttpURLConnection) nextUrl.openConnection();
+                conn.setDoInput(true);
+                conn.setRequestMethod(RequestMethod.GET.name());
+                conn.addRequestProperty("Authorization", "Bearer " + access_token);
+                conn.addRequestProperty("Content-Type", "application/vnd.com.runkeeper.FitnessActivityFeed+json");
+
+                InputStream input = new BufferedInputStream(conn.getInputStream());
+                if (conn.getResponseCode() == HttpStatus.SC_OK) {
+                    JSONObject resp = SyncHelper.parse(input);
+                    requestUrl = parseForNext(resp, list);
+                    s = Status.OK;
+                } else {
+                    s = Status.ERROR;
+                }
+                input.close();
+                conn.disconnect();
+            } catch (IOException e) {
+                Log.e(Constants.LOG, e.getMessage());
+                requestUrl = null;
+                s = Status.ERROR;
+            } catch (JSONException e) {
+                Log.e(Constants.LOG, e.getMessage());
+                requestUrl = null;
+                s = Status.ERROR;
+            }
+        }
+        return s;
+    }
+
+    private String parseForNext(JSONObject resp, List<SyncActivityItem> items) throws JSONException {
+        if (resp.has("items")) {
+            JSONArray activities = resp.getJSONArray("items");
+            for (int i = 0; i < activities.length(); i++) {
+                JSONObject item = activities.getJSONObject(i);
+                SyncActivityItem ai = new SyncActivityItem();
+
+                String startTime = item.getString("start_time");
+                SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
+                try {
+                    ai.setStartTime(TimeUnit.MILLISECONDS.toSeconds(format.parse(startTime).getTime()));
+                } catch (ParseException e) {
+                    Log.e(Constants.LOG, e.getMessage());
+                    return null;
+                }
+                Float time = Float.parseFloat(item.getString("duration"));
+                ai.setDuration(time.longValue());
+                BigDecimal dist = new BigDecimal(Float.parseFloat(item.getString("total_distance")));
+                dist = dist.setScale(2, BigDecimal.ROUND_UP);
+                ai.setDistance(dist.floatValue());
+                ai.setURI(REST_URL + item.getString("uri"));
+                ai.setId((long) items.size());
+                String sport = item.getString("type");
+                if (SPORT_MAP.containsKey(sport)) {
+                    ai.setSport(SPORT_MAP.get(sport));
+                } else {
+                    ai.setSport(Sport.OTHER.getDbValue());
+                }
+                items.add(ai);
+            }
+        }
+        if (resp.has("next")) {
+            return REST_URL + resp.getString("next");
+        }
+        return null;
     }
 
     @Override
@@ -297,13 +407,13 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
          * Get the fitnessActivities end-point
          */
         HttpURLConnection conn = null;
-        Exception ex = null;
+        Exception ex;
         try {
             URL newurl = new URL(REST_URL + fitnessActivitiesUrl);
-            System.err.println("url: " + newurl.toString());
+            Log.e(Constants.LOG, "url: " + newurl.toString());
             conn = (HttpURLConnection) newurl.openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Authorization", "Bearer " + access_token);
             conn.addRequestProperty("Content-type",
                     "application/vnd.com.runkeeper.NewFitnessActivity+json");
@@ -328,8 +438,9 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
             ex = e;
         }
 
-        if (ex != null)
-            ex.printStackTrace();
+        if (ex != null) {
+            Log.e(Constants.LOG, ex.getMessage());
+        }
 
         if (conn != null) {
             conn.disconnect();
@@ -345,6 +456,8 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         switch (f) {
             case FEED:
             case UPLOAD:
+            case ACTIVITY_LIST:
+            case GET_ACTIVITY:
                 return true;
             case GET_WORKOUT:
             case WORKOUT_LIST:
@@ -356,18 +469,247 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
     }
 
     @Override
+    public ActivityEntity download(SyncActivityItem item) {
+        ActivityEntity activity = new ActivityEntity();
+        Status s = connect();
+        if (s != Status.OK) {
+            return null;
+        }
+
+        HttpURLConnection conn = null;
+        try {
+            URL activityUrl = new URL(item.getURI());
+            conn = (HttpURLConnection) activityUrl.openConnection();
+            conn.setDoInput(true);
+            conn.setRequestMethod(RequestMethod.GET.name());
+            conn.addRequestProperty("Authorization", "Bearer " + access_token);
+            conn.addRequestProperty("Content-type", "application/vnd.com.runkeeper.FitnessActivity+json");
+
+            if (conn.getResponseCode() == HttpStatus.SC_OK) {
+                BufferedInputStream input = new BufferedInputStream(conn.getInputStream());
+                JSONObject resp = SyncHelper.parse(input);
+                activity = parseToActivity(resp, item);
+            }
+
+        } catch (IOException e) {
+            Log.e(Constants.LOG, e.getMessage());
+            return activity;
+
+        } catch (JSONException e) {
+            Log.e(Constants.LOG, e.getMessage());
+            return activity;
+        }
+        return activity;
+    }
+
+    private ActivityEntity parseToActivity(JSONObject response, SyncActivityItem ai) throws JSONException {
+        ActivityEntity newActivity = new ActivityEntity();
+        newActivity.setSport(SPORT_MAP.get(response.getString("type")));
+        newActivity.setStartTime(ai.getStartTime());
+        newActivity.setTime(ai.getDuration());
+        newActivity.setDistance(ai.getDistance());
+
+        List<LapEntity> laps = new ArrayList<LapEntity>();
+        List<LocationEntity> locations = new ArrayList<LocationEntity>();
+
+        JSONArray distance = response.getJSONArray("distance");
+        JSONArray path = response.getJSONArray("path");
+        JSONArray hr = response.getJSONArray("heart_rate");
+
+        SortedMap<Long, HashMap<String, String>> pointsValueMap = createPointsMap(distance, path, hr);
+        Iterator<Map.Entry<Long, HashMap<String, String>>> points = pointsValueMap.entrySet().iterator();
+
+        //lap hr
+        int maxHr = 0;
+        int sumHr = 0;
+        int count = 0;
+        //point speed
+        long time = 0;
+        float meters = 0.0f;
+        //activity hr
+        int maxHrOverall = 0;
+        int sumHrOverall = 0;
+        int countOverall = 0;
+
+        while (points.hasNext()) {
+            Map.Entry<Long, HashMap<String, String>> timePoint = points.next();
+            HashMap<String, String> values = timePoint.getValue();
+
+            LocationEntity lv = new LocationEntity();
+            lv.setActivityId(newActivity.getId());
+            lv.setTime(ai.getStartTime() + timePoint.getKey());
+
+            String dist = values.get("distance");
+            String lat = values.get("latitude");
+            String lon = values.get("longitude");
+            String alt = values.get("altitude");
+            String heart = values.get("heart_rate");
+            String type = values.get("type");
+
+            if (lat != null) {
+                lv.setLatitude(Double.valueOf(lat));
+            }
+            if (lon != null) {
+                lv.setLongitude(Double.valueOf(lon));
+            }
+            if (alt != null) {
+                lv.setAltitude(Double.valueOf(alt));
+            }
+            if (type != null) {
+                lv.setType(POINT_TYPE.get(type));
+            }
+            // lap and activity max and avg hr
+            if (heart != null) {
+                lv.setHr(Integer.valueOf(heart));
+                maxHr = Math.max(maxHr, lv.getHr());
+                maxHrOverall = Math.max(maxHrOverall, lv.getHr());
+                sumHr += lv.getHr();
+                sumHrOverall += lv.getHr();
+                count++;
+                countOverall++;
+            }
+
+            meters = Float.valueOf(dist) - meters;
+            time = timePoint.getKey() - time;
+            if (time > 0) {
+                float speed = meters / (float)TimeUnit.MILLISECONDS.toSeconds(time);
+                BigDecimal s = new BigDecimal(speed);
+                s = s.setScale(2, BigDecimal.ROUND_UP);
+                lv.setSpeed(s.floatValue());
+            }
+
+            // create lap if distance greater than configured lap distance
+            double unitMeters = getLapLength();
+            if (Float.valueOf(dist) >= unitMeters * laps.size()) {
+                LapEntity newLap = new LapEntity();
+                newLap.setLap(laps.size());
+                newLap.setDistance(Float.valueOf(dist));
+                newLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()));
+                newLap.setActivityId(newActivity.getId());
+                laps.add(newLap);
+
+                // update previous lap with duration and distance
+                if (laps.size() > 1) {
+                    LapEntity previousLap = laps.get(laps.size() - 2);
+                    previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
+                    previousLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()) - previousLap.getTime());
+
+                    if (hr != null && hr.length() > 0) {
+                        previousLap.setMaxHr(maxHr);
+                        previousLap.setAvgHr(sumHr / count);
+                    }
+                    maxHr = 0;
+                    sumHr = 0;
+                    count = 0;
+                }
+            }
+            // update last lap with duration and distance
+            if (!points.hasNext()) {
+                LapEntity previousLap = laps.get(laps.size() - 1);
+                previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
+                previousLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()) - previousLap.getTime());
+
+                if (hr != null && hr.length() > 0) {
+                    previousLap.setMaxHr(maxHr);
+                    previousLap.setAvgHr(sumHr / count);
+                }
+            }
+
+            lv.setLap(laps.size()-1);
+
+            locations.add(lv);
+        }
+        // calculate avg and max hr
+        // update the activity
+        newActivity.setMaxHr(maxHrOverall);
+        if (countOverall > 0) {
+            newActivity.setAvgHr(sumHrOverall / countOverall);
+        }
+
+        newActivity.putPoints(locations);
+        newActivity.putLaps(laps);
+
+        return newActivity;
+    }
+
+    private double getLapLength() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Resources res = context.getResources();
+        double lapLength = Formatter.getUnitMeters(context);
+        if (prefs.getBoolean(res.getString(R.string.pref_autolap_active), false)) {
+            String autoLap = prefs.getString(res.getString(R.string.pref_autolap), String.valueOf(lapLength));
+            try {
+                lapLength = Double.parseDouble(autoLap);
+            } catch (NumberFormatException e) {
+                return lapLength;
+            }
+            return lapLength;
+        }
+        return lapLength;
+    }
+
+    private SortedMap<Long, HashMap<String, String>> createPointsMap(JSONArray distance, JSONArray path, JSONArray hr) throws JSONException {
+        SortedMap<Long, HashMap<String, String>> result = new TreeMap<Long, HashMap<String, String>>();
+
+        if (distance != null && distance.length() > 0) {
+            for (int i = 0; i < distance.length(); i++) {
+                JSONObject o = distance.getJSONObject(i);
+                Long key = TimeUnit.SECONDS.toMillis(Long.valueOf(o.getString("timestamp")));
+                HashMap<String, String> value = new HashMap<String, String>();
+                String valueMapKey = "distance";
+                String valueMapValue = o.getString(valueMapKey);
+                value.put(valueMapKey, valueMapValue);
+                result.put(key, value);
+            }
+        }
+
+        if (path != null && path.length() > 0) {
+            for (int i = 0; i < path.length(); i++) {
+                JSONObject o = path.getJSONObject(i);
+                Long key = TimeUnit.SECONDS.toMillis(Long.valueOf(o.getString("timestamp")));
+                HashMap<String, String> value = result.get(key);
+                if (value == null) {
+                    value = new HashMap<String, String>();
+                }
+                String[] attrs = new String[] {"latitude", "longitude", "altitude", "type"};
+                for (String valueMapKey : attrs) {
+                    String valueMapValue = o.getString(valueMapKey);
+                    value.put(valueMapKey, valueMapValue);
+                }
+                result.put(key, value);
+            }
+        }
+
+        if (hr != null && hr.length() > 0) {
+            for (int i = 0; i < hr.length(); i++) {
+                JSONObject o = hr.getJSONObject(i);
+                Long key = TimeUnit.SECONDS.toMillis(Long.valueOf(o.getString("timestamp")));
+                HashMap<String, String> value = result.get(key);
+                if (value == null) {
+                    value = new HashMap<String, String>();
+                }
+                String valueMapKey = "heart_rate";
+                String valueMapValue = o.getString(valueMapKey);
+                value.put(valueMapKey, valueMapValue);
+                result.put(key, value);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public void logout() {
         this.fitnessActivitiesUrl = null;
     }
 
-    private Status getFeedAccessToken(String username, String password) {
+    private Status getFeedAccessToken() {
         Uploader.Status s = Status.OK;
         HttpURLConnection conn = null;
         try {
             URL newurl = new URL(FEED_TOKEN_URL);
             conn = (HttpURLConnection) newurl.openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
 
             FormValues kv = new FormValues();
             kv.put("email", feed_username);
@@ -400,8 +742,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
             s.ex = e;
         }
 
-        if (s.ex != null)
-            s.ex.printStackTrace();
+        Log.e(Constants.LOG, s.ex.getMessage());
 
         return s;
     }
@@ -424,15 +765,16 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                 for (int i = 0; i < arr.length(); i++) {
                     JSONObject e = arr.getJSONObject(i);
                     try {
-                        if (e.getInt("type") != 0)
+                        if (e.getInt("type") != 0) {
                             continue;
+                        }
 
                         ContentValues c = new ContentValues();
                         c.put(FEED.ACCOUNT_ID, getId());
                         c.put(FEED.EXTERNAL_ID, e.getString("id"));
                         c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
                         JSONObject d = e.getJSONObject("data");
-                        Sport sport = runkeeper2sportMap.get(d.getInt("activityType"));
+                        Sport sport = RK2SPORT.get(d.getInt("activityType"));
                         if (sport != null) {
                             c.put(FEED.FEED_SUBTYPE, sport.getDbValue());
                         } else {
@@ -443,13 +785,16 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                         c.put(FEED.FLAGS, "brokenStartTime"); // BUH!!
                         if (e.has("data")) {
                             JSONObject p = e.getJSONObject("data");
-                            if (p.has("duration"))
+                            if (p.has("duration")) {
                                 c.put(FEED.DURATION, p.getLong("duration"));
-                            if (p.has("distance"))
+                            }
+                            if (p.has("distance")) {
                                 c.put(FEED.DISTANCE, p.getDouble("distance"));
+                            }
                             if (p.has("notes") && p.getString("notes") != null
-                                    && !p.getString("notes").equals("null"))
+                                    && !p.getString("notes").equals("null")) {
                                 c.put(FEED.NOTES, p.getString("notes"));
+                            }
                         }
 
                         SyncHelper.setName(c, e.getString("sourceUserDisplayName"));
@@ -461,15 +806,15 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
                         reply.add(c);
                         from = e.getLong("posttime");
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        Log.e(Constants.LOG, ex.getMessage());
                         iter = MAX_ITER;
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(Constants.LOG, e.getMessage());
                 break;
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(Constants.LOG, e.getMessage());
                 break;
             }
         }
@@ -482,7 +827,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         URL newurl = new URL(FEED_URL);
         HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Authorization", "Bearer " + feed_access_token);
 
         FormValues kv = new FormValues();
@@ -502,7 +847,7 @@ public class RunKeeperUploader extends DefaultUploader implements Uploader, OAut
         JSONObject obj = SyncHelper.parse(in);
 
         conn.disconnect();
-        if (responseCode == 200) {
+        if (responseCode == HttpStatus.SC_OK) {
             return obj;
         }
         throw new IOException(amsg);

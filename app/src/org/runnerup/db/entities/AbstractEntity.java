@@ -62,7 +62,8 @@ public abstract class AbstractEntity implements DBEntity {
     }
 
     public long insert(SQLiteDatabase db) {
-        return db.insert(getTableName(), getNullColumnHack(), values());
+        this.setId(db.insert(getTableName(), getNullColumnHack(), values()));
+        return this.getId();
     }
 
     public void update(SQLiteDatabase db) {

@@ -566,7 +566,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
-    public static int bulkInsert(List<DBEntity> objectList, SQLiteDatabase db) {
+    public static int bulkInsert(List<? extends DBEntity> objectList, SQLiteDatabase db) {
         int result = 0;
         for (DBEntity obj : objectList) {
             long id = obj.insert(db);
