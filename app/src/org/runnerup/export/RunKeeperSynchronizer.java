@@ -426,7 +426,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             String amsg = conn.getResponseMessage();
             conn.disconnect();
             conn = null;
-            if (responseCode >= 200 && responseCode < 300) {
+            if (responseCode >= HttpStatus.SC_OK && responseCode < HttpStatus.SC_MULTIPLE_CHOICES) {
                 s = Status.OK;
                 s.activityId = mID;
                 return s;

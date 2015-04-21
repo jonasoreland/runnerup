@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -193,7 +194,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            if (responseCode == 200 &&
+            if (responseCode == HttpStatus.SC_OK &&
                     "OK".contentEquals(res.getString("_0")) &&
                     res.has("authToken")) {
                 authToken = res.getString("authToken");
@@ -285,7 +286,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            if (responseCode == 200 &&
+            if (responseCode == HttpStatus.SC_OK &&
                     "OK".contentEquals(res.getString("_0"))) {
                 s.activityId = mID;
                 return s;
@@ -344,7 +345,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             conn.disconnect();
 
-            if (responseCode == 200) {
+            if (responseCode == HttpStatus.SC_OK) {
                 parseFeed(feedUpdater, reply);
                 return Status.OK;
             }
