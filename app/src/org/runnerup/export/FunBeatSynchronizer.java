@@ -208,7 +208,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(LOGIN_URL).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
             addCookies(conn);
@@ -229,7 +229,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     conn = (HttpURLConnection) new URL(BASE_URL + redirect)
                             .openConnection();
                     conn.setInstanceFollowRedirects(false);
-                    conn.setRequestMethod("GET");
+                    conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
                     responseCode = conn.getResponseCode();
                     amsg = conn.getResponseMessage();
@@ -304,7 +304,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(API_URL + function).openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
             OutputStream out = new BufferedOutputStream(conn.getOutputStream());
@@ -372,7 +372,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             addCookies(conn);
             SyncHelper.postMulti(conn, parts);
             int responseCode = conn.getResponseCode();
@@ -385,7 +385,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 conn = (HttpURLConnection) new URL(BASE_URL + redirect)
                         .openConnection();
                 conn.setInstanceFollowRedirects(false);
-                conn.setRequestMethod("GET");
+                conn.setRequestMethod(RequestMethod.GET.name());
                 addCookies(conn);
                 responseCode = conn.getResponseCode();
                 amsg = conn.getResponseMessage();
@@ -412,7 +412,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(surl).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
             addCookies(conn);
@@ -431,7 +431,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     conn = (HttpURLConnection) new URL(BASE_URL + redirect)
                             .openConnection();
                     conn.setInstanceFollowRedirects(false);
-                    conn.setRequestMethod("GET");
+                    conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
                     responseCode = conn.getResponseCode();
                     amsg = conn.getResponseMessage();
@@ -493,7 +493,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(FEED_URL).openConnection();
             conn.setDoInput(true);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/json; charset=utf-8");
             final JSONObject req = getRequestObject();
             final OutputStream out = new BufferedOutputStream(conn.getOutputStream());

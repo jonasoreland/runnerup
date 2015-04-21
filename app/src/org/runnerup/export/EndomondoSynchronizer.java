@@ -179,7 +179,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             conn = (HttpURLConnection) new URL(login).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
@@ -269,7 +269,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/octet-stream");
             OutputStream out = new GZIPOutputStream(
                     new BufferedOutputStream(conn.getOutputStream()));
@@ -336,7 +336,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         Exception ex = null;
         try {
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             final InputStream in = new BufferedInputStream(conn.getInputStream());
             final JSONObject reply = SyncHelper.parse(in);
             int responseCode = conn.getResponseCode();

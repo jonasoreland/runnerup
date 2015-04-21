@@ -289,7 +289,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 .openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
@@ -343,7 +343,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();

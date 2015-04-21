@@ -273,7 +273,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
             URL url = new URL(getTokenUrl());
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             SyncHelper.postData(conn, fv);

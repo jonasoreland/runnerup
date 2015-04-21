@@ -206,7 +206,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
         conn = (HttpURLConnection) new URL(login).openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         addCookies(conn);
 
@@ -341,7 +341,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(false);
-        conn.setRequestMethod("GET");
+        conn.setRequestMethod(RequestMethod.GET.name());
         return conn;
     }
 
@@ -349,7 +349,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         return conn;
     }
 
@@ -375,7 +375,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             tcx.export(mID, writer);
             conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             addCookies(conn);
             Part<StringWritable> part2 = new Part<StringWritable>("data",
                     new StringWritable(writer.toString()));
@@ -442,7 +442,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         Exception ex = null;
         try {
             conn = (HttpURLConnection) new URL(LIST_WORKOUTS_URL).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             addCookies(conn);
             conn.connect();
             getCookies(conn);
@@ -485,7 +485,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         FileOutputStream out = null;
         try {
             conn = (HttpURLConnection) new URL(GET_WORKOUT_URL + key).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             addCookies(conn);
             conn.connect();
             getCookies(conn);

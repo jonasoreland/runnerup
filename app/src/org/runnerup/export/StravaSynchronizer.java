@@ -202,7 +202,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             tcx.export(mID, writer);
             conn = (HttpURLConnection) new URL(URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
 
             Part<StringWritable> part0 = new Part<StringWritable>("access_token",
                     new StringWritable(access_token));
