@@ -331,4 +331,14 @@ public class JoggSE extends DefaultUploader {
         return s;
 
     }
+
+    @Override
+    public boolean checkSupport(Uploader.Feature f) {
+        switch (f) {
+            case UPLOAD:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

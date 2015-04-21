@@ -247,6 +247,16 @@ public class Strava extends DefaultUploader implements OAuth2Server {
     }
 
     @Override
+    public boolean checkSupport(Uploader.Feature f) {
+        switch (f) {
+            case UPLOAD:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
     public void logout() {
     }
 }
