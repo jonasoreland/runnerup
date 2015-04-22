@@ -289,4 +289,8 @@
   <string name="new_audio_scheme">新しい音声合図スキーム</string>
   <string name="default_audio_scheme_name">デフォルト</string>
   <string name="notes_hint">ワークアウトについてのメモ</string>
+  <string name="downloading_from">%1$s からダウンロード中</string>
+  <string name="uploading_to">%1$s へアップロード中</string>
+  <string name="loading_activities">アクティビティをロード中</string>
+  <string name="fetching_list">%1$s からアクティビティを取得中</string>
 </resources>
