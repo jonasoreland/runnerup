@@ -289,4 +289,8 @@
   <string name="new_audio_scheme">Nowy schemat wskazówek</string>
   <string name="default_audio_scheme_name">Domyślne</string>
   <string name="notes_hint">Notatki</string>
+  <string name="downloading_from">Pobieram z %1$s</string>
+  <string name="uploading_to">Wysyłam do %1$s</string>
+  <string name="loading_activities">Ładuje treningi</string>
+  <string name="fetching_list">Pobieram treningi z %1$s</string>
 </resources>
