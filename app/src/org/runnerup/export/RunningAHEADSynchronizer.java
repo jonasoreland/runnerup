@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
@@ -235,7 +236,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
             if (!found) {
                 System.err.println("Unhandled response from RunningAHEADSynchronizer: " + obj);
             }
-            if (responseCode == 200 && found) {
+            if (responseCode == HttpStatus.SC_OK && found) {
                 conn.disconnect();
                 return Status.OK;
             }
