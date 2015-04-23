@@ -177,7 +177,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             String url = String.format(LOGIN_URL, CLIENT_ID, CLIENT_SECRET, APP_ID);
             conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("user-agent", USER_AGENT);
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.addRequestProperty("Accept", "application/json");
@@ -252,7 +252,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             String url = String.format(SYNC_URL, access_token);
             conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("user-agent", USER_AGENT);
             conn.addRequestProperty("appid", APP_ID);
             Part<StringWritable> part1 = new Part<StringWritable>("runXML",
@@ -282,7 +282,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             url = String.format(SYNC_COMPLETE_URL, access_token);
             conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("user-agent", USER_AGENT);
             conn.addRequestProperty("appid", APP_ID);
 
@@ -350,7 +350,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             conn.addRequestProperty("Accept", "application/json");
             conn.addRequestProperty("User-Agent", USER_AGENT);
             conn.addRequestProperty("appid", APP_ID);

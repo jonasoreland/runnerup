@@ -101,7 +101,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             ProtocolException, JSONException {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         addCookies(conn);
 
@@ -167,7 +167,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             HttpURLConnection conn = (HttpURLConnection) new URL(DIGIFIT_URL + "/site/authenticate")
                     .openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             OutputStream out = conn.getOutputStream();
@@ -214,7 +214,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                     + "&file_type="
                     + fileType;
             HttpURLConnection conn = (HttpURLConnection) new URL(deleteUrl).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             conn.addRequestProperty("Referer", DIGIFIT_URL + "/site/workoutimport");
             addCookies(conn);
         } catch (Exception ex) {
@@ -254,7 +254,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             String downloadUrl = DIGIFIT_URL + "/workout/download/" + fileId;
 
             HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             addCookies(conn);
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -474,7 +474,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     private void uploadFileToDigifit(String payload, String uploadUrl) throws Exception {
         HttpURLConnection conn = (HttpURLConnection) new URL(uploadUrl).openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         addCookies(conn);
 
         String filename = "RunnerUp.tcx";

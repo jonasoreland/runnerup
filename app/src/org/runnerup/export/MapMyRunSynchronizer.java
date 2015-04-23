@@ -184,7 +184,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
              */
             conn = (HttpURLConnection) new URL(GET_USER_URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             FormValues kv = new FormValues();
@@ -251,7 +251,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
             conn = (HttpURLConnection) new URL(IMPORT_URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             FormValues kv = new FormValues();
@@ -296,7 +296,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
                 conn = (HttpURLConnection) new URL(UPDATE_URL).openConnection();
                 conn.setDoOutput(true);
-                conn.setRequestMethod("POST");
+                conn.setRequestMethod(RequestMethod.POST.name());
                 conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 wr = new BufferedOutputStream(conn.getOutputStream());
                 kv.write(wr);

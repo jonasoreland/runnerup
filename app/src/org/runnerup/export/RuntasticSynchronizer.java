@@ -189,7 +189,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(LOGIN_URL).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             addRequestHeaders(conn);
             conn.addRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
@@ -236,7 +236,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                 url2 = url2 + "?authenticity_token=" + SyncHelper.URLEncode(authToken);
                 conn = (HttpURLConnection) new URL(url2).openConnection();
                 conn.setInstanceFollowRedirects(false);
-                conn.setRequestMethod("GET");
+                conn.setRequestMethod(RequestMethod.GET.name());
                 conn.setRequestProperty("Host", "www.runtastic.com");
                 conn.addRequestProperty("Accept", "application/json");
                 InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -290,7 +290,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Host", "www.runtastic.com");
             conn.addRequestProperty("X-Requested-With", "XMLHttpRequest");
             conn.addRequestProperty("X-File-Name", filename);
@@ -325,7 +325,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             if (sport != null && sport != Sport.RUNNING && sport2runtasticMap.containsKey(sport)) {
                 conn = (HttpURLConnection) new URL(UPDATE_SPORTS_TYPE).openConnection();
                 conn.setDoOutput(true);
-                conn.setRequestMethod("POST");
+                conn.setRequestMethod(RequestMethod.POST.name());
                 conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 conn.addRequestProperty("X-Requested-With", "XMLHttpRequest");
                 addRequestHeaders(conn);

@@ -204,7 +204,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
             tcx.export(mID, writer);
             conn = (HttpURLConnection) new URL(URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Encoding", "gzip");
             OutputStream out = new GZIPOutputStream(
                     new BufferedOutputStream(conn.getOutputStream()));

@@ -36,6 +36,7 @@ import android.webkit.WebViewClient;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.Synchronizer;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
 
@@ -216,7 +217,7 @@ public class OAuth2Activity extends Activity {
                                 URL newUrl = new URL(token_url);
                                 conn = (HttpURLConnection) newUrl.openConnection();
                                 conn.setDoOutput(true);
-                                conn.setRequestMethod("POST");
+                                conn.setRequestMethod(Synchronizer.RequestMethod.POST.name());
                                 conn.setRequestProperty("Content-Type",
                                         "application/x-www-form-urlencoded");
                                 {
