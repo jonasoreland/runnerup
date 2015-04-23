@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class GoogleFitUploader extends GooglePlus {
+public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     public static final String NAME = "GoogleFit";
     public static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
@@ -53,8 +53,8 @@ public class GoogleFitUploader extends GooglePlus {
 
     private final Context context;
 
-    GoogleFitUploader(Context ctx, UploadManager uploadManager) {
-        super(uploadManager);
+    GoogleFitSynchronizer(Context ctx, SyncManager syncManager) {
+        super(syncManager);
         this.context = ctx;
     }
 

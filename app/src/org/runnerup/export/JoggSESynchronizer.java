@@ -52,7 +52,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class JoggSE extends DefaultUploader {
+public class JoggSESynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "jogg.se";
     private static String MASTER_USER = null;
@@ -65,10 +65,10 @@ public class JoggSE extends DefaultUploader {
     private String password = null;
     private boolean isConnected = false;
 
-    JoggSE(final UploadManager uploadManager) {
+    JoggSESynchronizer(final SyncManager syncManager) {
         if (MASTER_USER == null || MASTER_KEY == null) {
             try {
-                final JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                final JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 MASTER_USER = tmp.getString("MASTER_USER");
                 MASTER_KEY = tmp.getString("MASTER_KEY");
             } catch (final Exception ex) {
@@ -136,7 +136,7 @@ public class JoggSE extends DefaultUploader {
         }
 
         Status s = Status.NEED_AUTH;
-        s.authMethod = Uploader.AuthMethod.USER_PASS;
+        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
         if (username == null || password == null) {
             return s;
         }
@@ -180,7 +180,7 @@ public class JoggSE extends DefaultUploader {
             if (e != null && e.getTextContent() != null
                     && LOGIN_OK.contentEquals(e.getTextContent())) {
                 isConnected = true;
-                return Uploader.Status.OK;
+                return Synchronizer.Status.OK;
             }
 
             return s;
@@ -197,7 +197,7 @@ public class JoggSE extends DefaultUploader {
         if (conn != null)
             conn.disconnect();
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();
@@ -322,7 +322,7 @@ public class JoggSE extends DefaultUploader {
         if (conn != null)
             conn.disconnect();
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
         if (ex != null) {

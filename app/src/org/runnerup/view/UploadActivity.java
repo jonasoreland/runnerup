@@ -42,8 +42,8 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
-import org.runnerup.export.UploadManager;
-import org.runnerup.export.Uploader.Status;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Sport;
@@ -54,11 +54,11 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class UploadActivity extends ListActivity implements Constants {
 
-    long uploaderID = -1;
-    String uploader = null;
-    Integer uploaderIcon = null;
-    UploadManager.SyncMode syncMode = UploadManager.SyncMode.UPLOAD;
-    UploadManager uploadManager = null;
+    long synchronizerID = -1;
+    String synchronizer = null;
+    Integer synchronizerIcon = null;
+    SyncManager.SyncMode syncMode = SyncManager.SyncMode.UPLOAD;
+    SyncManager syncManager = null;
 
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
@@ -80,16 +80,16 @@ public class UploadActivity extends ListActivity implements Constants {
         setContentView(R.layout.upload);
 
         Intent intent = getIntent();
-        uploader = intent.getStringExtra("uploader");
-        uploaderID = intent.getLongExtra("uploaderID", -1);
-        syncMode = UploadManager.SyncMode.valueOf(intent.getStringExtra("mode"));
-        if (intent.hasExtra("uploaderIcon"))
-            uploaderIcon = intent.getIntExtra("uploaderIcon", 0);
+        synchronizer = intent.getStringExtra("synchronizer");
+        synchronizerID = intent.getLongExtra("synchronizerID", -1);
+        syncMode = SyncManager.SyncMode.valueOf(intent.getStringExtra("mode"));
+        if (intent.hasExtra("synchronizerIcon"))
+            synchronizerIcon = intent.getIntExtra("synchronizerIcon", 0);
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
         formatter = new Formatter(this);
-        uploadManager = new UploadManager(this);
+        syncManager = new SyncManager(this);
 
         this.getListView().setDividerHeight(1);
         setListAdapter(new UploadListAdapter(this));
@@ -107,7 +107,7 @@ public class UploadActivity extends ListActivity implements Constants {
         {
             Button dwbtn = (Button) findViewById(R.id.account_download_button);
             Button upbtn = (Button) findViewById(R.id.account_upload_button);
-            if (syncMode.equals(UploadManager.SyncMode.DOWNLOAD)) {
+            if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
                 dwbtn.setOnClickListener(downloadButtonClick);
                 actionButton = dwbtn;
                 actionButtonText = dwbtn.getText();
@@ -123,14 +123,14 @@ public class UploadActivity extends ListActivity implements Constants {
         {
             TextView tv = (TextView) findViewById(R.id.account_upload_list_name);
             ImageView im = (ImageView) findViewById(R.id.account_upload_list_icon);
-            tv.setText(uploader);
-            if (uploaderIcon == null) {
+            tv.setText(synchronizer);
+            if (synchronizerIcon == null) {
                 im.setVisibility(View.GONE);
                 tv.setVisibility(View.VISIBLE);
             } else {
                 im.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.GONE);
-                im.setBackgroundResource(uploaderIcon);
+                im.setBackgroundResource(synchronizerIcon);
             }
         }
 
@@ -154,15 +154,15 @@ public class UploadActivity extends ListActivity implements Constants {
         super.onDestroy();
         mDB.close();
         mDBHelper.close();
-        uploadManager.close();
+        syncManager.close();
     }
 
     void fillData() {
-        if (syncMode.equals(UploadManager.SyncMode.DOWNLOAD)) {
-            uploadManager.load(uploader);
-            uploadManager.loadActivityList(allSyncActivities, uploader, new UploadManager.Callback() {
+        if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
+            syncManager.load(synchronizer);
+            syncManager.loadActivityList(allSyncActivities, synchronizer, new SyncManager.Callback() {
                 @Override
-                public void run(String uploaderName, Status status) {
+                public void run(String synchronizerName, Status status) {
                     filterAlreadyPresentActivities();
                     requery();
                 }
@@ -177,7 +177,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
             final String w = "NOT EXISTS (SELECT 1 FROM " + DB.EXPORT.TABLE + " r WHERE r."
                     + DB.EXPORT.ACTIVITY + " = " + DB.ACTIVITY.TABLE + "._id " +
-                    " AND r." + DB.EXPORT.ACCOUNT + " = " + uploaderID + ")";
+                    " AND r." + DB.EXPORT.ACCOUNT + " = " + synchronizerID + ")";
 
             Cursor c = mDB.query(DB.ACTIVITY.TABLE, from,
                     " deleted == 0 AND " + w, null,
@@ -343,14 +343,14 @@ public class UploadActivity extends ListActivity implements Constants {
                 cb.setOnCheckedChangeListener(checkedChangeClick);
                 cb.setChecked(!ai.skipActivity());
 
-                if (ai.isPresent() && syncMode.equals(UploadManager.SyncMode.DOWNLOAD)) {
+                if (ai.isPresent() && syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
                     cb.setEnabled(Boolean.FALSE);
                 }
             }
 
             Long id = ai.getId();
             view.setTag(id);
-            if (syncMode.equals(UploadManager.SyncMode.UPLOAD)) {
+            if (syncMode.equals(SyncManager.SyncMode.UPLOAD)) {
                 view.setOnClickListener(onActivityClick);
             }
 
@@ -381,7 +381,7 @@ public class UploadActivity extends ListActivity implements Constants {
             Log.i(Constants.LOG, "Start uploading " + upload.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
-            uploadManager.syncActivities(UploadManager.SyncMode.UPLOAD, syncCallback, uploader, upload, cancelSync);
+            syncManager.syncActivities(SyncManager.SyncMode.UPLOAD, syncCallback, synchronizer, upload, cancelSync);
         }
     };
 
@@ -397,7 +397,7 @@ public class UploadActivity extends ListActivity implements Constants {
             Log.i(Constants.LOG, "Start downloading " + download.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
-            uploadManager.syncActivities(UploadManager.SyncMode.DOWNLOAD, syncCallback, uploader, download, cancelSync);
+            syncManager.syncActivities(SyncManager.SyncMode.DOWNLOAD, syncCallback, synchronizer, download, cancelSync);
         }
     };
 
@@ -410,16 +410,16 @@ public class UploadActivity extends ListActivity implements Constants {
         return selected;
     }
 
-    final UploadManager.Callback syncCallback = new UploadManager.Callback() {
+    final SyncManager.Callback syncCallback = new SyncManager.Callback() {
 
         @Override
-        public void run(String uploaderName, Status status) {
+        public void run(String synchronizerName, Status status) {
             fetching = false;
             if (cancelSync.length() > 0 || status == Status.CANCEL) {
                 finish();
                 return;
             }
-            if (syncMode.equals(UploadManager.SyncMode.UPLOAD)) {
+            if (syncMode.equals(SyncManager.SyncMode.UPLOAD)) {
                 fillData();
             } else {
                 filterAlreadyPresentActivities();

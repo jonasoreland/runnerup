@@ -48,8 +48,8 @@ import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.Uploader.AuthMethod;
-import org.runnerup.export.Uploader.Status;
+import org.runnerup.export.Synchronizer.AuthMethod;
+import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.feed.FeedList;
 import org.runnerup.tracker.WorkoutObserver;
@@ -69,7 +69,7 @@ import java.util.Map;
 import java.util.Set;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class UploadManager {
+public class SyncManager {
 
     public static final int CONFIGURE_REQUEST = 1;
     public static final long ERROR_ACTIVITY_ID = -1L;
@@ -78,8 +78,8 @@ public class UploadManager {
     private SQLiteDatabase mDB = null;
     private Activity activity = null;
     private Context context = null;
-    private final Map<String, Uploader> uploaders = new HashMap<String, Uploader>();
-    private final Map<Long, Uploader> uploadersById = new HashMap<Long, Uploader>();
+    private final Map<String, Synchronizer> synchronizers = new HashMap<String, Synchronizer>();
+    private final Map<Long, Synchronizer> synchronizersById = new HashMap<Long, Synchronizer>();
     private ProgressDialog mSpinner = null;
 
     public enum SyncMode {
@@ -98,10 +98,10 @@ public class UploadManager {
     };
 
     public interface Callback {
-        void run(String uploader, Uploader.Status status);
+        void run(String synchronizerName, Synchronizer.Status status);
     }
 
-    public UploadManager(Activity activity) {
+    public SyncManager(Activity activity) {
         this.activity = activity;
         this.context = activity;
         mDBHelper = new DBHelper(activity);
@@ -110,7 +110,7 @@ public class UploadManager {
         mSpinner.setCancelable(false);
     }
 
-    public UploadManager(Context context) {
+    public SyncManager(Context context) {
         this.activity = null;
         this.context = context;
         mDBHelper = new DBHelper(context);
@@ -134,25 +134,25 @@ public class UploadManager {
         return mDB == null;
     }
 
-    public void remove(String uploaderName) {
-        Uploader u = uploaders.get(uploaderName);
-        uploaders.remove(uploaderName);
+    public void remove(String synchronizerName) {
+        Synchronizer u = synchronizers.get(synchronizerName);
+        synchronizers.remove(synchronizerName);
         if (u != null) {
-            this.uploadersById.remove(u.getId());
+            this.synchronizersById.remove(u.getId());
         }
     }
 
     public void clear() {
-        uploaders.clear();
-        uploadersById.clear();
+        synchronizers.clear();
+        synchronizersById.clear();
     }
 
-    public long load(String uploaderName) {
+    public long load(String synchronizerName) {
         String from[] = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
         String args[] = {
-            uploaderName
+            synchronizerName
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
                 args, null, null, null, null);
@@ -167,88 +167,88 @@ public class UploadManager {
     }
 
     @SuppressWarnings("null")
-    public Uploader add(ContentValues config) {
+    public Synchronizer add(ContentValues config) {
         if (config == null) {
             System.err.println("Add null!");
             assert (false);
             return null;
         }
 
-        String uploaderName = config.getAsString(DB.ACCOUNT.NAME);
-        if (uploaderName == null) {
+        String synchronizerName = config.getAsString(DB.ACCOUNT.NAME);
+        if (synchronizerName == null) {
             System.err.println("name not found!");
             return null;
         }
-        if (uploaders.containsKey(uploaderName)) {
-            return uploaders.get(uploaderName);
+        if (synchronizers.containsKey(synchronizerName)) {
+            return synchronizers.get(synchronizerName);
         }
-        Uploader uploader = null;
-        if (uploaderName.contentEquals(RunKeeperUploader.NAME)) {
-            uploader = new RunKeeperUploader(this);
-        } else if (uploaderName.contentEquals(GarminUploader.NAME)) {
-            uploader = new GarminUploader(this);
-        } else if (uploaderName.contentEquals(FunBeatUploader.NAME)) {
-            uploader = new FunBeatUploader(this);
-        } else if (uploaderName.contentEquals(MapMyRunUploader.NAME)) {
-            uploader = new MapMyRunUploader(this);
-        } else if (uploaderName.contentEquals(NikePlus.NAME)) {
-            uploader = new NikePlus(this);
-        } else if (uploaderName.contentEquals(JoggSE.NAME)) {
-            uploader = new JoggSE(this);
-        } else if (uploaderName.contentEquals(Endomondo.NAME)) {
-            uploader = new Endomondo(this);
-        } else if (uploaderName.contentEquals(RunningAHEAD.NAME)) {
-            uploader = new RunningAHEAD(this);
-        } else if (uploaderName.contentEquals(RunnerUpLive.NAME)) {
-            uploader = new RunnerUpLive(context);
-        } else if (uploaderName.contentEquals(DigifitUploader.NAME)) {
-            uploader = new DigifitUploader(this);
-        } else if (uploaderName.contentEquals(Strava.NAME)) {
-            uploader = new Strava(this);
-        } else if (uploaderName.contentEquals(Facebook.NAME)) {
-            uploader = new Facebook(context, this);
-        } else if (uploaderName.contentEquals(GooglePlus.NAME)) {
-            uploader = new GooglePlus(this);
-        } else if (uploaderName.contentEquals(RuntasticUploader.NAME)) {
-            uploader = new RuntasticUploader(this);
-        } else if (uploaderName.contentEquals(GoogleFitUploader.NAME)) {
-            uploader = new GoogleFitUploader(context, this);
+        Synchronizer synchronizer = null;
+        if (synchronizerName.contentEquals(RunKeeperSynchronizer.NAME)) {
+            synchronizer = new RunKeeperSynchronizer(this);
+        } else if (synchronizerName.contentEquals(GarminSynchronizer.NAME)) {
+            synchronizer = new GarminSynchronizer(this);
+        } else if (synchronizerName.contentEquals(FunBeatSynchronizer.NAME)) {
+            synchronizer = new FunBeatSynchronizer(this);
+        } else if (synchronizerName.contentEquals(MapMyRunSynchronizer.NAME)) {
+            synchronizer = new MapMyRunSynchronizer(this);
+        } else if (synchronizerName.contentEquals(NikePlusSynchronizer.NAME)) {
+            synchronizer = new NikePlusSynchronizer(this);
+        } else if (synchronizerName.contentEquals(JoggSESynchronizer.NAME)) {
+            synchronizer = new JoggSESynchronizer(this);
+        } else if (synchronizerName.contentEquals(EndomondoSynchronizer.NAME)) {
+            synchronizer = new EndomondoSynchronizer(this);
+        } else if (synchronizerName.contentEquals(RunningAHEADSynchronizer.NAME)) {
+            synchronizer = new RunningAHEADSynchronizer(this);
+        } else if (synchronizerName.contentEquals(RunnerUpLiveSynchronizer.NAME)) {
+            synchronizer = new RunnerUpLiveSynchronizer(context);
+        } else if (synchronizerName.contentEquals(DigifitSynchronizer.NAME)) {
+            synchronizer = new DigifitSynchronizer(this);
+        } else if (synchronizerName.contentEquals(StravaSynchronizer.NAME)) {
+            synchronizer = new StravaSynchronizer(this);
+        } else if (synchronizerName.contentEquals(FacebookSynchronizer.NAME)) {
+            synchronizer = new FacebookSynchronizer(context, this);
+        } else if (synchronizerName.contentEquals(GooglePlusSynchronizer.NAME)) {
+            synchronizer = new GooglePlusSynchronizer(this);
+        } else if (synchronizerName.contentEquals(RuntasticSynchronizer.NAME)) {
+            synchronizer = new RuntasticSynchronizer(this);
+        } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
+            synchronizer = new GoogleFitSynchronizer(context, this);
         }
 
-        if (uploader != null) {
+        if (synchronizer != null) {
             if (!config.containsKey(DB.ACCOUNT.FLAGS)) {
                 if (BuildConfig.DEBUG) {
                     String s = null;
                     s.charAt(3);
                 }
             }
-            uploader.init(config);
-            uploaders.put(uploaderName, uploader);
-            uploadersById.put(uploader.getId(), uploader);
+            synchronizer.init(config);
+            synchronizers.put(synchronizerName, synchronizer);
+            synchronizersById.put(synchronizer.getId(), synchronizer);
         }
-        return uploader;
+        return synchronizer;
     }
 
     public boolean isConfigured(final String name) {
-        Uploader l = uploaders.get(name);
+        Synchronizer l = synchronizers.get(name);
         if (l == null) {
             return true;
         }
         return l.isConfigured();
     }
 
-    public Uploader getUploader(long id) {
-        return uploadersById.get(id);
+    public Synchronizer getSynchronizer(long id) {
+        return synchronizersById.get(id);
     }
 
-    public Uploader getUploaderByName(String name) {
-        return uploaders.get(name);
+    public Synchronizer getSynchronizerByName(String name) {
+        return synchronizers.get(name);
     }
 
     public void connect(final Callback callback, final String name, final boolean uploading) {
-        Uploader l = uploaders.get(name);
+        Synchronizer l = synchronizers.get(name);
         if (l == null) {
-            callback.run(name, Uploader.Status.INCORRECT_USAGE);
+            callback.run(name, Synchronizer.Status.INCORRECT_USAGE);
             return;
         }
         Status s = l.connect();
@@ -270,26 +270,26 @@ public class UploadManager {
                 mSpinner.show();
                 handleAuth(new Callback() {
                     @Override
-                    public void run(String uploader, Status status) {
+                    public void run(String synchronizerName, Status status) {
                         mSpinner.dismiss();
-                        callback.run(uploader, status);
+                        callback.run(synchronizerName, status);
                     }
                 }, l, s.authMethod);
                 return;
         }
     }
 
-    private void handleRefreshResult(Uploader uploader, Status status) {
+    private void handleRefreshResult(Synchronizer synchronizer, Status status) {
         switch (status) {
             case ERROR:
-                uploader.reset();
+                synchronizer.reset();
                 return;
             case OK: {
                 ContentValues tmp = new ContentValues();
-                tmp.put("_id", uploader.getId());
-                tmp.put(DB.ACCOUNT.AUTH_CONFIG, uploader.getAuthConfig());
+                tmp.put("_id", synchronizer.getId());
+                tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
                 String args[] = {
-                        Long.toString(uploader.getId())
+                        Long.toString(synchronizer.getId())
                 };
                 mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
                 return;
@@ -298,11 +298,11 @@ public class UploadManager {
         mSpinner.dismiss();
     }
 
-    Uploader authUploader = null;
+    Synchronizer authSynchronizer = null;
     Callback authCallback = null;
 
-    private void handleAuth(Callback callback, Uploader l, AuthMethod authMethod) {
-        authUploader = l;
+    private void handleAuth(Callback callback, Synchronizer l, AuthMethod authMethod) {
+        authSynchronizer = l;
         authCallback = callback;
         switch (authMethod) {
             case OAUTH2:
@@ -314,31 +314,31 @@ public class UploadManager {
         }
     }
 
-    private void handleAuthComplete(Uploader uploader, Status s) {
+    private void handleAuthComplete(Synchronizer synchronizer, Status s) {
         Callback cb = authCallback;
         authCallback = null;
-        authUploader = null;
+        authSynchronizer = null;
         switch (s) {
             case CANCEL:
             case ERROR:
             case INCORRECT_USAGE:
             case SKIP:
-                uploader.reset();
-                cb.run(uploader.getName(), s);
+                synchronizer.reset();
+                cb.run(synchronizer.getName(), s);
                 return;
             case OK: {
                 ContentValues tmp = new ContentValues();
-                tmp.put("_id", uploader.getId());
-                tmp.put(DB.ACCOUNT.AUTH_CONFIG, uploader.getAuthConfig());
+                tmp.put("_id", synchronizer.getId());
+                tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
                 String args[] = {
-                    Long.toString(uploader.getId())
+                    Long.toString(synchronizer.getId())
                 };
                 mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-                cb.run(uploader.getName(), s);
+                cb.run(synchronizer.getName(), s);
                 return;
             }
             case NEED_AUTH:
-                handleAuth(cb, uploader, s.authMethod);
+                handleAuth(cb, synchronizer, s.authMethod);
                 return;
         }
     }
@@ -352,7 +352,7 @@ public class UploadManager {
         return null;
     }
 
-    private void askUsernamePassword(final Uploader l, boolean showPassword) {
+    private void askUsernamePassword(final Synchronizer l, boolean showPassword) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(l.getName());
         // Get the layout inflater
@@ -411,16 +411,16 @@ public class UploadManager {
         dialog.show();
     }
 
-    private void testUserPass(final Uploader l, final JSONObject authConfig,
+    private void testUserPass(final Synchronizer l, final JSONObject authConfig,
             final boolean showPassword) {
         mSpinner.setTitle("Testing login " + l.getName());
 
-        new AsyncTask<Uploader, String, Uploader.Status>() {
+        new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
 
             final ContentValues config = new ContentValues();
 
             @Override
-            protected Uploader.Status doInBackground(Uploader... params) {
+            protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 config.put(DB.ACCOUNT.AUTH_CONFIG, authConfig.toString());
                 config.put("_id", l.getId());
                 l.init(config);
@@ -428,12 +428,12 @@ public class UploadManager {
                     return params[0].connect();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    return Uploader.Status.ERROR;
+                    return Synchronizer.Status.ERROR;
                 }
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
+            protected void onPostExecute(Synchronizer.Status result) {
                 handleAuthComplete(l, result);
             }
         }.execute(l);
@@ -441,102 +441,102 @@ public class UploadManager {
 
     private long mID = 0;
     private Callback uploadCallback = null;
-    private HashSet<String> pendingUploaders = null;
+    private HashSet<String> pendingSynchronizers = null;
 
-    public void startUploading(Callback callback, HashSet<String> uploaders, long id) {
+    public void startUploading(Callback callback, HashSet<String> synchronizers, long id) {
         mID = id;
         uploadCallback = callback;
-        pendingUploaders = uploaders;
-        mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
+        pendingSynchronizers = synchronizers;
+        mSpinner.setTitle("Uploading (" + pendingSynchronizers.size() + ")");
         mSpinner.show();
-        nextUploader();
+        nextSynchronizer();
     }
 
-    private void nextUploader() {
-        if (pendingUploaders.isEmpty()) {
+    private void nextSynchronizer() {
+        if (pendingSynchronizers.isEmpty()) {
             doneUploading();
             return;
         }
 
-        mSpinner.setTitle("Uploading (" + pendingUploaders.size() + ")");
-        final Uploader uploader = uploaders.get(pendingUploaders.iterator().next());
-        pendingUploaders.remove(uploader.getName());
-        doUpload(uploader);
+        mSpinner.setTitle("Uploading (" + pendingSynchronizers.size() + ")");
+        final Synchronizer synchronizer = synchronizers.get(pendingSynchronizers.iterator().next());
+        pendingSynchronizers.remove(synchronizer.getName());
+        doUpload(synchronizer);
     }
 
-    private void doUpload(final Uploader uploader) {
+    private void doUpload(final Synchronizer synchronizer) {
         final ProgressDialog copySpinner = mSpinner;
         final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
-        copySpinner.setMessage(getResources().getString(SyncMode.UPLOAD.getTextId(), uploader.getName()));
+        copySpinner.setMessage(getResources().getString(SyncMode.UPLOAD.getTextId(), synchronizer.getName()));
 
-        new AsyncTask<Uploader, String, Uploader.Status>() {
+        new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
 
             @Override
-            protected Uploader.Status doInBackground(Uploader... params) {
+            protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
                     return params[0].upload(copyDB, mID);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    return Uploader.Status.ERROR;
+                    return Synchronizer.Status.ERROR;
                 }
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
+            protected void onPostExecute(Synchronizer.Status result) {
                 switch (result) {
                     case CANCEL:
-                        disableUploader(disableUploaderCallback, uploader, false);
+                        disableSynchronizer(disableSynchronizerCallback, synchronizer, false);
                         return;
                     case SKIP:
                     case ERROR:
                     case INCORRECT_USAGE:
-                        nextUploader();
+                        nextSynchronizer();
                         return;
                     case OK:
-                        uploadOK(uploader, copySpinner, copyDB, mID);
-                        nextUploader();
+                        syncOK(synchronizer, copySpinner, copyDB, mID);
+                        nextSynchronizer();
                         return;
                     case NEED_AUTH: // should be handled inside connect "loop"
                         handleAuth(new Callback() {
                             @Override
-                            public void run(String uploaderName,
-                                    org.runnerup.export.Uploader.Status status) {
+                            public void run(String synchronizerName,
+                                    Synchronizer.Status status) {
                                 switch (status) {
                                     case CANCEL:
-                                        disableUploader(disableUploaderCallback, uploader, false);
+                                        disableSynchronizer(disableSynchronizerCallback, synchronizer, false);
                                         return;
                                     case SKIP:
                                     case ERROR:
                                     case INCORRECT_USAGE:
                                     case NEED_AUTH: // should be handled inside
                                                     // connect "loop"
-                                        nextUploader();
+                                        nextSynchronizer();
                                         return;
                                     case OK:
-                                        doUpload(uploader);
+                                        doUpload(synchronizer);
                                         return;
                                 }
                             }
-                        }, uploader, result.authMethod);
+                        }, synchronizer, result.authMethod);
                         return;
                 }
             }
-        }.execute(uploader);
+        }.execute(synchronizer);
     }
 
-    private final Callback disableUploaderCallback = new Callback() {
+    private final Callback disableSynchronizerCallback = new Callback() {
         @Override
-        public void run(String uploader, Status status) {
-            nextUploader();
+        public void run(String synchronizerName, Status status) {
+            nextSynchronizer();
         }
     };
 
-    private void uploadOK(Uploader uploader, ProgressDialog copySpinner, SQLiteDatabase copyDB,
-            long id) {
+    private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
+                        long id) {
         copySpinner.setMessage(getResources().getString(R.string.saving));
         ContentValues tmp = new ContentValues();
-        tmp.put(DB.EXPORT.ACCOUNT, uploader.getId());
+        tmp.put(DB.EXPORT.ACCOUNT, synchronizer.getId());
         tmp.put(DB.EXPORT.ACTIVITY, id);
         tmp.put(DB.EXPORT.STATUS, 0);
         copyDB.insert(DB.EXPORT.TABLE, null, tmp);
@@ -555,20 +555,20 @@ public class UploadManager {
         if (requestCode != CONFIGURE_REQUEST)
             return;
 
-        handleAuthComplete(authUploader, authUploader.getAuthResult(resultCode, data));
+        handleAuthComplete(authSynchronizer, authSynchronizer.getAuthResult(resultCode, data));
     }
 
-    public void disableUploader(Callback disconnectCallback, String uploader, boolean clearUploads) {
-        disableUploader(disconnectCallback, uploaders.get(uploader), clearUploads);
+    public void disableSynchronizer(Callback disconnectCallback, String synchronizer, boolean clearUploads) {
+        disableSynchronizer(disconnectCallback, synchronizers.get(synchronizer), clearUploads);
     }
 
-    public void disableUploader(Callback callback, Uploader uploader, boolean clearUploads) {
-        resetDB(callback, uploader, clearUploads);
+    public void disableSynchronizer(Callback callback, Synchronizer synchronizer, boolean clearUploads) {
+        resetDB(callback, synchronizer, clearUploads);
     }
 
-    void resetDB(final Callback callback, final Uploader uploader, final boolean clearUploads) {
+    void resetDB(final Callback callback, final Synchronizer synchronizer, final boolean clearUploads) {
         final String args[] = {
-            Long.toString(uploader.getId())
+            Long.toString(synchronizer.getId())
         };
         ContentValues config = new ContentValues();
         config.putNull(DB.ACCOUNT.AUTH_CONFIG);
@@ -578,57 +578,57 @@ public class UploadManager {
             mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
         }
 
-        uploader.reset();
-        callback.run(uploader.getName(), Uploader.Status.OK);
+        synchronizer.reset();
+        callback.run(synchronizer.getName(), Synchronizer.Status.OK);
     }
 
-    public void clearUploads(Callback callback, String uploader) {
+    public void clearUploads(Callback callback, String synchronizer) {
         final String args[] = {
-            uploader
+            synchronizer
         };
         mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
-        callback.run(uploader, Uploader.Status.OK);
+        callback.run(synchronizer, Synchronizer.Status.OK);
     }
 
     public void clearUpload(String name, long id) {
-        Uploader uploader = uploaders.get(name);
-        if (uploader != null) {
+        Synchronizer synchronizer = synchronizers.get(name);
+        if (synchronizer != null) {
             final String args[] = {
-                    Long.toString(uploader.getId()), Long.toString(id)
+                    Long.toString(synchronizer.getId()), Long.toString(id)
             };
             mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ? AND " + DB.EXPORT.ACTIVITY
                     + " = ?", args);
         }
     }
 
-    public void loadActivityList(final List<SyncActivityItem> items, final String uploader, final Callback callback) {
+    public void loadActivityList(final List<SyncActivityItem> items, final String synchronizerName, final Callback callback) {
         mSpinner.setTitle(getResources().getString(R.string.loading_activities));
-        mSpinner.setMessage(getResources().getString(R.string.fetching_list, uploader));
+        mSpinner.setMessage(getResources().getString(R.string.fetching_list, synchronizerName));
         mSpinner.show();
 
-        new AsyncTask<Uploader, String, Status>() {
+        new AsyncTask<Synchronizer, String, Status>() {
             @Override
-            protected Uploader.Status doInBackground(Uploader... params) {
+            protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 return params[0].listActivities(items);
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
-                callback.run(uploader, result);
+            protected void onPostExecute(Synchronizer.Status result) {
+                callback.run(synchronizerName, result);
                 mSpinner.dismiss();
             }
-        }.execute(uploaders.get(uploader));
+        }.execute(synchronizers.get(synchronizerName));
     }
 
 
     public static class WorkoutRef {
-        public WorkoutRef(String uploader, String key, String name) {
-            this.uploader = uploader;
+        public WorkoutRef(String synchronizerName, String key, String workoutName) {
+            this.synchronizer = synchronizerName;
             this.workoutKey = key;
-            this.workoutName = name;
+            this.workoutName = workoutName;
         }
 
-        public final String uploader;
+        public final String synchronizer;
         public final String workoutKey;
         public final String workoutName;
     }
@@ -638,10 +638,10 @@ public class UploadManager {
     ArrayList<WorkoutRef> workoutRef = null;
 
     public void loadWorkoutList(ArrayList<WorkoutRef> workoutRef, Callback callback,
-            HashSet<String> uploaders) {
+            HashSet<String> wourkouts) {
 
         listWorkoutCallback = callback;
-        pendingListWorkout = uploaders;
+        pendingListWorkout = wourkouts;
         this.workoutRef = workoutRef;
 
         mSpinner.setTitle("Loading workout list (" + pendingListWorkout.size() + ")");
@@ -656,36 +656,36 @@ public class UploadManager {
         }
 
         mSpinner.setTitle("Loading workout list (" + pendingListWorkout.size() + ")");
-        Uploader uploader = uploaders.get(pendingListWorkout.iterator().next());
-        pendingListWorkout.remove(uploader.getName());
-        mSpinner.setMessage("Configure " + uploader.getName());
-        if (!uploader.isConfigured()) {
+        Synchronizer synchronizer = synchronizers.get(pendingListWorkout.iterator().next());
+        pendingListWorkout.remove(synchronizer.getName());
+        mSpinner.setMessage("Configure " + synchronizer.getName());
+        if (!synchronizer.isConfigured()) {
             nextListWorkout();
             return;
         }
-        doListWorkout(uploader);
+        doListWorkout(synchronizer);
     }
 
-    protected void doListWorkout(final Uploader uploader) {
+    protected void doListWorkout(final Synchronizer synchronizer) {
         final ProgressDialog copySpinner = mSpinner;
 
-        copySpinner.setMessage("Listing from " + uploader.getName());
+        copySpinner.setMessage("Listing from " + synchronizer.getName());
         final ArrayList<Pair<String, String>> list = new ArrayList<Pair<String, String>>();
 
-        new AsyncTask<Uploader, String, Uploader.Status>() {
+        new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
 
             @Override
-            protected Uploader.Status doInBackground(Uploader... params) {
+            protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
                     return params[0].listWorkouts(list);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    return Uploader.Status.ERROR;
+                    return Synchronizer.Status.ERROR;
                 }
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
+            protected void onPostExecute(Synchronizer.Status result) {
                 switch (result) {
                     case CANCEL:
                     case ERROR:
@@ -694,14 +694,14 @@ public class UploadManager {
                         break;
                     case OK:
                         for (Pair<String, String> w : list) {
-                            workoutRef.add(new WorkoutRef(uploader.getName(), w.first, w.second));
+                            workoutRef.add(new WorkoutRef(synchronizer.getName(), w.first, w.second));
                         }
                         break;
                     case NEED_AUTH:
                         handleAuth(new Callback() {
                             @Override
-                            public void run(String uploaderName,
-                                    org.runnerup.export.Uploader.Status status) {
+                            public void run(String synchronizerName,
+                                    Synchronizer.Status status) {
                                 switch (status) {
                                     case CANCEL:
                                     case SKIP:
@@ -712,16 +712,16 @@ public class UploadManager {
                                         nextListWorkout();
                                         break;
                                     case OK:
-                                        doListWorkout(uploader);
+                                        doListWorkout(synchronizer);
                                         break;
                                 }
                             }
-                        }, uploader, result.authMethod);
+                        }, synchronizer, result.authMethod);
                         return;
                 }
                 nextListWorkout();
             }
-        }.execute(uploader);
+        }.execute(synchronizer);
     }
 
     private void doneListing() {
@@ -736,7 +736,7 @@ public class UploadManager {
         int cnt = pendingWorkouts.size();
         mSpinner.setTitle("Downloading workouts (" + cnt + ")");
         mSpinner.show();
-        new AsyncTask<String, String, Uploader.Status>() {
+        new AsyncTask<String, String, Synchronizer.Status>() {
 
             @Override
             protected void onProgressUpdate(String... values) {
@@ -744,17 +744,17 @@ public class UploadManager {
             }
 
             @Override
-            protected Uploader.Status doInBackground(String... params0) {
+            protected Synchronizer.Status doInBackground(String... params0) {
                 for (WorkoutRef ref : pendingWorkouts) {
-                    publishProgress(ref.workoutName, ref.uploader);
-                    Uploader uploader = uploaders.get(ref.uploader);
+                    publishProgress(ref.workoutName, ref.synchronizer);
+                    Synchronizer synchronizer = synchronizers.get(ref.synchronizer);
                     File f = WorkoutSerializer.getFile(context, ref.workoutName);
                     File w = f;
                     if (f.exists()) {
                         w = WorkoutSerializer.getFile(context, ref.workoutName + ".tmp");
                     }
                     try {
-                        uploader.downloadWorkout(w, ref.workoutKey);
+                        synchronizer.downloadWorkout(w, ref.workoutKey);
                         if (w != f) {
                             if (compareFiles(w, f) != true) {
                                 System.err.println("overwriting " + f.getPath() + " with "
@@ -773,14 +773,14 @@ public class UploadManager {
                         w.delete();
                     }
                 }
-                return Uploader.Status.OK;
+                return Synchronizer.Status.OK;
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
+            protected void onPostExecute(Synchronizer.Status result) {
                 mSpinner.dismiss();
                 if (callback != null) {
-                    callback.run(null, Uploader.Status.OK);
+                    callback.run(null, Synchronizer.Status.OK);
                 }
             }
         }.execute("string");
@@ -831,18 +831,18 @@ public class UploadManager {
     }
 
     /**
-     * Load uploader private data
+     * Load synchronizer private data
      * 
-     * @param uploader
+     * @param synchronizer
      * @return
      * @throws Exception
      */
-    String loadData(Uploader uploader) throws Exception {
+    String loadData(Synchronizer synchronizer) throws Exception {
         InputStream in = context.getAssets()
-                .open(uploader.getName() + ".data");
+                .open(synchronizer.getName() + ".data");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         String key = Encryption.calculateRFC2104HMAC("RunnerUp",
-                uploader.getName());
+                synchronizer.getName());
         Encryption.decrypt(in, out, key);
 
         return out.toString();
@@ -853,11 +853,11 @@ public class UploadManager {
      * 
      * @return
      */
-    public SharedPreferences getPreferences(Uploader uploader) {
-        if (uploader == null)
+    public SharedPreferences getPreferences(Synchronizer synchronizer) {
+        if (synchronizer == null)
             return PreferenceManager.getDefaultSharedPreferences(context);
         else
-            return context.getSharedPreferences(uploader.getName(), Context.MODE_PRIVATE);
+            return context.getSharedPreferences(synchronizer.getName(), Context.MODE_PRIVATE);
     }
 
     public Resources getResources() {
@@ -869,25 +869,25 @@ public class UploadManager {
     }
 
     /**
-     * Upload set of activities for a specific uploader
+     * Synch set of activities for a specific synchronizer
      */
     List<SyncActivityItem> syncActivitiesList = null;
     Callback syncActivityCallback = null;
     StringBuffer cancelSync = null;
 
-    public void syncActivities(SyncMode mode, Callback uploadCallback, String synchronizerName, List<SyncActivityItem> list,
+    public void syncActivities(SyncMode mode, Callback synchCallback, String synchronizerName, List<SyncActivityItem> list,
                                final StringBuffer cancel) {
 
         prepareSpinnerForSync(list, cancel, mode, synchronizerName);
 
         load(synchronizerName);
-        final Uploader synchronizer = uploaders.get(synchronizerName);
+        final Synchronizer synchronizer = synchronizers.get(synchronizerName);
         if (synchronizer == null) {
-            uploadCallback.run(synchronizerName, Status.INCORRECT_USAGE);
+            synchCallback.run(synchronizerName, Status.INCORRECT_USAGE);
             return;
         }
         cancelSync = cancel;
-        syncActivityCallback = uploadCallback;
+        syncActivityCallback = synchCallback;
         syncActivitiesList = list;
         mSpinner.show();
 
@@ -905,8 +905,8 @@ public class UploadManager {
         syncNextActivity(synchronizer, mode);
     }
 
-    private void prepareSpinnerForSync(List<SyncActivityItem> list, final StringBuffer cancel, SyncMode mode, String uploader) {
-        String msg = getResources().getString(mode.getTextId(), uploader);
+    private void prepareSpinnerForSync(List<SyncActivityItem> list, final StringBuffer cancel, SyncMode mode, String synchronizerName) {
+        String msg = getResources().getString(mode.getTextId(), synchronizerName);
         mSpinner.setTitle(msg);
         mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
                 new OnClickListener() {
@@ -929,50 +929,50 @@ public class UploadManager {
         }
     }
 
-    void syncNextActivity(final Uploader uploader, SyncMode mode) {
+    void syncNextActivity(final Synchronizer synchronizer, SyncMode mode) {
         if (checkCancel(cancelSync)) {
             mSpinner.cancel();
-            syncActivityCallback.run(uploader.getName(), Uploader.Status.CANCEL);
+            syncActivityCallback.run(synchronizer.getName(), Synchronizer.Status.CANCEL);
             return;
         }
 
         if (syncActivitiesList.size() == 0) {
             mSpinner.cancel();
-            syncActivityCallback.run(uploader.getName(), Uploader.Status.OK);
+            syncActivityCallback.run(synchronizer.getName(), Synchronizer.Status.OK);
             return;
         }
 
         mSpinner.setProgress(syncActivitiesList.size());
         SyncActivityItem ai = syncActivitiesList.get(0);
         syncActivitiesList.remove(0);
-        doSyncMulti(uploader, mode, ai);
+        doSyncMulti(synchronizer, mode, ai);
     }
 
-    private void doSyncMulti(final Uploader uploader, final SyncMode mode, final SyncActivityItem activityItem) {
+    private void doSyncMulti(final Synchronizer synchronizer, final SyncMode mode, final SyncActivityItem activityItem) {
         final ProgressDialog copySpinner = mSpinner;
         final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
 
         copySpinner.setMessage(Long.toString(1 + syncActivitiesList.size()) + " remaining");
-        new AsyncTask<Uploader, String, Status>() {
+        new AsyncTask<Synchronizer, String, Status>() {
 
             @Override
-            protected Uploader.Status doInBackground(Uploader... params) {
+            protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
                     switch (mode) {
                         case UPLOAD:
-                            return uploader.upload(copyDB, activityItem.getId());
+                            return synchronizer.upload(copyDB, activityItem.getId());
                         case DOWNLOAD:
-                            return uploader.download(copyDB, activityItem);
+                            return synchronizer.download(copyDB, activityItem);
                     }
-                    return Uploader.Status.ERROR;
+                    return Synchronizer.Status.ERROR;
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    return Uploader.Status.ERROR;
+                    return Synchronizer.Status.ERROR;
                 }
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
+            protected void onPostExecute(Synchronizer.Status result) {
                 switch (result) {
                     case CANCEL:
                     case ERROR:
@@ -980,13 +980,13 @@ public class UploadManager {
                     case SKIP:
                         break;
                     case OK:
-                        uploadOK(uploader, copySpinner, copyDB, result.activityId);
+                        syncOK(synchronizer, copySpinner, copyDB, result.activityId);
                         break;
                     case NEED_AUTH:
                         handleAuth(new Callback() {
                             @Override
-                            public void run(String uploaderName,
-                                    Uploader.Status status) {
+                            public void run(String synchronizerName,
+                                    Synchronizer.Status status) {
                                 switch (status) {
                                     case CANCEL:
                                     case SKIP:
@@ -995,30 +995,30 @@ public class UploadManager {
                                     case NEED_AUTH: // should be handled inside
                                                     // connect "loop"
                                         syncActivitiesList.clear();
-                                        syncNextActivity(uploader, mode);
+                                        syncNextActivity(synchronizer, mode);
                                         break;
                                     case OK:
-                                        doSyncMulti(uploader, mode, activityItem);
+                                        doSyncMulti(synchronizer, mode, activityItem);
                                         break;
                                 }
                             }
-                        }, uploader, result.authMethod);
+                        }, synchronizer, result.authMethod);
 
                         break;
                 }
-                syncNextActivity(uploader, mode);
+                syncNextActivity(synchronizer, mode);
             }
-        }.execute(uploader);
+        }.execute(synchronizer);
     }
 
     Callback feedCallback = null;
-    Set<String> feedUploaders = null;
+    Set<String> feedProviders = null;
     FeedList feedList = null;
     StringBuffer feedCancel = null;
 
-    public void syncronizeFeed(Callback cb, Set<String> uploaders, FeedList dst, StringBuffer cancel) {
+    public void syncronizeFeed(Callback cb, Set<String> providers, FeedList dst, StringBuffer cancel) {
         feedCallback = cb;
-        feedUploaders = uploaders;
+        feedProviders = providers;
         feedList = dst;
         feedCancel = cancel;
         nextSyncFeed();
@@ -1026,57 +1026,57 @@ public class UploadManager {
 
     void nextSyncFeed() {
         if (checkCancel(feedCancel)) {
-            feedUploaders.clear();
+            feedProviders.clear();
         }
 
-        if (feedUploaders.isEmpty()) {
+        if (feedProviders.isEmpty()) {
             Callback cb = feedCallback;
             feedCallback = null;
-            cb.run(null, Uploader.Status.OK);
+            cb.run(null, Synchronizer.Status.OK);
             return;
         }
 
-        final String uploaderName = feedUploaders.iterator().next();
-        feedUploaders.remove(uploaderName);
-        final Uploader uploader = uploaders.get(uploaderName);
-        syncFeed(uploader);
+        final String providerName = feedProviders.iterator().next();
+        feedProviders.remove(providerName);
+        final Synchronizer synchronizer = synchronizers.get(providerName);
+        syncFeed(synchronizer);
     }
 
-    void syncFeed(final Uploader uploader) {
-        if (uploader == null) {
+    void syncFeed(final Synchronizer synchronizer) {
+        if (synchronizer == null) {
             nextSyncFeed();
             return;
         }
 
         final FeedList.FeedUpdater feedUpdater = feedList.getUpdater();
-        feedUpdater.start(uploader.getName());
-        new AsyncTask<Uploader, String, Uploader.Status>() {
+        feedUpdater.start(synchronizer.getName());
+        new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
 
             @Override
-            protected Uploader.Status doInBackground(Uploader... params) {
+            protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
                     return params[0].getFeed(feedUpdater);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    return Uploader.Status.ERROR;
+                    return Synchronizer.Status.ERROR;
                 }
             }
 
             @Override
-            protected void onPostExecute(Uploader.Status result) {
-                if (result == Uploader.Status.OK) {
+            protected void onPostExecute(Synchronizer.Status result) {
+                if (result == Synchronizer.Status.OK) {
                     feedUpdater.complete();
-                } else if (result == Uploader.Status.NEED_AUTH) {
+                } else if (result == Synchronizer.Status.NEED_AUTH) {
                     handleAuth(new Callback() {
                         @Override
-                        public void run(String uploaderName, Uploader.Status s2) {
-                            if (s2 == Uploader.Status.OK) {
-                                syncFeed(uploader);
+                        public void run(String synchronizerName, Synchronizer.Status s2) {
+                            if (s2 == Synchronizer.Status.OK) {
+                                syncFeed(synchronizer);
                             } else {
                                 nextSyncFeed();
                             }
                         }
-                    }, uploader, result.authMethod);
+                    }, synchronizer, result.authMethod);
                     return;
                 } else {
                     if (result.ex != null)
@@ -1084,7 +1084,7 @@ public class UploadManager {
                 }
                 nextSyncFeed();
             }
-        }.execute(uploader);
+        }.execute(synchronizer);
     }
 
     public void loadLiveLoggers(List<WorkoutObserver> liveLoggers) {
@@ -1107,8 +1107,8 @@ public class UploadManager {
             if (c.moveToFirst()) {
                 do {
                     ContentValues config = DBHelper.get(c);
-                    Uploader u = add(config);
-                    if (u.isConfigured() && u.checkSupport(Uploader.Feature.LIVE) &&
+                    Synchronizer u = add(config);
+                    if (u.isConfigured() && u.checkSupport(Synchronizer.Feature.LIVE) &&
                             (u instanceof WorkoutObserver)) {
                         liveLoggers.add((WorkoutObserver) u);
                     }

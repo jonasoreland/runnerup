@@ -57,7 +57,7 @@ import java.util.Map;
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class FunBeatUploader extends DefaultUploader {
+public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "FunBeat";
     public static final String BASE_URL = "http://www.funbeat.se";
@@ -88,10 +88,10 @@ public class FunBeatUploader extends DefaultUploader {
         }
     }
 
-    FunBeatUploader(UploadManager uploadManager) {
+    FunBeatSynchronizer(SyncManager syncManager) {
         if (APP_ID == null || APP_SECRET == null) {
             try {
-                final JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                final JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 APP_ID = tmp.getString("APP_ID");
                 APP_SECRET = tmp.getString("APP_SECRET");
             } catch (final Exception ex) {
@@ -235,7 +235,7 @@ public class FunBeatUploader extends DefaultUploader {
                     amsg = conn.getResponseMessage();
                     getCookies(conn);
                 } else if (responseCode != 200) {
-                    System.err.println("FunBeatUploader::connect() - got " + responseCode
+                    System.err.println("FunBeatSynchronizer::connect() - got " + responseCode
                             + ", msg: " + amsg);
                 }
                 String html = getFormValues(conn);
@@ -245,7 +245,7 @@ public class FunBeatUploader extends DefaultUploader {
             }
 
             if (ok) {
-                return Uploader.Status.OK;
+                return Synchronizer.Status.OK;
             } else {
                 return s;
             }
@@ -391,7 +391,7 @@ public class FunBeatUploader extends DefaultUploader {
                 amsg = conn.getResponseMessage();
                 getCookies(conn);
             } else if (responseCode != 200) {
-                System.err.println("FunBeatUploader::upload() - got " + responseCode + ", msg: "
+                System.err.println("FunBeatSynchronizer::upload() - got " + responseCode + ", msg: "
                         + amsg);
             }
             getFormValues(conn);
@@ -454,7 +454,7 @@ public class FunBeatUploader extends DefaultUploader {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
         if (ex != null) {
             ex.printStackTrace();
@@ -463,7 +463,7 @@ public class FunBeatUploader extends DefaultUploader {
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case FEED:
             case UPLOAD:

@@ -38,7 +38,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-public class GooglePlus extends DefaultUploader implements Uploader, OAuth2Server {
+public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "Google+";
 
@@ -80,10 +80,10 @@ public class GooglePlus extends DefaultUploader implements Uploader, OAuth2Serve
     private long token_now = 0;
     private long expire_time = 0;
 
-    GooglePlus(UploadManager uploadManager) {
+    GooglePlusSynchronizer(SyncManager syncManager) {
         if (getClientId() == null || getClientSecret() == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 this.setClientId(tmp.getString("CLIENT_ID"));
                 this.setClientSecret(tmp.getString("CLIENT_SECRET"));
                 this.setProjectId(tmp.getString("PROJECT_ID"));

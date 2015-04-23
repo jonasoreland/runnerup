@@ -30,21 +30,22 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.export.util.Part;
-import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.zip.GZIPOutputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class Strava extends DefaultUploader implements OAuth2Server {
+public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
-    public static final String NAME = "Strava";
+    public static final String NAME = "RunningAHEAD";
 
     /**
      * @todo register OAuth2Server
@@ -52,19 +53,20 @@ public class Strava extends DefaultUploader implements OAuth2Server {
     public static String CLIENT_ID = null;
     public static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
-    public static final String TOKEN_URL = "https://www.strava.com/oauth/token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
+    public static final String AUTH_URL = "https://www.runningahead.com/oauth2/authorize";
+    public static final String TOKEN_URL = "https://api.runningahead.com/oauth2/token";
+    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runningahead";
 
-    public static final String REST_URL = "https://www.strava.com/api/v3/uploads";
+    public static final String REST_URL = "https://api.runningahead.com/rest";
+    public static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";
 
     private long id = 0;
     private String access_token = null;
 
-    Strava(UploadManager uploadManager) {
+    RunningAHEADSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
-                JSONObject tmp = new JSONObject(uploadManager.loadData(this));
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
                 CLIENT_ID = tmp.getString("CLIENT_ID");
                 CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
             } catch (Exception ex) {
@@ -95,7 +97,7 @@ public class Strava extends DefaultUploader implements OAuth2Server {
 
     @Override
     public String getAuthExtra() {
-        return "scope=write";
+        return null;
     }
 
     @Override
@@ -183,7 +185,7 @@ public class Strava extends DefaultUploader implements OAuth2Server {
         if (access_token == null)
             return s;
 
-        return Uploader.Status.OK;
+        return Synchronizer.Status.OK;
     }
 
     @Override
@@ -193,7 +195,7 @@ public class Strava extends DefaultUploader implements OAuth2Server {
             return s;
         }
 
-        String URL = REST_URL;
+        String URL = IMPORT_URL + "?access_token=" + access_token;
         TCX tcx = new TCX(db);
         HttpURLConnection conn = null;
         Exception ex = null;
@@ -203,32 +205,39 @@ public class Strava extends DefaultUploader implements OAuth2Server {
             conn = (HttpURLConnection) new URL(URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
-
-            Part<StringWritable> part0 = new Part<StringWritable>("access_token",
-                    new StringWritable(access_token));
-            Part<StringWritable> part1 = new Part<StringWritable>("data_type",
-                    new StringWritable("tcx"));
-            Part<StringWritable> part2 = new Part<StringWritable>("file",
-                    new StringWritable(writer.toString()));
-            part2.setFilename("RunnerUp.tcx");
-            part2.setContentType("application/octet-stream");
-            Part<?> parts[] = {
-                    part0, part1, part2
-            };
-            SyncHelper.postMulti(conn, parts);
-
+            conn.addRequestProperty("Content-Encoding", "gzip");
+            OutputStream out = new GZIPOutputStream(
+                    new BufferedOutputStream(conn.getOutputStream()));
+            out.write(writer.toString().getBytes());
+            out.flush();
+            out.close();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             System.err.println("code: " + responseCode + ", amsg: " + amsg);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             JSONObject obj = SyncHelper.parse(in);
+            JSONObject data = obj.getJSONObject("data");
 
-            if (responseCode == 201 && obj.getLong("id") > 0) {
+            boolean found = false;
+            if (found == false) {
+                try {
+                    found = data.getJSONArray("workoutIds").length() == 1;
+                } catch (JSONException e) {
+                }
+            }
+            if (found == false) {
+                try {
+                    found = data.getJSONArray("ids").length() == 1;
+                } catch (JSONException e) {
+                }
+            }
+            if (!found) {
+                System.err.println("Unhandled response from RunningAHEADSynchronizer: " + obj);
+            }
+            if (responseCode == 200 && found) {
                 conn.disconnect();
-                s = Status.OK;
-                s.activityId = mID;
-                return s;
+                return Status.OK;
             }
             ex = new Exception(amsg);
         } catch (IOException e) {
@@ -237,9 +246,8 @@ public class Strava extends DefaultUploader implements OAuth2Server {
             ex = e;
         }
 
-        s = Uploader.Status.ERROR;
+        s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        s.activityId = mID;
         if (ex != null) {
             ex.printStackTrace();
         }
