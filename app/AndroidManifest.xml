@@ -106,7 +106,7 @@
 				<action android:name="android.intent.action.VIEW" />
   				<action android:name="android.intent.action.EDIT" />
   				<category android:name="android.intent.category.DEFAULT" />
-  				<data android:mimeType="application/vnd.garmin.Workout+json"/>
+  				<data android:mimeType="application/vnd.garmin.workout+json"/>
 			</intent-filter>
 <!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
 			<intent-filter>
@@ -118,7 +118,7 @@
 		</activity>
 
         <provider android:name=".content.WorkoutFileProvider"
-            android:authorities="org.runnerup.Workout.file.provider"
+            android:authorities="org.runnerup.workout.file.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider" />
 
@@ -127,7 +127,7 @@
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider" />
 				
-		<activity android:name=".Export.oauth2client.OAuth2Activity"
+		<activity android:name=".export.oauth2client.OAuth2Activity"
 		    android:screenOrientation="portrait" >
 		</activity>
 
@@ -143,7 +143,7 @@
 		    android:name=".tracker.Tracker" >
 		</service>
 		<service
-                android:name=".Export.RunnerUpLiveSynchronizer$LiveService">
+                android:name=".export.RunnerUpLiveSynchronizer$LiveService">
  		</service>
  		
 		<receiver
