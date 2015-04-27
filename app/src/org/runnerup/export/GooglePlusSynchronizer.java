@@ -307,7 +307,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case UPLOAD:
                 return true;
