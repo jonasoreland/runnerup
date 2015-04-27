@@ -253,7 +253,7 @@ public class AccountActivity extends Activity implements Constants {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this);
             builder.setTitle(getString(R.string.Clear_uploads));
-            builder.setMessage(getResources().getString(R.string.clear_uploads_msg,
+            builder.setMessage(getResources().getString(R.string.Clear_uploads_from_phone,
                     synchrnizer));
             builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
