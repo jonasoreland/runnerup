@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
@@ -289,7 +290,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 .openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
@@ -299,7 +300,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         JSONObject ref = SyncHelper.parse(in);
 
         conn.disconnect();
-        if (code != 200) {
+        if (code != HttpStatus.SC_OK) {
             throw new Exception("got " + code + ": >" + msg + "< from createCourse");
         }
 
@@ -343,7 +344,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
@@ -353,7 +354,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         JSONObject runRef = SyncHelper.parse(in);
 
         conn.disconnect();
-        if (code != 200) {
+        if (code != HttpStatus.SC_OK) {
             throw new Exception("Got code: " + code + ", msg: " + msg + " from " + url.toString());
         }
 

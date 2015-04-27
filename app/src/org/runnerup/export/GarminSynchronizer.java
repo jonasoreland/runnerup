@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Pair;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -148,9 +149,9 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             System.err.println("GarminSynchronizer.connect() CHOOSE_URL => code: " + responseCode
                     + ", msg: " + amsg);
 
-            if (responseCode == 200) {
+            if (responseCode == HttpStatus.SC_OK) {
                 return connectOld();
-            } else if (responseCode == 302) {
+            } else if (responseCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                 return connectNew();
             }
         } catch (MalformedURLException e) {
@@ -186,7 +187,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             getCookies(conn);
-            if (responseCode != 200) {
+            if (responseCode != HttpStatus.SC_OK) {
                 System.err.println("GarminSynchronizer::connect() - got " + responseCode + ", msg: "
                         + amsg);
             }
@@ -206,7 +207,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
         conn = (HttpURLConnection) new URL(login).openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         addCookies(conn);
 
@@ -310,9 +311,9 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             int code = conn.getResponseCode();
             System.err.println("attempt: " + i + " => code: " + code);
             getCookies(conn);
-            if (code == 200)
+            if (code == HttpStatus.SC_OK)
                 break;
-            if (code != 302)
+            if (code != HttpStatus.SC_MOVED_TEMPORARILY)
                 break;
             List<String> fields = conn.getHeaderFields().get("location");
             conn.disconnect();
@@ -341,7 +342,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(false);
-        conn.setRequestMethod("GET");
+        conn.setRequestMethod(RequestMethod.GET.name());
         return conn;
     }
 
@@ -349,7 +350,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         return conn;
     }
 
@@ -375,7 +376,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             tcx.export(mID, writer);
             conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             addCookies(conn);
             Part<StringWritable> part2 = new Part<StringWritable>("data",
                     new StringWritable(writer.toString()));
@@ -387,7 +388,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             SyncHelper.postMulti(conn, parts);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            if (responseCode == 200) {
+            if (responseCode == HttpStatus.SC_OK) {
                 JSONObject reply = SyncHelper.parse(new BufferedReader(new InputStreamReader(
                         conn.getInputStream())));
                 conn.disconnect();
@@ -442,7 +443,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         Exception ex = null;
         try {
             conn = (HttpURLConnection) new URL(LIST_WORKOUTS_URL).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             addCookies(conn);
             conn.connect();
             getCookies(conn);
@@ -451,7 +452,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             conn.disconnect();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            if (responseCode == 200) {
+            if (responseCode == HttpStatus.SC_OK) {
                 obj = obj.getJSONObject("com.garmin.connect.workout.dto.BaseUserWorkoutListDto");
                 JSONArray arr = obj.getJSONArray("baseUserWorkouts");
                 for (int i = 0;; i++) {
@@ -485,7 +486,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         FileOutputStream out = null;
         try {
             conn = (HttpURLConnection) new URL(GET_WORKOUT_URL + key).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             addCookies(conn);
             conn.connect();
             getCookies(conn);
@@ -504,7 +505,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             conn.disconnect();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            if (responseCode == 200) {
+            if (responseCode == HttpStatus.SC_OK) {
                 return;
             }
             ex = new Exception(amsg);

@@ -20,6 +20,7 @@ package org.runnerup.export;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -188,9 +189,9 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
             int code = connect.getResponseCode();
             try {
-                if (code == 500) {
+                if (code == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                     continue;
-                } else if (code != 200) {
+                } else if (code != HttpStatus.SC_OK) {
                     System.out.println(SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())));
                     status = Status.ERROR;
                     break;
@@ -239,7 +240,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
             int code = conn.getResponseCode();
             conn.disconnect();
 
-            if (code != 200) {
+            if (code != HttpStatus.SC_OK) {
                 throw new Exception("got a " + code + " response code from upload");
             } else {
                 JSONArray data = reply.getJSONArray("dataSource");

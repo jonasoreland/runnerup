@@ -153,7 +153,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
             conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Host", "jogg.se");
             conn.addRequestProperty("Content-Type", "text/xml");
 
@@ -271,7 +271,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
             conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Host", "jogg.se");
             conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
 
@@ -333,7 +333,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case UPLOAD:
                 return true;

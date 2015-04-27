@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -208,7 +209,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(LOGIN_URL).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
             addCookies(conn);
@@ -223,18 +224,18 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 int responseCode = conn.getResponseCode();
                 String amsg = conn.getResponseMessage();
                 getCookies(conn);
-                if (responseCode == 302) {
+                if (responseCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                     String redirect = conn.getHeaderField("Location");
                     conn.disconnect();
                     conn = (HttpURLConnection) new URL(BASE_URL + redirect)
                             .openConnection();
                     conn.setInstanceFollowRedirects(false);
-                    conn.setRequestMethod("GET");
+                    conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
                     responseCode = conn.getResponseCode();
                     amsg = conn.getResponseMessage();
                     getCookies(conn);
-                } else if (responseCode != 200) {
+                } else if (responseCode != HttpStatus.SC_OK) {
                     System.err.println("FunBeatSynchronizer::connect() - got " + responseCode
                             + ", msg: " + amsg);
                 }
@@ -304,7 +305,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(API_URL + function).openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
             OutputStream out = new BufferedOutputStream(conn.getOutputStream());
@@ -372,25 +373,25 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             addCookies(conn);
             SyncHelper.postMulti(conn, parts);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             getCookies(conn);
             String redirect = null;
-            if (responseCode == 302) {
+            if (responseCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                 redirect = conn.getHeaderField("Location");
                 conn.disconnect();
                 conn = (HttpURLConnection) new URL(BASE_URL + redirect)
                         .openConnection();
                 conn.setInstanceFollowRedirects(false);
-                conn.setRequestMethod("GET");
+                conn.setRequestMethod(RequestMethod.GET.name());
                 addCookies(conn);
                 responseCode = conn.getResponseCode();
                 amsg = conn.getResponseMessage();
                 getCookies(conn);
-            } else if (responseCode != 200) {
+            } else if (responseCode != HttpStatus.SC_OK) {
                 System.err.println("FunBeatSynchronizer::upload() - got " + responseCode + ", msg: "
                         + amsg);
             }
@@ -412,7 +413,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(surl).openConnection();
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
             addCookies(conn);
@@ -425,13 +426,13 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 responseCode = conn.getResponseCode();
                 amsg = conn.getResponseMessage();
                 getCookies(conn);
-                if (responseCode == 302) {
+                if (responseCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                     redirect = conn.getHeaderField("Location");
                     conn.disconnect();
                     conn = (HttpURLConnection) new URL(BASE_URL + redirect)
                             .openConnection();
                     conn.setInstanceFollowRedirects(false);
-                    conn.setRequestMethod("GET");
+                    conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
                     responseCode = conn.getResponseCode();
                     amsg = conn.getResponseMessage();
@@ -493,7 +494,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn = (HttpURLConnection) new URL(FEED_URL).openConnection();
             conn.setDoInput(true);
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/json; charset=utf-8");
             final JSONObject req = getRequestObject();
             final OutputStream out = new BufferedOutputStream(conn.getOutputStream());
@@ -504,7 +505,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             final JSONObject reply = SyncHelper.parse(in);
             final int code = conn.getResponseCode();
             conn.disconnect();
-            if (code == 200) {
+            if (code == HttpStatus.SC_OK) {
                 parseFeed(feedUpdater, reply);
                 return Status.OK;
             }

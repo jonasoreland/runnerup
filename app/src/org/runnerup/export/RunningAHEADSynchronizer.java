@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
@@ -204,7 +205,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
             tcx.export(mID, writer);
             conn = (HttpURLConnection) new URL(URL).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Encoding", "gzip");
             OutputStream out = new GZIPOutputStream(
                     new BufferedOutputStream(conn.getOutputStream()));
@@ -235,7 +236,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
             if (!found) {
                 System.err.println("Unhandled response from RunningAHEADSynchronizer: " + obj);
             }
-            if (responseCode == 200 && found) {
+            if (responseCode == HttpStatus.SC_OK && found) {
                 conn.disconnect();
                 return Status.OK;
             }
@@ -255,7 +256,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     }
 
     @Override
-    public boolean checkSupport(Uploader.Feature f) {
+    public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case UPLOAD:
                 return true;

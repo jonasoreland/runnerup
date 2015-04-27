@@ -426,7 +426,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             String amsg = conn.getResponseMessage();
             conn.disconnect();
             conn = null;
-            if (responseCode >= 200 && responseCode < 300) {
+            if (responseCode >= HttpStatus.SC_OK && responseCode < HttpStatus.SC_MULTIPLE_CHOICES) {
                 s = Status.OK;
                 s.activityId = mID;
                 return s;
@@ -505,6 +505,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     private ActivityEntity parseToActivity(JSONObject response, SyncActivityItem ai) throws JSONException {
         ActivityEntity newActivity = new ActivityEntity();
         newActivity.setSport(SPORT_MAP.get(response.getString("type")));
+        newActivity.setComment(response.getString("notes"));
         newActivity.setStartTime(ai.getStartTime());
         newActivity.setTime(ai.getDuration());
         newActivity.setDistance(ai.getDistance());

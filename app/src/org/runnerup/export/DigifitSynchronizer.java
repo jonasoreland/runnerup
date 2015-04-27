@@ -29,6 +29,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,7 +102,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             ProtocolException, JSONException {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         addCookies(conn);
 
@@ -111,7 +112,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         out.close();
 
         JSONObject response = null;
-        if (conn.getResponseCode() == 200) {
+        if (conn.getResponseCode() == HttpStatus.SC_OK) {
             try {
                 response = SyncHelper.parse(conn.getInputStream());
             } finally {
@@ -167,7 +168,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             HttpURLConnection conn = (HttpURLConnection) new URL(DIGIFIT_URL + "/site/authenticate")
                     .openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             OutputStream out = conn.getOutputStream();
@@ -186,7 +187,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = in.readLine();
 
-            if (conn.getResponseCode() == 200) {
+            if (conn.getResponseCode() == HttpStatus.SC_OK) {
                 if (line.contains("<result>success</result>")) {
                     // Store the authentication token.
                     getCookies(conn);
@@ -214,7 +215,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                     + "&file_type="
                     + fileType;
             HttpURLConnection conn = (HttpURLConnection) new URL(deleteUrl).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             conn.addRequestProperty("Referer", DIGIFIT_URL + "/site/workoutimport");
             addCookies(conn);
         } catch (Exception ex) {
@@ -254,7 +255,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             String downloadUrl = DIGIFIT_URL + "/workout/download/" + fileId;
 
             HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             addCookies(conn);
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -474,7 +475,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     private void uploadFileToDigifit(String payload, String uploadUrl) throws Exception {
         HttpURLConnection conn = (HttpURLConnection) new URL(uploadUrl).openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod(RequestMethod.POST.name());
         addCookies(conn);
 
         String filename = "RunnerUp.tcx";
@@ -491,7 +492,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
-        if (code != 200 && code != 302) {
+        if (code != HttpStatus.SC_OK && code != HttpStatus.SC_MOVED_TEMPORARILY) {
             throw new Exception("got a " + code + " response code from upload");
         }
 

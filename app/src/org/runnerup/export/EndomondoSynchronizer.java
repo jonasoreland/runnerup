@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -179,7 +180,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             conn = (HttpURLConnection) new URL(login).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
@@ -193,7 +194,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            if (responseCode == 200 &&
+            if (responseCode == HttpStatus.SC_OK &&
                     "OK".contentEquals(res.getString("_0")) &&
                     res.has("authToken")) {
                 authToken = res.getString("authToken");
@@ -269,7 +270,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
             conn.setDoOutput(true);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/octet-stream");
             OutputStream out = new GZIPOutputStream(
                     new BufferedOutputStream(conn.getOutputStream()));
@@ -285,7 +286,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            if (responseCode == 200 &&
+            if (responseCode == HttpStatus.SC_OK &&
                     "OK".contentEquals(res.getString("_0"))) {
                 s.activityId = mID;
                 return s;
@@ -336,7 +337,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         Exception ex = null;
         try {
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
-            conn.setRequestMethod("GET");
+            conn.setRequestMethod(RequestMethod.GET.name());
             final InputStream in = new BufferedInputStream(conn.getInputStream());
             final JSONObject reply = SyncHelper.parse(in);
             int responseCode = conn.getResponseCode();
@@ -344,7 +345,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
             conn.disconnect();
 
-            if (responseCode == 200) {
+            if (responseCode == HttpStatus.SC_OK) {
                 parseFeed(feedUpdater, reply);
                 return Status.OK;
             }
