@@ -198,22 +198,22 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         tabHost = (TabHost) findViewById(R.id.tabhost_start);
         tabHost.setup();
         TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.basic)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Basic)));
         tabSpec.setContent(R.id.tab_basic);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.interval)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Interval)));
         tabSpec.setContent(R.id.tab_interval);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.advanced)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Advanced)));
         tabSpec.setContent(R.id.tab_advanced);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_MANUAL);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.manual)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Manual)));
         tabSpec.setContent(R.id.tab_manual);
         tabHost.addTab(tabSpec);
 
@@ -507,15 +507,15 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
         AlertDialog.Builder prompt = new AlertDialog.Builder(this);
         final CheckBox dontShowAgain = new CheckBox(this);
-        dontShowAgain.setText(getResources().getText(R.string.do_not_show_again));
+        dontShowAgain.setText(getResources().getText(R.string.Do_not_show_again));
         prompt.setView(dontShowAgain);
 
         prompt.setCancelable(false);
-        prompt.setMessage(getResources().getText(R.string.battery_level_low_notification_txt)
-            + "\n" + getResources().getText(R.string.battery_level) + ": " + batteryLevel + "%");
-        prompt.setTitle(getResources().getText(R.string.warning));
+        prompt.setMessage(getResources().getText(R.string.Low_HRM_battery_level)
+            + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%");
+        prompt.setTitle(getResources().getText(R.string.Warning));
 
-        prompt.setPositiveButton(getResources().getText(R.string.ok), new DialogInterface.OnClickListener() {
+        prompt.setPositiveButton(getResources().getText(R.string.OK), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (dontShowAgain.isChecked()) {
                     prefs.edit().putBoolean(pref_key, true).commit();
@@ -539,7 +539,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 startButton.setVisibility(View.VISIBLE);
                 loadAdvanced(null);
             } else if (tabId.contentEquals(TAB_MANUAL)) {
-                startButton.setText(getString(R.string.save_activity));
+                startButton.setText(getString(R.string.Save_activity));
             }
             updateView();
         }
@@ -634,21 +634,21 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
             gpsInfoLayout.setVisibility(View.GONE);
             startButton.setEnabled(manualSetValue);
-            startButton.setText(getString(R.string.save_activity));
+            startButton.setText(getString(R.string.Save_activity));
             return;
         } else if (mGpsStatus.isEnabled() == false) {
             startButton.setEnabled(true);
-            startButton.setText(getString(R.string.enable_gps));
+            startButton.setText(getString(R.string.Enable_GPS));
         } else if (mGpsStatus.isLogging() == false) {
             startButton.setEnabled(true);
-            startButton.setText(getString(R.string.start_gps));
+            startButton.setText(getString(R.string.Start_GPS));
         } else if (mGpsStatus.isFixed() == false) {
             startButton.setEnabled(false);
-            startButton.setText(getString(R.string.waiting_for_gps));
+            startButton.setText(getString(R.string.Waiting_for_GPS));
             notificationStateManager.displayNotificationState(gpsSearchingState);
         } else {
             playIcon = R.drawable.ic_av_play_arrow;
-            startButton.setText(getString(R.string.start_activity));
+            startButton.setText(getString(R.string.Start_activity));
             if (!tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) || advancedWorkout != null) {
                 startButton.setEnabled(true);
             } else {
@@ -882,9 +882,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         } catch (Exception ex) {
             ex.printStackTrace();
             AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-            builder.setTitle(getString(R.string.failed_to_load_workout));
+            builder.setTitle(getString(R.string.Failed_to_load_workout));
             builder.setMessage("" + ex.toString());
-            builder.setPositiveButton(getString(R.string.ok),
+            builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -950,9 +950,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                     WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
                 } catch (Exception ex) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-                    builder.setTitle(getString(R.string.failed_to_load_workout));
+                    builder.setTitle(getString(R.string.Failed_to_load_workout));
                     builder.setMessage("" + ex.toString());
-                    builder.setPositiveButton(getString(R.string.ok),
+                    builder.setPositiveButton(getString(R.string.OK),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();

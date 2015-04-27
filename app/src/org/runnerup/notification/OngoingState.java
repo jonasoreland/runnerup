@@ -33,9 +33,9 @@ public class OngoingState implements NotificationState {
         i.putExtra(Constants.Intents.FROM_NOTIFICATION, true);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
-        builder.setTicker(context.getString(R.string.runnerup_activity_started));
+        builder.setTicker(context.getString(R.string.RunnerUp_activity_started));
         builder.setContentIntent(pi);
-        builder.setContentTitle(context.getString(R.string.activity_ongoing));
+        builder.setContentTitle(context.getString(R.string.Activity_ongoing));
         builder.setSmallIcon(R.drawable.icon);
         builder.setOngoing(true);
         builder.setOnlyAlertOnce(true);
@@ -58,7 +58,7 @@ public class OngoingState implements NotificationState {
         builder.setContentText(content);
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle(builder);
-        bigTextStyle.setBigContentTitle(context.getString(R.string.activity_ongoing));
+        bigTextStyle.setBigContentTitle(context.getString(R.string.Activity_ongoing));
         bigTextStyle.bigText(String.format("%s: %s,\n%s: %s\n%s: %s",
                 context.getString(R.string.distance), distance,
                 context.getString(R.string.time), time,

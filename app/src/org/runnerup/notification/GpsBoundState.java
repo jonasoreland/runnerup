@@ -25,8 +25,8 @@ public class GpsBoundState implements NotificationState {
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
         builder.setContentIntent(pi);
-        builder.setContentTitle(context.getString(R.string.activity_ready));
-        builder.setContentText(context.getString(R.string.ready_to_start_running));
+        builder.setContentTitle(context.getString(R.string.Activity_ready));
+        builder.setContentText(context.getString(R.string.Ready_to_start_running));
         builder.setSmallIcon(R.drawable.icon);
         builder.setOnlyAlertOnce(true);
         org.runnerup.util.NotificationCompat.setLocalOnly(builder);

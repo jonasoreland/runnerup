@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_weight="27"
             android:gravity="center_vertical|left"
-            android:text="@string/cooldown"
+            android:text="@string/cool_down"
             android:textColor="@android:color/black"
             android:textStyle="bold" />
 
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="25"
             android:gravity="center_vertical|left"
-            android:text="@string/duration"
+            android:text="@string/Duration"
             android:textColor="@android:color/black" />
 
         <TextView

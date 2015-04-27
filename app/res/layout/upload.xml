@@ -69,14 +69,14 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
-      android:text="@string/select_all"/>
+      android:text="@string/Select_all"/>
 
     <Button
       android:id="@+id/account_upload_clear_all"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
-      android:text="@string/clear_all"/>
+      android:text="@string/Clear_all"/>
   </LinearLayout>
 
   <LinearLayout
@@ -104,7 +104,7 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:background="@drawable/btn_blue"
-      android:text="@string/download"
+      android:text="@string/Download"
       android:layout_alignParentBottom="true"
       android:layout_alignParentRight="true"
       android:layout_alignParentEnd="true"/>

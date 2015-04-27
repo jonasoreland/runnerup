@@ -25,7 +25,7 @@
         android:id="@+id/hrz_age"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/age"
+        android:text="@string/Age"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"
@@ -38,8 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sexes"
-        android:prompt="@string/sex"
-        android:text="@string/sex"
+        android:prompt="@string/Sex"
+        android:text="@string/Sex"
         app:type="spinner"
         android:key="@string/pref_hrz_sex" >
     </org.runnerup.widget.TitleSpinner>
@@ -48,7 +48,7 @@
         android:id="@+id/hrz_mhr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/maximum_heart_rate"
+        android:text="@string/Maximum_heart_rate_MHR"
         app:type="numberpicker"
         app:digits="3"
         app:min_val="0"

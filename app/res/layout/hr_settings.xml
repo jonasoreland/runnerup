@@ -16,14 +16,14 @@
             style="@style/RunHeader"
             android:layout_marginLeft="5dp"
             android:gravity="left"
-            android:text="@string/device" />
+            android:text="@string/Device" />
 
         <TextView
             android:id="@+id/total_pace"
             style="@style/RunHeader"
             android:layout_marginRight="3dp"
             android:gravity="right"
-            android:text="@string/heart_rate" />
+            android:text="@string/Heart_rate" />
     </LinearLayout>
 
     <LinearLayout
@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/connect_button"
         android:background="@drawable/btn_blue"
-        android:text="@string/scan" />
+        android:text="@string/Scan" />
 
     <Button
         android:id="@+id/connect_button"
@@ -114,6 +114,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/btn_green"
-        android:text="@string/connect" />
+        android:text="@string/Connect" />
 
 </RelativeLayout>

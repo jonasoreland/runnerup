@@ -58,7 +58,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         if (position == 0) {
-            return inflater.getContext().getString(R.string.default_audio_scheme_name);
+            return inflater.getContext().getString(R.string.Default);
         }
 
         position -= 1;
@@ -66,7 +66,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
         if (position < audioSchemes.size())
             return audioSchemes.get(position);
 
-        return inflater.getContext().getString(R.string.new_audio_scheme);
+        return inflater.getContext().getString(R.string.New_audio_scheme);
     }
 
     @Override

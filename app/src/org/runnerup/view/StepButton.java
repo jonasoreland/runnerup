@@ -112,7 +112,7 @@ public class StepButton extends TableLayout {
         Dimension durationType = step.getDurationType();
         if (durationType == null) {
             mDurationType.setText("");
-            mDurationValue.setText(res.getString(R.string.until_press));
+            mDurationValue.setText(res.getString(R.string.Until_press));
         } else {
             mDurationType.setText(res.getString(durationType.getTextId()));
             mDurationValue.setText(formatter.format(Formatter.TXT_LONG, durationType,
@@ -152,7 +152,7 @@ public class StepButton extends TableLayout {
             layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
             layout.addView(numberPicker);
             alert.setView(layout);
-            alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     step.setRepeatCount(numberPicker.getValue());
                     dialog.dismiss();
@@ -163,7 +163,7 @@ public class StepButton extends TableLayout {
                 }
             });
 
-            alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
                 }
@@ -178,7 +178,7 @@ public class StepButton extends TableLayout {
         @Override
         public void onClick(View v) {
             AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-            alert.setTitle(getResources().getString(R.string.edit_step));
+            alert.setTitle(getResources().getString(R.string.Edit_step));
 
             final LayoutInflater inflater = LayoutInflater.from(mContext);
             final View layout = inflater.inflate(
@@ -186,7 +186,7 @@ public class StepButton extends TableLayout {
 
             final Runnable save = setupEditStep(inflater, layout);
             alert.setView(layout);
-            alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+            alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     save.run();
                     dialog.dismiss();
@@ -196,7 +196,7 @@ public class StepButton extends TableLayout {
                     }
                 }
             });
-            alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
                 }

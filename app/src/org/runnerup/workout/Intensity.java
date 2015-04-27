@@ -35,12 +35,12 @@ public enum Intensity {
     /**
      * Warm up
      */
-    WARMUP(INTENSITY.WARMUP, R.string.warmup, R.string.cue_warmup),
+    WARMUP(INTENSITY.WARMUP, R.string.warm_up, R.string.cue_warmup),
 
     /**
      * Cool down
      */
-    COOLDOWN(INTENSITY.COOLDOWN, R.string.cooldown, R.string.cue_cooldown),
+    COOLDOWN(INTENSITY.COOLDOWN, R.string.cool_down, R.string.cue_cooldown),
 
     /**
      * Loop (for workout construction/plans)

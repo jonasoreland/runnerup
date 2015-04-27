@@ -83,8 +83,8 @@ public class SyncManager {
     private ProgressDialog mSpinner = null;
 
     public enum SyncMode {
-        DOWNLOAD(R.string.downloading_from),
-        UPLOAD(R.string.uploading_to);
+        DOWNLOAD(R.string.Downloading_from_1s),
+        UPLOAD(R.string.Uploading_to_1s);
 
         final int textId;
 
@@ -383,7 +383,7 @@ public class SyncManager {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view);
-        builder.setPositiveButton(getResources().getString(R.string.ok), new OnClickListener() {
+        builder.setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
@@ -401,7 +401,7 @@ public class SyncManager {
                 handleAuthComplete(l, Status.SKIP);
             }
         });
-        builder.setNegativeButton(getResources().getString(R.string.cancel), new OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 handleAuthComplete(l, Status.SKIP);
@@ -534,7 +534,7 @@ public class SyncManager {
 
     private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
                         long id) {
-        copySpinner.setMessage(getResources().getString(R.string.saving));
+        copySpinner.setMessage(getResources().getString(R.string.Saving));
         ContentValues tmp = new ContentValues();
         tmp.put(DB.EXPORT.ACCOUNT, synchronizer.getId());
         tmp.put(DB.EXPORT.ACTIVITY, id);
@@ -602,8 +602,8 @@ public class SyncManager {
     }
 
     public void loadActivityList(final List<SyncActivityItem> items, final String synchronizerName, final Callback callback) {
-        mSpinner.setTitle(getResources().getString(R.string.loading_activities));
-        mSpinner.setMessage(getResources().getString(R.string.fetching_list, synchronizerName));
+        mSpinner.setTitle(getResources().getString(R.string.Loading_activities));
+        mSpinner.setMessage(getResources().getString(R.string.Fetching_activities_from_1s, synchronizerName));
         mSpinner.show();
 
         new AsyncTask<Synchronizer, String, Status>() {
@@ -898,7 +898,7 @@ public class SyncManager {
                         synchronized (cancel) {
                             cancel.append('t');
                         }
-                        mSpinner.setMessage(getResources().getString(R.string.cancelling_please_wait));
+                        mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
                     }
                 });
 
@@ -915,7 +915,7 @@ public class SyncManager {
                         synchronized (cancel) {
                             cancel.append('t');
                         }
-                        mSpinner.setMessage(getResources().getString(R.string.cancelling_please_wait));
+                        mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
                     }
                 });
         mSpinner.setCancelable(false);

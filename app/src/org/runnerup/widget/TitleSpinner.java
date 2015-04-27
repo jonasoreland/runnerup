@@ -178,7 +178,7 @@ public class TitleSpinner extends LinearLayout {
                 final LinearLayout layout = createLayout(context);
                 layout.addView(edit);
                 alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(edit.getText().toString());
                         dialog.dismiss();
@@ -186,7 +186,7 @@ public class TitleSpinner extends LinearLayout {
                         onClose(true);
                     }
                 });
-                alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(edit);
@@ -289,7 +289,7 @@ public class TitleSpinner extends LinearLayout {
                 final LinearLayout layout = createLayout(context);
                 layout.addView(datePicker);
                 alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(datePicker));
                         dialog.dismiss();
@@ -304,7 +304,7 @@ public class TitleSpinner extends LinearLayout {
                         return df.format(c.getTime());
                     }
                 });
-                alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(datePicker);
@@ -345,7 +345,7 @@ public class TitleSpinner extends LinearLayout {
                 final LinearLayout layout = createLayout(context);
                 layout.addView(timePicker);
                 alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(timePicker));
                         dialog.dismiss();
@@ -361,7 +361,7 @@ public class TitleSpinner extends LinearLayout {
                         return df.format(c.getTime());
                     }
                 });
-                alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(timePicker);
@@ -399,7 +399,7 @@ public class TitleSpinner extends LinearLayout {
                 final LinearLayout layout = createLayout(context);
                 layout.addView(picker);
                 alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(picker));
                         dialog.dismiss();
@@ -411,7 +411,7 @@ public class TitleSpinner extends LinearLayout {
                         return DateUtils.formatElapsedTime(picker.getEpochTime());
                     }
                 });
-                alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(picker);
@@ -451,7 +451,7 @@ public class TitleSpinner extends LinearLayout {
                 final LinearLayout layout = createLayout(context);
                 layout.addView(distancePicker);
                 alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(distancePicker));
                         dialog.dismiss();
@@ -463,7 +463,7 @@ public class TitleSpinner extends LinearLayout {
                         return Long.toString(dp.getDistance());
                     }
                 });
-                alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(distancePicker);
@@ -502,7 +502,7 @@ public class TitleSpinner extends LinearLayout {
                 final LinearLayout layout = createLayout(context);
                 layout.addView(numberPicker);
                 alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(numberPicker));
                         dialog.dismiss();
@@ -514,7 +514,7 @@ public class TitleSpinner extends LinearLayout {
                         return Integer.toString(dp.getValue());
                     }
                 });
-                alert.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(numberPicker);

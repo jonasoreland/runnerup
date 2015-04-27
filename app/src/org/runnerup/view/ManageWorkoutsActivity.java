@@ -142,9 +142,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 importData(fileName, data);
             } catch (Exception e) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(getString(R.string.problem));
+                builder.setTitle(getString(R.string.Problem));
                 builder.setMessage(getString(R.string.Failed_to_import) + fileName);
-                builder.setPositiveButton(getString(R.string.ok_darn),
+                builder.setPositiveButton(getString(R.string.OK_darn),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -201,7 +201,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Import_workout) + fileName);
-        builder.setPositiveButton(getString(R.string.yes),
+        builder.setPositiveButton(getString(R.string.Yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -238,7 +238,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         return;
                     }
                 });
-        builder.setNegativeButton(getString(R.string.no_way),
+        builder.setNegativeButton(getString(R.string.No_way),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -427,7 +427,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final EditText input = new EditText(ManageWorkoutsActivity.this);
             builder.setView(input);
 
-            builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     String value = input.getText().toString();
                     intent.putExtra(WORKOUT_NAME, value);
@@ -436,7 +436,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 }
             });
 
-            builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
                 }
@@ -457,9 +457,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             ArrayList<WorkoutRef> local = workouts.get(PHONE_STRING);
             if (contains(local, selected)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
-                builder.setTitle(getString(R.string.Downloading_will_overwrite, selected.workoutName, PHONE_STRING));
-                builder.setMessage(getString(R.string.are_you_sure));
-                builder.setPositiveButton(getString(R.string.yes),
+                builder.setTitle(getString(R.string.Downloading_1s_will_overwrite_2_workout_with_same_name, selected.workoutName, PHONE_STRING));
+                builder.setMessage(getString(R.string.Are_you_sure));
+                builder.setPositiveButton(getString(R.string.Yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -467,7 +467,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                                 return;
                             }
                         });
-                builder.setNegativeButton(getString(R.string.no),
+                builder.setNegativeButton(getString(R.string.No),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Do nothing but close the dialog
@@ -518,8 +518,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
             builder.setTitle(getString(R.string.Delete_workout) + selected.workoutName);
-            builder.setMessage(getString(R.string.are_you_sure));
-            builder.setPositiveButton(getString(R.string.yes),
+            builder.setMessage(getString(R.string.Are_you_sure));
+            builder.setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -527,7 +527,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             return;
                         }
                     });
-            builder.setNegativeButton(getString(R.string.no),
+            builder.setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -591,13 +591,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
 
-            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Share_workout_subject) + name);
-            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.Share_workout_text));
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.RunnerUp_workout) + name);
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.HinHere_is_a_workout_I_think_you_might_like));
 
             intent.setType(WorkoutFileProvider.MIME);
             Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name);
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-            context.startActivity(Intent.createChooser(intent, getString(R.string.Share_workout_chooser)));
+            context.startActivity(Intent.createChooser(intent, getString(R.string.Share_workout)));
         }
     };
 

@@ -29,8 +29,8 @@ public enum Dimension {
     DISTANCE(DIMENSION.DISTANCE, R.string.distance),
     SPEED(DIMENSION.SPEED, R.string.speed),
     PACE(DIMENSION.PACE, R.string.pace),
-    HR(DIMENSION.HR, R.string.heartrate),
-    HRZ(DIMENSION.HRZ, R.string.heartrate_zone);
+    HR(DIMENSION.HR, R.string.Heart_rate),
+    HRZ(DIMENSION.HRZ, R.string.heart_rate_zone);
 
     // TODO
     public static final boolean SPEED_CUE_ENABLED = false;

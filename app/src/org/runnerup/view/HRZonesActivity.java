@@ -63,7 +63,7 @@ public class HRZonesActivity extends Activity implements Constants {
         EditText lo = (EditText) row.findViewById(R.id.zonelo);
         EditText hi = (EditText) row.findViewById(R.id.zonehi);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
-        tv.setText(getString(R.string.zone) + " " + zone + " " + lim.first + "% - " + lim.second + "%");
+        tv.setText(getString(R.string.Zone) + " " + zone + " " + lim.first + "% - " + lim.second + "%");
         lo.setTag("zone" + zone + "lo");
         hi.setTag("zone" + zone + "hi");
         zones.add(lo);
@@ -218,9 +218,9 @@ public class HRZonesActivity extends Activity implements Constants {
 
     void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.clear_heart_rate_zone_settings));
-        builder.setMessage(getString(R.string.are_you_sure));
-        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.Clear_heart_rate_zone_settings));
+        builder.setMessage(getString(R.string.Are_you_sure));
+        builder.setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ageSpinner.clear();
                 sexSpinner.clear();
@@ -232,7 +232,7 @@ public class HRZonesActivity extends Activity implements Constants {
             }
         });
 
-        builder.setNegativeButton(getString(R.string.cancel),
+        builder.setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog

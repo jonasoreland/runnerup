@@ -54,7 +54,7 @@ public class AboutPreference extends DialogPreference {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        String str = res.getString(R.string.google_play_services_legal_notices);
+        String str = res.getString(R.string.Google_Play_Services_Legal_Notices);
         if (str.contentEquals(this.getTitle())) {
             CharSequence msg = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this
                     .getContext());

@@ -99,7 +99,7 @@ public class OAuth2Activity extends Activity {
 
         mSpinner = new ProgressDialog(this);
         mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mSpinner.setMessage(getString(R.string.loading));
+        mSpinner.setMessage(getString(R.string.Loading));
         
         final WebView wv = new WebView(this);
         wv.setVerticalScrollBarEnabled(false);

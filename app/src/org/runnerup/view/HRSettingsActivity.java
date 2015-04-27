@@ -143,7 +143,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         formatter = new Formatter(this);
         {
             LinearLayout graphLayout = (LinearLayout) findViewById(R.id.hr_graph_layout);
-            graphView = new LineGraphView(this, getString(R.string.heart_rate)) {
+            graphView = new LineGraphView(this, getString(R.string.Heart_rate)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
                     if (!isValueX) {
@@ -217,15 +217,15 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
     void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.clear_hr_settings));
-        builder.setMessage(getString(R.string.are_you_sure));
-        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.Clear_HR_settings));
+        builder.setMessage(getString(R.string.Are_you_sure));
+        builder.setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 doClear();
             }
         });
 
-        builder.setNegativeButton(getString(R.string.cancel),
+        builder.setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -277,7 +277,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
 
     public void notSupported() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.heart_rate_monitor_is_not_supported_for_your_device));
+        builder.setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device));
         builder.setMessage(getString(R.string.try_again_later));
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
@@ -309,7 +309,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
         if (hrProvider == null) {
             scanButton.setEnabled(true);
             connectButton.setEnabled(false);
-            connectButton.setText(getString(R.string.connect));
+            connectButton.setText(getString(R.string.Connect));
             tvBTName.setText("");
             tvHR.setText("");
             return;
@@ -323,14 +323,14 @@ public class HRSettingsActivity extends Activity implements HRClient {
         }
 
         if (hrProvider.isConnected()) {
-            connectButton.setText(getString(R.string.disconnect));
+            connectButton.setText(getString(R.string.Disconnect));
             connectButton.setEnabled(true);
         } else if (hrProvider.isConnecting()) {
             connectButton.setEnabled(false);
-            connectButton.setText(getString(R.string.connecting));
+            connectButton.setText(getString(R.string.Connecting));
         } else {
             connectButton.setEnabled(btName == null ? false : true);
-            connectButton.setText(getString(R.string.connect));
+            connectButton.setText(getString(R.string.Connect));
         }
     }
 
@@ -342,14 +342,14 @@ public class HRSettingsActivity extends Activity implements HRClient {
             itemNames[i] = providers.get(i).getName();
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.select_type_of_bluetooth_device));
-        builder.setPositiveButton(getString(R.string.ok),
+        builder.setTitle(getString(R.string.Select_type_of_Bluetooth_device));
+        builder.setPositiveButton(getString(R.string.OK),
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
                         open();
                     }
                 });
-        builder.setNegativeButton(getString(R.string.cancel),
+        builder.setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mIsScanning = false;
@@ -377,8 +377,8 @@ public class HRSettingsActivity extends Activity implements HRClient {
         deviceAdapter.deviceList.clear();
         hrProvider.startScan();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.scanning));
-        builder.setPositiveButton(getString(R.string.connect),
+        builder.setTitle(getString(R.string.Scanning));
+        builder.setPositiveButton(getString(R.string.Connect),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         log(hrProvider.getProviderName() + ".stopScan()");
@@ -399,7 +399,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
                 }
             });
         }
-        builder.setNegativeButton(getString(R.string.cancel),
+        builder.setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         log(hrProvider.getProviderName() + ".stopScan()");
@@ -559,7 +559,7 @@ public class HRSettingsActivity extends Activity implements HRClient {
             save();
             if (hrProvider.getBatteryLevel() > 0) {
                 tvBatteryLevel.setVisibility(View.VISIBLE);
-                tvBatteryLevel.setText(getResources().getText(R.string.battery_level) + ": " + hrProvider.getBatteryLevel() + "%");
+                tvBatteryLevel.setText(getResources().getText(R.string.Battery_level) + ": " + hrProvider.getBatteryLevel() + "%");
             }
             startTimer();
         } else {

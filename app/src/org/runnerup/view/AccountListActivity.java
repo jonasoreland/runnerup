@@ -101,7 +101,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         switch (item.getItemId()) {
             case R.id.menu_tab_format:
                 tabFormat = !tabFormat;
-                item.setTitle(getString(R.string.icon_list));
+                item.setTitle(getString(R.string.Icon_list));
                 getSupportLoaderManager().restartLoader(0, null, this);
                 break;
         }
@@ -215,7 +215,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
                     WidgetUtil.setBackground(b, getResources().getDrawable(
                             R.drawable.btn_blue));
                 } else {
-                    b.setText(getString(R.string.connect));
+                    b.setText(getString(R.string.Connect));
                     WidgetUtil.setBackground(b, getResources().getDrawable(
                             R.drawable.btn_green));
                 }

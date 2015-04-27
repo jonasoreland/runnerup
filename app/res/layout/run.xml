@@ -69,7 +69,7 @@
                 <TextView
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/total" />
+                    android:text="@string/Total" />
             </LinearLayout>
 
             <TableRow
@@ -108,7 +108,7 @@
                 <TextView
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/interval" />
+                    android:text="@string/Interval" />
             </LinearLayout>
 
             <TableRow
@@ -147,7 +147,7 @@
                 <TextView
                     style="@style/RunHeader"
                     android:layout_marginLeft="10dp"
-                    android:text="@string/lap" />
+                    android:text="@string/Lap" />
             </LinearLayout>
 
             <TableRow
@@ -217,7 +217,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/new_lap"
+            android:text="@string/New_lap"
             android:drawableRight="@drawable/ic_av_newlap"
             android:drawablePadding="-32dp" />
 
@@ -228,7 +228,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/pause"
+            android:text="@string/Pause"
             android:drawableRight="@drawable/ic_av_pause"
             android:drawablePadding="-32dp" />
     </TableRow>
@@ -246,7 +246,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_red"
-            android:text="@string/stop"
+            android:text="@string/Stop"
             android:drawableRight="@drawable/ic_av_stop"
             android:drawablePadding="-32dp" />
     </TableRow>

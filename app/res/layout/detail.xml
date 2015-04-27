@@ -65,7 +65,7 @@
             <TextView
                 android:id="@+id/text_view01"
                 style="@style/RunHeader"
-                android:text="@string/total" />
+                android:text="@string/Total" />
         </LinearLayout>
 
         <LinearLayout
@@ -124,8 +124,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="1px"
                         android:entries="@array/sportEntries"
-                        android:prompt="@string/type"
-                        android:text="@string/sport" />
+                        android:prompt="@string/Type"
+                        android:text="@string/Sport" />
 
                     <EditText
                         android:id="@+id/notes_text"
@@ -146,7 +146,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/heartrate_zones_distribution"
+                            android:text="@string/Heartrate_zones_distribution"
                             android:textColor="@android:color/white"
                             android:layout_gravity="center"
                             android:textAlignment="center"/>
@@ -216,7 +216,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/resume"
+            android:text="@string/Resume"
             android:drawableRight="@drawable/ic_av_play_arrow"
             android:drawablePadding="-32dp" />
 
@@ -227,7 +227,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/upload_activity"
+            android:text="@string/Upload_activity"
             android:singleLine="false" />
 
         <Button
@@ -237,7 +237,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/discard_button"
             android:background="@drawable/btn_green"
-            android:text="@string/save_activity" />
+            android:text="@string/Save_activity" />
 
         <Button
             android:id="@+id/discard_button"
@@ -246,7 +246,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@drawable/btn_red"
-            android:text="@string/discard_activity" />
+            android:text="@string/Discard_activity" />
     </LinearLayout>
 
 </RelativeLayout>

@@ -179,8 +179,8 @@ public class CreateAdvancedWorkout extends Activity {
                             }
                         });
 
-                builder.setTitle(getString(R.string.are_you_sure));
-                builder.setPositiveButton(getString(R.string.yes),
+                builder.setTitle(getString(R.string.Are_you_sure));
+                builder.setPositiveButton(getString(R.string.Yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -188,7 +188,7 @@ public class CreateAdvancedWorkout extends Activity {
                                 return;
                             }
                         });
-                builder.setNegativeButton(getString(R.string.no),
+                builder.setNegativeButton(getString(R.string.No),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -233,9 +233,9 @@ public class CreateAdvancedWorkout extends Activity {
                     WorkoutSerializer.writeFile(ctx, advWorkoutName, advancedWorkout);
                 } catch (Exception ex) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this);
-                    builder.setTitle(getString(R.string.failed_to_load_workout));
+                    builder.setTitle(getString(R.string.Failed_to_load_workout));
                     builder.setMessage("" + ex.toString());
-                    builder.setPositiveButton(getString(R.string.ok),
+                    builder.setPositiveButton(getString(R.string.OK),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
@@ -281,9 +281,9 @@ public class CreateAdvancedWorkout extends Activity {
 
     private void handleWorkoutFileException(Exception e) {
         AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this);
-        builder.setTitle(getString(R.string.failed_to_create_workout));
+        builder.setTitle(getString(R.string.Failed_to_create_workout));
         builder.setMessage("" + e.toString());
-        builder.setPositiveButton(getString(R.string.ok),
+        builder.setPositiveButton(getString(R.string.OK),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -298,8 +298,8 @@ public class CreateAdvancedWorkout extends Activity {
         public void onClick(View view) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this);
             builder.setTitle("Delete workout?");
-            builder.setMessage(getString(R.string.are_you_sure));
-            builder.setPositiveButton(getString(R.string.yes),
+            builder.setMessage(getString(R.string.Are_you_sure));
+            builder.setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -309,7 +309,7 @@ public class CreateAdvancedWorkout extends Activity {
                             return;
                         }
                     });
-            builder.setNegativeButton(getString(R.string.no),
+            builder.setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();

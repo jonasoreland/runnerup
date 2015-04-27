@@ -20,30 +20,30 @@
     <item
         android:id="@+id/menu_accounts"
         android:orderInCategory="100"
-        android:title="@string/manage_accounts"/>
+        android:title="@string/Manage_accounts"/>
 
     <item
         android:id="@+id/menu_audio_cues"
         android:orderInCategory="100"
-        android:title="@string/manage_audio_cues"/>
+        android:title="@string/Manage_audio_cues"/>
 
     <item
         android:id="@+id/menu_workouts"
         android:orderInCategory="100"
-        android:title="@string/manage_workouts" />
+        android:title="@string/Manage_workouts" />
 
     <item
         android:id="@+id/menu_settings"
         android:orderInCategory="100"
-        android:title="@string/settings" />
+        android:title="@string/Settings" />
 
     <item
         android:id="@+id/menu_whatsnew"
         android:orderInCategory="110"
-        android:title="@string/what_s_new" />
+        android:title="@string/Whats_new" />
     
     <item
         android:id="@+id/menu_rate"
         android:orderInCategory="110"
-        android:title="@string/rate_runner_up" />
+        android:title="@string/Rate_RunnerUp" />
 </menu>
