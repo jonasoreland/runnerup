@@ -48,7 +48,7 @@
           android:layout_width="0dp"
           android:layout_weight="1"
           android:layout_height="wrap_content"
-          android:text="@string/download"
+          android:text="@string/Download"
           android:textSize="16sp"
   />
 
@@ -59,7 +59,7 @@
               android:layout_width="0dp"
               android:layout_weight="1"
               android:layout_height="wrap_content"
-              android:text="@string/share"
+              android:text="@string/Share"
               android:textSize="16sp"
       />
     </TableRow>
@@ -75,7 +75,7 @@
           android:layout_width="0dp"
           android:layout_weight="1"
           android:layout_height="wrap_content"
-          android:text="@string/create"
+          android:text="@string/Create"
           android:textSize="16sp"
           android:clickable="false"
         />
@@ -87,7 +87,7 @@
           android:layout_width="0dp"
           android:layout_weight="1"
           android:layout_height="wrap_content"
-          android:text="@string/delete"
+          android:text="@string/Delete"
           android:textSize="16sp"
           />
 

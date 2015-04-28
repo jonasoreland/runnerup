@@ -84,7 +84,7 @@ public class ListenerService extends WearableListenerService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.start))
+                .setContentText(getString(R.string.Start))
                 .setContentIntent(pendingViewIntent)
                 .setOngoing(true)
                 .setLocalOnly(true);

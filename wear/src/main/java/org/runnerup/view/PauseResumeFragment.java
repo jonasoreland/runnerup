@@ -82,13 +82,13 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
                     mButtonNewLap.setEnabled(true);
                     mButtonPauseResume.setEnabled(true);
                     mButtonPauseResume.setImageResource(R.drawable.ic_av_pause);
-                    mButtonPauseResumeTxt.setText(getText(R.string.pause));
+                    mButtonPauseResumeTxt.setText(getText(R.string.Pause));
                     return;
                 case PAUSED:
                     mButtonNewLap.setEnabled(true);
                     mButtonPauseResume.setEnabled(true);
                     mButtonPauseResume.setImageResource(R.drawable.ic_av_play_arrow);
-                    mButtonPauseResumeTxt.setText(getText(R.string.resume));
+                    mButtonPauseResumeTxt.setText(getText(R.string.Resume));
                     return;
             }
         }

@@ -28,7 +28,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:visibility="gone" 
-		android:text="@string/audio_cue_settings"/>
+		android:text="@string/Audio_cue_settings"/>
  
     <ListView
         android:id="@android:id/list"

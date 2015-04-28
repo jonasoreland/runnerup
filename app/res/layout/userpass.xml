@@ -35,7 +35,7 @@
                 android:id="@+id/text_view1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/username" />
+                android:text="@string/Username" />
 
             <EditText
                 android:id="@+id/username"
@@ -55,7 +55,7 @@
                 android:id="@+id/text_view01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/password" />
+                android:text="@string/Password" />
 
             <EditText
                 android:id="@+id/password_input"
@@ -76,7 +76,7 @@
             android:id="@+id/showpass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/show_password" />
+            android:text="@string/Show_password" />
     </TableRow>
 
 </LinearLayout>

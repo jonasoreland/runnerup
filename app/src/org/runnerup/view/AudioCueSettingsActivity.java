@@ -80,7 +80,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getWritableDatabase();
-        DEFAULT = getString(R.string.default_audio_scheme_name);
+        DEFAULT = getString(R.string.Default);
 
         Intent intent = getIntent();
         settingsName = intent.getStringExtra("name");
@@ -201,15 +201,15 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             return true;
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.are_you_sure));
-        builder.setPositiveButton(getString(R.string.yes),
+        builder.setMessage(getString(R.string.Are_you_sure));
+        builder.setPositiveButton(getString(R.string.Yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         deleteAudioScheme();
                     }
                 });
-        builder.setNegativeButton(getString(R.string.no),
+        builder.setNegativeButton(getString(R.string.No),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -276,7 +276,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             if (newValue.contentEquals(DEFAULT)) {
                 prefMgr.getSharedPreferences().edit().commit();
                 switchTo(null);
-            } else if (newValue.contentEquals(getString(R.string.new_audio_scheme))) {
+            } else if (newValue.contentEquals(getString(R.string.New_audio_scheme))) {
                 createNewAudioSchemeDialog();
             } else {
                 prefMgr.getSharedPreferences().edit().commit();
@@ -314,11 +314,11 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     private void createNewAudioSchemeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.create_new_audio_cue_scheme));
+        builder.setTitle(getString(R.string.Create_new_audio_cue_scheme));
         // Get the layout inflater
         final EditText editText = new EditText(this);
         builder.setView(editText);
-        builder.setPositiveButton(getString(R.string.create), new OnClickListener() {
+        builder.setPositiveButton(getString(R.string.Create), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String scheme = editText.getText().toString();
@@ -329,7 +329,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 }
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new OnClickListener() {
+        builder.setNegativeButton(getString(R.string.Cancel), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }

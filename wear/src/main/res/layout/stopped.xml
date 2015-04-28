@@ -50,7 +50,7 @@
                 android:id="@+id/txt_resume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/saving_on_phone"
+                android:text="@string/Saving_on_phone"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />

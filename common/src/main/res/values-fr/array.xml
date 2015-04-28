@@ -24,7 +24,7 @@
   </string-array>
   <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
-    <item>Aucun</item>
+    <item>Aucune</item>
     <item>Rythme</item>
     <item>Zone cardiaque</item>
   </string-array>
@@ -51,7 +51,7 @@
     <item>Femme</item>
   </string-array>
   <string-array name="targetEntries">
-    <item>aucunes</item>
+    <item>aucune</item>
     <item>rythme</item>
     <item>zone de fréquence cardiaque</item>
   </string-array>

@@ -252,17 +252,17 @@ public class AccountActivity extends Activity implements Constants {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this);
-            builder.setTitle(getString(R.string.clear_uploads));
-            builder.setMessage(getResources().getString(R.string.clear_uploads_msg,
+            builder.setTitle(getString(R.string.Clear_uploads));
+            builder.setMessage(getResources().getString(R.string.Clear_uploads_from_phone,
                     synchrnizer));
-            builder.setPositiveButton(getString(R.string.ok),
+            builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             syncManager.clearUploads(callback, synchrnizer);
                         }
                     });
 
-            builder.setNegativeButton(getString(R.string.cancel),
+            builder.setNegativeButton(getString(R.string.Cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -342,22 +342,22 @@ public class AccountActivity extends Activity implements Constants {
     final OnClickListener disconnectButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final CharSequence items[] = {
-                getString(R.string.clear_uploads_from_phone)
+                getString(R.string.Clear_uploads_from_phone)
             };
             final boolean selected[] = {
                 true
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this);
-            builder.setTitle(getString(R.string.disconnect_account));
-            builder.setPositiveButton(getString(R.string.ok),
+            builder.setTitle(getString(R.string.Disconnect_account));
+            builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             syncManager.disableSynchronizer(disconnectCallback, synchrnizer,
                                     selected[0]);
                         }
                     });
-            builder.setNegativeButton(getString(R.string.cancel),
+            builder.setNegativeButton(getString(R.string.Cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog

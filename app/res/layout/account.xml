@@ -68,7 +68,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/account_upload_button"
-        android:text="@string/disconnect" />
+        android:text="@string/Disconnect" />
 
     <Button
         android:id="@+id/account_upload_button"
@@ -86,7 +86,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="false"
-    android:text="@string/download"
+    android:text="@string/Download"
     android:layout_above="@+id/ok_account_button"/>
 
   <Button
@@ -96,6 +96,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/ok" />
+        android:text="@string/OK" />
 
 </RelativeLayout>

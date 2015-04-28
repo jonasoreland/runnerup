@@ -373,7 +373,7 @@ public class FeedActivity extends Activity implements Constants {
                 feedAdapter.notifyDataSetChanged();
             } else {
                 String synchronizerName = (String) data;
-                feedStatus.setText(getString(R.string.synchronizing) + " " + synchronizerName);
+                feedStatus.setText(getString(R.string.Synchronizing) + " " + synchronizerName);
             }
         }
     }

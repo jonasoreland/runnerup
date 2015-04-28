@@ -171,7 +171,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         activityPace = (TextView) findViewById(R.id.activity_pace);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
-        notes.setHint(getString(R.string.notes_hint));
+        notes.setHint(getString(R.string.Notes_about_your_workout));
         map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
@@ -211,27 +211,27 @@ public class DetailActivity extends FragmentActivity implements Constants {
         TabHost th = (TabHost) findViewById(R.id.tabhost);
         th.setup();
         TabSpec tabSpec = th.newTabSpec("notes");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_notes)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Notes)));
         tabSpec.setContent(R.id.tab_main);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("laps");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_laps)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Laps)));
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("map");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_map)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
         tabSpec.setContent(R.id.tab_map);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("graph");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_graph)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
         tabSpec.setContent(R.id.tab_graph);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("share");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.tab_upload)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Upload)));
         tabSpec.setContent(R.id.tab_upload);
         th.addTab(tabSpec);
 
@@ -251,7 +251,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         }
         graphTab = (LinearLayout) findViewById(R.id.tab_graph);
         {
-            graphView = new LineGraphView(this, getString(R.string.pace_chart)) {
+            graphView = new LineGraphView(this, getString(R.string.Pace)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
                     if (!isValueX) {
@@ -261,7 +261,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 }
             };
 
-            graphView2 = new LineGraphView(this, getString(R.string.heart_rate)) {
+            graphView2 = new LineGraphView(this, getString(R.string.Heart_rate)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
                     if (!isValueX) {
@@ -566,7 +566,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (position == reports.size()) {
                 Button b = new Button(DetailActivity.this);
-                b.setText(getString(R.string.configure_accounts));
+                b.setText(getString(R.string.Configure_accounts));
                 b.setBackgroundResource(R.drawable.btn_blue);
                 b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
                 b.setOnClickListener(new OnClickListener() {
@@ -595,7 +595,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
             cb.setTag(name);
             if (alreadySynched.contains(name)) {
                 cb.setChecked(true);
-                cb.setText(getString(R.string.uploaded));
+                cb.setText(getString(R.string.Uploaded));
                 if (edit)
                 {
                     cb.setOnLongClickListener(clearUploadClick);
@@ -639,8 +639,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
             final String name = (String) arg0.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
             builder.setTitle("Clear upload for " + name);
-            builder.setMessage(getString(R.string.are_you_sure));
-            builder.setPositiveButton(getString(R.string.yes),
+            builder.setMessage(getString(R.string.Are_you_sure));
+            builder.setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -648,7 +648,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             requery();
                         }
                     });
-            builder.setNegativeButton(getString(R.string.no),
+            builder.setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -685,9 +685,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
     final OnClickListener discardButtonClick = new OnClickListener() {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
-            builder.setTitle(getString(R.string.discard_activity));
-            builder.setMessage(getString(R.string.are_you_sure));
-            builder.setPositiveButton(getString(R.string.yes),
+            builder.setTitle(getString(R.string.Discard_activity));
+            builder.setMessage(getString(R.string.Are_you_sure));
+            builder.setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -695,7 +695,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             DetailActivity.this.finish();
                         }
                     });
-            builder.setNegativeButton(getString(R.string.no),
+            builder.setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -771,9 +771,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     DetailActivity.this);
-            builder.setTitle(getString(R.string.delete_activity));
-            builder.setMessage(getString(R.string.are_you_sure));
-            builder.setPositiveButton(getString(R.string.yes),
+            builder.setTitle(getString(R.string.Delete_activity));
+            builder.setMessage(getString(R.string.Are_you_sure));
+            builder.setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             DBHelper.deleteActivity(mDB, mID);
@@ -782,7 +782,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             DetailActivity.this.finish();
                         }
                     });
-            builder.setNegativeButton(getString(R.string.no),
+            builder.setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -1265,16 +1265,16 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 m.position((lastLocation = point));
                                 switch (type) {
                                     case DB.LOCATION.TYPE_START:
-                                        m.title(getResources().getString(R.string.start));
+                                        m.title(getResources().getString(R.string.Start));
                                         break;
                                     case DB.LOCATION.TYPE_END:
-                                        m.title(getResources().getString(R.string.stop));
+                                        m.title(getResources().getString(R.string.Stop));
                                         break;
                                     case DB.LOCATION.TYPE_PAUSE:
-                                        m.title(getResources().getString(R.string.pause));
+                                        m.title(getResources().getString(R.string.Pause));
                                         break;
                                     case DB.LOCATION.TYPE_RESUME:
-                                        m.title(getResources().getString(R.string.resume));
+                                        m.title(getResources().getString(R.string.Resume));
                                         break;
                                 }
                                 m.snippet(null);
@@ -1370,8 +1370,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
                 "gpx", "tcx" /* "nike+xml" */
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.share_activity));
-        builder.setPositiveButton(getString(R.string.ok),
+        builder.setTitle(getString(R.string.Share_activity));
+        builder.setPositiveButton(getString(R.string.OK),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int w) {
                         if (which[0] == -1) {
@@ -1392,7 +1392,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
                     }
                 });
-        builder.setNegativeButton(getString(R.string.cancel),
+        builder.setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog

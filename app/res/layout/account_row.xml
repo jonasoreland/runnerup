@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             style="@style/ButtonText"
 	        android:background="@drawable/btn_blue"
-            android:text="@string/configure" />
+            android:text="@string/Configure" />
 
     </TableRow>
 

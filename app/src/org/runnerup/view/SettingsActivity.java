@@ -100,10 +100,10 @@ public class SettingsActivity extends PreferenceActivity {
             try {
                 int cnt = FileUtil.copyFile(to, from);
                 builder.setMessage("Copied " + cnt + " bytes");
-                builder.setPositiveButton(getString(R.string.great), listener);
+                builder.setPositiveButton(getString(R.string.Great), listener);
             } catch (IOException e) {
                 builder.setMessage("Exception: " + e.toString());
-                builder.setNegativeButton(getString(R.string.darn), listener);
+                builder.setNegativeButton(getString(R.string.Darn), listener);
             }
             builder.show();
             return false;
@@ -129,10 +129,10 @@ public class SettingsActivity extends PreferenceActivity {
             try {
                 int cnt = FileUtil.copyFile(to, from);
                 builder.setMessage("Copied " + cnt + " bytes");
-                builder.setPositiveButton(getString(R.string.great), listener);
+                builder.setPositiveButton(getString(R.string.Great), listener);
             } catch (IOException e) {
                 builder.setMessage("Exception: " + e.toString());
-                builder.setNegativeButton(getString(R.string.darn), listener);
+                builder.setNegativeButton(getString(R.string.Darn), listener);
             }
             builder.show();
             return false;
@@ -143,7 +143,7 @@ public class SettingsActivity extends PreferenceActivity {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
-            dialog.setTitle(R.string.pruning_deleted_activities_from_database);
+            dialog.setTitle(R.string.Pruning_deleted_activities_from_database);
             dialog.show();
             DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, new Runnable() {
                 @Override

@@ -181,10 +181,10 @@ public class RunActivity extends Activity implements TickListener {
 
         if (simpleWorkout) {
             newLapButton.setOnClickListener(newLapButtonClick);
-            newLapButton.setText(getString(R.string.new_lap));
+            newLapButton.setText(getString(R.string.New_lap));
         } else {
             newLapButton.setOnClickListener(nextStepButtonClick);
-            newLapButton.setText(getString(R.string.next_lap));
+            newLapButton.setText(getString(R.string.Next_lap));
         }
     }
 
@@ -314,11 +314,11 @@ public class RunActivity extends Activity implements TickListener {
 
     private void setPauseButtonEnabled(boolean enabled) {
         if (enabled) {
-            pauseButton.setText(getString(R.string.pause));
+            pauseButton.setText(getString(R.string.Pause));
             WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_blue));
             pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_pause, 0);
         } else {
-            pauseButton.setText(getString(R.string.resume));
+            pauseButton.setText(getString(R.string.Resume));
             WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_green));
             pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_play_arrow, 0);
         }
@@ -521,7 +521,7 @@ public class RunActivity extends Activity implements TickListener {
 
             if (step.getRepeatCount() > 0) {
                 if (step.getCurrentRepeat() == step.getRepeatCount()) {
-                    durationValue.setText(getString(R.string.finished));
+                    durationValue.setText(getString(R.string.Finished));
                 } else {
                     durationValue.setText("" + (step.getCurrentRepeat() + 1) + "/"
                             + step.getRepeatCount());

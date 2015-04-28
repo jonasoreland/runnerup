@@ -50,7 +50,7 @@
                 android:id="@+id/txt_newlap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/new_lap"
+                android:text="@string/New_lap"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -76,7 +76,7 @@
                 android:id="@+id/txt_resume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/resume"
+                android:text="@string/Resume"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />

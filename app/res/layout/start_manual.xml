@@ -29,17 +29,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:entries="@array/sportEntries"
-        android:prompt="@string/type"
-        android:text="@string/sport" />
+        android:prompt="@string/Type"
+        android:text="@string/Sport" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manual_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/manual_sport"
-        android:prompt="@string/type"
+        android:prompt="@string/Type"
         android:defaultValue="today"
-        android:text="@string/date"
+        android:text="@string/Date"
         runnerup:type="datepicker" />
 
     <org.runnerup.widget.TitleSpinner
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/manual_date"
-        android:prompt="@string/type"
+        android:prompt="@string/Type"
         android:text="@string/time"
         runnerup:type="timepicker" />
 
@@ -58,8 +58,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/manual_time"
-        android:prompt="@string/type"
-        android:text="@string/duration_time_format"
+        android:prompt="@string/Type"
+        android:text="@string/Duration_time_HHMMSS"
         android:defaultValue="00:00:00"
         runnerup:type="durationpicker" />
 
@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/manual_duration"
-        android:prompt="@string/type"
+        android:prompt="@string/Type"
         android:inputType="numberDecimal"
         android:text="@string/distance"
         runnerup:type="distancepicker" />
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/manual_distance"
-        android:prompt="@string/type"
+        android:prompt="@string/Type"
         android:inputType="numberDecimal"
         android:text="@string/pace"
         runnerup:type="durationpicker" />
@@ -96,7 +96,7 @@
         android:gravity="top|left"
         android:inputType="textMultiLine"
         android:singleLine="false"
-        android:hint="@string/add_workout_notes" />
+        android:hint="@string/Add_workout_notes" />
 
 </RelativeLayout>
 

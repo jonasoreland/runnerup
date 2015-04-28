@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">aktivitet</string>
+  <string name="cue_interval">intervall</string>
+  <string name="cue_lap">varv</string>
+  <string name="cue_warmup">uppvärmning</string>
+  <string name="cue_cooldown">nedvarvning</string>
+  <string name="cue_current">aktuell</string>
+  <string name="cue_recovery">återhämtning</string>
+  <string name="cue_perkilometer">per kilometer</string>
+  <string name="cue_permile">per mile</string>
+  <string name="cue_started">startad</string>
+  <string name="cue_paused">pausad</string>
+  <string name="cue_resumed">återupptagen</string>
+  <string name="cue_stopped">stoppad</string>
+  <string name="cue_completed">slutförd</string>
+  <string name="cue_speedup">öka tempo</string>
+  <string name="cue_slowdown">sakta ned</string>
+  <plurals name="cue_hour">
+    <item quantity="one">timma</item>
+    <item quantity="other">timmar</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minut</item>
+    <item quantity="other">minuter</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">sekund</item>
+    <item quantity="other">sekunder</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">meter</item>
+    <item quantity="other">meter</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilometer</item>
+    <item quantity="other">kilometer</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">mile</item>
+    <item quantity="other">miles</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">bpm</item>
+    <item quantity="other">bpm</item>
+  </plurals>
+  <string name="cue_activity_started">aktivitet startad</string>
+  <string name="cue_activity_paused">aktivitet pausad</string>
+  <string name="cue_activity_resumed">aktivitet återupptagen</string>
+  <string name="cue_activity_stopped">aktivitet stoppad</string>
+  <string name="cue_lap_started">varv startat</string>
+  <string name="cue_lap_completed">varv färdigt</string>
+  <string name="cue_warmup_started">uppvärmning startad</string>
+  <string name="cue_cooldown_started">nedvarvning startad</string>
+</resources>

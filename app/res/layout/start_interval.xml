@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/pref_interval_audio"
-            android:text="@string/audio_cue_settings"
+            android:text="@string/Audio_cue_settings"
             runnerup:type="spinner_txt" />
 
         <org.runnerup.widget.TitleSpinner
@@ -41,8 +41,8 @@
             android:layout_height="wrap_content"
             android:entries="@array/types"
             android:key="@string/pref_interval_type"
-            android:prompt="@string/type"
-            android:text="@string/interval_type" />
+            android:prompt="@string/Type"
+            android:text="@string/Interval_type" />
 
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/interval_time"
@@ -51,8 +51,8 @@
             android:defaultValue="00:01:00"
             android:inputType="time"
             android:key="@string/pref_interval_time"
-            android:prompt="@string/type"
-            android:text="@string/interval_time_format"
+            android:prompt="@string/Type"
+            android:text="@string/Interval_time_HHMMSS"
             runnerup:type="durationpicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -62,8 +62,8 @@
             android:defaultValue="1000"
             android:inputType="numberDecimal"
             android:key="@string/pref_interval_distance"
-            android:prompt="@string/type"
-            android:text="@string/interval_distance"
+            android:prompt="@string/Type"
+            android:text="@string/Interval_distance"
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -72,8 +72,8 @@
             android:layout_height="wrap_content"
             android:entries="@array/types"
             android:key="@string/pref_interval_rest_type"
-            android:prompt="@string/type"
-            android:text="@string/rest_type" />
+            android:prompt="@string/Type"
+            android:text="@string/Rest_type" />
 
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/interval_rest_time"
@@ -82,8 +82,8 @@
             android:defaultValue="00:01:00"
             android:inputType="time"
             android:key="@string/pref_interval_rest_time"
-            android:prompt="@string/type"
-            android:text="@string/rest_time_format"
+            android:prompt="@string/Type"
+            android:text="@string/Rest_time_HHMMSS"
             runnerup:type="durationpicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -93,8 +93,8 @@
             android:defaultValue="200"
             android:inputType="numberDecimal"
             android:key="@string/pref_interval_rest_distance"
-            android:prompt="@string/type"
-            android:text="@string/rest_distance_format"
+            android:prompt="@string/Type"
+            android:text="@string/Rest_distance_m"
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -104,8 +104,8 @@
             android:defaultValue="5"
             android:inputType="number"
             android:key="@string/pref_interval_repetitions"
-            android:prompt="@string/type"
-            android:text="@string/repetitions"
+            android:prompt="@string/Type"
+            android:text="@string/Repetitions"
             runnerup:type="numberpicker" />
 
         <LinearLayout
@@ -120,7 +120,7 @@
                 android:layout_weight="1"
                 android:checked="true"
                 android:enabled="false"
-                android:text="@string/warmup" />
+                android:text="@string/warm_up" />
 
             <CheckBox
                 android:id="@+id/interval_cooldown"
@@ -129,7 +129,7 @@
                 android:layout_weight="1"
                 android:checked="true"
                 android:enabled="false"
-                android:text="@string/cooldown" />
+                android:text="@string/cool_down" />
         </LinearLayout>
     </LinearLayout>
 

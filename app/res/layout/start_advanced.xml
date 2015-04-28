@@ -29,7 +29,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:key="@string/pref_advanced_audio"
-        android:text="@string/audio_cue_settings"
+        android:text="@string/Audio_cue_settings"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
@@ -40,7 +40,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/advanced_audio_cue_spinner"
         android:key="@string/pref_advanced_workout"
-        android:text="@string/workout"
+        android:text="@string/Workout"
         runnerup:type="spinner_txt" >
     </org.runnerup.widget.TitleSpinner>
 
@@ -63,6 +63,6 @@
 		android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/download_workouts" />
+        android:text="@string/Download_workouts" />
 
 </RelativeLayout>

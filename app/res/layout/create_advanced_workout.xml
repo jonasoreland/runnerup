@@ -13,7 +13,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/new_workout_spinner"
-    android:text="@string/workout"
+    android:text="@string/Workout"
     runnerup:type="spinner_txt"
     android:orientation="horizontal">
   </org.runnerup.widget.TitleSpinner>
@@ -42,7 +42,7 @@
       <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/add_step"
+        android:text="@string/Add_step"
         android:id="@+id/add_step_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_blue"
@@ -51,7 +51,7 @@
       <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/add_repeat_step"
+        android:text="@string/Add_repeat"
         android:id="@+id/add_repeat_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_blue"
@@ -65,7 +65,7 @@
       <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/save"
+        android:text="@string/Save"
         android:id="@+id/workout_save_button"
         style="@style/ButtonText"
         android:background="@drawable/btn_green"
@@ -74,7 +74,7 @@
       <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/discard"
+        android:text="@string/Discard"
         android:id="@+id/workout_discard_button"
         android:layout_weight="1"
         style="@style/ButtonText"
