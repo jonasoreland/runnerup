@@ -66,6 +66,8 @@
   <string-array name="sportEntries">
     <item>Running</item>
     <item>Biking</item>
+    <item>Other</item>
+    <item>Orienteering</item>
   </string-array>
   <string-array name="muteEntries">
     <item>No</item>

@@ -198,7 +198,8 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
                 if (cursor.isNull(4)) {
                     tv.setText(getResources().getText(R.string.Running));
                 } else {
-                    tv.setText(getResources().getText(Sport.valueOf(cursor.getInt(4)).getTextId()));
+                    int sport = Sport.valueOf(cursor.getInt(4)).getDbValue();
+                    tv.setText(getResources().getStringArray(R.array.sportEntries)[sport]);
                 }
             }
         }

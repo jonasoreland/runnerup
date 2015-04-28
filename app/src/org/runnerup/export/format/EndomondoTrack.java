@@ -24,6 +24,8 @@ import android.location.Location;
 import android.os.Build;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.EndomondoSynchronizer;
+import org.runnerup.workout.Sport;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -33,7 +35,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 /**
  * @author jonas.oreland@gmail.com
- * 
+ *
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -77,15 +79,7 @@ public class EndomondoTrack {
             summary.hr = null;
             summary.distance = distance;
             summary.duration = duration;
-            summary.sport = 22; // other
-            switch (cursor.getInt(5)) {
-                case DB.ACTIVITY.SPORT_RUNNING:
-                    summary.sport = 0;
-                    break;
-                case DB.ACTIVITY.SPORT_BIKING:
-                    summary.sport = 2;
-                    break;
-            }
+            summary.sport = EndomondoSynchronizer.sport2endomondoMap.get(Sport.valueOf(cursor.getInt(5)));
             if (!cursor.isNull(6)) {
                 summary.hr = cursor.getLong(6);
             }
@@ -103,8 +97,8 @@ public class EndomondoTrack {
                 DB.LOCATION.LONGITUDE, // 3
                 DB.LOCATION.ALTITUDE, // 4
                 DB.LOCATION.TYPE, // 5
-                DB.LOCATION.HR
-        }; // 6
+                DB.LOCATION.HR // 6
+        };
 
         final Cursor c = mDB.query(DB.LOCATION.TABLE, pColumns, DB.LOCATION.ACTIVITY
                 + " = " + activityId, null, null, null, null);

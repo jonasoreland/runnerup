@@ -18,26 +18,25 @@
 package org.runnerup.workout;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 
 public enum Sport {
 
-    RUNNING(DB.ACTIVITY.SPORT_RUNNING, R.string.Running),
-    BIKING(DB.ACTIVITY.SPORT_BIKING, R.string.Biking),
-    OTHER(DB.ACTIVITY.SPORT_OTHER, R.string.Other);
+    RUNNING(DB.ACTIVITY.SPORT_RUNNING),
+    BIKING(DB.ACTIVITY.SPORT_BIKING),
+    OTHER(DB.ACTIVITY.SPORT_OTHER),
+    ORIENTEERING(DB.ACTIVITY.SPORT_ORIENTEERING);
 
     final int dbValue;
-    final int textId;
 
-    Sport(int dbValue, int txtValue) {
+    Sport(int dbValue) {
         this.dbValue = dbValue;
-        this.textId = txtValue;
     }
 
     public int getDbValue() {
         return dbValue;
     }
-    public int getTextId() { return textId; }
 
     static public Sport valueOf(int dbValue) {
         switch (dbValue) {
@@ -45,6 +44,8 @@ public enum Sport {
                 return RUNNING;
             case DB.ACTIVITY.SPORT_BIKING:
                 return BIKING;
+            case DB.ACTIVITY.SPORT_ORIENTEERING:
+                return ORIENTEERING;
             default:
             case DB.ACTIVITY.SPORT_OTHER:
                 return OTHER;

@@ -73,11 +73,14 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     private String deviceId = null;
     private String authToken = null;
 
-    static final Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2endomondoMap = new HashMap<Sport, Integer>();
+    public static final Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer, Sport>();
+    public static final Map<Sport, Integer> sport2endomondoMap = new HashMap<Sport, Integer>();
     static {
+        //list of sports ID can be found in https://github.com/isoteemu/sports-tracker-liberator/blob/master/endomondo/workout.py
         endomondo2sportMap.put(0, Sport.RUNNING);
         endomondo2sportMap.put(2, Sport.BIKING);
+        endomondo2sportMap.put(22, Sport.OTHER);
+        endomondo2sportMap.put(17, Sport.ORIENTEERING);
         for (Integer i : endomondo2sportMap.keySet()) {
             sport2endomondoMap.put(endomondo2sportMap.get(i), i);
         }
@@ -167,7 +170,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         try {
 
             /**
-			 * 
+			 *
 			 */
             String login = AUTH_URL;
             FormValues kv = new FormValues();

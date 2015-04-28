@@ -426,6 +426,8 @@ public class FeedActivity extends Activity implements Constants {
                 return "running";
             case DB.ACTIVITY.SPORT_BIKING:
                 return "biking";
+            case DB.ACTIVITY.SPORT_ORIENTEERING:
+                return "orienteering";
             case DB.ACTIVITY.SPORT_OTHER:
                 break;
         }

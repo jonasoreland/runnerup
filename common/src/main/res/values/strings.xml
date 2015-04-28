@@ -113,10 +113,6 @@
   <string name="Configure_accounts">Configure accounts</string>
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>
-  <string name="Running">Running</string>
-  <string name="Biking">Biking</string>
-  <string name="Other">Other</string>
-  <string name="Unknown">Unknown</string>
   <string name="edit">edit</string>
   <string name="Synchronizing">Synchronizing:</string>
   <string name="synchronizing_feed">synchronizing feed...</string>
