@@ -39,6 +39,7 @@ import android.widget.TextView;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.common.util.Constants;
+import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.workout.Sport;
@@ -131,34 +132,27 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
+            ActivityEntity ae = new ActivityEntity(cursor);
             int[] to = new int[] {
                     R.id.history_list_id,
                     R.id.history_list_start_time, R.id.history_list_distance,
                     R.id.history_list_time, R.id.history_list_pace, R.id.history_list_sport
             };
 
-            int id = cursor.getInt(0);
-            long st = 0;
-            if (!cursor.isNull(1)) {
-                st = cursor.getLong(1); // start time
-            }
-            float d = 0;
-            if (!cursor.isNull(2)) {
-                d = cursor.getFloat(2); // distance
-            }
-            long t = 0;
-            if (!cursor.isNull(3)) {
-                t = cursor.getLong(3); // time (us)
-            }
+            Long id = ae.getId();
+            Long st = ae.getStartTime();
+            Float d = ae.getDistance();
+            Long t = ae.getTime();
+            Integer s = ae.getSport();
 
             {
                 TextView tv = (TextView) view.findViewById(to[0]);
-                tv.setText(Integer.toString(id));
+                tv.setText(Long.toString(id));
             }
 
             {
                 TextView tv = (TextView) view.findViewById(to[1]);
-                if (!cursor.isNull(1)) {
+                if (st != null) {
                     tv.setText(formatter.formatDateTime(Formatter.TXT_LONG, st));
                 } else {
                     tv.setText("");
@@ -167,8 +161,8 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
             {
                 TextView tv = (TextView) view.findViewById(to[2]);
-                if (!cursor.isNull(2)) {
-                    tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, (long) d));
+                if (d != null) {
+                    tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, d.longValue()));
                 } else {
                     tv.setText("");
                 }
@@ -176,7 +170,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
             {
                 TextView tv = (TextView) view.findViewById(to[3]);
-                if (!cursor.isNull(3)) {
+                if (t != null) {
                     tv.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
                 } else {
                     tv.setText("");
@@ -185,7 +179,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
             {
                 TextView tv = (TextView) view.findViewById(to[4]);
-                if (!cursor.isNull(3) && !cursor.isNull(3) && d != 0 && t != 0) {
+                if (d != null && t != null && d != 0 && t != 0) {
                     tv.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
                 } else {
                     tv.setText("");
@@ -195,11 +189,10 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             {
                 TextView tv = (TextView) view.findViewById(to[5]);
 
-                if (cursor.isNull(4)) {
-                    tv.setText(getResources().getText(R.string.Running));
+                if (s != null) {
+                    tv.setText(Sport.textOf(getResources(), s));
                 } else {
-                    int sport = Sport.valueOf(cursor.getInt(4)).getDbValue();
-                    tv.setText(Sport.textOf(getResources(), sport));
+                    tv.setText(getResources().getText(R.string.Running));
                 }
             }
         }
