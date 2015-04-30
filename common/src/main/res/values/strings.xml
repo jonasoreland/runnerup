@@ -51,6 +51,7 @@
   <string name="heart_rate_zone">heart rate zone</string>
   <string name="Zone">Zone</string>
   <string name="Device">Device</string>
+  <string name="Start_hour">Start hour</string>
   <string name="Heart_rate">Heart rate</string>
   <string name="Pace">Pace</string>
   <string name="Scan">Scan</string>

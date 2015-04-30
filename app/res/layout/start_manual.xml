@@ -49,7 +49,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/manual_date"
         android:prompt="@string/Type"
-        android:text="@string/time"
+        android:text="@string/Start_hour"
         runnerup:type="timepicker" />
 
     <org.runnerup.widget.TitleSpinner
