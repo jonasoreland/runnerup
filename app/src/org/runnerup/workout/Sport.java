@@ -17,6 +17,9 @@
 
 package org.runnerup.workout;
 
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
@@ -36,6 +39,14 @@ public enum Sport {
 
     public int getDbValue() {
         return dbValue;
+    }
+
+    static public final String textOf(Resources res, int dbValue) {
+        String sports[] = res.getStringArray(R.array.sportEntries);
+        if (0 <= dbValue && dbValue < sports.length) {
+            return sports[dbValue];
+        }
+        return res.getString(R.string.Unknown);
     }
 
     static public Sport valueOf(int dbValue) {
