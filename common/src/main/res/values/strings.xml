@@ -46,6 +46,7 @@
   <string name="repeat">repeat</string>
   <string name="time">time</string>
   <string name="distance">distance</string>
+  <string name="Distance">Distance</string>
   <string name="speed">speed</string>
   <string name="pace">pace</string>
   <string name="heart_rate_zone">heart rate zone</string>

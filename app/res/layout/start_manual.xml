@@ -71,7 +71,7 @@
         android:layout_below="@+id/manual_duration"
         android:prompt="@string/Type"
         android:inputType="numberDecimal"
-        android:text="@string/distance"
+        android:text="@string/Distance"
         runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
