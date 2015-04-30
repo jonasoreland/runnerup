@@ -37,13 +37,6 @@
 			    android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
     </Preference>
 
-    <ListPreference
-        android:key="@string/pref_audio_lang"
-        android:persistent="true"
-        android:title="@string/Audio_cue_language"
-        android:entries="@array/cueLanguageNames"
-        android:entryValues="@array/cueLanguageCodes" />
-
     <Preference
         	android:key="cue_workouts"
         	android:title="@string/Manage_workouts"

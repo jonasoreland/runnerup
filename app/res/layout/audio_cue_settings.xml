@@ -19,22 +19,22 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-<!-- Doesn't work yet :-( 
+<!-- Doesn't work yet :-(
         <CheckBoxPreference
         	android:defaultValue="false"
         	android:persistent="false"
         	android:key="cue_silence"
         	android:title="Silence"
         	android:summary="Clear all cues"/>
--->    
+-->
    	    <PreferenceCategory android:title="@string/Triggers" />
-    
+
    	    <CheckBoxPreference
         	android:defaultValue="false"
         	android:persistent="true"
         	android:key="@string/cue_time"
         	android:title="@string/Time_triggered_audio_cue" />
-    	
+
 	    <org.runnerup.widget.TextPreference
 	        android:dependency="cue_time"
             android:defaultValue="120"
@@ -48,7 +48,7 @@
         	android:persistent="true"
         	android:key="@string/cue_distance"
         	android:title="@string/Distance_triggered_audio_cue" />
-    	
+
 	    <org.runnerup.widget.TextPreference
 	        android:dependency="@string/cue_distance"
             android:defaultValue="1000"
@@ -62,7 +62,7 @@
         	android:persistent="true"
         	android:key="@string/cue_end_of_lap"
         	android:title="@string/End_of_lap_audio_cue" />
-	    	    
+
 	    <ListPreference
         	android:defaultValue="yes"
         	android:entries="@array/muteEntries"
@@ -97,7 +97,7 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_total_hrz"
         		android:title="@string/Total_heart_rate_zone" />
-    				
+
     		<CheckBoxPreference
         		android:defaultValue="true"
         		android:persistent="true"
@@ -113,7 +113,7 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_step_pace"
         		android:title="@string/Interval_pace" />
-<!-- 
+<!--
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
@@ -130,7 +130,7 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_step_hrz"
         		android:title="@string/Interval_heart_rate_zone" />
- 
+
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
@@ -146,7 +146,7 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_lap_pace"
         		android:title="@string/Lap_pace" />
-<!-- 
+<!--
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
@@ -181,12 +181,18 @@
         		android:summary="@string/Keep_silent_when_workout_startpauseresumestop"
         		/>
    		</PreferenceCategory>
-	    
+
     	<PreferenceCategory android:title="@string/Test_audio_cue">
 			<Preference android:title="@string/Push"
                 android:key="test_cueinfo"
                 android:summary="@string/Test_audio_cue"/>
+            <ListPreference
+                android:key="@string/pref_audio_lang"
+                android:persistent="true"
+                android:title="@string/Audio_cue_language"
+                android:entries="@array/cueLanguageNames"
+                android:entryValues="@array/cueLanguageCodes" />
 			<Preference android:title="@string/Android_text_to_speech_settings"
                 android:key="tts_settings" />
-		</PreferenceCategory>	    
+		</PreferenceCategory>
 </PreferenceScreen>
