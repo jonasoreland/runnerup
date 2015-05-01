@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
@@ -82,8 +83,15 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     static final Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer, Sport>();
     static final Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
     static {
+        // the best (known) way to get ID for a given sport is:
+        // 1) create a workout on the website funbeat.se with the desired sport type
+        // 2) launch RunnerUp and go to Feed tab
+        // 3) a log should appear "Unknown workout ... with" (fired from setTrainingType method)
         funbeat2sportMap.put(25, Sport.RUNNING);
         funbeat2sportMap.put(7, Sport.BIKING);
+        funbeat2sportMap.put(51, Sport.OTHER);
+        funbeat2sportMap.put(26, Sport.ORIENTEERING);
+        funbeat2sportMap.put(417, Sport.WALKING);
         for (Integer i : funbeat2sportMap.keySet()) {
             sport2funbeatMap.put(funbeat2sportMap.get(i), i);
         }
@@ -580,6 +588,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         if (s != null) {
             c.put(FEED.FEED_SUBTYPE, s.getDbValue());
         } else {
+            Log.e(getName(), "Unknown workout " + typeString + " with ID " + TypeID);
             c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
             c.put(FEED.FEED_TYPE_STRING, typeString);
         }

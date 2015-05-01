@@ -25,11 +25,12 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 
 public enum Sport {
-
-    RUNNING(DB.ACTIVITY.SPORT_RUNNING),
-    BIKING(DB.ACTIVITY.SPORT_BIKING),
-    OTHER(DB.ACTIVITY.SPORT_OTHER),
-    ORIENTEERING(DB.ACTIVITY.SPORT_ORIENTEERING);
+    RUNNING(DB.ACTIVITY.SPORT_RUNNING)
+    , BIKING(DB.ACTIVITY.SPORT_BIKING)
+    , OTHER(DB.ACTIVITY.SPORT_OTHER)
+    , ORIENTEERING(DB.ACTIVITY.SPORT_ORIENTEERING)
+    , WALKING(DB.ACTIVITY.SPORT_WALKING)
+    ;
 
     final int dbValue;
 
@@ -57,6 +58,8 @@ public enum Sport {
                 return BIKING;
             case DB.ACTIVITY.SPORT_ORIENTEERING:
                 return ORIENTEERING;
+            case DB.ACTIVITY.SPORT_WALKING:
+                return WALKING;
             default:
             case DB.ACTIVITY.SPORT_OTHER:
                 return OTHER;

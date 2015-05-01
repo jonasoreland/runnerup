@@ -35,6 +35,7 @@ import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Bitfield;
+import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -63,6 +64,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     private static final String COURSE_ENDPOINT = "https://graph.facebook.com/me/objects/fitness.course";
     private static final String RUN_ENDPOINT = "https://graph.facebook.com/me/fitness.runs";
     private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
+    private static final String WALK_ENDPOINT = "https://graph.facebook.com/me/fitness.walks";
 
     final boolean uploadComment = false;
     final boolean explicitly_shared = false; // Doesn't work now...don't know why...
@@ -307,12 +309,20 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return ref;
     }
 
+    private static URL getSportEndPoint(Sport s) throws Exception {
+        if (s == Sport.RUNNING) return new URL(RUN_ENDPOINT);
+        else if (s == Sport.BIKING) return new URL(BIKE_ENDPOINT);
+        else if (s == Sport.ORIENTEERING) return new URL(RUN_ENDPOINT);
+        else if (s == Sport.WALKING) return new URL(WALK_ENDPOINT);
+        return null;
+    }
+
+
     private JSONObject createRun(JSONObject ref, JSONObject runObj) throws Exception {
         int sport = runObj.optInt("sport", DB.ACTIVITY.SPORT_OTHER);
-        if (sport != DB.ACTIVITY.SPORT_RUNNING &&
-                sport != DB.ACTIVITY.SPORT_BIKING) {
-
-            /* only running and biking is supported */
+        URL url = getSportEndPoint(Sport.valueOf(sport));
+        if (url == null) {
+            /* only running/biking/walking and similar are supported */
             return null;
         }
         String id = ref.getString("id");
@@ -340,7 +350,6 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         Part<?> parts[] = new Part<?>[list.size()];
         list.toArray(parts);
 
-        URL url = new URL(sport == DB.ACTIVITY.SPORT_RUNNING ? RUN_ENDPOINT : BIKE_ENDPOINT);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
