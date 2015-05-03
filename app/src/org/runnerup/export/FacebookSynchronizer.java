@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -225,7 +226,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
         if (now + ONE_DAY > endTime) {
 
-            System.err.println("now: " + now + ", endTime: " + endTime + ", now + ONE_DAY: "
+            Log.e(getName(), "now: " + now + ", endTime: " + endTime + ", now + ONE_DAY: "
                     + (now + ONE_DAY) + " => needs refresh");
             return s;
         }
@@ -246,21 +247,21 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
             JSONObject course = courseFactory.export(mID, !skipMapInPost, runObj);
             JSONObject ref = createCourse(course);
 
-            System.err.println("createdCourseObj: " + ref.toString());
+            Log.e(getName(), "createdCourseObj: " + ref.toString());
 
             try {
                 JSONObject ret = createRun(ref, runObj);
-                System.err.println("createdRunObj: " + ret.toString());
+                Log.e(getName(), "createdRunObj: " + ret.toString());
                 s = Status.OK;
                 s.activityId = mID;
                 return s;
             } catch (Exception e) {
-                System.err.println("fail1: " + e);
+                Log.e(getName(), "fail createdRunObj: " + e);
                 s.ex = e;
             }
             deleteCourse(ref);
         } catch (Exception e) {
-            System.err.println("fail2: " + e);
+            Log.e(getName(), "fail createdCourseObj: " + e);
             s.ex = e;
         }
 
@@ -270,6 +271,27 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return s;
     }
 
+    private JSONObject createObj(URL url, Part<?> parts[]) throws Exception{
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
+        conn.setRequestMethod(RequestMethod.POST.name());
+        SyncHelper.postMulti(conn, parts);
+
+        int code = conn.getResponseCode();
+        String msg = conn.getResponseMessage();
+
+        if (code != HttpStatus.SC_OK) {
+            conn.disconnect();
+            throw new Exception("Got code: " + code + ", msg: " + msg + " from " + url.toString());
+        } else {
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            JSONObject runRef = SyncHelper.parse(in);
+
+            conn.disconnect();
+            return runRef;
+        }
+    }
     private JSONObject createCourse(JSONObject course) throws JSONException,
             IOException, Exception {
         JSONObject obj = new JSONObject();
@@ -288,25 +310,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 themePart, payloadPart
         };
 
-        HttpURLConnection conn = (HttpURLConnection) new URL(COURSE_ENDPOINT)
-                .openConnection();
-        conn.setDoOutput(true);
-        conn.setDoInput(true);
-        conn.setRequestMethod(RequestMethod.POST.name());
-        SyncHelper.postMulti(conn, parts);
-
-        int code = conn.getResponseCode();
-        String msg = conn.getResponseMessage();
-
-        InputStream in = new BufferedInputStream(conn.getInputStream());
-        JSONObject ref = SyncHelper.parse(in);
-
-        conn.disconnect();
-        if (code != HttpStatus.SC_OK) {
-            throw new Exception("got " + code + ": >" + msg + "< from createCourse");
-        }
-
-        return ref;
+        return createObj(new URL(COURSE_ENDPOINT), parts);
     }
 
     private static URL getSportEndPoint(Sport s) throws Exception {
@@ -350,24 +354,8 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         Part<?> parts[] = new Part<?>[list.size()];
         list.toArray(parts);
 
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setDoInput(true);
-        conn.setRequestMethod(RequestMethod.POST.name());
-        SyncHelper.postMulti(conn, parts);
-
-        int code = conn.getResponseCode();
-        String msg = conn.getResponseMessage();
-
-        InputStream in = new BufferedInputStream(conn.getInputStream());
-        JSONObject runRef = SyncHelper.parse(in);
-
-        conn.disconnect();
-        if (code != HttpStatus.SC_OK) {
-            throw new Exception("Got code: " + code + ", msg: " + msg + " from " + url.toString());
-        }
-
-        return runRef;
+        URL url2 = new URL(sport == DB.ACTIVITY.SPORT_RUNNING ? RUN_ENDPOINT : BIKE_ENDPOINT);
+        return createObj(url2, parts);
     }
 
     private String formatTime(long long1) {
