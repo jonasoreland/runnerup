@@ -48,8 +48,12 @@ public class GoogleFitData {
     private static final Map<Integer, Integer> ACTIVITY_TYPE;
     static {
         Map<Integer, Integer> aMap = new HashMap<Integer, Integer>();
+        // sports list can be found at https://developers.google.com/fit/rest/v1/reference/activity-types
         aMap.put(DB.ACTIVITY.SPORT_RUNNING, 8);
         aMap.put(DB.ACTIVITY.SPORT_BIKING, 1);
+        aMap.put(DB.ACTIVITY.SPORT_OTHER, 4);
+        aMap.put(DB.ACTIVITY.SPORT_ORIENTEERING, 4); //not supported so considering unknown
+        aMap.put(DB.ACTIVITY.SPORT_WALKING, 7);
         ACTIVITY_TYPE = Collections.unmodifiableMap(aMap);
     }
     private static final Map<DataSourceType, List<DataTypeField>> DATA_TYPE_FIELDS;
