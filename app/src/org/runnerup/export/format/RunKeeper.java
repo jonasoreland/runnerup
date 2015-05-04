@@ -23,7 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.entities.ActivityEntity;
+import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.util.JsonWriter;
+import org.runnerup.workout.Sport;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -59,50 +62,39 @@ public class RunKeeper {
         Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
                 + activityId, null, null, null, null);
         cursor.moveToFirst();
-
-        long startTime = cursor.getLong(2); // epoch
-        double distance = cursor.getDouble(3);
-        long duration = cursor.getLong(4);
-        String comment = null;
-        if (!cursor.isNull(1))
-            comment = cursor.getString(1);
+        ActivityEntity ae = new ActivityEntity(cursor);
+        long startTime = ae.getStartTime();
+        double distance = ae.getDistance();
+        long duration = ae.getTime();
+        String comment = ae.getComment();
         try {
             JsonWriter w = new JsonWriter(writer);
             w.beginObject();
-            if (cursor.isNull(5)) {
-                w.name("type").value("Running");
-            } else {
-                /**
-                 * Running, Cycling, Mountain Biking, Walking, Hiking, Downhill
-                 * Skiing, Cross-Country Skiing, Snowboarding, Skating,
-                 * Swimming, Wheelchair, Rowing, Elliptical, Other
-                 */
-                switch (cursor.getInt(5)) {
-                    case DB.ACTIVITY.SPORT_RUNNING:
-                        w.name("type").value("Running");
-                        break;
-                    case DB.ACTIVITY.SPORT_BIKING:
-                        w.name("type").value("Cycling");
-                        break;
-                    default:
-                        w.name("type").value("Other");
-                        break;
-                }
+            Sport s = Sport.valueOf(ae.getSport());
+            if (!RunKeeperSynchronizer.sport2runkeeperMap.containsKey(s)) {
+                s = Sport.OTHER;
             }
+            w.name("type").value(RunKeeperSynchronizer.sport2runkeeperMap.get(s));
             w.name("equipment").value("None");
             w.name("start_time").value(formatTime(startTime * 1000));
             w.name("total_distance").value(distance);
             w.name("duration").value(duration);
-            if (comment != null)
+            if (comment != null && comment.length() > 0) {
                 w.name("notes").value(comment);
-            w.name("heart_rate");
-            w.beginArray();
-            exportHeartRate(activityId, startTime, w);
-            w.endArray();
-            w.name("path");
-            w.beginArray();
-            exportPath(activityId, startTime, w);
-            w.endArray();
+            }
+            //it seems that upload fails if writting an empty array...
+            if (ae.getMaxHr()!=null) {
+                w.name("heart_rate");
+                w.beginArray();
+                exportHeartRate(activityId, startTime, w);
+                w.endArray();
+            }
+            if (ae.getLocationPoints().size() > 0) {
+                w.name("path");
+                w.beginArray();
+                exportPath(activityId, startTime, w);
+                w.endArray();
+            }
             w.name("post_to_facebook").value(false);
             w.name("post_to_twitter").value(false);
             w.endObject();

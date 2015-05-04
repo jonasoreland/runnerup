@@ -103,17 +103,27 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     private String feed_password = null;
     private String feed_access_token = null;
 
-    static final Map<Integer, Sport> RK2SPORT = new HashMap<Integer, Sport>();
+    public static final Map<String, Sport> runkeeper2sportMap = new HashMap<String, Sport>();
+    public static final Map<Sport, String> sport2runkeeperMap = new HashMap<Sport, String>();
     static {
-        RK2SPORT.put(0, Sport.RUNNING);
-        RK2SPORT.put(1, Sport.BIKING);
-    }
-
-    static final Map<String, Integer> SPORT_MAP = new HashMap<String, Integer>();
-    static {
-        SPORT_MAP.put("Running", Sport.RUNNING.getDbValue());
-        SPORT_MAP.put("Cycling", Sport.BIKING.getDbValue());
-        SPORT_MAP.put("Mountain Biking", Sport.BIKING.getDbValue());
+        //sports list can be found at http://developer.runkeeper.com/healthgraph/fitness-activities#past
+        /**
+         * Running, Cycling, Mountain Biking, Walking, Hiking, Downhill Skiing, Cross-Country Skiing,
+         * Snowboarding, Skating, Swimming, Wheelchair, Rowing, Elliptical, Other, Yoga, Pilates,
+         * CrossFit, Spinning, Zumba, Barre, Group Workout, Dance, Bootcamp, Boxing / MMA, Meditation,
+         * Strength Training, Circuit Training, Core Strengthening, Arc Trainer, Stairmaster / Stepwell,
+         * Sports, Nordic Walking
+         */
+        runkeeper2sportMap.put("Running", Sport.RUNNING);
+        runkeeper2sportMap.put("Cycling", Sport.BIKING);
+        runkeeper2sportMap.put("Mountain Biking", Sport.BIKING);
+        runkeeper2sportMap.put("Other", Sport.OTHER);
+        runkeeper2sportMap.put("Walking", Sport.WALKING);
+        for (String i : runkeeper2sportMap.keySet()) {
+            if (!sport2runkeeperMap.containsKey(runkeeper2sportMap.get(i))) {
+                sport2runkeeperMap.put(runkeeper2sportMap.get(i), i);
+            }
+        }
     }
 
     static final Map<String, Integer> POINT_TYPE = new HashMap<String, Integer>();
@@ -382,8 +392,8 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 ai.setURI(REST_URL + item.getString("uri"));
                 ai.setId((long) items.size());
                 String sport = item.getString("type");
-                if (SPORT_MAP.containsKey(sport)) {
-                    ai.setSport(SPORT_MAP.get(sport));
+                if (runkeeper2sportMap.containsKey(sport)) {
+                    ai.setSport(runkeeper2sportMap.get(sport).getDbValue());
                 } else {
                     ai.setSport(Sport.OTHER.getDbValue());
                 }
@@ -432,14 +442,12 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 return s;
             }
             ex = new Exception(amsg);
-        } catch (MalformedURLException e) {
-            ex = e;
-        } catch (IOException e) {
+        } catch (Exception e) {
             ex = e;
         }
 
         if (ex != null) {
-            Log.e(Constants.LOG, ex.getMessage());
+            Log.e(getName(), "Failed to upload: " + ex.getMessage());
         }
 
         if (conn != null) {
@@ -504,7 +512,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     private ActivityEntity parseToActivity(JSONObject response, SyncActivityItem ai) throws JSONException {
         ActivityEntity newActivity = new ActivityEntity();
-        newActivity.setSport(SPORT_MAP.get(response.getString("type")));
+        newActivity.setSport(runkeeper2sportMap.get(response.getString("type")).getDbValue());
         newActivity.setComment(response.getString("notes"));
         newActivity.setStartTime(ai.getStartTime());
         newActivity.setTime(ai.getDuration());
@@ -775,10 +783,11 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                         c.put(FEED.EXTERNAL_ID, e.getString("id"));
                         c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
                         JSONObject d = e.getJSONObject("data");
-                        Sport sport = RK2SPORT.get(d.getInt("activityType"));
+                        Sport sport = runkeeper2sportMap.get(d.getInt("activityType"));
                         if (sport != null) {
                             c.put(FEED.FEED_SUBTYPE, sport.getDbValue());
                         } else {
+                            Log.w(getName(), "Unknown sport with id " + d.getInt("activityType"));
                             c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
                             break;
                         }
