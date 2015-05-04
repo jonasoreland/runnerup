@@ -37,12 +37,12 @@ import java.util.Locale;
 import java.util.TimeZone;
 /**
  * TCX - export an activity in TCX format
- * 
+ *
  * @todo Handle pauses
  * @todo Other sports than running
- * 
+ *
  * @author jonas.oreland@gmail.com
- * 
+ *
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -103,6 +103,7 @@ public class TCX {
             if (cursor.isNull(3)) {
                 mXML.attribute("", "Sport", "Running");
             } else {
+                // TCX supports only these 3 sports...(cf http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
                 switch (cursor.getInt(3)) {
                     case DB.ACTIVITY.SPORT_RUNNING:
                         sport = Sport.RUNNING;

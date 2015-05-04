@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 import android.util.Pair;
 
 import org.json.JSONException;
@@ -67,6 +68,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     static {
         // V3 API (what we use): 16 is Walking (specifically a long walk)
         // V7 API is different: 11: Biking, 16: Running, 9: Walk
+        // documentation can be found at http://www.mapmyrun.com/api/3.1/?doc
         mapmyrun2sportMap.put(1, Sport.RUNNING);
         mapmyrun2sportMap.put(3, Sport.BIKING);
         for (Integer i : mapmyrun2sportMap.keySet()) {
@@ -271,7 +273,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 JSONObject obj = SyncHelper.parse(in);
                 conn.disconnect();
-
+                Log.e(getName(), obj.toString());
                 JSONObject result = obj.getJSONObject("result").getJSONObject("output")
                         .getJSONObject("result");
                 final String workout_id = result.getString("workout_id");

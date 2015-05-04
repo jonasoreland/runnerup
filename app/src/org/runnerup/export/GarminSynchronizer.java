@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 import android.util.Pair;
 
 import org.apache.http.HttpStatus;
@@ -33,6 +34,7 @@ import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -146,7 +148,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             String amsg = conn.getResponseMessage();
             getCookies(conn);
 
-            System.err.println("GarminSynchronizer.connect() CHOOSE_URL => code: " + responseCode
+            Log.e(getName(), "GarminSynchronizer.connect() CHOOSE_URL => code: " + responseCode
                     + ", msg: " + amsg);
 
             if (responseCode == HttpStatus.SC_OK) {
@@ -188,7 +190,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             String amsg = conn.getResponseMessage();
             getCookies(conn);
             if (responseCode != HttpStatus.SC_OK) {
-                System.err.println("GarminSynchronizer::connect() - got " + responseCode + ", msg: "
+                Log.e(getName(), "GarminSynchronizer::connect() - got " + responseCode + ", msg: "
                         + amsg);
             }
         }
@@ -218,7 +220,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             wr.close();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            System.err.println("code: " + responseCode + ", msg=" + amsg);
+            Log.e(getName(), "code: " + responseCode + ", msg=" + amsg);
             getCookies(conn);
         }
         conn.disconnect();
@@ -236,7 +238,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             conn.connect();
             getCookies(conn);
             String str = SyncHelper.readInputStream(conn.getInputStream());
-            System.err.println("checkLogin: str: " + str);
+            Log.e(getName(), "checkLogin: str: " + str);
             JSONObject obj = SyncHelper.parse(str);
             conn.disconnect();
             int responseCode = conn.getResponseCode();
@@ -247,7 +249,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                 isConnected = true;
                 return Synchronizer.Status.OK;
             } else {
-                System.err.println("GarminSynchronizer::connect() missing username, obj: "
+                Log.e(getName(), "GarminSynchronizer::connect() missing username, obj: "
                         + obj.toString() + ", code: " + responseCode + ", msg: " + amsg);
             }
             Status s = Status.NEED_AUTH;
@@ -298,7 +300,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         start += "?ticket=".length();
         int end = html.indexOf("'", start);
         String ticket = html.substring(start, end);
-        System.err.println("ticket: " + ticket);
+        Log.e(getName(), "ticket: " + ticket);
 
         // connection 3...
         fv.clear();
@@ -309,7 +311,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         addCookies(conn);
         for (int i = 0;; i++) {
             int code = conn.getResponseCode();
-            System.err.println("attempt: " + i + " => code: " + code);
+            Log.e(getName(), "attempt: " + i + " => code: " + code);
             getCookies(conn);
             if (code == HttpStatus.SC_OK)
                 break;
@@ -361,6 +363,44 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
     }
 
+    private boolean setWorkoutType(Sport s, String garminID) throws Exception {
+        //TCX format supports only 3 sports by default. Otherwise "other" is
+        // choosen and we have to edit the workout to add the real sport after upload
+        if (s == Sport.RUNNING || s == Sport.BIKING || s == Sport.OTHER)
+            return true;
+
+        final String SET_TYPE_URL = "https://connect.garmin.com/proxy/activity-service-1.2/json/type/";
+        HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL + garminID).openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod(RequestMethod.POST.name());
+        addCookies(conn);
+
+        String value = "skating";
+
+        FormValues fv = new FormValues();
+        fv.put("value", value);
+
+        Log.e(getName(), "Setting sport activity to " + value + " for workout " + garminID);
+        SyncHelper.postData(conn, fv);
+
+        int responseCode = conn.getResponseCode();
+        String amsg = conn.getResponseMessage();
+        if (responseCode == HttpStatus.SC_OK) {
+            JSONObject reply = SyncHelper.parse(new BufferedReader(new InputStreamReader(
+            // if "activityType" not in res or res["activityType"]["key"] != acttype:
+            conn.getInputStream())));
+            conn.disconnect();
+            JSONObject result = reply.getJSONObject("detailedImportResult");
+            if (result.getJSONArray("successes").length() == 1) {
+                return true;
+            } else {
+                throw new Exception("Could not set Sport: " + reply.toString());
+            }
+        } else {
+            throw new Exception("Impossible to connect" + responseCode + amsg);
+        }
+    }
+
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
         Status s;
@@ -374,10 +414,12 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         try {
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer);
+
             conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
             addCookies(conn);
+
             Part<StringWritable> part2 = new Part<StringWritable>("data",
                     new StringWritable(writer.toString()));
             part2.setFilename("RunnerUp.tcx");
@@ -385,6 +427,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             Part<?> parts[] = {
                 part2
             };
+
             SyncHelper.postMulti(conn, parts);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
@@ -393,19 +436,21 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                         conn.getInputStream())));
                 conn.disconnect();
                 JSONObject result = reply.getJSONObject("detailedImportResult");
-                if (result.getJSONArray("successes").length() == 1) {
+                JSONArray successes = result.getJSONArray("successes");
+                if (successes.length() == 1) {
                     s = Status.OK;
                     s.activityId = mID;
+                    String garminID = successes.getJSONObject(0).getString("internalId");
+                    setWorkoutType(Sport.ORIENTEERING, garminID);
                     return s;
                 } else {
-                    ex = new Exception("Unexpected reply: " + reply.toString());
+                    JSONArray failures = result.getJSONArray("failures");
+                    ex = new Exception("Unexpected reply: " + (failures.length()>0?failures.toString():result.toString()));
                 }
             } else {
                 ex = new Exception(amsg);
             }
-        } catch (IOException e) {
-            ex = e;
-        } catch (JSONException e) {
+        } catch (Exception e) {
             ex = e;
         }
 
@@ -498,7 +543,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                 cnt += buf.length;
                 out.write(buf);
             }
-            System.err.println("downloaded workout key: " + key + " " + cnt + " bytes from "
+            Log.e(getName(), "downloaded workout key: " + key + " " + cnt + " bytes from "
                     + getName());
             in.close();
             out.close();
