@@ -23,9 +23,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
 import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.GPX;
@@ -70,6 +76,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
     private static final String SYNC_COMPLETE_URL = BASE_URL
             + "/v2.0/me/sync/complete?access_token=%s";
 
+    private static final String UPLOAD_URL = BASE_URL + "/v1/me/sport/activities?access_token=%s";
     private static final String USER_AGENT = "NPConnect";
 
     private static final String PROFILE_URL = BASE_URL + "/v1.0/me/profile?access_token=%s";
@@ -239,68 +246,69 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        NikeXML nikeXML = new NikeXML(db);
-        GPX nikeGPX = new GPX(db);
-        HttpURLConnection conn = null;
         Exception ex = null;
+        HttpURLConnection conn = null;
         try {
-            StringWriter xml = new StringWriter();
-            nikeXML.export(mID, xml);
-
-            StringWriter gpx = new StringWriter();
-            nikeGPX.export(mID, gpx);
-
-            String url = String.format(SYNC_URL, access_token);
-            conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod(RequestMethod.POST.name());
-            conn.addRequestProperty("user-agent", USER_AGENT);
-            conn.addRequestProperty("appid", APP_ID);
-            Part<StringWritable> part1 = new Part<StringWritable>("runXML",
-                    new StringWritable(xml.toString()));
-            part1.setFilename("runXML.xml");
-            part1.setContentType("text/plain; charset=US-ASCII");
-            part1.setContentTransferEncoding("8bit");
-
-            Part<StringWritable> part2 = new Part<StringWritable>("gpxXML",
-                    new StringWritable(gpx.toString()));
-            part2.setFilename("gpxXML.xml");
-            part2.setContentType("text/plain; charset=US-ASCII");
-            part2.setContentTransferEncoding("8bit");
-
-            Part<?> parts[] = {
-                    part1, part2
-            };
-            SyncHelper.postMulti(conn, parts);
-            int responseCode = conn.getResponseCode();
-            String amsg = conn.getResponseMessage();
-            conn.connect();
-
-            if (responseCode != HttpStatus.SC_OK) {
-                throw new Exception(amsg);
+            JSONObject data = new JSONObject();
+            data.put("activityType", "CYCLE");
+            data.put("deviceName", "Runner Up");
+            data.put("deviceType", "WATCH");
+            data.put("startTime", 100000);
+            data.put("duration", 1000*60*4);
+            data.put("timeZoneName", "Etc/GMT+1");
+            JSONObject metrics = new JSONObject();
+            metrics.put("intervalUnit", "sec");
+            metrics.put("intervalValue", 10);
+            JSONArray metricsTypes = new JSONArray();
+            metricsTypes.put("latitude"); //degrees
+            metricsTypes.put("longitude"); //degrees
+            metricsTypes.put("elevation"); //meters
+            metricsTypes.put("distance"); //kilometers
+            metricsTypes.put("speed");//meters/sec
+            metrics.put("metricsTypes", metricsTypes);
+            JSONArray metricsData = new JSONArray();
+            for (int i = 0; i < 500; i++) {
+                JSONArray metricsDataPoint = new JSONArray();
+                metricsDataPoint.put(55.8576650);
+                metricsDataPoint.put(-3.1920980);
+                metricsDataPoint.put(0.0);
+                metricsDataPoint.put(0.0186985);
+                metricsDataPoint.put(10);
+                metricsData.put(metricsDataPoint);
             }
+            metrics.put("data", metricsData);
+            data.put("metrics", metrics);
 
-            url = String.format(SYNC_COMPLETE_URL, access_token);
-            conn = (HttpURLConnection) new URL(url).openConnection();
+            conn = (HttpURLConnection) new URL(String.format(UPLOAD_URL, access_token)).openConnection();
             conn.setDoOutput(true);
+            conn.setDoInput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
-            conn.addRequestProperty("user-agent", USER_AGENT);
-            conn.addRequestProperty("appid", APP_ID);
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            addCookies(conn);
 
-            responseCode = conn.getResponseCode();
-            amsg = conn.getResponseMessage();
-            conn.disconnect();
-            if (responseCode == HttpStatus.SC_OK) {
+            OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+            out.write(data.toString().getBytes("UTF-8"));
+            out.flush();
+            out.close();
+
+            if (conn.getResponseCode() == HttpStatus.SC_OK) {
                 s = Status.OK;
                 s.activityId = mID;
+
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                JSONObject ret = SyncHelper.parse(in);
+                conn.disconnect();
+
                 return s;
             }
-
+            String amsg = "Error " + conn.getResponseCode() + ":" +  conn.getResponseMessage();
             ex = new Exception(amsg);
         } catch (Exception e) {
             ex = e;
         }
 
+        if (conn != null)
+            conn.disconnect();
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
