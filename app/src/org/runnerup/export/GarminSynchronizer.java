@@ -47,6 +47,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -62,6 +63,8 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     public static final String UPLOAD_URL = "https://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
     public static final String LIST_WORKOUTS_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
     public static final String GET_WORKOUT_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
+    public static final String CALENDAR_URL = "https://connect.garmin.com/proxy/calendar-service/year/%1$tY/month/%2$d/day/%1te/start/1";
+    public static final String SCHEDULE_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule?workoutScheduleId=";
 
     long id = 0;
     private String username = null;
@@ -432,15 +435,83 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return false;
     }
 
+    private String getWorkoutIdFromSchedule(String scheduleid) throws IOException {
+        HttpURLConnection conn;
+
+        conn = (HttpURLConnection) new URL(SCHEDULE_URL + scheduleid).openConnection();
+        conn.setRequestMethod(RequestMethod.GET.name());
+        addCookies(conn);
+        conn.connect();
+        getCookies(conn);
+        InputStream in = new BufferedInputStream(conn.getInputStream());
+        try {
+            JSONObject obj = SyncHelper.parse(in);
+            conn.disconnect();
+            int responseCode = conn.getResponseCode();
+            //String amsg = conn.getResponseMessage();
+            if (responseCode == HttpStatus.SC_OK) {
+                obj = obj.getJSONObject("com.garmin.connect.workout.dto.WorkoutScheduleDto");
+                return obj.getString("workoutId");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @Override
     public Status listWorkouts(List<Pair<String, String>> list) {
         Status s;
         if ((s = connect()) != Status.OK) {
             return s;
         }
-
+        // s = Status.OK
         HttpURLConnection conn = null;
-        Exception ex = null;
+
+        try {
+
+            Calendar today = Calendar.getInstance();
+            int month = today.get(Calendar.MONTH); //jan = 0
+            String str_today = String.format("%1$tY-%1$tm-%1td", today);
+            String workout_url = String.format(CALENDAR_URL, today, month);
+
+            conn = (HttpURLConnection) new URL(workout_url).openConnection();
+            conn.setRequestMethod(RequestMethod.GET.name());
+            addCookies(conn);
+            conn.connect();
+            getCookies(conn);
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            JSONObject obj = SyncHelper.parse(in);
+            conn.disconnect();
+            int responseCode = conn.getResponseCode();
+            String amsg = conn.getResponseMessage();
+            if (responseCode == HttpStatus.SC_OK) {
+                JSONArray arr = obj.getJSONArray("calendarItems");
+                for (int i = 0; ; i++) {
+                    obj = arr.optJSONObject(i);
+                    if (obj == null)
+                        break;
+                    else if (!obj.getString("itemType").equals("workout"))
+                        continue;
+                    String title = obj.getString("title");
+                    if (obj.optString("date").equals(str_today)) {
+                        title = '*' + title; //mark workout scheduled for today
+                    }
+                    list.add(new Pair<String, String>(getWorkoutIdFromSchedule(obj.getString("id")),
+                            title + ".json"));
+                }
+            } else {
+                s = Synchronizer.Status.ERROR;
+                s.ex = new Exception(amsg);
+            }
+        } catch (IOException e) {
+            s = Synchronizer.Status.ERROR;
+            s.ex = e;
+        } catch (JSONException e) {
+            s = Synchronizer.Status.ERROR;
+            s.ex = e;
+        }
+
         try {
             conn = (HttpURLConnection) new URL(LIST_WORKOUTS_URL).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());
@@ -462,19 +533,20 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     list.add(new Pair<String, String>(obj.getString("workoutId"), obj
                             .getString("workoutName") + ".json"));
                 }
-                return Status.OK;
+            } else {
+                s = Synchronizer.Status.ERROR;
+                s.ex = new Exception(amsg);
             }
-            ex = new Exception(amsg);
         } catch (IOException e) {
-            ex = e;
+            s = Synchronizer.Status.ERROR;
+            s.ex = e;
         } catch (JSONException e) {
-            ex = e;
+            s = Synchronizer.Status.ERROR;
+            s.ex = e;
         }
 
-        s = Synchronizer.Status.ERROR;
-        s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
+        if (s != Status.OK) {
+            s.ex.printStackTrace();
         }
         return s;
     }
