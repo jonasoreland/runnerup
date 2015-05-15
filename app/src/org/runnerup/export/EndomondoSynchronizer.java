@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
@@ -205,7 +206,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                 authToken = res.getString("authToken");
                 return Status.OK;
             }
-            System.err.println("FAIL: code: " + responseCode + ", msg=" + amsg + ", res="
+            Log.e(getName(), "FAIL: code: " + responseCode + ", msg=" + amsg + ", res="
                     + res.toString());
             return s;
         } catch (MalformedURLException e) {
@@ -259,7 +260,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             tcx.export(mID, writer, summary);
 
             String workoutId = deviceId + "-" + Long.toString(mID);
-            System.err.println("workoutId: " + workoutId);
+            Log.e(getName(), "workoutId: " + workoutId);
 
             StringBuilder url = new StringBuilder();
             url.append(UPLOAD_URL).append("?authToken=").append(authToken);
@@ -287,7 +288,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             JSONObject res = parseKVP(in);
             conn.disconnect();
 
-            System.err.println("res: " + res.toString());
+            Log.e(getName(), "res: " + res.toString());
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();

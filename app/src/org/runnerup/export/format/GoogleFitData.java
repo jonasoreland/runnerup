@@ -20,6 +20,7 @@ package org.runnerup.export.format;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.util.Pair;
 
 import org.runnerup.R;
@@ -186,7 +187,7 @@ public class GoogleFitData {
             w.name("application");
             addApplicationObject(w);
             w.endObject();
-            System.out.println("Creating new dataSource: " + type.getDataStreamId(this));
+            Log.i(getClass().getName(), "Creating new dataSource: " + type.getDataStreamId(this));
         } catch (IOException e) {
             e.printStackTrace();
         }

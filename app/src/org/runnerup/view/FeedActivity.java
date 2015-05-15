@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -403,7 +404,7 @@ public class FeedActivity extends Activity implements Constants {
                     }
                     return d;
                 } catch (Exception e) {
-                    System.err.println("url: " + url);
+                    Log.e(getClass().getName(), "url: " + url);
                     e.printStackTrace();
                 }
                 return null;

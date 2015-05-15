@@ -30,6 +30,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -135,7 +136,7 @@ public class RunActivity extends Activity implements TickListener {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        System.err.println("onConfigurationChange => do NOTHING!!");
+        Log.e(getClass().getName(), "onConfigurationChange => do NOTHING!!");
     }
 
     @Override

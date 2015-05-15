@@ -194,7 +194,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 String amsg = conn.getResponseMessage();
                 getCookies(conn);
                 getFormValues(conn);
-                System.out.println("FunBeat.START_URL => code: " + responseCode + "(" + amsg
+                Log.i(getName(), "FunBeat.START_URL => code: " + responseCode + "(" + amsg
                         + "), cookies: " + cookies.size() + ", values: " + formValues.size());
             }
             conn.disconnect();
@@ -244,7 +244,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     amsg = conn.getResponseMessage();
                     getCookies(conn);
                 } else if (responseCode != HttpStatus.SC_OK) {
-                    System.err.println("FunBeatSynchronizer::connect() - got " + responseCode
+                    Log.e(getName(), "FunBeatSynchronizer::connect() - got " + responseCode
                             + ", msg: " + amsg);
                 }
                 String html = getFormValues(conn);
@@ -400,7 +400,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 amsg = conn.getResponseMessage();
                 getCookies(conn);
             } else if (responseCode != HttpStatus.SC_OK) {
-                System.err.println("FunBeatSynchronizer::upload() - got " + responseCode + ", msg: "
+                Log.e(getName(), "FunBeatSynchronizer::upload() - got " + responseCode + ", msg: "
                         + amsg);
             }
             getFormValues(conn);
@@ -448,7 +448,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 }
                 String html = getFormValues(conn);
                 boolean ok = html.indexOf("r klar") > 0;
-                System.err.println("ok: " + ok);
+                Log.e(getName(), "ok: " + ok);
 
                 conn.disconnect();
                 if (ok) {

@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -158,7 +159,7 @@ public class HRZonesActivity extends Activity implements Constants {
                 EditText hi = zones.get(2 * zone + 1);
                 lo.setText(Integer.toString(values.first));
                 hi.setText(Integer.toString(values.second));
-                System.err.println("loaded " + (zone + 1) + " " + values.first + "-"
+                Log.e(getClass().getName(), "loaded " + (zone + 1) + " " + values.first + "-"
                         + values.second);
             }
         }
@@ -210,7 +211,7 @@ public class HRZonesActivity extends Activity implements Constants {
                 System.err.print(" " + vals.lastElement());
             }
             vals.add(Integer.valueOf(zones.lastElement().getText().toString()));
-            System.err.println(" " + vals.lastElement());
+            Log.e(getClass().getName(), " " + vals.lastElement());
             hrZones.save(vals);
         } catch (Exception ex) {
         }

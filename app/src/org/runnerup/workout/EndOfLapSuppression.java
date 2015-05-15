@@ -17,6 +17,8 @@
 
 package org.runnerup.workout;
 
+import android.util.Log;
+
 /**
  * This suppression is for suppressing interval (distance) triggers really close
  * too end of lap (currently 5 meters)
@@ -101,7 +103,7 @@ public class EndOfLapSuppression extends TriggerSuppression {
             if (Math.abs(distance - lapDuration) > lapDistanceLimit)
                 return false;
 
-            System.err.println("suppressing trigger! distance: " + distance + ", lapDistance: "
+            Log.e(getClass().getName(), "suppressing trigger! distance: " + distance + ", lapDistance: "
                     + lapDuration);
 
             return true;

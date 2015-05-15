@@ -23,6 +23,7 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.util.Log;
 import android.widget.TextView;
 
 import org.runnerup.util.Formatter;
@@ -71,11 +72,11 @@ public class RUTextToSpeech {
                 case TextToSpeech.LANG_COUNTRY_AVAILABLE:
                 case TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE:
                     res = tts.setLanguage(locale);
-                    System.err.println("setLanguage("+locale.getDisplayLanguage()+") => " + res);
+                    Log.e(getClass().getName(), "setLanguage(" + locale.getDisplayLanguage() + ") => " + res);
                     break;
                 case TextToSpeech.LANG_MISSING_DATA:
                 case TextToSpeech.LANG_NOT_SUPPORTED:
-                    System.err.println("setLanguage("+locale.getDisplayLanguage()+") => MISSING: " + res);
+                    Log.e(getClass().getName(), "setLanguage("+locale.getDisplayLanguage()+") => MISSING: " + res);
                     break;
             }
         }
@@ -98,7 +99,7 @@ public class RUTextToSpeech {
 
         if (queueMode == TextToSpeech.QUEUE_FLUSH) {
             if (trace) {
-                System.err.println("speak (mute: " + mute + "): " + text);
+                Log.e(getClass().getName(), "speak (mute: " + mute + "): " + text);
             }
             // speak directly
             if (mute) {
@@ -109,13 +110,13 @@ public class RUTextToSpeech {
         } else {
             if (!cueSet.contains(text)) {
                 if (trace) {
-                    System.err.println("buffer speak: " + text);
+                    Log.e(getClass().getName(), "buffer speak: " + text);
                 }
                 cueSet.add(text);
                 cueList.add(new Entry(text, params));
             } else {
                 if (trace) {
-                    System.err.println("skip buffer (duplicate) speak: " + text);
+                    Log.e(getClass().getName(), "skip buffer (duplicate) speak: " + text);
                 }
             }
             return 0;
@@ -125,7 +126,7 @@ public class RUTextToSpeech {
     /**
      * Requests audio focus before speaking, if no focus is given nothing is
      * said.
-     * 
+     *
      * @param text
      * @param queueMode
      * @param params
@@ -150,7 +151,7 @@ public class RUTextToSpeech {
             }
             return res;
         }
-        System.err.println("Could not get audio focus.");
+        Log.e(getClass().getName(), "Could not get audio focus.");
         return TextToSpeech.ERROR;
     }
 
@@ -188,7 +189,7 @@ public class RUTextToSpeech {
                 params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
                 int res = textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, params);
                 if (res == TextToSpeech.ERROR) {
-                    System.err.println("res == ERROR emit() text: " + e.text + ", utId: " + utId
+                    Log.e(getClass().getName(), "res == ERROR emit() text: " + e.text + ", utId: " + utId
                             + ") outstanding.size(): " + outstanding.size());
                     outstanding.remove(utId);
                 }

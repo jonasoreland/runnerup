@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Base64;
+import android.util.Log;
 import android.util.Xml;
 
 import org.json.JSONException;
@@ -176,7 +177,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
                     "ResponseStatus", "ResponseCode"
             };
             final Node e = navigate(doc, path);
-            System.err.println("reply: " + e.getTextContent());
+            Log.e(getName(), "reply: " + e.getTextContent());
             if (e != null && e.getTextContent() != null
                     && LOGIN_OK.contentEquals(e.getTextContent())) {
                 isConnected = true;
@@ -296,7 +297,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
                     "ResponseCode"
             };
             final Node e = navigate(doc, path);
-            System.err.println("reply: " + e.getTextContent());
+            Log.e(getName(), "reply: " + e.getTextContent());
             if (e != null && e.getTextContent() != null
                     && "OK".contentEquals(e.getTextContent())) {
                 s = Status.OK;

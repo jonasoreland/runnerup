@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -161,7 +162,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     }
 
     private String getFilename(Uri data) {
-        System.out.println("scheme: " + data.toString());
+        Log.i(getClass().getName(), "scheme: " + data.toString());
         String name = null;
         if (ContentResolver.SCHEME_FILE.contentEquals(data.getScheme())) {
             name = data.getLastPathSegment();
@@ -728,7 +729,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         final Callback onSynchronizerConfiguredCallback = new Callback() {
             @Override
             public void run(String synchronizerName, Status status) {
-                System.out.println("status: " + status);
+                Log.i(getClass().getName(), "status: " + status);
                 if (status != Synchronizer.Status.OK) {
                     uploading = false;
                     return;

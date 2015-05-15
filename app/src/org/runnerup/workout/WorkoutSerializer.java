@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.Pair;
 
 import org.json.JSONArray;
@@ -461,7 +462,7 @@ public class WorkoutSerializer {
             JSONException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         File fin = getFile(ctx, name);
-        System.err.println("reading " + fin.getPath());
+        Log.e("WorkoutSerializer", "reading " + fin.getPath());
         final boolean convertRestToRecovery = prefs.getBoolean(ctx.getResources().getString(
                 R.string.pref_convert_advanced_distance_rest_to_recovery), false);
 
@@ -471,7 +472,7 @@ public class WorkoutSerializer {
     public static void writeFile(Context ctx, String name, Workout workout) throws IOException,
             JSONException {
         File fout = getFile(ctx, name);
-        System.err.println("writing " + fout.getPath());
+        Log.e("WorkoutSerializer", "writing " + fout.getPath());
         writeJSON(new FileWriter(fout), workout);
     }
 

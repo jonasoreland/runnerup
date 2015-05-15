@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -242,9 +243,9 @@ public class HRSettingsActivity extends Activity implements HRClient {
         btName = prefs.getString(res.getString(R.string.pref_bt_name), null);
         btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
         btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
-        System.err.println("btName: " + btName);
-        System.err.println("btAddress: " + btAddress);
-        System.err.println("btProviderName: " + btProviderName);
+        Log.e(getClass().getName(), "btName: " + btName);
+        Log.e(getClass().getName(), "btAddress: " + btAddress);
+        Log.e(getClass().getName(), "btProviderName: " + btProviderName);
 
         if (btProviderName != null) {
             log("HRManager.get(" + btProviderName + ")");

@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.util.Log;
 
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
@@ -59,10 +60,10 @@ import java.util.List;
 
 /**
  * GpsTracker - this class tracks Location updates
- * 
+ *
  * TODO: rename this class into ActivityTracker and factor out Gps stuff into own class
  *       that should be handled much like hrm (e.g as a sensor among others)
- * 
+ *
  * @author jonas.oreland@gmail.com
  */
 
@@ -206,7 +207,7 @@ public class Tracker extends android.app.Service implements
                 state.set(TrackerState.INITIALIZED);
             }
 
-            System.err.println("state.set(" + getState() + ")");
+            Log.e(getClass().getName(), "state.set(" + getState() + ")");
             handleNextState();
         }
     };
@@ -253,14 +254,14 @@ public class Tracker extends android.app.Service implements
     }
 
     public void connect() {
-        System.err.println("Tracker.connect() - state: " + state.get());
+        Log.e(getClass().getName(), "Tracker.connect() - state: " + state.get());
         switch (state.get()) {
             case INIT:
                 setup();
             case INITIALIZING:
             case CLEANUP:
                 nextState = TrackerState.CONNECTED;
-                System.err.println(" => nextState: " + nextState);
+                Log.e(getClass().getName(), " => nextState: " + nextState);
                 return;
             case INITIALIZED:
                 break;
@@ -330,7 +331,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public void start() {
-        System.err.println("Tracker.start() state: " + state.get());
+//        Log.e(getClass().getName(), "Tracker.start() state: " + state.get());
         assert (state.get() == TrackerState.CONNECTED);
 
         // connect workout and tracker
@@ -636,7 +637,7 @@ public class Tracker extends android.app.Service implements
                 mBug23937Delta = 0;
             }
             mBug23937Checked = true;
-            System.err.println("Bug23937: gpsTime: " + gpsTime + " utcTime: " + utcTime
+            Log.e(getClass().getName(), "Bug23937: gpsTime: " + gpsTime + " utcTime: " + utcTime
                     + " (diff: " + Math.abs(gpsTime - utcTime) + ") => delta: " + mBug23937Delta);
         }
         if (mBug23937Delta != 0) {
@@ -651,10 +652,10 @@ public class Tracker extends android.app.Service implements
                 double distDiff = arg0.distanceTo(mActivityLastLocation);
                 if (timeDiff < 0) {
                     // time moved backward ??
-                    System.err.println("lastTime:       " + mActivityLastLocation.getTime());
-                    System.err.println("arg0.getTime(): " + arg0.getTime());
-                    System.err.println(" => delta time: " + timeDiff);
-                    System.err.println(" => delta dist: " + distDiff);
+                    Log.e(getClass().getName(), "lastTime:       " + mActivityLastLocation.getTime());
+                    Log.e(getClass().getName(), "arg0.getTime(): " + arg0.getTime());
+                    Log.e(getClass().getName(), " => delta time: " + timeDiff);
+                    Log.e(getClass().getName(), " => delta dist: " + distDiff);
                     // TODO investigate if this is known...only seems to happen
                     // in emulator
                     timeDiff = 0;

@@ -212,7 +212,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                     md5pass = pass;
                     return Synchronizer.Status.OK;
                 } catch (JSONException e) {
-                    System.err.println("obj: " + obj);
+                    Log.e(getName(), "obj: " + obj);
                     throw e;
                 }
             }

@@ -23,6 +23,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -214,7 +215,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
             out.close();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            System.err.println("code: " + responseCode + ", amsg: " + amsg);
+            Log.e(getName(), "code: " + responseCode + ", amsg: " + amsg);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             JSONObject obj = SyncHelper.parse(in);
@@ -234,7 +235,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
                 }
             }
             if (!found) {
-                System.err.println("Unhandled response from RunningAHEADSynchronizer: " + obj);
+                Log.e(getName(), "Unhandled response from RunningAHEADSynchronizer: " + obj);
             }
             if (responseCode == HttpStatus.SC_OK && found) {
                 conn.disconnect();
