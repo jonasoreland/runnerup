@@ -49,7 +49,9 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GarminSynchronizer extends DefaultSynchronizer {
@@ -64,6 +66,15 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     public static final String UPLOAD_URL = "https://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
     public static final String LIST_WORKOUTS_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
     public static final String GET_WORKOUT_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
+    public static final String SET_TYPE_URL = "https://connect.garmin.com/proxy/activity-service-1.2/json/type/";
+
+    //TCX format supports only 2 sports by default (Running / Biking);
+    // Otherwise "other" is chosen and we have to edit the workout to add the real sport
+    //list of sports ID can be found on Garmin website when editing an activity:
+    public static final Map<Sport, String> sport2garminMap = new HashMap<Sport, String>();
+    static {
+        sport2garminMap.put(Sport.WALKING, "walking");
+    }
 
     long id = 0;
     private String username = null;
@@ -363,19 +374,24 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    private boolean setWorkoutType(Sport s, String garminID) throws Exception {
-        //TCX format supports only 3 sports by default. Otherwise "other" is
-        // choosen and we have to edit the workout to add the real sport after upload
-        if (s == Sport.RUNNING || s == Sport.BIKING || s == Sport.OTHER)
-            return true;
+    private void setWorkoutType(Sport s, String garminID) throws Exception {
+        if (s == Sport.RUNNING || s == Sport.BIKING || s == Sport.OTHER) {
+            //nothing to do
+            return;
+        }
 
-        final String SET_TYPE_URL = "https://connect.garmin.com/proxy/activity-service-1.2/json/type/";
-        HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL + garminID).openConnection();
+        String value = sport2garminMap.get(s);
+        //only change workout type if sport is supported by Garmin..
+        if (value == null) {
+            Log.w(getName(), "Workout of type " + Sport.valueOf(s.getDbValue()) + " not supported by Garmin");
+            return;
+        }
+
+        HttpURLConnection conn = (HttpURLConnection) new URL(SET_TYPE_URL + garminID).openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod(RequestMethod.POST.name());
         addCookies(conn);
 
-        String value = "skating";
 
         FormValues fv = new FormValues();
         fv.put("value", value);
@@ -390,12 +406,6 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             // if "activityType" not in res or res["activityType"]["key"] != acttype:
             conn.getInputStream())));
             conn.disconnect();
-            JSONObject result = reply.getJSONObject("detailedImportResult");
-            if (result.getJSONArray("successes").length() == 1) {
-                return true;
-            } else {
-                throw new Exception("Could not set Sport: " + reply.toString());
-            }
         } else {
             throw new Exception("Impossible to connect" + responseCode + amsg);
         }
@@ -441,7 +451,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     s = Status.OK;
                     s.activityId = mID;
                     String garminID = successes.getJSONObject(0).getString("internalId");
-                    setWorkoutType(Sport.ORIENTEERING, garminID);
+                    setWorkoutType(tcx.getSport(), garminID);
                     return s;
                 } else {
                     JSONArray failures = result.getJSONArray("failures");

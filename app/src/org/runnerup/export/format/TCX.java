@@ -53,6 +53,7 @@ public class TCX {
     XmlSerializer mXML = null;
     String notes = null;
     SimpleDateFormat simpleDateFormat = null;
+    Sport sport = null;
 
     private boolean addGratuitousTrack = false;
 
@@ -79,7 +80,6 @@ public class TCX {
      */
     public Pair<String,Sport> exportWithSport(long activityId, Writer writer) throws IOException {
 
-        Sport sport = null;
         String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
                 DB.ACTIVITY.START_TIME, DB.ACTIVITY.SPORT
@@ -104,13 +104,12 @@ public class TCX {
                 mXML.attribute("", "Sport", "Running");
             } else {
                 // TCX supports only these 3 sports...(cf http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
-                switch (cursor.getInt(3)) {
+                sport = Sport.valueOf(cursor.getInt(3));
+                switch (sport.getDbValue()) {
                     case DB.ACTIVITY.SPORT_RUNNING:
-                        sport = Sport.RUNNING;
                         mXML.attribute("", "Sport", "Running");
                         break;
                     case DB.ACTIVITY.SPORT_BIKING:
-                        sport = Sport.BIKING;
                         mXML.attribute("", "Sport", "Biking");
                         break;
                     default:
@@ -294,6 +293,10 @@ public class TCX {
 
     public String getNotes() {
         return notes;
+    }
+
+    public Sport getSport() {
+        return sport;
     }
 
     public void setAddGratuitousTrack(boolean addGratuitousTrack) {
