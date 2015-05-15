@@ -334,7 +334,7 @@ public class UploadActivity extends ListActivity implements Constants {
                     tv.setText(getResources().getText(R.string.Running));
                 } else {
                     int sport = Sport.valueOf(ai.getSport()).getDbValue();
-                    tv.setText(Sport.textOf(getResources(), sport));
+                    tv.setText(Sport.textOf(getApplicationContext(), sport));
                 }
             }
 

@@ -43,13 +43,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -318,6 +321,16 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     @Override
     public void onResume() {
         super.onResume();
+        //tmp code: reload sports in case of experimental sports support settings change
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (prefs.getBoolean(getString(R.string.pref_experimental_features), false)) {
+            TitleSpinner basic_sport = (TitleSpinner) findViewById(R.id.basic_sport);
+            TitleSpinner manual_sport = (TitleSpinner) findViewById(R.id.manual_sport);
+            SpinnerAdapter sportsAdapter = ArrayAdapter.createFromResource(this,
+                    R.array.sportEntriesExperimental, android.R.layout.simple_spinner_item);
+            basic_sport.setAdapter(sportsAdapter);
+            manual_sport.setAdapter(sportsAdapter);
+        }
         simpleAudioListAdapter.reload();
         intervalAudioListAdapter.reload();
         advancedAudioListAdapter.reload();

@@ -17,8 +17,11 @@
 
 package org.runnerup.workout;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.preference.PreferenceManager;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -42,8 +45,13 @@ public enum Sport {
         return dbValue;
     }
 
-    static public final String textOf(Resources res, int dbValue) {
-        String sports[] = res.getStringArray(R.array.sportEntries);
+    static public final String textOf(Context ctx, int dbValue) {
+        Resources res = ctx.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean experimental = prefs
+            .getBoolean(res.getString(R.string.pref_experimental_features), false);
+
+        String sports[] = res.getStringArray(experimental ? R.array.sportEntriesExperimental : R.array.sportEntries);
         if (0 <= dbValue && dbValue < sports.length) {
             return sports[dbValue];
         }

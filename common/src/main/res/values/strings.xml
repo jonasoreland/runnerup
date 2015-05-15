@@ -46,6 +46,7 @@
   <string name="repeat">repeat</string>
   <string name="time">time</string>
   <string name="distance">distance</string>
+  <string name="Unknown">Unknown</string>
   <string name="Distance">Distance</string>
   <string name="speed">speed</string>
   <string name="pace">pace</string>
@@ -203,6 +204,7 @@
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
+  <string name="Experimental_features">Experimental features</string>
   <string name="Mock_HRM_devices">Mock HRM devices</string>
   <string name="About">About</string>
   <string name="About_RunnerUp">About RunnerUp</string>
