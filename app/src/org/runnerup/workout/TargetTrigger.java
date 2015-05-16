@@ -139,11 +139,16 @@ public class TargetTrigger extends Trigger {
         if (cntMeasures == lastValCnt)
             return lastVal;
 
-        System.arraycopy(measure, 0, sort_measure, 0, measure.length);
-        java.util.Arrays.sort(sort_measure);
+        //not all values in the measure array are meaningful when
+        //cntMeasures is small so we adjust for it.
+        int meaningful_length = Math.min(cntMeasures,measure.length);
+        //should the percentage of values skipped be a variable of the class?
+        int meaningful_skip_values = (5*meaningful_length)/100;
+        System.arraycopy(measure, 0, sort_measure, 0, meaningful_length);
+        java.util.Arrays.sort(sort_measure,0,meaningful_length);
         double cnt = 0;
         double val = 0;
-        for (int i = skip_values; i < sort_measure.length - skip_values; i++) {
+        for (int i = meaningful_skip_values; i < meaningful_length - meaningful_skip_values; i++) {
             val += sort_measure[i];
             cnt++;
         }
