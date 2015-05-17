@@ -583,12 +583,13 @@ public class SyncManager {
         callback.run(synchronizer.getName(), Synchronizer.Status.OK);
     }
 
-    public void clearUploads(Callback callback, String synchronizer) {
+    public void clearUploadsByName(Callback callback, String synchronizerName) {
+        Synchronizer synchronizer = synchronizers.get(synchronizerName);
         final String args[] = {
-            synchronizer
+                Long.toString(synchronizer.getId())
         };
         mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
-        callback.run(synchronizer, Synchronizer.Status.OK);
+        callback.run(synchronizerName, Synchronizer.Status.OK);
     }
 
     public void clearUpload(String name, long id) {

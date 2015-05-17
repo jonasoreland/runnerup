@@ -258,8 +258,7 @@ public class AccountActivity extends Activity implements Constants {
             builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            String id = String.valueOf(syncManager.getSynchronizerByName(synchronizer).getId());
-                            syncManager.clearUploads(callback, id);
+                            syncManager.clearUploadsByName(callback, synchronizer);
                         }
                     });
 
