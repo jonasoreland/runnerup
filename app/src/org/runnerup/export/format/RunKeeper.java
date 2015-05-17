@@ -89,12 +89,7 @@ public class RunKeeper {
                 exportHeartRate(activityId, startTime, w);
                 w.endArray();
             }
-            if (ae.getLocationPoints().size() > 0) {
-                w.name("path");
-                w.beginArray();
-                exportPath(activityId, startTime, w);
-                w.endArray();
-            }
+            exportPath("path", activityId, startTime, w);
             w.name("post_to_facebook").value(false);
             w.name("post_to_twitter").value(false);
             w.endObject();
@@ -127,7 +122,7 @@ public class RunKeeper {
         cursor.close();
     }
 
-    private void exportPath(long activityId, long startTime, JsonWriter w)
+    private void exportPath(String name, long activityId, long startTime, JsonWriter w)
             throws IOException {
         String[] pColumns = {
                 DB.LOCATION.TIME, DB.LOCATION.LATITUDE,
@@ -137,6 +132,8 @@ public class RunKeeper {
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
                 null);
         if (cursor.moveToFirst()) {
+            w.name(name);
+            w.beginArray();
             startTime = cursor.getLong(0);
             do {
                 w.beginObject();
@@ -162,6 +159,7 @@ public class RunKeeper {
                 }
                 w.endObject();
             } while (cursor.moveToNext());
+            w.endArray();
         }
         cursor.close();
     }
