@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -209,7 +210,7 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     private void setTrackerState(TrackerState val) {
-        Log.e(getName(), "setTrackerState("+val+")");
+        Log.e(getName(), "setTrackerState(" + val + ")");
         Bundle b = new Bundle();
         b.putInt(Wear.TrackerState.STATE, val.getValue());
         setData(Wear.Path.TRACKER_STATE, b);
