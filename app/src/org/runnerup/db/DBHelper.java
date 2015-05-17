@@ -26,6 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -177,7 +178,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     @Override
     public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
-        System.err.println("onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+        Log.e(getClass().getName(), "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 
         if (newVersion < oldVersion) {
             throw new java.lang.UnsupportedOperationException(
@@ -242,7 +243,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     private static void echoDo(SQLiteDatabase arg0, String str) {
-        System.err.println("execSQL(" + str + ")");
+        Log.e("DBHelper", "execSQL(" + str + ")");
         arg0.execSQL(str);
     }
 
@@ -476,7 +477,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             arg0.insert(DB.ACCOUNT.TABLE, null, arg1);
         else {
             arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-            System.err.println("update: " + arg1);
+            Log.e(getClass().getName(), "update: " + arg1);
         }
         c.close();
         c = null;
@@ -506,7 +507,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static void deleteActivity(SQLiteDatabase db, long id) {
-        System.err.println("deleting activity: " + id);
+        Log.e("DBHelper", "deleting activity: " + id);
         String args[] = {
                 Long.toString(id)
         };

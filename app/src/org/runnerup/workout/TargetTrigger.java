@@ -19,6 +19,7 @@ package org.runnerup.workout;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TargetTrigger extends Trigger {
@@ -82,13 +83,13 @@ public class TargetTrigger extends Trigger {
         double time_now = w.get(Scope.STEP, Dimension.TIME);
 
         if (time_now < lastTimestamp) {
-            System.out.println("time_now < lastTimestamp");
+            Log.i(getClass().getName(), "time_now < lastTimestamp");
             reset();
             return false;
         }
 
         if (inited == false) {
-            System.out.println("inited == false");
+            Log.i(getClass().getName(), "inited == false");
             lastTimestamp = time_now;
             initMeasurement(w, time_now);
             inited = true;
@@ -107,16 +108,16 @@ public class TargetTrigger extends Trigger {
             for (int i = 0; i < elapsed_seconds; i++) {
                 addObservation(val_now);
             }
-            // System.err.println("val_now: " + val_now + " elapsed: " +
+            // Log.e(getName(), "val_now: " + val_now + " elapsed: " +
             // elapsed_seconds);
 
             if (graceCount > 0) { // only emit coaching ever so often
-            // System.err.println("graceCount: " + graceCount);
+            // Log.e(getName(), "graceCount: " + graceCount);
                 graceCount -= elapsed_seconds;
             } else {
                 double avg = getValue();
                 double cmp = range.compare(avg);
-                // System.err.println(" => avg: " + avg + " => cmp: " + cmp);
+                // Log.e(getName(), " => avg: " + avg + " => cmp: " + cmp);
                 if (cmp == 0) {
                     return false;
                 }
@@ -139,11 +140,16 @@ public class TargetTrigger extends Trigger {
         if (cntMeasures == lastValCnt)
             return lastVal;
 
-        System.arraycopy(measure, 0, sort_measure, 0, measure.length);
-        java.util.Arrays.sort(sort_measure);
+        //not all values in the measure array are meaningful when
+        //cntMeasures is small so we adjust for it.
+        int meaningful_length = Math.min(cntMeasures,measure.length);
+        //should the percentage of values skipped be a variable of the class?
+        int meaningful_skip_values = (5*meaningful_length)/100;
+        System.arraycopy(measure, 0, sort_measure, 0, meaningful_length);
+        java.util.Arrays.sort(sort_measure,0,meaningful_length);
         double cnt = 0;
         double val = 0;
-        for (int i = skip_values; i < sort_measure.length - skip_values; i++) {
+        for (int i = meaningful_skip_values; i < meaningful_length - meaningful_skip_values; i++) {
             val += sort_measure[i];
             cnt++;
         }

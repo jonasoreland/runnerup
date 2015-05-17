@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -175,7 +176,7 @@ public class TrackerWear extends DefaultTrackerComponent
                             public void onResult(DataItemBuffer dataItems) {
                                 for (DataItem dataItem : dataItems) {
                                     wearNode = dataItem.getUri().getHost();
-                                    System.err.println("getDataItem => wearNode:" + wearNode);
+                                    Log.e(getName(), "getDataItem => wearNode:" + wearNode);
                                 }
                                 dataItems.release();
                             }
@@ -209,7 +210,7 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     private void setTrackerState(TrackerState val) {
-        System.err.println("setTrackerState("+val+")");
+        Log.e(getName(), "setTrackerState(" + val + ")");
         Bundle b = new Bundle();
         b.putInt(Wear.TrackerState.STATE, val.getValue());
         setData(Wear.Path.TRACKER_STATE, b);
@@ -222,7 +223,7 @@ public class TrackerWear extends DefaultTrackerComponent
                     @Override
                     public void onResult(DataApi.DataItemResult dataItemResult) {
                         if (!dataItemResult.getStatus().isSuccess()) {
-                            System.err.println("TrackerWear: ERROR: failed to putDataItem, " +
+                            Log.e(getName(), "TrackerWear: ERROR: failed to putDataItem, " +
                                     "status code: " + dataItemResult.getStatus().getStatusCode());
                         }
                     }
@@ -370,7 +371,7 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void onMessageReceived(final MessageEvent messageEvent) {
-        System.err.println("onMessageReceived: " + messageEvent);
+        Log.e(getName(), "onMessageReceived: " + messageEvent);
         //note: skip state checking, do that in receiver instead
         if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
             sendLocalBroadcast(Intents.PAUSE_WORKOUT);
@@ -442,7 +443,7 @@ public class TrackerWear extends DefaultTrackerComponent
     @Override
     public void onDataChanged(final DataEventBuffer dataEvents) {
         for (DataEvent ev : dataEvents) {
-            System.err.println("onDataChanged: " + ev.getDataItem().getUri());
+            Log.e(getName(), "onDataChanged: " + ev.getDataItem().getUri());
             String path = ev.getDataItem().getUri().getPath();
             if (Constants.Wear.Path.WEAR_NODE_ID.contentEquals(path)) {
                 setWearNode(ev);

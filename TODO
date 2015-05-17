@@ -74,7 +74,12 @@
 - audio cues settings: step time/distance/pace     (DONE)
 - audio cues settings: activity/step/lap summaries (DONE)
 
-- fix (all?) uploaders to handle more sport types
+- fix uploaders to handle different sport types
+  digifit
+  map my run
+  runningahead
+  strava
+
 - add more downloaders (see web-services.txt for docs)
 - fix so that external ID is populated on upload (and checked on download)
 - unify code for unique-ing activities between feed and download

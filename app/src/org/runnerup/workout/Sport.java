@@ -17,27 +17,46 @@
 
 package org.runnerup.workout;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.preference.PreferenceManager;
+
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 
 public enum Sport {
-
-    RUNNING(DB.ACTIVITY.SPORT_RUNNING, R.string.Running),
-    BIKING(DB.ACTIVITY.SPORT_BIKING, R.string.Biking),
-    OTHER(DB.ACTIVITY.SPORT_OTHER, R.string.Other);
+    RUNNING(DB.ACTIVITY.SPORT_RUNNING)
+    , BIKING(DB.ACTIVITY.SPORT_BIKING)
+    , OTHER(DB.ACTIVITY.SPORT_OTHER)
+    , ORIENTEERING(DB.ACTIVITY.SPORT_ORIENTEERING)
+    , WALKING(DB.ACTIVITY.SPORT_WALKING)
+    ;
 
     final int dbValue;
-    final int textId;
 
-    Sport(int dbValue, int txtValue) {
+    Sport(int dbValue) {
         this.dbValue = dbValue;
-        this.textId = txtValue;
     }
 
     public int getDbValue() {
         return dbValue;
     }
-    public int getTextId() { return textId; }
+
+    static public final String textOf(Context ctx, int dbValue) {
+        Resources res = ctx.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        boolean experimental = prefs
+            .getBoolean(res.getString(R.string.pref_experimental_features), false);
+
+        String sports[] = res.getStringArray(experimental ? R.array.sportEntriesExperimental : R.array.sportEntries);
+        if (0 <= dbValue && dbValue < sports.length) {
+            return sports[dbValue];
+        }
+        return res.getString(R.string.Unknown);
+    }
 
     static public Sport valueOf(int dbValue) {
         switch (dbValue) {
@@ -45,6 +64,10 @@ public enum Sport {
                 return RUNNING;
             case DB.ACTIVITY.SPORT_BIKING:
                 return BIKING;
+            case DB.ACTIVITY.SPORT_ORIENTEERING:
+                return ORIENTEERING;
+            case DB.ACTIVITY.SPORT_WALKING:
+                return WALKING;
             default:
             case DB.ACTIVITY.SPORT_OTHER:
                 return OTHER;

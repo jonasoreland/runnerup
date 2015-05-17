@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/target_types"
-            runnerup:values="@array/step_target_values"
+            runnerup:values="@array/target_values"
             android:prompt="@string/Type"
             android:text="@string/Target" />
 

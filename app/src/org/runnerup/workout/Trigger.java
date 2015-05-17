@@ -17,6 +17,8 @@
 
 package org.runnerup.workout;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,7 +51,7 @@ public abstract class Trigger implements TickComponent {
     public void fire(Workout w) {
         for (TriggerSuppression s : triggerSuppression) {
             if (s.suppress(this, w)) {
-                System.err.println("trigger: " + this + "suppressed by: " + s);
+                Log.e(getClass().getName(), "trigger: " + this + "suppressed by: " + s);
                 return;
             }
         }

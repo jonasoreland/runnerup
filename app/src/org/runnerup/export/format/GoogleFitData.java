@@ -20,6 +20,7 @@ package org.runnerup.export.format;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.util.Pair;
 
 import org.runnerup.R;
@@ -48,8 +49,12 @@ public class GoogleFitData {
     private static final Map<Integer, Integer> ACTIVITY_TYPE;
     static {
         Map<Integer, Integer> aMap = new HashMap<Integer, Integer>();
+        // sports list can be found at https://developers.google.com/fit/rest/v1/reference/activity-types
         aMap.put(DB.ACTIVITY.SPORT_RUNNING, 8);
         aMap.put(DB.ACTIVITY.SPORT_BIKING, 1);
+        aMap.put(DB.ACTIVITY.SPORT_OTHER, 4);
+        aMap.put(DB.ACTIVITY.SPORT_ORIENTEERING, 4); //not supported so considering unknown
+        aMap.put(DB.ACTIVITY.SPORT_WALKING, 7);
         ACTIVITY_TYPE = Collections.unmodifiableMap(aMap);
     }
     private static final Map<DataSourceType, List<DataTypeField>> DATA_TYPE_FIELDS;
@@ -182,7 +187,7 @@ public class GoogleFitData {
             w.name("application");
             addApplicationObject(w);
             w.endObject();
-            System.out.println("Creating new dataSource: " + type.getDataStreamId(this));
+            Log.i(getClass().getName(), "Creating new dataSource: " + type.getDataStreamId(this));
         } catch (IOException e) {
             e.printStackTrace();
         }

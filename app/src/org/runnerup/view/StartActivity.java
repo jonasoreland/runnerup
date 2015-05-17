@@ -39,10 +39,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -50,6 +52,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -120,7 +123,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     TitleSpinner simpleAudioSpinner = null;
     AudioSchemeListAdapter simpleAudioListAdapter = null;
     TitleSpinner simpleTargetType = null;
-    DisabledEntriesAdapter targetEntriesAdapter = null;
     TitleSpinner simpleTargetPaceValue = null;
     TitleSpinner simpleTargetHrz = null;
     HRZonesListAdapter hrZonesAdapter = null;
@@ -230,7 +232,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         simpleTargetHrz = (TitleSpinner) findViewById(R.id.tab_basic_target_hrz);
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
-        targetEntriesAdapter = new DisabledEntriesAdapter(this, R.array.targetEntries);
 
         intervalType = (TitleSpinner) findViewById(R.id.interval_type);
         intervalTime = (TitleSpinner) findViewById(R.id.interval_time);
@@ -318,6 +319,16 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     @Override
     public void onResume() {
         super.onResume();
+        //tmp code: reload sports in case of experimental sports support settings change
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (prefs.getBoolean(getString(R.string.pref_experimental_features), false)) {
+            TitleSpinner basic_sport = (TitleSpinner) findViewById(R.id.basic_sport);
+            TitleSpinner manual_sport = (TitleSpinner) findViewById(R.id.manual_sport);
+            SpinnerAdapter sportsAdapter = ArrayAdapter.createFromResource(this,
+                    R.array.sportEntriesExperimental, android.R.layout.simple_spinner_item);
+            basic_sport.setAdapter(sportsAdapter);
+            manual_sport.setAdapter(sportsAdapter);
+        }
         simpleAudioListAdapter.reload();
         intervalAudioListAdapter.reload();
         advancedAudioListAdapter.reload();
@@ -325,11 +336,10 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         hrZonesAdapter.reload();
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         if (!hrZonesAdapter.hrZones.isConfigured()) {
-            targetEntriesAdapter.addDisabled(2);
+            simpleTargetType.addDisabledValue(DB.DIMENSION.HRZ);
         } else {
-            targetEntriesAdapter.clearDisabled();
+            simpleTargetType.clearDisabled();
         }
-        simpleTargetType.setAdapter(targetEntriesAdapter);
 
         if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
             loadAdvanced(null);
@@ -355,7 +365,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             if (mTracker != null &&
                 ((mTracker.getState() == TrackerState.INITIALIZED) ||
                  (mTracker.getState() == TrackerState.INITIALIZING))) {
-                System.err.println("mTracker.reset()");
+                Log.e(getClass().getName(), "mTracker.reset()");
                 mTracker.reset();
             }
         }
@@ -455,7 +465,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     }
 
     private void startGps() {
-        System.err.println("StartActivity.startGps()");
+        Log.e(getClass().getName(), "StartActivity.startGps()");
         if (mGpsStatus != null && !mGpsStatus.isLogging())
             mGpsStatus.start(this);
 
@@ -467,7 +477,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     }
 
     private void stopGps() {
-        System.err.println("StartActivity.stopGps() skipStop: " + this.skipStopGps);
+        Log.e(getClass().getName(), "StartActivity.stopGps() skipStop: " + this.skipStopGps);
         if (skipStopGps == true)
             return;
 
@@ -553,17 +563,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
             audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
                     getString(R.string.pref_basic_audio));
-            Dimension target = null;
-            switch (simpleTargetType.getValueInt()) {
-                case 0: // none
-                    break;
-                case 1:
-                    target = Dimension.PACE;
-                    break;
-                case 2:
-                    target = Dimension.HRZ;
-                    break;
-            }
+            Dimension target = Dimension.valueOf(simpleTargetType.getValueInt());
             w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
         } else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
             audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
@@ -778,11 +778,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
         if (data != null) {
             if (data.getStringExtra("url") != null)
-                System.err.println("data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
+                Log.e(getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
             if (data.getStringExtra("ex") != null)
-                System.err.println("data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
+                Log.e(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
             if (data.getStringExtra("obj") != null)
-                System.err.println("data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
+                Log.e(getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
         }
         if (requestCode == 112) {
             skipStopGps = false;
@@ -813,21 +813,22 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     };
 
     void updateTargetView() {
-        switch (simpleTargetType.getValueInt()) {
-            case 0:
-            default:
-                simpleTargetPaceValue.setEnabled(false);
-                simpleTargetHrz.setEnabled(false);
-                break;
-            case 1:
-                simpleTargetPaceValue.setEnabled(true);
-                simpleTargetPaceValue.setVisibility(View.VISIBLE);
-                simpleTargetHrz.setVisibility(View.GONE);
-                break;
-            case 2:
-                simpleTargetPaceValue.setVisibility(View.GONE);
-                simpleTargetHrz.setEnabled(true);
-                simpleTargetHrz.setVisibility(View.VISIBLE);
+        Dimension dim = Dimension.valueOf(simpleTargetType.getValueInt());
+        if (dim == null) {
+            simpleTargetPaceValue.setEnabled(false);
+            simpleTargetHrz.setEnabled(false);
+        } else {
+            switch (dim) {
+                case PACE:
+                    simpleTargetPaceValue.setEnabled(true);
+                    simpleTargetPaceValue.setVisibility(View.VISIBLE);
+                    simpleTargetHrz.setVisibility(View.GONE);
+                    break;
+                case HRZ:
+                    simpleTargetPaceValue.setVisibility(View.GONE);
+                    simpleTargetHrz.setEnabled(true);
+                    simpleTargetHrz.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -1003,7 +1004,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     };
 
     void setManualPace(String distance, String duration) {
-        System.err.println("distance: >" + distance + "< duration: >" + duration + "<");
+        Log.e(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
         double dist = SafeParse.parseDouble(distance, 0); // convert to meters
         long seconds = SafeParse.parseSeconds(duration, 0);
         if (dist == 0 || seconds == 0) {

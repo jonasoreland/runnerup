@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.Pair;
 
 import org.runnerup.R;
@@ -59,7 +60,7 @@ public class HRZones {
             for (int zone : zones) {
                 System.err.print(" " + zone);
             }
-            System.err.println("");
+            Log.e(getClass().getName(), "");
         }
     }
 
@@ -87,7 +88,7 @@ public class HRZones {
             double lo = (z == 0) ? 0 : zones[z - 1];
             double hi = zones[z];
             double add = (value - lo) / (hi - lo);
-            System.err.println("value: " + value + ", z: " + z + ", lo: " + lo + ", hi: " + hi
+            Log.e(getClass().getName(), "value: " + value + ", z: " + z + ", lo: " + lo + ", hi: " + hi
                     + ", add: " + add);
             return z + add;
         }

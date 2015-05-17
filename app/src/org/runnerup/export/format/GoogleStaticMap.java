@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.runnerup.common.util.Constants.DB;
 
@@ -48,7 +49,7 @@ public class GoogleStaticMap {
             lat0 = lat;
             lot0 = lot;
         }
-        System.err.println(" => " + dst.toString());
+        Log.e("GoogleStaticMap", " => " + dst.toString());
     }
 
     public static void encode(StringBuffer buf, long val) {
@@ -126,7 +127,7 @@ public class GoogleStaticMap {
             String res;
             try {
                 res = URLEncoder.encode(dst.toString(), "UTF-8");
-                System.err.println("count: " + count + ", avgLen: " + avgLen + ", points: "
+                Log.e("GoogleStaticMap", "count: " + count + ", avgLen: " + avgLen + ", points: "
                         + points + ", res.length(): " + res.length());
                 if (res.length() < maxLen)
                     return res;

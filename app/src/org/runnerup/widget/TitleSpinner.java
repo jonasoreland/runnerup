@@ -668,6 +668,10 @@ public class TitleSpinner extends LinearLayout {
         ((DisabledEntriesAdapter)mSpinner.getAdapter()).addDisabled(selection);
     }
 
+    public void clearDisabled() {
+        ((DisabledEntriesAdapter)mSpinner.getAdapter()).clearDisabled();
+    }
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);

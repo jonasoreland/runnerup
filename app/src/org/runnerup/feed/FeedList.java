@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.runnerup.db.DBHelper;
 import org.runnerup.common.util.Constants;
@@ -168,7 +169,7 @@ public class FeedList extends Observable implements Constants {
             mDB.close();
             mDB = null;
             prune();
-            System.err.println("FeedUpdater: " + synchronizer + ", added: " + added + ", discarded: "
+            Log.e(getClass().getName(), "FeedUpdater: " + synchronizer + ", added: " + added + ", discarded: "
                     + discarded);
         }
 
@@ -288,7 +289,7 @@ public class FeedList extends Observable implements Constants {
             if (c0.containsKey(k) && c1.containsKey(k))
                 if (!c0.getAsString(k).equalsIgnoreCase(c1.getAsString(k))) {
                     if (print)
-                        System.out.println("fail at " + k + " c0: " + c0.getAsString(k) + ", c1: "
+                        Log.i("FeedList", "fail at " + k + " c0: " + c0.getAsString(k) + ", c1: "
                                 + c1.getAsString(k));
                     return false;
                 }
@@ -336,7 +337,7 @@ public class FeedList extends Observable implements Constants {
             if ((d0.get(Calendar.YEAR) != d1.get(Calendar.YEAR)) ||
                     (d0.get(Calendar.DAY_OF_YEAR) != d1.get(Calendar.DAY_OF_YEAR))) {
                 if (print)
-                    System.out.println("fail at d0: " + d0.toString() + ", d1: " + d1.toString());
+                    Log.i("FeedList", "fail at d0: " + d0.toString() + ", d1: " + d1.toString());
                 return false;
             }
 
@@ -348,7 +349,7 @@ public class FeedList extends Observable implements Constants {
                     double pct = Math.abs((dur0 / dur1) - 1);
                     if (pct > 0.1) {
                         if (print)
-                            System.out.println("fail at dur0: " + dur0 + "dur1: " + dur1
+                            Log.i("FeedList", "fail at dur0: " + dur0 + "dur1: " + dur1
                                     + " => pct: " + pct);
                         return false;
                     }
@@ -366,7 +367,7 @@ public class FeedList extends Observable implements Constants {
                     double pct = Math.abs((dur0 / dur1) - 1);
                     if (pct > 0.1) {
                         if (print)
-                            System.out.println("fail at dis0: " + dur0 + "dis1: " + dur1
+                            Log.i("FeedList", "fail at dis0: " + dur0 + "dis1: " + dur1
                                     + " => pct: " + pct);
                         return false;
                     }
@@ -380,7 +381,7 @@ public class FeedList extends Observable implements Constants {
                 return true;
             }
 
-            System.out.println("dur_match: " + dur_match + ", dis_match: " + dis_match + ", c0: "
+            Log.i("FeedList", "dur_match: " + dur_match + ", dis_match: " + dis_match + ", c0: "
                     + FeedList.toString(c0) + ", c1: " + FeedList.toString(c1));
         }
 

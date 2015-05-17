@@ -36,6 +36,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -596,20 +597,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
             if (alreadySynched.contains(name)) {
                 cb.setChecked(true);
                 cb.setText(getString(R.string.Uploaded));
-                if (edit)
-                {
-                    cb.setOnLongClickListener(clearUploadClick);
-                }
-                else
-                {
-                    cb.setEnabled(false);
-                }
+                cb.setOnLongClickListener(clearUploadClick);
             } else if (pendingSynchronizers.contains(name)) {
                 cb.setChecked(true);
             } else {
                 cb.setChecked(false);
             }
-            if (mode == MODE_DETAILS && !alreadySynched.contains(name)) {
+            if (mode == MODE_DETAILS) {
                 cb.setEnabled(edit);
             } else if (mode == MODE_SAVE) {
                 cb.setEnabled(true);
@@ -1090,7 +1084,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
         public void complete(GraphView graphView) {
             avg_pace /= paceList.size();
-            System.err.println("graph: " + paceList.size() + " points");
+            Log.e(getClass().getName(), "graph: " + paceList.size() + " points");
 
             boolean smoothData = PreferenceManager.getDefaultSharedPreferences(DetailActivity.this)
                     .getBoolean(getResources().getString(R.string.pref_pace_graph_smoothing), true);
@@ -1130,7 +1124,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         }
                     }
                 }
-                System.err.println("");
+                Log.e(getClass().getName(), "");
                 f.complete();
             }
             GraphViewSeries graphViewData = new GraphViewSeries(
@@ -1152,7 +1146,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                         hrzHist[i] = hrzHist[i] / sum;
                         System.err.print(" " + hrzHist[i]);
                     }
-                    System.err.println("\n");
+                    Log.e(getClass().getName(), "\n");
                     hrzonesBar.pushHrzData(hrzHist);
                 }
             }
@@ -1314,7 +1308,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 break;
                         }
                     } while (c.moveToNext());
-                    System.err.println("Finished loading " + cnt + " points");
+                    Log.e(getClass().getName(), "Finished loading " + cnt + " points");
                 }
                 c.close();
                 return route;
@@ -1347,13 +1341,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     if (map != null) {
                         map.addPolyline(route.path);
                         mapBounds = route.bounds.build();
-                        System.err.println("Added polyline");
+                        Log.e(getClass().getName(), "Added polyline");
                         int cnt = 0;
                         for (MarkerOptions m : route.markers) {
                             cnt++;
                             map.addMarker(m);
                         }
-                        System.err.println("Added " + cnt + " markers");
+                        Log.e(getClass().getName(), "Added " + cnt + " markers");
 
                         route = new Route(); // release mem for old...
                     }

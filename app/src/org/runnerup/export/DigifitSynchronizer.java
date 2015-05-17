@@ -2,11 +2,11 @@
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met: 
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- *    
+ *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
@@ -27,6 +27,7 @@ package org.runnerup.export;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.util.Pair;
 
 import org.apache.http.HttpStatus;
@@ -68,7 +69,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
     public static void main(String args[]) throws Exception {
         if (args.length < 2) {
-            System.err.println("usage: DigifitSynchronizer username password");
+            Log.e("DigifitSynchronizer", "usage: DigifitSynchronizer username password");
             System.exit(1);
         }
 
@@ -78,7 +79,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         DigifitSynchronizer du = new DigifitSynchronizer(null);
         du.init(username, password);
 
-        System.err.println(du.connect());
+        Log.e("DigifitSynchronizer", du.connect().toString());
     }
 
     private long _id;
@@ -197,7 +198,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                     Status s = Status.NEED_AUTH;
                     s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
-                    System.err.println("Error: " + line);
+                    Log.e(getName(), "Error: " + line);
                     return s;
                 }
             }
@@ -248,7 +249,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             }
 
             if (fileId == 0) {
-                System.err.println("export file not ready on Digifit within deadline");
+                Log.e(getName(), "export file not ready on Digifit within deadline");
                 return;
             }
 
@@ -266,7 +267,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                 out.write(buf, 0, readLen);
                 cnt += readLen;
             }
-            System.err.println("Expected " + fileSize + " bytes, got " + cnt + " bytes: "
+            Log.e(getName(), "Expected " + fileSize + " bytes, got " + cnt + " bytes: "
                     + (fileSize == cnt ? "OK" : "ERROR"));
 
             in.close();
@@ -322,7 +323,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         JSONObject exportListResponse = callDigifitEndpoint(DIGIFIT_URL
                 + "/rpc/json/workout/export_workouts_list",
                 new JSONObject());
-        System.err.println(exportListResponse);
+        Log.e(getName(), exportListResponse.toString());
 
         JSONArray exportList = exportListResponse.getJSONObject("response").getJSONArray(
                 "export_list");
@@ -420,7 +421,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
             return Status.OK;
         } catch (Exception ex) {
-            System.err.println(ex.toString());
+            Log.e(getName(), ex.toString());
             errorStatus.ex = ex;
         }
         return errorStatus;
@@ -448,7 +449,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             // I wonder why there's an API for getting a special upload path.
             // This seems obtuse.
             String uploadUrl = getUploadUrl();
-            System.err.println("Digifit returned uploadUrl = " + uploadUrl);
+            Log.e(getName(), "Digifit returned uploadUrl = " + uploadUrl);
 
             StringWriter wr = new StringWriter();
             tcx.export(mID, wr);
@@ -466,7 +467,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             return s;
         } catch (Exception ex) {
             errorStatus.ex = ex;
-            System.err.println("Digifit returned: " + ex);
+            Log.e(getName(), "Digifit returned: " + ex);
         }
 
         return errorStatus;

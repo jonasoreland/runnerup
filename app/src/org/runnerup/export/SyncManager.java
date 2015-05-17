@@ -34,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.InputType;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -169,14 +170,14 @@ public class SyncManager {
     @SuppressWarnings("null")
     public Synchronizer add(ContentValues config) {
         if (config == null) {
-            System.err.println("Add null!");
+            Log.e(getClass().getName(), "Add null!");
             assert (false);
             return null;
         }
 
         String synchronizerName = config.getAsString(DB.ACCOUNT.NAME);
         if (synchronizerName == null) {
-            System.err.println("name not found!");
+            Log.e(getClass().getName(), "name not found!");
             return null;
         }
         if (synchronizers.containsKey(synchronizerName)) {
@@ -582,12 +583,13 @@ public class SyncManager {
         callback.run(synchronizer.getName(), Synchronizer.Status.OK);
     }
 
-    public void clearUploads(Callback callback, String synchronizer) {
+    public void clearUploadsByName(Callback callback, String synchronizerName) {
+        Synchronizer synchronizer = synchronizers.get(synchronizerName);
         final String args[] = {
-            synchronizer
+                Long.toString(synchronizer.getId())
         };
         mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
-        callback.run(synchronizer, Synchronizer.Status.OK);
+        callback.run(synchronizerName, Synchronizer.Status.OK);
     }
 
     public void clearUpload(String name, long id) {
@@ -757,13 +759,13 @@ public class SyncManager {
                         synchronizer.downloadWorkout(w, ref.workoutKey);
                         if (w != f) {
                             if (compareFiles(w, f) != true) {
-                                System.err.println("overwriting " + f.getPath() + " with "
+                                Log.e(getClass().getName(), "overwriting " + f.getPath() + " with "
                                         + w.getPath());
                                 // TODO dialog
                                 f.delete();
                                 w.renameTo(f);
                             } else {
-                                System.err.println("file identical...deleting temporary "
+                                Log.e(getClass().getName(), "file identical...deleting temporary "
                                         + w.getPath());
                                 w.delete();
                             }
@@ -832,7 +834,7 @@ public class SyncManager {
 
     /**
      * Load synchronizer private data
-     * 
+     *
      * @param synchronizer
      * @return
      * @throws Exception
@@ -850,7 +852,7 @@ public class SyncManager {
 
     /**
      * Get preferences
-     * 
+     *
      * @return
      */
     public SharedPreferences getPreferences(Synchronizer synchronizer) {

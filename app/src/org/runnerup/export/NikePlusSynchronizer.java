@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
@@ -203,8 +204,8 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                         buf.append(line);
                     }
                     response = buf.toString().replaceAll("<User>.*</User>", "\"\"");
-                    System.err.println("buf: " + buf.toString());
-                    System.err.println("res: " + response);
+                    Log.e(getName(), "buf: " + buf.toString());
+                    Log.e(getName(), "res: " + response);
                 }
                 JSONObject obj = SyncHelper.parse(new ByteArrayInputStream(response.getBytes()));
                 conn.disconnect();
