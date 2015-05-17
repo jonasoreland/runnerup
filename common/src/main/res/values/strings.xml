@@ -46,11 +46,14 @@
   <string name="repeat">repeat</string>
   <string name="time">time</string>
   <string name="distance">distance</string>
+  <string name="Unknown">Unknown</string>
+  <string name="Distance">Distance</string>
   <string name="speed">speed</string>
   <string name="pace">pace</string>
   <string name="heart_rate_zone">heart rate zone</string>
   <string name="Zone">Zone</string>
   <string name="Device">Device</string>
+  <string name="Start_hour">Start hour</string>
   <string name="Heart_rate">Heart rate</string>
   <string name="Pace">Pace</string>
   <string name="Scan">Scan</string>
@@ -113,10 +116,6 @@
   <string name="Configure_accounts">Configure accounts</string>
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>
-  <string name="Running">Running</string>
-  <string name="Biking">Biking</string>
-  <string name="Other">Other</string>
-  <string name="Unknown">Unknown</string>
   <string name="edit">edit</string>
   <string name="Synchronizing">Synchronizing:</string>
   <string name="synchronizing_feed">synchronizing feed...</string>
@@ -205,6 +204,7 @@
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
+  <string name="Experimental_features">Experimental features</string>
   <string name="Mock_HRM_devices">Mock HRM devices</string>
   <string name="About">About</string>
   <string name="About_RunnerUp">About RunnerUp</string>

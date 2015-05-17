@@ -39,17 +39,21 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -318,6 +322,16 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     @Override
     public void onResume() {
         super.onResume();
+        //tmp code: reload sports in case of experimental sports support settings change
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (prefs.getBoolean(getString(R.string.pref_experimental_features), false)) {
+            TitleSpinner basic_sport = (TitleSpinner) findViewById(R.id.basic_sport);
+            TitleSpinner manual_sport = (TitleSpinner) findViewById(R.id.manual_sport);
+            SpinnerAdapter sportsAdapter = ArrayAdapter.createFromResource(this,
+                    R.array.sportEntriesExperimental, android.R.layout.simple_spinner_item);
+            basic_sport.setAdapter(sportsAdapter);
+            manual_sport.setAdapter(sportsAdapter);
+        }
         simpleAudioListAdapter.reload();
         intervalAudioListAdapter.reload();
         advancedAudioListAdapter.reload();
@@ -355,7 +369,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             if (mTracker != null &&
                 ((mTracker.getState() == TrackerState.INITIALIZED) ||
                  (mTracker.getState() == TrackerState.INITIALIZING))) {
-                System.err.println("mTracker.reset()");
+                Log.e(getClass().getName(), "mTracker.reset()");
                 mTracker.reset();
             }
         }
@@ -455,7 +469,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     }
 
     private void startGps() {
-        System.err.println("StartActivity.startGps()");
+        Log.e(getClass().getName(), "StartActivity.startGps()");
         if (mGpsStatus != null && !mGpsStatus.isLogging())
             mGpsStatus.start(this);
 
@@ -467,7 +481,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     }
 
     private void stopGps() {
-        System.err.println("StartActivity.stopGps() skipStop: " + this.skipStopGps);
+        Log.e(getClass().getName(), "StartActivity.stopGps() skipStop: " + this.skipStopGps);
         if (skipStopGps == true)
             return;
 
@@ -778,11 +792,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
         if (data != null) {
             if (data.getStringExtra("url") != null)
-                System.err.println("data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
+                Log.e(getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
             if (data.getStringExtra("ex") != null)
-                System.err.println("data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
+                Log.e(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
             if (data.getStringExtra("obj") != null)
-                System.err.println("data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
+                Log.e(getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
         }
         if (requestCode == 112) {
             skipStopGps = false;
@@ -1003,7 +1017,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     };
 
     void setManualPace(String distance, String duration) {
-        System.err.println("distance: >" + distance + "< duration: >" + duration + "<");
+        Log.e(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
         double dist = SafeParse.parseDouble(distance, 0); // convert to meters
         long seconds = SafeParse.parseSeconds(duration, 0);
         if (dist == 0 || seconds == 0) {

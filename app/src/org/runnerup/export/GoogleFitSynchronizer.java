@@ -19,6 +19,7 @@ package org.runnerup.export;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
@@ -192,11 +193,11 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
                 if (code == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                     continue;
                 } else if (code != HttpStatus.SC_OK) {
-                    System.out.println(SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())));
+                    Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
                     status = Status.ERROR;
                     break;
                 } else {
-                    System.out.println(SyncHelper.parse(new GZIPInputStream(connect.getInputStream())));
+                    Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getInputStream())).toString());
                     status = Status.OK;
                     break;
                 }

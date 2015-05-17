@@ -57,7 +57,7 @@ import java.util.ArrayList;
 public class AccountActivity extends Activity implements Constants {
 
     long synchronizerID = -1;
-    String synchrnizer = null;
+    String synchronizer = null;
     Integer synchronizerIcon = null;
 
     DBHelper mDBHelper = null;
@@ -76,7 +76,7 @@ public class AccountActivity extends Activity implements Constants {
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         Intent intent = getIntent();
-        synchrnizer = intent.getStringExtra("synchronizer");
+        synchronizer = intent.getStringExtra("synchronizer");
 
 
         mDBHelper = new DBHelper(this);
@@ -84,7 +84,7 @@ public class AccountActivity extends Activity implements Constants {
         syncManager = new SyncManager(this);
         fillData();
 
-        Synchronizer upd = syncManager.getSynchronizerByName(synchrnizer);
+        Synchronizer upd = syncManager.getSynchronizerByName(synchronizer);
 
         {
             Button btn = (Button) findViewById(R.id.ok_account_button);
@@ -140,7 +140,7 @@ public class AccountActivity extends Activity implements Constants {
         };
 
         String args[] = {
-                synchrnizer
+                synchronizer
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?", args,
                 null, null, null);
@@ -254,11 +254,12 @@ public class AccountActivity extends Activity implements Constants {
                     AccountActivity.this);
             builder.setTitle(getString(R.string.Clear_uploads));
             builder.setMessage(getResources().getString(R.string.Clear_uploads_from_phone,
-                    synchrnizer));
+                    synchronizer));
             builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            syncManager.clearUploads(callback, synchrnizer);
+                            String id = String.valueOf(syncManager.getSynchronizerByName(synchronizer).getId());
+                            syncManager.clearUploads(callback, id);
                         }
                     });
 
@@ -278,7 +279,7 @@ public class AccountActivity extends Activity implements Constants {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("synchronizer", synchrnizer);
+            intent.putExtra("synchronizer", synchronizer);
             intent.putExtra("synchronizerID", synchronizerID);
             intent.putExtra("mode", SyncManager.SyncMode.UPLOAD.name());
             if (synchronizerIcon != null)
@@ -292,7 +293,7 @@ public class AccountActivity extends Activity implements Constants {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("synchronizer", synchrnizer);
+            intent.putExtra("synchronizer", synchronizer);
             intent.putExtra("synchronizerID", synchronizerID);
             intent.putExtra("mode", SyncManager.SyncMode.DOWNLOAD.name());
             if (synchronizerIcon != null)
@@ -326,7 +327,7 @@ public class AccountActivity extends Activity implements Constants {
             }
             tmp.put(DB.ACCOUNT.FLAGS, flags);
             String args[] = {
-                    synchrnizer
+                    synchronizer
             };
             mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
         }
@@ -353,7 +354,7 @@ public class AccountActivity extends Activity implements Constants {
             builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            syncManager.disableSynchronizer(disconnectCallback, synchrnizer,
+                            syncManager.disableSynchronizer(disconnectCallback, synchronizer,
                                     selected[0]);
                         }
                     });

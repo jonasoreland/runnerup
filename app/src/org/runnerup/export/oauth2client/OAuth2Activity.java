@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.webkit.CookieManager;
@@ -173,7 +174,7 @@ public class OAuth2Activity extends Activity {
                     }
 
                     if (e != null) {
-                        System.err.println("e: " + e);
+                        Log.e(getClass().getName(), "e: " + e);
                         Intent res = new Intent();
                         res.putExtra("error", e);
                         OAuth2Activity.this.setResult(Activity.RESULT_CANCELED,

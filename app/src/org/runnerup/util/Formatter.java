@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import org.runnerup.R;
 import org.runnerup.workout.Dimension;
@@ -110,7 +111,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         Resources res = ctx.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         if (prefs.contains(res.getString(R.string.pref_audio_lang))) {
-            System.err.println("Audio language: " +
+            Log.e("Formatter", "Audio language: " +
                     prefs.getString(res.getString(R.string.pref_audio_lang), null));
             return new Locale(prefs.getString(res.getString(R.string.pref_audio_lang), "en"));
         }
@@ -166,7 +167,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     private static boolean guessDefaultUnit(Resources res, SharedPreferences prefs, Editor editor) {
         String countryCode = Locale.getDefault().getCountry();
-        System.err.println("guessDefaultUnit: countryCode: " + countryCode);
+        Log.e("Formatter", "guessDefaultUnit: countryCode: " + countryCode);
         if (countryCode == null)
             return true; // km;
         String key = res.getString(R.string.pref_unit);

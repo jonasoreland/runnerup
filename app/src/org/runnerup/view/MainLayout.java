@@ -36,6 +36,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -103,7 +104,7 @@ public class MainLayout extends TabActivity {
         // clear basicTargetType between application startup/shutdown
         pref.edit().remove(getString(R.string.pref_basic_target_type)).commit();
 
-        System.err.println("app-version: " + versionCode + ", upgradeState: " + upgradeState
+        Log.e(getClass().getName(), "app-version: " + versionCode + ", upgradeState: " + upgradeState
                 + ", km: " + km);
 
         PreferenceManager.setDefaultValues(this, R.layout.settings, false);
@@ -159,12 +160,12 @@ public class MainLayout extends TabActivity {
                 } catch (Exception ex) {
                 }
 
-                System.err.println("Found: " + dst + ", " + add + ", isFile: " + isFile);
+                Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
                 if (isFile == false) {
                     File dstDir = new File(dst + File.separator + add);
                     dstDir.mkdir();
                     if (!dstDir.isDirectory()) {
-                        System.err.println("Failed to copy " + add + " as \"" + dst
+                        Log.e(getClass().getName(), "Failed to copy " + add + " as \"" + dst
                                 + "\" is not a directory!");
                         continue;
                     }
@@ -176,7 +177,7 @@ public class MainLayout extends TabActivity {
                     String tmp = dst + File.separator + add;
                     File dstFile = new File(tmp);
                     if (dstFile.isDirectory() || dstFile.isFile()) {
-                        System.err.println("Skip: " + tmp +
+                        Log.e(getClass().getName(), "Skip: " + tmp +
                                 ", isDirectory(): " + dstFile.isDirectory() +
                                 ", isFile(): " + dstFile.isFile());
                         continue;
@@ -185,13 +186,13 @@ public class MainLayout extends TabActivity {
                     String key = "install_bundled_" + add;
                     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
                     if (pref.contains(key)) {
-                        System.err.println("Skip: " + key);
+                        Log.e(getClass().getName(), "Skip: " + key);
                         continue;
 
                     }
 
                     pref.edit().putBoolean(key, true).commit();
-                    System.err.println("Copying: " + tmp);
+                    Log.e(getClass().getName(), "Copying: " + tmp);
                     InputStream input = null;
                     try {
                         input = mgr.open(src + File.separator + add);

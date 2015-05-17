@@ -333,7 +333,8 @@ public class UploadActivity extends ListActivity implements Constants {
                 if (ai.getSport() == null) {
                     tv.setText(getResources().getText(R.string.Running));
                 } else {
-                    tv.setText(getResources().getText(Sport.valueOf(ai.getSport()).getTextId()));
+                    int sport = Sport.valueOf(ai.getSport()).getDbValue();
+                    tv.setText(Sport.textOf(getApplicationContext(), sport));
                 }
             }
 

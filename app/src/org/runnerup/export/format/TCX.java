@@ -37,12 +37,12 @@ import java.util.Locale;
 import java.util.TimeZone;
 /**
  * TCX - export an activity in TCX format
- * 
+ *
  * @todo Handle pauses
  * @todo Other sports than running
- * 
+ *
  * @author jonas.oreland@gmail.com
- * 
+ *
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -53,6 +53,7 @@ public class TCX {
     XmlSerializer mXML = null;
     String notes = null;
     SimpleDateFormat simpleDateFormat = null;
+    Sport sport = null;
 
     private boolean addGratuitousTrack = false;
 
@@ -79,7 +80,6 @@ public class TCX {
      */
     public Pair<String,Sport> exportWithSport(long activityId, Writer writer) throws IOException {
 
-        Sport sport = null;
         String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
                 DB.ACTIVITY.START_TIME, DB.ACTIVITY.SPORT
@@ -103,13 +103,13 @@ public class TCX {
             if (cursor.isNull(3)) {
                 mXML.attribute("", "Sport", "Running");
             } else {
-                switch (cursor.getInt(3)) {
+                // TCX supports only these 3 sports...(cf http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
+                sport = Sport.valueOf(cursor.getInt(3));
+                switch (sport.getDbValue()) {
                     case DB.ACTIVITY.SPORT_RUNNING:
-                        sport = Sport.RUNNING;
                         mXML.attribute("", "Sport", "Running");
                         break;
                     case DB.ACTIVITY.SPORT_BIKING:
-                        sport = Sport.BIKING;
                         mXML.attribute("", "Sport", "Biking");
                         break;
                     default:
@@ -293,6 +293,10 @@ public class TCX {
 
     public String getNotes() {
         return notes;
+    }
+
+    public Sport getSport() {
+        return sport;
     }
 
     public void setAddGratuitousTrack(boolean addGratuitousTrack) {

@@ -23,6 +23,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -220,7 +221,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            System.err.println("code: " + responseCode + ", amsg: " + amsg);
+            Log.e(getName(), "code: " + responseCode + ", amsg: " + amsg);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             JSONObject obj = SyncHelper.parse(in);

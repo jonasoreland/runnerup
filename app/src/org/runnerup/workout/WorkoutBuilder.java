@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import org.runnerup.R;
@@ -308,11 +309,11 @@ public class WorkoutBuilder {
                     }
                     checkDuplicateTriggers(step);
                     // {
-                    // System.err.println("triggers: ");
+                    // Log.e("WorkoutBuilder", "triggers: ");
                     // for (Trigger t : step.triggers) {
                     // System.err.print(t + " ");
                     // }
-                    // System.err.println("");
+                    // Log.e("WorkoutBuilder", "");
                     // }
 
                     break;
@@ -394,7 +395,7 @@ public class WorkoutBuilder {
 
     private static void checkDuplicateTriggers(Step step) {
         if (hasEndOfLapTrigger(step.triggers) != null) {
-            System.err.println("hasEndOfLapTrigger()");
+            Log.e("WorkoutBuilder", "hasEndOfLapTrigger()");
             /**
              * The end of lap trigger can be a duplicate of a distance based
              * interval trigger 1) in a step with distance duration, that is a
@@ -603,7 +604,7 @@ public class WorkoutBuilder {
                 val = Double.parseDouble(vals);
             } catch (NumberFormatException e) {
             }
-            System.out.println("setAutolap(" + val + ")");
+            Log.i("WorkoutBuilder", "setAutolap(" + val + ")");
             for (StepListEntry s : steps) {
                 s.step.setAutolap(0); // reset
                 switch (s.step.getIntensity()) {
@@ -655,12 +656,12 @@ public class WorkoutBuilder {
                     Step s = Step.createPauseStep(Dimension.TIME, val);
                     if (stepArr[i].parent == null) {
                         w.steps.add(i + 1, s);
-                        System.err.println("Added step at index: " + (i + 1));
+                        Log.e("WorkoutBuilder", "Added step at index: " + (i + 1));
                     } else {
                         RepeatStep rs = (RepeatStep) stepArr[i].parent;
                         int idx = rs.steps.indexOf(step);
                         rs.steps.add(idx, s);
-                        System.err.println("Added step at index: " + (i + 1) + " repeat index: "
+                        Log.e("WorkoutBuilder", "Added step at index: " + (i + 1) + " repeat index: "
                                 + (idx + 1));
                     }
                 }

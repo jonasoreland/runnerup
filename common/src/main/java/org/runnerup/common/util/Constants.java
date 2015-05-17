@@ -41,6 +41,8 @@ public interface Constants {
             public static final int SPORT_RUNNING = 0;
             public static final int SPORT_BIKING = 1;
             public static final int SPORT_OTHER = 2; // unknown
+            public static final int SPORT_ORIENTEERING = 3;
+            public static final int SPORT_WALKING = 4;
         }
 
         public interface LOCATION {

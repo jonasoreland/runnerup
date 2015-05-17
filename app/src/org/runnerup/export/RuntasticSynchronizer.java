@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
 
@@ -151,7 +152,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        System.out.println("userId: " + userId + ", authToken: " + authToken);
+        Log.i(getName(), "userId: " + userId + ", authToken: " + authToken);
         if (userId != null && authToken != null) {
             return Status.OK;
         }
@@ -224,7 +225,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                         }
                     }
                 }
-                System.out.println("found url2: " + url2);
+                Log.i(getName(), "found url2: " + url2);
                 conn.disconnect();
             }
 
@@ -305,7 +306,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             JSONObject ret = SyncHelper.parse(in);
             getCookies(conn);
             if (ret == null || !ret.has("success") || !ret.getBoolean("success")) {
-                System.out.println("ret: " + ret);
+                Log.i(getName(), "ret: " + ret);
                 throw new JSONException("Unexpected json return");
             }
 
@@ -313,13 +314,13 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             final String name="name='";
             int i1 = tmp.indexOf(name);
             if (i1 < 0) {
-                System.out.println("ret: " + ret);
+                Log.i(getName(), "ret: " + ret);
                 throw new JSONException("Unexpected json return");
             }
             i1 += name.length();
             int i2 = tmp.indexOf('\'', i1);
             String import_id = tmp.substring(i1, i2);
-            System.out.println("import_id: " + import_id);
+            Log.i(getName(), "import_id: " + import_id);
             conn.disconnect();
 
             if (sport != null && sport != Sport.RUNNING && sport2runtasticMap.containsKey(sport)) {
@@ -338,7 +339,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                 SyncHelper.postData(conn, fv);
                 int responseCode = conn.getResponseCode();
                 String amsg = conn.getResponseMessage();
-                System.out.println("code: " + responseCode + ", html: " + getFormValues(conn));
+                Log.i(getName(), "code: " + responseCode + ", html: " + getFormValues(conn));
                 conn.disconnect();
             }
             logout();
@@ -355,7 +356,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         }
 
         if (s.ex != null)
-            System.err.println("ex: " + s.ex);
+            Log.e(getName(), "ex: " + s.ex);
 
         if (conn != null)
             conn.disconnect();

@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
+import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 
@@ -185,7 +186,7 @@ public class ActivityCleaner implements Constants {
 
         for (long lap : laps) {
             int res = trimLap(db, activityId, lap);
-            System.err.println("lap " + lap + " removed " + res + " locations");
+            Log.e("ActivityCleaner", "lap " + lap + " removed " + res + " locations");
         }
     }
 

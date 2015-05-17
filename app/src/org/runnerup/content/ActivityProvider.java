@@ -26,6 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 import android.util.Pair;
 
 import org.runnerup.db.DBHelper;
@@ -96,7 +97,7 @@ public class ActivityProvider extends ContentProvider {
                 }
                 final File file = new File(path.getAbsolutePath() + File.separator + name);
                 final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-                System.err.println(Integer.toString(i) + ": putting cache file in: "
+                Log.e(getClass().getName(), Integer.toString(i) + ": putting cache file in: "
                         + file.getAbsolutePath());
                 return new Pair<File, OutputStream>(file, out);
             } catch (IOException ex) {
@@ -111,7 +112,7 @@ public class ActivityProvider extends ContentProvider {
             throws FileNotFoundException {
 
         final int res = uriMatcher.match(uri);
-        System.err.println("match(" + uri.toString() + "): " + res);
+        Log.e(getClass().getName(), "match(" + uri.toString() + "): " + res);
         switch (res) {
             case GPX:
             case TCX:
@@ -125,12 +126,12 @@ public class ActivityProvider extends ContentProvider {
                 final Pair<File, OutputStream> out = openCacheFile("activity."
                         + list.get(list.size() - 3));
                 if (out == null) {
-                    System.err.println("Failed to open cacheFile(" + "activity."
+                    Log.e(getClass().getName(), "Failed to open cacheFile(" + "activity."
                             + list.get(list.size() - 3) + ")");
                     return null;
                 }
 
-                System.err.println("activity: " + activityId + ", file: "
+                Log.e(getClass().getName(), "activity: " + activityId + ", file: "
                         + out.first.getAbsolutePath());
                 DBHelper mDBHelper = new DBHelper(getContext());
                 SQLiteDatabase mDB = mDBHelper.getReadableDatabase();
@@ -138,11 +139,11 @@ public class ActivityProvider extends ContentProvider {
                     if (res == TCX) {
                         TCX tcx = new TCX(mDB);
                         tcx.export(activityId, new OutputStreamWriter(out.second));
-                        System.err.println("export tcx");
+                        Log.e(getClass().getName(), "export tcx");
                     } else if (res == GPX) {
                         GPX gpx = new GPX(mDB);
                         gpx.export(activityId, new OutputStreamWriter(out.second));
-                        System.err.println("export gpx");
+                        Log.e(getClass().getName(), "export gpx");
                     } else if (res == NIKE) {
                         NikeXML xml = new NikeXML(mDB);
                         xml.export(activityId, new OutputStreamWriter(out.second));
@@ -161,7 +162,7 @@ public class ActivityProvider extends ContentProvider {
                     }
                     out.second.flush();
                     out.second.close();
-                    System.err.println("wrote " + out.first.length() + " bytes...");
+                    Log.e(getClass().getName(), "wrote " + out.first.length() + " bytes...");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

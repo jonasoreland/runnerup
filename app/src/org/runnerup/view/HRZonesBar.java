@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.transition.Visibility;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -78,7 +79,7 @@ public class HRZonesBar extends View {
 
         float totalWidth = getWidth();
         if (totalWidth <= 0 || calculatedBarHeight < 10 ) {
-            System.err.println("Not enough space to display the heart-rate zone bar");
+            Log.e(getClass().getName(), "Not enough space to display the heart-rate zone bar");
             activity.findViewById(R.id.hrzonesBarLayout).setVisibility(View.GONE);
             return;
         }
