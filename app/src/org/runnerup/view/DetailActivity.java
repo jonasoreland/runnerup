@@ -597,20 +597,13 @@ public class DetailActivity extends FragmentActivity implements Constants {
             if (alreadySynched.contains(name)) {
                 cb.setChecked(true);
                 cb.setText(getString(R.string.Uploaded));
-                if (edit)
-                {
-                    cb.setOnLongClickListener(clearUploadClick);
-                }
-                else
-                {
-                    cb.setEnabled(false);
-                }
+                cb.setOnLongClickListener(clearUploadClick);
             } else if (pendingSynchronizers.contains(name)) {
                 cb.setChecked(true);
             } else {
                 cb.setChecked(false);
             }
-            if (mode == MODE_DETAILS && !alreadySynched.contains(name)) {
+            if (mode == MODE_DETAILS) {
                 cb.setEnabled(edit);
             } else if (mode == MODE_SAVE) {
                 cb.setEnabled(true);
