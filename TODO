@@ -79,6 +79,9 @@
   map my run
   runningahead
   strava
+  runtastic
+  jogg.se
+  (and runnerup live)
 
 - add more downloaders (see web-services.txt for docs)
 - fix so that external ID is populated on upload (and checked on download)
