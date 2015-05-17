@@ -57,7 +57,7 @@
     <item>Heartrate zone</item>
   </string-array>
   <!-- Note: same order as above, same values as Dimension -->
-  <integer-array name="step_target_values">
+  <integer-array name="target_values">
     <item>-1</item>
     <item>4</item>
     <item>6</item>
@@ -90,11 +90,6 @@
   <string-array name="sexes">
     <item>Male</item>
     <item>Female</item>
-  </string-array>
-  <string-array name="targetEntries">
-    <item>none</item>
-    <item>pace</item>
-    <item>heart rate zone</item>
   </string-array>
 
   <!-- Audio cue languages -->
