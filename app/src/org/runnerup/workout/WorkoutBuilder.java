@@ -734,5 +734,20 @@ public class WorkoutBuilder {
         if (prefs.getBoolean(res.getString(R.string.cueinfo_lap_hrz), false)) {
             feedback.add(new AudioFeedback(Scope.LAP, Dimension.HRZ));
         }
+
+        /**** CURRENT ****/
+        if (prefs.getBoolean(res.getString(R.string.cueinfo_current_pace), false)) {
+            feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.PACE));
+        }
+        if (prefs.getBoolean(res.getString(R.string.cueinfo_current_speed), false)) {
+            feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.SPEED));
+        }
+        if (prefs.getBoolean(res.getString(R.string.cueinfo_current_hr), false)) {
+            feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.HR));
+        }
+        if (prefs.getBoolean(res.getString(R.string.cueinfo_current_hrz), false)) {
+            feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.HRZ));
+        }
+
     }
 }
