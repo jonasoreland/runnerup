@@ -113,7 +113,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             final int remove[] = {
                     R.string.cueinfo_total_hrz,
                     R.string.cueinfo_step_hrz,
-                    R.string.cueinfo_lap_hrz
+                    R.string.cueinfo_lap_hrz,
+                    R.string.cueinfo_current_hrz
             };
             removePrefs(remove);
         }
@@ -122,7 +123,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             final int remove[] = {
                     R.string.cueinfo_total_hr,
                     R.string.cueinfo_step_hr,
-                    R.string.cueinfo_lap_hr
+                    R.string.cueinfo_lap_hr,
+                    R.string.cueinfo_current_hr
             };
             removePrefs(remove);
         }
