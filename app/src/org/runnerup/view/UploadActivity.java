@@ -331,7 +331,7 @@ public class UploadActivity extends ListActivity implements Constants {
             {
                 TextView tv = (TextView) view.findViewById(R.id.upload_list_sport);
                 if (ai.getSport() == null) {
-                    tv.setText(getResources().getText(R.string.Running));
+                    tv.setText(Sport.textOf(getApplicationContext(), DB.ACTIVITY.SPORT_RUNNING));
                 } else {
                     int sport = Sport.valueOf(ai.getSport()).getDbValue();
                     tv.setText(Sport.textOf(getApplicationContext(), sport));
