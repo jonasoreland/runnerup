@@ -46,6 +46,7 @@
   <string name="repeat">herhalen</string>
   <string name="time">tijd</string>
   <string name="distance">afstand</string>
+  <string name="Unknown">Onbekend</string>
   <string name="speed">snelheid</string>
   <string name="pace">tempo</string>
   <string name="heart_rate_zone">hartslagzone</string>
@@ -112,10 +113,6 @@
   <string name="Configure_accounts">Accounts configureren</string>
   <string name="Refresh">Veversen</string>
   <string name="Age">Leeftijd</string>
-  <string name="Running">Hardlopen</string>
-  <string name="Biking">Fietsen</string>
-  <string name="Other">Ander</string>
-  <string name="Unknown">Onbekend</string>
   <string name="edit">aanpassen</string>
   <string name="Synchronizing">Synchroniseren:</string>
   <string name="synchronizing_feed">synchroniseren van de feed...</string>

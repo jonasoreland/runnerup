@@ -36,7 +36,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, ratos</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Infos. jurídicas do Google Play</string>
+  <string name="Google_Play_Services_Legal_Notices">Infos. legais do Google Play</string>
   <string name="Type">Tipo</string>
   <string name="active">ativo</string>
   <string name="rest">descanso</string>
@@ -46,11 +46,14 @@
   <string name="repeat">repita</string>
   <string name="time">tempo</string>
   <string name="distance">distância</string>
+  <string name="Unknown">Desconhecido</string>
+  <string name="Distance">Distância</string>
   <string name="speed">velocidade</string>
   <string name="pace">ritmo</string>
   <string name="heart_rate_zone">zona de frequência cardíaca</string>
   <string name="Zone">Zona</string>
   <string name="Device">Dispositivo</string>
+  <string name="Start_hour">Iniciar hora</string>
   <string name="Heart_rate">Frequência cardíaca</string>
   <string name="Pace">Ritmo</string>
   <string name="Scan">Escanear</string>
@@ -113,10 +116,6 @@
   <string name="Configure_accounts">Configurar contas</string>
   <string name="Refresh">Atualizar</string>
   <string name="Age">Idade</string>
-  <string name="Running">Corrida</string>
-  <string name="Biking">Ciclismo</string>
-  <string name="Other">Outros</string>
-  <string name="Unknown">Desconhecido</string>
   <string name="edit">editar</string>
   <string name="Synchronizing">Sincronismo:</string>
   <string name="synchronizing_feed">sincronizando feed..</string>
@@ -205,6 +204,7 @@
   <string name="Export">Exportar</string>
   <string name="Import">Importar</string>
   <string name="Experimental_HRM_devices">Experim. - Dispos. HRM</string>
+  <string name="Experimental_features">Recursos experimentais</string>
   <string name="Mock_HRM_devices">Dispos. HRM simulados</string>
   <string name="About">Sobre</string>
   <string name="About_RunnerUp">Sobre o RunnerUp</string>
@@ -288,4 +288,8 @@
   <string name="New_audio_scheme">Novo esquema de áudio</string>
   <string name="Default">Padrão</string>
   <string name="Notes_about_your_workout">Anotações sobre seu exercício</string>
+  <string name="Downloading_from_1s">Baixando de %1$s</string>
+  <string name="Uploading_to_1s">Enviando para %1$s</string>
+  <string name="Loading_activities">Carregando atividades</string>
+  <string name="Fetching_activities_from_1s">Obtendo atividades de %1$s</string>
 </resources>

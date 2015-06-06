@@ -46,6 +46,7 @@
   <string name="repeat">powtórzenia</string>
   <string name="time">czas</string>
   <string name="distance">dystans</string>
+  <string name="Unknown">Nieznane</string>
   <string name="speed">prędkość</string>
   <string name="pace">tempo</string>
   <string name="heart_rate_zone">strefa tętna</string>
@@ -113,10 +114,6 @@
   <string name="Configure_accounts">Konfiguruj konta</string>
   <string name="Refresh">Odśwież</string>
   <string name="Age">Wiek</string>
-  <string name="Running">Bieganie</string>
-  <string name="Biking">Kolarstwo</string>
-  <string name="Other">Inne</string>
-  <string name="Unknown">Nieznane</string>
   <string name="edit">edytuj</string>
   <string name="Synchronizing">Sychronizuje:</string>
   <string name="synchronizing_feed">aktualizuje kanał</string>

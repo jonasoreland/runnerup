@@ -33,6 +33,14 @@
   <string-array name="sportEntries">
     <item>ランニング</item>
     <item>サイクリング</item>
+    <item>その他</item>
+  </string-array>
+  <string-array name="sportEntriesExperimental">
+    <item>ランニング</item>
+    <item>サイクリング</item>
+    <item>その他</item>
+    <item>オリエンテーリング</item>
+    <item>ウォーキング</item>
   </string-array>
   <string-array name="muteEntries">
     <item>いいえ</item>
@@ -49,11 +57,6 @@
   <string-array name="sexes">
     <item>男性</item>
     <item>女性</item>
-  </string-array>
-  <string-array name="targetEntries">
-    <item>なし</item>
-    <item>ペース</item>
-    <item>心拍数ゾーン</item>
   </string-array>
   <!--Audio cue languages-->
   <string-array name="cueLanguageNames">

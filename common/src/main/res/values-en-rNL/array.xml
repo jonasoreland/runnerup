@@ -30,10 +30,6 @@
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
-  <string-array name="sportEntries">
-    <item>Hardlopen</item>
-    <item>Fietsen</item>
-  </string-array>
   <string-array name="muteEntries">
     <item>Nee</item>
     <item>Ja</item>
@@ -49,11 +45,6 @@
   <string-array name="sexes">
     <item>Man</item>
     <item>Vrouw</item>
-  </string-array>
-  <string-array name="targetEntries">
-    <item>geen</item>
-    <item>tempo</item>
-    <item>hartslagzone</item>
   </string-array>
   <!--Audio cue languages-->
   <!--Note: keep in same order as languagesNames-->

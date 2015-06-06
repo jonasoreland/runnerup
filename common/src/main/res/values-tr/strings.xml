@@ -22,6 +22,7 @@
   <string name="metrics_elapsed_min">dk</string>
   <!--format hint stuff-->
   <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="ok_rats">Tamam</string>
   <!--other-->
   <string name="Google_Play_Services_Legal_Notices">Google Play Servisi Yasal Notlar</string>
   <string name="Type">Tip</string>
@@ -53,6 +54,6 @@
   <string name="Configure_accounts">Hesapları yapılandır</string>
   <string name="Refresh">Yenile</string>
   <string name="Age">Yaş</string>
-  <string name="Running">Koşu</string>
   <string name="OK">Tamam</string>
+  <string name="OK_darn">Tamam</string>
 </resources>

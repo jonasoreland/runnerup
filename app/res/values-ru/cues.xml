@@ -33,36 +33,43 @@
   <plurals name="cue_hour">
     <item quantity="one">час</item>
     <item quantity="few">часа</item>
+    <item quantity="many">часов</item>
     <item quantity="other">часов</item>
   </plurals>
   <plurals name="cue_minute">
     <item quantity="one">минута</item>
     <item quantity="few">минуты</item>
+    <item quantity="many">минут</item>
     <item quantity="other">минут</item>
   </plurals>
   <plurals name="cue_second">
     <item quantity="one">секунда</item>
     <item quantity="few">секунды</item>
+    <item quantity="many">секунд</item>
     <item quantity="other">секунд</item>
   </plurals>
   <plurals name="cue_meter">
     <item quantity="one">метр</item>
     <item quantity="few">метра</item>
+    <item quantity="many">метров</item>
     <item quantity="other">метров</item>
   </plurals>
   <plurals name="cue_kilometer">
     <item quantity="one">километр</item>
     <item quantity="few">километра</item>
+    <item quantity="many">километров</item>
     <item quantity="other">километров</item>
   </plurals>
   <plurals name="cue_mile">
     <item quantity="one">миля</item>
     <item quantity="few">мили</item>
+    <item quantity="many">миль</item>
     <item quantity="other">миль</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">удар в минуту</item>
     <item quantity="few">удара в минуту</item>
+    <item quantity="many">ударов в минуту</item>
     <item quantity="other">ударов в минуту</item>
   </plurals>
   <string name="cue_activity_started">Начало движения</string>

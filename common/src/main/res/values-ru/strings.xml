@@ -46,6 +46,8 @@
   <string name="repeat">повторять</string>
   <string name="time">Время</string>
   <string name="distance">Дистанция</string>
+  <string name="Unknown">Неизвестно</string>
+  <string name="Distance">Дистанция</string>
   <string name="speed">скорость</string>
   <string name="pace">Темп</string>
   <string name="heart_rate_zone">Зона</string>
@@ -113,10 +115,6 @@
   <string name="Configure_accounts">Настройка фитнес аккаунтов</string>
   <string name="Refresh">Обновить</string>
   <string name="Age">Возраст</string>
-  <string name="Running">Бег</string>
-  <string name="Biking">Велосипед</string>
-  <string name="Other">Другое</string>
-  <string name="Unknown">Неизвестно</string>
   <string name="edit">Настройка</string>
   <string name="Synchronizing">Синхронизация:</string>
   <string name="synchronizing_feed">синхронизируем фитнес аккаунты...</string>
@@ -205,6 +203,7 @@
   <string name="Export">Экспорт</string>
   <string name="Import">Импорт</string>
   <string name="Experimental_HRM_devices">Тестовые HRM датчики</string>
+  <string name="Experimental_features">Экспериментальные возможности</string>
   <string name="Mock_HRM_devices">Имитировать датчик HRM</string>
   <string name="About">О приложении</string>
   <string name="About_RunnerUp">О RunnerUp</string>
@@ -288,4 +287,8 @@
   <string name="New_audio_scheme">Новая голосовая схема</string>
   <string name="Default">Стандартная</string>
   <string name="Notes_about_your_workout">Примечания о этом занятии</string>
+  <string name="Downloading_from_1s">Загрузка из %1$s</string>
+  <string name="Uploading_to_1s">Выгрузка в %1$s</string>
+  <string name="Loading_activities">Загрузка данных</string>
+  <string name="Fetching_activities_from_1s">Извлечение данных из %1$s</string>
 </resources>

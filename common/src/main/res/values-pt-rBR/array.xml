@@ -33,6 +33,14 @@
   <string-array name="sportEntries">
     <item>Corrida</item>
     <item>Ciclismo</item>
+    <item>Outros</item>
+  </string-array>
+  <string-array name="sportEntriesExperimental">
+    <item>Corrida</item>
+    <item>Ciclismo</item>
+    <item>Outros</item>
+    <item>Orientação</item>
+    <item>Caminhada</item>
   </string-array>
   <string-array name="muteEntries">
     <item>Não</item>
@@ -49,11 +57,6 @@
   <string-array name="sexes">
     <item>Masculino</item>
     <item>Feminino</item>
-  </string-array>
-  <string-array name="targetEntries">
-    <item>nenhuma</item>
-    <item>ritmo</item>
-    <item>zona de freq. cardíaca</item>
   </string-array>
   <!--Audio cue languages-->
   <string-array name="cueLanguageNames">

@@ -46,9 +46,9 @@
   <string name="repeat">upprepning</string>
   <string name="time">tid</string>
   <string name="distance">distans</string>
+  <string name="Unknown">Okänt</string>
   <string name="speed">hastighet</string>
   <string name="pace">tempo</string>
-  <string name="Heart_rate">puls</string>
   <string name="heart_rate_zone">pulszon</string>
   <string name="Zone">Zon</string>
   <string name="Device">Enhet</string>
@@ -114,10 +114,6 @@
   <string name="Configure_accounts">Konfigurera konton</string>
   <string name="Refresh">Uppdatera</string>
   <string name="Age">Ålder</string>
-  <string name="Running">Löpning</string>
-  <string name="Biking">Cykel</string>
-  <string name="Other">Annat</string>
-  <string name="Unknown">Okänt</string>
   <string name="edit">redigera</string>
   <string name="Synchronizing">Synkroniserar:</string>
   <string name="synchronizing_feed">synkroniserar flöde...</string>

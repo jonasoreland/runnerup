@@ -46,11 +46,14 @@
   <string name="repeat">繰り返す</string>
   <string name="time">時間</string>
   <string name="distance">距離</string>
+  <string name="Unknown">不明</string>
+  <string name="Distance">距離</string>
   <string name="speed">スピード</string>
   <string name="pace">ペース</string>
   <string name="heart_rate_zone">心拍数ゾーン</string>
   <string name="Zone">ゾーン</string>
   <string name="Device">デバイス</string>
+  <string name="Start_hour">開始時間</string>
   <string name="Heart_rate">心拍数</string>
   <string name="Pace">ペース</string>
   <string name="Scan">スキャン</string>
@@ -113,10 +116,6 @@
   <string name="Configure_accounts">アカウントを設定</string>
   <string name="Refresh">リフレッシュ</string>
   <string name="Age">年齢</string>
-  <string name="Running">ランニング</string>
-  <string name="Biking">サイクリング</string>
-  <string name="Other">その他</string>
-  <string name="Unknown">不明</string>
   <string name="edit">編集</string>
   <string name="Synchronizing">同期中:</string>
   <string name="synchronizing_feed">フィードを同期中...</string>
@@ -205,6 +204,7 @@
   <string name="Export">エクスポート</string>
   <string name="Import">インポート</string>
   <string name="Experimental_HRM_devices">実験的な HRM デバイス</string>
+  <string name="Experimental_features">実験的な機能</string>
   <string name="Mock_HRM_devices">モックの HRM デバイス</string>
   <string name="About">アプリについて</string>
   <string name="About_RunnerUp">RunnerUp について</string>
