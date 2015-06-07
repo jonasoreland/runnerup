@@ -82,11 +82,11 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_total_time"
         		android:title="@string/Total_time" />
-			<CheckBoxPreference
-				android:defaultValue="false"
-				android:persistent="true"
-				android:key="@string/cueinfo_total_speed"
-				android:title="@string/Total_speed" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:persistent="true"
+			android:key="@string/cueinfo_total_speed"
+			android:title="@string/Total_speed" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
@@ -113,11 +113,11 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_step_time"
         		android:title="@string/Interval_time" />
-			<CheckBoxPreference
-				android:defaultValue="true"
-				android:persistent="true"
-				android:key="@string/cueinfo_step_speed"
-				android:title="@string/Interval_speed" />
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:persistent="true"
+			android:key="@string/cueinfo_step_speed"
+			android:title="@string/Interval_speed" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
@@ -151,11 +151,11 @@
         		android:persistent="true"
         		android:key="@string/cueinfo_lap_time"
         		android:title="@string/Lap_time" />
-			<CheckBoxPreference
-				android:defaultValue="false"
-				android:persistent="true"
-				android:key="@string/cueinfo_lap_speed"
-				android:title="@string/Lap_speed" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:persistent="true"
+			android:key="@string/cueinfo_lap_speed"
+			android:title="@string/Lap_speed" />
     		<CheckBoxPreference
         		android:defaultValue="false"
         		android:persistent="true"
