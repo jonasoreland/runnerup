@@ -368,7 +368,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param speed_meter_per_second
+     * @param seconds_per_meter
      * @return string suitable for printing according to settings
      */
     private String txtPace(double seconds_per_meter, boolean includeUnit) {
@@ -441,7 +441,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param speed_meter_per_second
+     * @param seconds_per_meter
      * @return string suitable for printing according to settings
      */
     private String txtSpeed(double seconds_per_meter, boolean includeUnit) {
@@ -458,38 +458,14 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     private String cueSpeed(double seconds_per_meter) {
-        long seconds_per_unit = Math.round(base_meters * seconds_per_meter);
-        long hours_per_unit = 0;
-        long minutes_per_unit = 0;
-        if (seconds_per_unit >= 3600) {
-            hours_per_unit = seconds_per_unit / 3600;
-            seconds_per_unit -= hours_per_unit * 3600;
-        }
-        if (seconds_per_unit >= 60) {
-            minutes_per_unit = seconds_per_unit / 60;
-            seconds_per_unit -= minutes_per_unit * 60;
-        }
+        double meter_per_seconds = 1/seconds_per_meter;
+        double distance_per_seconds = meter_per_seconds / base_meters;
+        double distance_per_hour = distance_per_seconds * 3600;
+        String str = String.format("%.1f", distance_per_hour);
         StringBuilder s = new StringBuilder();
-        if (hours_per_unit > 0) {
-            s.append(hours_per_unit)
-                    .append(" ")
-                    .append(cueResources.getQuantityString(R.plurals.cue_hour, (int)hours_per_unit));
-        }
-        if (minutes_per_unit > 0) {
-            if (hours_per_unit > 0)
-                s.append(" ");
-            s.append(minutes_per_unit)
-                    .append(" ")
-                    .append(cueResources.getQuantityString(R.plurals.cue_minute, (int)minutes_per_unit));
-        }
-        if (seconds_per_unit > 0) {
-            if (hours_per_unit > 0 || minutes_per_unit > 0)
-                s.append(" ");
-            s.append(seconds_per_unit)
-                    .append(" ")
-                    .append(cueResources.getQuantityString(R.plurals.cue_second, (int)seconds_per_unit));
-        }
-        s.append(" ").append(cueResources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile) + "/h");
+        s.append(str);
+        s.append(" ").append(km ? cueResources.getQuantityString(R.plurals.cue_kilometer,2) : cueResources.getQuantityString(R.plurals.cue_mile,2));
+        s.append(" ").append("per hour");
         return s.toString();
     }
 
