@@ -456,7 +456,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             return str;
         else {
             int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
-            return str + resources.getString(res) + "/h";
+            return str +
+                    resources.getString(res) +
+                    "/" +
+                    resources.getString(R.string.metrics_elapsed_h);
         }
     }
 
