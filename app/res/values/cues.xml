@@ -23,6 +23,7 @@
   <string name="cue_recovery">recovery</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>
+  <string name="cue_perhour">per hour</string>
   <string name="cue_started">started</string>
   <string name="cue_paused">paused</string>
   <string name="cue_resumed">resumed</string>

@@ -446,9 +446,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      */
     private String txtSpeed(double seconds_per_meter, boolean includeUnit) {
         double meter_per_seconds = 0;
-	if (seconds_per_meter != 0) {
-		meter_per_seconds = 1/seconds_per_meter;
-	}
+        if (seconds_per_meter != 0) {
+            meter_per_seconds = 1 / seconds_per_meter;
+        }
         double distance_per_seconds = meter_per_seconds / base_meters;
         double distance_per_hour = distance_per_seconds * 3600;
         String str = String.format("%.1f", distance_per_hour);
@@ -462,16 +462,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     private String cueSpeed(double seconds_per_meter) {
         double meter_per_seconds = 0;
-	if (seconds_per_meter != 0) {
-		meter_per_seconds = 1/seconds_per_meter;
-	}
+        if (seconds_per_meter != 0) {
+            meter_per_seconds = 1 / seconds_per_meter;
+        }
         double distance_per_seconds = meter_per_seconds / base_meters;
         double distance_per_hour = distance_per_seconds * 3600;
         String str = String.format("%.1f", distance_per_hour);
         StringBuilder s = new StringBuilder();
         s.append(str);
-        s.append(" ").append(km ? cueResources.getQuantityString(R.plurals.cue_kilometer,2) : cueResources.getQuantityString(R.plurals.cue_mile,2));
-        s.append(" ").append("per hour");
+        s.append(" ").append(km ? cueResources.getQuantityString(R.plurals.cue_kilometer, 2) : cueResources.getQuantityString(R.plurals.cue_mile, 2));
+        s.append(" ").append(cueResources.getString(R.string.cue_perhour));
         return s.toString();
     }
 
