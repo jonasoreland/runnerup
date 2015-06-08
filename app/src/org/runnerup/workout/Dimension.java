@@ -33,7 +33,7 @@ public enum Dimension {
     HRZ(DIMENSION.HRZ, R.string.heart_rate_zone);
 
     // TODO
-    public static final boolean SPEED_CUE_ENABLED = false;
+    public static final boolean SPEED_CUE_ENABLED = true;
 
     int value = 0;
     int textId = 0;
