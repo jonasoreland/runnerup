@@ -51,8 +51,8 @@ public class SyncActivityItem {
         this.skipFlag = skipFlag;
     }
 
-    public Boolean isPresent() {
-        return presentFlag;
+    public Boolean isRelevantForSynch(SyncManager.SyncMode syncMode) {
+        return (presentFlag && SyncManager.SyncMode.UPLOAD.equals(syncMode)) || (!presentFlag && SyncManager.SyncMode.DOWNLOAD.equals(syncMode));
     }
 
     public void setPresentFlag(Boolean presentFlag) {
@@ -108,13 +108,6 @@ public class SyncActivityItem {
     }
 
     public boolean synchronize(SyncManager.SyncMode syncMode) {
-        switch (syncMode) {
-            case DOWNLOAD:
-                return !this.skipActivity() && !this.isPresent();
-            case UPLOAD:
-                return !this.skipActivity() && this.isPresent();
-            default:
-                return false;
-        }
+            return !this.skipActivity() && this.isRelevantForSynch(syncMode);
     }
 }

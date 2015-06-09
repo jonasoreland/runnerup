@@ -344,7 +344,7 @@ public class UploadActivity extends ListActivity implements Constants {
                 cb.setOnCheckedChangeListener(checkedChangeClick);
                 cb.setChecked(!ai.skipActivity());
 
-                if (ai.isPresent() && syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
+                if (!ai.isRelevantForSynch(syncMode)) {
                     cb.setEnabled(Boolean.FALSE);
                 }
             }
@@ -433,7 +433,7 @@ public class UploadActivity extends ListActivity implements Constants {
         @Override
         public void onClick(View v) {
             for (SyncActivityItem tmp : allSyncActivities) {
-                if (!tmp.isPresent()) {
+                if (tmp.isRelevantForSynch(syncMode)) {
                     tmp.setSkipFlag(Boolean.TRUE);
                 }
             }
@@ -446,7 +446,7 @@ public class UploadActivity extends ListActivity implements Constants {
         @Override
         public void onClick(View v) {
             for (SyncActivityItem tmp : allSyncActivities) {
-                if (!tmp.isPresent()) {
+                if (tmp.isRelevantForSynch(syncMode)) {
                     tmp.setSkipFlag(Boolean.FALSE);
                 }
             }
