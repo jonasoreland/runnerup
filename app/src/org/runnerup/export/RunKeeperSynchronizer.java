@@ -513,7 +513,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     private ActivityEntity parseToActivity(JSONObject response, SyncActivityItem ai) throws JSONException {
         ActivityEntity newActivity = new ActivityEntity();
         newActivity.setSport(runkeeper2sportMap.get(response.getString("type")).getDbValue());
-        newActivity.setComment(response.getString("notes"));
+        if (response.has("notes")) {
+            newActivity.setComment(response.getString("notes"));
+        }
         newActivity.setStartTime(ai.getStartTime());
         newActivity.setTime(ai.getDuration());
         newActivity.setDistance(ai.getDistance());
@@ -549,6 +551,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             lv.setTime(ai.getStartTime() + timePoint.getKey());
 
             String dist = values.get("distance");
+            if (dist == null) {
+                continue;
+            }
             String lat = values.get("latitude");
             String lon = values.get("longitude");
             String alt = values.get("altitude");
@@ -663,7 +668,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         if (distance != null && distance.length() > 0) {
             for (int i = 0; i < distance.length(); i++) {
                 JSONObject o = distance.getJSONObject(i);
-                Long key = TimeUnit.SECONDS.toMillis(Long.valueOf(o.getString("timestamp")));
+                Long key = TimeUnit.SECONDS.toMillis((long) Float.parseFloat(o.getString("timestamp")));
                 HashMap<String, String> value = new HashMap<String, String>();
                 String valueMapKey = "distance";
                 String valueMapValue = o.getString(valueMapKey);
@@ -675,7 +680,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         if (path != null && path.length() > 0) {
             for (int i = 0; i < path.length(); i++) {
                 JSONObject o = path.getJSONObject(i);
-                Long key = TimeUnit.SECONDS.toMillis(Long.valueOf(o.getString("timestamp")));
+                Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
                     value = new HashMap<String, String>();
@@ -692,7 +697,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         if (hr != null && hr.length() > 0) {
             for (int i = 0; i < hr.length(); i++) {
                 JSONObject o = hr.getJSONObject(i);
-                Long key = TimeUnit.SECONDS.toMillis(Long.valueOf(o.getString("timestamp")));
+                Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
                     value = new HashMap<String, String>();
