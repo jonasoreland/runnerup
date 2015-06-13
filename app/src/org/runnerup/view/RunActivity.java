@@ -272,6 +272,11 @@ public class RunActivity extends Activity implements TickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (workout == null) {
+            // "should not happen"
+            finish();
+            return;
+        }
         if (resultCode == Activity.RESULT_OK) {
             /**
              * they saved
