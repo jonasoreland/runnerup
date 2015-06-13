@@ -158,6 +158,16 @@ public class RunActivity extends Activity implements TickListener {
     }
 
     void onGpsTrackerBound() {
+        if (mTracker == null) {
+            // should not happen
+            return;
+        }
+
+        if (mTracker.getWorkout() == null) {
+            // should not happen
+            return;
+        }
+
         workout = mTracker.getWorkout();
 
         {
