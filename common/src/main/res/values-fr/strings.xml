@@ -27,8 +27,8 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Fréquence Cardiaque Maximum (FCM)</string>
   <string name="Target_pace_HHMMSS">Rythme cible (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Temps d\'intervalle (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Distance d\'intervalle (m)</string>
+  <string name="Interval_time_HHMMSS">Durée de l\'intervalle (HH:MM:SS)</string>
+  <string name="Interval_distance_m">Longueur de l\'intervalle (m)</string>
   <string name="Rest_time_HHMMSS">Temps de repos (HH:MM:SS)</string>
   <string name="Rest_distance_m">Distance de repos (m)</string>
   <string name="Duration_time_HHMMSS">Durée (HH:MM:SS)</string>
@@ -53,7 +53,7 @@
   <string name="heart_rate_zone">zone de fréq. cardiaque</string>
   <string name="Zone">Zone</string>
   <string name="Device">Appareil</string>
-  <string name="Start_hour">Heure de début</string>
+  <string name="Start_hour">Heure de démarrage</string>
   <string name="Heart_rate">Fréquence Cardiaque</string>
   <string name="Pace">Rythme</string>
   <string name="Scan">Scanner</string>
@@ -93,7 +93,7 @@
   <string name="Password">Mot de passe</string>
   <string name="Show_password">Afficher le mot de passe</string>
   <string name="intensity">intensité</string>
-  <string name="Step_intensity">Seuil d\'intensité </string>
+  <string name="Step_intensity">Intensité de l\'effort</string>
   <string name="Low_pace">Rythme min.</string>
   <string name="High_pace">Rythme max.</string>
   <string name="Sex">Sexe</string>
@@ -175,7 +175,7 @@
   <string name="Test_audio_cue">Tester le suivi audio</string>
   <string name="Accounts">Comptes</string>
   <string name="Audio_cues">Suivi audio</string>
-  <string name="Heart_Rate_Monitor">Moniteur de Fréq. Cardiaque</string>
+  <string name="Heart_Rate_Monitor">Cardiofréquencemètre </string>
   <string name="Heart_Rate_Zones">Zones de Fréq. Cardiaque</string>
   <string name="Autolap">Tour automatique</string>
   <string name="Autolap_m">Tour automatique (m)</string>
@@ -184,11 +184,11 @@
   <string name="Headset_key_startstop">Touche de casque début/fin</string>
   <string name="Activity_countdown">Compte à rebours avant démarrage séance</string>
   <string name="Countdown_time_s">Compte à rebours (s)</string>
-  <string name="Unit_preference">Préférence d\'unité</string>
+  <string name="Unit_preference">Unité de mesure</string>
   <string name="Auto_start_GPS">Démarrage auto. GPS</string>
   <string name="Advanced_options">Paramètres avancés</string>
   <string name="RunnerUp_live_address">Adresse RunnerUp live</string>
-  <string name="Autopause_after_s">Pause auto après (s)</string>
+  <string name="Autopause_after_s">Pause auto. après (s)</string>
   <string name="Autopause_min_pace_minkm">Pause auto. rythme min. (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Convertir le repos dans l\'onglet Intervalle</string>
   <string name="Convert_rest_on_Advanced_tab">Convertir le repos dans l\'onglet Avancé</string>
@@ -209,12 +209,12 @@
   <string name="About">À propos</string>
   <string name="About_RunnerUp">À propos de RunnerUp</string>
   <string name="Triggers">Déclencheurs</string>
-  <string name="Time_triggered_audio_cue">Suivi audio selon temps</string>
+  <string name="Time_triggered_audio_cue">Déclencher selon le temps</string>
   <string name="Cue_interval_s">Temps entre 2 suivis audio (en sec)</string>
-  <string name="Distance_triggered_audio_cue">Suivi audio selon distance</string>
+  <string name="Distance_triggered_audio_cue">Déclencher selon la distance</string>
   <string name="Cue_intervall_m">Distance entre 2 suivis audio (en m)</string>
-  <string name="End_of_lap_audio_cue">Suivi audio à la fin du tour</string>
-  <string name="Mute_music_during_audio_cues">Pauser la musique lors du suivi audio</string>
+  <string name="End_of_lap_audio_cue">Déclencher à la fin du tour</string>
+  <string name="Mute_music_during_audio_cues">Musique en pause lors du suivi audio</string>
   <string name="Cue_information">Contenu du suivi audio</string>
   <string name="Total_distance">Distance totale</string>
   <string name="Total_time">Temps total</string>
@@ -231,6 +231,10 @@
   <string name="Lap_pace">Rythme au tour</string>
   <string name="Lap_heart_rate">Fréq. cardiaque au tour</string>
   <string name="Lap_heart_rate_zone">Zone fréq. cardiaque au tour</string>
+  <string name="Current_pace">Rythme actuel</string>
+  <string name="Current_speed">Vitesse actuelle</string>
+  <string name="Current_heart_rate">Fréquence cardiaque actuelle</string>
+  <string name="Current_heart_rate_zone">Zone de fréq. cardiaque actuelle</string>
   <string name="Misc_cues">Autre</string>
   <string name="Target_coaching">Objectif d\'entraînement</string>
   <string name="Skip_event_audio_cues">Ignorer le suivi audio</string>

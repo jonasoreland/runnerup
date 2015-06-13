@@ -220,7 +220,7 @@
   <string name="Total_time">Total do tempo</string>
   <string name="Total_pace">Total do ritmo</string>
   <string name="Total_heart_rate">Total da frequência cardíaca</string>
-  <string name="Total_heart_rate_zone">Total da zona de frequência cardíaca</string>
+  <string name="Total_heart_rate_zone">Total da zona de freq cardíaca</string>
   <string name="Interval_distance">Distância do intervalo</string>
   <string name="Interval_time">Tempo do intervalo</string>
   <string name="Interval_pace">Ritmo do intervalo</string>
@@ -231,6 +231,10 @@
   <string name="Lap_pace">Ritmo da volta</string>
   <string name="Lap_heart_rate">Frequência cardíaca da volta</string>
   <string name="Lap_heart_rate_zone">Zona de frequência cardíaca da volta</string>
+  <string name="Current_pace">Ritmo atual</string>
+  <string name="Current_speed">Velocidade atual</string>
+  <string name="Current_heart_rate">Frequência cardíada atual</string>
+  <string name="Current_heart_rate_zone">Zona da frequência cardíaca atual</string>
   <string name="Misc_cues">Avisos diversos</string>
   <string name="Target_coaching">Meta de treinamento</string>
   <string name="Skip_event_audio_cues">Pular avisos de áudio de evento</string>

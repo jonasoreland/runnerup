@@ -231,6 +231,10 @@
   <string name="Lap_pace">ラップペース</string>
   <string name="Lap_heart_rate">ラップ心拍数</string>
   <string name="Lap_heart_rate_zone">ラップ心拍数ゾーン</string>
+  <string name="Current_pace">現在のペース</string>
+  <string name="Current_speed">現在のスピード</string>
+  <string name="Current_heart_rate">現在の心拍数</string>
+  <string name="Current_heart_rate_zone">現在の心拍数ゾーン</string>
   <string name="Misc_cues">その他の合図</string>
   <string name="Target_coaching">目標コーチング</string>
   <string name="Skip_event_audio_cues">イベントの音声合図をスキップ</string>

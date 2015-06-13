@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string-array name="unitEntries">
-    <item>Miles</item>
+    <item>Milles</item>
     <item>Kilomètres</item>
   </string-array>
   <string-array name="unitValues">
@@ -11,7 +11,7 @@
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>Échauffement</item>
-    <item>Active</item>
+    <item>Actif</item>
     <item>Repos</item>
     <item>Récupération</item>
     <item>Refroidissement</item>
