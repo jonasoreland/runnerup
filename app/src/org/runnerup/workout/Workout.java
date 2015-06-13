@@ -76,9 +76,15 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             --depth;
             if (depth == 0) {
                 set.clear();
-                Workout.this.textToSpeech.emit();
+                try {
+                    Workout.this.textToSpeech.emit();
+                } catch (Exception ex) {
+                    // make sure that no small misstake crashes a workout...
+                    ex.printStackTrace();
+                }
+                return true;
             }
-            return depth == 0;
+            return false;
         }
     }
 
