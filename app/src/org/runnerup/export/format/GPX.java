@@ -21,10 +21,9 @@ import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.util.Xml;
 
 import org.runnerup.common.util.Constants.DB;
-import org.xmlpull.v1.XmlSerializer;
+import org.runnerup.util.KXmlSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -47,7 +46,7 @@ public class GPX {
 
     long mID = 0;
     SQLiteDatabase mDB = null;
-    XmlSerializer mXML = null;
+    KXmlSerializer mXML = null;
     String notes = null;
     SimpleDateFormat simpleDateFormat = null;
 
@@ -78,7 +77,7 @@ public class GPX {
 
         long startTime = cursor.getLong(2); // epoch
         try {
-            mXML = Xml.newSerializer();
+            mXML = new KXmlSerializer();
             mXML.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
             mXML.setOutput(writer);
             mXML.startDocument("UTF-8", true);

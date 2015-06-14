@@ -23,11 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 import android.util.Pair;
-import android.util.Xml;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.util.KXmlSerializer;
 import org.runnerup.workout.Sport;
-import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -50,7 +49,7 @@ public class TCX {
 
     long mID = 0;
     SQLiteDatabase mDB = null;
-    XmlSerializer mXML = null;
+    KXmlSerializer mXML = null;
     String notes = null;
     SimpleDateFormat simpleDateFormat = null;
     Sport sport = null;
@@ -90,7 +89,7 @@ public class TCX {
 
         long startTime = cursor.getLong(2); // epoch
         try {
-            mXML = Xml.newSerializer();
+            mXML = new KXmlSerializer();
             mXML.setOutput(writer);
             mXML.startDocument("UTF-8", true);
             mXML.startTag("", "TrainingCenterDatabase");

@@ -23,19 +23,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
-import android.util.Xml;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
+import org.runnerup.util.KXmlSerializer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -214,7 +213,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
     private void saveGPX(final Writer wr, final String gpx) throws IllegalArgumentException,
             IllegalStateException, IOException {
-        final XmlSerializer mXML = Xml.newSerializer();
+        final KXmlSerializer mXML = new KXmlSerializer();
         mXML.setFeature(
                 "http://xmlpull.org/v1/doc/features.html#indent-output",
                 true);

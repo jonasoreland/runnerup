@@ -22,11 +22,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
-import android.util.Xml;
 
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
-import org.xmlpull.v1.XmlSerializer;
+import org.runnerup.util.KXmlSerializer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -34,18 +33,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
+
 /**
  * @author jonas.oreland@gmail.com
  * 
  */
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class NikeXML {
 
     private static final String DEVICE = "iPod";
 
     SQLiteDatabase mDB = null;
-    XmlSerializer mXML = null;
+    KXmlSerializer mXML = null;
     SimpleDateFormat simpleDateFormat = null;
 
     public NikeXML(final SQLiteDatabase db) {
@@ -83,7 +82,7 @@ public class NikeXML {
         final double distance = cursor.getDouble(3);
         final long duration = cursor.getLong(4);
         try {
-            mXML = Xml.newSerializer();
+            mXML = new KXmlSerializer();
             mXML.setFeature(
                     "http://xmlpull.org/v1/doc/features.html#indent-output",
                     true);
