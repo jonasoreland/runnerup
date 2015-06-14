@@ -84,6 +84,10 @@ public abstract class AbstractEntity implements DBEntity {
         } else {
             throw new IllegalArgumentException("Cursor " + c.toString() + " is incompatible with the Entity " + this.getClass().getName());
         }
-    }
 
+        for (String column : getValidColumns()) {
+            if (values().get(column) == null)
+                values().remove(column);
+        }
+    }
 }
