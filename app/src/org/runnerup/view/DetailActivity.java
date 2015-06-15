@@ -1279,6 +1279,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 float res[] = {
                                     0
                                 };
+                                if (lastLocation == null) {
+                                    lastLocation = point;
+                                }
                                 Location.distanceBetween(lastLocation.latitude,
                                         lastLocation.longitude, point.latitude, point.longitude,
                                         res);
