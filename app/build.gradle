@@ -31,7 +31,7 @@ android {
             minSdkVersion 8
             targetSdkVersion 18
             versionName "1.45"
-            versionCode 8000045 
+            versionCode 8000045
         }
         latest {
             minSdkVersion 14
@@ -65,15 +65,21 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     latestCompile 'com.android.support:support-v4:20.0.0'
-    latestCompile 'com.google.android.gms:play-services:6.1.11'
 
     froyoCompile 'com.android.support:support-v4:19.1.+'
-    froyoCompile 'com.google.android.gms:play-services:3.2.65'
+
+    compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar'){
+        transitive=true
+    }
 
     compile files('../GraphView/public/graphview-3.1.jar')
-    
+
     compile project(':common')
     compile project(':hrdevice')
 

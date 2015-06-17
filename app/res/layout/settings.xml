@@ -20,55 +20,55 @@
     android:layout_height="fill_parent" >
 
     <Preference
-        	android:key="cue_accounts"
-        	android:title="@string/Accounts"
-        	android:summary="@string/Configure_accounts">
-			<intent
-			    android:targetPackage="org.runnerup"
-			    android:targetClass="org.runnerup.view.AccountListActivity" />
+            android:key="cue_accounts"
+            android:title="@string/Accounts"
+            android:summary="@string/Configure_accounts">
+            <intent
+                android:targetPackage="org.runnerup"
+                android:targetClass="org.runnerup.view.AccountListActivity" />
     </Preference>
 
     <Preference
-        	android:key="cue_accounts"
-        	android:title="@string/Audio_cues"
-        	android:summary="@string/Configure_audio_cues">
-			<intent
-			    android:targetPackage="org.runnerup"
-			    android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
+            android:key="cue_accounts"
+            android:title="@string/Audio_cues"
+            android:summary="@string/Configure_audio_cues">
+            <intent
+                android:targetPackage="org.runnerup"
+                android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
     </Preference>
 
     <Preference
-        	android:key="cue_workouts"
-        	android:title="@string/Manage_workouts"
-        	android:summary="@string/Downloadeditremove_workouts">
-			<intent
-			    android:targetPackage="org.runnerup"
-			    android:targetClass="org.runnerup.view.ManageWorkoutsActivity" />
+            android:key="cue_workouts"
+            android:title="@string/Manage_workouts"
+            android:summary="@string/Downloadeditremove_workouts">
+            <intent
+                android:targetPackage="org.runnerup"
+                android:targetClass="org.runnerup.view.ManageWorkoutsActivity" />
     </Preference>
 
-	<Preference
+    <Preference
         android:key="cue_configure_hr"
         android:title="@string/Heart_Rate_Monitor">
-			<intent
-			    android:targetPackage="org.runnerup"
-			    android:targetClass="org.runnerup.view.HRSettingsActivity" />
+            <intent
+                android:targetPackage="org.runnerup"
+                android:targetClass="org.runnerup.view.HRSettingsActivity" />
     </Preference>
 
-	<Preference
+    <Preference
         android:key="cue_configure_hrzones"
         android:title="@string/Heart_Rate_Zones">
-			<intent
-			    android:targetPackage="org.runnerup"
-			    android:targetClass="org.runnerup.view.HRZonesActivity" />
+            <intent
+                android:targetPackage="org.runnerup"
+                android:targetClass="org.runnerup.view.HRZonesActivity" />
     </Preference>
 
-	<CheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_autolap_active"
         android:persistent="true"
         android:title="@string/Autolap" />
 
-	<org.runnerup.widget.TextPreference
+    <org.runnerup.widget.TextPreference
         android:defaultValue="1000"
         android:dependency="@string/pref_autolap_active"
         android:inputType="number"
@@ -90,7 +90,7 @@
         android:title="@string/Enable_RunnerUpLive"
         android:summary="@string/Note_you_need_to_connect_to_the_account_too" />
 
-	<CheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"
         android:key="@string/pref_keystartstop_active"
@@ -103,7 +103,7 @@
         android:key="@string/pref_countdown_active"
         android:title="@string/Activity_countdown" />
 
-	<org.runnerup.widget.TextPreference
+    <org.runnerup.widget.TextPreference
         android:defaultValue="15"
         android:dependency="@string/pref_countdown_active"
         android:inputType="number"
@@ -118,24 +118,24 @@
         android:entries="@array/unitEntries"
         android:entryValues="@array/unitValues" />
 
-	<CheckBoxPreference
+    <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/pref_startgps"
         android:persistent="true"
         android:title="@string/Auto_start_GPS" />
 
-	<PreferenceScreen
+    <PreferenceScreen
             android:key="second_preferencescreen"
             android:title="@string/Advanced_options">
 
-	    <org.runnerup.widget.TextPreference
-	        android:defaultValue="http://weide.devsparkles.se/api/Resource/"
-	        android:dependency="@string/pref_runneruplive_active"
-	        android:inputType="text"
-	        android:key="@string/pref_runneruplive_serveradress"
-	        android:persistent="true"
-	        android:title="@string/RunnerUp_live_address"
-	        android:enabled="true" />
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="http://weide.devsparkles.se/api/Resource/"
+            android:dependency="@string/pref_runneruplive_active"
+            android:inputType="text"
+            android:key="@string/pref_runneruplive_serveradress"
+            android:persistent="true"
+            android:title="@string/RunnerUp_live_address"
+            android:enabled="true" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="3"
@@ -169,52 +169,52 @@
             android:title="@string/Convert_rest_on_Advanced_tab"
             android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab" />
 
-	    <org.runnerup.widget.TextPreference
+        <org.runnerup.widget.TextPreference
             android:inputType="number"
             android:key="@string/pref_target_pace_moving_average_seconds"
             android:persistent="true"
             android:title="@string/Target_pace_moving_average_seconds" />
 
-	    <org.runnerup.widget.TextPreference
+        <org.runnerup.widget.TextPreference
             android:inputType="number"
             android:key="@string/pref_target_pace_grace_seconds"
             android:persistent="true"
             android:title="@string/Target_pace_grace_seconds" />
 
-    	<CheckBoxPreference
-        	android:defaultValue="true"
-        	android:persistent="true"
-        	android:key="@string/pref_step_autolap_active"
-        	android:title="@string/Autolap_during_intervals" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_step_autolap_active"
+            android:title="@string/Autolap_during_intervals" />
 
-    	<CheckBoxPreference
-        	android:defaultValue="true"
-        	android:persistent="true"
-        	android:key="@string/pref_step_countdown_active"
-        	android:title="@string/Add_countdown_after_step_that_ends_with_user_press" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_step_countdown_active"
+            android:title="@string/Add_countdown_after_step_that_ends_with_user_press" />
 
-		<org.runnerup.widget.TextPreference
-        	android:defaultValue="15"
-        	android:dependency="@string/pref_step_countdown_active"
-        	android:inputType="number"
-        	android:key="@string/pref_step_countdown_time"
-        	android:persistent="true"
-        	android:title="@string/Step_countdown_time_s" />
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="15"
+            android:dependency="@string/pref_step_countdown_active"
+            android:inputType="number"
+            android:key="@string/pref_step_countdown_time"
+            android:persistent="true"
+            android:title="@string/Step_countdown_time_s" />
 
-    	<CheckBoxPreference
-        	android:defaultValue="true"
-        	android:persistent="true"
-        	android:key="@string/pref_pace_graph_smoothing"
-        	android:title="@string/Smooth_pace_graph" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_pace_graph_smoothing"
+            android:title="@string/Smooth_pace_graph" />
 
-		<org.runnerup.widget.TextPreference
-        	android:defaultValue="mm(31);kz(5,13);sg(5)"
-        	android:dependency="@string/pref_pace_graph_smoothing"
-        	android:key="@string/pref_pace_graph_smoothing_filters"
-        	android:persistent="true"
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="mm(31);kz(5,13);sg(5)"
+            android:dependency="@string/pref_pace_graph_smoothing"
+            android:key="@string/pref_pace_graph_smoothing_filters"
+            android:persistent="true"
             android:inputType="none"
-        	android:summary="@string/mm31kz513sg5"
-        	android:title="@string/Smooth_pace_filters" />
+            android:summary="@string/mm31kz513sg5"
+            android:title="@string/Smooth_pace_filters" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="500"
@@ -242,17 +242,17 @@
             android:key="prunedb"
             android:summary="@string/Pruning_deleted_activities_from_database" />
 
-    	<CheckBoxPreference
-        	android:defaultValue="false"
-        	android:persistent="true"
-        	android:key="@string/pref_bt_experimental"
-        	android:title="@string/Experimental_HRM_devices" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_bt_experimental"
+            android:title="@string/Experimental_HRM_devices" />
 
-    	<CheckBoxPreference
-        	android:defaultValue="false"
-        	android:persistent="true"
-        	android:key="@string/pref_bt_mock"
-        	android:title="@string/Mock_HRM_devices" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_bt_mock"
+            android:title="@string/Mock_HRM_devices" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="15"
@@ -274,16 +274,12 @@
             android:key="@string/pref_experimental_features"
             android:title="@string/Experimental_features" />
 
-    	</PreferenceScreen>
+        </PreferenceScreen>
 
-	<PreferenceCategory android:title="@string/About">
-		<org.runnerup.widget.AboutPreference
-        	android:title="@string/About_RunnerUp"
-        	android:dialogMessage="@string/Not_much_to_say_at_this_point" />
-
-		<org.runnerup.widget.AboutPreference
-        	android:title="@string/Google_Play_Services_Legal_Notices"
-        	android:dialogMessage="@string/Not_much_to_say_at_this_point" />
-	</PreferenceCategory>
+    <PreferenceCategory android:title="@string/About">
+        <org.runnerup.widget.AboutPreference
+            android:title="@string/About_RunnerUp"
+            android:dialogMessage="@string/Not_much_to_say_at_this_point" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -16,6 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -134,6 +135,7 @@
                         android:gravity="top|left"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
+                        android:hint="@string/Notes_about_your_workout"
                         android:singleLine="false" />
 
                     <LinearLayout
@@ -192,11 +194,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
-                    <fragment
-                        android:id="@+id/map"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        class="com.google.android.gms.maps.SupportMapFragment" />
+                    <com.mapbox.mapboxsdk.views.MapView
+                            android:id="@+id/mapview"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            mapbox:mapid="cqnqrd.4004d33f"
+                            mapbox:accessToken="pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw"/>
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
