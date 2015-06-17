@@ -562,7 +562,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
             if (lat == null || lon == null) {
                 continue;
-            } else if (lat != null && lon != null) {
+            } else {
                 lv.setLatitude(Double.valueOf(lat));
                 lv.setLongitude(Double.valueOf(lon));
             }
