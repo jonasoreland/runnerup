@@ -70,6 +70,7 @@ repositories {
 }
 
 dependencies {
+    latestCompile 'com.google.android.gms:play-services:6.1.11'
     latestCompile 'com.android.support:support-v4:20.0.0'
 
     froyoCompile 'com.android.support:support-v4:19.1.+'
