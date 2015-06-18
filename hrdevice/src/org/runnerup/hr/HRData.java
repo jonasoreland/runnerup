@@ -1,5 +1,8 @@
 package org.runnerup.hr;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import java.util.Arrays;
 
 /**
@@ -33,6 +36,7 @@ import java.util.Arrays;
  * }
  * </pre>
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class HRData {
     
     public boolean hasHeartRate = false;

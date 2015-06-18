@@ -17,7 +17,9 @@
 
 package org.runnerup.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 
 import org.runnerup.util.HRZones;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZonesListAdapter extends BaseAdapter {
 
     /**

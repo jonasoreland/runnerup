@@ -1,6 +1,8 @@
 package org.runnerup.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import java.util.HashSet;
 /**
  * Created by jonas on 9/18/14.
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class DisabledEntriesAdapter extends BaseAdapter {
 
     String[] entries;

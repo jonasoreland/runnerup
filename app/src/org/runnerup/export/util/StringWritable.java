@@ -17,9 +17,13 @@
 
 package org.runnerup.export.util;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class StringWritable implements Writable {
     final String s;
 

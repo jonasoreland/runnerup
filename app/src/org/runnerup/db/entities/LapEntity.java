@@ -17,7 +17,9 @@
 
 package org.runnerup.db.entities;
 
+import android.annotation.TargetApi;
 import android.database.Cursor;
+import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 /**
  * Content values wrapper for the {@code lap} table.
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class LapEntity extends AbstractEntity {
 
     public LapEntity() {

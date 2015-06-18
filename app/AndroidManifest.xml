@@ -38,71 +38,71 @@
     	<uses-permission android:name="android.permission.BLUETOOTH" />
     	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
         <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-        
+
 	<application
 	    android:icon="@drawable/icon"
 	    android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar">
+		android:theme="@android:style/Theme.NoTitleBar">
 
-		<meta-data 
+		<meta-data
 		    android:name="com.google.android.maps.v2.API_KEY"
     		android:value="AIzaSyA1hWmPZcCeQYbqTUXlxjIXrTGmi8quOKQ" />
 
-           
+
 		<activity
 			android:name=".view.MainLayout"
 			android:label="@string/app_name"
-			android:screenOrientation="portrait" >
+			android:screenOrientation="sensorPortrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
   		</activity>
-	
+
 		<activity android:name=".view.StartActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
 		<activity android:name="org.runnerup.view.FeedActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
-		
+
 		<activity android:name=".view.RunActivity"
 		    android:configChanges="keyboardHidden|orientation"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
-		
+
 		<activity android:name=".view.SettingsActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
 		<activity android:name=".view.AudioCueSettingsActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
-		
+
 		<activity android:name=".view.DetailActivity"
 			android:configChanges="orientation|screenSize|uiMode"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
 		<activity android:name=".view.HistoryActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
 		<activity android:name=".view.AccountListActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
 		<activity android:name=".view.AccountActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
-		
+
 		<activity android:name=".view.UploadActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
-		
+
 		<activity android:name=".view.ManageWorkoutsActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
   				<action android:name="android.intent.action.EDIT" />
@@ -127,26 +127,26 @@
             android:authorities="org.runnerup.activity.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider" />
-				
+
 		<activity android:name=".export.oauth2client.OAuth2Activity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
 		<activity android:name=".view.HRSettingsActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
-				
+
 		<activity android:name=".view.HRZonesActivity"
-		    android:screenOrientation="portrait" >
+		    android:screenOrientation="sensorPortrait" >
 		</activity>
-		
-		<service 
+
+		<service
 		    android:name=".tracker.Tracker" >
 		</service>
 		<service
                 android:name=".export.RunnerUpLiveSynchronizer$LiveService">
  		</service>
- 		
+
 		<receiver
 		    android:name=".tracker.component.HeadsetButtonReceiver"
 		    android:enabled="true" >
@@ -169,7 +169,7 @@
 
 		<activity
 			android:name=".view.CreateAdvancedWorkout"
-			android:screenOrientation="portrait" >
+			android:screenOrientation="sensorPortrait" >
 		</activity>
 	</application>
 

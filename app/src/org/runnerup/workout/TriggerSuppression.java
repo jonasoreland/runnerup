@@ -17,6 +17,10 @@
 
 package org.runnerup.workout;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public abstract class TriggerSuppression {
 
     public abstract boolean suppress(Trigger trigger, Workout w);

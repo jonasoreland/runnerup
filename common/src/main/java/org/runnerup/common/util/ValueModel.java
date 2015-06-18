@@ -16,11 +16,15 @@
  */
 package org.runnerup.common.util;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
 import java.util.ArrayList;
 
 /**
  * Created by jonas on 12/29/14.
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class ValueModel<T> {
 
     private T value;

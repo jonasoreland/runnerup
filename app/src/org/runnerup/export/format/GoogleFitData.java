@@ -17,9 +17,11 @@
 
 package org.runnerup.export.format;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
@@ -41,6 +43,7 @@ import java.util.Map;
 
 import static org.runnerup.common.util.Constants.DB;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class GoogleFitData {
 
     public static final int SECONDS_TO_MILLIS = 1000;
@@ -143,6 +146,7 @@ public class GoogleFitData {
             neededSources.add(DataSourceType.ACTIVITY_LOCATION);
             neededSources.add(DataSourceType.LOCATION_SUMMARY);
         }
+        cursor.close();
 
         // Than if present the heart rate
         cursor = getDB().query(DB.LOCATION.TABLE, pColumns,
@@ -153,6 +157,7 @@ public class GoogleFitData {
             neededSources.add(DataSourceType.ACTIVITY_HEARTRATE);
             neededSources.add(DataSourceType.HEARTRATE_SUMMARY);
         }
+        cursor.close();
 
         // Next will be the speed
         cursor = getDB().query(DB.LOCATION.TABLE, pColumns,
@@ -162,6 +167,7 @@ public class GoogleFitData {
             neededSources.add(DataSourceType.ACTIVITY_SPEED);
             neededSources.add(DataSourceType.SPEED_SUMMARY);
         }
+        cursor.close();
 
         // At last the segments and summary
         neededSources.add(DataSourceType.ACTIVITY_SEGMENT);
@@ -254,7 +260,7 @@ public class GoogleFitData {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        cursor.close();
         return getDataSetURLSuffix(source, startTime, endTime);
     }
 
@@ -278,6 +284,7 @@ public class GoogleFitData {
 
         long startTime = minMaxTime.getLong(0) * MICRO_TO_NANOS;
         long endTime = minMaxTime.getLong(1) * MICRO_TO_NANOS;
+        minMaxTime.close();
 
         JsonWriter w = new JsonWriter(writer);
         try {
@@ -317,6 +324,7 @@ public class GoogleFitData {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        cursor.close();
         return getDataSetURLSuffix(source, startTime, endTime);
     }
 
@@ -424,6 +432,7 @@ public class GoogleFitData {
             e.printStackTrace();
         }
 
+        cursor.close();
         return getSessionURLSuffix(startTime, endTime);
 
     }

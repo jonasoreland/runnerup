@@ -17,6 +17,8 @@
 
 package org.runnerup.workout;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.util.Log;
 
 /**
@@ -25,6 +27,7 @@ import android.util.Log;
  * 
  * @author jonas
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class EndOfLapSuppression extends TriggerSuppression {
 
     enum t_type {
