@@ -25,6 +25,6 @@ import android.support.v4.app.NotificationCompat.Builder;
  */
 public class NotificationCompat {
 
-    public static void setLocalOnly(Builder builder) {
+    public static void customSettings(Builder builder) {
     }
 }

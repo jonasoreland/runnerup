@@ -33,7 +33,7 @@ public class GpsSearchingState implements NotificationState {
         builder.setContentTitle(context.getString(R.string.Searching_for_GPS));
         builder.setSmallIcon(R.drawable.icon);
         builder.setOnlyAlertOnce(true);
-        org.runnerup.util.NotificationCompat.setLocalOnly(builder);
+        org.runnerup.util.NotificationCompat.customSettings(builder);
     }
 
     @Override
