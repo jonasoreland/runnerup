@@ -1,6 +1,8 @@
 package org.runnerup.hr;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -17,6 +19,7 @@ import android.os.Looper;
  *   if loosing connection when connected,
  *   it will auto connect
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient {
 
     private HRDeviceRef connectRef;

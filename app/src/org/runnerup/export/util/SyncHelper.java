@@ -17,7 +17,9 @@
 
 package org.runnerup.export.util;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
+import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +43,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public final class SyncHelper {
 
     /**

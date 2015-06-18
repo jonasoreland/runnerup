@@ -17,6 +17,10 @@
 
 package org.runnerup.export.util;
 
+import android.annotation.TargetApi;
+import android.os.Build;
+
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class Part<Value extends Writable> {
 
     String name = null;

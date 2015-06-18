@@ -17,8 +17,10 @@
 
 package org.runnerup.hr;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
@@ -42,6 +44,7 @@ import java.util.HashSet;
  *
  * @author jonas
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class AntPlus extends BtHRBase {
 
     static final String NAME = "AntPlus";

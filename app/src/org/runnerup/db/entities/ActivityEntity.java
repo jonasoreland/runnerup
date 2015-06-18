@@ -17,7 +17,9 @@
 
 package org.runnerup.db.entities;
 
+import android.annotation.TargetApi;
 import android.database.Cursor;
+import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
@@ -29,6 +31,7 @@ import java.util.List;
 /**
  * Content values wrapper for the {@code activity} table.
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityEntity extends AbstractEntity {
 
     private List<LapEntity> laps;

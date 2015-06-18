@@ -17,9 +17,11 @@
 
 package org.runnerup.export.format;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
@@ -41,6 +43,7 @@ import java.util.Map;
 
 import static org.runnerup.common.util.Constants.DB;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class GoogleFitData {
 
     public static final int SECONDS_TO_MILLIS = 1000;

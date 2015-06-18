@@ -25,8 +25,10 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
@@ -62,6 +64,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class DigifitSynchronizer extends DefaultSynchronizer {
     public static final String DIGIFIT_URL = "http://my.digifit.com";
 

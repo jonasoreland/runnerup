@@ -17,12 +17,14 @@
 
 package org.runnerup.export;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import org.apache.http.HttpStatus;
@@ -48,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Facebook";

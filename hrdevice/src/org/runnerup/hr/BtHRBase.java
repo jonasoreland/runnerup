@@ -16,6 +16,8 @@
  */
 package org.runnerup.hr;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -24,6 +26,7 @@ import java.util.UUID;
 /**
  * Created by jonas on 11/1/14.
  */
+@TargetApi(Build.VERSION_CODES.FROYO)
 public abstract class BtHRBase implements HRProvider {
     static final UUID HRP_SERVICE = UUID
             .fromString("0000180D-0000-1000-8000-00805f9b34fb");

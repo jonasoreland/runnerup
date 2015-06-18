@@ -17,17 +17,20 @@
 
 package org.runnerup.db.entities;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
 import org.runnerup.common.util.Constants;
 
 import java.util.Arrays;
 import java.util.List;
 
+@TargetApi(Build.VERSION_CODES.FROYO)
 public abstract class AbstractEntity implements DBEntity {
 
     private final ContentValues mContentValues;
