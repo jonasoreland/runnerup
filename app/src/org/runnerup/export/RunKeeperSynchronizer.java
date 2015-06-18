@@ -560,16 +560,21 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             String heart = values.get("heart_rate");
             String type = values.get("type");
 
-            if (lat != null) {
+            if (lat == null || lon == null) {
+                continue;
+            } else {
                 lv.setLatitude(Double.valueOf(lat));
-            }
-            if (lon != null) {
                 lv.setLongitude(Double.valueOf(lon));
             }
             if (alt != null) {
                 lv.setAltitude(Double.valueOf(alt));
             }
-            if (type != null) {
+
+            if (pointsValueMap.firstKey().equals(timePoint.getKey())) {
+                lv.setType(DB.LOCATION.TYPE_START);
+            } else if (!points.hasNext()) {
+                lv.setType(DB.LOCATION.TYPE_END);
+            } else if (type != null) {
                 lv.setType(POINT_TYPE.get(type));
             }
             // lap and activity max and avg hr
