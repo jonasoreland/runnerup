@@ -54,7 +54,7 @@ public abstract class AbstractEntity implements DBEntity {
     }
 
     public Long getId() {
-        if (mContentValues.keySet().contains(Constants.DB.PRIMARY_KEY)) {
+        if (mContentValues.containsKey(Constants.DB.PRIMARY_KEY)) {
             return mContentValues.getAsLong(Constants.DB.PRIMARY_KEY);
         }
         return null;
