@@ -27,4 +27,8 @@ public class NotificationCompat {
 
     public static void setLocalOnly(Builder builder) {
     }
+    public static void setVisibility(Builder builder) {
+    }
+    public static void setCategory(Builder builder) {
+    }
 }

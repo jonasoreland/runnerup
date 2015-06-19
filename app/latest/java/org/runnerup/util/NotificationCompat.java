@@ -17,6 +17,7 @@
 package org.runnerup.util;
 
 import android.annotation.TargetApi;
+import android.app.Notification;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat.Builder;
 
@@ -28,6 +29,16 @@ public class NotificationCompat {
     public static void setLocalOnly(Builder builder) {
         if (Build.VERSION.SDK_INT >= 20) {
             builder.setLocalOnly(true);
+        }
+    }
+    public static void setVisibility(Builder builder) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        }
+    }
+    public static void setCategory(Builder builder) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            builder.setCategory(Notification.CATEGORY_SERVICE);
         }
     }
 }

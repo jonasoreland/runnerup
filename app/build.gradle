@@ -31,11 +31,11 @@ android {
             minSdkVersion 8
             targetSdkVersion 18
             versionName "1.46"
-            versionCode 8000046 
+            versionCode 8000046
         }
         latest {
             minSdkVersion 14
-            targetSdkVersion 20
+            targetSdkVersion 21
             versionName "1.46"
             versionCode 14000046
         }
@@ -66,18 +66,18 @@ android {
 }
 
 dependencies {
-    latestCompile 'com.android.support:support-v4:20.0.0'
+    latestCompile 'com.android.support:support-v4:21.0.0'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
 
     froyoCompile 'com.android.support:support-v4:19.1.+'
     froyoCompile 'com.google.android.gms:play-services:3.2.65'
 
     compile files('../GraphView/public/graphview-3.1.jar')
-    
+
     compile project(':common')
     compile project(':hrdevice')
 
-    latestWearApp project(':wear')
+   latestWearApp project(':wear')
 }
 
 allprojects {
