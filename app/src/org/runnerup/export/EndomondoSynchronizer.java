@@ -487,7 +487,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         if (txt.matches(".*<0>.*<\\/0>.*")) {
             int start = txt.indexOf('>');
             int end = txt.indexOf('<', start);
-            sportTxt = txt.substring(start, end);
+            sportTxt = txt.substring(start+1, end);
         }
         // put in string instead...
         c.put(DB.FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
