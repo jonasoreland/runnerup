@@ -427,17 +427,16 @@ public class FeedActivity extends Activity implements Constants {
                 return "running";
             case DB.ACTIVITY.SPORT_BIKING:
                 return "biking";
-            case DB.ACTIVITY.SPORT_OTHER:
-                break;
             case DB.ACTIVITY.SPORT_ORIENTEERING:
                 return "orienteering";
             case DB.ACTIVITY.SPORT_WALKING:
                 return "walking";
+            case DB.ACTIVITY.SPORT_OTHER:
+            default:
+                if (tmp.containsKey(DB.FEED.FEED_TYPE_STRING))
+                    return tmp.getAsString(DB.FEED.FEED_TYPE_STRING);
+
+                return "something";
         }
-
-        if (tmp.containsKey(DB.FEED.FEED_TYPE_STRING))
-            return tmp.getAsString(DB.FEED.FEED_TYPE_STRING);
-
-        return "something";
     }
 }
