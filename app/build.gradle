@@ -43,8 +43,6 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("../../my-release-key.keystore")
-            keyAlias "alias_name"
         }
     }
 
@@ -96,5 +94,8 @@ if (rootProject.file("release.properties").exists()) {
     android.signingConfigs.release.storePassword props.keyStorePassword
     android.signingConfigs.release.keyAlias props.keyAlias
     android.signingConfigs.release.keyPassword props.keyAliasPassword
+} else {
+    android.signingConfigs.release.storePassword = 'storePassword'
+    android.signingConfigs.release.keyAlias = 'keyAlias'
+    android.signingConfigs.release.keyPassword = 'keyPassword'
 }
-

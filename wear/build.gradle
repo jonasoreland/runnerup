@@ -14,8 +14,6 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("../../my-release-key.keystore")
-            keyAlias "alias_name"
         }
     }
 
@@ -38,8 +36,12 @@ def props = new Properties()
 if (rootProject.file("release.properties").exists()) {
     props.load(new FileInputStream(rootProject.file("release.properties")))
 
-    android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
-    android.signingConfigs.release.storePassword props.keyStorePassword
-    android.signingConfigs.release.keyAlias props.keyAlias
-    android.signingConfigs.release.keyPassword props.keyAliasPassword
+    android.signingConfigs.release.storeFile = rootProject.file(props.keyStore)
+    android.signingConfigs.release.storePassword = props.keyStorePassword
+    android.signingConfigs.release.keyAlias = props.keyAlias
+    android.signingConfigs.release.keyPassword = props.keyAliasPassword
+} else {
+    android.signingConfigs.release.storePassword = 'storePassword'
+    android.signingConfigs.release.keyAlias = 'keyAlias'
+    android.signingConfigs.release.keyPassword = 'keyPassword'
 }
