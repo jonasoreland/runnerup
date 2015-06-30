@@ -169,7 +169,7 @@ public class FeedList extends Observable implements Constants {
             mDB.close();
             mDB = null;
             prune();
-            Log.e(getClass().getName(), "FeedUpdater: " + synchronizer + ", added: " + added + ", discarded: "
+            Log.i(getClass().getSimpleName(), "FeedUpdater: " + synchronizer + ", added: " + added + ", discarded: "
                     + discarded);
         }
 
