@@ -8,14 +8,12 @@ android {
     defaultConfig {
         minSdkVersion 20
         targetSdkVersion 20
-        versionName "1.46"
-        versionCode 14000046
+        versionName "1.47"
+        versionCode 14000047
     }
 
     signingConfigs {
         release {
-            storeFile file("../../my-release-key.keystore")
-            keyAlias "alias_name"
         }
     }
 
@@ -29,7 +27,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android.support:wearable:+'
+    compile 'com.google.android.support:wearable:1.1.+'
     compile 'com.google.android.gms:play-services-wearable:+'
     compile project(':common')
 }
@@ -38,8 +36,12 @@ def props = new Properties()
 if (rootProject.file("release.properties").exists()) {
     props.load(new FileInputStream(rootProject.file("release.properties")))
 
-    android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
-    android.signingConfigs.release.storePassword props.keyStorePassword
-    android.signingConfigs.release.keyAlias props.keyAlias
-    android.signingConfigs.release.keyPassword props.keyAliasPassword
+    android.signingConfigs.release.storeFile = rootProject.file(props.keyStore)
+    android.signingConfigs.release.storePassword = props.keyStorePassword
+    android.signingConfigs.release.keyAlias = props.keyAlias
+    android.signingConfigs.release.keyPassword = props.keyAliasPassword
+} else {
+    android.signingConfigs.release.storePassword = 'storePassword'
+    android.signingConfigs.release.keyAlias = 'keyAlias'
+    android.signingConfigs.release.keyPassword = 'keyPassword'
 }

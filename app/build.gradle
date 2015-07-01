@@ -2,7 +2,7 @@ apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 20
+    compileSdkVersion 21
     buildToolsVersion '20.0.0'
 
     sourceSets {
@@ -30,21 +30,19 @@ android {
         froyo {
             minSdkVersion 8
             targetSdkVersion 18
-            versionName "1.46"
-            versionCode 8000046
+            versionName "1.47"
+            versionCode 8000047
         }
         latest {
             minSdkVersion 14
-            targetSdkVersion 20
-            versionName "1.46"
-            versionCode 14000046
+            targetSdkVersion 21
+            versionName "1.47"
+            versionCode 14000047
         }
     }
 
     signingConfigs {
         release {
-            storeFile file("../../my-release-key.keystore")
-            keyAlias "alias_name"
         }
     }
 
@@ -61,7 +59,8 @@ android {
         checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,
         // but continue the build even when errors are found:
-        abortOnError false
+        fatal 'NewApi', 'InlineApi'
+        disable 'MissingTranslation'
     }
 }
 
@@ -70,8 +69,8 @@ repositories {
 }
 
 dependencies {
+    latestCompile 'com.android.support:support-v4:21.0.0'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
-    latestCompile 'com.android.support:support-v4:20.0.0'
 
     froyoCompile 'com.android.support:support-v4:19.1.+'
 
@@ -84,7 +83,7 @@ dependencies {
     compile project(':common')
     compile project(':hrdevice')
 
-    latestWearApp project(':wear')
+   latestWearApp project(':wear')
 }
 
 allprojects {
@@ -102,5 +101,8 @@ if (rootProject.file("release.properties").exists()) {
     android.signingConfigs.release.storePassword props.keyStorePassword
     android.signingConfigs.release.keyAlias props.keyAlias
     android.signingConfigs.release.keyPassword props.keyAliasPassword
+} else {
+    android.signingConfigs.release.storePassword = 'storePassword'
+    android.signingConfigs.release.keyAlias = 'keyAlias'
+    android.signingConfigs.release.keyPassword = 'keyPassword'
 }
-

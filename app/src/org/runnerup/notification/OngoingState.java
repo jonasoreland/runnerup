@@ -40,6 +40,8 @@ public class OngoingState implements NotificationState {
         builder.setOngoing(true);
         builder.setOnlyAlertOnce(true);
         org.runnerup.util.NotificationCompat.setLocalOnly(builder);
+        org.runnerup.util.NotificationCompat.setVisibility(builder);
+        org.runnerup.util.NotificationCompat.setCategory(builder);
     }
 
     @Override

@@ -195,16 +195,7 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void onStart() {
-        {
-            Bundle b = new Bundle();
-            int i = 0;
-            for (Pair<Scope, Dimension> item : items) {
-                b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
-                i++;
-            }
-            setData(Wear.Path.HEADERS, b);
-        }
-
+        updateHeaders();
         setTrackerState(tracker.getState());
         tracker.getWorkout().registerWorkoutStepListener(this);
     }
@@ -319,23 +310,24 @@ public class TrackerWear extends DefaultTrackerComponent
             return; // this is end
         }
 
-        // Update headers
-        {
-            Bundle b = new Bundle();
-            int i = 0;
-            for (Pair<Scope, Dimension> item : items) {
-                b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
-                i++;
-            }
+        updateHeaders();
+    }
 
-            pauseStep = false;
-            if (currentStep != null && currentStep.isPauseStep()) {
-                pauseStep = true;
-                b.putBoolean(Wear.RunInfo.PAUSE_STEP, true);
-            }
-
-            setData(Wear.Path.HEADERS, b);
+    private void updateHeaders() {
+        Bundle b = new Bundle();
+        int i = 0;
+        for (Pair<Scope, Dimension> item : items) {
+            b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
+            i++;
         }
+
+        pauseStep = false;
+        if (currentStep != null && currentStep.isPauseStep()) {
+            pauseStep = true;
+            b.putBoolean(Wear.RunInfo.PAUSE_STEP, true);
+        }
+
+        setData(Wear.Path.HEADERS, b);
     }
 
     @Override

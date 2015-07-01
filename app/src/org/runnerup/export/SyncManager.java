@@ -36,7 +36,7 @@ import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
-import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -51,10 +51,10 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Synchronizer.AuthMethod;
 import org.runnerup.export.Synchronizer.Status;
-import org.runnerup.util.SyncActivityItem;
 import org.runnerup.feed.FeedList;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Encryption;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.WorkoutSerializer;
 
 import java.io.ByteArrayOutputStream;
@@ -96,7 +96,7 @@ public class SyncManager {
         public int getTextId() {
             return textId;
         }
-    };
+    }
 
     public interface Callback {
         void run(String synchronizerName, Synchronizer.Status status);
@@ -232,10 +232,7 @@ public class SyncManager {
 
     public boolean isConfigured(final String name) {
         Synchronizer l = synchronizers.get(name);
-        if (l == null) {
-            return true;
-        }
-        return l.isConfigured();
+        return l == null || l.isConfigured();
     }
 
     public Synchronizer getSynchronizer(long id) {
@@ -353,16 +350,15 @@ public class SyncManager {
         return null;
     }
 
-    private void askUsernamePassword(final Synchronizer l, boolean showPassword) {
+    private void askUsernamePassword(final Synchronizer sync, boolean showPassword) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(l.getName());
-        // Get the layout inflater
-        LayoutInflater inflater = activity.getLayoutInflater();
-        final View view = inflater.inflate(R.layout.userpass, null);
+        builder.setTitle(sync.getName());
+        
+        final View view = View.inflate(activity, R.layout.userpass, null);
         final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
         final TextView tv1 = (TextView) view.findViewById(R.id.username);
         final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
-        String authConfigStr = l.getAuthConfig();
+        String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
         String username = authConfig.optString("username", "");
         String password = authConfig.optString("password", "");
@@ -393,19 +389,28 @@ public class SyncManager {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                testUserPass(l, authConfig, cb.isChecked());
+                testUserPass(sync, authConfig, cb.isChecked());
             }
         });
         builder.setNeutralButton("Skip", new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                handleAuthComplete(l, Status.SKIP);
+                handleAuthComplete(sync, Status.SKIP);
             }
         });
         builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                handleAuthComplete(l, Status.SKIP);
+                handleAuthComplete(sync, Status.SKIP);
+            }
+        });
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                    handleAuthComplete(sync, Status.CANCEL);
+                }
+                return false;
             }
         });
         final AlertDialog dialog = builder.create();
