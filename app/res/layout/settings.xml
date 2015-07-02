@@ -276,9 +276,14 @@
 
         </PreferenceScreen>
 
-    <PreferenceCategory android:title="@string/About">
+    <PreferenceCategory android:key="aboutcategory" android:title="@string/About">
         <org.runnerup.widget.AboutPreference
             android:title="@string/About_RunnerUp"
+            android:dialogMessage="@string/Not_much_to_say_at_this_point" />
+
+        <org.runnerup.widget.AboutPreference
+            android:key="googleplayserviceslegalnotices"
+            android:title="@string/Google_Play_Services_Legal_Notices"
             android:dialogMessage="@string/Not_much_to_say_at_this_point" />
     </PreferenceCategory>
 
