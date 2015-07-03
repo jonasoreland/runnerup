@@ -18,9 +18,11 @@
 package org.runnerup.db;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -46,7 +48,9 @@ import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
+import org.runnerup.util.FileUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -576,5 +580,31 @@ public class DBHelper extends SQLiteOpenHelper implements
             }
         }
         return result;
+    }
+
+    public static String getDbPath(Context ctx) {
+        return ctx.getFilesDir().getPath() + "/../databases/runnerup.db";
+    }
+
+    public static void importDatabase(Context ctx, String from) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setTitle("Import runnerup.db from " + from);
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+
+        };
+        String to = getDbPath(ctx);
+        try {
+            int cnt = FileUtil.copyFile(to, from);
+            builder.setMessage("Copied " + cnt + " bytes");
+            builder.setPositiveButton(ctx.getString(R.string.Great), listener);
+        } catch (IOException e) {
+            builder.setMessage("Exception: " + e.toString());
+            builder.setNegativeButton(ctx.getString(R.string.Darn), listener);
+        }
+        builder.show();
     }
 }
