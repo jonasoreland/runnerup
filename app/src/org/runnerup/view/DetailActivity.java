@@ -168,7 +168,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
         map = (MapView) findViewById(R.id.mapview);
-
+        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
+            map.setVisibility(View.GONE);
+            map = null;
+            TextView placeholder = (TextView)findViewById(R.id.froyo_map_placeholder);
+            placeholder.setVisibility(View.VISIBLE);
+        }
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
         if (this.mode == MODE_SAVE) {
@@ -1315,26 +1320,28 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     }
 
                     if (map != null) {
-                        PathOverlay overlay = new PathOverlay(Color.RED, 3);
-                        overlay.addPoints(route.path);
-                        overlay.setOptimizePath(true);
-                        map.addOverlay(overlay);
-                        Log.e(getClass().getName(), "Added polyline");
-                        int cnt = 0;
-                        for (Marker m : route.markers) {
-                            cnt++;
-                            map.addMarker(m);
-                        }
-                        Log.e(getClass().getName(), "Added " + cnt + " markers");
+                        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.FROYO) {
+                            PathOverlay overlay = new PathOverlay(Color.RED, 3);
+                            overlay.addPoints(route.path);
+                            overlay.setOptimizePath(true);
+                            map.addOverlay(overlay);
+                            Log.e(getClass().getName(), "Added polyline");
+                            int cnt = 0;
+                            for (Marker m : route.markers) {
+                                cnt++;
+                                map.addMarker(m);
+                            }
+                            Log.e(getClass().getName(), "Added " + cnt + " markers");
 
-                        //zoom on map
-                        final BoundingBox box = BoundingBox.fromLatLngs(route.path);
-                        double laSpan = box.getLatitudeSpan() / 2.f;
-                        double loSpan = box.getLongitudeSpan() / 2.f;
-                        map.zoomToBoundingBox(new BoundingBox(box.getLatNorth() + laSpan, box.getLonEast() + loSpan, box.getLatSouth() - laSpan, box.getLonWest() - loSpan));
-                        if (map.getZoomLevel() > 18.0f) {
-                           Log.w("Map", "Zoom too big, zooming down a bit");
-                            map.setZoom(18.0f);
+                            //zoom on map
+                            final BoundingBox box = BoundingBox.fromLatLngs(route.path);
+                            double laSpan = box.getLatitudeSpan() / 2.f;
+                            double loSpan = box.getLongitudeSpan() / 2.f;
+                            map.zoomToBoundingBox(new BoundingBox(box.getLatNorth() + laSpan, box.getLonEast() + loSpan, box.getLatSouth() - laSpan, box.getLonWest() - loSpan));
+                            if (map.getZoomLevel() > 18.0f) {
+                                Log.w("Map", "Zoom too big, zooming down a bit");
+                                map.setZoom(18.0f);
+                            }
                         }
                         route = new Route(); // release mem for old...
                     }
