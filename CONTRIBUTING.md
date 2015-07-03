@@ -34,9 +34,7 @@ To build the app using Android Studio, see [this guide](Documentation/howto-buil
 
 - Look at the [TODO](TODO) list
 - Write some tests
-- Additional languages:
-  - Audio cues are in English, French and Spanish
-  - GUI is English only
+- Help translating at https://www.transifex.com/organization/runner-up/dashboard
 
 ## How to succeed in getting your Pull Request (PR) merged
 
