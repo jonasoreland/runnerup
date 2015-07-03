@@ -106,3 +106,16 @@ if (rootProject.file("release.properties").exists()) {
     android.signingConfigs.release.keyAlias = 'keyAlias'
     android.signingConfigs.release.keyPassword = 'keyPassword'
 }
+
+android.applicationVariants.all{ variant ->
+    variant.mergeResources.doLast{
+        if (rootProject.file("release.properties").exists()) {
+            props.load(new FileInputStream(rootProject.file("mapbox.properties")))
+            File valuesFile = file("${buildDir}/intermediates/res/${variant.dirName}/values/values.xml")
+            String content = valuesFile.getText('UTF-8')
+            content = content.replaceAll(/mapboxMapID.*/, "mapboxMapID\">" + props.mapboxid + "</string>")
+            content = content.replaceAll(/mapboxAccessToken.*/, "mapboxAccessToken\">" + props.mapboxAccessToken + "</string>")
+            valuesFile.write(content, 'UTF-8')
+        }
+    }
+}

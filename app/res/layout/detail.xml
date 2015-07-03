@@ -198,8 +198,8 @@
                             android:id="@+id/mapview"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
-                            mapbox:mapid="cqnqrd.4004d33f"
-                            mapbox:accessToken="pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw"/>
+                            mapbox:mapid="@string/mapboxMapID"
+                            mapbox:accessToken="@string/mapboxAccessToken" />
 
                     <TextView
                         android:visibility="gone"
