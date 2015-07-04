@@ -29,6 +29,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -140,6 +141,22 @@ public class MainLayout extends TabActivity {
 
         handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()
                 + "/..");
+
+        // if we were called from an intent-filter because user opened "runnerup.db.export", load it
+        final Uri data = getIntent().getData();
+        if (data != null) {
+            String filePath = null;
+            if ("content".equals(data.getScheme())) {
+                Cursor cursor = this.getContentResolver().query(data, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+                cursor.moveToFirst();
+                filePath = cursor.getString(0);
+                cursor.close();
+            } else {
+                filePath = data.getPath();
+            }
+            Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
+            DBHelper.importDatabase(MainLayout.this, filePath);
+        }
     }
 
     void handleBundled(AssetManager mgr, String src, String dst) {
