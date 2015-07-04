@@ -1338,7 +1338,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                             final BoundingBox box = BoundingBox.fromLatLngs(route.path);
                             double laSpan = box.getLatitudeSpan() / 2.f;
                             double loSpan = box.getLongitudeSpan() / 2.f;
-                            map.zoomToBoundingBox(new BoundingBox(box.getLatNorth() + laSpan, box.getLonEast() + loSpan, box.getLatSouth() - laSpan, box.getLonWest() - loSpan));
+                            map.zoomToBoundingBox(new BoundingBox(box.getLatNorth() + laSpan, box.getLonEast() + loSpan, box.getLatSouth() - laSpan, box.getLonWest() - loSpan), true);
                             if (map.getZoomLevel() > 18.0f) {
                                 Log.w("Map", "Zoom too big, zooming down a bit");
                                 map.setZoom(18.0f);
