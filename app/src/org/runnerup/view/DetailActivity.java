@@ -1235,26 +1235,27 @@ public class DetailActivity extends FragmentActivity implements Constants {
 
                                 String title = null;
                                 Icon icon = null;
+                                int color = Color.WHITE;
                                 switch (type) {
                                     case DB.LOCATION.TYPE_START:
-                                        icon = new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, "00ff00");
+                                        color = Color.GREEN;
                                         title = getResources().getString(R.string.Start);
                                         break;
                                     case DB.LOCATION.TYPE_END:
-                                        icon = new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, "ff0000");
+                                        color = Color.RED;
                                         title = getResources().getString(R.string.Stop);
                                         break;
                                     case DB.LOCATION.TYPE_PAUSE:
-                                        icon = new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, "00ffff");
+                                        color = Color.YELLOW;
                                         title = getResources().getString(R.string.Pause);
                                         break;
                                     case DB.LOCATION.TYPE_RESUME:
-                                        icon = new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, "0000ff");
+                                        color = Color.BLUE;
                                         title = getResources().getString(R.string.Resume);
                                         break;
                                 }
                                 m = new Marker(title, null, point);
-                                m.setIcon(icon);
+                                m.setIcon(new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, String.format("#%06X", 0xFFFFFF & color)));
                                 route.markers.add(m);
                                 break;
                             case DB.LOCATION.TYPE_GPS:
