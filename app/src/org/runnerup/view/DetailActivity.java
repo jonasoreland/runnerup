@@ -73,6 +73,7 @@ import org.runnerup.content.ActivityProvider;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
@@ -88,6 +89,7 @@ import org.runnerup.workout.Intensity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -1246,7 +1248,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                         title = getResources().getString(R.string.Stop);
                                         break;
                                     case DB.LOCATION.TYPE_PAUSE:
-                                        color = Color.YELLOW;
+                                        color = Color.CYAN;
                                         title = getResources().getString(R.string.Pause);
                                         break;
                                     case DB.LOCATION.TYPE_RESUME:
@@ -1283,14 +1285,32 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 if (acc_distance >= formatter.getUnitMeters()) {
                                     cnt_distance++;
                                     acc_distance = 0;
-                                    m = new Marker("" + cnt_distance + " " + formatter.getUnitString(), null, point);
-                                    m.setIcon(new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, "ffff00"));
+                                    m = new Marker("" + cnt_distance + " " + formatter.getUnitString(), getString(R.string.Distance_marker), point);
+                                    m.setIcon(new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, String.format("#%06X", 0xFFFFFF & Color.YELLOW)));
                                     route.markers.add(m);
                                 }
                                 lastLocation = point;
                                 break;
                         }
                     } while (c.moveToNext());
+
+                    // only keep 10 distance points to not overload the map with markers
+                    if (tot_distance > 1 + 10 * formatter.getUnitMeters()) {
+                        double step = tot_distance / (10 * formatter.getUnitMeters());
+                        double current = 0;
+                        for (Iterator<Marker> iterator = route.markers.iterator(); iterator.hasNext();) {
+                            Marker m = iterator.next();
+                            if (getString(R.string.Distance_marker).equals(m.getDescription())) {
+                                current++;
+                                if (current >= step) {
+                                    current -= step;
+                                } else {
+                                    iterator.remove();
+                                }
+                            }
+                        }
+                        Log.i(getClass().getName(), "Too big activity, keeping only 10 of " + (int)(tot_distance / formatter.getUnitMeters()) + " distance markers");
+                    }
                     Log.e(getClass().getName(), "Finished loading " + cnt + " points");
                 }
                 c.close();

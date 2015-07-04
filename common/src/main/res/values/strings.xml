@@ -300,4 +300,5 @@
   <string name="Loading_activities">Loading activities</string>
   <string name="Fetching_activities_from_1s">Fetching activities from %1$s</string>
   <string name="Map_not_available_on_Froyo">Map not available on Froyo.</string>
+  <string name="Distance_marker">Distance marker.</string>
 </resources>
