@@ -88,7 +88,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
             String dstdir = Environment.getExternalStorageDirectory().getPath();
             builder.setTitle("Export runnerup.db to " + dstdir);
             DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
