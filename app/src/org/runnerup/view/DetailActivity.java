@@ -57,25 +57,24 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
+import com.mapbox.mapboxsdk.geometry.BoundingBox;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.overlay.Icon;
+import com.mapbox.mapboxsdk.overlay.Marker;
+import com.mapbox.mapboxsdk.overlay.PathOverlay;
+import com.mapbox.mapboxsdk.views.MapView;
 
 import org.runnerup.R;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.entities.ActivityEntity;
+import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
@@ -90,6 +89,7 @@ import org.runnerup.workout.Intensity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -124,10 +124,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
     EditText notes = null;
     MenuItem recomputeMenuItem = null;
 
-    View mapViewLayout = null;
-    GoogleMap map = null;
-    View mapView = null;
-    LatLngBounds mapBounds = null;
+    MapView map = null;
     AsyncTask<String, String, Route> loadRouteTask = null;
     LinearLayout graphTab = null;
     GraphView graphView;
@@ -172,24 +169,12 @@ public class DetailActivity extends FragmentActivity implements Constants {
         activityPace = (TextView) findViewById(R.id.activity_pace);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
-        notes.setHint(getString(R.string.Notes_about_your_workout));
-        map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                .getMap();
-
-        if (map != null) {
-            map.setOnCameraChangeListener(new OnCameraChangeListener() {
-
-                @Override
-                public void onCameraChange(CameraPosition arg0) {
-                    if (mapBounds != null) {
-                        // Move camera.
-                        map.moveCamera(CameraUpdateFactory.newLatLngBounds(mapBounds, 5));
-                        // Remove listener to prevent position reset on camera
-                        // move.
-                        map.setOnCameraChangeListener(null);
-                    }
-                }
-            });
+        map = (MapView) findViewById(R.id.mapview);
+        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
+            map.setVisibility(View.GONE);
+            map = null;
+            TextView placeholder = (TextView)findViewById(R.id.froyo_map_placeholder);
+            placeholder.setVisibility(View.VISIBLE);
         }
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
@@ -805,14 +790,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
     }
 
     class Route {
-        final PolylineOptions path = new PolylineOptions();
-        final LatLngBounds.Builder bounds = new LatLngBounds.Builder();
-        final ArrayList<MarkerOptions> markers = new ArrayList<MarkerOptions>(10);
-
-        Route() {
-            path.color(Color.RED);
-            path.width(3);
-        }
+        final List<LatLng> path = new ArrayList<LatLng>(10);
+        final ArrayList<Marker> markers = new ArrayList<Marker>(10);
     }
 
     class GraphProducer {
@@ -1217,15 +1196,15 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     int hr = 0;
                     do {
                         cnt++;
-                        LatLng point = new LatLng(c.getDouble(0), c.getDouble(1));
+                        LocationEntity loc = new LocationEntity(c);
+                        LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
                         route.path.add(point);
-                        route.bounds.include(point);
-                        int type = c.getInt(2);
-                        long time = c.getLong(3);
-                        int lap = c.getInt(4);
-                        if (!c.isNull(5))
-                            hr = c.getInt(5);
-                        MarkerOptions m;
+                        int type = loc.getType();
+                        long time = loc.getTime();
+                        int lap = loc.getLap();
+                        if (loc.getHr() != null)
+                            hr = loc.getHr();
+                        Marker m;
                         switch (type) {
                             case DB.LOCATION.TYPE_START:
                             case DB.LOCATION.TYPE_END:
@@ -1239,9 +1218,9 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                         float res[] = {
                                             0
                                         };
-                                        Location.distanceBetween(lastLocation.latitude,
-                                                lastLocation.longitude, point.latitude,
-                                                point.longitude, res);
+                                        Location.distanceBetween(lastLocation.getLatitude(),
+                                                lastLocation.getLongitude(), point.getLatitude(),
+                                                point.getLongitude(), res);
                                         graphData.addObservation(time - lastTime, res[0],
                                                 tot_distance, hr);
                                         // hrList.clear();
@@ -1249,30 +1228,36 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                     }
                                     lastLap = lap;
                                     lastTime = 0;
-                                }
-                                else if (type == DB.LOCATION.TYPE_RESUME)
+                                } else if (type == DB.LOCATION.TYPE_RESUME)
                                 {
                                     lastLap = lap;
                                     lastTime = time;
                                 }
-                                m = new MarkerOptions();
-                                m.position((lastLocation = point));
+                                lastLocation = point;
+
+                                String title = null;
+                                Icon icon = null;
+                                int color = Color.WHITE;
                                 switch (type) {
                                     case DB.LOCATION.TYPE_START:
-                                        m.title(getResources().getString(R.string.Start));
+                                        color = Color.GREEN;
+                                        title = getResources().getString(R.string.Start);
                                         break;
                                     case DB.LOCATION.TYPE_END:
-                                        m.title(getResources().getString(R.string.Stop));
+                                        color = Color.RED;
+                                        title = getResources().getString(R.string.Stop);
                                         break;
                                     case DB.LOCATION.TYPE_PAUSE:
-                                        m.title(getResources().getString(R.string.Pause));
+                                        color = Color.CYAN;
+                                        title = getResources().getString(R.string.Pause);
                                         break;
                                     case DB.LOCATION.TYPE_RESUME:
-                                        m.title(getResources().getString(R.string.Resume));
+                                        color = Color.BLUE;
+                                        title = getResources().getString(R.string.Resume);
                                         break;
                                 }
-                                m.snippet(null);
-                                m.draggable(false);
+                                m = new Marker(title, null, point);
+                                m.setIcon(new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, String.format("#%06X", 0xFFFFFF & color)));
                                 route.markers.add(m);
                                 break;
                             case DB.LOCATION.TYPE_GPS:
@@ -1282,8 +1267,8 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 if (lastLocation == null) {
                                     lastLocation = point;
                                 }
-                                Location.distanceBetween(lastLocation.latitude,
-                                        lastLocation.longitude, point.latitude, point.longitude,
+                                Location.distanceBetween(lastLocation.getLatitude(),
+                                        lastLocation.getLongitude(), point.getLatitude(), point.getLongitude(),
                                         res);
                                 acc_distance += res[0];
                                 tot_distance += res[0];
@@ -1300,23 +1285,37 @@ public class DetailActivity extends FragmentActivity implements Constants {
                                 if (acc_distance >= formatter.getUnitMeters()) {
                                     cnt_distance++;
                                     acc_distance = 0;
-                                    m = new MarkerOptions();
-                                    m.position(point);
-                                    m.title("" + cnt_distance + " " + formatter.getUnitString());
-                                    m.snippet(null);
-                                    m.draggable(false);
+                                    m = new Marker("" + cnt_distance + " " + formatter.getUnitString(), getString(R.string.Distance_marker), point);
+                                    m.setIcon(new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, String.format("#%06X", 0xFFFFFF & Color.YELLOW)));
                                     route.markers.add(m);
                                 }
                                 lastLocation = point;
                                 break;
                         }
                     } while (c.moveToNext());
+
+                    // only keep 10 distance points to not overload the map with markers
+                    if (tot_distance > 1 + 10 * formatter.getUnitMeters()) {
+                        double step = tot_distance / (10 * formatter.getUnitMeters());
+                        double current = 0;
+                        for (Iterator<Marker> iterator = route.markers.iterator(); iterator.hasNext();) {
+                            Marker m = iterator.next();
+                            if (getString(R.string.Distance_marker).equals(m.getDescription())) {
+                                current++;
+                                if (current >= step) {
+                                    current -= step;
+                                } else {
+                                    iterator.remove();
+                                }
+                            }
+                        }
+                        Log.i(getClass().getName(), "Too big activity, keeping only 10 of " + (int)(tot_distance / formatter.getUnitMeters()) + " distance markers");
+                    }
                     Log.e(getClass().getName(), "Finished loading " + cnt + " points");
                 }
                 c.close();
                 return route;
             }
-
             @Override
             protected void onPostExecute(Route route) {
 
@@ -1342,16 +1341,29 @@ public class DetailActivity extends FragmentActivity implements Constants {
                     }
 
                     if (map != null) {
-                        map.addPolyline(route.path);
-                        mapBounds = route.bounds.build();
-                        Log.e(getClass().getName(), "Added polyline");
-                        int cnt = 0;
-                        for (MarkerOptions m : route.markers) {
-                            cnt++;
-                            map.addMarker(m);
-                        }
-                        Log.e(getClass().getName(), "Added " + cnt + " markers");
+                        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.FROYO) {
+                            PathOverlay overlay = new PathOverlay(Color.RED, 3);
+                            overlay.addPoints(route.path);
+                            overlay.setOptimizePath(true);
+                            map.addOverlay(overlay);
+                            Log.e(getClass().getName(), "Added polyline");
+                            int cnt = 0;
+                            for (Marker m : route.markers) {
+                                cnt++;
+                                map.addMarker(m);
+                            }
+                            Log.e(getClass().getName(), "Added " + cnt + " markers");
 
+                            //zoom on map
+                            final BoundingBox box = BoundingBox.fromLatLngs(route.path);
+                            double laSpan = box.getLatitudeSpan() / 2.f;
+                            double loSpan = box.getLongitudeSpan() / 2.f;
+                            map.zoomToBoundingBox(new BoundingBox(box.getLatNorth() + laSpan, box.getLonEast() + loSpan, box.getLatSouth() - laSpan, box.getLonWest() - loSpan), true);
+                            if (map.getZoomLevel() > 18.0f) {
+                                Log.w("Map", "Zoom too big, zooming down a bit");
+                                map.setZoom(18.0f);
+                            }
+                        }
                         route = new Route(); // release mem for old...
                     }
                 }

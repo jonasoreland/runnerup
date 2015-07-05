@@ -64,12 +64,19 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     latestCompile 'com.android.support:support-v4:21.0.0'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
 
     froyoCompile 'com.android.support:support-v4:19.1.+'
-    froyoCompile 'com.google.android.gms:play-services:3.2.65'
+
+    compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar'){
+        transitive=true
+    }
 
     compile files('../GraphView/public/graphview-3.1.jar')
 
@@ -98,4 +105,17 @@ if (rootProject.file("release.properties").exists()) {
     android.signingConfigs.release.storePassword = 'storePassword'
     android.signingConfigs.release.keyAlias = 'keyAlias'
     android.signingConfigs.release.keyPassword = 'keyPassword'
+}
+
+android.applicationVariants.all{ variant ->
+    variant.mergeResources.doLast{
+        if (rootProject.file("release.properties").exists()) {
+            props.load(new FileInputStream(rootProject.file("mapbox.properties")))
+            File valuesFile = file("${buildDir}/intermediates/res/${variant.dirName}/values/values.xml")
+            String content = valuesFile.getText('UTF-8')
+            content = content.replaceAll(/mapboxMapID.*/, "mapboxMapID\">" + props.mapboxid + "</string>")
+            content = content.replaceAll(/mapboxAccessToken.*/, "mapboxAccessToken\">" + props.mapboxAccessToken + "</string>")
+            valuesFile.write(content, 'UTF-8')
+        }
+    }
 }

@@ -30,6 +30,7 @@ import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 
 import org.runnerup.R;
@@ -57,6 +58,13 @@ public class SettingsActivity extends PreferenceActivity {
         {
             Preference btn = (Preference) findPreference("prunedb");
             btn.setOnPreferenceClickListener(onPruneClick);
+        }
+
+        //remove google play notices from froyo since we do not use it
+        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
+            Preference pref = findPreference("googleplayserviceslegalnotices");
+            PreferenceCategory category = (PreferenceCategory)findPreference("aboutcategory");
+            category.removePreference(pref);
         }
 
         if (!hasHR(this)) {

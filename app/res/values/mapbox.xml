@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+  ~ Copyright (C) 2012 - 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -15,17 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.runnerup" xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-sdk
-        tools:overrideLibrary="com.mapbox.mapboxsdk"
-        android:minSdkVersion="8" android:targetSdkVersion="18"/>
-
-    <application
-        android:icon="@drawable/icon"
-        android:label="@string/app_name">
-        android:configChanges="orientation"
-    </application>
-
-</manifest> 
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="mapboxMapID">cqnqrd.4004d33f</string>
+    <string name="mapboxAccessToken">pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw</string>
+</resources>
