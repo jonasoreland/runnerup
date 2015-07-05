@@ -109,7 +109,7 @@ if (rootProject.file("release.properties").exists()) {
 
 android.applicationVariants.all{ variant ->
     variant.mergeResources.doLast{
-        if (rootProject.file("release.properties").exists()) {
+        if (rootProject.file("mapbox.properties").exists()) {
             props.load(new FileInputStream(rootProject.file("mapbox.properties")))
             File valuesFile = file("${buildDir}/intermediates/res/${variant.dirName}/values/values.xml")
             String content = valuesFile.getText('UTF-8')
