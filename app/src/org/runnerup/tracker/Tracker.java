@@ -583,14 +583,14 @@ public class Tracker extends android.app.Service implements
 
     private void saveActivity() {
         ContentValues tmp = new ContentValues();
-        tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-        tmp.put(Constants.DB.ACTIVITY.TIME, getTime());
         if (mHeartbeatMillis > 0) {
             long avgHR = Math.round((60 * 1000 * mHeartbeats) / mHeartbeatMillis); // BPM
             tmp.put(Constants.DB.ACTIVITY.AVG_HR, avgHR);
         }
         if (mMaxHR > 0)
             tmp.put(Constants.DB.ACTIVITY.MAX_HR, mMaxHR);
+        tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+        tmp.put(Constants.DB.ACTIVITY.TIME, getTime()); // time should be updated last for conditional_recompute
 
         String key[] = {
                 Long.toString(mActivityId)

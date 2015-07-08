@@ -153,15 +153,30 @@ public class ActivityCleaner implements Constants {
         c.close();
 
         ContentValues tmp = new ContentValues();
-        tmp.put(DB.ACTIVITY.DISTANCE, sum_distance);
-        tmp.put(DB.ACTIVITY.TIME, sum_time);
         if (_totalSumHr > 0) {
             int hr = Math.round(_totalSumHr / _totalCount);
             tmp.put(DB.ACTIVITY.AVG_HR, hr);
             tmp.put(DB.ACTIVITY.MAX_HR, _totalMaxHr);
         }
+        tmp.put(DB.ACTIVITY.DISTANCE, sum_distance);
+        tmp.put(DB.ACTIVITY.TIME, sum_time); // also used as a flag for conditional_recompute
 
         db.update(DB.ACTIVITY.TABLE, tmp, "_id = " + activityId, null);
+    }
+
+    public void conditional_recompute(SQLiteDatabase db){
+        // get last activity
+        long id = db.compileStatement("SELECT MAX(_id) FROM " + DB.ACTIVITY.TABLE).simpleQueryForLong();
+
+        // check its TIME field - recompute if it isn't set
+        String[] cols = new String[]{DB.ACTIVITY.TIME};
+        Cursor c = db.query(DB.ACTIVITY.TABLE, cols, "_id = " + id, null, null, null, null);
+        if (c.moveToFirst()) {
+            if (c.isNull(0)) {
+                recompute(db, id);
+            }
+        }
+        c.close();
     }
 
     public void recompute(SQLiteDatabase db, long activityId) {
