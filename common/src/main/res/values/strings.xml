@@ -127,7 +127,7 @@
   <string name="Edit_activity">Edit activity</string>
   <string name="Share_activity">Share activity</string>
   <string name="Delete_activity">Delete activity</string>
-  <string name="Recompute_activity">Recompute activity</string>
+  <string name="Merge_activity">Merge activity</string>
   <string name="Configure_heart_rate_zones">Configure heart rate zones</string>
   <string name="Clear_heart_rate_zone_settings">Clear heart rate zone settings</string>
   <string name="Manage_accounts">Manage accounts</string>

@@ -127,7 +127,7 @@
   <string name="Edit_activity">Éditer la séance</string>
   <string name="Share_activity">Partager la séance</string>
   <string name="Delete_activity">Supprimer la séance</string>
-  <string name="Recompute_activity">Recalculer la séance</string>
+  <string name="Merge_activity">Recalculer la séance</string>
   <string name="Configure_heart_rate_zones">Configurer les zones de fréq. cardiaque</string>
   <string name="Clear_heart_rate_zone_settings">Supprimer les paramètres de zone de fréq. cardiaque</string>
   <string name="Manage_accounts">Gérer les comptes</string>

@@ -125,7 +125,7 @@
   <string name="Edit_activity">Modifica attività</string>
   <string name="Share_activity">Condividi attività</string>
   <string name="Delete_activity">Elimina attività</string>
-  <string name="Recompute_activity">Ricalcola attività</string>
+  <string name="Merge_activity">Ricalcola attività</string>
   <string name="Configure_heart_rate_zones">Configura zone BPM</string>
   <string name="Clear_heart_rate_zone_settings">Elimina impostazioni zona BPM</string>
   <string name="Manage_accounts">Gestisci account</string>

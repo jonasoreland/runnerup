@@ -127,7 +127,7 @@
   <string name="Edit_activity">アクティビティを編集</string>
   <string name="Share_activity">アクティビティを共有</string>
   <string name="Delete_activity">アクティビティを削除</string>
-  <string name="Recompute_activity">アクティビティを再計算</string>
+  <string name="Merge_activity">アクティビティを再計算</string>
   <string name="Configure_heart_rate_zones">心拍数ゾーンを設定</string>
   <string name="Clear_heart_rate_zone_settings">心拍数ゾーンの設定をクリア</string>
   <string name="Manage_accounts">アカウントの管理</string>
