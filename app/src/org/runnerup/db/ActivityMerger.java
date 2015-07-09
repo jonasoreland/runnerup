@@ -50,8 +50,8 @@ public class ActivityMerger implements Constants {
         updateActivity(db, activityId, previousActivityId);
 
         // cleanup
-        DBHelper.deleteActivity(db, previousActivityId);
         new ActivityCleaner().recompute(db, activityId);
+        DBHelper.deleteActivity(db, previousActivityId);
     }
 
     private static void updateActivity(SQLiteDatabase db, long activityId, long previousActivityId) {
@@ -64,9 +64,13 @@ public class ActivityMerger implements Constants {
         // # VERIFY THAT time IS UPDATED BY recompute IF NECESSARY
 
         // newer activity lap numbers should continue where previousActivity laps stopped
-        long nextLap = maxLap(db, previousActivityId) + 1;
-        db.execSQL("UPDATE " + DB.LAP.TABLE + " SET " + DB.LAP.LAP + "=" + DB.LAP.LAP + "+" + nextLap +
-                " WHERE " + DB.LAP.ACTIVITY + "=" + activityId);
+        // lap: old min = 0, new min = 0, old max = x, new max = y
+        long nextLap = lapMinMax(db, DB.LAP.TABLE, "MAX", previousActivityId) + 1;
+        // has this code already run? if so, don't re-run it.
+        if (lapMinMax(db, DB.LAP.TABLE, "MIN", activityId) == 0 && nextLap !=0)
+            db.execSQL("UPDATE " + DB.LAP.TABLE + " SET " + DB.LAP.LAP + "=" + DB.LAP.LAP + "+" + nextLap +
+                       " WHERE " + DB.LAP.ACTIVITY + "=" + activityId);
+
         // assign all older laps to the current activity
         db.execSQL("UPDATE " + DB.LAP.TABLE + " SET " + DB.LAP.ACTIVITY + " = " + activityId +
                 " WHERE " + DB.LAP.ACTIVITY + " = " + previousActivityId);
@@ -82,14 +86,16 @@ public class ActivityMerger implements Constants {
         db.update(DB.LOCATION.TABLE, values, DB.LOCATION.TYPE + "=" + DB.LOCATION.TYPE_START + " AND " + DB.LOCATION.ACTIVITY + "=" + activityId, null);
 
         // location: newer lap numbers should continue where previousActivity laps stopped
-        long nextLap = maxLap(db, previousActivityId) + 1;
-        db.execSQL("UPDATE " + DB.LOCATION.TABLE + " SET " + DB.LOCATION.LAP + "=" + DB.LOCATION.LAP + "+" + nextLap +
+        long nextLap = lapMinMax(db, DB.LOCATION.TABLE, "MAX", previousActivityId) + 1;
+        // has this code already run? if so, don't re-run it.
+        if (lapMinMax(db, DB.LOCATION.TABLE, "MIN", activityId) == 0 && nextLap !=0)
+            db.execSQL("UPDATE " + DB.LOCATION.TABLE + " SET " + DB.LOCATION.LAP + "=" + DB.LOCATION.LAP + "+" + nextLap +
                    " WHERE " + DB.LOCATION.ACTIVITY + "=" + activityId);
 
         // location: assign newer activityId to older locations
         values = new ContentValues();
         values.put(DB.LOCATION.ACTIVITY, activityId);
-        db.update(DB.LOCATION.TABLE, values, DB.LOCATION.ACTIVITY+"="+previousActivityId, null);
+        db.update(DB.LOCATION.TABLE, values, DB.LOCATION.ACTIVITY + "=" + previousActivityId, null);
     }
 
     private static long activityType(SQLiteDatabase db, long activityId) {
@@ -107,8 +113,13 @@ public class ActivityMerger implements Constants {
                 " WHERE _id = " + activityId).simpleQueryForLong();
     }
 
-    private static long maxLap(SQLiteDatabase db, long activityId) {
-        return db.compileStatement("SELECT MAX(" + DB.LAP.LAP + ") FROM " + DB.LAP.TABLE +
-                " WHERE " + DB.LAP.ACTIVITY + "=" + activityId).simpleQueryForLong();
+    private static long lapMinMax(SQLiteDatabase db, String table, String minMax, long activityId) {
+        try {
+            return db.compileStatement("SELECT " + minMax + "(" + DB.LAP.LAP + ") FROM " + table +
+                    " WHERE " + DB.LAP.ACTIVITY + "=" + activityId).simpleQueryForLong();
+        } catch (Exception e) {
+            // no laps, return -1
+            return -1;
+        }
     }
 }
