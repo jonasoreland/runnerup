@@ -74,7 +74,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
         this.getSupportLoaderManager().initLoader(0, null, this);
 
-        new ActivityCleaner().conditional_recompute(mDB);
+        new ActivityCleaner().conditionalRecompute(mDB);
     }
 
     @Override

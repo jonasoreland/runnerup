@@ -159,12 +159,12 @@ public class ActivityCleaner implements Constants {
             tmp.put(DB.ACTIVITY.MAX_HR, _totalMaxHr);
         }
         tmp.put(DB.ACTIVITY.DISTANCE, sum_distance);
-        tmp.put(DB.ACTIVITY.TIME, sum_time); // also used as a flag for conditional_recompute
+        tmp.put(DB.ACTIVITY.TIME, sum_time); // also used as a flag for conditionalRecompute
 
         db.update(DB.ACTIVITY.TABLE, tmp, "_id = " + activityId, null);
     }
 
-    public void conditional_recompute(SQLiteDatabase db){
+    public void conditionalRecompute(SQLiteDatabase db){
         // get last activity
         long id = db.compileStatement("SELECT MAX(_id) FROM " + DB.ACTIVITY.TABLE).simpleQueryForLong();
 

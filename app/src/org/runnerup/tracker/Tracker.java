@@ -590,7 +590,7 @@ public class Tracker extends android.app.Service implements
         if (mMaxHR > 0)
             tmp.put(Constants.DB.ACTIVITY.MAX_HR, mMaxHR);
         tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-        tmp.put(Constants.DB.ACTIVITY.TIME, getTime()); // time should be updated last for conditional_recompute
+        tmp.put(Constants.DB.ACTIVITY.TIME, getTime()); // time should be updated last for conditionalRecompute
 
         String key[] = {
                 Long.toString(mActivityId)
