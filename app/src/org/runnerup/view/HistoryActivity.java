@@ -37,6 +37,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.ActivityEntity;
@@ -72,6 +73,8 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
         listView.setAdapter(cursorAdapter);
 
         this.getSupportLoaderManager().initLoader(0, null, this);
+
+        new ActivityCleaner().conditionalRecompute(mDB);
     }
 
     @Override
