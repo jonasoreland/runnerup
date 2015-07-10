@@ -30,6 +30,11 @@
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Bieganie</item>
+    <item>Jazda rowerem</item>
+    <item>Inne</item>
+  </string-array>
   <string-array name="muteEntries">
     <item>Nie</item>
     <item>Tak</item>
