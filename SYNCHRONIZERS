@@ -1,0 +1,19 @@
+NAME		UPLOAD   SPORTS   DOWNLOAD   FEED
+RunKeeper           OK      ???         OK   BROKEN
+Garmin              OK      ???
+FunBeat             OK      ???              OK
+MapMyRun            OK      ???
+Endmondo            OK      ???              OK
+runtastic       BROKEN      ???
+jogg.se             OK      ???
+Nike+               OK      ???              OK
+RunningAHEAD        OK      ???
+strava              OK      ???
+digifit             OK      ???
+facebook            OK      ???
+
+NOT IMPLEMENTED
+long list!
+
+see Documentation/web-services.txt
+    https://github.com/cpfair/tapiriik

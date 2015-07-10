@@ -18,20 +18,7 @@
 - share workouts                   (DONE)
 - download workouts from Garmin    (DONE)
 - text fragment for audio cues (currently translates word by word)
-- post to facebook                 (DONE)
 - post to twitter
-- upload to RunKeeper              (DONE)
-- upload to Garmin                 (DONE)
-- upload to FunBeat                (DONE)
-- upload to MapMyRun               (DONE)
-- upload to Endmondo               (DONE)
-- upload to runtastic              (DONE)
-- upload to jogg.se                (DONE, but their GPX import isn't perfect)
-- upload to Nike+                  (DONE)
-- upload to RunningAHEAD           (DONE)
-- upload to www.sports-tracker.com
-- upload to strava                 (DONE)
-- upload to digifit                (DONE)
 - upload from End of activity view (DONE)
 - upload list of activities        (DONE)
 - Name/comment to activity         (DONE)
@@ -57,14 +44,6 @@
 - BUG: pause during rest step confuses audio countdown
                                    (DONE)
 - routes ??
-- feed                             (DONE)
-  runkeeper                        (DONE)
-  nike+                            (DONE)
-  funbeat                          (DONE)
-  endmondo                         (DONE)
-  digifit                          (DONE)
-  strava                           (DONE)
-
 - edit advanced workouts           (DONE)
 - advanced audio cue editor
 
@@ -74,18 +53,8 @@
 - audio cues settings: step time/distance/pace     (DONE)
 - audio cues settings: activity/step/lap summaries (DONE)
 
-- fix uploaders to handle different sport types
-  digifit
-  map my run
-  runningahead
-  strava
-  runtastic
-  jogg.se
-  (and runnerup live)
 
 - add more downloaders (see web-services.txt for docs)
 - fix so that external ID is populated on upload (and checked on download)
 - unify code for unique-ing activities between feed and download
-- fix runkeeper feed
-- fix runtastic upload
 - preview/edit mode for wear
