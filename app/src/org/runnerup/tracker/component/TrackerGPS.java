@@ -82,11 +82,11 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
             frequency_ms = Integer.valueOf(preferences.getString(context.getString(
                     R.string.pref_pollInterval), "500"));
             if (mWithoutGps == false) {
-                String frequency_meters = preferences.getString(context.getString(
-                        R.string.pref_pollDistance), "5");
+                String freq_meters_pref = preferences.getString(context.getString(R.string.pref_pollDistance), "0");
+                Integer frequency_meters = Math.max(Integer.valueOf(freq_meters_pref), 5);
                 lm.requestLocationUpdates(GPS_PROVIDER,
                         frequency_ms,
-                        Integer.valueOf(frequency_meters),
+                        frequency_meters,
                         tracker);
                 mGpsStatus = new GpsStatus(context);
                 mGpsStatus.start(this);
