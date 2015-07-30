@@ -58,11 +58,10 @@ public class AccountListActivity extends FragmentActivity implements Constants,
 
     DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
-    SyncManager syncManager = null;
-    boolean tabFormat = false;
-
-    ListView listView;
-    CursorAdapter cursorAdapter;
+    SyncManager mSyncManager = null;
+    boolean mTabFormat = false;
+    ListView mListView;
+    CursorAdapter mCursorAdapter;
 
     /** Called when the activity is first created. */
 
@@ -74,11 +73,11 @@ public class AccountListActivity extends FragmentActivity implements Constants,
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
-        syncManager = new SyncManager(this);
-        listView = (ListView) findViewById(R.id.account_list);
-        listView.setDividerHeight(10);
-        cursorAdapter = new AccountListAdapter(this, null);
-        listView.setAdapter(cursorAdapter);
+        mSyncManager = new SyncManager(this);
+        mListView = (ListView) findViewById(R.id.account_list);
+        mListView.setDividerHeight(10);
+        mCursorAdapter = new AccountListAdapter(this, null);
+        mListView.setAdapter(mCursorAdapter);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -87,7 +86,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
         super.onDestroy();
         mDB.close();
         mDBHelper.close();
-        syncManager.close();
+        mSyncManager.close();
     }
 
     @Override
@@ -100,7 +99,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_tab_format:
-                tabFormat = !tabFormat;
+                mTabFormat = !mTabFormat;
                 item.setTitle(getString(R.string.Icon_list));
                 getSupportLoaderManager().restartLoader(0, null, this);
                 break;
@@ -127,12 +126,12 @@ public class AccountListActivity extends FragmentActivity implements Constants,
 
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-        cursorAdapter.swapCursor(arg1);
+        mCursorAdapter.swapCursor(arg1);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
-        cursorAdapter.swapCursor(null);
+        mCursorAdapter.swapCursor(null);
     }
 
     class AccountListAdapter extends CursorAdapter {
@@ -148,75 +147,79 @@ public class AccountListActivity extends FragmentActivity implements Constants,
             ContentValues tmp = DBHelper.get(cursor);
 
             final String id = tmp.getAsString(DB.ACCOUNT.NAME);
-            final Synchronizer synchronizer = syncManager.add(tmp);
+            final Synchronizer synchronizer = mSyncManager.add(tmp);
             final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
 
-            ImageView im = (ImageView) view.findViewById(R.id.account_list_icon);
-            TextView tv = (TextView) view.findViewById(R.id.account_list_name);
-            CheckBox cbSend = (CheckBox) view.findViewById(R.id.account_list_upload);
-            CheckBox cbFeed = (CheckBox) view.findViewById(R.id.account_list_feed);
-            cbSend.setTag(id);
-            cbSend.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            ImageView accountIcon = (ImageView) view.findViewById(R.id.account_list_icon);
+            TextView accountNameText = (TextView) view.findViewById(R.id.account_list_name);
+            CheckBox accountUploadBox = (CheckBox) view.findViewById(R.id.account_list_upload);
+            CheckBox accountFeedBox = (CheckBox) view.findViewById(R.id.account_list_feed);
+            Button accountConfigureBtn = (Button) view.findViewById(R.id.account_list_configure_button);
+
+            // upload box
+            accountUploadBox.setTag(id);
+            accountUploadBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                     setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
                 }
             });
-            cbFeed.setTag(id);
-            cbFeed.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+
+            // feed box
+            accountFeedBox.setTag(id);
+            accountFeedBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
                     setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_FEED, arg1);
                 }
 
             });
-            Button b = (Button) view.findViewById(R.id.account_list_configure_button);
-            boolean configured = syncManager.isConfigured(id);
-            if (!tabFormat) {
-                {
-                    if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
-                        im.setVisibility(View.GONE);
-                        tv.setVisibility(View.VISIBLE);
-                        tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-                    } else {
-                        im.setVisibility(View.VISIBLE);
-                        tv.setVisibility(View.GONE);
-                        im.setBackgroundResource(tmp
-                                .getAsInteger(DB.ACCOUNT.ICON));
-                    }
-                }
-                cbSend.setVisibility(View.GONE);
-                cbFeed.setVisibility(View.GONE);
-            } else {
-                im.setVisibility(View.GONE);
-                tv.setVisibility(View.VISIBLE);
-                tv.setText(id);
-                if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
-                    cbSend.setEnabled(true);
-                    cbSend.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
-                    cbSend.setVisibility(View.VISIBLE);
+
+            boolean configured = mSyncManager.isConfigured(id);
+            if (!mTabFormat) {
+                if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
+                    accountIcon.setVisibility(View.GONE);
+                    accountNameText.setVisibility(View.VISIBLE);
+                    accountNameText.setText(tmp.getAsString(DB.ACCOUNT.NAME));
                 } else {
-                    cbSend.setVisibility(View.INVISIBLE);
+                    accountIcon.setVisibility(View.VISIBLE);
+                    accountNameText.setVisibility(View.GONE);
+                    accountIcon.setBackgroundResource(tmp
+                            .getAsInteger(DB.ACCOUNT.ICON));
+                }
+                accountUploadBox.setVisibility(View.GONE);
+                accountFeedBox.setVisibility(View.GONE);
+            } else {
+                accountIcon.setVisibility(View.GONE);
+                accountNameText.setVisibility(View.VISIBLE);
+                accountNameText.setText(id);
+                if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
+                    accountUploadBox.setEnabled(true);
+                    accountUploadBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
+                    accountUploadBox.setVisibility(View.VISIBLE);
+                } else {
+                    accountUploadBox.setVisibility(View.INVISIBLE);
                 }
                 if (configured && synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
-                    cbFeed.setEnabled(true);
-                    cbFeed.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
-                    cbFeed.setVisibility(View.VISIBLE);
+                    accountFeedBox.setEnabled(true);
+                    accountFeedBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
+                    accountFeedBox.setVisibility(View.VISIBLE);
                 } else {
-                    cbFeed.setVisibility(View.INVISIBLE);
+                    accountFeedBox.setVisibility(View.INVISIBLE);
                 }
             }
 
+            //configure button
             {
-                b.setTag(id);
-                b.setOnClickListener(configureButtonClick);
+                accountConfigureBtn.setTag(id);
+                accountConfigureBtn.setOnClickListener(configureButtonClick);
                 if (configured) {
-                    b.setText(getString(R.string.edit));
-                    WidgetUtil.setBackground(b, getResources().getDrawable(
+                    accountConfigureBtn.setText(getString(R.string.edit));
+                    WidgetUtil.setBackground(accountConfigureBtn, getResources().getDrawable(
                             R.drawable.btn_blue));
                 } else {
-                    b.setText(getString(R.string.Connect));
-                    WidgetUtil.setBackground(b, getResources().getDrawable(
+                    accountConfigureBtn.setText(getString(R.string.Connect));
+                    WidgetUtil.setBackground(accountConfigureBtn, getResources().getDrawable(
                             R.drawable.btn_green));
                 }
             }
@@ -231,10 +234,10 @@ public class AccountListActivity extends FragmentActivity implements Constants,
     final OnClickListener configureButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final String synchronizerName = (String) v.getTag();
-            if (syncManager.isConfigured(synchronizerName)) {
+            if (mSyncManager.isConfigured(synchronizerName)) {
                 startActivity(synchronizerName, true);
             } else {
-                syncManager.connect(callback, synchronizerName, false);
+                mSyncManager.connect(callback, synchronizerName, false);
             }
         }
     };
@@ -274,9 +277,9 @@ public class AccountListActivity extends FragmentActivity implements Constants,
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SyncManager.CONFIGURE_REQUEST) {
-            syncManager.onActivityResult(requestCode, resultCode, data);
+            mSyncManager.onActivityResult(requestCode, resultCode, data);
         } else if (requestCode == SyncManager.CONFIGURE_REQUEST + 1000) {
-            syncManager.clear();
+            mSyncManager.clear();
             getSupportLoaderManager().restartLoader(0, null, this);
         }
     }
