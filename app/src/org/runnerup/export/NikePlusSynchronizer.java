@@ -419,12 +419,13 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                     ex.printStackTrace();
                 }
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            if (profile != null) {
+                Log.e(getClass().getSimpleName(), "Failed for profile '" + profile + "' because of the following:");
+                Log.e(getClass().getSimpleName(), e.getMessage());
+            } else {
+                e.printStackTrace();
+            }
         }
     }
 
