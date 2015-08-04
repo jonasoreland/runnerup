@@ -93,4 +93,18 @@ public abstract class AbstractEntity implements DBEntity {
                 values().remove(column);
         }
     }
+
+    public void readByPrimaryKey(SQLiteDatabase DB, long primaryKey) {
+        String cols[] = new String[getValidColumns().size()];
+        getValidColumns().toArray(cols);
+        Cursor cursor = DB.query(getTableName(), cols, "_id = "
+                + primaryKey, null, null, null, null);
+        try {
+            if (cursor.moveToFirst()) {
+                toContentValues(cursor);
+            }
+        } finally {
+            cursor.close();
+        }
+    }
 }
