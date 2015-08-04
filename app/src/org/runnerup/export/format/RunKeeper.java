@@ -55,14 +55,8 @@ public class RunKeeper {
 
     public void export(long activityId, Writer writer) throws IOException {
 
-        String[] aColumns = {
-                DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
-                DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
-        };
-        Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
-                + activityId, null, null, null, null);
-        cursor.moveToFirst();
-        ActivityEntity ae = new ActivityEntity(cursor);
+        ActivityEntity ae = new ActivityEntity();
+        ae.readByPrimaryKey(mDB, activityId);
         long startTime = ae.getStartTime();
         double distance = ae.getDistance();
         long duration = ae.getTime();
@@ -96,7 +90,6 @@ public class RunKeeper {
         } catch (IOException e) {
             throw e;
         }
-        cursor.close();
     }
 
     private void exportHeartRate(long activityId, long startTime, JsonWriter w)
