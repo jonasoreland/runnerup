@@ -50,8 +50,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -327,7 +327,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         //tmp code: reload sports in case of experimental sports support settings change
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         if (prefs.getBoolean(getString(R.string.pref_experimental_features), false)) {
-            SpinnerAdapter sportsAdapter = ArrayAdapter.createFromResource(getActivity(),
+            ListAdapter sportsAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.sportEntriesExperimental, android.R.layout.simple_spinner_item);
             basic_sport.setAdapter(sportsAdapter);
             manual_sport.setAdapter(sportsAdapter);
