@@ -2,7 +2,6 @@ package org.runnerup.feedwidget;
 
 
 
-import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
@@ -11,8 +10,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.RemoteViews;
@@ -22,10 +19,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.feed.FeedList;
-import org.runnerup.util.Formatter;
-import org.runnerup.view.FeedActivity;
 import org.runnerup.view.MainLayout;
-import org.runnerup.view.StartActivity;
 
 import java.util.Set;
 

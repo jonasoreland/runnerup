@@ -17,21 +17,20 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+
+import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
@@ -39,13 +38,11 @@ import org.runnerup.util.FileUtil;
 
 import java.io.IOException;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsFragment extends PreferenceFragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.layout.settings);
-        setContentView(R.layout.settings_wrapper);
 
         {
             Preference btn = (Preference) findPreference("exportdb");
@@ -67,7 +64,7 @@ public class SettingsActivity extends PreferenceActivity {
             category.removePreference(pref);
         }
 
-        if (!hasHR(this)) {
+        if (!hasHR(getActivity())) {
             Preference pref = findPreference("cue_configure_hrzones");
             getPreferenceScreen().removePreference(pref);
         }
@@ -88,7 +85,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             String dstdir = Environment.getExternalStorageDirectory().getPath();
             builder.setTitle("Export runnerup.db to " + dstdir);
             DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -98,7 +95,7 @@ public class SettingsActivity extends PreferenceActivity {
                 }
 
             };
-            String from = DBHelper.getDbPath(getApplicationContext());
+            String from = DBHelper.getDbPath(getActivity().getApplicationContext());
             String to = dstdir + "/runnerup.db.export";
             try {
                 int cnt = FileUtil.copyFile(to, from);
@@ -119,7 +116,7 @@ public class SettingsActivity extends PreferenceActivity {
         public boolean onPreferenceClick(Preference preference) {
             String srcdir = Environment.getExternalStorageDirectory().getPath();
             String from = srcdir + "/runnerup.db.export";
-            DBHelper.importDatabase(SettingsActivity.this, from);
+            DBHelper.importDatabase(getActivity(), from);
             return false;
         }
     };
@@ -127,10 +124,10 @@ public class SettingsActivity extends PreferenceActivity {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
+            final ProgressDialog dialog = new ProgressDialog(getActivity());
             dialog.setTitle(R.string.Pruning_deleted_activities_from_database);
             dialog.show();
-            DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, new Runnable() {
+            DBHelper.purgeDeletedActivities(getActivity(), dialog, new Runnable() {
                 @Override
                 public void run() {
                     dialog.dismiss();

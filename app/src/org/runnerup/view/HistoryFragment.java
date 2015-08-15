@@ -24,7 +24,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -37,16 +38,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
-import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.workout.Sport;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
+public class HistoryFragment extends Fragment implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
     DBHelper mDBHelper = null;
@@ -61,26 +62,37 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.history);
-        listView = (ListView) findViewById(R.id.history_list);
 
-        mDBHelper = new DBHelper(this);
+        mDBHelper = new DBHelper(getActivity());
         mDB = mDBHelper.getReadableDatabase();
-        formatter = new Formatter(this);
-        listView.setDividerHeight(2);
-        listView.setOnItemClickListener(this);
-        cursorAdapter = new HistoryListAdapter(this, null);
-        listView.setAdapter(cursorAdapter);
-
-        this.getSupportLoaderManager().initLoader(0, null, this);
-
+        formatter = new Formatter(getActivity());
         new ActivityCleaner().conditionalRecompute(mDB);
     }
 
+    @Nullable
     @Override
-    protected void onResume() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.history, container, false);
+        listView = (ListView) view.findViewById(R.id.history_list);
+        listView.setDividerHeight(2);
+        listView.setOnItemClickListener(this);
+        cursorAdapter = new HistoryListAdapter(getActivity(), null);
+        listView.setAdapter(cursorAdapter);
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
-        getSupportLoaderManager().restartLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override
@@ -97,7 +109,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
         };
 
-        return new SimpleCursorLoader(this, mDB, DB.ACTIVITY.TABLE, from, "deleted == 0", null,
+        return new SimpleCursorLoader(getActivity(), mDB, DB.ACTIVITY.TABLE, from, "deleted == 0", null,
                 DB.ACTIVITY.START_TIME + " desc");
     }
 
@@ -113,16 +125,16 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long id) {
-        Intent intent = new Intent(this, DetailActivity.class);
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
         intent.putExtra("ID", id);
         intent.putExtra("mode", "details");
         startActivityForResult(intent, 0);
     }
 
     @Override
-    protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+    public void onActivityResult(int arg0, int arg1, Intent arg2) {
         super.onActivityResult(arg0, arg1, arg2);
-        this.getSupportLoaderManager().restartLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     class HistoryListAdapter extends CursorAdapter {
