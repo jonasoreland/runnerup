@@ -328,7 +328,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         if (prefs.getBoolean(getString(R.string.pref_experimental_features), false)) {
             ListAdapter sportsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                    R.array.sportEntriesExperimental, android.R.layout.simple_spinner_item);
+                    R.array.sportEntriesExperimental, android.R.layout.simple_list_item_1);
             basic_sport.setAdapter(sportsAdapter);
             manual_sport.setAdapter(sportsAdapter);
         }
