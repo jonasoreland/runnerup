@@ -47,6 +47,7 @@
   <string name="time">tempo</string>
   <string name="distance">distanza</string>
   <string name="Unknown">Sconosciuto</string>
+  <string name="Distance">Distanza</string>
   <string name="speed">velocità</string>
   <string name="pace">ritmo</string>
   <string name="heart_rate_zone">zona bpm</string>
@@ -223,6 +224,8 @@
   <string name="Lap_pace">Ritmo giro</string>
   <string name="Lap_heart_rate">BPM giro</string>
   <string name="Lap_heart_rate_zone">Zona BPM giro</string>
+  <string name="Current_speed">Velocità corrente</string>
+  <string name="Current_heart_rate">Frequenza cardiaca attuale</string>
   <string name="Misc_cues">Altri riferimenti</string>
   <string name="Target_coaching">Obiettivi del coach</string>
   <string name="Android_text_to_speech_settings">Impostazioni TTS Android</string>
@@ -248,4 +251,17 @@
   <string name="Do_not_show_again">Non mostrare più.</string>
   <string name="Waiting_for_phone">Attesa telefono</string>
   <string name="Saving_on_phone">Salvataggio su telefono</string>
+  <string name="Save">Salva</string>
+  <string name="_sign_plus">+</string>
+  <string name="_sign_minus">-</string>
+  <string name="Website">Sito web</string>
+  <string name="Automatic_upload">Upload automatico</string>
+  <string name="Live">Live</string>
+  <string name="my_phone">mio telefono</string>
+  <string name="Saving_as">Salva come</string>
+  <string name="Default">Standard</string>
+  <string name="Downloading_from_1s">Scaricando da %1$s</string>
+  <string name="Uploading_to_1s">Caricando a %1$s</string>
+  <string name="Loading_activities">Carico attività</string>
+  <string name="Fetching_activities_from_1s">Scarico attività da %1$s</string>
 </resources>
