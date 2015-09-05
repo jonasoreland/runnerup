@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 20
         targetSdkVersion 20
-        versionName "1.48"
-        versionCode 14000048
+        versionName "1.49"
+        versionCode 14000049
     }
 
     signingConfigs {
