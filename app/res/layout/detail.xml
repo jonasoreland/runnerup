@@ -16,7 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -189,29 +188,11 @@
                     android:weightSum="1">
                 </LinearLayout>
 
-                <LinearLayout
+                <include
                     android:id="@+id/tab_map"
+                    layout="@layout/map_area"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
-
-                    <com.mapbox.mapboxsdk.views.MapView
-                            android:id="@+id/mapview"
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
-                            mapbox:mapid="@string/mapboxMapID"
-                            mapbox:accessToken="@string/mapboxAccessToken" />
-
-                    <TextView
-                        android:visibility="gone"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="@string/Map_not_available_on_Froyo"
-                        android:id="@+id/froyo_map_placeholder"
-                        android:layout_gravity="center"
-                        android:gravity="center" />
-
-                </LinearLayout>
+                    android:layout_height="match_parent"/>
             </FrameLayout>
         </LinearLayout>
     </TabHost>

@@ -186,7 +186,10 @@
   <string name="RunnerUp_live_address">RunnerUpLive Adresse</string>
   <string name="Autopause_after_s">Automatische Pause nach (s)</string>
   <string name="Autopause_min_pace_minkm">Automatische Pause bei minimalem Tempo (min/km)</string>
+  <string name="Target_pace_moving_average_seconds">Zielgeschwindigkeitsintervall für rollended Mittelwert in Sekunden</string>
+  <string name="Target_pace_grace_seconds">Zielgeschwindigkeitstoleranz in Sekunden</string>
   <string name="Autolap_during_intervals">Rundenautomatik während Intervallen</string>
+  <string name="Add_countdown_after_step_that_ends_with_user_press">Countdown hinzufügen nach dem Abschnitt der mit eine Nutzerinteraktion endet</string>
   <string name="Step_countdown_time_s">Schritt Countdown-Zeit (s)</string>
   <string name="Smooth_pace_graph">Tempograph glätten</string>
   <string name="Smooth_pace_filters">Tempo-Glättungsfilter</string>
@@ -268,6 +271,8 @@
   <string name="Automatic_upload">Automatisch hochladen</string>
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Karte in Beitrag miteinbeziehen</string>
+  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Trainingseinheiten werden nicht von %1$s entfernt, sondern nur aus der RunnerUp-Liste, die zu %1$s hochgeladen wird.</string>
+  <string name="Clear_uploads_from_phone">Alle Uploads (vom Telefon) löschen</string>
   <string name="my_phone">Mein Telefon</string>
   <string name="Failed_to_import">Fehler beim Importieren: </string>
   <string name="Import_workout">Trainingseinheit importieren: </string>
@@ -275,9 +280,12 @@
   <string name="Overwrite_existing">Vorhandene überschreiben</string>
   <string name="Create_new_workout">Neue Trainingseinheit erstellen</string>
   <string name="Set_workout_name">Trainingsname festlegen</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Der Download von %1$s wird das Training %2$ mit dem selben Namen überschreiben</string>
   <string name="Delete_workout">Trainingseinheit löschen </string>
   <string name="RunnerUp_workout">RunnerUp-Trainingseinheit: </string>
+  <string name="HinHere_is_a_workout_I_think_you_might_like">Hallo\nHier ist ein Training, dass dir vielleicht gefallen könnte.</string>
   <string name="Share_workout">Trainingseinheit teilen...</string>
+  <string name="Not_much_to_say_at_this_point">Momentan gibt es nicht viel zu sagen.</string>
   <string name="New_audio_scheme">Neues Audioschema</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Notizen über Ihre Trainingseinheit</string>

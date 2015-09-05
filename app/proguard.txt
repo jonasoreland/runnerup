@@ -2,3 +2,7 @@
 -dontoptimize
 -dontwarn com.dsi.ant.**
 -dontwarn com.samsung.**
+-dontwarn okio.**
+-dontwarn com.vividsolutions.jts.awt.**
+-dontwarn android.support.**
+-dontwarn com.squareup.okhttp.**

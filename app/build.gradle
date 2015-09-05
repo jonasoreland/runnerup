@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '20.0.0'
+    buildToolsVersion '22.0.1'
 
     sourceSets {
         main {
@@ -30,14 +30,14 @@ android {
         latest {
             minSdkVersion 14
             targetSdkVersion 21
-            versionName "1.47"
-            versionCode 14000047
+            versionName "1.49"
+            versionCode 14000049
         }
         froyo {
             minSdkVersion 8
             targetSdkVersion 18
-            versionName "1.47"
-            versionCode 8000047
+            versionName "1.49"
+            versionCode 8000049
         }
     }
 

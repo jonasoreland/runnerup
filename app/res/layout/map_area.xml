@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:text="@string/Map_not_available_on_Froyo"
+    android:id="@+id/froyo_map_placeholder"
+    android:layout_gravity="center"
+    android:gravity="center"
+    />

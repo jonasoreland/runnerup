@@ -69,17 +69,16 @@ import com.mapbox.mapboxsdk.overlay.PathOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
-import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
 import org.runnerup.util.Bitfield;
-import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
@@ -170,12 +169,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
         map = (MapView) findViewById(R.id.mapview);
-        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
-            map.setVisibility(View.GONE);
-            map = null;
-            TextView placeholder = (TextView)findViewById(R.id.froyo_map_placeholder);
-            placeholder.setVisibility(View.VISIBLE);
-        }
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
         if (this.mode == MODE_SAVE) {

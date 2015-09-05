@@ -6,7 +6,7 @@ version = "1.0"
 
 android {
     compileSdkVersion 20
-    buildToolsVersion '20.0.0'
+    buildToolsVersion '22.0.1'
     
     sourceSets {
         main {
