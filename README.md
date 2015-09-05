@@ -1,6 +1,8 @@
 RunnerUp
 ========
 
+[![Build Status](https://travis-ci.org/jonasoreland/runnerup.svg?branch=master)](https://travis-ci.org/jonasoreland/runnerup)
+
 An open source run tracker for Android.
 
 Inspiration Garmin 410, RunKeeper and Everywhere Run.
