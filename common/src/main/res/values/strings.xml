@@ -46,7 +46,6 @@
   <string name="repeat">repeat</string>
   <string name="time">time</string>
   <string name="distance">distance</string>
-  <string name="Unknown">Unknown</string>
   <string name="Distance">Distance</string>
   <string name="speed">speed</string>
   <string name="pace">pace</string>
@@ -301,4 +300,5 @@
   <string name="Fetching_activities_from_1s">Fetching activities from %1$s</string>
   <string name="Map_not_available_on_Froyo">Map not available on Froyo.</string>
   <string name="Distance_marker">Distance marker.</string>
+  <string name="Unused_currently">Unused currently.</string>
 </resources>
