@@ -272,7 +272,8 @@
             android:defaultValue="false"
             android:persistent="true"
             android:key="@string/pref_experimental_features"
-            android:title="@string/Experimental_features" />
+            android:title="@string/Experimental_features"
+            android:summary="@string/Unused_currently" />
 
         </PreferenceScreen>
 

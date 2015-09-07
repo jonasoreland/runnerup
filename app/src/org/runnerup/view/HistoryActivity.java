@@ -193,9 +193,9 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
                 TextView tv = (TextView) view.findViewById(to[5]);
 
                 if (s != null) {
-                    tv.setText(Sport.textOf(getApplicationContext(), s));
+                    tv.setText(Sport.textOf(getResources(), s));
                 } else {
-                    tv.setText(Sport.textOf(getApplicationContext(), DB.ACTIVITY.SPORT_RUNNING));
+                    tv.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
                 }
             }
         }
