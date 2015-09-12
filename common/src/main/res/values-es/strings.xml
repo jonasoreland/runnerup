@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
+  <string name="metrics_heartrate">Hr</string>
+  <!--format hint stuff-->
+  <string name="Maximum_heart_rate_MHR">Máxima frecuencia cardíaca (MHR) </string>
+  <string name="Target_pace_HHMMSS">Paso objetivo (HH:MM:SS)</string>
+  <string name="Interval_time_HHMMSS">Intervalo de tiempo (HH:MM:SS)</string>
+  <string name="Interval_distance_m">Intervalo de distancia (m)</string>
+  <string name="Rest_time_HHMMSS">Tiempo de descanso (HH:MM:SS)</string>
+  <string name="Rest_distance_m">Distancia de descanso (m)</string>
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <!--other-->
+  <string name="Google_Play_Services_Legal_Notices">Aviso Legal de Google Play Services</string>
+  <string name="Type">Tipo</string>
+  <string name="active">activo</string>
+  <string name="rest">descansar</string>
+  <string name="recovery">recuperación</string>
+  <string name="warm_up">calentamiento</string>
+  <string name="cool_down">enfriamiento</string>
+  <string name="repeat">repetir</string>
+  <string name="time">Tiempo</string>
+  <string name="distance">distancia</string>
+  <string name="Unknown">Desconocido</string>
+  <string name="Distance">Distancia</string>
+  <string name="speed">velocidad</string>
+  <string name="pace">ritmo de paso</string>
+  <string name="Zone">Zona</string>
+  <string name="Device">Dispositivo</string>
+  <string name="Start_hour">Hora de inicio</string>
+  <string name="Heart_rate">Frecuencia cardíaca</string>
+  <string name="Pace">Ritmo de paso</string>
+  <string name="Scan">escanear</string>
+  <string name="Connect">Conectar</string>
+  <string name="Connecting">Conectando</string>
+  <string name="Download">Descargar</string>
+  <string name="Share">Compartir</string>
+  <string name="Delete">Borrar</string>
+  <string name="Total">Total</string>
+  <string name="Interval">Intervalo</string>
+  <string name="Remaining">Restante</string>
+  <string name="Lap">Vuelta</string>
+  <string name="New_lap">Nueva vuelta</string>
+  <string name="Next_lap">Siguiente vuelta</string>
+  <string name="Pause">Pausa</string>
+  <string name="Stop">Parar</string>
+  <string name="Workout">Entrenamiento</string>
+  <string name="Download_workouts">Descargar workouts</string>
+  <string name="Audio_cue_settings">Configuración inidicaciones de audio</string>
+  <string name="Sport">Deporte</string>
+  <string name="Target">Objetivo</string>
+  <string name="Target_heart_rate_zone">Zona de frecuencia cardíaca objetivo</string>
+  <string name="Interval_type">Tipo de intervalo</string>
+  <string name="Rest_type">Tipo de descanso</string>
+  <string name="Repetitions">Repeticiones</string>
+  <string name="Date">Fecha</string>
+  <string name="GPS_satellites">Satélites GPS</string>
+  <string name="Start_GPS">Iniciar GPS</string>
+  <string name="Duration">Duración</string>
+  <string name="Duration_type">Tipo de duración</string>
+  <string name="Target_type">Tipo de objetivo</string>
+  <string name="Cancel">Cancelar</string>
+  <string name="value">valor</string>
+  <string name="Select_all">Seleccionar todos</string>
+  <string name="Clear_all">Limpiar todos</string>
+  <string name="Username">Usuario</string>
+  <string name="Password">Contraseña</string>
+  <string name="Show_password">Mostrar contraseña</string>
+  <string name="intensity">intensidad</string>
+  <string name="Step_intensity">Intensidad de paso</string>
+  <string name="Low_pace">Paso bajo</string>
+  <string name="High_pace">Paso alto</string>
+  <string name="Sex">Sexo</string>
+  <string name="upload">cargar</string>
+  <string name="Notes">Notas</string>
+  <string name="Laps">Vueltas</string>
+  <string name="Map">Mapa</string>
+  <string name="Graph">Gráfico</string>
+  <string name="Upload">Cargar</string>
+  <string name="Configure">Configurar</string>
+  <string name="Disconnect">Desconectar</string>
+  <string name="Resume">Reiniciar</string>
+  <string name="Save_activity">Guardar actividad</string>
+  <string name="Upload_activity">Subir actividad</string>
+  <string name="Uploaded">Subida</string>
+  <string name="Finished">Finalizada</string>
+  <string name="Until_press">Hasta presionar</string>
+  <string name="Discard_activity">Descartar actividad</string>
+  <string name="Configure_accounts">Configurar cuentas</string>
+  <string name="Refresh">Actualizar</string>
+  <string name="Age">Edad</string>
+  <string name="edit">editar</string>
+  <string name="Synchronizing">Sincronizando:</string>
+  <string name="synchronizing_feed">sincronizando feed...</string>
+  <string name="OK">OK</string>
+  <string name="Table_format">Formato de tabla</string>
+  <string name="Clear_uploads">Limpiar subidas</string>
+  <string name="Upload_missing_workouts">Subida (sin) workouts</string>
+  <string name="Disconnect_account">Desconectar cuentas</string>
+  <string name="Edit_activity">Editar acitvidad</string>
+  <string name="Share_activity">Compartir actividad</string>
+  <string name="Delete_activity">Borrar actividad</string>
+  <string name="Recompute_activity">Recalcular actividad</string>
+  <string name="Configure_heart_rate_zones">Configurar zona de frecuencia cardíaca</string>
+  <string name="Clear_heart_rate_zone_settings">Limpiar configuración de zona de frecuencia cardíaca</string>
+  <string name="Settings">Configuración</string>
+  <string name="History">Histórico</string>
+  <string name="Basic">Basico</string>
+  <string name="Manual">Manual</string>
+  <string name="Battery_level">Nivel batería</string>
+  <string name="Searching_for_GPS">Buscando GPS</string>
+  <string name="Waiting_for_phone">Esperando al teléfono</string>
+  <string name="Saving_on_phone">Guardar en el teléfono</string>
+  <string name="Save">Guardar</string>
+  <string name="Discard">Descartar</string>
+  <string name="_sign_plus">+</string>
+  <string name="_sign_minus">-</string>
+  <string name="Delete_workout">Eliminar entrenamiento</string>
+  <string name="New_audio_scheme">Nuevo esquema de audio</string>
+  <string name="Default">Defecto</string>
+</resources>

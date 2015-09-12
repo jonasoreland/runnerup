@@ -14,12 +14,16 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">actividad</string>
+  <string name="cue_interval">intervalo</string>
   <string name="cue_lap">vuelta</string>
   <string name="cue_warmup">calentamiento</string>
   <string name="cue_cooldown">enfriamiento</string>
   <string name="cue_current">actual</string>
+  <string name="cue_recovery">recuperación</string>
   <string name="cue_perkilometer">por kilómetro</string>
   <string name="cue_permile">por milla</string>
+  <string name="cue_perhour">por hora</string>
   <string name="cue_started">empezado</string>
   <string name="cue_paused">en pausa</string>
   <string name="cue_resumed">reanudado</string>
@@ -55,4 +59,12 @@
     <item quantity="one">bpm</item>
     <item quantity="other">bpm</item>
   </plurals>
+  <string name="cue_activity_started">actividad iniciada</string>
+  <string name="cue_activity_paused">actividad pausada</string>
+  <string name="cue_activity_resumed">actividad reanudada</string>
+  <string name="cue_activity_stopped">actividad parada</string>
+  <string name="cue_lap_started">vuelta iniciada</string>
+  <string name="cue_lap_completed">vuelta completada</string>
+  <string name="cue_warmup_started">calentamiento iniciado</string>
+  <string name="cue_cooldown_started">enfriamiento iniciado</string>
 </resources>
