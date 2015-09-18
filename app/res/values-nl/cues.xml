@@ -14,6 +14,8 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">activiteit</string>
+  <string name="cue_interval">interval</string>
   <string name="cue_lap">ronde</string>
   <string name="cue_warmup">warming-up</string>
   <string name="cue_cooldown">cooling-down</string>
@@ -21,6 +23,7 @@
   <string name="cue_recovery">herstel</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mijl</string>
+  <string name="cue_perhour">per uur</string>
   <string name="cue_started">gestart</string>
   <string name="cue_paused">gepauzeerd</string>
   <string name="cue_resumed">hervatten</string>
@@ -56,4 +59,12 @@
     <item quantity="one">bpm</item>
     <item quantity="other">bpm</item>
   </plurals>
+  <string name="cue_activity_started">activiteit gestart</string>
+  <string name="cue_activity_paused">activiteit gepauzeerd</string>
+  <string name="cue_activity_resumed">activiteit hervat</string>
+  <string name="cue_activity_stopped">activiteit gestopt</string>
+  <string name="cue_lap_started">ronde gestart</string>
+  <string name="cue_lap_completed">ronde beeindigd</string>
+  <string name="cue_warmup_started">opwarming gestart</string>
+  <string name="cue_cooldown_started">afkoeling gestart</string>
 </resources>

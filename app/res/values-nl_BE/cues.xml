@@ -14,7 +14,57 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">activiteit</string>
+  <string name="cue_interval">interval</string>
+  <string name="cue_lap">ronde</string>
   <string name="cue_warmup">opwarming</string>
+  <string name="cue_cooldown">afkoeling</string>
   <string name="cue_current">huidige</string>
   <string name="cue_recovery">herstel</string>
+  <string name="cue_perkilometer">per kilometer</string>
+  <string name="cue_permile">per mijl</string>
+  <string name="cue_perhour">per uur</string>
+  <string name="cue_started">gestart</string>
+  <string name="cue_paused">gepauzeerd</string>
+  <string name="cue_resumed">hervat</string>
+  <string name="cue_stopped">gestopt</string>
+  <string name="cue_completed">voltooid</string>
+  <string name="cue_speedup">versnel</string>
+  <string name="cue_slowdown">vertraag</string>
+  <plurals name="cue_hour">
+    <item quantity="one">uur</item>
+    <item quantity="other">uren</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minuut</item>
+    <item quantity="other">minuten</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">seconde</item>
+    <item quantity="other">seconden</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">meter</item>
+    <item quantity="other">meter</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilometer</item>
+    <item quantity="other">kilometer</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">mijl</item>
+    <item quantity="other">mijl</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">bpm</item>
+    <item quantity="other">bpm</item>
+  </plurals>
+  <string name="cue_activity_started">activiteit gestart</string>
+  <string name="cue_activity_paused">activiteit gepauzeerd</string>
+  <string name="cue_activity_resumed">activiteit hervat</string>
+  <string name="cue_activity_stopped">activiteit gestopt</string>
+  <string name="cue_lap_started">ronde gestart</string>
+  <string name="cue_lap_completed">ronde beeindigd</string>
+  <string name="cue_warmup_started">opwarming gestart</string>
+  <string name="cue_cooldown_started">afkoeling gestart</string>
 </resources>

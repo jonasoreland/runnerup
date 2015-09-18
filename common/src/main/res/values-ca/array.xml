@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string-array name="unitEntries">
-    <item>Mijlen</item>
-    <item>Kilometers</item>
+    <item>Milles</item>
+    <item>Kilòmetres</item>
   </string-array>
   <string-array name="unitValues">
     <item>mi</item>
@@ -10,68 +10,63 @@
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
-    <item>Warming-up</item>
-    <item>Actief</item>
-    <item>Rust</item>
-    <item>Herstel</item>
-    <item>Cooling-down</item>
+    <item>Escalfament</item>
+    <item>Actiu</item>
+    <item>Descans</item>
+    <item>Recuperació</item>
+    <item>Refredar</item>
   </string-array>
   <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
-    <item>Totdat gedrukt</item>
-    <item>Tijd</item>
-    <item>Afstand</item>
+    <item>Fins que es premi</item>
+    <item>Temps</item>
+    <item>Distància</item>
   </string-array>
   <!--same order as above, same values as Dimension-->
-  <string-array name="target_types">
-    <item>Geen</item>
-    <item>Tempo</item>
-    <item>Hartslagzone</item>
-  </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
-    <item>Lopen</item>
-    <item>Fietsen</item>
-    <item>Andere</item>
+    <item>Córrer</item>
+    <item>Ciclisme</item>
+    <item>Altre</item>
   </string-array>
   <string-array name="sportEntriesExperimental">
-    <item>Lopen</item>
-    <item>Fietsen</item>
-    <item>Andere</item>
-    <item>Orienteren</item>
-    <item>Wandelen</item>
+    <item>Córrer</item>
+    <item>Ciclisme</item>
+    <item>Altre</item>
+    <item>Orientació</item>
+    <item>Caminar</item>
   </string-array>
   <string-array name="muteEntries">
-    <item>Nee</item>
-    <item>Ja</item>
+    <item>No</item>
+    <item>Si</item>
   </string-array>
   <string-array name="muteValues">
-    <item>nee</item>
-    <item>ja</item>
+    <item>no</item>
+    <item>si</item>
   </string-array>
   <string-array name="types">
-    <item>Tijd</item>
-    <item>Afstand</item>
+    <item>Temps</item>
+    <item>Distància</item>
   </string-array>
   <string-array name="sexes">
-    <item>Man</item>
-    <item>Vrouw</item>
+    <item>Home</item>
+    <item>Dona</item>
   </string-array>
   <!--Audio cue languages-->
   <string-array name="cueLanguageNames">
-    <item>Engels</item>
-    <item>Nederlands</item>
-    <item>Duits</item>
-    <item>Japans</item>
-    <item>Arabisch</item>
-    <item>Russisch</item>
-    <item>Spaans</item>
-    <item>Frans</item>
-    <item>Italiaans</item>
-    <item>Pools</item>
-    <item>Turks</item>
-    <item>Portugees</item>
+    <item>Anglès</item>
+    <item>Holandès</item>
+    <item>Alemany</item>
+    <item>Japonès</item>
+    <item>Àrab</item>
+    <item>Rus</item>
+    <item>Espanyol</item>
+    <item>Francès</item>
+    <item>Italià</item>
+    <item>Polonès</item>
+    <item>Turc</item>
+    <item>Portuguès</item>
   </string-array>
   <!--Note: keep in same order as languagesNames-->
   <string-array name="cueLanguageCodes">

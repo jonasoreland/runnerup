@@ -35,6 +35,13 @@
     <item>Jazda rowerem</item>
     <item>Inne</item>
   </string-array>
+  <string-array name="sportEntriesExperimental">
+    <item>Bieganie</item>
+    <item>Jazda na rowerze</item>
+    <item>Inne</item>
+    <item>Bieg na orientację</item>
+    <item>Chodzenie</item>
+  </string-array>
   <string-array name="muteEntries">
     <item>Nie</item>
     <item>Tak</item>
