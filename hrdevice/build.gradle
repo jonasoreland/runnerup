@@ -5,7 +5,7 @@ group = "org.runnerup.hr"
 version = "1.0"
 
 android {
-    compileSdkVersion 20
+    compileSdkVersion 22
     buildToolsVersion '22.0.1'
     
     sourceSets {
@@ -21,7 +21,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 18
+        targetSdkVersion 22
         versionCode 1
         versionName = version
     }
@@ -29,8 +29,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.+'
-
     provided files('libs/samsung_ble_sdk_200.jar')
     compile files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-1-0.jar')
 }
