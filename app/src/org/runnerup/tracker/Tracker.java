@@ -280,7 +280,7 @@ public class Tracker extends android.app.Service implements
 
         wakeLock(true);
 
-        SyncManager u = new SyncManager(this);
+        SyncManager u = new SyncManager(getApplicationContext());
         u.loadLiveLoggers(liveLoggers);
         u.close();
 

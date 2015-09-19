@@ -33,6 +33,9 @@
   <string name="Rest_distance_m">Rest distance (m)</string>
   <string name="Duration_time_HHMMSS">Duration time (HH:MM:SS)</string>
   <string name="Duration_distance_m">Duration distance (m)</string>
+  <!-- strings with argument to provide -->
+  <!-- first argument is a date, second a time, for intance: "Yesterday at 13:32" -->
+  <string name="formatting_date_at_time">%1$s at %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, rats</string>
   <!--other-->
@@ -300,5 +303,6 @@
   <string name="Fetching_activities_from_1s">Fetching activities from %1$s</string>
   <string name="Map_not_available_on_Froyo">Map not available on Froyo.</string>
   <string name="Distance_marker">Distance marker.</string>
+  <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
 </resources>
