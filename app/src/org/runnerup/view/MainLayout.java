@@ -17,10 +17,8 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Service;
-import android.app.TabActivity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,9 +32,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -57,21 +60,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
-public class MainLayout extends TabActivity {
-
-    private Drawable myGetDrawable(int resId) {
-        Drawable d = getResources().getDrawable(resId);
-        return d;
-    }
-
+public class MainLayout extends AppCompatActivity {
     private enum UpgradeState {
         UNKNOWN, NEW, UPGRADE, DOWNGRADE, SAME
     }
 
+    private ViewPager pager;
+    private TabLayout tabs;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        pager = (ViewPager) findViewById(R.id.pager);
+        tabs = (TabLayout) findViewById(R.id.tabs);
 
         int versionCode = 0;
         UpgradeState upgradeState = UpgradeState.UNKNOWN;
@@ -111,28 +113,8 @@ public class MainLayout extends TabActivity {
         PreferenceManager.setDefaultValues(this, R.layout.settings, false);
         PreferenceManager.setDefaultValues(this, R.layout.audio_cue_settings, true);
 
-        TabHost tabHost = getTabHost(); // The activity TabHost
+        setupPages();
 
-        tabHost.addTab(tabHost.newTabSpec("Start")
-                .setIndicator(getString(R.string.Start), myGetDrawable(R.drawable.ic_tab_main))
-                .setContent(new Intent(this, StartActivity.class)));
-
-        tabHost.addTab(tabHost.newTabSpec("Feed")
-                .setIndicator(getString(R.string.feed), myGetDrawable(R.drawable.ic_tab_feed))
-                .setContent(new Intent(this, FeedActivity.class)));
-
-        tabHost.addTab(tabHost.newTabSpec("History")
-                .setIndicator(getString(R.string.History), myGetDrawable(R.drawable.ic_tab_history))
-                .setContent(new Intent(this, HistoryActivity.class)));
-
-        tabHost.addTab(tabHost.newTabSpec("Settings")
-                .setIndicator(getString(R.string.Settings), myGetDrawable(R.drawable.ic_tab_setup))
-                .setContent(new Intent(this, SettingsActivity.class)));
-
-        // Set tabs Colors
-        tabHost.setBackgroundColor(Color.BLACK);
-        tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
-        tabHost.setCurrentTab(0);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         if (upgradeState == UpgradeState.UPGRADE) {
@@ -156,6 +138,52 @@ public class MainLayout extends TabActivity {
             }
             Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
             DBHelper.importDatabase(MainLayout.this, filePath);
+        }
+    }
+
+    private void setupPages() {
+        pager.setAdapter(new MainPagerAdapter(getSupportFragmentManager()));
+        tabs.setupWithViewPager(pager);
+    }
+
+    private class MainPagerAdapter extends FragmentStatePagerAdapter {
+        public MainPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new StartFragment();
+                case 1:
+                    return new FeedFragment();
+                case 2:
+                    return new HistoryFragment();
+                case 3:
+                    return new SettingsFragment();
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return getString(R.string.Start); //R.drawable.ic_tab_main
+                case 1:
+                    return getString(R.string.feed); //R.drawable.ic_tab_feed
+                case 2:
+                    return getString(R.string.History); //R.drawable.ic_tab_history
+                case 3:
+                    return getString(R.string.Settings); //R.drawable.ic_tab_setup
+            }
+            return super.getPageTitle(position);
         }
     }
 
@@ -262,7 +290,7 @@ public class MainLayout extends TabActivity {
                 i = new Intent(this, AudioCueSettingsActivity.class);
                 break;
             case R.id.menu_settings:
-                getTabHost().setCurrentTab(3);
+                pager.setCurrentItem(3, true);
                 return true;
             case R.id.menu_rate:
                 onRateClick.onClick(null);

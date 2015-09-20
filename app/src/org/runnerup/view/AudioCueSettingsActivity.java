@@ -106,7 +106,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         }
 
         HRZones hrZones = new HRZones(this);
-        boolean hasHR = SettingsActivity.hasHR(this);
+        boolean hasHR = SettingsFragment.hasHR(this);
         boolean hasHRZones = hrZones.isConfigured();
 
         if (!hasHR || !hasHRZones) {

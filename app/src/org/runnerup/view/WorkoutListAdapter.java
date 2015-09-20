@@ -63,7 +63,7 @@ class WorkoutListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
+            convertView = inflater.inflate(android.R.layout.simple_list_item_1, parent,
                     false);
         }
 

@@ -6,3 +6,5 @@
 -dontwarn com.vividsolutions.jts.awt.**
 -dontwarn android.support.**
 -dontwarn com.squareup.okhttp.**
+
+-keep public class * extends android.support.design.widget.CoordinatorLayout$Behavior { *; }

@@ -59,7 +59,7 @@ public class DisabledEntriesAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         String str = (String) getItem(position);
         if (convertView == null) {
-            convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
+            convertView = inflator.inflate(android.R.layout.simple_list_item_1, parent,
                     false);
         }
         TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
