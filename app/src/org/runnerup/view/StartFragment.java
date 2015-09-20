@@ -324,15 +324,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     public void onResume() {
         super.onResume();
 
-        //tmp code: reload sports in case of experimental sports support settings change
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        if (prefs.getBoolean(getString(R.string.pref_experimental_features), false)) {
-            ListAdapter sportsAdapter = ArrayAdapter.createFromResource(getActivity(),
-                    R.array.sportEntriesExperimental, android.R.layout.simple_list_item_1);
-            basic_sport.setAdapter(sportsAdapter);
-            manual_sport.setAdapter(sportsAdapter);
-        }
-
         simpleAudioListAdapter.reload();
         intervalAudioListAdapter.reload();
         advancedAudioListAdapter.reload();
