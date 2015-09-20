@@ -16,28 +16,40 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:minHeight="?listPreferredItemHeight"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <TextView
         android:id="@+id/account_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="My Account Id"
+        android:layout_gravity="center_vertical"
+        style="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/account_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        tools:text="My Account Name"
+        style="@style/TextAppearance.AppCompat.Body1" />
 
     <CheckBox
         android:id="@+id/report_sent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="true"
-        android:text="@string/upload" />
+        android:text="@string/upload"
+        android:layout_gravity="center_vertical"/>
 
 </LinearLayout>
