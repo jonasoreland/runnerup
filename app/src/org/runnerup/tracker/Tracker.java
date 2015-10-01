@@ -45,6 +45,7 @@ import org.runnerup.tracker.component.TrackerComponent;
 import org.runnerup.tracker.component.TrackerComponentCollection;
 import org.runnerup.tracker.component.TrackerGPS;
 import org.runnerup.tracker.component.TrackerHRM;
+import org.runnerup.tracker.component.TrackerPebble;
 import org.runnerup.tracker.component.TrackerReceiver;
 import org.runnerup.tracker.component.TrackerTTS;
 import org.runnerup.tracker.component.TrackerWear;
@@ -81,7 +82,7 @@ public class Tracker extends android.app.Service implements
     TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(
             new TrackerReceiver(this));
     TrackerWear trackerWear; // created if version is sufficient
-
+    TrackerPebble trackerPebble; // created if version is sufficient
     /**
      * Work-around for http://code.google.com/p/android/issues/detail?id=23937
      */
@@ -139,6 +140,10 @@ public class Tracker extends android.app.Service implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             // >= 4.3
             trackerWear = (TrackerWear) components.addComponent(new TrackerWear(this));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            // >= 4.1
+            trackerPebble = (TrackerPebble) components.addComponent(new TrackerPebble(this));
         }
     }
 
@@ -340,6 +345,9 @@ public class Tracker extends android.app.Service implements
         /** Add Wear to live loggers if it's active */
         if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK)
             liveLoggers.add(trackerWear);
+
+        if (components.getResultCode(TrackerPebble.NAME) == TrackerComponent.ResultCode.RESULT_OK)
+            liveLoggers.add(trackerPebble);
 
         /**
          * create the DB activity
