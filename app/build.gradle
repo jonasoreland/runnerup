@@ -69,12 +69,10 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.android.support:design:22.2.1'
-    compile 'com.github.machinarius:preferencefragment:0.1.1'
-    
-    latestCompile 'com.android.support:support-v4:22.2.1'
+    latestCompile 'com.android.support:support-v4:21.0.0'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
+
+    froyoCompile 'com.android.support:support-v4:19.1.+'
 
     compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar'){
         transitive=true
