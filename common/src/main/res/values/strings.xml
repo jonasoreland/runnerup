@@ -305,4 +305,5 @@
   <string name="Distance_marker">Distance marker.</string>
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
+  <string name="Unknown">Unknown</string>
 </resources>
