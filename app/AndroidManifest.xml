@@ -42,7 +42,7 @@
 	<application
 	    android:icon="@drawable/icon"
 	    android:label="@string/app_name"
-		android:theme="@style/Theme.AppCompat.NoActionBar">
+		android:theme="@android:style/Theme.NoTitleBar">
 
 		<activity
 			android:name=".view.MainLayout"
@@ -62,9 +62,20 @@
 			</intent-filter>
   		</activity>
 
+		<activity android:name=".view.StartActivity"
+		    android:screenOrientation="sensorPortrait" >
+		</activity>
+
+		<activity android:name="org.runnerup.view.FeedActivity"
+		    android:screenOrientation="sensorPortrait" >
+		</activity>
 
 		<activity android:name=".view.RunActivity"
 		    android:configChanges="keyboardHidden|orientation"
+		    android:screenOrientation="sensorPortrait" >
+		</activity>
+
+		<activity android:name=".view.SettingsActivity"
 		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
@@ -74,6 +85,10 @@
 
 		<activity android:name=".view.DetailActivity"
 			android:configChanges="orientation|screenSize|uiMode"
+		    android:screenOrientation="sensorPortrait" >
+		</activity>
+
+		<activity android:name=".view.HistoryActivity"
 		    android:screenOrientation="sensorPortrait" >
 		</activity>
 
