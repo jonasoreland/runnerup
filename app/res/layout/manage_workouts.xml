@@ -27,6 +27,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         android:layout_above="@+id/button_table">
     </ExpandableListView>

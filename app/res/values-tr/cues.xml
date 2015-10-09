@@ -14,12 +14,16 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">etkinlik</string>
+  <string name="cue_interval">aralıklı çalışma</string>
   <string name="cue_lap">tur</string>
   <string name="cue_warmup">ısınma</string>
   <string name="cue_cooldown">soğuma</string>
   <string name="cue_current">şimdiki</string>
+  <string name="cue_recovery">toparlanma</string>
   <string name="cue_perkilometer">kilometre başına</string>
   <string name="cue_permile">mil başına</string>
+  <string name="cue_perhour">saatte</string>
   <string name="cue_started">başlandı</string>
   <string name="cue_paused">duraklatıldı</string>
   <string name="cue_resumed">devam edildi</string>
@@ -28,24 +32,39 @@
   <string name="cue_speedup">hızlan</string>
   <string name="cue_slowdown">yavaşla</string>
   <plurals name="cue_hour">
+    <item quantity="one">saat</item>
     <item quantity="other">saat</item>
   </plurals>
   <plurals name="cue_minute">
+    <item quantity="one">dakika</item>
     <item quantity="other">dakika</item>
   </plurals>
   <plurals name="cue_second">
+    <item quantity="one">saniye</item>
     <item quantity="other">saniye</item>
   </plurals>
   <plurals name="cue_meter">
+    <item quantity="one">metre</item>
     <item quantity="other">metre</item>
   </plurals>
   <plurals name="cue_kilometer">
+    <item quantity="one">kilometre</item>
     <item quantity="other">kilometre</item>
   </plurals>
   <plurals name="cue_mile">
+    <item quantity="one">mil</item>
     <item quantity="other">mil</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="other">bpm</item>
+    <item quantity="one">dakikada kalp atışı</item>
+    <item quantity="other">kalp atışı (dakikada)</item>
   </plurals>
+  <string name="cue_activity_started">etkinliğe başlandı</string>
+  <string name="cue_activity_paused">etkinlik duraklatıldı</string>
+  <string name="cue_activity_resumed">etkinlik devam ettirildi</string>
+  <string name="cue_activity_stopped">etkinlik durduruldu</string>
+  <string name="cue_lap_started">tur başladı</string>
+  <string name="cue_lap_completed">tur tamamlandı</string>
+  <string name="cue_warmup_started">ısınma başladı</string>
+  <string name="cue_cooldown_started">soğuma başladı</string>
 </resources>

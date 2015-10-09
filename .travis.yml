@@ -11,3 +11,4 @@ android:
 script:
     - ./gradlew assembleLatestRelease
     - ./gradlew assembleFroyoRelease
+    - ./gradlew lintLatestRelease
