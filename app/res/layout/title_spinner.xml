@@ -43,4 +43,9 @@
         android:gravity="center_vertical|right"
         android:text="@string/value"
         android:textColor="@android:color/black" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 </LinearLayout>

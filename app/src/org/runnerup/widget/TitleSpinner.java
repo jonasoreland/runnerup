@@ -18,6 +18,7 @@
 package org.runnerup.widget;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -25,17 +26,18 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
+import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -65,6 +67,7 @@ public class TitleSpinner extends LinearLayout {
     private String mKey = null;
     private TextView mTitle = null;
     private TextView mValue = null;
+    private Spinner mSpinner = null;
     private CharSequence mPrompt = null;
     int mInputType = 0;
     private final Context mContext;
@@ -73,7 +76,6 @@ public class TitleSpinner extends LinearLayout {
     private Type mType = null;
     private boolean mFirstSetValue = true;
     private int values[] = null;
-    private ListAdapter spinnerAdapter;
 
     public interface OnSetValueListener {
         /**
@@ -105,6 +107,7 @@ public class TitleSpinner extends LinearLayout {
 
         mTitle = (TextView) findViewById(R.id.title);
         mValue = (TextView) findViewById(R.id.value);
+        mSpinner = (Spinner) findViewById(R.id.spinner);
 
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
         CharSequence title = arr.getString(R.styleable.TitleSpinner_android_text);
@@ -118,10 +121,10 @@ public class TitleSpinner extends LinearLayout {
 
         if (type == null || "spinner".contentEquals(type)) {
             mType = Type.TS_SPINNER;
-            setupSpinner(arr, defaultValue);
+            setupSpinner(context, attrs, arr, defaultValue);
         } else if ("spinner_txt".contentEquals(type)) {
             mType = Type.TS_SPINNER_TXT;
-            setupSpinner(arr, defaultValue);
+            setupSpinner(context, attrs, arr, defaultValue);
         } else if ("edittext".contentEquals(type)) {
             mType = Type.TS_EDITTEXT;
             setupEditText(context, attrs, arr, defaultValue);
@@ -196,13 +199,19 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupSpinner(TypedArray arr, CharSequence defaultValue) {
-        final int entriesId = arr.getResourceId(R.styleable.TitleSpinner_android_entries, 0);
+    private void setupSpinner(Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
+        if (mPrompt != null) {
+            mSpinner.setPrompt(mPrompt);
+        }
+
+        int entriesId = arr.getResourceId(R.styleable.TitleSpinner_android_entries, 0);
         int valuesId = arr.getResourceId(R.styleable.TitleSpinner_values, 0);
         if (valuesId != 0) {
             values = getResources().getIntArray(valuesId);
         }
         if (entriesId != 0) {
+            DisabledEntriesAdapter adapter = new DisabledEntriesAdapter(mContext, entriesId);
+            mSpinner.setAdapter(adapter);
             int value = 0;
             if (defaultValue != null) {
                 value = SafeParse.parseInt(defaultValue.toString(), 0);
@@ -218,27 +227,28 @@ public class TitleSpinner extends LinearLayout {
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (spinnerAdapter == null) {
-                    spinnerAdapter = new DisabledEntriesAdapter(mContext, entriesId);
-                }
+                mSpinner.performClick();
+            }
+        });
 
-                new AlertDialog.Builder(getContext())
-                        .setTitle(mTitle.getText())
-                        .setAdapter(spinnerAdapter, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (mType == Type.TS_SPINNER_TXT) {
-                                    setValue(spinnerAdapter.getItem(which).toString());
-                                } else {
-                                    setValue(getRealValue(which));
-                                }
-                                if (!mFirstSetValue) {
-                                    onClose(true);
-                                }
-                                mFirstSetValue = false;
-                            }
-                        })
-                        .show();
+        mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                if (mType == Type.TS_SPINNER_TXT) {
+                    if (mSpinner.getAdapter() != null) {
+                        setValue(mSpinner.getAdapter().getItem(arg2).toString());
+                    }
+                } else {
+                    setValue(getRealValue(arg2));
+                }
+                if (!mFirstSetValue) {
+                    onClose(true);
+                }
+                mFirstSetValue = false;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
     }
@@ -517,8 +527,8 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    public void setAdapter(ListAdapter adapter) {
-        spinnerAdapter = adapter;
+    public void setAdapter(SpinnerAdapter adapter) {
+        mSpinner.setAdapter(adapter);
         loadValue(null);
     }
 
@@ -578,6 +588,12 @@ public class TitleSpinner extends LinearLayout {
         }
 
         mValue.setText(value);
+        if (mType == Type.TS_SPINNER_TXT) {
+            if (mSpinner.getAdapter() != null) {
+                int intVal = find(mSpinner.getAdapter(), value);
+                mSpinner.setSelection(intVal);
+            }
+        }
 
         if (mKey == null)
             return;
@@ -624,13 +640,17 @@ public class TitleSpinner extends LinearLayout {
             try {
                 value = mSetValueListener.preSetValue(value);
             } catch (java.lang.IllegalArgumentException ex) {
+                if (mValueInt != -1) {
+                    mSpinner.setSelection(mValueInt);
+                }
                 return;
             }
         }
         mValueInt = value;
         int selectionValue = getSelectionValue(value);
-        if (spinnerAdapter != null) {
-            Object val = spinnerAdapter.getItem(selectionValue);
+        mSpinner.setSelection(selectionValue);
+        if (mSpinner.getAdapter() != null) {
+            Object val = mSpinner.getAdapter().getItem(selectionValue);
             if (val != null)
                 mValue.setText(val.toString());
             else
@@ -645,15 +665,11 @@ public class TitleSpinner extends LinearLayout {
 
     public void addDisabledValue(int value) {
         int selection = getSelectionValue(value);
-        if(spinnerAdapter instanceof DisabledEntriesAdapter) {
-            ((DisabledEntriesAdapter) spinnerAdapter).addDisabled(selection);
-        }
+        ((DisabledEntriesAdapter)mSpinner.getAdapter()).addDisabled(selection);
     }
 
     public void clearDisabled() {
-        if(spinnerAdapter instanceof DisabledEntriesAdapter) {
-            ((DisabledEntriesAdapter) spinnerAdapter).clearDisabled();
-        }
+        ((DisabledEntriesAdapter)mSpinner.getAdapter()).clearDisabled();
     }
 
     @Override
@@ -661,6 +677,7 @@ public class TitleSpinner extends LinearLayout {
         super.setEnabled(enabled);
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setEnabled(enabled);
+        mSpinner.setEnabled(enabled);
     }
 
     public CharSequence getValue() {

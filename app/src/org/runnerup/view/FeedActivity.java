@@ -18,14 +18,18 @@
 package org.runnerup.view;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,27 +40,34 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import org.runnerup.R;
-import org.runnerup.common.util.Constants;
-import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.feed.FeedImageLoader;
 import org.runnerup.feed.FeedList;
+import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.feedwidget.FeedWidgetProvider;
 import org.runnerup.util.Formatter;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.text.DateFormat;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class FeedFragment extends Fragment implements Constants {
+public class FeedActivity extends Activity implements Constants {
 
     DBHelper mDBHelper = null;
     SyncManager syncManager = null;
@@ -76,25 +87,20 @@ public class FeedFragment extends Fragment implements Constants {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.feed);
 
-        mDBHelper = new DBHelper(getActivity());
-        syncManager = new SyncManager(getActivity());
-        formatter = new Formatter(getActivity());
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.feed, container, false);
+        mDBHelper = new DBHelper(this);
+        syncManager = new SyncManager(this);
+        formatter = new Formatter(this);
         feed = new FeedList(mDBHelper);
         feed.load(); // load from DB
-        feedAdapter = new FeedListAdapter(getActivity(), feed);
 
-        feedList = (ListView) view.findViewById(R.id.feed_list);
+        feedAdapter = new FeedListAdapter(this, feed);
+        feedList = (ListView) findViewById(R.id.feed_list);
         feedList.setAdapter(feedAdapter);
         feedList.setDividerHeight(2);
 
-        refreshButton = (Button) view.findViewById(R.id.refresh_feed_button);
+        refreshButton = (Button) findViewById(R.id.refresh_feed_button);
         refreshButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -106,24 +112,18 @@ public class FeedFragment extends Fragment implements Constants {
             }
         });
 
-        feedAccountButton = (Button) view.findViewById(R.id.feed_account_button);
+        feedAccountButton = (Button) findViewById(R.id.feed_account_button);
         feedAccountButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), AccountListActivity.class);
+                Intent i = new Intent(FeedActivity.this,
+                        AccountListActivity.class);
                 startActivityForResult(i, 0);
             }
         });
 
-        feedHeader = (LinearLayout) view.findViewById(R.id.feed_header);
-        feedStatus = (TextView) view.findViewById(R.id.feed_status);
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+        feedHeader = (LinearLayout) findViewById(R.id.feed_header);
+        feedStatus = (TextView) findViewById(R.id.feed_status);
         startSync();
     }
 
@@ -153,7 +153,7 @@ public class FeedFragment extends Fragment implements Constants {
     };
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
     }
 
@@ -166,7 +166,7 @@ public class FeedFragment extends Fragment implements Constants {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         startSync();
     }
 
@@ -246,7 +246,7 @@ public class FeedFragment extends Fragment implements Constants {
 
                 String name = formatter.formatName(tmp.getAsString(DB.FEED.USER_FIRST_NAME),
                         tmp.getAsString(DB.FEED.USER_LAST_NAME));
-                String sport = FeedFragment.GetSportActivity(tmp);
+                String sport = FeedActivity.GetSportActivity(tmp);
                 tv1.setText(name + " trained " + sport);
                 if (tmp.containsKey(DB.FEED.DISTANCE) || tmp.containsKey(DB.FEED.DURATION)) {
                     double distance = 0;
