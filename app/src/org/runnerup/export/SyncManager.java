@@ -1063,10 +1063,7 @@ public class SyncManager {
         if (feedProviders.isEmpty()) {
             //update feed widgets, if any
             Log.i(getClass().getSimpleName(), "Feed sync ended");
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
-            int[] ids = appWidgetManager.getAppWidgetIds(
-                    new ComponentName(getContext(), FeedWidgetProvider.class));
-            appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.widget_list);
+            FeedWidgetProvider.RefreshWidget(getContext());
 
             if (feedCallback != null) {
                 Callback cb = feedCallback;
