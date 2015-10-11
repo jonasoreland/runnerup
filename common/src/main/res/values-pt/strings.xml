@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
+  <!--format hint stuff-->
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <!--other-->
+  <string name="Type">tipo</string>
+  <string name="active">ativo</string>
+  <string name="rest">pausa</string>
+  <string name="recovery">recuperação</string>
+  <string name="warm_up">aquecer</string>
+  <string name="cool_down">descansar</string>
+  <string name="repeat">repetir</string>
+  <string name="time">tempo</string>
+  <string name="distance">distância</string>
+  <string name="Unknown">desconhecido</string>
+  <string name="Distance">Distância</string>
+  <string name="speed">velocidade</string>
+  <string name="pace">passo</string>
+  <string name="Zone">zona</string>
+  <string name="Device">equipamento</string>
+  <string name="Pace">Passo</string>
+  <string name="Connect">contatar</string>
+  <string name="Connecting">contatando</string>
+  <string name="Download">Baixar</string>
+  <string name="Share">Partilhar</string>
+  <string name="Delete">Apagar</string>
+  <string name="Total">Total</string>
+  <string name="Interval">Intervalo</string>
+  <string name="Remaining">Restante</string>
+  <string name="Lap">Volta</string>
+  <string name="New_lap">Nova volta</string>
+  <string name="Next_lap">Proxima volta</string>
+  <string name="Pause">Pausa</string>
+  <string name="Stop">Parar</string>
+  <string name="Workout">Exercício</string>
+  <string name="Download_workouts">Baixar exercícios</string>
+  <string name="Sport">Desporto</string>
+  <string name="Target">Objetivo</string>
+  <string name="Interval_type">Tipo de invervalo</string>
+  <string name="Rest_type">Tipo de pausa</string>
+  <string name="Repetitions">Repetições</string>
+  <string name="Date">Data</string>
+  <string name="GPS_satellites">Satélites GPS</string>
+  <string name="Start_GPS">Ativar GPS</string>
+  <string name="Duration">Duração</string>
+  <string name="Duration_type">Tipo de duração</string>
+  <string name="Target_type">Tipo de objetivo</string>
+  <string name="Cancel">Abortar</string>
+  <string name="Select_all">Escolher tudo</string>
+  <string name="Username">Nome do usador</string>
+  <string name="Password">Palavra-passe</string>
+  <string name="Show_password">Mostrar palavra-passe</string>
+  <string name="intensity">intensidade</string>
+  <string name="Sex">Sexo</string>
+  <string name="upload">carregar</string>
+  <string name="Notes">Anotações</string>
+  <string name="Laps">Voltas</string>
+  <string name="Map">Mapa</string>
+  <string name="Upload">Carregar</string>
+  <string name="Configure">Configurar</string>
+  <string name="Disconnect">Desconetar</string>
+  <string name="Resume">Reatar</string>
+  <string name="Save_activity">Gravar atividade</string>
+  <string name="Upload_activity">Carregar atividade</string>
+  <string name="Uploaded">Carregado</string>
+  <string name="Finished">Acabado</string>
+  <string name="Refresh">Renovar</string>
+  <string name="Age">Idade</string>
+  <string name="edit">editar</string>
+  <string name="OK">OK</string>
+  <string name="Edit_activity">Editar atividade</string>
+  <string name="Share_activity">Partilhar atividade</string>
+  <string name="Delete_activity">Apagar atividade</string>
+  <string name="Recompute_activity">Recalcular atividade</string>
+  <string name="Enable_GPS">Activar GPS</string>
+  <string name="Waiting_for_GPS">Esperando pelo GPS</string>
+  <string name="Start_activity">Iniciar atividade</string>
+  <string name="Problem">Problema</string>
+  <string name="Great">Otimo!</string>
+  <string name="Yes">Sim</string>
+  <string name="Create">Criar</string>
+  <string name="Darn">Raios!</string>
+  <string name="No_way">Nem pensar</string>
+  <string name="No">Não</string>
+  <string name="Loading">Carregando...</string>
+  <string name="Saving">Gravando</string>
+  <string name="Are_you_sure">Tem certeza?</string>
+  <string name="Downloadeditremove_workouts">Baixar/editar/apagar exercícios</string>
+  <string name="Enable_RunnerUpLive">Ativar RunnerUpLive</string>
+  <string name="Export">Exportar</string>
+  <string name="Import">Importar</string>
+  <string name="About">Sobre</string>
+  <string name="About_RunnerUp">Sobre RunnerUp</string>
+  <string name="Lap_time">Tempo por volta</string>
+  <string name="Lap_speed">Velocidade por volta</string>
+  <string name="Current_speed">Velocidade atual</string>
+  <string name="Start">Iniciar</string>
+  <string name="History">História</string>
+  <string name="Advanced">Avançado</string>
+  <string name="Manual">Manual</string>
+  <string name="Battery_level">Nível da bateria</string>
+  <string name="Searching_for_GPS">Procurando GPS</string>
+  <string name="Do_not_show_again">Não mostrar outra vez</string>
+  <string name="Waiting_for_phone">Esperando pelo telefone</string>
+  <string name="Saving_on_phone">Gravando no telefone</string>
+  <string name="Save">Gravar</string>
+  <string name="Add_step">Adicionar passo</string>
+  <string name="Add_repeat">Adicionar repetição</string>
+  <string name="_sign_plus">+</string>
+  <string name="_sign_minus">-</string>
+  <string name="Website">Website</string>
+  <string name="Automatic_upload">Carregar automaticamente</string>
+  <string name="Live">Ao vivo</string>
+  <string name="my_phone">meu telefone</string>
+  <string name="Delete_workout">Apagar exercício</string>
+</resources>

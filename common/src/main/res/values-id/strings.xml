@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">mil</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">j</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">men</string>
+  <string name="metrics_elapsed_s">d</string>
+  <string name="metrics_heartrate">Jam</string>
+  <!--format hint stuff-->
+  <string name="Maximum_heart_rate_MHR">Denyut jantung maksimum (DJM)</string>
+  <string name="Target_pace_HHMMSS">Laju target (JJ:MM:DD)</string>
+  <string name="Interval_time_HHMMSS">Waktu jeda (JJ:MM:DD)</string>
+  <string name="Interval_distance_m">Jarak jeda (m)</string>
+  <string name="Rest_time_HHMMSS">Waktu istirahat (JJ:MM:DD)</string>
+  <string name="Rest_distance_m">Jarak istirahat (m)</string>
+  <string name="Duration_time_HHMMSS">Durasi waktu (JJ:MM:SS)</string>
+  <string name="Duration_distance_m">Durasi jarak (m)</string>
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="ok_rats">ok, rats</string>
+  <!--other-->
+  <string name="Google_Play_Services_Legal_Notices">Catatan Legal Layanan Google Play</string>
+  <string name="Type">Tipe</string>
+  <string name="active">aktif</string>
+  <string name="rest">istirahat</string>
+  <string name="recovery">pemulihan</string>
+  <string name="warm_up">pemanasan</string>
+  <string name="cool_down">pendinginan</string>
+  <string name="repeat">ulang</string>
+  <string name="time">waktu</string>
+  <string name="distance">jarak</string>
+  <string name="Unknown">Entah</string>
+  <string name="Distance">Jarak</string>
+  <string name="speed">kecepatan</string>
+  <string name="pace">laju</string>
+  <string name="heart_rate_zone">zona denyut jantung</string>
+  <string name="Zone">Zona</string>
+  <string name="Device">Gawai</string>
+  <string name="Start_hour">Jam mulai</string>
+  <string name="Heart_rate">Denyut jantung</string>
+  <string name="Pace">Laju</string>
+  <string name="Scan">Pindai</string>
+  <string name="Connect">Sambungkan</string>
+  <string name="Connecting">Menyambungkan</string>
+  <string name="Download">Unduh</string>
+  <string name="Share">Berbagi</string>
+  <string name="Delete">Hapus</string>
+  <string name="Total">Total</string>
+  <string name="Interval">Interval</string>
+  <string name="Remaining">sisa</string>
+  <string name="Lap">putaran</string>
+  <string name="New_lap">Putaran baru</string>
+  <string name="Next_lap">Putaran berikutnya</string>
+  <string name="Pause">Jeda</string>
+  <string name="Stop">Berhenti</string>
+  <string name="Workout">Latihan</string>
+  <string name="Download_workouts">Unduh latihan</string>
+  <string name="Audio_cue_settings">Setelan petunjuk suara</string>
+  <string name="Sport">Olah raga</string>
+  <string name="Target">Target</string>
+  <string name="Target_heart_rate_zone">Zona denyut jantung target</string>
+  <string name="Interval_type">Tipe interval</string>
+  <string name="Rest_type">Tipe istirahat</string>
+  <string name="Repetitions">Ulangan</string>
+  <string name="Date">Tanggal</string>
+  <string name="GPS_satellites">Satelit GPS</string>
+  <string name="Start_GPS">Nyalakan GPS</string>
+  <string name="Duration">Durasi</string>
+  <string name="Duration_type">Tipe durasi</string>
+  <string name="Target_type">Tipe target</string>
+  <string name="Cancel">Batal</string>
+  <string name="value">nilai</string>
+  <string name="Select_all">Pilih semua</string>
+  <string name="Clear_all">Kosongkan semua</string>
+  <string name="Username">Nama akun</string>
+  <string name="Password">Kata sandi</string>
+  <string name="Show_password">Tunjukkan sandi</string>
+  <string name="intensity">Intensitas</string>
+  <string name="Step_intensity">Intensitas langkah</string>
+  <string name="Low_pace">Laju pelan</string>
+  <string name="High_pace">Laju cepat</string>
+  <string name="Sex">Jenis kelamin</string>
+  <string name="upload">unggah</string>
+  <string name="feed">umpan</string>
+  <string name="Notes">Catatan</string>
+  <string name="Laps">Putaran</string>
+  <string name="Map">Peta</string>
+  <string name="Graph">Grafik</string>
+  <string name="Upload">Unggah</string>
+  <string name="Configure">Pengaturan</string>
+  <string name="Disconnect">Lepaskan</string>
+  <string name="Resume">Lanjutkan</string>
+  <string name="Save_activity">Simpan aktivitas</string>
+  <string name="Upload_activity">Unggah aktivitas</string>
+  <string name="Uploaded">Selesai mengunggah</string>
+  <string name="Finished">Selesai</string>
+  <string name="Until_press">Sampai diminta</string>
+  <string name="Discard_activity">Buang aktivitas barusan</string>
+  <string name="Configure_accounts">Pengaturan akun</string>
+  <string name="Refresh">Segarkan</string>
+  <string name="Age">Umur</string>
+  <string name="edit">edit</string>
+  <string name="Synchronizing">Menyinkronkan:</string>
+  <string name="synchronizing_feed">menyingkronkan umpan...</string>
+  <string name="OK">OK</string>
+  <string name="Table_format">Format tabel</string>
+  <string name="Clear_uploads">Kosongkan unggahan</string>
+  <string name="Upload_missing_workouts">Unggah latihan (yang belum ada)</string>
+  <string name="Disconnect_account">Putuskan akun</string>
+  <string name="Edit_activity">Edit aktivitas</string>
+  <string name="Share_activity">Berbagi aktivitas</string>
+  <string name="Delete_activity">Hapus aktivitasi</string>
+  <string name="Recompute_activity">Hitung ulang aktivitas</string>
+  <string name="Configure_heart_rate_zones">Pengaturan zona denyut jantung</string>
+  <string name="Clear_heart_rate_zone_settings">Kosongkan setelan zona denyut jantung</string>
+  <string name="Manage_accounts">Kelola akun</string>
+  <string name="Manage_audio_cues">Kelola isyarat suara</string>
+  <string name="Manage_workouts">Kelola latihan</string>
+  <string name="Settings">Setelan</string>
+  <string name="Whats_new">Apa yang baru</string>
+  <string name="Rate_RunnerUp">Menilai RunnerUp</string>
+  <string name="Enable_GPS">Hidupkan GPS</string>
+  <string name="Waiting_for_GPS">Menunggu GPS</string>
+  <string name="Start_activity">Mulai aktivitas</string>
+  <string name="Clear_HR_settings">Kosongkan setelan DJ</string>
+  <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitor denyut jantung tidak didukung alat anda</string>
+  <string name="Select_type_of_Bluetooth_device">Pilih tipe gawai Bluetooth</string>
+  <string name="Scanning">Memindai</string>
+  <string name="Failed_to_load_workout">Gagal mengunggah latihan!</string>
+  <string name="Icon_list">Daftar ikon</string>
+  <string name="Problem">Masalah</string>
+  <string name="Edit_step">Edit langkah</string>
+  <string name="Create_new_audio_cue_scheme">Buat skema isyarat suara baru</string>
+  <string name="Great">Hebat!</string>
+  <string name="OK_darn">OK, damn!</string>
+  <string name="Yes">Ya</string>
+  <string name="Create">Buat</string>
+  <string name="Darn">Damn!</string>
+  <string name="Dismiss">Selesai</string>
+  <string name="No_way">Tidak mungkin</string>
+  <string name="No">Tidak</string>
+  <string name="Loading">Memuat...</string>
+  <string name="Saving">Menyimpan</string>
+  <string name="Cancellingplease_wait">Membatalkan...harap tunggu</string>
+  <string name="try_again_later">coba lagi nanti!</string>
+  <string name="Are_you_sure">Anda yakin?</string>
+  <string name="Configure_audio_cues">Pengaturan isyarat suara</string>
+  <string name="Downloadeditremove_workouts">Unduh/edit/hapus latihan</string>
+  <string name="Note_you_need_to_connect_to_the_account_too">Catatan, anda perlu terhubung dengan akun</string>
+  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gunakan headset untuk memulai/menjeda/melanjutkan RunnerUp</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Convert rest-step with type distance to recovery-step for Interval-tab</string>
+  <string name="Export_database_to_sdcard_eg_for_upgrade">Ekspor data ke sdcard (sebelum upgrade)</string>
+  <string name="Import_database_from_sdcard_eg_after_upgrade">Impor data dari sdcard (setelah upgrade)</string>
+  <string name="Coach_to_help_you_reach_target_if_having_set_target">Suara pelatih untuk mencapai target (jika target sudah ditetapkan)</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Tetap diam ketika latihan dimulai/dijeda/dilanjutkan/berhenti</string>
+  <string name="Test_audio_cue">Tes isyarat suara</string>
+  <string name="Accounts">Akun</string>
+  <string name="Audio_cues">Isyarat suara</string>
+  <string name="Heart_Rate_Monitor">Monitor Denyut Jantung</string>
+  <string name="Heart_Rate_Zones">Zona Denyut Jantung</string>
+  <string name="Autolap">Putaran otomatis</string>
+  <string name="Autolap_m">Putaran otomatis (m)</string>
+  <string name="Autopause">Jeda otomatis</string>
+  <string name="Enable_RunnerUpLive">Hidupkan RunnerUpLive</string>
+  <string name="Headset_key_startstop">Tombol start/stop headset</string>
+  <string name="Activity_countdown">Hitung mundur aktivitas</string>
+  <string name="Countdown_time_s">Waktu hitung mundur (d)</string>
+  <string name="Unit_preference">Unit ukur pilihan</string>
+  <string name="Auto_start_GPS">Nyalakan GPS otomatis</string>
+  <string name="Advanced_options">Opsi mahir</string>
+  <string name="RunnerUp_live_address">Alamat RunnerUpLive</string>
+  <string name="Autopause_after_s">Jeda otomatis setelah (d)</string>
+  <string name="Autopause_min_pace_minkm">Jeda otomatis berdasar laju (men/km)</string>
+  <string name="Convert_rest_on_Interval_tab">Konversikan istirahat pada tab Interval</string>
+  <string name="Convert_rest_on_Advanced_tab">Konversikan istirahat pada tab Mahir</string>
+  <string name="Autolap_during_intervals">Putaran otomatis selama interval</string>
+  <string name="Add_countdown_after_step_that_ends_with_user_press">Tambahkan hitung mundur setelah langkah yang berakhir dengan masukan pengguna</string>
+  <string name="Step_countdown_time_s">Waktu langkah hitung mundur (d)</string>
+  <string name="Smooth_pace_graph">Grafik laju dipoles</string>
+  <string name="Export">Ekspor</string>
+  <string name="Import">Impor</string>
+  <string name="Experimental_HRM_devices">Gawai MDJ eksperimental</string>
+  <string name="Experimental_features">Fitur eksperimental</string>
+  <string name="About">Info</string>
+  <string name="About_RunnerUp">Tentang RunnerUp</string>
+  <string name="Triggers">Picu</string>
+  <string name="Clear_uploads_from_phone">Kosongkan unggahan (dari telepon)</string>
+  <string name="my_phone">teleponku</string>
+  <string name="Failed_to_import">Gagal mengimpor:</string>
+  <string name="Import_workout">Impor latihan</string>
+  <string name="Saving_as">Menyimpan sebagai</string>
+  <string name="Create_new_workout">Buat latihan baru</string>
+  <string name="Set_workout_name">Buat nama latihan</string>
+  <string name="New_audio_scheme">Skema suara baru</string>
+  <string name="Default">Baku</string>
+  <string name="Notes_about_your_workout">Catatan terkait latihan</string>
+  <string name="Downloading_from_1s">Mengunduh dari %1$s</string>
+  <string name="Uploading_to_1s">Mengunggah ke %1$s</string>
+  <string name="Loading_activities">Membuka aktivitas</string>
+  <string name="Fetching_activities_from_1s">Mengambil aktivitas dari %1$s</string>
+</resources>
