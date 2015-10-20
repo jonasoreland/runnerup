@@ -24,6 +24,7 @@ android {
             manifest.srcFile 'latest/AndroidManifest.xml'
             java.srcDirs = ['latest/java']
         }
+        test.setRoot('test')
     }
 
     productFlavors {
@@ -75,7 +76,6 @@ dependencies {
     froyoCompile 'com.android.support:support-v4:19.1.+'
     latestCompile 'com.getpebble:pebblekit:3.0.0'
 
-
     compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar'){
         transitive=true
     }
@@ -85,7 +85,10 @@ dependencies {
     compile project(':common')
     compile project(':hrdevice')
 
-   latestWearApp project(':wear')
+    latestWearApp project(':wear')
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
 }
 
 allprojects {
