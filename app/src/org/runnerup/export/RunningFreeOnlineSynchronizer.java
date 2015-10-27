@@ -183,7 +183,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             conn = null;
 
             NodeList nodes = doc.getElementsByTagName("Success");
-            if (nodes != null || nodes.getLength() == 1) {
+            if (nodes != null && nodes.getLength() == 1) {
                 if("true".equals(nodes.item(0).getTextContent())) {
                     Log.d(LOG_TAG, "Upload success");
                     retval = Status.OK;
@@ -191,7 +191,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
                 } else {
                     String errorMessage = null;
                     nodes = doc.getElementsByTagName("ErrorMessage");
-                    if (nodes != null || nodes.getLength() == 1) {
+                    if (nodes != null && nodes.getLength() == 1) {
                         errorMessage = nodes.item(0).getTextContent();
                     }
                     Log.e(LOG_TAG, String.format("Upload failed; Service said '%s'", errorMessage));
