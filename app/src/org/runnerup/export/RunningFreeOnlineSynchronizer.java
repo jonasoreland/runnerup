@@ -16,10 +16,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -74,15 +76,91 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
 
     @Override
     public Status connect() {
-        Status s = Status.NEED_AUTH;
-        s.authMethod = Synchronizer.AuthMethod.USER_PASS;
+        Status retval = Status.NEED_AUTH;
+        retval.authMethod = Synchronizer.AuthMethod.USER_PASS;
         if (username == null || secretKey == null) {
-            return s;
+            return retval;
         }
 
-        // TODO Verify login
-        isConnected = true;
-        return Synchronizer.Status.OK;
+        Exception exception = null;
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod(RequestMethod.POST.name());
+            conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
+            conn.addRequestProperty("SOAPAction", "http://www.runsaturday.com/Upload");
+            final BufferedWriter wr = new BufferedWriter(new PrintWriter(conn.getOutputStream()));
+            createAndWriteSoapMessage(wr, "");
+
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String line = reader.readLine();
+                reader.close();
+                if (line != null && !line.contains("UserName and Password not matched")) {
+                    isConnected = true;
+                    return Synchronizer.Status.OK;
+                }
+            }
+        } catch (MalformedURLException e) {
+            exception = e;
+        } catch (ProtocolException e) {
+            exception = e;
+        } catch (IOException e) {
+            exception = e;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        if (exception != null) {
+            retval.ex = exception;
+            Log.e(LOG_TAG, "connect failed", exception);
+        }
+        return retval;
+    }
+
+    /**
+     * Create SOAP message for BASE_URL service and write result to wr.
+     * @param wr
+     * @param tcxData TCX data, gzipped and base64 encoded.
+     * @throws IOException
+     */
+    private void createAndWriteSoapMessage(BufferedWriter wr, String tcxData) throws IOException {
+        final KXmlSerializer mXML = new KXmlSerializer();
+        mXML.setOutput(wr);
+        mXML.startDocument("UTF-8", true);
+        mXML.startTag("", "soap:Envelope");
+        mXML.attribute("", "xmlns:soap", "http://www.w3.org/2003/05/soap-envelope");
+        mXML.attribute("", "xmlns:run", "http://www.runsaturday.com");
+
+        mXML.startTag("", "soap:Header");
+        mXML.startTag("", "run:SportTrackCredentials");
+        mXML.startTag("", "run:UserName");
+        mXML.text(username);
+        mXML.endTag("", "run:UserName");
+        mXML.startTag("", "run:SecretKey");
+        mXML.text(secretKey);
+        mXML.endTag("", "run:SecretKey");
+        mXML.endTag("", "run:SportTrackCredentials");
+        mXML.endTag("", "soap:Header");
+
+        mXML.startTag("", "soap:Body");
+        mXML.startTag("", "run:Upload");
+        mXML.startTag("", "run:compressedData");
+        mXML.text(tcxData);
+        mXML.endTag("", "run:compressedData");
+        mXML.startTag("", "run:skipDuplicates");
+        mXML.text("true");
+        mXML.endTag("", "run:skipDuplicates");
+        mXML.endTag("", "run:Upload");
+        mXML.endTag("", "soap:Body");
+
+        mXML.endTag("", "soap:Envelope");
+        mXML.endDocument();
+        mXML.flush();
     }
 
     @Override
