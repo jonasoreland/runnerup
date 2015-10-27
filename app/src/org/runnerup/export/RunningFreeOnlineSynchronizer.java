@@ -85,11 +85,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         Exception exception = null;
         HttpURLConnection conn = null;
         try {
-            conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod(RequestMethod.POST.name());
-            conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
-            conn.addRequestProperty("SOAPAction", "http://www.runsaturday.com/Upload");
+            conn = createHttpURLConnection();
             final BufferedWriter wr = new BufferedWriter(new PrintWriter(conn.getOutputStream()));
             createAndWriteSoapMessage(wr, "");
 
@@ -202,57 +198,13 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             Log.d(LOG_TAG, "TCX created, length = " + gzippedTcx.length);
 
             Log.d(LOG_TAG, "Connect to server");
-            conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod(RequestMethod.POST.name());
-            conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
-            conn.addRequestProperty("SOAPAction", "http://www.runsaturday.com/Upload");
+            conn = createHttpURLConnection();
             final BufferedWriter wr = new BufferedWriter(new PrintWriter(conn.getOutputStream()));
 
-            final KXmlSerializer mXML = new KXmlSerializer();
-            mXML.setOutput(wr);
-            mXML.startDocument("UTF-8", true);
-            mXML.startTag("", "soap:Envelope");
-            mXML.attribute("", "xmlns:soap", "http://www.w3.org/2003/05/soap-envelope");
-            mXML.attribute("", "xmlns:run", "http://www.runsaturday.com");
-
-            mXML.startTag("", "soap:Header");
-            mXML.startTag("", "run:SportTrackCredentials");
-            mXML.startTag("", "run:UserName");
-            mXML.text(username);
-            mXML.endTag("", "run:UserName");
-            mXML.startTag("", "run:SecretKey");
-            mXML.text(secretKey);
-            mXML.endTag("", "run:SecretKey");
-            mXML.endTag("", "run:SportTrackCredentials");
-            mXML.endTag("", "soap:Header");
-
-            mXML.startTag("", "soap:Body");
-            mXML.startTag("", "run:Upload");
-            mXML.startTag("", "run:compressedData");
-            mXML.text(Base64.encodeToString(gzippedTcx, Base64.NO_WRAP));
-            mXML.endTag("", "run:compressedData");
-            mXML.startTag("", "run:skipDuplicates");
-            mXML.text("true");
-            mXML.endTag("", "run:skipDuplicates");
-            mXML.endTag("", "run:Upload");
-            mXML.endTag("", "soap:Body");
-
-            mXML.endTag("", "soap:Envelope");
-            mXML.endDocument();
-            mXML.flush();
+            createAndWriteSoapMessage(wr,Base64.encodeToString(gzippedTcx, Base64.NO_WRAP));
 
             Log.d(LOG_TAG, "Read response");
             final InputStream in = new BufferedInputStream(conn.getInputStream());
-
-            // TODO remove
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-//            String line = reader.readLine();
-//            while(line != null) {
-//                Log.d(LOG_TAG, line);
-//                line = reader.readLine();
-//            }
-//            reader.close();
 
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             final DocumentBuilder dob = dbf.newDocumentBuilder();
@@ -298,6 +250,20 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         }
         retval.activityId = mID;
         return retval;
+    }
+
+    /**
+     * Create HttpURLConnection for BASE_URL service upload operation.
+     * @return
+     * @throws IOException
+     */
+    private HttpURLConnection createHttpURLConnection() throws IOException {
+        HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL).openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod(RequestMethod.POST.name());
+        conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
+        conn.addRequestProperty("SOAPAction", "http://www.runsaturday.com/Upload");
+        return conn;
     }
 
     public static byte[] gzip(String string) throws IOException {
