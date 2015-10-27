@@ -13,25 +13,28 @@ import org.runnerup.util.KXmlSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
- * Created by Jonas on 2015-10-26.
+ * Export integration with runningfreeonline.com.
+ * @author jonfre
  */
 public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
 
@@ -84,9 +87,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && secretKey != null)
-            return true;
-        return false;
+        return username != null && secretKey != null;
     }
 
     @Override
@@ -112,7 +113,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
         Status retval = Status.ERROR;
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try {
             Log.d(LOG_TAG, "Create TCX");
             TCX tcx = new TCX(db);
@@ -180,11 +181,10 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             is.setByteStream(in);
             final Document doc = dob.parse(is);
             conn.disconnect();
-            conn = null;
 
             NodeList nodes = doc.getElementsByTagName("Success");
             if (nodes != null && nodes.getLength() == 1) {
-                if("true".equals(nodes.item(0).getTextContent())) {
+                if ("true".equals(nodes.item(0).getTextContent())) {
                     Log.d(LOG_TAG, "Upload success");
                     retval = Status.OK;
                     retval.activityId = mID;
