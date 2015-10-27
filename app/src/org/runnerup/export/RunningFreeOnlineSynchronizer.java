@@ -190,20 +190,16 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         Exception exception = null;
         HttpURLConnection conn = null;
         try {
-            Log.d(LOG_TAG, "Create TCX");
             TCX tcx = new TCX(db);
             StringWriter writer = new StringWriter();
             tcx.exportWithSport(mID, writer);
             byte[] gzippedTcx = gzip(writer.toString());
-            Log.d(LOG_TAG, "TCX created, length = " + gzippedTcx.length);
 
-            Log.d(LOG_TAG, "Connect to server");
             conn = createHttpURLConnection();
             final BufferedWriter wr = new BufferedWriter(new PrintWriter(conn.getOutputStream()));
 
             createAndWriteSoapMessage(wr,Base64.encodeToString(gzippedTcx, Base64.NO_WRAP));
 
-            Log.d(LOG_TAG, "Read response");
             final InputStream in = new BufferedInputStream(conn.getInputStream());
 
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -217,7 +213,6 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             NodeList nodes = doc.getElementsByTagName("Success");
             if (nodes != null && nodes.getLength() == 1) {
                 if ("true".equals(nodes.item(0).getTextContent())) {
-                    Log.d(LOG_TAG, "Upload success");
                     retval = Status.OK;
                 } else {
                     String errorMessage = null;
