@@ -200,6 +200,9 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
 
             createAndWriteSoapMessage(wr,Base64.encodeToString(gzippedTcx, Base64.NO_WRAP));
 
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                throw new Exception("Server response code " + conn.getResponseCode());
+            }
             final InputStream in = new BufferedInputStream(conn.getInputStream());
 
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -232,6 +235,8 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         } catch (ParserConfigurationException e) {
             exception = e;
         } catch (SAXException e) {
+            exception = e;
+        } catch (Exception e) {
             exception = e;
         } finally {
             if (conn != null) {
