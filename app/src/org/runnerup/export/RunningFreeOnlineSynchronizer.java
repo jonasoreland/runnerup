@@ -113,7 +113,9 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
         Status retval = Status.ERROR;
-        HttpURLConnection conn;
+        retval.activityId = mID;
+        Exception exception = null;
+        HttpURLConnection conn = null;
         try {
             Log.d(LOG_TAG, "Create TCX");
             TCX tcx = new TCX(db);
@@ -181,13 +183,13 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             is.setByteStream(in);
             final Document doc = dob.parse(is);
             conn.disconnect();
+            conn = null;
 
             NodeList nodes = doc.getElementsByTagName("Success");
             if (nodes != null && nodes.getLength() == 1) {
                 if ("true".equals(nodes.item(0).getTextContent())) {
                     Log.d(LOG_TAG, "Upload success");
                     retval = Status.OK;
-                    retval.activityId = mID;
                 } else {
                     String errorMessage = null;
                     nodes = doc.getElementsByTagName("ErrorMessage");
@@ -197,8 +199,25 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
                     Log.e(LOG_TAG, String.format("Upload failed; Service said '%s'", errorMessage));
                 }
             }
-        } catch (Exception e) { // TODO
-            Log.e(LOG_TAG, "upload failed", e);
+        } catch (MalformedURLException e) {
+            exception = e;
+        } catch (ProtocolException e) {
+            exception = e;
+        } catch (IOException e) {
+            exception = e;
+        } catch (ParserConfigurationException e) {
+            exception = e;
+        } catch (SAXException e) {
+            exception = e;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+
+        if (exception != null) {
+            retval.ex = exception;
+            Log.e(LOG_TAG, "upload failed", exception);
         }
         return retval;
     }
