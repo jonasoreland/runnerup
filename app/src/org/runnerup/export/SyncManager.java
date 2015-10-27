@@ -233,6 +233,8 @@ public class SyncManager {
             synchronizer = new RuntasticSynchronizer(this);
         } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
+        } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
+            synchronizer = new RunningFreeOnlineSynchronizer();
         }
 
         if (synchronizer != null) {
