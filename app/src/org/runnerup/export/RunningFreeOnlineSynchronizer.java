@@ -113,7 +113,6 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
         Status retval = Status.ERROR;
-        retval.activityId = mID;
         Exception exception = null;
         HttpURLConnection conn = null;
         try {
@@ -219,6 +218,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             retval.ex = exception;
             Log.e(LOG_TAG, "upload failed", exception);
         }
+        retval.activityId = mID;
         return retval;
     }
 
