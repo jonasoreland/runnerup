@@ -139,10 +139,10 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             mXML.startTag("", "soap:Header");
             mXML.startTag("", "run:SportTrackCredentials");
             mXML.startTag("", "run:UserName");
-            mXML.text("flite"); // TODO
+            mXML.text(username);
             mXML.endTag("", "run:UserName");
             mXML.startTag("", "run:SecretKey");
-            mXML.text("mussla"); // TODO
+            mXML.text(secretKey);
             mXML.endTag("", "run:SecretKey");
             mXML.endTag("", "run:SportTrackCredentials");
             mXML.endTag("", "soap:Header");
