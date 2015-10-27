@@ -21,8 +21,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -320,7 +319,7 @@ public class SyncManager {
     Synchronizer authSynchronizer = null;
     Callback authCallback = null;
 
-    private void handleAuth(Callback callback, Synchronizer l, AuthMethod authMethod) {
+    private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
         authSynchronizer = l;
         authCallback = callback;
         switch (authMethod) {
@@ -328,8 +327,30 @@ public class SyncManager {
                 mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
                 return;
             case USER_PASS:
-                askUsernamePassword(l, false);
-                return;
+                // Show special notice for RunningFreeOnlineSynchronizer
+                if (l instanceof RunningFreeOnlineSynchronizer) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                    builder.setTitle(RunningFreeOnlineSynchronizer.NAME)
+                            .setMessage(R.string.RunningFreeOnlinePasswordNotice)
+                            .setNeutralButton(R.string.GoToWebsite, new OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(RunningFreeOnlineSynchronizer.SECRET_KEY_URL));
+                                    mActivity.startActivity(browserIntent);
+                                    mSpinner.dismiss();
+                                }
+                            })
+                            .setPositiveButton(R.string.OK, new OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    askUsernamePassword(l, false);
+                                }
+                            })
+                            .show();
+                } else {
+                    askUsernamePassword(l, false);
+                    return;
+                }
         }
     }
 
