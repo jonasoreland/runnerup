@@ -82,6 +82,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
             return retval;
         }
 
+        // Login by upload empty activity and check result for username/password error.
         Exception exception = null;
         HttpURLConnection conn = null;
         try {
