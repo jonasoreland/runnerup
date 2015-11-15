@@ -21,8 +21,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -50,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Synchronizer.AuthMethod;
@@ -233,6 +233,8 @@ public class SyncManager {
             synchronizer = new RuntasticSynchronizer(this);
         } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
+        } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
+            synchronizer = new RunningFreeOnlineSynchronizer();
         }
 
         if (synchronizer != null) {
@@ -243,6 +245,7 @@ public class SyncManager {
                 }
             }
             synchronizer.init(config);
+            synchronizer.setAuthNotice(config.getAsInteger(Constants.DB.ACCOUNT.AUTH_NOTICE));
             synchronizers.put(synchronizerName, synchronizer);
             synchronizersById.put(synchronizer.getId(), synchronizer);
         }
@@ -318,7 +321,7 @@ public class SyncManager {
     Synchronizer authSynchronizer = null;
     Callback authCallback = null;
 
-    private void handleAuth(Callback callback, Synchronizer l, AuthMethod authMethod) {
+    private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
         authSynchronizer = l;
         authCallback = callback;
         switch (authMethod) {
@@ -377,6 +380,7 @@ public class SyncManager {
         final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
         final TextView tv1 = (TextView) view.findViewById(R.id.username);
         final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
+        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
         String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
         String username = authConfig.optString("username", "");
@@ -395,6 +399,12 @@ public class SyncManager {
                                 : InputType.TYPE_TEXT_VARIATION_PASSWORD));
             }
         });
+        if (sync.getAuthNotice() != null) {
+            tvAuthNotice.setVisibility(View.VISIBLE);
+            tvAuthNotice.setText(sync.getAuthNotice());
+        } else {
+            tvAuthNotice.setVisibility(View.GONE);
+        }
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
