@@ -306,6 +306,6 @@
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
   <string name="Unknown">Unknown</string>
-  <string name="RunningFreeOnlinePasswordNotice">Note: As password, use the \"secret key\" set on website under Add > Sync Training > SportTracks</string>
+  <string name="RunningFreeOnlinePasswordNotice">Note: As password, use the \"secret key\" set on website under Add > Sync Training > SportTracks.</string>
   <string name="GoToWebsite">Go to website</string>
 </resources>
