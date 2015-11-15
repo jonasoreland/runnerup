@@ -49,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Synchronizer.AuthMethod;
@@ -244,6 +245,7 @@ public class SyncManager {
                 }
             }
             synchronizer.init(config);
+            synchronizer.setAuthNotice(config.getAsInteger(Constants.DB.ACCOUNT.AUTH_NOTICE));
             synchronizers.put(synchronizerName, synchronizer);
             synchronizersById.put(synchronizer.getId(), synchronizer);
         }
@@ -327,30 +329,8 @@ public class SyncManager {
                 mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
                 return;
             case USER_PASS:
-                // Show special notice for RunningFreeOnlineSynchronizer
-                if (l instanceof RunningFreeOnlineSynchronizer) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-                    builder.setTitle(RunningFreeOnlineSynchronizer.NAME)
-                            .setMessage(R.string.RunningFreeOnlinePasswordNotice)
-                            .setNeutralButton(R.string.GoToWebsite, new OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(RunningFreeOnlineSynchronizer.SECRET_KEY_URL));
-                                    mActivity.startActivity(browserIntent);
-                                    mSpinner.dismiss();
-                                }
-                            })
-                            .setPositiveButton(R.string.OK, new OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    askUsernamePassword(l, false);
-                                }
-                            })
-                            .show();
-                } else {
-                    askUsernamePassword(l, false);
-                    return;
-                }
+                askUsernamePassword(l, false);
+                return;
         }
     }
 
@@ -400,6 +380,7 @@ public class SyncManager {
         final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
         final TextView tv1 = (TextView) view.findViewById(R.id.username);
         final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
+        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
         String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
         String username = authConfig.optString("username", "");
@@ -418,6 +399,12 @@ public class SyncManager {
                                 : InputType.TYPE_TEXT_VARIATION_PASSWORD));
             }
         });
+        if (sync.getAuthNotice() != null) {
+            tvAuthNotice.setVisibility(View.VISIBLE);
+            tvAuthNotice.setText(sync.getAuthNotice());
+        } else {
+            tvAuthNotice.setVisibility(View.GONE);
+        }
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
