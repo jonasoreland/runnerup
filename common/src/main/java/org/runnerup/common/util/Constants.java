@@ -112,6 +112,7 @@ public interface Constants {
             public static final String AUTH_METHOD = "auth_method";
             public static final String AUTH_CONFIG = "auth_config";
             public static final String ICON = "icon";
+            public static final String AUTH_NOTICE = "auth_notice";
 
             public static final int FLAG_UPLOAD = 0;
             public static final int FLAG_FEED = 1;

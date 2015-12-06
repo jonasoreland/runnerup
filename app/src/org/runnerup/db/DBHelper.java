@@ -46,6 +46,7 @@ import org.runnerup.export.NikePlusSynchronizer;
 import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
+import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.util.FileUtil;
@@ -58,7 +59,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 27;
+    private static final int DBVERSION = 28;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -120,6 +121,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,")
             + (DB.ACCOUNT.AUTH_METHOD + " text not null, ")
             + (DB.ACCOUNT.AUTH_CONFIG + " text, ")
+            + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ")
             + (DB.ACCOUNT.ICON + " integer null, ")
             + "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
 
@@ -243,6 +245,11 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + DB.ACTIVITY.AVG_CADENCE + " integer");
         }
 
+        if (oldVersion > 0 && oldVersion < 28 && newVersion >= 28) {
+            echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + " add column " + DB.ACCOUNT.AUTH_NOTICE
+                    + " integer");
+        }
+
         insertAccounts(arg0);
     }
 
@@ -280,7 +287,8 @@ public class DBHelper extends SQLiteOpenHelper implements
                         DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
-                        DB.ACCOUNT.AUTH_CONFIG + ") " +
+                        DB.ACCOUNT.AUTH_CONFIG + ", " +
+                        DB.ACCOUNT.AUTH_NOTICE + ") " +
                         "select " +
                         "_id, " +
                         DB.ACCOUNT.NAME + ", " +
@@ -291,6 +299,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
                         DB.ACCOUNT.AUTH_CONFIG + " " +
+                        DB.ACCOUNT.AUTH_NOTICE + " " +
                         "FROM " + DB.ACCOUNT.TABLE;
         try {
             echoDo(arg0, newtab.toString());
@@ -464,6 +473,17 @@ public class DBHelper extends SQLiteOpenHelper implements
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
             values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
             values.put(DB.ACCOUNT.URL, "https://fit.google.com");
+            insertAccount(arg0, values);
+        }
+
+        if (DBVERSION >= 28) {
+            ContentValues values = new ContentValues();
+            values.put(DB.ACCOUNT.NAME, RunningFreeOnlineSynchronizer.NAME);
+            values.put(DB.ACCOUNT.FORMAT, "tcx");
+            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+            values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
+            values.put(DB.ACCOUNT.URL, "http://www.runningfreeonline.com");
+            values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
             insertAccount(arg0, values);
         }
     }

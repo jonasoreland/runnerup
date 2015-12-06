@@ -117,6 +117,7 @@ public class AccountListActivity extends FragmentActivity implements Constants,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.ICON,
                 DB.ACCOUNT.AUTH_CONFIG,
+                DB.ACCOUNT.AUTH_NOTICE,
                 DB.ACCOUNT.FLAGS
         };
 
