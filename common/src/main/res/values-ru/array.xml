@@ -26,7 +26,7 @@
   <string-array name="target_types">
     <item>Нет</item>
     <item>Темп</item>
-    <item>Пульс</item>
+    <item>Зона ЧСС</item>
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->

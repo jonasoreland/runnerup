@@ -167,6 +167,7 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usa gli auricolari per avviare/sospendere/riprendere RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Converti il tratto di riposo di tipo distanza in tratto di recupero per la scheda Intervallo</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Converti il tratto di riposo di tipo distanza in tratto di recupero per la scheda Avanzato</string>
+  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Esporta database su sdcard (ad esempio prima di un aggiornamento di sistema)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importa database su sdcard (ad esempio dopo un aggiornamento di sistema)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Allenatore (ti aiuta a raggiungere l\'obiettivo - se fissato)</string>
@@ -236,6 +237,8 @@
   <string name="Current_heart_rate_zone">Zona di frequenza cardiaca corrente</string>
   <string name="Misc_cues">Altri riferimenti</string>
   <string name="Target_coaching">Obiettivi del coach</string>
+  <string name="Skip_event_audio_cues">Salta i riferimenti audio degli eventi</string>
+  <string name="Push">Premi</string>
   <string name="Android_text_to_speech_settings">Impostazioni TTS Android</string>
   <string name="Start">Inizia</string>
   <string name="History">Cronologia</string>
@@ -263,13 +266,15 @@
   <string name="Add_step">Aggiungi un passo</string>
   <string name="Add_repeat">Aggiungi ripetizione</string>
   <string name="Discard">Scarta</string>
-  <string name="Failed_to_create_workout">Fallita la creazione dell\'attività</string>
+  <string name="Failed_to_create_workout">Impossibile creare l\'attività</string>
   <string name="_sign_plus">+</string>
   <string name="_sign_minus">-</string>
+  <string name="Audio_cue_language">Lingua dei riferimenti audio</string>
   <string name="Website">Sito web</string>
   <string name="Automatic_upload">Upload automatico</string>
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Includi la mappa nel post</string>
+  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Gli allenamenti non verranno rimossi da %1$s, ma solo dalla lista degli allenamenti di RunnerUp caricati su %1$s</string>
   <string name="Clear_uploads_from_phone">Cancella gli upload (dal telefono)</string>
   <string name="my_phone">mio telefono</string>
   <string name="Failed_to_import">Importazione fallita</string>
