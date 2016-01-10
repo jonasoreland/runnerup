@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">aktivitas</string>
+  <string name="cue_interval">interval</string>
+  <string name="cue_lap">putaran</string>
+  <string name="cue_warmup">pemanasan</string>
+  <string name="cue_cooldown">pendinginan</string>
+  <string name="cue_current">sekarang</string>
+  <string name="cue_recovery">pemulihan</string>
+  <string name="cue_perkilometer">per kilometer</string>
+  <string name="cue_permile">per mil</string>
+  <string name="cue_perhour">per jam</string>
+  <string name="cue_started">mulai</string>
+  <string name="cue_paused">jeda</string>
+  <string name="cue_resumed">lanjut</string>
+  <string name="cue_stopped">stop</string>
+  <string name="cue_completed">selesai</string>
+  <string name="cue_speedup">lebih cepat</string>
+  <string name="cue_slowdown">lebih lambat</string>
+  <plurals name="cue_hour">
+    <item quantity="other">jam</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="other">menit</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="other">detik</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="other">meter</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="other">kilometer</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="other">mil</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="other">dpm</item>
+  </plurals>
+  <string name="cue_activity_started">aktivitas dimulai</string>
+  <string name="cue_activity_paused">aktivitas dijeda</string>
+  <string name="cue_activity_resumed">aktivitas dilanjutkan</string>
+  <string name="cue_activity_stopped">aktivitas dihentikan</string>
+  <string name="cue_lap_started">putaran dimulai</string>
+  <string name="cue_lap_completed">putaran selesai</string>
+  <string name="cue_warmup_started">pemanasan dimulai</string>
+  <string name="cue_cooldown_started">pendinginan dimulai</string>
+</resources>

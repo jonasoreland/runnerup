@@ -174,20 +174,6 @@
 			android:name=".view.CreateAdvancedWorkout"
 			android:screenOrientation="sensorPortrait" >
 		</activity>
-
-        <receiver android:name=".feedwidget.FeedWidgetProvider" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/feed_widget_provider_info" />
-        </receiver>
-        <service
-                android:name=".feedwidget.FeedWidgetService"
-                android:exported="false"
-                android:permission="android.permission.BIND_REMOTEVIEWS" />
 	</application>
 
 </manifest>

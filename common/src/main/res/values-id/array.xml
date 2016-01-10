@@ -1,77 +1,77 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string-array name="unitEntries">
-    <item>Miglia</item>
-    <item>Chilometri</item>
+    <item>Mil</item>
+    <item>Kilometer</item>
   </string-array>
   <string-array name="unitValues">
-    <item>mi</item>
+    <item>mil</item>
     <item>km</item>
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
-    <item>Riscaldamento</item>
-    <item>Attivo</item>
-    <item>Riposo</item>
-    <item>Recupero</item>
-    <item>Defaticamento</item>
+    <item>Pemanasan</item>
+    <item>Aktif</item>
+    <item>Istirahat</item>
+    <item>Pemulihan</item>
+    <item>Pendinginan</item>
   </string-array>
   <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
-    <item>Dall\'ultima pressione</item>
-    <item>Tempo</item>
-    <item>Distanza</item>
+    <item>Sampai dihentikan</item>
+    <item>Waktu</item>
+    <item>Jarak</item>
   </string-array>
   <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
-    <item>Nessuno</item>
-    <item>Ritmo</item>
-    <item>Zona BPM</item>
+    <item>Tiada</item>
+    <item>Laju</item>
+    <item>Zona denyut jantung</item>
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
-    <item>Corsa</item>
-    <item>Bicicletta</item>
-    <item>Altro</item>
+    <item>Lari</item>
+    <item>Sepeda</item>
+    <item>Lainnya</item>
   </string-array>
   <string-array name="sportEntriesExperimental">
-    <item>Corsa</item>
-    <item>Bicicletta</item>
-    <item>Altro</item>
-    <item>Orientamento</item>
-    <item>Camminata</item>
+    <item>Lari</item>
+    <item>Sepeda</item>
+    <item>Lainnya</item>
+    <item>Orienteering</item>
+    <item>Jalan kaki</item>
   </string-array>
   <string-array name="muteEntries">
-    <item>No</item>
-    <item>Sì</item>
+    <item>Tidak</item>
+    <item>Ya</item>
   </string-array>
   <string-array name="muteValues">
-    <item>no</item>
-    <item>sì</item>
+    <item>tidak</item>
+    <item>ya</item>
   </string-array>
   <string-array name="types">
-    <item>Tempo</item>
-    <item>Distanza</item>
+    <item>Waktu</item>
+    <item>Jarak</item>
   </string-array>
   <string-array name="sexes">
-    <item>Uomo</item>
-    <item>Donna</item>
+    <item>Pria</item>
+    <item>Wanita</item>
   </string-array>
   <!--Audio cue languages-->
   <string-array name="cueLanguageNames">
-    <item>Inglese</item>
-    <item>Olandese</item>
-    <item>Tedesco</item>
-    <item>Giapponese</item>
-    <item>Arabo</item>
-    <item>Russo</item>
-    <item>Spagnolo</item>
-    <item>Francese</item>
-    <item>Italiano</item>
-    <item>Polacco</item>
-    <item>Turco</item>
-    <item>Portoghese</item>
+    <item>Inggris</item>
+    <item>Belanda</item>
+    <item>Jerman</item>
+    <item>Jepang</item>
+    <item>Arab</item>
+    <item>Rusia</item>
+    <item>Spanyol</item>
+    <item>Perancis</item>
+    <item>Italia</item>
+    <item>Polandia</item>
+    <item>Turki</item>
+    <item>Portugis</item>
   </string-array>
   <!--Note: keep in same order as languagesNames-->
   <string-array name="cueLanguageCodes">

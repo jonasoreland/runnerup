@@ -111,5 +111,12 @@ public class FeedWidgetProvider extends AppWidgetProvider {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_list);
         }
     }
+
+    public static void RefreshWidget(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] ids = appWidgetManager.getAppWidgetIds(
+                 new ComponentName(context, FeedWidgetProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.widget_list);
+    }
 }
 
