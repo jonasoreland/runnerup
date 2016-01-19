@@ -1,6 +1,8 @@
 RunnerUp
 ========
 
+[![Join the chat at https://gitter.im/jonasoreland/runnerup](https://badges.gitter.im/jonasoreland/runnerup.svg)](https://gitter.im/jonasoreland/runnerup?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/jonasoreland/runnerup.svg?branch=master)](https://travis-ci.org/jonasoreland/runnerup)
 
 An open source run tracker for Android.
