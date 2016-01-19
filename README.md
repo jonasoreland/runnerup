@@ -7,6 +7,11 @@ An open source run tracker for Android.
 
 Inspiration Garmin 410, RunKeeper and Everywhere Run.
 
+
+### Chat
+
+https://gitter.im/jonasoreland/runnerup
+
 ## Features
 
 * GPL.
@@ -47,6 +52,10 @@ Please read the [contributing guidelines](CONTRIBUTING.md).
 ### How can I contribute?
 
 Thanks for asking! You can check [TODO list](TODO.md) and [open issues](https://github.com/jonasoreland/runnerup/issues). You can also work on your own wishes :-).
+
+### Chat
+
+https://gitter.im/jonasoreland/runnerup
 
 ### Translations
 
