@@ -53,10 +53,6 @@ Please read the [contributing guidelines](CONTRIBUTING.md).
 
 Thanks for asking! You can check [TODO list](TODO.md) and [open issues](https://github.com/jonasoreland/runnerup/issues). You can also work on your own wishes :-).
 
-### Chat
-
-https://gitter.im/jonasoreland/runnerup
-
 ### Translations
 
 <img border="0" src="https://www.transifex.com/projects/p/runner-up-android/resource/stringsxml/chart/image_png"/><br/><a target="_blank" href="https://www.transifex.com/projects/p/runner-up-android/resource/stringsxml/"><img border="0" src="https://ds0k0en9abmn1.cloudfront.net/static/charts/images/tx-logo-micro.646b0065fce6.png"/></a>
