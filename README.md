@@ -32,6 +32,7 @@ Releases can be downloaded either:
 * on [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup).
 * directly on [GitHub](https://github.com/jonasoreland/runnerup/releases/tag/v1.47).
 
+[![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup)
 
 ## Build
 Depending on your IDE, see according documentation:
