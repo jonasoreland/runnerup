@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -50,7 +51,7 @@ import java.net.URL;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 @SuppressLint("SetJavaScriptEnabled")
-public class OAuth2Activity extends Activity {
+public class OAuth2Activity extends AppCompatActivity {
 
     /**
      * Names used in Bundle to/from OAuth2Activity

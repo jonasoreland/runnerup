@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +54,7 @@ import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.widget.WidgetUtil;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class AccountListActivity extends FragmentActivity implements Constants,
+public class AccountListActivity extends AppCompatActivity implements Constants,
         LoaderCallbacks<Cursor> {
 
     DBHelper mDBHelper = null;

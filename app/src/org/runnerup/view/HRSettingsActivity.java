@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -31,6 +30,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,7 +64,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HRSettingsActivity extends Activity implements HRClient {
+public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private final Handler handler = new Handler();
     private final StringBuffer logBuffer = new StringBuffer();

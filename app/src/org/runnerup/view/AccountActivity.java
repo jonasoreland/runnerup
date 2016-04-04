@@ -30,6 +30,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,8 +57,7 @@ import org.runnerup.widget.WidgetUtil;
 import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class AccountActivity extends Activity implements Constants {
-
+public class AccountActivity extends AppCompatActivity implements Constants {
     long synchronizerID = -1;
     String synchronizer = null;
     Integer synchronizerIcon = null;
@@ -74,11 +75,11 @@ public class AccountActivity extends Activity implements Constants {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.account);
+
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         Intent intent = getIntent();
         synchronizer = intent.getStringExtra("synchronizer");
-
 
         mDBHelper = new DBHelper(this);
         mDB = mDBHelper.getReadableDatabase();
