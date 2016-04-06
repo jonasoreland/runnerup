@@ -18,13 +18,13 @@
 package org.runnerup.view;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -47,7 +47,7 @@ import org.runnerup.widget.WidgetUtil;
 import java.util.Vector;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HRZonesActivity extends Activity implements Constants {
+public class HRZonesActivity extends AppCompatActivity implements Constants {
 
     TitleSpinner ageSpinner;
     TitleSpinner sexSpinner;

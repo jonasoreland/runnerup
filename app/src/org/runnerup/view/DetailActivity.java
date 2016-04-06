@@ -35,7 +35,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -92,7 +92,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class DetailActivity extends FragmentActivity implements Constants {
+public class DetailActivity extends AppCompatActivity implements Constants {
 
     long mID = 0;
     DBHelper mDBHelper = null;
