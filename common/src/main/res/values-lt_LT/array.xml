@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <string-array name="unitEntries">
-    <item>Millas</item>
-    <item>Kilómetros</item>
+    <item>Mylios</item>
+    <item>Kilometrai</item>
   </string-array>
   <string-array name="unitValues">
     <item>mi</item>
@@ -10,68 +10,68 @@
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
-    <item>Calentamiento</item>
-    <item>Activo</item>
-    <item>Descanso</item>
-    <item>Recuperación</item>
-    <item>Enfriamiento</item>
+    <item>Apšilimas</item>
+    <item>Aktyvumas</item>
+    <item>Poilsis</item>
+    <item>Atsistatymas</item>
+    <item>Atvėsimas</item>
   </string-array>
   <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
-    <item>Hasta pulsación</item>
-    <item>Tiempo</item>
-    <item>Distancia</item>
+    <item>Iki paspaudimo</item>
+    <item>Laikas</item>
+    <item>Atstumas</item>
   </string-array>
   <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
-    <item>Ninguno</item>
-    <item>Ritmo</item>
-    <item>Frecuencia cardiaca</item>
+    <item>Nieko</item>
+    <item>Tempas</item>
+    <item>Širdies ritmo zona</item>
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
-    <item>Carrera</item>
-    <item>Ciclismo</item>
-    <item>Otro</item>
+    <item>Bėgimas</item>
+    <item>Dviračių sportas</item>
+    <item>Kita</item>
   </string-array>
   <string-array name="sportEntriesExperimental">
-    <item>Carrera</item>
-    <item>Ciclismo</item>
-    <item>Otro</item>
-    <item>Orientación</item>
-    <item>Caminar</item>
+    <item>Bėgimas</item>
+    <item>Dviračių sportas</item>
+    <item>Kita</item>
+    <item>Orientacijios sportas</item>
+    <item>Ėjimas</item>
   </string-array>
   <string-array name="muteEntries">
-    <item>No</item>
-    <item>Sí</item>
+    <item>Ne</item>
+    <item>Taip</item>
   </string-array>
   <string-array name="muteValues">
-    <item>no</item>
-    <item>sí</item>
+    <item>ne</item>
+    <item>taip</item>
   </string-array>
   <string-array name="types">
-    <item>Tiempo</item>
-    <item>Distancia</item>
+    <item>Laikas</item>
+    <item>Atstumas</item>
   </string-array>
   <string-array name="sexes">
-    <item>Hombre</item>
-    <item>Mujer</item>
+    <item>Vyras</item>
+    <item>Moteris</item>
   </string-array>
   <!--Audio cue languages-->
   <string-array name="cueLanguageNames">
-    <item>Inglés</item>
-    <item>Holandés</item>
-    <item>Alemán</item>
-    <item>Japonés</item>
-    <item>Árabe</item>
-    <item>Ruso</item>
-    <item>Español</item>
-    <item>Francés</item>
-    <item>Italiano</item>
-    <item>Polaco</item>
-    <item>Turco</item>
-    <item>Portugues</item>
+    <item>Anglų</item>
+    <item>Olandų</item>
+    <item>Vokiečių</item>
+    <item>Japonų</item>
+    <item>Arabų</item>
+    <item>Rusų</item>
+    <item>Ispanų</item>
+    <item>Prancūzų</item>
+    <item>Italų</item>
+    <item>Lenkų</item>
+    <item>Turkų</item>
+    <item>Portugalų</item>
   </string-array>
   <!--Note: keep in same order as languagesNames-->
   <string-array name="cueLanguageCodes">

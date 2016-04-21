@@ -23,7 +23,7 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
-  <string name="metrics_heartrate">Hr</string>
+  <string name="metrics_heartrate">BPM</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Massima frequenza cardiaca (HR max)</string>
   <string name="Target_pace_HHMMSS">Ritmo obiettivo (HH:MM:SS)</string>
@@ -193,9 +193,12 @@
   <string name="Convert_rest_on_Interval_tab">Converti riposo nella scheda Intervallo</string>
   <string name="Convert_rest_on_Advanced_tab">Converti riposo nella scheda Avanzato</string>
   <string name="Target_pace_moving_average_seconds">Intervallo media mobile ritmo obiettivo</string>
+  <string name="Target_pace_grace_seconds">Secondi di tolleranza dal ritmo obiettivo </string>
   <string name="Autolap_during_intervals">Giri automatici durante intervalli</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Aggiungi countdown dopo passo che termina con intervento utente</string>
+  <string name="Step_countdown_time_s">Conto alla rovescia in passi</string>
   <string name="Smooth_pace_graph">Grafico del passo ponderato</string>
+  <string name="Smooth_pace_filters">Filtro valori del passo</string>
   <string name="Poll_interval_ms">Intervallo polling (ms)</string>
   <string name="Poll_distance_m">Distanza polling (m)</string>
   <string name="Export">Esporta</string>
