@@ -1,6 +1,6 @@
 [main]
 host = https://www.transifex.com
-lang_map = fr_CA:fr-rCA,pt_BR:pt-rBR,pt_PT:pt,zh_CN:zh-rCN,zh_HK:zh-rHK,zh_TW:zh-rTW,da_DK:da-rDK,de_DE:de,tr_TR:tr,fr_FR:fr,es_ES:es,hu_HU:hu,sv_SE:sv-rSE,bg_BG:bg,el_GR:el,kn_IN:kn-rIN,cs_CZ:cs,nl_BE:nl-rBE,nl_NL:nl-rNL,en_NL:en-rNL
+lang_map = fr_CA:fr-rCA,pt_BR:pt-rBR,pt_PT:pt,zh_CN:zh-rCN,zh_HK:zh-rHK,zh_TW:zh-rTW,da_DK:da-rDK,de_DE:de,tr_TR:tr,fr_FR:fr,es_ES:es,hu_HU:hu,sv_SE:sv-rSE,bg_BG:bg,el_GR:el,kn_IN:kn-rIN,cs_CZ:cs,nl_BE:nl-rBE,nl_NL:nl-rNL,en_NL:en-rNL,lt_LT:lt
 minimum_perc = 10
 
 [runner-up-android.stringsxml]
