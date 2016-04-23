@@ -277,4 +277,39 @@ public class MainLayout extends TabActivity {
         builder.show();
         wv.loadUrl("file:///android_asset/changes.html");
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i = null;
+        switch (item.getItemId()) {
+            case R.id.menu_accounts:
+                i = new Intent(this, AccountListActivity.class);
+                break;
+            case R.id.menu_workouts:
+                i = new Intent(this, ManageWorkoutsActivity.class);
+                break;
+            case R.id.menu_audio_cues:
+                i = new Intent(this, AudioCueSettingsActivity.class);
+                break;
+            case R.id.menu_settings:
+                getTabHost().setCurrentTab(3);
+                return true;
+            case R.id.menu_rate:
+                onRateClick.onClick(null);
+                break;
+            case R.id.menu_whatsnew:
+                whatsNew();
+                break;
+        }
+        if (i != null) {
+            startActivity(i);
+        }
+        return true;
+    }
 }
