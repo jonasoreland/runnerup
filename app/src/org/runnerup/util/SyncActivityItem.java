@@ -7,7 +7,7 @@ public class SyncActivityItem {
     private Long id;
 
     private Long duration;
-    private Long startTime;
+    private Long startTime; // in seconds since epoch
     private String uri;
     private Float distance;
     private Integer sport;

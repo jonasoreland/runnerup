@@ -88,7 +88,7 @@ public class LapEntity extends AbstractEntity {
     }
 
     /**
-     * Duration of the lap
+     * Duration of the lap (in seconds)
      */
     public void setTime(Integer value) {
         values().put(Constants.DB.LAP.TIME, value);

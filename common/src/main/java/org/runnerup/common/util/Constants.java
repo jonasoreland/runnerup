@@ -50,7 +50,7 @@ public interface Constants {
             public static final String ACTIVITY = "activity_id";
             public static final String LAP = "lap";
             public static final String TYPE = "type";
-            public static final String TIME = "time";
+            public static final String TIME = "time"; // in milliseconds since epoch
             public static final String LATITUDE = "latitude";
             public static final String LONGITUDE = "longitude";
             public static final String ACCURANCY = "accurancy";

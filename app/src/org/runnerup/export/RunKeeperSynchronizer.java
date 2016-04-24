@@ -496,7 +496,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             if (conn.getResponseCode() == HttpStatus.SC_OK) {
                 BufferedInputStream input = new BufferedInputStream(conn.getInputStream());
                 JSONObject resp = SyncHelper.parse(input);
-                activity = parseToActivity(resp, item);
+                activity = parseToActivity(resp);
             }
 
         } catch (IOException e) {
@@ -510,15 +510,23 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return activity;
     }
 
-    private ActivityEntity parseToActivity(JSONObject response, SyncActivityItem ai) throws JSONException {
+    private ActivityEntity parseToActivity(JSONObject response) throws JSONException {
         ActivityEntity newActivity = new ActivityEntity();
         newActivity.setSport(runkeeper2sportMap.get(response.getString("type")).getDbValue());
         if (response.has("notes")) {
             newActivity.setComment(response.getString("notes"));
         }
-        newActivity.setStartTime(ai.getStartTime());
-        newActivity.setTime(ai.getDuration());
-        newActivity.setDistance(ai.getDistance());
+        newActivity.setTime((long) Float.parseFloat(response.getString("duration")));
+        newActivity.setDistance(Float.parseFloat(response.getString("total_distance")));
+
+        String startTime = response.getString("start_time");
+        SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
+        try {
+            newActivity.setStartTime(format.parse(startTime));
+        } catch (ParseException e) {
+            Log.e(Constants.LOG, e.getMessage());
+            return null;
+        }
 
         List<LapEntity> laps = new ArrayList<LapEntity>();
         List<LocationEntity> locations = new ArrayList<LocationEntity>();
@@ -548,7 +556,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
             LocationEntity lv = new LocationEntity();
             lv.setActivityId(newActivity.getId());
-            lv.setTime(ai.getStartTime() + timePoint.getKey());
+            lv.setTime(TimeUnit.SECONDS.toMillis(newActivity.getStartTime()) + timePoint.getKey());
 
             String dist = values.get("distance");
             if (dist == null) {
