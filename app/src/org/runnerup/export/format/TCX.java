@@ -236,16 +236,18 @@ public class TCX {
                             mXML.endTag("", "DistanceMeters");
                             if (!cLocation.isNull(6)) {
                                 int hr = cLocation.getInt(6);
-                                maxHR = hr > maxHR ? hr : maxHR;
-                                sumHR += hr;
-                                cntHR++;
+                                if (hr > 0) {
+                                    maxHR = hr > maxHR ? hr : maxHR;
+                                    sumHR += hr;
+                                    cntHR++;
 
-                                mXML.startTag("", "HeartRateBpm");
-                                mXML.startTag("", "Value");
-                                String bpm = Integer.toString(hr);
-                                mXML.text(bpm);
-                                mXML.endTag("", "Value");
-                                mXML.endTag("", "HeartRateBpm");
+                                    mXML.startTag("", "HeartRateBpm");
+                                    mXML.startTag("", "Value");
+                                    String bpm = Integer.toString(hr);
+                                    mXML.text(bpm);
+                                    mXML.endTag("", "Value");
+                                    mXML.endTag("", "HeartRateBpm");
+                                }
                             }
                             mXML.endTag("", "Trackpoint");
                             last_time = time;
