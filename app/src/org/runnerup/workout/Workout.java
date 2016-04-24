@@ -478,12 +478,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
      * @return flattened list of all steps in workout
      */
     static public class StepListEntry {
-        public StepListEntry(Step step, int level, Step parent) {
+        public StepListEntry(int index, Step step, int level, Step parent) {
+            this.index = index;
             this.level = level;
             this.step = step;
             this.parent = parent;
         }
 
+        public final int index;
         public final int level;
         public final Step parent;
         public final Step step;

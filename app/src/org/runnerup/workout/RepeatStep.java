@@ -197,7 +197,7 @@ public class RepeatStep extends Step {
 
     @Override
     public void getSteps(Step parent, int level, List<Workout.StepListEntry> list) {
-        list.add(new Workout.StepListEntry(this, level, parent));
+        list.add(new Workout.StepListEntry(list.size(), this, level, parent));
         for (Step s2 : steps) {
             s2.getSteps(this, level + 1, list);
         }
