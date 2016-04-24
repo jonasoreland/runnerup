@@ -37,9 +37,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
-import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;

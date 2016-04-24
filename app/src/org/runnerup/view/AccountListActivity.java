@@ -25,7 +25,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -44,12 +43,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
-import org.runnerup.common.util.Constants;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.widget.WidgetUtil;
 

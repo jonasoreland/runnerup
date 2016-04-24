@@ -15,12 +15,11 @@ package org.runnerup.workout;
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import android.location.Location;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;

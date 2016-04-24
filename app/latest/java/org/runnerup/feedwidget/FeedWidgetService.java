@@ -15,15 +15,12 @@ import android.widget.RemoteViewsService;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
-import org.runnerup.export.SyncManager;
 import org.runnerup.feed.FeedImageLoader;
 import org.runnerup.feed.FeedList;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.FeedActivity;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class FeedWidgetService extends RemoteViewsService {

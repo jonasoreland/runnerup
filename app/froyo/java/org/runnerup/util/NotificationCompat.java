@@ -16,8 +16,6 @@
  */
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat.Builder;
 
 /**

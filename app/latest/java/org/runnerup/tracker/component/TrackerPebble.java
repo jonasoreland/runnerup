@@ -43,7 +43,6 @@ import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.WorkoutStepListener;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

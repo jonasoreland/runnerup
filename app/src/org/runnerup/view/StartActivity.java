@@ -73,7 +73,6 @@ import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
-import org.runnerup.widget.DisabledEntriesAdapter;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.TitleSpinner.OnCloseDialogListener;
 import org.runnerup.widget.TitleSpinner.OnSetValueListener;

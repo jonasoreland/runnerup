@@ -18,33 +18,16 @@
 package org.runnerup.feed;
 
 import android.annotation.TargetApi;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
-import android.widget.ImageView;
-
-import org.runnerup.db.DBHelper;
-import org.runnerup.common.util.Constants;
-import org.runnerup.export.SyncManager;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Observable;
-import java.util.Set;
-import java.util.TimeZone;
 import java.util.WeakHashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)

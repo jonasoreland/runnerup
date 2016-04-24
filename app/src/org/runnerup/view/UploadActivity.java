@@ -44,8 +44,8 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer.Status;
-import org.runnerup.util.SyncActivityItem;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;

@@ -24,8 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Log;
 
-import org.runnerup.db.DBHelper;
 import org.runnerup.common.util.Constants;
+import org.runnerup.db.DBHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;

@@ -24,7 +24,6 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.runnerup.util.Formatter;
 

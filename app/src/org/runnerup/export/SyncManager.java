@@ -30,7 +30,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;

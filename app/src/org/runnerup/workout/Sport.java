@@ -18,10 +18,8 @@
 package org.runnerup.workout;
 
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 
 import org.runnerup.R;
-import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 
 public enum Sport {

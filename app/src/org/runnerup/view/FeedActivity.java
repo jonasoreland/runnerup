@@ -19,17 +19,12 @@ package org.runnerup.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,31 +35,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.feed.FeedImageLoader;
 import org.runnerup.feed.FeedList;
-import org.runnerup.common.util.Constants;
-import org.runnerup.common.util.Constants.DB.FEED;
-import org.runnerup.feedwidget.FeedWidgetProvider;
 import org.runnerup.util.Formatter;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.text.DateFormat;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedActivity extends Activity implements Constants {

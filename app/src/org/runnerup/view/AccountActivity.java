@@ -18,9 +18,7 @@
 package org.runnerup.view;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -30,7 +28,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;

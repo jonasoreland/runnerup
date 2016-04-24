@@ -23,8 +23,8 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.tracker.Tracker;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.feedback.RUTextToSpeech;
