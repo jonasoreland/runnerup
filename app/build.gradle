@@ -31,14 +31,14 @@ android {
         latest {
             minSdkVersion 14
             targetSdkVersion 22
-            versionName "1.51"
-            versionCode 14000051
+            versionName "1.52"
+            versionCode 14000052
         }
         froyo {
             minSdkVersion 8
             targetSdkVersion 22
-            versionName "1.51"
-            versionCode 8000051
+            versionName "1.52"
+            versionCode 8000052
         }
     }
 
