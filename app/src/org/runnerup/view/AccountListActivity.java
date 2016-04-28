@@ -56,7 +56,6 @@ import org.runnerup.widget.WidgetUtil;
 public class AccountListActivity extends AppCompatActivity implements Constants,
         LoaderCallbacks<Cursor> {
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     SyncManager mSyncManager = null;
     boolean mTabFormat = false;
@@ -71,8 +70,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         setContentView(R.layout.account_list);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
         mListView = (ListView) findViewById(R.id.account_list);
         mListView.setDividerHeight(10);
@@ -84,8 +82,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         mSyncManager.close();
     }
 

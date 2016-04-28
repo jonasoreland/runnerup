@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
@@ -29,23 +30,23 @@ public class FeedWidgetService extends RemoteViewsService {
         return new RemoteViewsFactory() {
             private FeedList data = null;
             private Formatter formatter = null;
-            private DBHelper mDBHelper = null;
+            private SQLiteDatabase mDB = null;
 
             @Override
             public void onCreate() {
                 formatter = new Formatter(getApplicationContext());
-                mDBHelper = new DBHelper(getApplicationContext());
+                mDB = DBHelper.getReadableDatabase(getApplicationContext());
             }
 
 
             @Override
             public void onDestroy() {
-                mDBHelper.close();
+                DBHelper.closeDB(mDB);
             }
 
             @Override
             public void onDataSetChanged() {
-                data = new FeedList(mDBHelper);
+                data = new FeedList(mDB);
                 data.load();
             }
 
@@ -175,15 +176,13 @@ public class FeedWidgetService extends RemoteViewsService {
                 String args[] = {
                         "" + id
                 };
-                DBHelper db = new DBHelper(getApplicationContext());
-                Cursor c = db.getReadableDatabase().query(Constants.DB.ACCOUNT.TABLE, from, "_id = ?",
+                Cursor c = mDB.query(Constants.DB.ACCOUNT.TABLE, from, "_id = ?",
                         args, null, null, null, null);
                 String name = "?";
                 c.moveToFirst();
                 ContentValues config = DBHelper.get(c);
                 name = config.getAsString("name");
                 c.close();
-                db.close();
                 return name;
             }
 

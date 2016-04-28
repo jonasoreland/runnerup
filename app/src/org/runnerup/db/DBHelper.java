@@ -164,7 +164,45 @@ public class DBHelper extends SQLiteOpenHelper implements
     private static final String CREATE_INDEX_FEED = "create index if not exists FEED_START_TIME " +
             (" on " + DB.FEED.TABLE + " (" + DB.FEED.START_TIME + ")");
 
-    public DBHelper(Context context) {
+    private static DBHelper sInstance = null;
+
+    private static synchronized DBHelper getHelper(Context context) {
+        if (sInstance == null) {
+            sInstance = new DBHelper(context.getApplicationContext(), 1);
+        }
+        return sInstance;
+    }
+
+    @Override
+    public synchronized void close() {
+        if (sInstance != null) {
+            // don't close
+            return;
+        }
+        super.close();
+    }
+
+    private static SQLiteDatabase sReadableDB = null;
+    private static SQLiteDatabase sWritableDB = null;
+
+    public static synchronized SQLiteDatabase getReadableDatabase(Context context) {
+        if (sReadableDB == null) {
+            sReadableDB =getHelper(context).getReadableDatabase();
+        }
+        return sReadableDB;
+    }
+
+    public static synchronized SQLiteDatabase getWritableDatabase(Context context) {
+        if (sWritableDB == null) {
+            sWritableDB =getHelper(context).getReadableDatabase();
+        }
+        return sWritableDB;
+    }
+
+    public static synchronized void closeDB(SQLiteDatabase db) {
+    }
+
+    private DBHelper(Context context, int a) {
         super(context, DBNAME, null, DBVERSION);
     }
 
@@ -544,7 +582,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     public static void purgeDeletedActivities(Context ctx, final ProgressDialog dialog,
                                               final Runnable onComplete) {
 
-        final DBHelper mDBHelper = new DBHelper(ctx);
+        final DBHelper mDBHelper = DBHelper.getHelper(ctx);
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
         String from[] = { "_id" };
         Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0",

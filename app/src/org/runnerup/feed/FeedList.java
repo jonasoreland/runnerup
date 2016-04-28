@@ -42,12 +42,12 @@ public class FeedList extends Observable implements Constants {
     static final int MAX_ITEMS = 50;
     static final long TIME_MARGIN = 5 * 60; // 5 minutes
 
-    final DBHelper mDBHelper;
+    final SQLiteDatabase mDB;
     List<ContentValues> list = new ArrayList<ContentValues>();
     boolean filterDuplicates = true;
 
-    public FeedList(DBHelper db) {
-        mDBHelper = db;
+    public FeedList(SQLiteDatabase db) {
+        mDB = db;
     }
 
     public void setFilterDuplicates(boolean val) {
@@ -60,8 +60,7 @@ public class FeedList extends Observable implements Constants {
 
     public void load() {
         list.clear();
-        SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.query(DB.FEED.TABLE, null, null, null, null, null, DB.FEED.START_TIME
+        Cursor c = mDB.query(DB.FEED.TABLE, null, null, null, null, null, DB.FEED.START_TIME
                 + " desc", Integer.toString(MAX_ITEMS));
         if (c.moveToFirst()) {
             do {
@@ -69,23 +68,18 @@ public class FeedList extends Observable implements Constants {
             } while (c.moveToNext());
         }
         c.close();
-        db.close();
     }
 
     public void reset() {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        db.execSQL("DELETE FROM " + DB.FEED.TABLE);
-        db.close();
+        mDB.execSQL("DELETE FROM " + DB.FEED.TABLE);
     }
 
     public void prune() {
         if (list.size() >= MAX_ITEMS + 1) {
-            SQLiteDatabase db = mDBHelper.getReadableDatabase();
             ContentValues tmp = list.get(MAX_ITEMS);
             long start_time = tmp.getAsLong(DB.FEED.START_TIME);
-            db.execSQL("DELETE FROM " + DB.FEED.TABLE + " WHERE " + DB.FEED.START_TIME + " < "
+            mDB.execSQL("DELETE FROM " + DB.FEED.TABLE + " WHERE " + DB.FEED.START_TIME + " < "
                     + start_time);
-            db.close();
             List<ContentValues> swap = list.subList(0, MAX_ITEMS);
             list = swap;
         }
@@ -96,7 +90,6 @@ public class FeedList extends Observable implements Constants {
     }
 
     public class FeedUpdater {
-        SQLiteDatabase mDB = null;
         List<ContentValues> currList = null;
         List<ContentValues> addList = null;
         String synchronizer = null;
@@ -104,7 +97,6 @@ public class FeedList extends Observable implements Constants {
         int discarded = 0;
 
         FeedUpdater() {
-            mDB = mDBHelper.getWritableDatabase();
             currList = new ArrayList<ContentValues>(list.size());
             for (ContentValues c : list) { // initialize list with already
                                            // present items
@@ -166,8 +158,6 @@ public class FeedList extends Observable implements Constants {
                 setChanged();
                 notifyObservers(null);
             }
-            mDB.close();
-            mDB = null;
             prune();
             Log.i(getClass().getSimpleName(), "FeedUpdater: " + synchronizer + ", added: " + added + ", discarded: "
                     + discarded);

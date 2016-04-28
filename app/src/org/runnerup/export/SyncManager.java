@@ -78,7 +78,6 @@ public class SyncManager {
     public static final int CONFIGURE_REQUEST = 1;
     public static final long ERROR_ACTIVITY_ID = -1L;
 
-    private DBHelper mDBHelper = null;
     private SQLiteDatabase mDB = null;
     private Activity mActivity = null;
     private Context mContext = null;
@@ -122,8 +121,7 @@ public class SyncManager {
     private void init(Activity activity, Context context, ProgressDialog spinner) {
         this.mActivity = activity;
         this.mContext = context;
-        mDBHelper = new DBHelper(context);
-        mDB = mDBHelper.getWritableDatabase();
+        mDB = DBHelper.getWritableDatabase(context);
         mSpinner = spinner;
         mSpinner.setCancelable(false);
     }
@@ -140,12 +138,7 @@ public class SyncManager {
 
     public synchronized void close() {
         if (mDB != null) {
-            mDB.close();
-            mDB = null;
-        }
-        if (mDBHelper != null) {
-            mDBHelper.close();
-            mDBHelper = null;
+            DBHelper.closeDB(mDB);
         }
     }
 
@@ -500,7 +493,7 @@ public class SyncManager {
 
     private void doUpload(final Synchronizer synchronizer) {
         final ProgressDialog copySpinner = mSpinner;
-        final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
+        final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
 
         copySpinner.setMessage(getResources().getString(SyncMode.UPLOAD.getTextId(), synchronizer.getName()));
 
@@ -990,7 +983,7 @@ public class SyncManager {
 
     private void doSyncMulti(final Synchronizer synchronizer, final SyncMode mode, final SyncActivityItem activityItem) {
         final ProgressDialog copySpinner = mSpinner;
-        final SQLiteDatabase copyDB = mDBHelper.getWritableDatabase();
+        final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
 
         copySpinner.setMessage(Long.toString(1 + syncActivitiesList.size()) + " remaining");
         new AsyncTask<Synchronizer, String, Status>() {
@@ -1166,7 +1159,7 @@ public class SyncManager {
         }
     }
 
-    public Set<String> feedSynchronizersSet() {
+    public Set<String> feedSynchronizersSet(Context ctx) {
         Set<String> set = new HashSet<String>();
         String[] from = new String[] {
                 "_id",
@@ -1176,7 +1169,7 @@ public class SyncManager {
                 DB.ACCOUNT.FLAGS
         };
 
-        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
         Cursor c = db.query(DB.ACCOUNT.TABLE, from, null, null, null, null, null);
         if (c.moveToFirst()) {
             do {
@@ -1192,7 +1185,7 @@ public class SyncManager {
             } while (c.moveToNext());
         }
         c.close();
-        db.close();
+        DBHelper.closeDB(db);
         return set;
     }
 }

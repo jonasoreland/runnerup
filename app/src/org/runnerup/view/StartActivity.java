@@ -151,7 +151,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     TitleSpinner manualPace = null;
     EditText manualNotes = null;
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
 
     Formatter formatter = null;
@@ -165,8 +164,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getWritableDatabase();
+        mDB = DBHelper.getWritableDatabase(this);
         formatter = new Formatter(this);
 
         bindGpsTracker();
@@ -371,8 +369,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         mGpsStatus = null;
         mTracker = null;
 
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         super.onDestroy();
     }
 

@@ -60,7 +60,6 @@ public class UploadActivity extends ListActivity implements Constants {
     SyncManager.SyncMode syncMode = SyncManager.SyncMode.UPLOAD;
     SyncManager syncManager = null;
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
     final List<SyncActivityItem> allSyncActivities = new ArrayList<SyncActivityItem>();
@@ -86,8 +85,7 @@ public class UploadActivity extends ListActivity implements Constants {
         if (intent.hasExtra("synchronizerIcon"))
             synchronizerIcon = intent.getIntExtra("synchronizerIcon", 0);
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);
         syncManager = new SyncManager(this);
 
@@ -152,8 +150,7 @@ public class UploadActivity extends ListActivity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         syncManager.close();
     }
 

@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.RemoteViews;
@@ -23,7 +24,7 @@ import org.runnerup.view.MainLayout;
 import java.util.Set;
 
 public class FeedWidgetProvider extends AppWidgetProvider {
-    private DBHelper mDBHelper = null;
+    private SQLiteDatabase mDB = null;
     private SyncManager mSyncManager = null;
     static private boolean UpdateInProgress = false;
     private class ProgressDialogStub extends ProgressDialog {
@@ -47,17 +48,17 @@ public class FeedWidgetProvider extends AppWidgetProvider {
                 Log.e(getClass().getSimpleName(), "Feed already being refreshed, cancelling this request");
             } else {
                 Log.i(getClass().getSimpleName(), "Downloading latest feed...");
-                if (mDBHelper == null) {
-                    mDBHelper = new DBHelper(context);
+                if (mDB == null) {
+                    mDB = DBHelper.getReadableDatabase(context);
                     mSyncManager = new SyncManager(context, new ProgressDialogStub(context));
                 }
 
                 mSyncManager.clear();
-                FeedList feed = new FeedList(mDBHelper);
+                FeedList feed = new FeedList(mDB);
                 feed.reset();
                 feed.getList().clear();
                 UpdateInProgress = true;
-                Set<String> set = mSyncManager.feedSynchronizersSet();
+                Set<String> set = mSyncManager.feedSynchronizersSet(context);
                 // this will trigger onUpdate automatically
                 mSyncManager.synchronizeFeed(new SyncManager.Callback() {
                     @Override

@@ -116,7 +116,6 @@ public class Tracker extends android.app.Service implements
      */
     Location mActivityLastLocation = null;
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     PersistentGpsLoggerListener mDBWriter = null;
     PowerManager.WakeLock mWakeLock = null;
@@ -130,8 +129,7 @@ public class Tracker extends android.app.Service implements
 
     @Override
     public void onCreate() {
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getWritableDatabase();
+        mDB =DBHelper.getWritableDatabase(this);
         notificationStateManager = new NotificationStateManager(
                 new ForegroundNotificationDisplayStrategy(this));
 
@@ -157,13 +155,8 @@ public class Tracker extends android.app.Service implements
     @Override
     public void onDestroy() {
         if (mDB != null) {
-            mDB.close();
+            DBHelper.closeDB(mDB);
             mDB = null;
-        }
-
-        if (mDBHelper != null) {
-            mDBHelper.close();
-            mDBHelper = null;
         }
 
         reset();

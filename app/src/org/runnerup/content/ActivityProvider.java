@@ -133,8 +133,7 @@ public class ActivityProvider extends ContentProvider {
 
                 Log.e(getClass().getName(), "activity: " + activityId + ", file: "
                         + out.first.getAbsolutePath());
-                DBHelper mDBHelper = new DBHelper(getContext());
-                SQLiteDatabase mDB = mDBHelper.getReadableDatabase();
+                SQLiteDatabase mDB = DBHelper.getReadableDatabase(getContext());
                 try {
                     if (res == TCX) {
                         TCX tcx = new TCX(mDB);
@@ -166,8 +165,7 @@ public class ActivityProvider extends ContentProvider {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                mDB.close();
-                mDBHelper.close();
+                DBHelper.closeDB(mDB);
 
                 ParcelFileDescriptor pfd = ParcelFileDescriptor.open(out.first,
                         ParcelFileDescriptor.MODE_READ_ONLY);

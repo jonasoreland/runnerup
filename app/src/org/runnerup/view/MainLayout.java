@@ -229,16 +229,14 @@ public class MainLayout extends TabActivity {
         if (file.contains("_audio_cues.xml")) {
             String name = file.substring(0, file.indexOf("_audio_cues.xml"));
 
-            DBHelper mDBHelper = new DBHelper(this);
-            SQLiteDatabase mDB = mDBHelper.getWritableDatabase();
+            SQLiteDatabase mDB = DBHelper.getWritableDatabase(this);
 
             ContentValues tmp = new ContentValues();
             tmp.put(DB.AUDIO_SCHEMES.NAME, name);
             tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
             mDB.insert(DB.AUDIO_SCHEMES.TABLE, null, tmp);
 
-            mDB.close();
-            mDBHelper.close();
+            DBHelper.closeDB(mDB);
         }
     }
 

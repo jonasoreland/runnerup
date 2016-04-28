@@ -95,7 +95,6 @@ import java.util.List;
 public class DetailActivity extends AppCompatActivity implements Constants {
 
     long mID = 0;
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     final HashSet<String> pendingSynchronizers = new HashSet<String>();
     final HashSet<String> alreadySynched = new HashSet<String>();
@@ -146,8 +145,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         mID = intent.getLongExtra("ID", -1);
         String mode = intent.getStringExtra("mode");
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         formatter = new Formatter(this);
 
@@ -302,8 +300,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         syncManager.close();
     }
 

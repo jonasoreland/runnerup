@@ -59,7 +59,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     String synchronizer = null;
     Integer synchronizerIcon = null;
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     final ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
 
@@ -78,8 +77,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         Intent intent = getIntent();
         synchronizer = intent.getStringExtra("synchronizer");
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         fillData();
 
@@ -115,11 +113,10 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
         for (Cursor c : mCursors) {
             c.close();
         }
+        DBHelper.closeDB(mDB);
         mCursors.clear();
         syncManager.close();
     }

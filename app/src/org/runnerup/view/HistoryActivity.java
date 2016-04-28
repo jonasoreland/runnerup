@@ -49,7 +49,6 @@ import org.runnerup.workout.Sport;
 public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
 
@@ -64,8 +63,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
         setContentView(R.layout.history);
         listView = (ListView) findViewById(R.id.history_list);
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);
         listView.setDividerHeight(2);
         listView.setOnItemClickListener(this);
@@ -86,8 +84,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
     }
 
     @Override

@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -57,7 +58,7 @@ import java.util.Set;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedActivity extends Activity implements Constants {
 
-    DBHelper mDBHelper = null;
+    SQLiteDatabase mDB = null;
     SyncManager syncManager = null;
     Formatter formatter = null;
 
@@ -77,10 +78,10 @@ public class FeedActivity extends Activity implements Constants {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed);
 
-        mDBHelper = new DBHelper(this);
         syncManager = new SyncManager(this);
         formatter = new Formatter(this);
-        feed = new FeedList(mDBHelper);
+        mDB = DBHelper.getWritableDatabase(this);
+        feed = new FeedList(mDB);
         feed.load(); // load from DB
 
         feedAdapter = new FeedListAdapter(this, feed);
@@ -117,7 +118,7 @@ public class FeedActivity extends Activity implements Constants {
 
     void startSync() {
         syncManager.clear();
-        Set<String> set = syncManager.feedSynchronizersSet();
+        Set<String> set = syncManager.feedSynchronizersSet(this);
         if (!set.isEmpty()) {
             feedAccountButton.setVisibility(View.GONE);
             refreshButton.setVisibility(View.VISIBLE);
@@ -148,7 +149,7 @@ public class FeedActivity extends Activity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         syncManager.close();
         feedAdapter.close();
     }
