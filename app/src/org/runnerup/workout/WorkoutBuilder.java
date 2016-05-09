@@ -319,13 +319,15 @@ public class WorkoutBuilder {
                     break;
                 case RECOVERY:
                 case RESTING: {
-                    IntervalTrigger trigger = new IntervalTrigger();
-                    trigger.dimension = step.durationType;
-                    trigger.first = 1;
-                    trigger.interval = 1;
-                    trigger.scope = Scope.STEP;
-                    trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
-                    step.triggers.add(trigger);
+                    if (step.durationType != null) {
+                        IntervalTrigger trigger = new IntervalTrigger();
+                        trigger.dimension = step.durationType;
+                        trigger.first = 1;
+                        trigger.interval = 1;
+                        trigger.scope = Scope.STEP;
+                        trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
+                        step.triggers.add(trigger);
+                    }
                     addPauseStopResumeTriggers(res, step.triggers, prefs);
 
                     if (!silent) {
@@ -622,8 +624,9 @@ public class WorkoutBuilder {
         }
 
         /**
-         * Add countdowns after steps with duration "until pressed", if next is
-         * not a countdown
+         * Add countdowns after steps with duration "until pressed"
+         * - if next is not a countdown
+         * - and current is not rest
          */
         if (prefs.getBoolean(res.getString(R.string.pref_step_countdown_active), true))
         {
@@ -644,7 +647,7 @@ public class WorkoutBuilder {
                     if (step.durationType != null)
                         continue;
 
-                    if (step.intensity == Intensity.REPEAT)
+                    if (step.intensity == Intensity.REPEAT || step.intensity == Intensity.RESTING)
                         continue;
 
                     if (next == null)

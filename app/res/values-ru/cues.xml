@@ -23,6 +23,7 @@
   <string name="cue_recovery">Восстановление</string>
   <string name="cue_perkilometer">за километр</string>
   <string name="cue_permile">за милю</string>
+  <string name="cue_perhour">в час</string>
   <string name="cue_started">начато</string>
   <string name="cue_paused">приостановлено</string>
   <string name="cue_resumed">продолжено</string>

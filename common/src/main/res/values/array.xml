@@ -67,11 +67,6 @@
     <item>Running</item>
     <item>Biking</item>
     <item>Other</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>Running</item>
-    <item>Biking</item>
-    <item>Other</item>
     <item>Orienteering</item>
     <item>Walking</item>
   </string-array>

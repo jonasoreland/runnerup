@@ -80,7 +80,6 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
 
     private String PHONE_STRING = "my phone";
@@ -111,8 +110,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         PHONE_STRING = getResources().getString(R.string.my_phone);
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         adapter = new WorkoutAccountListAdapter(this);
         list = (ExpandableListView) findViewById(R.id.expandable_list_view);
@@ -337,8 +335,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         syncManager.close();
     }
 

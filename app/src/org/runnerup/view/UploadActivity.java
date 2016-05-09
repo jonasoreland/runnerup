@@ -44,8 +44,8 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer.Status;
-import org.runnerup.util.SyncActivityItem;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;
@@ -60,7 +60,6 @@ public class UploadActivity extends ListActivity implements Constants {
     SyncManager.SyncMode syncMode = SyncManager.SyncMode.UPLOAD;
     SyncManager syncManager = null;
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
     final List<SyncActivityItem> allSyncActivities = new ArrayList<SyncActivityItem>();
@@ -86,8 +85,7 @@ public class UploadActivity extends ListActivity implements Constants {
         if (intent.hasExtra("synchronizerIcon"))
             synchronizerIcon = intent.getIntExtra("synchronizerIcon", 0);
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);
         syncManager = new SyncManager(this);
 
@@ -152,8 +150,7 @@ public class UploadActivity extends ListActivity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         syncManager.close();
     }
 
@@ -331,10 +328,10 @@ public class UploadActivity extends ListActivity implements Constants {
             {
                 TextView tv = (TextView) view.findViewById(R.id.upload_list_sport);
                 if (ai.getSport() == null) {
-                    tv.setText(Sport.textOf(getApplicationContext(), DB.ACTIVITY.SPORT_RUNNING));
+                    tv.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
                 } else {
                     int sport = Sport.valueOf(ai.getSport()).getDbValue();
-                    tv.setText(Sport.textOf(getApplicationContext(), sport));
+                    tv.setText(Sport.textOf(getResources(), sport));
                 }
             }
 

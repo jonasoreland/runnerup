@@ -35,7 +35,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,17 +69,16 @@ import com.mapbox.mapboxsdk.overlay.PathOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
-import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
 import org.runnerup.util.Bitfield;
-import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
@@ -93,10 +92,9 @@ import java.util.Iterator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class DetailActivity extends FragmentActivity implements Constants {
+public class DetailActivity extends AppCompatActivity implements Constants {
 
     long mID = 0;
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     final HashSet<String> pendingSynchronizers = new HashSet<String>();
     final HashSet<String> alreadySynched = new HashSet<String>();
@@ -147,8 +145,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
         mID = intent.getLongExtra("ID", -1);
         String mode = intent.getStringExtra("mode");
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         formatter = new Formatter(this);
 
@@ -170,12 +167,6 @@ public class DetailActivity extends FragmentActivity implements Constants {
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
         map = (MapView) findViewById(R.id.mapview);
-        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
-            map.setVisibility(View.GONE);
-            map = null;
-            TextView placeholder = (TextView)findViewById(R.id.froyo_map_placeholder);
-            placeholder.setVisibility(View.VISIBLE);
-        }
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
         if (this.mode == MODE_SAVE) {
@@ -309,8 +300,7 @@ public class DetailActivity extends FragmentActivity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         syncManager.close();
     }
 

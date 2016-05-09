@@ -17,7 +17,7 @@
   <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">км</string>
-  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_mi">ми</string>
   <string name="metrics_distance_m">м</string>
   <string name="metrics_elapsed_h">ч.</string>
   <string name="metrics_elapsed_m">мин.</string>
@@ -53,6 +53,7 @@
   <string name="heart_rate_zone">Зона</string>
   <string name="Zone">Зоны ЧСС</string>
   <string name="Device">Устройство</string>
+  <string name="Start_hour">Начальный час</string>
   <string name="Heart_rate">Пульс</string>
   <string name="Pace">Темп</string>
   <string name="Scan">Сканирование</string>
@@ -217,19 +218,26 @@
   <string name="Cue_information">Озвучивать следующие параметры:</string>
   <string name="Total_distance">Общая дистанция</string>
   <string name="Total_time">Общее время</string>
+  <string name="Total_speed">Средняя скорость</string>
   <string name="Total_pace">Средний темп</string>
   <string name="Total_heart_rate">Средняя ЧСС</string>
   <string name="Total_heart_rate_zone">Зона ЧСС</string>
   <string name="Interval_distance">Интервал: дистанция</string>
   <string name="Interval_time">Интервал: время</string>
+  <string name="Interval_speed">Интервал: скорость</string>
   <string name="Interval_pace">Интервал: средний темп</string>
   <string name="Interval_heart_rate">Интервал: средняя ЧСС</string>
   <string name="Interval_heart_rate_zone">Интервал: зона ЧСС</string>
   <string name="Lap_distance">Круг: дистанция</string>
   <string name="Lap_time">Круг: время</string>
+  <string name="Lap_speed">Круг: скорость</string>
   <string name="Lap_pace">Круг: средний темп</string>
   <string name="Lap_heart_rate">Круг: средняя ЧСС</string>
   <string name="Lap_heart_rate_zone">Круг: зона ЧСС</string>
+  <string name="Current_pace">Текущий темп</string>
+  <string name="Current_speed">Текущая скорость</string>
+  <string name="Current_heart_rate">Текущий пульс</string>
+  <string name="Current_heart_rate_zone">Текущая зона ЧСС</string>
   <string name="Misc_cues">Прочие голосовые команды</string>
   <string name="Target_coaching">Тренировка по показателям</string>
   <string name="Skip_event_audio_cues">Не озвучивать паузу</string>

@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <!--metrics stuff-->
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
+  <!--format hint stuff-->
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <!--other-->
+  <string name="active">actiu</string>
+  <string name="recovery">recuperació</string>
+  <string name="warm_up">escalfar</string>
+  <string name="cool_down">refredar</string>
+  <string name="repeat">repetir</string>
+  <string name="time">temps</string>
+  <string name="distance">distància</string>
+  <string name="Unknown">Desconegut</string>
+  <string name="Distance">Distància</string>
+  <string name="speed">velocitat</string>
+  <string name="Start_hour">Hora d\'inici</string>
+  <string name="Heart_rate">Ritme cardíac</string>
+  <string name="Connect">Connectar</string>
+  <string name="Connecting">Connectant</string>
+  <string name="Download">Descarregar</string>
+  <string name="Share">Compartir</string>
+  <string name="Delete">Esborrar</string>
+  <string name="Total">Total</string>
+  <string name="Interval">Interval</string>
+  <string name="Remaining">Pendent</string>
+  <string name="Lap">Volta</string>
+  <string name="New_lap">Nova volta</string>
+  <string name="Next_lap">Propera volta</string>
+  <string name="Pause">Pausar</string>
+  <string name="Stop">Aturar</string>
+  <string name="Workout">Entrenament</string>
+  <string name="Download_workouts">Descarregar entrenaments</string>
+  <string name="Sport">Esport</string>
+  <string name="Repetitions">Repeticions</string>
+  <string name="Date">Data</string>
+  <string name="GPS_satellites">Satèl·lits GPS</string>
+  <string name="Start_GPS">Activar GPS</string>
+  <string name="Duration">Duració</string>
+  <string name="Duration_type">Tipus de duració</string>
+  <string name="Cancel">Cancel·lar</string>
+  <string name="value">valor</string>
+  <string name="Select_all">Triar tot</string>
+  <string name="Clear_all">Esborrar tot</string>
+  <string name="Username">Nom d\'usuari</string>
+  <string name="Password">Contrasenya</string>
+  <string name="Show_password">Mostrar contrasenya</string>
+  <string name="intensity">intensitat</string>
+  <string name="Sex">Sexe</string>
+  <string name="upload">penjar</string>
+  <string name="Notes">Comentaris</string>
+  <string name="Laps">Voltes</string>
+  <string name="Map">Mapa</string>
+  <string name="Graph">Gràfic</string>
+  <string name="Upload">Carregar</string>
+  <string name="Configure">Configurar</string>
+  <string name="Disconnect">Desconnectar</string>
+  <string name="Resume">Continuar</string>
+  <string name="Save_activity">Desar activitat</string>
+  <string name="Upload_activity">Pujar activitat</string>
+  <string name="Uploaded">Pujat</string>
+  <string name="Finished">Acabat</string>
+  <string name="Discard_activity">Descartar activitat</string>
+  <string name="Configure_accounts">Configurar comptes</string>
+  <string name="Refresh">Refrescar</string>
+  <string name="Age">Edat</string>
+  <string name="edit">editar</string>
+  <string name="Synchronizing">Sincronitzant:</string>
+  <string name="Disconnect_account">Desconnectar compte</string>
+  <string name="Edit_activity">Editar activitat</string>
+  <string name="Share_activity">Compartir activitat</string>
+  <string name="Delete_activity">Esborrar activitat</string>
+  <string name="Recompute_activity">Recalcular activitat</string>
+  <string name="Configure_heart_rate_zones">Configurar zones de freqüència cardíaca</string>
+  <string name="Clear_heart_rate_zone_settings">Esborrar configuració de zones de freqüència cardíaca</string>
+  <string name="Manage_accounts">Gestionar comptes</string>
+  <string name="Manage_audio_cues">Gestionar pistes d\'àudio</string>
+  <string name="Manage_workouts">Gestionar entrenaments</string>
+  <string name="Settings">Configuració</string>
+  <string name="Whats_new">Que hi ha de nou</string>
+  <string name="Rate_RunnerUp">Valorar RunnerUp</string>
+  <string name="Enable_GPS">Activar GPS</string>
+  <string name="Waiting_for_GPS">Esperant a GPS</string>
+  <string name="Start_activity">Començar activitat</string>
+  <string name="Delete_workout">Esborrar entrenament</string>
+  <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nAquí tens un entrenament que crec que t\'agradarà.</string>
+  <string name="Share_workout">Compartir entrenament...</string>
+  <string name="Not_much_to_say_at_this_point">No hi ha molt a dir en aquest moment</string>
+  <string name="New_audio_scheme">Nou esquema d\'àudio</string>
+  <string name="Default">Per defecte</string>
+  <string name="Notes_about_your_workout">Comentaris sobre el teu entrenament</string>
+  <string name="Downloading_from_1s">Descarregant des de %1$s</string>
+  <string name="Uploading_to_1s">Carregant a %1$s</string>
+  <string name="Loading_activities">Carregant activitats</string>
+  <string name="Fetching_activities_from_1s">Descarregant entrenaments des de %1$s</string>
+</resources>

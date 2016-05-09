@@ -38,8 +38,6 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.db.entities.ActivityEntity;
-import org.runnerup.db.entities.LapEntity;
-import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -66,12 +64,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -126,7 +121,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         }
     }
 
-    static final Map<String, Integer> POINT_TYPE = new HashMap<String, Integer>();
+    public static final Map<String, Integer> POINT_TYPE = new HashMap<String, Integer>();
     static {
         POINT_TYPE.put("start", DB.LOCATION.TYPE_START);
         POINT_TYPE.put("end", DB.LOCATION.TYPE_END);
@@ -496,7 +491,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             if (conn.getResponseCode() == HttpStatus.SC_OK) {
                 BufferedInputStream input = new BufferedInputStream(conn.getInputStream());
                 JSONObject resp = SyncHelper.parse(input);
-                activity = parseToActivity(resp, item);
+                activity = RunKeeper.parseToActivity(resp, getLapLength());
             }
 
         } catch (IOException e) {
@@ -508,147 +503,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return activity;
         }
         return activity;
-    }
-
-    private ActivityEntity parseToActivity(JSONObject response, SyncActivityItem ai) throws JSONException {
-        ActivityEntity newActivity = new ActivityEntity();
-        newActivity.setSport(runkeeper2sportMap.get(response.getString("type")).getDbValue());
-        if (response.has("notes")) {
-            newActivity.setComment(response.getString("notes"));
-        }
-        newActivity.setStartTime(ai.getStartTime());
-        newActivity.setTime(ai.getDuration());
-        newActivity.setDistance(ai.getDistance());
-
-        List<LapEntity> laps = new ArrayList<LapEntity>();
-        List<LocationEntity> locations = new ArrayList<LocationEntity>();
-
-        JSONArray distance = response.getJSONArray("distance");
-        JSONArray path = response.getJSONArray("path");
-        JSONArray hr = response.getJSONArray("heart_rate");
-
-        SortedMap<Long, HashMap<String, String>> pointsValueMap = createPointsMap(distance, path, hr);
-        Iterator<Map.Entry<Long, HashMap<String, String>>> points = pointsValueMap.entrySet().iterator();
-
-        //lap hr
-        int maxHr = 0;
-        int sumHr = 0;
-        int count = 0;
-        //point speed
-        long time = 0;
-        float meters = 0.0f;
-        //activity hr
-        int maxHrOverall = 0;
-        int sumHrOverall = 0;
-        int countOverall = 0;
-
-        while (points.hasNext()) {
-            Map.Entry<Long, HashMap<String, String>> timePoint = points.next();
-            HashMap<String, String> values = timePoint.getValue();
-
-            LocationEntity lv = new LocationEntity();
-            lv.setActivityId(newActivity.getId());
-            lv.setTime(ai.getStartTime() + timePoint.getKey());
-
-            String dist = values.get("distance");
-            if (dist == null) {
-                continue;
-            }
-            String lat = values.get("latitude");
-            String lon = values.get("longitude");
-            String alt = values.get("altitude");
-            String heart = values.get("heart_rate");
-            String type = values.get("type");
-
-            if (lat == null || lon == null) {
-                continue;
-            } else {
-                lv.setLatitude(Double.valueOf(lat));
-                lv.setLongitude(Double.valueOf(lon));
-            }
-            if (alt != null) {
-                lv.setAltitude(Double.valueOf(alt));
-            }
-
-            if (pointsValueMap.firstKey().equals(timePoint.getKey())) {
-                lv.setType(DB.LOCATION.TYPE_START);
-            } else if (!points.hasNext()) {
-                lv.setType(DB.LOCATION.TYPE_END);
-            } else if (type != null) {
-                lv.setType(POINT_TYPE.get(type));
-            }
-            // lap and activity max and avg hr
-            if (heart != null) {
-                lv.setHr(Integer.valueOf(heart));
-                maxHr = Math.max(maxHr, lv.getHr());
-                maxHrOverall = Math.max(maxHrOverall, lv.getHr());
-                sumHr += lv.getHr();
-                sumHrOverall += lv.getHr();
-                count++;
-                countOverall++;
-            }
-
-            meters = Float.valueOf(dist) - meters;
-            time = timePoint.getKey() - time;
-            if (time > 0) {
-                float speed = meters / (float)TimeUnit.MILLISECONDS.toSeconds(time);
-                BigDecimal s = new BigDecimal(speed);
-                s = s.setScale(2, BigDecimal.ROUND_UP);
-                lv.setSpeed(s.floatValue());
-            }
-
-            // create lap if distance greater than configured lap distance
-            double unitMeters = getLapLength();
-            if (Float.valueOf(dist) >= unitMeters * laps.size()) {
-                LapEntity newLap = new LapEntity();
-                newLap.setLap(laps.size());
-                newLap.setDistance(Float.valueOf(dist));
-                newLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()));
-                newLap.setActivityId(newActivity.getId());
-                laps.add(newLap);
-
-                // update previous lap with duration and distance
-                if (laps.size() > 1) {
-                    LapEntity previousLap = laps.get(laps.size() - 2);
-                    previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
-                    previousLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()) - previousLap.getTime());
-
-                    if (hr != null && hr.length() > 0) {
-                        previousLap.setMaxHr(maxHr);
-                        previousLap.setAvgHr(sumHr / count);
-                    }
-                    maxHr = 0;
-                    sumHr = 0;
-                    count = 0;
-                }
-            }
-            // update last lap with duration and distance
-            if (!points.hasNext()) {
-                LapEntity previousLap = laps.get(laps.size() - 1);
-                previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
-                previousLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()) - previousLap.getTime());
-
-                if (hr != null && hr.length() > 0) {
-                    previousLap.setMaxHr(maxHr);
-                    previousLap.setAvgHr(sumHr / count);
-                }
-            }
-
-            lv.setLap(laps.size()-1);
-
-            locations.add(lv);
-        }
-        // calculate avg and max hr
-        // update the activity
-        newActivity.setMaxHr(maxHrOverall);
-        if (countOverall > 0) {
-            newActivity.setAvgHr(sumHrOverall / countOverall);
-        }
-
-        newActivity.putPoints(locations);
-        newActivity.putLaps(laps);
-
-        return newActivity;
     }
 
     private double getLapLength() {
@@ -665,55 +519,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return lapLength;
         }
         return lapLength;
-    }
-
-    private SortedMap<Long, HashMap<String, String>> createPointsMap(JSONArray distance, JSONArray path, JSONArray hr) throws JSONException {
-        SortedMap<Long, HashMap<String, String>> result = new TreeMap<Long, HashMap<String, String>>();
-
-        if (distance != null && distance.length() > 0) {
-            for (int i = 0; i < distance.length(); i++) {
-                JSONObject o = distance.getJSONObject(i);
-                Long key = TimeUnit.SECONDS.toMillis((long) Float.parseFloat(o.getString("timestamp")));
-                HashMap<String, String> value = new HashMap<String, String>();
-                String valueMapKey = "distance";
-                String valueMapValue = o.getString(valueMapKey);
-                value.put(valueMapKey, valueMapValue);
-                result.put(key, value);
-            }
-        }
-
-        if (path != null && path.length() > 0) {
-            for (int i = 0; i < path.length(); i++) {
-                JSONObject o = path.getJSONObject(i);
-                Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
-                HashMap<String, String> value = result.get(key);
-                if (value == null) {
-                    value = new HashMap<String, String>();
-                }
-                String[] attrs = new String[] {"latitude", "longitude", "altitude", "type"};
-                for (String valueMapKey : attrs) {
-                    String valueMapValue = o.getString(valueMapKey);
-                    value.put(valueMapKey, valueMapValue);
-                }
-                result.put(key, value);
-            }
-        }
-
-        if (hr != null && hr.length() > 0) {
-            for (int i = 0; i < hr.length(); i++) {
-                JSONObject o = hr.getJSONObject(i);
-                Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
-                HashMap<String, String> value = result.get(key);
-                if (value == null) {
-                    value = new HashMap<String, String>();
-                }
-                String valueMapKey = "heart_rate";
-                String valueMapValue = o.getString(valueMapKey);
-                value.put(valueMapKey, valueMapValue);
-                result.put(key, value);
-            }
-        }
-        return result;
     }
 
     @Override

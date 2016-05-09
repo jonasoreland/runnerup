@@ -23,6 +23,7 @@
   <string name="cue_recovery">regeneracja</string>
   <string name="cue_perkilometer">na kilometr</string>
   <string name="cue_permile">na milę</string>
+  <string name="cue_perhour">na godzinę</string>
   <string name="cue_started">rozpoczęte</string>
   <string name="cue_paused">zatrzymana</string>
   <string name="cue_resumed">wznowiona</string>

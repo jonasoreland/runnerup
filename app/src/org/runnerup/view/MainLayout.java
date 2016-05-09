@@ -229,52 +229,15 @@ public class MainLayout extends TabActivity {
         if (file.contains("_audio_cues.xml")) {
             String name = file.substring(0, file.indexOf("_audio_cues.xml"));
 
-            DBHelper mDBHelper = new DBHelper(this);
-            SQLiteDatabase mDB = mDBHelper.getWritableDatabase();
+            SQLiteDatabase mDB = DBHelper.getWritableDatabase(this);
 
             ContentValues tmp = new ContentValues();
             tmp.put(DB.AUDIO_SCHEMES.NAME, name);
             tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
             mDB.insert(DB.AUDIO_SCHEMES.TABLE, null, tmp);
 
-            mDB.close();
-            mDBHelper.close();
+            DBHelper.closeDB(mDB);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent i = null;
-        switch (item.getItemId()) {
-            case R.id.menu_accounts:
-                i = new Intent(this, AccountListActivity.class);
-                break;
-            case R.id.menu_workouts:
-                i = new Intent(this, ManageWorkoutsActivity.class);
-                break;
-            case R.id.menu_audio_cues:
-                i = new Intent(this, AudioCueSettingsActivity.class);
-                break;
-            case R.id.menu_settings:
-                getTabHost().setCurrentTab(3);
-                return true;
-            case R.id.menu_rate:
-                onRateClick.onClick(null);
-                break;
-            case R.id.menu_whatsnew:
-                whatsNew();
-                break;
-        }
-        if (i != null) {
-            startActivity(i);
-        }
-        return true;
     }
 
     public final OnClickListener onRateClick = new OnClickListener() {
@@ -311,5 +274,40 @@ public class MainLayout extends TabActivity {
         });
         builder.show();
         wv.loadUrl("file:///android_asset/changes.html");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i = null;
+        switch (item.getItemId()) {
+            case R.id.menu_accounts:
+                i = new Intent(this, AccountListActivity.class);
+                break;
+            case R.id.menu_workouts:
+                i = new Intent(this, ManageWorkoutsActivity.class);
+                break;
+            case R.id.menu_audio_cues:
+                i = new Intent(this, AudioCueSettingsActivity.class);
+                break;
+            case R.id.menu_settings:
+                getTabHost().setCurrentTab(3);
+                return true;
+            case R.id.menu_rate:
+                onRateClick.onClick(null);
+                break;
+            case R.id.menu_whatsnew:
+                whatsNew();
+                break;
+        }
+        if (i != null) {
+            startActivity(i);
+        }
+        return true;
     }
 }

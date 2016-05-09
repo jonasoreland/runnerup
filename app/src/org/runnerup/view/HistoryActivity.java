@@ -37,9 +37,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
-import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
@@ -49,7 +49,6 @@ import org.runnerup.workout.Sport;
 public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     Formatter formatter = null;
 
@@ -64,8 +63,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
         setContentView(R.layout.history);
         listView = (ListView) findViewById(R.id.history_list);
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getReadableDatabase();
+        mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);
         listView.setDividerHeight(2);
         listView.setOnItemClickListener(this);
@@ -86,8 +84,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
     }
 
     @Override
@@ -193,9 +190,9 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
                 TextView tv = (TextView) view.findViewById(to[5]);
 
                 if (s != null) {
-                    tv.setText(Sport.textOf(getApplicationContext(), s));
+                    tv.setText(Sport.textOf(getResources(), s));
                 } else {
-                    tv.setText(Sport.textOf(getApplicationContext(), DB.ACTIVITY.SPORT_RUNNING));
+                    tv.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
                 }
             }
         }

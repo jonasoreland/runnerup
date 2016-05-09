@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Mil</item>
+    <item>Kilometer</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mil</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Pemanasan</item>
+    <item>Aktif</item>
+    <item>Istirahat</item>
+    <item>Pemulihan</item>
+    <item>Pendinginan</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Sampai dihentikan</item>
+    <item>Waktu</item>
+    <item>Jarak</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Tiada</item>
+    <item>Laju</item>
+    <item>Zona denyut jantung</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Lari</item>
+    <item>Sepeda</item>
+    <item>Lainnya</item>
+  </string-array>
+  <string-array name="sportEntriesExperimental">
+    <item>Lari</item>
+    <item>Sepeda</item>
+    <item>Lainnya</item>
+    <item>Orienteering</item>
+    <item>Jalan kaki</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>Tidak</item>
+    <item>Ya</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>tidak</item>
+    <item>ya</item>
+  </string-array>
+  <string-array name="types">
+    <item>Waktu</item>
+    <item>Jarak</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Pria</item>
+    <item>Wanita</item>
+  </string-array>
+  <!--Audio cue languages-->
+  <string-array name="cueLanguageNames">
+    <item>Inggris</item>
+    <item>Belanda</item>
+    <item>Jerman</item>
+    <item>Jepang</item>
+    <item>Arab</item>
+    <item>Rusia</item>
+    <item>Spanyol</item>
+    <item>Perancis</item>
+    <item>Italia</item>
+    <item>Polandia</item>
+    <item>Turki</item>
+    <item>Portugis</item>
+  </string-array>
+  <!--Note: keep in same order as languagesNames-->
+  <string-array name="cueLanguageCodes">
+    <item>en</item>
+    <item>nl</item>
+    <item>de</item>
+    <item>ja</item>
+    <item>ar</item>
+    <item>ru</item>
+    <item>es</item>
+    <item>fr</item>
+    <item>it</item>
+    <item>pl</item>
+    <item>tr</item>
+    <item>pt</item>
+  </string-array>
+</resources>

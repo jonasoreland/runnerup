@@ -50,6 +50,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,7 +171,6 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        Exception ex = null;
         HttpURLConnection conn = null;
         try {
             /**
@@ -204,31 +204,26 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                         buf.append(line);
                     }
                     response = buf.toString().replaceAll("<User>.*</User>", "\"\"");
-                    Log.e(getName(), "buf: " + buf.toString());
-                    Log.e(getName(), "res: " + response);
                 }
                 JSONObject obj = SyncHelper.parse(new ByteArrayInputStream(response.getBytes()));
-                conn.disconnect();
 
                 access_token = obj.getString("access_token");
                 String expires = obj.getString("expires_in");
                 expires_timeout = now() + Long.parseLong(expires);
-                return Status.OK;
+                s = Status.OK;
             }
-        } catch (MalformedURLException e) {
-            ex = e;
-        } catch (IOException e) {
-            ex = e;
-        } catch (JSONException e) {
-            ex = e;
+        } catch (UnknownHostException e) {
+            // probably no internet connection available
+            s = Status.SKIP;
+        } catch (Exception e) {
+            s.ex = e;
         }
 
-        if (conn != null)
+        if (conn != null) {
             conn.disconnect();
-
-        s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
+        }
+        if (s.ex != null) {
+            Log.e(getClass().getSimpleName(), s.ex.getMessage());
         }
         return s;
     }
@@ -386,11 +381,12 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
     }
 
     private void getOwnFeed(SimpleDateFormat df, List<ContentValues> result) {
+        JSONObject profile = null;
         try {
-            JSONObject profile = makeGetRequest(String.format(PROFILE_URL, access_token));
+            profile = makeGetRequest(String.format(PROFILE_URL, access_token));
             String first = profile.getString("firstName");
             String last = profile.getString("lastName");
-            String userUrl = profile.getString("avatarFullUrl");
+            String userUrl = profile.has("avatarFullUrl") ? profile.getString("avatarFullUrl") : null;
             JSONObject feed = makeGetRequest(String.format(MY_FEED_URL, access_token, 1, 25));
             JSONArray arr = feed.getJSONArray("events");
             for (int i = 0; i < arr.length(); i++) {
@@ -413,24 +409,31 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                     }
                     c.put(FEED.USER_FIRST_NAME, first);
                     c.put(FEED.USER_LAST_NAME, last);
-                    c.put(FEED.USER_IMAGE_URL, userUrl);
+                    if (userUrl != null) {
+                        c.put(FEED.USER_IMAGE_URL, userUrl);
+                    }
                     result.add(c);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            if (profile != null) {
+                Log.e(getClass().getSimpleName(), "Failed for profile '" + profile + "' because of the following: " + e.getMessage());
+            } else {
+                e.getStackTrace();
+            }
         }
     }
 
     private void getFriendsFeed(SimpleDateFormat df, List<ContentValues> result) {
         try {
             JSONObject feed = makeGetRequest(String.format(FRIEND_FEED_URL, access_token, 1, 25));
+
+            if (!feed.has("friends")) {
+                Log.i(getClass().getSimpleName(), "No friends found, skipping their feed...");
+                return;
+            }
             JSONArray arr = feed.getJSONArray("friends");
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject e = arr.getJSONObject(i).getJSONObject("event");
@@ -456,11 +459,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                     ex.printStackTrace();
                 }
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

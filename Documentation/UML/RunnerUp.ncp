@@ -1,0 +1,1185 @@
+<Project>
+  <Name>Runner Up</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>app</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>Workout</Name>
+        <Access>Public</Access>
+        <Location left="659" top="627" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">int stepListeners</Member>
+        <Member type="Method">public void getCurrentStep()</Member>
+        <Member type="Method">public void setTracker()</Member>
+        <Member type="Method">public void onNewLap()</Member>
+        <Member type="Method">public void onSave()</Member>
+        <Member type="Method">public boolean isPaused()</Member>
+        <Member type="Method">public void registerWorkoutStepListener()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>WorkoutComponent</Name>
+        <Access>Public</Access>
+        <Location left="447" top="226" />
+        <Size width="162" height="214" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void onInit()</Member>
+        <Member type="Method">void onBind()</Member>
+        <Member type="Method">void onRepeat()</Member>
+        <Member type="Method">void onStart()</Member>
+        <Member type="Method">void onPause()</Member>
+        <Member type="Method">void onStop()</Member>
+        <Member type="Method">void onResume()</Member>
+        <Member type="Method">void onComplete()</Member>
+        <Member type="Method">void onEnd()</Member>
+      </Entity>
+      <Entity type="Interface">
+        <Name>WorkoutInfo</Name>
+        <Access>Public</Access>
+        <Location left="635" top="226" />
+        <Size width="162" height="231" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">double get()</Member>
+        <Member type="Method">double getDistance()</Member>
+        <Member type="Method">void getTime()</Member>
+        <Member type="Method">void getPace()</Member>
+        <Member type="Method">void getDuration()</Member>
+        <Member type="Method">void getRemaining()</Member>
+        <Member type="Method">int getSport()</Member>
+        <Member type="Method">boolean isPaused()</Member>
+        <Member type="Method">void isEnabled()</Member>
+        <Member type="Method">Location getLastKnownLocation()</Member>
+      </Entity>
+      <Entity type="Class">
+        <Name>Tracker</Name>
+        <Access>Public</Access>
+        <Location left="1052" top="671" />
+        <Size width="162" height="366" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">long mLapId</Member>
+        <Member type="Field">int mActivityId</Member>
+        <Member type="Field">long mElapsedTimeMillis</Member>
+        <Member type="Field">long mElapsedDistance</Member>
+        <Member type="Field">double mHeartbeats</Member>
+        <Member type="Field">Location mLastLocation</Member>
+        <Member type="Field">Location mActivityLastLocation</Member>
+        <Member type="Method">public void newLap()</Member>
+        <Member type="Method">public void saveLap()</Member>
+        <Member type="Method">public void pause()</Member>
+        <Member type="Method">public void stop()</Member>
+        <Member type="Method">public void resume()</Member>
+        <Member type="Method">public void reset()</Member>
+        <Member type="Method">public double getTime()</Member>
+        <Member type="Method">public void getSpeed()</Member>
+        <Member type="Method">public double getDistance()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TrackerGPS</Name>
+        <Access>Public</Access>
+        <Location left="1297" top="655" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TrackerHRM</Name>
+        <Access>Public</Access>
+        <Location left="1483" top="655" />
+        <Size width="162" height="173" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>TrackerWear</Name>
+        <Access>Public</Access>
+        <Location left="1659" top="655" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>LocationListener</Name>
+        <Access>Public</Access>
+        <Location left="1157" top="430" />
+        <Size width="162" height="120" />
+        <Collapsed>True</Collapsed>
+      </Entity>
+      <Entity type="Class">
+        <Name>DefaultTrackerComponent</Name>
+        <Access>Public</Access>
+        <Location left="1465" top="413" />
+        <Size width="195" height="137" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>TrackerComponent</Name>
+        <Access>Public</Access>
+        <Location left="1483" top="185" />
+        <Size width="162" height="180" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">ResultCode onInit()</Member>
+        <Member type="Method">void onConnected()</Member>
+        <Member type="Method">void onStart()</Member>
+        <Member type="Method">void onPause()</Member>
+        <Member type="Method">void onResume()</Member>
+        <Member type="Method">void onComplete()</Member>
+        <Member type="Method">ResultCode onEnd()</Member>
+      </Entity>
+      <Entity type="Enum">
+        <Name>TrackerState</Name>
+        <Access>Public</Access>
+        <Location left="1187" top="1118" />
+        <Size width="162" height="231" />
+        <Collapsed>False</Collapsed>
+        <Value>INIT</Value>
+        <Value>INITIALIZING</Value>
+        <Value>INITIALIZED</Value>
+        <Value>CONNECTING</Value>
+        <Value>CONNECTED</Value>
+        <Value>STARTED</Value>
+        <Value>PAUSED</Value>
+        <Value>STOPPED</Value>
+        <Value>CLEANUP</Value>
+        <Value>ERROR</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>ValueModel&lt;TrackerState&gt;</Name>
+        <Access>Public</Access>
+        <Location left="925" top="1118" />
+        <Size width="192" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">TrackerState state</Member>
+        <Member type="Method">public TrackerState get()</Member>
+        <Member type="Method">public void set()</Member>
+        <Member type="Method">public void registerChangeListener()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ChangeListener</Name>
+        <Access>Public</Access>
+        <Location left="707" top="1118" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Comment">
+        <Text>Updated 2015-10-21</Text>
+        <Location left="499" top="92" />
+        <Size width="160" height="75" />
+      </Entity>
+      <Entity type="Class">
+        <Name>Step</Name>
+        <Access>Public</Access>
+        <Location left="430" top="627" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">String name</Member>
+        <Member type="Field">int stepStartTime</Member>
+        <Member type="Field">double stepStartDistance</Member>
+        <Member type="Field">double lapStartTime</Member>
+        <Member type="Field">double lapStartDistance</Member>
+        <Member type="Method">public double getDistance()</Member>
+        <Member type="Method">public double getTime()</Member>
+        <Member type="Method">public double getSpeed()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Intensity</Name>
+        <Access>Public</Access>
+        <Location left="133" top="381" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>ACTIVE</Value>
+        <Value>RESTING</Value>
+        <Value>WARMUP</Value>
+        <Value>COOLDOWN</Value>
+        <Value>REPEAT</Value>
+        <Value>RECOVERY</Value>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Dimension</Name>
+        <Access>Public</Access>
+        <Location left="133" top="650" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>TIME</Value>
+        <Value>DISTANCE</Value>
+        <Value>SPEED</Value>
+        <Value>PACE</Value>
+        <Value>HR</Value>
+        <Value>HRZ</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>Range</Name>
+        <Access>Public</Access>
+        <Location left="181" top="935" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">int minValue</Member>
+        <Member type="Field">double maxValue</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>TickComponent</Name>
+        <Access>Public</Access>
+        <Location left="383" top="506" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+      </Entity>
+      <Entity type="Class">
+        <Name>SQLiteDatabase</Name>
+        <Access>Public</Access>
+        <Location left="1465" top="872" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>PersistentGpsLoggerListener</Name>
+        <Access>Public</Access>
+        <Location left="1465" top="967" />
+        <Size width="209" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>GpsStatus</Name>
+        <Access>Public</Access>
+        <Location left="1233" top="534" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Service</Name>
+        <Access>Public</Access>
+        <Location left="1013" top="568" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Realization" first="0" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>679</X>
+          <Y>598</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>567</X>
+          <Y>484</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="0" second="2">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>729</X>
+          <Y>599</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>729</X>
+          <Y>489</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="0" second="3">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>tracker</EndRole>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="3" second="4">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1239</X>
+          <Y>775</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1349</X>
+          <Y>743</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="3" second="5">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1560</X>
+          <Y>798</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="3" second="6">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1239</X>
+          <Y>841</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1706</X>
+          <Y>748</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Realization" first="3" second="7">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1197</X>
+          <Y>646</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="4" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1388</X>
+          <Y>630</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1496</X>
+          <Y>593</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="5" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1562</X>
+          <Y>580</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="6" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1634</X>
+          <Y>579</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="8" second="9">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1559</X>
+          <Y>388</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="3" second="10">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1155</X>
+          <Y>1062</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>nextState</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="3" second="11">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1039</X>
+          <Y>1093</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>state</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="3" second="0">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1025</X>
+          <Y>814</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="11" second="12">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>listeners</EndRole>
+        <EndMultiplicity>0..*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="11" second="10">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>state</EndRole>
+        <EndMultiplicity>0..1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="0" second="14">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>currentStep</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="14" second="15">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>intensity</EndRole>
+        <EndMultiplicity>0..1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="14" second="16">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>targetType</EndRole>
+        <EndMultiplicity>0..1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="14" second="17">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>targetValue</EndRole>
+        <EndMultiplicity>0..1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Generalization" first="18" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>468</X>
+          <Y>472</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Realization" first="14" second="18">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>490</X>
+          <Y>584</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="3" second="19">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1286</X>
+          <Y>889</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1429</X>
+          <Y>889</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>mDB</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="3" second="20">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1243</X>
+          <Y>994</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1440</X>
+          <Y>994</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>mDBWriter</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="4" second="3">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="20" second="19">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="4" second="21">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1364</X>
+          <Y>628</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1364</X>
+          <Y>604</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Realization" first="21" second="7">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1290</X>
+          <Y>502</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="3" second="22">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1096</X>
+          <Y>646</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1096</X>
+          <Y>638</Y>
+        </BendPoint>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>DB</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Interface">
+        <Name>DBEntity</Name>
+        <Access>Public</Access>
+        <Location left="649" top="105" />
+        <Size width="162" height="117" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void insert()</Member>
+        <Member type="Method">void update()</Member>
+      </Entity>
+      <Entity type="Class">
+        <Name>AbstractEntity</Name>
+        <Access>Public</Access>
+        <Location left="637" top="273" />
+        <Size width="192" height="196" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private ContentValues mContentValues</Member>
+        <Member type="Method">public Long getId()</Member>
+        <Member type="Method">public void setId()</Member>
+        <Member type="Method">public long insert()</Member>
+        <Member type="Method">public void update()</Member>
+        <Member type="Method">public void readByPrimaryKey()</Member>
+        <Member type="Method">public ContentValues values()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ActivityEntity</Name>
+        <Access>Public</Access>
+        <Location left="701" top="569" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private List laps</Member>
+        <Member type="Field">private List locationPoints</Member>
+        <Member type="Method">public void setStartTime()</Member>
+        <Member type="Method">public void setDistance()</Member>
+        <Member type="Method">public void setTime()</Member>
+        <Member type="Method">public void setSport()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>LapEntity</Name>
+        <Access>Public</Access>
+        <Location left="451" top="569" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>LocationEntity</Name>
+        <Access>Public</Access>
+        <Location left="985" top="569" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Realization" first="1" second="0">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="2" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>741</X>
+          <Y>496</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="2" second="3">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>673</X>
+          <Y>631</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="2" second="4">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>898</X>
+          <Y>651</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>956</X>
+          <Y>651</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="3" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>693</X>
+          <Y>498</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="4" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>812</X>
+          <Y>498</Y>
+        </BendPoint>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>wear</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>MainActivity</Name>
+        <Access>Public</Access>
+        <Location left="714" top="231" />
+        <Size width="213" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void registerTrackerStateListener()</Member>
+        <Member type="Method">public TrackerState getTrackerState()</Member>
+        <Member type="Method">public StateService getStateService()</Member>
+        <Member type="Method">public Bundle getData()</Member>
+        <Member type="Method">public Bundle getHeaders()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ValueModel</Name>
+        <Access>Public</Access>
+        <Location left="986" top="598" />
+        <Size width="192" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private TrackerState value</Member>
+        <Member type="Method">public void registerChangeListener()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>GridViewPager</Name>
+        <Access>Public</Access>
+        <Location left="518" top="524" />
+        <Size width="162" height="77" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>PagerAdapter</Name>
+        <Access>Public</Access>
+        <Location left="613" top="657" />
+        <Size width="207" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public Fragment getFragment()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>ChangeListener</Name>
+        <Access>Public</Access>
+        <Location left="1252" top="598" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+      </Entity>
+      <Entity type="Comment">
+        <Text>wear</Text>
+        <Location left="734" top="22" />
+        <Size width="160" height="75" />
+      </Entity>
+      <Entity type="Class">
+        <Name>ListenerService</Name>
+        <Access>Public</Access>
+        <Location left="1395" top="217" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void showNotification()</Member>
+        <Member type="Method">public void dismissNotification()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>WearableListenerService</Name>
+        <Access>Public</Access>
+        <Location left="1382" top="111" />
+        <Size width="186" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>FragmentGridPagerAdapter</Name>
+        <Access>Public</Access>
+        <Location left="714" top="524" />
+        <Size width="209" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ConnectToPhoneFragment</Name>
+        <Access>Public</Access>
+        <Location left="226" top="132" />
+        <Size width="162" height="77" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>StartFragment</Name>
+        <Access>Public</Access>
+        <Location left="408" top="69" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SearchingFragment</Name>
+        <Access>Public</Access>
+        <Location left="226" top="69" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>CountdownFragment</Name>
+        <Access>Public</Access>
+        <Location left="226" top="201" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RunInfoFragment</Name>
+        <Access>Public</Access>
+        <Location left="408" top="261" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>StoppedFragment</Name>
+        <Access>Public</Access>
+        <Location left="408" top="132" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>PauseResumeFragment</Name>
+        <Access>Public</Access>
+        <Location left="408" top="201" />
+        <Size width="162" height="77" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>StateService</Name>
+        <Access>Public</Access>
+        <Location left="1186" top="217" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Bundle data</Member>
+        <Member type="Field">private Bundle headers</Member>
+        <Member type="Method">public void onDataChanged()</Member>
+        <Member type="Method">public void onMessageReceived()</Member>
+        <Member type="Method">public void registerPauseStepListener()</Member>
+        <Member type="Method">public Bundle getData()</Member>
+        <Member type="Method">public Bundle getHeaders()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Service</Name>
+        <Access>Public</Access>
+        <Location left="1186" top="111" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="0" second="1">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1018</X>
+          <Y>573</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>trackerState</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="0" second="2">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>605</X>
+          <Y>351</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+        <EndRole>pager</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="1" second="4">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1211</X>
+          <Y>680</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>listeners</EndRole>
+        <EndMultiplicity>0..*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Realization" first="3" second="4">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>870</X>
+          <Y>840</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1336</X>
+          <Y>873</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="2" second="3">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>586</X>
+          <Y>688</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="6" second="7">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="3" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Generalization" first="16" second="17">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1268</X>
+          <Y>181</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="0" second="16">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>958</X>
+          <Y>303</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1159</X>
+          <Y>303</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>mStateService</EndRole>
+        <EndMultiplicity>0..1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="13" second="0">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>608</X>
+          <Y>285</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>646</X>
+          <Y>285</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+        <EndRole>activity</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="16" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1143</X>
+          <Y>573</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>trackerState</EndRole>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>activity</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>RunActivity</Name>
+        <Access>Public</Access>
+        <Location left="748" top="327" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>StartActivity</Name>
+        <Access>Public</Access>
+        <Location left="561" top="328" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void manualSaveButtonClick()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Interface">
+        <Name>TickListener</Name>
+        <Access>Public</Access>
+        <Location left="746" top="62" />
+        <Size width="162" height="125" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">void onTick()</Member>
+      </Entity>
+      <Entity type="Class">
+        <Name>Workout</Name>
+        <Access>Public</Access>
+        <Location left="864" top="679" />
+        <Size width="162" height="264" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void onTick()</Member>
+        <Member type="Method">public void getDistance()</Member>
+        <Member type="Method">public void getTime()</Member>
+        <Member type="Method">public void getPace()</Member>
+        <Member type="Method">public void onNewLap()</Member>
+        <Member type="Method">public void onNextStep()</Member>
+        <Member type="Method">public void onStop()</Member>
+        <Member type="Method">public void onResume()</Member>
+        <Member type="Method">public void onPause()</Member>
+        <Member type="Method">public void isPaused()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Tracker</Name>
+        <Access>Public</Access>
+        <Location left="655" top="679" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void setWorkout()</Member>
+        <Member type="Method">public void start()</Member>
+        <Member type="Method">public TrackerState getState()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>GPSStatus</Name>
+        <Access>Public</Access>
+        <Location left="298" top="327" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>SQLiteDatabase</Name>
+        <Access>Public</Access>
+        <Location left="298" top="410" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>WorkoutAdapter</Name>
+        <Access>Public</Access>
+        <Location left="1013" top="386" />
+        <Size width="162" height="132" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Workout</Name>
+        <Access>Public</Access>
+        <Location left="469" top="679" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>WorkoutBuilder</Name>
+        <Access>Public</Access>
+        <Location left="272" top="679" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Dependency" first="1" second="2">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>791</X>
+          <Y>212</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Dependency" first="0" second="2">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="0" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>882</X>
+          <Y>575</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>882</X>
+          <Y>650</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="0" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>800</X>
+          <Y>582</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="1" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>695</X>
+          <Y>597</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>695</X>
+          <Y>654</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="1" second="5">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="1" second="6">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="0" second="7">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="1" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>595</X>
+          <Y>654</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>advancedWorkout</EndRole>
+        <EndMultiplicity>0..1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="1" second="9">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>536</X>
+          <Y>504</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>380</X>
+          <Y>654</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>

@@ -23,8 +23,8 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.tracker.Tracker;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.feedback.RUTextToSpeech;
@@ -478,12 +478,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
      * @return flattened list of all steps in workout
      */
     static public class StepListEntry {
-        public StepListEntry(Step step, int level, Step parent) {
+        public StepListEntry(int index, Step step, int level, Step parent) {
+            this.index = index;
             this.level = level;
             this.step = step;
             this.parent = parent;
         }
 
+        public final int index;
         public final int level;
         public final Step parent;
         public final Step step;

@@ -53,6 +53,7 @@
   <string name="heart_rate_zone">strefa tętna</string>
   <string name="Zone">Strefa</string>
   <string name="Device">Urządzenie</string>
+  <string name="Start_hour">Godzina startu</string>
   <string name="Heart_rate">Tętno</string>
   <string name="Pace">Tempo</string>
   <string name="Scan">Skanuj</string>

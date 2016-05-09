@@ -32,6 +32,7 @@ import android.util.Log;
 import org.runnerup.R;
 import org.runnerup.workout.Dimension;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -56,7 +57,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public static final int CUE = 1; // for text to speech
     public static final int CUE_SHORT = 2; // brief for tts
     public static final int CUE_LONG = 3; // long for tts
-    public static final int TXT = 4; // same as TXT_SHORT
+    public static final int TXT = 4; // same as TXT_SHORT but without unit
     public static final int TXT_SHORT = 5; // brief for printing
     public static final int TXT_LONG = 6; // long for printing
 
@@ -498,12 +499,18 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE_SHORT:
                 return cueDistance(meters, false);
             case TXT:
+                return cueDistanceInKmOrMiles(meters);
             case TXT_SHORT:
                 return cueDistance(meters, true);
             case TXT_LONG:
                 return Long.toString(meters) + " m";
         }
         return null;
+    }
+
+    private String cueDistanceInKmOrMiles(long meters) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(meters / base_meters);
     }
 
     private String cueDistance(long meters, boolean txt) {

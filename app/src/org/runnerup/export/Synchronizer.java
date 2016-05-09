@@ -165,4 +165,16 @@ public interface Synchronizer {
     public Status getFeed(FeedUpdater feedUpdater);
 
     public Status refreshToken();
+
+    /**
+     * Get any authorization user notice to be shown when user enters username/password.
+     * @return A string resource id or null.
+     */
+    public Integer getAuthNotice();
+
+    /**
+     * Set any authorization user notice to be shown when user enters username/password.
+     * @param authNotice String resource id or null.
+     */
+    public void setAuthNotice(Integer authNotice);
 }

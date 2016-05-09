@@ -51,7 +51,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
     public static final String BASE_URL = "https://www.runtastic.com";
-    public static final String START_URL = BASE_URL;
+    public static final String START_URL = BASE_URL + "/en/login";
     public static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in.json";
     public static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
     public static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";

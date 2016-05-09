@@ -2,8 +2,8 @@ apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '20.0.0'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
     sourceSets {
         main {
@@ -24,20 +24,21 @@ android {
             manifest.srcFile 'latest/AndroidManifest.xml'
             java.srcDirs = ['latest/java']
         }
+        test.setRoot('test')
     }
 
     productFlavors {
         latest {
             minSdkVersion 14
-            targetSdkVersion 21
-            versionName "1.47"
-            versionCode 14000047
+            targetSdkVersion 22
+            versionName "1.53"
+            versionCode 14000053
         }
         froyo {
             minSdkVersion 8
-            targetSdkVersion 18
-            versionName "1.47"
-            versionCode 8000047
+            targetSdkVersion 22
+            versionName "1.53"
+            versionCode 8000053
         }
     }
 
@@ -66,13 +67,13 @@ android {
 
 repositories {
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/groups/public/" }
 }
 
 dependencies {
-    latestCompile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.0'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
-
-    froyoCompile 'com.android.support:support-v4:19.1.+'
+    latestCompile 'com.getpebble:pebblekit:3.0.0'
 
     compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar'){
         transitive=true
@@ -83,7 +84,10 @@ dependencies {
     compile project(':common')
     compile project(':hrdevice')
 
-   latestWearApp project(':wear')
+    latestWearApp project(':wear')
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
 }
 
 allprojects {
@@ -111,7 +115,7 @@ android.applicationVariants.all{ variant ->
     variant.mergeResources.doLast{
         if (rootProject.file("mapbox.properties").exists()) {
             props.load(new FileInputStream(rootProject.file("mapbox.properties")))
-            File valuesFile = file("${buildDir}/intermediates/res/${variant.dirName}/values/values.xml")
+            File valuesFile = file("${buildDir}/intermediates/res/merged/${variant.dirName}/values/values.xml")
             String content = valuesFile.getText('UTF-8')
             content = content.replaceAll(/mapboxMapID.*/, "mapboxMapID\">" + props.mapboxid + "</string>")
             content = content.replaceAll(/mapboxAccessToken.*/, "mapboxAccessToken\">" + props.mapboxAccessToken + "</string>")

@@ -391,7 +391,7 @@ public class Step implements TickComponent {
 
     public static Step createPauseStep(Dimension dim, double duration) {
         Step step = null;
-        if (dim == Dimension.TIME)
+        if (dim == null || dim == Dimension.TIME)
             step = new PauseStep();
         else
             step = new Step();
@@ -403,7 +403,7 @@ public class Step implements TickComponent {
     }
 
     public void getSteps(Step parent, int i, List<Workout.StepListEntry> list) {
-        list.add(new Workout.StepListEntry(this, i, parent));
+        list.add(new Workout.StepListEntry(list.size(), this, i, parent));
     }
 
     public Step getCurrentStep() {

@@ -46,6 +46,7 @@ import org.runnerup.export.NikePlusSynchronizer;
 import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
+import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.util.FileUtil;
@@ -58,7 +59,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 27;
+    private static final int DBVERSION = 28;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -120,6 +121,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,")
             + (DB.ACCOUNT.AUTH_METHOD + " text not null, ")
             + (DB.ACCOUNT.AUTH_CONFIG + " text, ")
+            + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ")
             + (DB.ACCOUNT.ICON + " integer null, ")
             + "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
 
@@ -162,7 +164,45 @@ public class DBHelper extends SQLiteOpenHelper implements
     private static final String CREATE_INDEX_FEED = "create index if not exists FEED_START_TIME " +
             (" on " + DB.FEED.TABLE + " (" + DB.FEED.START_TIME + ")");
 
-    public DBHelper(Context context) {
+    private static DBHelper sInstance = null;
+
+    private static synchronized DBHelper getHelper(Context context) {
+        if (sInstance == null) {
+            sInstance = new DBHelper(context.getApplicationContext(), 1);
+        }
+        return sInstance;
+    }
+
+    @Override
+    public synchronized void close() {
+        if (sInstance != null) {
+            // don't close
+            return;
+        }
+        super.close();
+    }
+
+    private static SQLiteDatabase sReadableDB = null;
+    private static SQLiteDatabase sWritableDB = null;
+
+    public static synchronized SQLiteDatabase getReadableDatabase(Context context) {
+        if (sReadableDB == null) {
+            sReadableDB =getHelper(context).getReadableDatabase();
+        }
+        return sReadableDB;
+    }
+
+    public static synchronized SQLiteDatabase getWritableDatabase(Context context) {
+        if (sWritableDB == null) {
+            sWritableDB =getHelper(context).getReadableDatabase();
+        }
+        return sWritableDB;
+    }
+
+    public static synchronized void closeDB(SQLiteDatabase db) {
+    }
+
+    private DBHelper(Context context, int a) {
         super(context, DBNAME, null, DBVERSION);
     }
 
@@ -243,6 +283,11 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + DB.ACTIVITY.AVG_CADENCE + " integer");
         }
 
+        if (oldVersion > 0 && oldVersion < 28 && newVersion >= 28) {
+            echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + " add column " + DB.ACCOUNT.AUTH_NOTICE
+                    + " integer");
+        }
+
         insertAccounts(arg0);
     }
 
@@ -280,7 +325,8 @@ public class DBHelper extends SQLiteOpenHelper implements
                         DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
-                        DB.ACCOUNT.AUTH_CONFIG + ") " +
+                        DB.ACCOUNT.AUTH_CONFIG + ", " +
+                        DB.ACCOUNT.AUTH_NOTICE + ") " +
                         "select " +
                         "_id, " +
                         DB.ACCOUNT.NAME + ", " +
@@ -291,6 +337,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
                         DB.ACCOUNT.AUTH_CONFIG + " " +
+                        DB.ACCOUNT.AUTH_NOTICE + " " +
                         "FROM " + DB.ACCOUNT.TABLE;
         try {
             echoDo(arg0, newtab.toString());
@@ -466,6 +513,17 @@ public class DBHelper extends SQLiteOpenHelper implements
             values.put(DB.ACCOUNT.URL, "https://fit.google.com");
             insertAccount(arg0, values);
         }
+
+        if (DBVERSION >= 28) {
+            ContentValues values = new ContentValues();
+            values.put(DB.ACCOUNT.NAME, RunningFreeOnlineSynchronizer.NAME);
+            values.put(DB.ACCOUNT.FORMAT, "tcx");
+            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+            values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
+            values.put(DB.ACCOUNT.URL, "http://www.runningfreeonline.com");
+            values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
+            insertAccount(arg0, values);
+        }
     }
 
     void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
@@ -524,7 +582,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     public static void purgeDeletedActivities(Context ctx, final ProgressDialog dialog,
                                               final Runnable onComplete) {
 
-        final DBHelper mDBHelper = new DBHelper(ctx);
+        final DBHelper mDBHelper = DBHelper.getHelper(ctx);
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
         String from[] = { "_id" };
         Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0",

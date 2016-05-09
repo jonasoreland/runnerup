@@ -43,8 +43,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import org.runnerup.R;
-import org.runnerup.db.DBHelper;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.DBHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
@@ -66,7 +66,6 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     boolean delete = false;
     String settingsName = null;
     AudioSchemeListAdapter adapter = null;
-    DBHelper mDBHelper = null;
     SQLiteDatabase mDB = null;
     MenuItem newSettings;
 
@@ -78,8 +77,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
-        mDBHelper = new DBHelper(this);
-        mDB = mDBHelper.getWritableDatabase();
+        mDB = DBHelper.getWritableDatabase(this);
         DEFAULT = getString(R.string.Default);
 
         Intent intent = getIntent();
@@ -183,8 +181,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         if (delete) {
             deleteAudioSchemeImpl(settingsName);
         }
-        mDB.close();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
     }
 
     @Override

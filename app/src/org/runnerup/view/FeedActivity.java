@@ -22,13 +22,10 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,32 +39,26 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.SyncManager.Callback;
-import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
+import org.runnerup.feed.FeedImageLoader;
 import org.runnerup.feed.FeedList;
-import org.runnerup.util.Bitfield;
-import org.runnerup.common.util.Constants;
-import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.util.Formatter;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.text.DateFormat;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.WeakHashMap;
+import java.util.Set;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedActivity extends Activity implements Constants {
 
-    DBHelper mDBHelper = null;
+    SQLiteDatabase mDB = null;
     SyncManager syncManager = null;
     Formatter formatter = null;
 
@@ -87,10 +78,10 @@ public class FeedActivity extends Activity implements Constants {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed);
 
-        mDBHelper = new DBHelper(this);
         syncManager = new SyncManager(this);
         formatter = new Formatter(this);
-        feed = new FeedList(mDBHelper);
+        mDB = DBHelper.getWritableDatabase(this);
+        feed = new FeedList(mDB);
         feed.load(); // load from DB
 
         feedAdapter = new FeedListAdapter(this, feed);
@@ -106,7 +97,6 @@ public class FeedActivity extends Activity implements Constants {
                 feed.getList().clear();
                 feedAdapter.feed.clear();
                 feedAdapter.notifyDataSetInvalidated();
-                syncManager.clear();
                 startSync();
             }
         });
@@ -126,45 +116,16 @@ public class FeedActivity extends Activity implements Constants {
         startSync();
     }
 
-    StringBuffer cancelSync = null;
-
     void startSync() {
         syncManager.clear();
-        HashSet<String> set = new HashSet<String>();
-        String[] from = new String[] {
-                "_id",
-                DB.ACCOUNT.NAME,
-                DB.ACCOUNT.ENABLED,
-                DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.FLAGS
-        };
-
-        SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor c = db.query(DB.ACCOUNT.TABLE, from, null, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                final ContentValues tmp = DBHelper.get(c);
-                final Synchronizer synchronizer = syncManager.add(tmp);
-                final String name = tmp.getAsString(DB.ACCOUNT.NAME);
-                final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-                if (syncManager.isConfigured(name) &&
-                        Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED) &&
-                        synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
-                    set.add(name);
-                }
-            } while (c.moveToNext());
-        }
-        c.close();
-        db.close();
+        Set<String> set = syncManager.feedSynchronizersSet(this);
         if (!set.isEmpty()) {
             feedAccountButton.setVisibility(View.GONE);
             refreshButton.setVisibility(View.VISIBLE);
             feedHeader.setVisibility(View.VISIBLE);
-
             refreshButton.setEnabled(false);
             feedStatus.setText(getString(R.string.synchronizing_feed));
-            cancelSync = new StringBuffer();
-            syncManager.syncronizeFeed(syncDone, set, feed, cancelSync);
+            syncManager.synchronizeFeed(syncDone, set, feed, null);
         } else {
             feedHeader.setVisibility(View.GONE);
             refreshButton.setVisibility(View.GONE);
@@ -188,7 +149,7 @@ public class FeedActivity extends Activity implements Constants {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mDBHelper.close();
+        DBHelper.closeDB(mDB);
         syncManager.close();
         feedAdapter.close();
     }
@@ -243,6 +204,7 @@ public class FeedActivity extends Activity implements Constants {
         @Override
         public View getView(int arg0, View arg1, ViewGroup parent) {
             ContentValues tmp = feed.get(arg0);
+
             if (FeedList.isHeaderDate(tmp)) {
                 View v = layoutInflator.inflate(R.layout.feed_row_date_header, parent, false);
                 TextView tv = (TextView) v.findViewById(R.id.feed_activity_date_header);
@@ -251,7 +213,7 @@ public class FeedActivity extends Activity implements Constants {
                 return v;
             } else if (FeedList.isActivity(tmp)) {
                 View v = layoutInflator.inflate(R.layout.feed_row_activity, parent, false);
-                ImageView iv = (ImageView) v.findViewById(R.id.feed_image);
+                final ImageView iv = (ImageView) v.findViewById(R.id.feed_image);
                 TextView tv0 = (TextView) v.findViewById(R.id.feed_activity_source);
                 TextView tv1 = (TextView) v.findViewById(R.id.feed_activity_header);
                 TextView tv2 = (TextView) v.findViewById(R.id.feed_activity_summary);
@@ -259,8 +221,12 @@ public class FeedActivity extends Activity implements Constants {
 
                 String src = syncManager.getSynchronizer(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
                 if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {
-                    loadImage(iv, fixUrl(tmp.getAsString(DB.FEED.USER_IMAGE_URL)));
-                } else {
+                    FeedImageLoader.LoadImageAsync(tmp.getAsString(DB.FEED.USER_IMAGE_URL), new FeedImageLoader.Callback() {
+                        @Override
+                        public void run(String url, Bitmap b) {
+                            iv.setImageBitmap(b);
+                        }
+                    });
                 }
 
                 // String time = formatter.formatTime(Formatter.TXT,
@@ -269,7 +235,7 @@ public class FeedActivity extends Activity implements Constants {
 
                 String name = formatter.formatName(tmp.getAsString(DB.FEED.USER_FIRST_NAME),
                         tmp.getAsString(DB.FEED.USER_LAST_NAME));
-                String sport = getSportText(tmp);
+                String sport = FeedActivity.GetSportActivity(tmp);
                 tv1.setText(name + " trained " + sport);
                 if (tmp.containsKey(DB.FEED.DISTANCE) || tmp.containsKey(DB.FEED.DURATION)) {
                     double distance = 0;
@@ -345,15 +311,6 @@ public class FeedActivity extends Activity implements Constants {
             }
         }
 
-        /**
-         * fb redirects from http to https which is not handled automatically by HttpUrlConnection
-         */
-        private String fixUrl(String in) {
-            if (!in.contains("http://graph.facebook.com/"))
-                return in;
-            return in.replace("http://graph.facebook.com/", "https://graph.facebook.com/");
-        }
-
         @Override
         public boolean areAllItemsEnabled() {
             return false;
@@ -379,49 +336,7 @@ public class FeedActivity extends Activity implements Constants {
         }
     }
 
-    final Map<String, Drawable> imageCache = Collections
-            .synchronizedMap(new WeakHashMap<String, Drawable>());
-
-    public Drawable loadImage(final ImageView iv, final String url) {
-        Drawable d = imageCache.get(url);
-        if (d != null) {
-            iv.setImageDrawable(d);
-            return d;
-        }
-
-        new AsyncTask<String, String, Drawable>() {
-            @Override
-            protected Drawable doInBackground(String... params) {
-                Drawable d = imageCache.get(url);
-                if (d != null) {
-                    return d;
-                }
-                try {
-                    InputStream is = (InputStream) new URL(url).getContent();
-                    d = Drawable.createFromStream(is, "src name");
-                    if (d != null) {
-                        imageCache.put(url, d);
-                    }
-                    return d;
-                } catch (Exception e) {
-                    Log.e(getClass().getName(), "url: " + url);
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Drawable result) {
-                if (result == null)
-                    return;
-
-                iv.setImageDrawable(result);
-            }
-        }.execute(url);
-        return null;
-    }
-
-    public String getSportText(ContentValues tmp) {
+    public static String GetSportActivity(ContentValues tmp) {
         switch (tmp.getAsInteger(DB.FEED.FEED_SUBTYPE)) {
             case DB.ACTIVITY.SPORT_RUNNING:
                 return "running";

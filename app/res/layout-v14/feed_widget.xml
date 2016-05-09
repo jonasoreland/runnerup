@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/widget_margin"
+    android:id="@+id/widget_layout"
+    tools:showIn="@layout/feed_widget_provider_info"
+    android:background="@android:color/background_dark">
+
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/widget_app_icon"
+        android:src="@drawable/icon_feed"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Latest feed (click to refresh)"
+        android:id="@+id/textView"
+        android:layout_above="@+id/widget_empty"
+        android:layout_toRightOf="@+id/widget_app_icon"
+        android:gravity="center" />
+    <ListView
+        android:id="@+id/widget_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/widget_margin"
+        android:layout_marginRight="@dimen/widget_margin"
+        android:layout_marginBottom="@dimen/widget_margin"
+        android:layout_below="@+id/widget_app_icon" />
+    <TextView
+    android:id="@+id/widget_empty"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:textAppearance="?android:textAppearanceLarge"
+    android:text="@string/No_feed_to_show"
+        android:layout_below="@+id/widget_app_icon" />
+
+
+
+</RelativeLayout>

@@ -21,8 +21,6 @@ import android.annotation.TargetApi;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.tracker.Tracker;
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AutoPauseTrigger extends Trigger {
     private final float mAutoPauseAfterSeconds;

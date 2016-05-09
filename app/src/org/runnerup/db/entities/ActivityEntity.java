@@ -26,7 +26,9 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Content values wrapper for the {@code activity} table.
@@ -54,10 +56,14 @@ public class ActivityEntity extends AbstractEntity {
     }
 
     /**
-     * Start time of the activity
+     * Start time of the activity (in seconds since epoch)
      */
-    public void setStartTime(Long value) {
+    private void setStartTime(Long value) {
         values().put(Constants.DB.ACTIVITY.START_TIME, value);
+    }
+
+    public void setStartTime(Date date) {
+        setStartTime(TimeUnit.MILLISECONDS.toSeconds(date.getTime()));
     }
 
     public Long getStartTime() {
@@ -289,6 +295,4 @@ public class ActivityEntity extends AbstractEntity {
     public List<LocationEntity> getLocationPoints() {
         return locationPoints;
     }
-
-
 }
