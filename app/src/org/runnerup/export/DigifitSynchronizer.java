@@ -93,6 +93,10 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     DigifitSynchronizer(SyncManager unused) {
     }
 
+    protected String getConnectionURL() {
+        return DIGIFIT_URL;
+    }
+
     private JSONObject buildRequest(String root, Map<String, String> requestParameters)
             throws JSONException {
         JSONObject json = new JSONObject();
@@ -169,7 +173,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
         Status errorStatus = Status.ERROR;
         try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(DIGIFIT_URL + "/site/authenticate")
+            HttpURLConnection conn = (HttpURLConnection) new URL(getConnectionURL() + "/site/authenticate")
                     .openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
@@ -215,12 +219,12 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
     private void deleteFile(long fileId, String fileType) {
         try {
-            String deleteUrl = DIGIFIT_URL + "/rpc/json/userfile/delete_workout?file_id=" + fileId
+            String deleteUrl = getConnectionURL() + "/rpc/json/userfile/delete_workout?file_id=" + fileId
                     + "&file_type="
                     + fileType;
             HttpURLConnection conn = (HttpURLConnection) new URL(deleteUrl).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());
-            conn.addRequestProperty("Referer", DIGIFIT_URL + "/site/workoutimport");
+            conn.addRequestProperty("Referer", getConnectionURL() + "/site/workoutimport");
             addCookies(conn);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -237,7 +241,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
         try {
             JSONObject exportRequest = buildRequest("workout", exportParameters);
-            callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/export_web", exportRequest);
+            callDigifitEndpoint(getConnectionURL() + "/rpc/json/workout/export_web", exportRequest);
 
             // I have observed Digifit taking >15 seconds to generate a file.
             for (int i = 0; i < 60; i++) {
@@ -256,7 +260,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                 return;
             }
 
-            String downloadUrl = DIGIFIT_URL + "/workout/download/" + fileId;
+            String downloadUrl = getConnectionURL() + "/workout/download/" + fileId;
 
             HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());
@@ -312,7 +316,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
     private String getUploadUrl() throws IOException, MalformedURLException, ProtocolException,
             JSONException {
-        String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";
+        String getUploadUrl = getConnectionURL() + "/rpc/json/workout/import_workouts_url";
         JSONObject response = callDigifitEndpoint(getUploadUrl, new JSONObject());
 
         String uploadUrl = response.getJSONObject("response").getJSONObject("upload_url")
@@ -323,7 +327,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     private JSONObject getWorkoutFileId(String key) throws IOException, MalformedURLException,
             ProtocolException,
             JSONException {
-        JSONObject exportListResponse = callDigifitEndpoint(DIGIFIT_URL
+        JSONObject exportListResponse = callDigifitEndpoint(getConnectionURL()
                 + "/rpc/json/workout/export_workouts_list",
                 new JSONObject());
         Log.e(getName(), exportListResponse.toString());
@@ -397,7 +401,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
         try {
             JSONObject request = buildRequest("workout", requestParameters);
-            JSONObject response = callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/list",
+            JSONObject response = callDigifitEndpoint(getConnectionURL() + "/rpc/json/workout/list",
                     request);
 
             if (response == null)
@@ -505,7 +509,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             // the import we just did above won't show up in this list. In the
             // general case, this will remove *old* imports from Digifit only
             // leaving the user with ~1ish file of import cruft.
-            JSONObject response = callDigifitEndpoint(DIGIFIT_URL
+            JSONObject response = callDigifitEndpoint(getConnectionURL()
                     + "/rpc/json/workout/import_workouts_list",
                     new JSONObject());
             JSONArray uploadList = response.getJSONObject("response").getJSONArray("upload_list");
