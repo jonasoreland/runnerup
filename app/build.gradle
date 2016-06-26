@@ -1,9 +1,8 @@
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    buildToolsVersion '23.0.3'
 
     sourceSets {
         main {
@@ -74,18 +73,13 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.0'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
     latestCompile 'com.getpebble:pebblekit:3.0.0'
-
-    compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar'){
-        transitive=true
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
+        transitive = true
     }
-
     compile files('../GraphView/public/graphview-3.1.jar')
-
     compile project(':common')
     compile project(':hrdevice')
-
     latestWearApp project(':wear')
-
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
 }
