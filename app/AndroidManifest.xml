@@ -20,7 +20,7 @@
 	xmlns:tools="http://schemas.android.com/tools">
 
         <uses-sdk
-            android:minSdkVersion="8" />
+            android:minSdkVersion="14" />
 
 		<uses-feature
   			android:glEsVersion="0x00020000"
@@ -56,7 +56,8 @@
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="application/octet-stream" />
+				<data android:mimeType="application/octet-stream"
+					android:scheme="http" />
 				<data android:host="*" />
 				<data android:pathPattern="runnerup.db.export" />
 			</intent-filter>

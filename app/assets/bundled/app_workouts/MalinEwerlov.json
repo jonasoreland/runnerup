@@ -229,11 +229,4 @@
       "targetValueUnitKey": "dimensionless"
     }
   ]
-}}itKey": "dimensionless"
-    },
-    {
-      "stepId": 38429983,
-      "stepOrder": 13,
-      "groupId": 4,
-      "parentGroupId": 4,
-      "endConditionId": 1
+}}

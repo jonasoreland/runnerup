@@ -333,26 +333,25 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             /**
              * Accounts/reports
              */
-            String sql = new String(
-                    "SELECT DISTINCT "
-                            + "  acc._id, " // 0
-                            + ("  acc." + DB.ACCOUNT.NAME + ", ")
-                            + ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
-                            + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
-                            + ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
-                            + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
-                            + ("  acc." + DB.ACCOUNT.ENABLED + ", ")
-                            + ("  rep._id as repid, ")
-                            + ("  rep." + DB.EXPORT.ACCOUNT + ", ")
-                            + ("  rep." + DB.EXPORT.ACTIVITY + ", ")
-                            + ("  rep." + DB.EXPORT.STATUS)
-                            + (" FROM " + DB.ACCOUNT.TABLE + " acc ")
-                            + (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
-                            + (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
-                            + ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
-                                    + mID + " )")
-                            + (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
-                            + ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null"));
+            String sql = "SELECT DISTINCT "
+                    + "  acc._id, " // 0
+                    + ("  acc." + DB.ACCOUNT.NAME + ", ")
+                    + ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
+                    + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
+                    + ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
+                    + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
+                    + ("  acc." + DB.ACCOUNT.ENABLED + ", ")
+                    + ("  rep._id as repid, ")
+                    + ("  rep." + DB.EXPORT.ACCOUNT + ", ")
+                    + ("  rep." + DB.EXPORT.ACTIVITY + ", ")
+                    + ("  rep." + DB.EXPORT.STATUS)
+                    + (" FROM " + DB.ACCOUNT.TABLE + " acc ")
+                    + (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
+                    + (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
+                    + ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
+                    + mID + " )")
+                    + (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
+                    + ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null");
 
             Cursor c = mDB.rawQuery(sql, null);
             alreadySynched.clear();
@@ -407,9 +406,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         ContentValues tmp = DBHelper.get(c);
         c.close();
 
-        long st = 0;
         if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
-            st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
+            long st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
             setTitle("RunnerUp - " + formatter.formatDateTime(Formatter.TXT_LONG, st));
         }
         float d = 0;
@@ -951,8 +949,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             }
 
             void shiftLeft(double window[], double newVal) {
-                for (int j = 0; j < window.length - 1; j++)
-                    window[j] = window[j + 1];
+                System.arraycopy(window, 1, window, 0, window.length - 1);
                 window[window.length - 1] = newVal;
             }
 
@@ -1226,7 +1223,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                                 lastLocation = point;
 
                                 String title = null;
-                                Icon icon = null;
                                 int color = Color.WHITE;
                                 switch (type) {
                                     case DB.LOCATION.TYPE_START:

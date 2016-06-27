@@ -194,25 +194,4 @@
       "targetValueUnitKey": "dimensionless"
     }
   ]
-}}k": 7,
-      "targetValueTwo": 0.4545454581818182,
-      "targetTwoDisplayValue": "03:40",
-      "stepTypeKey": "interval",
-      "intensityTypeKey": "active",
-      "endConditionTypeKey": "time",
-      "targetTypeKey": "pace.zone",
-      "endConditionUnitKey": "ms",
-      "endConditionDisplayValue": "00:02:00",
-      "endConditionDisplayUnit": "Hours:Minutes:Seconds",
-      "endConditionDisplayUnitAbbr": "h:m:s",
-      "targetValueUnitKey": "centimetersPerMillisecond",
-      "targetValueDisplayUnit": "Minutes per Kilometer",
-      "targetValueDisplayUnitAbbr": "min/km"
-    },
-    {
-      "stepId": 66882018,
-      "stepOrder": 9,
-      "groupId": 0,
-      "parentGroupId": 0,
-      "endConditionId": 1,
- 
+}}

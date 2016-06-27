@@ -484,7 +484,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         }
         String sportTxt = "something";
         // <0>running<\/0>
-        if (txt.matches(".*<0>.*<\\/0>.*")) {
+        if (txt.matches(".*<0>.*</0>.*")) {
             int start = txt.indexOf('>');
             int end = txt.indexOf('<', start);
             sportTxt = txt.substring(start+1, end);

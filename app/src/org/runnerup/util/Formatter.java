@@ -442,7 +442,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param seconds_per_meter
+     * @param meter_per_seconds
      * @return string suitable for printing according to settings
      */
     private String txtSpeed(double meter_per_seconds, boolean includeUnit) {
@@ -464,11 +464,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         double distance_per_seconds = meter_per_seconds / base_meters;
         double distance_per_hour = distance_per_seconds * 3600;
         String str = String.format("%.1f", distance_per_hour);
-        StringBuilder s = new StringBuilder();
-        s.append(str);
-        s.append(" ").append(km ? cueResources.getQuantityString(R.plurals.cue_kilometer, 2) : cueResources.getQuantityString(R.plurals.cue_mile, 2));
-        s.append(" ").append(cueResources.getString(R.string.cue_perhour));
-        return s.toString();
+        String s = str +
+                " " + (km ? cueResources.getQuantityString(R.plurals.cue_kilometer, 2) : cueResources.getQuantityString(R.plurals.cue_mile, 2)) +
+                " " + cueResources.getString(R.string.cue_perhour);
+        return s;
     }
 
     /**
@@ -478,13 +477,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      */
     public String formatDateTime(int target, long seconds_since_epoch) {
         // ignore target
-        StringBuilder s = new StringBuilder();
-        s.append(dateFormat.format(seconds_since_epoch * 1000)); // takes
-                                                                 // milliseconds
+        String s = dateFormat.format(seconds_since_epoch * 1000) +
+                " " +
+                timeFormat.format(seconds_since_epoch * 1000);
+        // milliseconds
                                                                  // as argument
-        s.append(" ");
-        s.append(timeFormat.format(seconds_since_epoch * 1000));
-        return s.toString();
+        return s;
     }
 
     /**
