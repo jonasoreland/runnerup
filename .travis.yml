@@ -10,5 +10,5 @@ android:
 
 script:
     - ./gradlew assembleFroyoRelease
-    - ./gradlew assembleLatestRelease
+    - ./gradlew lintLatestRelease
     - ./gradlew test

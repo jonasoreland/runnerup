@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Miles</item>
+    <item>Kilometer</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Uppvärmning</item>
+    <item>Aktiv</item>
+    <item>Vila</item>
+    <item>Återhämtning</item>
+    <item>Nedvarvning</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Till knapptryckning</item>
+    <item>Tid</item>
+    <item>Distans</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Ingen</item>
+    <item>Tempo</item>
+    <item>Pulszon</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="muteEntries">
+    <item>Nej</item>
+    <item>Ja</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>nej</item>
+    <item>ja</item>
+  </string-array>
+  <string-array name="types">
+    <item>Tid</item>
+    <item>Distans</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Man</item>
+    <item>Kvinna</item>
+  </string-array>
+  <!--Audio cue languages-->
+  <!--Note: keep in same order as languagesNames-->
+</resources>
