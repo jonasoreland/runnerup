@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '23.0.1'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -34,14 +34,14 @@ android {
     productFlavors {
         latest {
             minSdkVersion 14
-            targetSdkVersion 22
-            versionName "1.53"
-            versionCode 14000053
+            targetSdkVersion rootProject.ext.compileSdkVersion
+            versionName rootProject.ext.versionName
+            versionCode rootProject.ext.versionCode
         }
         froyo {
             minSdkVersion 8
-            targetSdkVersion 22
-            versionName "1.53"
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            versionName rootProject.ext.versionName
             versionCode 8000053
         }
     }
@@ -103,7 +103,7 @@ if (rootProject.file("release.properties").exists()) {
     android.signingConfigs.release.keyAlias props.keyAlias
     android.signingConfigs.release.keyPassword props.keyAliasPassword
 } else {
-    project.logger.warn('WARN: Set the values storeFile, storePassword, keyAlias, and keyPassword in release.properties to sign the release.')
+    project.logger.warn('INFO: Set the values storeFile, storePassword, keyAlias, and keyPassword in release.properties to sign the release.')
     android.buildTypes.release.signingConfig = null
 }
 
