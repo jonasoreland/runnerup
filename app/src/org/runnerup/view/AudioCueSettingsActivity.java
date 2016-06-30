@@ -88,7 +88,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             prefMgr.setSharedPreferencesMode(MODE_PRIVATE);
         }
 
-        addPreferencesFromResource(R.layout.audio_cue_settings);
+        addPreferencesFromResource(R.xml.audio_cue_settings);
         setContentView(R.layout.settings_wrapper);
 
         {

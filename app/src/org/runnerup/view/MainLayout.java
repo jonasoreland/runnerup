@@ -108,8 +108,8 @@ public class MainLayout extends TabActivity {
         Log.e(getClass().getName(), "app-version: " + versionCode + ", upgradeState: " + upgradeState
                 + ", km: " + km);
 
-        PreferenceManager.setDefaultValues(this, R.layout.settings, false);
-        PreferenceManager.setDefaultValues(this, R.layout.audio_cue_settings, true);
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+        PreferenceManager.setDefaultValues(this, R.xml.audio_cue_settings, true);
 
         TabHost tabHost = getTabHost(); // The activity TabHost
 
