@@ -37,8 +37,8 @@ public class SyncActivityItem {
 
     public boolean isSimilarTo(SyncActivityItem o) {
         return this.getSport().equals(o.getSport()) &&
-               Math.abs(this.getStartTime().longValue() - o.getStartTime().longValue()) < 30 &&
-                (Math.abs(this.getDuration().longValue() - o.getDuration().longValue()) < 30 ||
+               Math.abs(this.getStartTime() - o.getStartTime()) < 30 &&
+                (Math.abs(this.getDuration() - o.getDuration()) < 30 ||
                  Math.abs(this.getDistance().longValue() - o.getDistance().longValue()) < 100);
 
     }

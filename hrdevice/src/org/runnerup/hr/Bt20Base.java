@@ -331,9 +331,7 @@ public abstract class Bt20Base extends BtHRBase {
                 Method m;
                 try {
                     m = device.getClass().getMethod("createInsecureRfcommSocket",
-                            new Class[] {
-                                int.class
-                            });
+                            int.class);
                     m.setAccessible(true);
                     sock = (BluetoothSocket) m.invoke(device, 1);
                 } catch (NoSuchMethodException e) {

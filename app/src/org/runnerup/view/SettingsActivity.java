@@ -48,15 +48,15 @@ public class SettingsActivity extends PreferenceActivity {
         setContentView(R.layout.settings_wrapper);
 
         {
-            Preference btn = (Preference) findPreference("exportdb");
+            Preference btn = findPreference("exportdb");
             btn.setOnPreferenceClickListener(onExportClick);
         }
         {
-            Preference btn = (Preference) findPreference("importdb");
+            Preference btn = findPreference("importdb");
             btn.setOnPreferenceClickListener(onImportClick);
         }
         {
-            Preference btn = (Preference) findPreference("prunedb");
+            Preference btn = findPreference("prunedb");
             btn.setOnPreferenceClickListener(onPruneClick);
         }
 

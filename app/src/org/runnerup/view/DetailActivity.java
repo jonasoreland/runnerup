@@ -721,7 +721,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 if (arg1 == true) {
                     pendingSynchronizers.add((String) arg0.getTag());
                 } else {
-                    pendingSynchronizers.remove((String) arg0.getTag());
+                    pendingSynchronizers.remove(arg0.getTag());
                 }
 
                 if (mode == MODE_DETAILS) {
@@ -1351,7 +1351,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                                 map.setZoom(18.0f);
                             }
                         }
-                        route = new Route(); // release mem for old...
+                        route = null; // release mem for old...
                     }
                 }
             }

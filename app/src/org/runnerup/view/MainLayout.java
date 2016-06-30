@@ -180,8 +180,7 @@ public class MainLayout extends TabActivity {
                 Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
                 if (isFile == false) {
                     File dstDir = new File(dst + File.separator + add);
-                    dstDir.mkdir();
-                    if (!dstDir.isDirectory()) {
+                    if (!dstDir.mkdir() || !dstDir.isDirectory()) {
                         Log.e(getClass().getName(), "Failed to copy " + add + " as \"" + dst
                                 + "\" is not a directory!");
                         continue;

@@ -122,7 +122,7 @@ public class RunActivity extends Activity implements TickListener {
         lapHr = (TextView) findViewById(R.id.lap_hr);
         intervalTime = (TextView) findViewById(R.id.interval_time);
         intervalDistance = (TextView) findViewById(R.id.intervall_distance);
-        tableRowInterval = (View) findViewById(R.id.table_row_interval);
+        tableRowInterval = findViewById(R.id.table_row_interval);
         intervalPace = (TextView) findViewById(R.id.interval_pace);
         intervalHr = (TextView) findViewById(R.id.interval_hr);
         countdownView = (TextView) findViewById(R.id.countdown_text_view);
