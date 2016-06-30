@@ -889,6 +889,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             double avg_time = sum_time;
             double avg_dist = sum_distance;
             double avg_hr = calculateAverage(hr);
+            //noinspection ConstantIfStatement,ConstantIfStatement
             if (true) {
                 // remove max/min pace to (maybe) get smoother graph
                 double max_pace[] = {

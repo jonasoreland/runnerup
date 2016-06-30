@@ -155,7 +155,8 @@ public class ActivityProvider extends ContentProvider {
                         final boolean includeMap = true;
                         String str = map.export(activityId, includeMap, null).toString();
                         out.second.write(str.getBytes());
-                    } else if (res == RUNKEEPER) {
+                    } else //noinspection ConstantConditions
+                        if (res == RUNKEEPER) {
                         RunKeeper map = new RunKeeper(mDB);
                         map.export(activityId, new OutputStreamWriter(out.second));
                     }

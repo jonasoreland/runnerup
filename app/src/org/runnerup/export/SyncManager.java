@@ -233,6 +233,7 @@ public class SyncManager {
             if (!config.containsKey(DB.ACCOUNT.FLAGS)) {
                 if (BuildConfig.DEBUG) {
                     String s = null;
+                    //noinspection ResultOfMethodCallIgnored
                     s.charAt(3);
                 }
             }
@@ -955,6 +956,7 @@ public class SyncManager {
 
     protected boolean checkCancel(StringBuffer cancel) {
         if (cancel != null) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cancel) {
                 return cancel.length() > 0;
             }

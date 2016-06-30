@@ -539,6 +539,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     private void deleteWorkout(WorkoutRef selected) {
         File f = WorkoutSerializer.getFile(this, selected.workoutName);
+        //noinspection ResultOfMethodCallIgnored
         f.delete();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         if (selected.workoutName.contentEquals(pref.getString(getResources().getString(R.string.pref_advanced_workout), ""))) {

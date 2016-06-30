@@ -245,6 +245,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
          */
         File a = new File(getFilesDir().getAbsoluteFile() + "/../" + PREFS_DIR + "/" + name
                 + SUFFIX + ".xml");
+        //noinspection ResultOfMethodCallIgnored
         a.delete();
 
         String args[] = {

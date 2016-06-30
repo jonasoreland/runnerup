@@ -33,7 +33,7 @@ public class ValueModel<T> {
 
     public interface ChangeListener<T> {
         void onValueChanged(ValueModel<T> instance, T oldValue, T newValue);
-    };
+    }
 
     public ValueModel() {
         value = null;
