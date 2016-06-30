@@ -101,7 +101,6 @@ public class AudioFeedback extends Feedback {
 
     protected String getCue(Workout w, Context ctx) {
         String msg = null;
-        Resources res = ctx.getResources();
         if (msgId != 0) {
             if (msgTxt == null) {
                 msgTxt = formatter.getCueString(msgId);

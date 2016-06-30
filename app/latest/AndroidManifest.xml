@@ -16,10 +16,10 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="org.runnerup" xmlns:tools="http://schemas.android.com/tools">
+	package="org.runnerup">
 
         <uses-sdk
-            android:minSdkVersion="9" />
+            android:minSdkVersion="14" />
 
 	<application
 	    android:icon="@drawable/icon"

@@ -85,7 +85,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
 
     @Override
     protected void onPause() {
-        super.onResume();
+        super.onPause();
         if (mStateService != null) {
             mStateService.unregisterTrackerStateListener(this);
             mStateService.unregisterPauseStepListener(this);

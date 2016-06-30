@@ -562,7 +562,7 @@ public class NikeXML {
      * @param l
      * @param bearing
      * @param dist
-     * @see http://www.movable-type.co.uk/scripts/latlong.html
+     * @see <url>http://www.movable-type.co.uk/scripts/latlong.html</url>
      */
     public static void move(final Location l, final double bearing, final double dist) {
         final double d = dist / 1000.0; // in km

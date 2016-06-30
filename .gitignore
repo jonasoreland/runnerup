@@ -33,8 +33,6 @@ build/
 # Intellij files (Android Studio)
 *.iml
 
-lint.xml
-
 # NetBeans IDE project files
 /.nb-gradle/private/
 

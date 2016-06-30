@@ -121,9 +121,8 @@ public class ActivityCleaner implements Constants {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.LAP.DISTANCE, sum_distance);
         tmp.put(DB.LAP.TIME, (sum_time / 1000));
-        int hr = 0;
         if (sum_hr > 0) {
-            hr = Math.round(sum_hr / count);
+            int hr = Math.round(sum_hr / count);
             tmp.put(DB.LAP.AVG_HR, hr);
             tmp.put(DB.LAP.MAX_HR, max_hr);
         }

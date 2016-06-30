@@ -28,7 +28,9 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
-        android:layout_above="@+id/button_table">
+        android:layout_above="@+id/button_table"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentLeft="false">
     </ExpandableListView>
 
   <TableLayout

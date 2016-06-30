@@ -98,9 +98,7 @@ public class GpsStatus implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
-        for (int i = 1; i < HIST_LEN; i++) {
-            mHistory[i] = mHistory[i - 1];
-        }
+        System.arraycopy(mHistory, 0, mHistory, 1, HIST_LEN - 1);
         mHistory[0] = location;
         if (location.hasAccuracy() && location.getAccuracy() < mFixAccurancy) {
             mIsFixed = true;

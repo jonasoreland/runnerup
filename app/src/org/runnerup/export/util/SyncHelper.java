@@ -106,7 +106,7 @@ public final class SyncHelper {
         while (matcher.find()) {
             String key = matcher.group(1);
             String value = "";
-            String g = matcher.group(2).trim();
+            String g = matcher.group(2);
             if (g != null) {
                 value = g;
             }

@@ -307,8 +307,11 @@ public class DBHelper extends SQLiteOpenHelper implements
             e.printStackTrace();
             return;
         }
-        if (c != null)
-            c.close();
+        finally {
+            if (c != null) {
+                c.close();
+            }
+        }
 
         StringBuilder newtab = new StringBuilder();
         newtab.append(CREATE_TABLE_ACCOUNT);

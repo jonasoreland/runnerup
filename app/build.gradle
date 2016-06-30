@@ -4,6 +4,11 @@ android {
     compileSdkVersion 22
     buildToolsVersion '23.0.1'
 
+    dexOptions {
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !travisBuild
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -57,10 +62,8 @@ android {
 
     lintOptions {
         checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        fatal 'NewApi', 'InlineApi'
-        disable 'MissingTranslation'
+        // Disable some specific checks completely, some specific with path in lint.xml
+        disable 'MissingTranslation','MissingQuantity','ImpliedQuantity','InvalidPackage'
     }
 }
 

@@ -3,12 +3,14 @@ language: android
 android:
     components:
         - build-tools-23.0.1
+        - platform-tools
+        - tools
         - android-22
         - extras
         - extra-android-m2repository
         - extra-google-google_play_services
 
 script:
-    - ./gradlew assembleFroyoRelease
-    - ./gradlew assembleLatestRelease
+    - ./gradlew lintFroyoRelease
+    - ./gradlew lintLatestRelease
     - ./gradlew test
