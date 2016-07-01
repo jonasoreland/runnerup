@@ -2,13 +2,22 @@ language: android
 
 android:
     components:
-        - build-tools-23.0.1
         - platform-tools
         - tools
+        - build-tools-24.0.0
         - android-22
         - extras
         - extra-android-m2repository
         - extra-google-google_play_services
+
+notifications:
+  email: false
+
+# cache between builds
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.gradle
 
 script:
     - ./gradlew lintFroyoRelease
