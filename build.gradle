@@ -11,7 +11,7 @@ buildscript {
 
 project.ext {
     //Common settings for all builds
-    //Note that Android Studio does not know about the 'ext' module and will warn, but gradle knows
+    //Note that Android Studio does not know about the 'ext' module and will warn
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '24.0.0'
