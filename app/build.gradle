@@ -39,7 +39,7 @@ android {
             versionCode 14000053
         }
         froyo {
-            minSdkVersion 8
+            minSdkVersion 10
             targetSdkVersion 22
             versionName "1.53"
             versionCode 8000053
