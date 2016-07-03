@@ -16,6 +16,7 @@
  */
 package org.runnerup.util;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat.Builder;
@@ -23,6 +24,7 @@ import android.support.v4.app.NotificationCompat.Builder;
 /**
  * Created by jonas on 2/15/15.
  */
+@SuppressLint("InlinedApi")
 public class NotificationCompat {
 
     public static void setLocalOnly(Builder builder) {

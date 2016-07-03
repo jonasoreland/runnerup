@@ -47,6 +47,7 @@ android {
     }
 
     signingConfigs {
+        //noinspection GroovyMissingReturnStatement
         release {
         }
     }
@@ -62,6 +63,8 @@ android {
 
     lintOptions {
         checkReleaseBuilds false
+        //promote to error
+        error 'InlinedApi'
         // Disable some specific checks completely, some specific with path in lint.xml
         disable 'MissingTranslation','MissingQuantity','ImpliedQuantity','InvalidPackage'
     }
