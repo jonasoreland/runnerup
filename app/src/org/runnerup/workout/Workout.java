@@ -321,6 +321,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         return 0;
     }
 
+    public boolean getCurrentSpeedValid()
+    {
+        return tracker.getCurrentSpeed() != null;
+    }
+
     @Override
     public double getSpeed(Scope scope) {
         switch (scope) {
