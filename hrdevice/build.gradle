@@ -5,8 +5,8 @@ group = "org.runnerup.hr"
 version = "1.0"
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '23.0.1'
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -26,7 +26,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 22
+        targetSdkVersion rootProject.ext.compileSdkVersion
         versionCode 1
         versionName = version
     }
