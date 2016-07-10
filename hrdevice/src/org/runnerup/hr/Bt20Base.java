@@ -333,8 +333,11 @@ public abstract class Bt20Base extends BtHRBase {
             case 2: {
                 Method m;
                 try {
+                    //noinspection RedundantArrayCreation
                     m = device.getClass().getMethod("createInsecureRfcommSocket",
-                            int.class);
+                            new Class[]{
+                                    int.class
+                            });
                     m.setAccessible(true);
                     sock = (BluetoothSocket) m.invoke(device, 1);
                 } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
