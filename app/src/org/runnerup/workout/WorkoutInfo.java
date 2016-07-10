@@ -27,7 +27,6 @@ public interface WorkoutInfo {
     double getTime(Scope scope);
 
     double getSpeed(Scope scope);
-    boolean getCurrentSpeedValid();
 
     double getPace(Scope scope);
 
