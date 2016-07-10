@@ -172,10 +172,12 @@ public class ActivityProvider extends ContentProvider {
                         final boolean includeMap = true;
                         String str = map.export(activityId, includeMap, null).toString();
                         out.second.write(str.getBytes());
-                    } else //noinspection ConstantConditions
-                        if (res == RUNKEEPER) {
-                        RunKeeper map = new RunKeeper(mDB);
-                        map.export(activityId, new OutputStreamWriter(out.second));
+                    } else {
+                       //noinspection ConstantConditions
+                       if (res == RUNKEEPER) {
+                            RunKeeper map = new RunKeeper(mDB);
+                            map.export(activityId, new OutputStreamWriter(out.second));
+                        }
                     }
                     out.second.flush();
                     out.second.close();
