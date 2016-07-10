@@ -18,6 +18,7 @@ android {
     }
 
     signingConfigs {
+        //noinspection GroovyMissingReturnStatement
         release {
         }
     }
