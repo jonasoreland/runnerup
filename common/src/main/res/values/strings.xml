@@ -200,7 +200,7 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">Add countdown after step that ends with user press</string>
   <string name="Step_countdown_time_s">Step countdown time (s)</string>
   <string name="Smooth_pace_graph">Smooth pace graph</string>
-  <string name="Smooth_pace_filters">Smooth pace filter(s)</string>
+  <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
   <string name="Poll_interval_ms">Poll interval (ms)</string>
   <string name="Poll_distance_m">Poll distance (m)</string>
   <string name="Export">Export</string>
@@ -301,8 +301,8 @@
   <string name="Uploading_to_1s">Uploading to %1$s</string>
   <string name="Loading_activities">Loading activities</string>
   <string name="Fetching_activities_from_1s">Fetching activities from %1$s</string>
-  <string name="Map_not_available_on_Froyo">Map not available on Froyo.</string>
-  <string name="Distance_marker">Distance marker.</string>
+  <string name="Map_not_available_on_Froyo">Map not available on Froyo</string>
+  <string name="Distance_marker">Distance marker</string>
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
   <string name="Unknown">Unknown</string>
