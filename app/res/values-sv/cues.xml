@@ -23,6 +23,7 @@
   <string name="cue_recovery">återhämtning</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>
+  <string name="cue_perhour">per timme</string>
   <string name="cue_started">startad</string>
   <string name="cue_paused">pausad</string>
   <string name="cue_resumed">återupptagen</string>

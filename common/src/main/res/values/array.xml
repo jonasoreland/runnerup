@@ -99,6 +99,7 @@
       <item>French</item>
       <item>Italian</item>
       <item>Polish</item>
+      <item>Swedish</item>
       <item>Turkish</item>
       <item>Portuguese</item>
   </string-array>
@@ -115,6 +116,7 @@
       <item>fr</item>
       <item>it</item>
       <item>pl</item>
+      <item>sv</item>
       <item>tr</item>
       <item>pt</item>
   </string-array>

@@ -18,18 +18,30 @@
   </string-array>
   <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
-    <item>Till knapptryckning</item>
+    <item>Knapptryckning</item>
     <item>Tid</item>
     <item>Distans</item>
   </string-array>
   <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
-    <item>Ingen</item>
+    <item>Inget</item>
     <item>Tempo</item>
     <item>Pulszon</item>
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Löpning</item>
+    <item>Cykling</item>
+    <item>Övrigt</item>
+  </string-array>
+  <string-array name="sportEntriesExperimental">
+    <item>Löpning</item>
+    <item>Cykling</item>
+    <item>Övrigt</item>
+    <item>Orientering</item>
+    <item>Gång</item>
+  </string-array>
   <string-array name="muteEntries">
     <item>Nej</item>
     <item>Ja</item>
@@ -47,5 +59,35 @@
     <item>Kvinna</item>
   </string-array>
   <!--Audio cue languages-->
+  <string-array name="cueLanguageNames">
+    <item>Engelska</item>
+    <item>Holländska</item>
+    <item>Tyska</item>
+    <item>Japanska</item>
+    <item>Arabiska</item>
+    <item>Ryska</item>
+    <item>Spanska</item>
+    <item>Franska</item>
+    <item>Italienska</item>
+    <item>Polska</item>
+    <item>Svenska</item>
+    <item>Turkiska</item>
+    <item>Portugisiska</item>
+  </string-array>
   <!--Note: keep in same order as languagesNames-->
+  <string-array name="cueLanguageCodes">
+    <item>en</item>
+    <item>nl</item>
+    <item>de</item>
+    <item>ja</item>
+    <item>ar</item>
+    <item>ru</item>
+    <item>es</item>
+    <item>fr</item>
+    <item>it</item>
+    <item>pl</item>
+    <item>sv</item>
+    <item>tr</item>
+    <item>pt</item>
+  </string-array>
 </resources>
