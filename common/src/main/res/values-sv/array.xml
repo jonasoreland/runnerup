@@ -70,6 +70,7 @@
     <item>Franska</item>
     <item>Italienska</item>
     <item>Polska</item>
+    <item>Svenska</item>
     <item>Turkiska</item>
     <item>Portugisiska</item>
   </string-array>
@@ -85,6 +86,7 @@
     <item>fr</item>
     <item>it</item>
     <item>pl</item>
+    <item>sv</item>
     <item>tr</item>
     <item>pt</item>
   </string-array>
