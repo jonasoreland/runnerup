@@ -5,13 +5,12 @@ jdk:
 
 android:
     components:
-        - platform-tools
-        - platform-tools #update to latest
         - tools
-        - tools #update to latest
+        - tools #update to latest, cannot control version
+        - platform-tools #latest
         - build-tools-24.0.0
         - android-24
-        - extras
+        - extra
         - extra-android-m2repository
         - extra-google-google_play_services
 
