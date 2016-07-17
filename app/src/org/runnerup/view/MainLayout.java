@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Service;
@@ -27,6 +28,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.database.Cursor;
@@ -37,6 +39,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +50,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -58,7 +64,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class MainLayout extends TabActivity {
+public class MainLayout extends TabActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Drawable myGetDrawable(int resId) {
         Drawable d = getResources().getDrawable(resId);
@@ -138,6 +145,7 @@ public class MainLayout extends TabActivity {
         if (upgradeState == UpgradeState.UPGRADE) {
             whatsNew();
         }
+        requestGpsPermissions();
 
         handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()
                 + "/..");
@@ -147,77 +155,91 @@ public class MainLayout extends TabActivity {
         if (data != null) {
             String filePath = null;
             if ("content".equals(data.getScheme())) {
-                Cursor cursor = this.getContentResolver().query(data, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
+                Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
                 cursor.moveToFirst();
                 filePath = cursor.getString(0);
                 cursor.close();
             } else {
                 filePath = data.getPath();
             }
-            Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
-            DBHelper.importDatabase(MainLayout.this, filePath);
+            if (Build.VERSION.SDK_INT >= 16 &&
+                    ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                Log.e(getClass().getSimpleName(), "No permission to read storage");
+            } else {
+                Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
+                DBHelper.importDatabase(MainLayout.this, filePath);
+            }
         }
     }
 
     void handleBundled(AssetManager mgr, String src, String dst) {
-        String list[] = null;
-        try {
-            list = mgr.list(src);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (list != null) {
-            for (String aList : list) {
-                boolean isFile = false;
-                String add = aList;
-                try {
-                    InputStream is = mgr.open(src + File.separator + add);
-                    is.close();
-                    isFile = true;
-                } catch (Exception ex) {
-                }
+        if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+            Log.e(getClass().getSimpleName(), "No permission to write storage");
+        } else {
+            String list[] = null;
 
-                Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
-                if (isFile == false) {
-                    File dstDir = new File(dst + File.separator + add);
-                    if (!dstDir.mkdir() || !dstDir.isDirectory()) {
-                        Log.e(getClass().getName(), "Failed to copy " + add + " as \"" + dst
-                                + "\" is not a directory!");
-                        continue;
-                    }
-                    if (dst == null)
-                        handleBundled(mgr, src + File.separator + add, add);
-                    else
-                        handleBundled(mgr, src + File.separator + add, dst + File.separator + add);
-                } else {
-                    String tmp = dst + File.separator + add;
-                    File dstFile = new File(tmp);
-                    if (dstFile.isDirectory() || dstFile.isFile()) {
-                        Log.e(getClass().getName(), "Skip: " + tmp +
-                                ", isDirectory(): " + dstFile.isDirectory() +
-                                ", isFile(): " + dstFile.isFile());
-                        continue;
-                    }
-
-                    String key = "install_bundled_" + add;
-                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-                    if (pref.contains(key)) {
-                        Log.e(getClass().getName(), "Skip: " + key);
-                        continue;
-
-                    }
-
-                    pref.edit().putBoolean(key, true).commit();
-                    Log.e(getClass().getName(), "Copying: " + tmp);
-                    InputStream input = null;
+            try {
+                list = mgr.list(src);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (list != null) {
+                for (String aList : list) {
+                    boolean isFile = false;
+                    String add = aList;
                     try {
-                        input = mgr.open(src + File.separator + add);
-                        FileUtil.copy(input, tmp);
-                        handleHooks(src, add);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        FileUtil.close(input);
+                        InputStream is = mgr.open(src + File.separator + add);
+                        is.close();
+                        isFile = true;
+                    } catch (Exception ex) {
+                    }
+
+                    Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
+                    if (isFile == false) {
+                        File dstDir = new File(dst + File.separator + add);
+                        if (!dstDir.mkdir() || !dstDir.isDirectory()) {
+                            Log.e(getClass().getName(), "Failed to copy " + add + " as \"" + dst
+                                    + "\" is not a directory!");
+                            continue;
+                        }
+                        if (dst == null)
+                            handleBundled(mgr, src + File.separator + add, add);
+                        else
+                            handleBundled(mgr, src + File.separator + add, dst + File.separator + add);
+                    } else {
+                        String tmp = dst + File.separator + add;
+                        File dstFile = new File(tmp);
+                        if (dstFile.isDirectory() || dstFile.isFile()) {
+                            Log.e(getClass().getName(), "Skip: " + tmp +
+                                    ", isDirectory(): " + dstFile.isDirectory() +
+                                    ", isFile(): " + dstFile.isFile());
+                            continue;
+                        }
+
+                        String key = "install_bundled_" + add;
+                        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+                        if (pref.contains(key)) {
+                            Log.e(getClass().getName(), "Skip: " + key);
+                            continue;
+
+                        }
+
+                        pref.edit().putBoolean(key, true).commit();
+                        Log.e(getClass().getName(), "Copying: " + tmp);
+                        InputStream input = null;
+                        try {
+                            input = mgr.open(src + File.separator + add);
+                            FileUtil.copy(input, tmp);
+                            handleHooks(src, add);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            FileUtil.close(input);
+                        }
                     }
                 }
             }
@@ -275,6 +297,41 @@ public class MainLayout extends TabActivity {
         wv.loadUrl("file:///android_asset/changes.html");
     }
 
+    public void requestGpsPermissions()
+    {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                //Toast, not intrusive popup at every start
+                Toast.makeText(this, "GPS permission is not granted",
+                        Toast.LENGTH_SHORT).show();
+                //Snackbar is a better option, in android.support.design.widget.Snackbar;
+                //However, requires tabHost.getCurrentView() and a AppCompat Theme for TabHost
+                //Replace TabHost first, a popup is too intrusive
+                //Snackbar.make(view, "GPS permission is required",
+                //        Snackbar.LENGTH_INDEFINITE)
+                //        .setAction(R.string.OK, new View.OnClickListener() {
+                //            @Override
+                //            public void onClick(View view) {
+                //                ActivityCompat.requestPermissions(MainLayout.this,
+                //                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                //                        REQUEST_LOCATION);
+                //            }
+                //        })
+                //        .show();
+            } else {
+
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQUEST_LOCATION);
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -308,5 +365,25 @@ public class MainLayout extends TabActivity {
             startActivity(i);
         }
         return true;
+    }
+
+    /**
+     * Id to identify a permission request.
+     */
+    private static final int REQUEST_LOCATION = 0;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_LOCATION) {
+            // Check if the only required permission has been granted (could react on the response)
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Log.i("MainLayout", "LOCATION permission was NOT granted.");
+            }
+
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

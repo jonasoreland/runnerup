@@ -17,12 +17,15 @@
 
 package org.runnerup.view;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +35,11 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
+import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
@@ -40,7 +48,8 @@ import org.runnerup.util.FileUtil;
 import java.io.IOException;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +93,70 @@ public class SettingsActivity extends PreferenceActivity {
         return false;
     }
 
+    @SuppressLint("InlinedApi")
+    public boolean requestReadStoragePermissions() {
+        boolean ret = true;
+        if (Build.VERSION.SDK_INT >= 16 &&
+                ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ret = false;
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                 Toast.makeText(SettingsActivity.this, "Read permission is not granted",
+                                        Toast.LENGTH_SHORT).show();
+                //Here it would be natural to request every time, but next requestPermissions() do not appear
+                return ret;
+            }
+        }
+        return ret;
+    }
+
+    public boolean requestWriteStoragePermissions() {
+        boolean ret = true;
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ret = false;
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                 Toast.makeText(SettingsActivity.this, "Write permission is not granted",
+                                        Toast.LENGTH_SHORT).show();
+                //Here it would be natural to request every time, but next requestPermissions() do not appear
+                return ret;
+            }
+
+            ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+        return ret;
+    }
+
+    /**
+     * Id to identify a permission request.
+     */
+    private static final int REQUEST_READ_EXTERNAL_STORAGE = 1;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 2;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_READ_EXTERNAL_STORAGE || requestCode == REQUEST_WRITE_EXTERNAL_STORAGE) {
+            // Check if the only required permission has been granted (could react on the response)
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Log.i(getClass().getSimpleName(),
+                        requestCode == REQUEST_READ_EXTERNAL_STORAGE ? "READ" : "WRITE" + " permission was NOT granted.");
+            }
+
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
     final OnPreferenceClickListener onExportClick = new OnPreferenceClickListener() {
 
         @Override
@@ -98,14 +171,19 @@ public class SettingsActivity extends PreferenceActivity {
                 }
 
             };
-            String from = DBHelper.getDbPath(getApplicationContext());
-            String to = dstdir + "/runnerup.db.export";
-            try {
-                int cnt = FileUtil.copyFile(to, from);
-                builder.setMessage("Copied " + cnt + " bytes");
-                builder.setPositiveButton(getString(R.string.Great), listener);
-            } catch (IOException e) {
-                builder.setMessage("Exception: " + e.toString());
+            if(requestWriteStoragePermissions()) {
+                String from = DBHelper.getDbPath(getApplicationContext());
+                String to = dstdir + "/runnerup.db.export";
+                try {
+                    int cnt = FileUtil.copyFile(to, from);
+                    builder.setMessage("Copied " + cnt + " bytes");
+                    builder.setPositiveButton(getString(R.string.Great), listener);
+                } catch (IOException e) {
+                    builder.setMessage("Exception: " + e.toString());
+                    builder.setNegativeButton(getString(R.string.Darn), listener);
+                }
+            } else {
+                builder.setMessage("Permission is not granted");
                 builder.setNegativeButton(getString(R.string.Darn), listener);
             }
             builder.show();
@@ -117,9 +195,23 @@ public class SettingsActivity extends PreferenceActivity {
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            String srcdir = Environment.getExternalStorageDirectory().getPath();
-            String from = srcdir + "/runnerup.db.export";
-            DBHelper.importDatabase(SettingsActivity.this, from);
+            if (requestReadStoragePermissions()) {
+                String srcdir = Environment.getExternalStorageDirectory().getPath();
+                String from = srcdir + "/runnerup.db.export";
+                DBHelper.importDatabase(SettingsActivity.this, from);
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+
+                };
+                builder.setTitle("Import runnerup.db");
+                builder.setMessage("Permission to read is not granted");
+                builder.setNegativeButton(getString(R.string.Darn), listener);
+            }
             return false;
         }
     };
