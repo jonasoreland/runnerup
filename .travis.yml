@@ -7,6 +7,7 @@ android:
     components:
         - platform-tools
         - tools
+        - tools #update to latest
         - build-tools-24.0.0
         - android-24
         - extras
