@@ -6,6 +6,7 @@ jdk:
 android:
     components:
         - platform-tools
+        - platform-tools #update to latest
         - tools
         - tools #update to latest
         - build-tools-24.0.0
