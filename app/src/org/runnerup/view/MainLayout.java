@@ -19,6 +19,7 @@ package org.runnerup.view;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
@@ -42,6 +43,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+//import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -145,90 +147,115 @@ public class MainLayout extends TabActivity
         if (upgradeState == UpgradeState.UPGRADE) {
             whatsNew();
         }
-        requestGpsPermissions();
+        requestGpsPermissions(this, tabHost.getCurrentView());
 
-        handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()
+        //Will request storage permissions if needed
+        handleBundled(this, tabHost.getCurrentView(), getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()
                 + "/..");
 
         // if we were called from an intent-filter because user opened "runnerup.db.export", load it
         final Uri data = getIntent().getData();
         if (data != null) {
-            String filePath = null;
-            if ("content".equals(data.getScheme())) {
-                Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
-                cursor.moveToFirst();
-                filePath = cursor.getString(0);
-                cursor.close();
-            } else {
-                filePath = data.getPath();
-            }
-            if (Build.VERSION.SDK_INT >= 16 &&
-                    ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.READ_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                Log.e(getClass().getSimpleName(), "No permission to read storage");
-            } else {
+            if (SettingsActivity.requestReadStoragePermissions(MainLayout.this)) {
+                String filePath = null;
+                if ("content".equals(data.getScheme())) {
+                    Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
+                    cursor.moveToFirst();
+                    filePath = cursor.getString(0);
+                    cursor.close();
+                } else {
+                    filePath = data.getPath();
+                }
                 Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
                 DBHelper.importDatabase(MainLayout.this, filePath);
+            } else {
+                Toast.makeText(this, "Storage permission not granted in Android settings, predefined workouts are not imported.",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    void handleBundled(AssetManager mgr, String src, String dst) {
-        if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-            Log.e(getClass().getSimpleName(), "No permission to write storage");
-        } else {
-            String list[] = null;
+    void handleBundled(final Activity activity, final View view, AssetManager mgr, String src, String dst) {
+        String list[] = null;
 
-            try {
-                list = mgr.list(src);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (list != null) {
-                for (String aList : list) {
-                    boolean isFile = false;
-                    String add = aList;
-                    try {
-                        InputStream is = mgr.open(src + File.separator + add);
-                        is.close();
-                        isFile = true;
-                    } catch (Exception ex) {
+        try {
+            list = mgr.list(src);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (list != null) {
+             for (String aList : list) {
+                boolean isFile = false;
+                String add = aList;
+
+                String key = "install_bundled_" + add;
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+                if (pref.contains(key)) {
+                    Log.e(getClass().getName(), "Skip: " + key);
+                    continue;
+                }
+
+                Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
+                if (!SettingsActivity.requestReadStoragePermissions(activity) && Build.VERSION.SDK_INT >= 16) {
+                    //TODO Defer this handling to when the permission response is received
+                    //The "bundled" handling should be moved to when needed, not startup
+                    Log.e(getClass().getName(), "No storage permission for "+add);
+                    //Only request permissions once, if granted import will be done next
+//                    if (view == null){
+                        //Toast, not intrusive popup at every start
+                        Toast.makeText(activity, "Storage permission not granted in Android settings, predefined workouts are not imported.",
+                              Toast.LENGTH_SHORT).show();
+//                    } else{
+                        //Snackbar is a better option, in android.support.design.widget.Snackbar;
+                        //However, requires tabHost.getCurrentView() and a AppCompat Theme for TabHost
+                        //Replace TabHost first, a popup is too intrusive
+//                        Snackbar.make(view, "Storage permission is required to import predefined workouts",
+//                                Snackbar.LENGTH_INDEFINITE)
+//                                .setAction(R.string.OK, new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//                                        ActivityCompat.requestPermissions(activity,
+//                                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                                                REQUEST_LOCATION);
+//                                    }
+//                                })
+//                                .show();
+//                    }
+                    break;
+                }
+
+                try {
+                    InputStream is = mgr.open(src + File.separator + add);
+                    is.close();
+                    isFile = true;
+                } catch (Exception ex) {
+                }
+
+                if (isFile == false) {
+                    File dstDir = new File(dst + File.separator + add);
+                    if (!dstDir.mkdir() || !dstDir.isDirectory()) {
+                        Log.e(getClass().getName(), "Failed to copy " + add + " as \"" + dst
+                                + "\" is not a directory!");
+                        continue;
+                    }
+                    if (dst == null)
+                        handleBundled(activity, view, mgr, src + File.separator + add, add);
+                    else
+                        handleBundled(activity, view, mgr, src + File.separator + add, dst + File.separator + add);
+                } else {
+                    String tmp = dst + File.separator + add;
+                    File dstFile = new File(tmp);
+                    if (dstFile.isDirectory() || dstFile.isFile()) {
+                        Log.e(getClass().getName(), "Skip: " + tmp +
+                                ", isDirectory(): " + dstFile.isDirectory() +
+                                ", isFile(): " + dstFile.isFile());
+                        continue;
                     }
 
-                    Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
-                    if (isFile == false) {
-                        File dstDir = new File(dst + File.separator + add);
-                        if (!dstDir.mkdir() || !dstDir.isDirectory()) {
-                            Log.e(getClass().getName(), "Failed to copy " + add + " as \"" + dst
-                                    + "\" is not a directory!");
-                            continue;
-                        }
-                        if (dst == null)
-                            handleBundled(mgr, src + File.separator + add, add);
-                        else
-                            handleBundled(mgr, src + File.separator + add, dst + File.separator + add);
-                    } else {
-                        String tmp = dst + File.separator + add;
-                        File dstFile = new File(tmp);
-                        if (dstFile.isDirectory() || dstFile.isFile()) {
-                            Log.e(getClass().getName(), "Skip: " + tmp +
-                                    ", isDirectory(): " + dstFile.isDirectory() +
-                                    ", isFile(): " + dstFile.isFile());
-                            continue;
-                        }
-
-                        String key = "install_bundled_" + add;
-                        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-                        if (pref.contains(key)) {
-                            Log.e(getClass().getName(), "Skip: " + key);
-                            continue;
-
-                        }
-
-                        pref.edit().putBoolean(key, true).commit();
+                    pref.edit().putBoolean(key, true).commit();
+                    //Write permissions should be granted already here, then write should be granted automatically
+                    //No extra user information
+                    if (SettingsActivity.requestWriteStoragePermissions(activity)) {
                         Log.e(getClass().getName(), "Copying: " + tmp);
                         InputStream input = null;
                         try {
@@ -297,35 +324,37 @@ public class MainLayout extends TabActivity
         wv.loadUrl("file:///android_asset/changes.html");
     }
 
-    public void requestGpsPermissions()
+    public static void requestGpsPermissions(final Activity activity, final View view)
     {
-        if (ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                //Toast, not intrusive popup at every start
-                Toast.makeText(this, "GPS permission is not granted",
-                        Toast.LENGTH_SHORT).show();
-                //Snackbar is a better option, in android.support.design.widget.Snackbar;
-                //However, requires tabHost.getCurrentView() and a AppCompat Theme for TabHost
-                //Replace TabHost first, a popup is too intrusive
-                //Snackbar.make(view, "GPS permission is required",
-                //        Snackbar.LENGTH_INDEFINITE)
-                //        .setAction(R.string.OK, new View.OnClickListener() {
-                //            @Override
-                //            public void onClick(View view) {
-                //                ActivityCompat.requestPermissions(MainLayout.this,
-                //                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                //                        REQUEST_LOCATION);
-                //            }
-                //        })
-                //        .show();
+//                if (view == null){
+                    //Toast, not intrusive popup at every start
+                    Toast.makeText(activity, "GPS permission not granted in Android settings",
+                            Toast.LENGTH_SHORT).show();
+//                } else{
+//                    //Snackbar is a better option, in android.support.design.widget.Snackbar;
+//                    //However, requires tabHost.getCurrentView() and a AppCompat Theme for TabHost
+//                    //Replace TabHost first, a popup is too intrusive
+//                    Snackbar.make(view, "GPS permission is required",
+//                            Snackbar.LENGTH_INDEFINITE)
+//                            .setAction(R.string.OK, new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View view) {
+//                                    ActivityCompat.requestPermissions(activity,
+//                                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+//                                            REQUEST_LOCATION);
+//                                }
+//                            })
+//                            .show();
+//                }
             } else {
-
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
+                ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                         REQUEST_LOCATION);
             }
@@ -377,9 +406,11 @@ public class MainLayout extends TabActivity
 
         if (requestCode == REQUEST_LOCATION) {
             // Check if the only required permission has been granted (could react on the response)
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             } else {
-                Log.i("MainLayout", "LOCATION permission was NOT granted.");
+                String s = "Location permission was not granted";
+                Log.i("MainLayout", s);
+                Toast.makeText(MainLayout.this, s, Toast.LENGTH_SHORT).show();
             }
 
         } else {
