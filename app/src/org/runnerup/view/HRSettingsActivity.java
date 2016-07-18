@@ -619,7 +619,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 row = convertView;
             }
             TextView tv = (TextView) row.findViewById(android.R.id.text1);
-            tv.setTextColor(resources.getColor(R.color.black));
+            //tv.setTextColor(resources.getColor(R.color.black));
 
             HRDeviceRef btDevice = deviceList.get(position);
             tv.setTag(btDevice);

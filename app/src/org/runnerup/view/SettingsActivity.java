@@ -97,6 +97,7 @@ public class SettingsActivity extends PreferenceActivity
     @SuppressLint("InlinedApi")
     public static boolean requestReadStoragePermissions(final Activity activity) {
         boolean ret = true;
+
         if (Build.VERSION.SDK_INT >= 16 &&
                 ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -107,7 +108,7 @@ public class SettingsActivity extends PreferenceActivity
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 //Assume that the caller informs the user, no toast or SnackBar
             } else {
-                //Request permission - not working from Settings.Activity
+                //Request permission - not working from SettingsActivity
                 //If not calling requestPermissions at startup, this part will not be called...
                 ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
@@ -119,6 +120,7 @@ public class SettingsActivity extends PreferenceActivity
 
     public static boolean requestWriteStoragePermissions(final Activity activity) {
         boolean ret = true;
+
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -127,8 +129,9 @@ public class SettingsActivity extends PreferenceActivity
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             } else {
-                 //Request permission - not working from Settings.Activity
-                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                 //Request permission - not working from SettingsActivity
+                 ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_WRITE_EXTERNAL_STORAGE);
             }
         }

@@ -50,7 +50,7 @@ public class WidgetUtil {
         Resources res = ctx.getResources(); // Resource object to get Drawables
         TextView txtTab = new TextView(ctx);
         txtTab.setText(title);
-        txtTab.setTextColor(Color.WHITE);
+        //txtTab.setTextColor(Color.WHITE);
         txtTab.setGravity(Gravity.CENTER_HORIZONTAL);
         Drawable drawable = res.getDrawable(R.drawable.tab_indicator_holo);
         WidgetUtil.setBackground(txtTab, drawable); // R.drawable.tab_indicator_holo);
