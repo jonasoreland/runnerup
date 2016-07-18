@@ -8,7 +8,7 @@ android:
         - tools
         - tools #update to latest, cannot control version
         - platform-tools #latest
-        - build-tools-24.0.0
+        - build-tools-24.0.1
         - android-24
         - extra
         - extra-android-m2repository
