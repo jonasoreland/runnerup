@@ -2,10 +2,10 @@ language: android
 
 android:
     components:
-        - tools
+        - tools #standard travis version
         - tools #update to latest, cannot control version
         - platform-tools #latest
-        - build-tools-24.0.1
+        - build-tools #latest
         - android-22
         - extra
         - extra-android-m2repository
