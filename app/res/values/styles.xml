@@ -16,16 +16,17 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-    <style name="AppTheme.Base" parent="Theme.AppCompat">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:tabWidgetStyle">@android:style/Widget.TabWidget</item>
         <!--
             <item name="colorPrimary">@color/colorPrimary</item>
             <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
             <item name="colorAccent">@color/colorAccent</item>
          -->
     </style>
-<style name="ButtonText" parent="AppTheme.Base">
+<style name="ButtonText" parent="AppTheme">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/btn_text_color</item>
@@ -38,7 +39,7 @@
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">2</item>
 </style>
-<style name="ButtonTextGrey" parent="AppTheme.Base">
+<style name="ButtonTextGrey" parent="AppTheme">
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:gravity">center</item>
@@ -51,7 +52,7 @@
     <item name="android:shadowDy">1</item>
     <item name="android:shadowRadius">2</item>
 </style>
-<style name="RunHeader" parent="AppTheme.Base">
+<style name="RunHeader" parent="AppTheme">
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_weight">1</item>
@@ -59,7 +60,7 @@
     <item name="android:textSize">15sp</item>
     <item name="android:textStyle">bold|italic</item>
 </style>
-<style name="RunInfo" parent="AppTheme.Base">
+<style name="RunInfo" parent="AppTheme">
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_weight">1</item>
@@ -68,7 +69,7 @@
     <item name="android:textSize">20sp</item>
     <item name="android:textStyle">bold</item>
 </style>
-<style name="FeedDateHeader" parent="AppTheme.Base">
+<style name="FeedDateHeader" parent="AppTheme">
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_margin">10dp</item>
@@ -76,7 +77,7 @@
     <item name="android:textSize">20sp</item>
     <item name="android:textStyle">bold</item>
 </style>
-<style name="FeedActivitySource" parent="AppTheme.Base">
+<style name="FeedActivitySource" parent="AppTheme">
     <item name="android:layout_width">fill_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_marginLeft">5dp</item>

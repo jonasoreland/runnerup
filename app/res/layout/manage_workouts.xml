@@ -50,19 +50,21 @@
           android:layout_width="0dp"
           android:layout_weight="1"
           android:layout_height="wrap_content"
+          android:singleLine="true"
           android:text="@string/Download"
           android:textSize="16sp"
-  />
+      />
 
       <Button
-              android:id="@+id/share_workout_button"
-              style="@style/ButtonText"
-              android:background="@drawable/btn_blue"
-              android:layout_width="0dp"
-              android:layout_weight="1"
-              android:layout_height="wrap_content"
-              android:text="@string/Share"
-              android:textSize="16sp"
+          android:id="@+id/share_workout_button"
+          style="@style/ButtonText"
+          android:background="@drawable/btn_blue"
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:layout_height="wrap_content"
+          android:singleLine="true"
+          android:text="@string/Share"
+          android:textSize="16sp"
       />
     </TableRow>
 
@@ -77,6 +79,7 @@
           android:layout_width="0dp"
           android:layout_weight="1"
           android:layout_height="wrap_content"
+          android:singleLine="true"
           android:text="@string/Create"
           android:textSize="16sp"
           android:clickable="false"
@@ -89,6 +92,7 @@
           android:layout_width="0dp"
           android:layout_weight="1"
           android:layout_height="wrap_content"
+          android:singleLine="true"
           android:text="@string/Delete"
           android:textSize="16sp"
           />
