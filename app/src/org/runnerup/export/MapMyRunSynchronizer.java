@@ -306,7 +306,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 wr.close();
 
                 in = new BufferedInputStream(conn.getInputStream());
-                obj = SyncHelper.parse(in);
+                SyncHelper.parse(in);
                 conn.disconnect();
 
                 s = Status.OK;

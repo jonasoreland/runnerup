@@ -308,6 +308,7 @@ public class CreateAdvancedWorkout extends Activity {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             File f = WorkoutSerializer.getFile(getApplicationContext(), advancedWorkoutSpinner.getValue().toString());
+                            //noinspection ResultOfMethodCallIgnored
                             f.delete();
                             finish();
                             return;

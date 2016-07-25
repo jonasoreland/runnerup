@@ -318,15 +318,12 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     }
 
     public void log(final String msg) {
-        StringBuilder str = new StringBuilder();
-        str.append("[ RetryingHRProviderProxy: ").
-                append(provider.getProviderName()).
-                append(", attempt: ").append(Integer.toString(attempt)).
-                append(" ]");
 
-        str.append(", state: " + state + ", request: " + requestedState +
-                ", " + msg);
-        String res = str.toString();
+        String res = "[ RetryingHRProviderProxy: " +
+                provider.getProviderName() +
+                ", attempt: " + Integer.toString(attempt) +
+                " ]" +
+                ", state: " + state + ", request: " + requestedState + ", " + msg;
         System.err.println(res);
         if (client != null) {
             if(Looper.myLooper() == Looper.getMainLooper()) {

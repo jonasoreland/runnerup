@@ -721,7 +721,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 if (arg1 == true) {
                     pendingSynchronizers.add((String) arg0.getTag());
                 } else {
-                    pendingSynchronizers.remove((String) arg0.getTag());
+                    pendingSynchronizers.remove(arg0.getTag());
                 }
 
                 if (mode == MODE_DETAILS) {
@@ -889,6 +889,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             double avg_time = sum_time;
             double avg_dist = sum_distance;
             double avg_hr = calculateAverage(hr);
+            //noinspection ConstantIfStatement,ConstantIfStatement
             if (true) {
                 // remove max/min pace to (maybe) get smoother graph
                 double max_pace[] = {
@@ -1350,7 +1351,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                                 map.setZoom(18.0f);
                             }
                         }
-                        route = new Route(); // release mem for old...
+                        route = null; // release mem for old...
                     }
                 }
             }

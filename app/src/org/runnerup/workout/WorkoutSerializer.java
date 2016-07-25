@@ -209,7 +209,7 @@ public class WorkoutSerializer {
 
         if (step.getIntensity() == Intensity.REPEAT) {
             obj.put("endConditionTypeKey", "iterations");
-            obj.put("endConditionValue", ((RepeatStep) step).getRepeatCount());
+            obj.put("endConditionValue", step.getRepeatCount());
             obj.put("endConditionUnitKey", "dimensionless");
             return;
         }

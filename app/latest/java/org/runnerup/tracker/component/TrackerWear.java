@@ -75,6 +75,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private Context context;
     private GoogleApiClient mGoogleApiClient;
     private Formatter formatter;
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private HashSet<Node> connectedNodes = new HashSet<Node>();
     private String wearNode;
 

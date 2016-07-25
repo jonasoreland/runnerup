@@ -442,15 +442,11 @@ public class GoogleFitData {
     }
 
     private String getDataSetURLSuffix(DataSourceType source, long startTime, long endTime) {
-        StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append(GoogleFitSynchronizer.REST_DATASOURCE).append("/").append(SyncHelper.URLEncode(source.getDataStreamId(this))).append("/").append(GoogleFitSynchronizer.REST_DATASETS).append("/").append(startTime).append("-").append(endTime);
-        return urlSuffix.toString();
+        return GoogleFitSynchronizer.REST_DATASOURCE + "/" + SyncHelper.URLEncode(source.getDataStreamId(this)) + "/" + GoogleFitSynchronizer.REST_DATASETS + "/" + startTime + "-" + endTime;
     }
 
     private String getSessionURLSuffix(long startTime, long endTime) {
-        StringBuilder urlSuffix = new StringBuilder();
-        urlSuffix.append(GoogleFitSynchronizer.REST_SESSIONS).append("/").append(mContext.getString(R.string.app_name)).append("-").append(startTime).append("-").append(endTime);
-        return urlSuffix.toString();
+        return GoogleFitSynchronizer.REST_SESSIONS + "/" + mContext.getString(R.string.app_name) + "-" + startTime + "-" + endTime;
     }
 
     public enum DataSourceType {
@@ -473,9 +469,7 @@ public class GoogleFitData {
         }
 
         public String getDataStreamId(GoogleFitData gfd) {
-            StringBuilder streamId = new StringBuilder();
-            streamId.append(SOURCE_TYPE).append(":").append(getDataType()).append(":").append(getProjectId(gfd)).append(":").append(getDataName());
-            return streamId.toString();
+            return SOURCE_TYPE + ":" + getDataType() + ":" + getProjectId(gfd) + ":" + getDataName();
         }
 
         public String getProjectId(GoogleFitData gfd) {

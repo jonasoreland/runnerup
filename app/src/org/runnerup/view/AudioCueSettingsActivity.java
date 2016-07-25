@@ -88,16 +88,16 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             prefMgr.setSharedPreferencesMode(MODE_PRIVATE);
         }
 
-        addPreferencesFromResource(R.layout.audio_cue_settings);
+        addPreferencesFromResource(R.xml.audio_cue_settings);
         setContentView(R.layout.settings_wrapper);
 
         {
-            Preference btn = (Preference) findPreference("test_cueinfo");
+            Preference btn = findPreference("test_cueinfo");
             btn.setOnPreferenceClickListener(onTestCueinfoClick);
         }
 
         {
-            Preference btn = (Preference) findPreference("cue_silence");
+            Preference btn = findPreference("cue_silence");
             if (btn != null) {
                 btn.setOnPreferenceClickListener(this.onSilenceClick);
             }
@@ -128,7 +128,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         }
 
         {
-            Preference btn = (Preference) findPreference("tts_settings");
+            Preference btn = findPreference("tts_settings");
             btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
@@ -245,6 +245,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
          */
         File a = new File(getFilesDir().getAbsoluteFile() + "/../" + PREFS_DIR + "/" + name
                 + SUFFIX + ".xml");
+        //noinspection ResultOfMethodCallIgnored
         a.delete();
 
         String args[] = {

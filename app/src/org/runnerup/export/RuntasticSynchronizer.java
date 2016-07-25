@@ -339,7 +339,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                 fv.put("user_id", userId.toString());
                 SyncHelper.postData(conn, fv);
                 int responseCode = conn.getResponseCode();
-                String amsg = conn.getResponseMessage();
+                //String amsg = conn.getResponseMessage();
                 Log.i(getName(), "code: " + responseCode + ", html: " + getFormValues(conn));
                 conn.disconnect();
             }
