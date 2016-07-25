@@ -212,9 +212,8 @@ public class NikeXML {
         Cursor c = mDB.rawQuery("select min(" + DB.LOCATION.HR + "), max(" + DB.LOCATION.HR
                 + "), avg(" + DB.LOCATION.HR + ") FROM " + DB.LOCATION.TABLE + " WHERE "
                 + DB.LOCATION.ACTIVITY + " = ?", args);
-        while (c.moveToFirst()) {
-            if (c.isNull(0) || c.isNull(1) || c.isNull(2))
-                break;
+        if (c.moveToFirst() &&
+                !(c.isNull(0) || c.isNull(1) || c.isNull(2))) {
 
             int minHR = c.getInt(0);
             int maxHR = c.getInt(1);

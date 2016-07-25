@@ -187,7 +187,7 @@ public interface Constants {
         public static final int CONNECTING = 7;
         public static final int CONNECTED = 8;
         public static final int STOPPED = 9;
-    };
+    }
 
     public interface Wear {
 
@@ -213,17 +213,17 @@ public interface Constants {
             static final String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
             static final String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
             static final String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
-        };
+        }
 
         public interface RunInfo {
             static final String HEADER = "HEADER/";
             static final String DATA = "DATA/";
             static final String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
             static final String COUNTDOWN = "COUNTDOWN";   // Stored in DATA
-        };
+        }
 
         public interface TrackerState {
             static final String STATE = "state";
-        };
-    };
+        }
+    }
 }

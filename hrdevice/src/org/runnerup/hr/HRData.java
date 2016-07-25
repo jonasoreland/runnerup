@@ -48,17 +48,16 @@ public class HRData {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("HRData{");
-        sb.append(", hrValue=").append((hasHeartRate ? hrValue : "<no_heart_rate_data>"))
-                .append('\n');
-        sb.append(", timeStampIsFromDevice=").append(timeStampIsFromDevice)
-                .append('\n');
-        sb.append(", timestamp=").append(timestamp)
-                .append('\n');
-        sb.append(", rrIntervals=").append((hasRrIntervals ? Arrays.toString(rrIntervals) : "<no_rr_interval_data>"))
-                .append('\n');
-        sb.append('}');
-        return sb.toString();
+        String sb = "HRData{" + ", hrValue=" + (hasHeartRate ? hrValue : "<no_heart_rate_data>") +
+                '\n' +
+                ", timeStampIsFromDevice=" + timeStampIsFromDevice +
+                '\n' +
+                ", timestamp=" + timestamp +
+                '\n' +
+                ", rrIntervals=" + (hasRrIntervals ? Arrays.toString(rrIntervals) : "<no_rr_interval_data>") +
+                '\n' +
+                '}';
+        return sb;
     }
 
     public HRData setHeartRate(long heartRate){

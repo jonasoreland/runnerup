@@ -19,7 +19,6 @@ package org.runnerup.workout.feedback;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
