@@ -20,12 +20,14 @@ package org.runnerup.content;
 import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 
@@ -51,19 +53,30 @@ public class ActivityProvider extends ContentProvider {
 
     // The authority is the symbolic name for the provider class
     public static final String AUTHORITY = "org.runnerup.activity.provider";
+    @SuppressWarnings("WeakerAccess")
     public static final String GPX_MIME = "application/gpx+xml";
+    @SuppressWarnings("WeakerAccess")
     public static final String TCX_MIME = "application/tcx+xml";
+    @SuppressWarnings("WeakerAccess")
     public static final String NIKE_MIME = "application/nike+xml";
+    @SuppressWarnings("WeakerAccess")
     public static final String MAPS_MIME = "application/maps";
+    @SuppressWarnings("WeakerAccess")
     public static final String FACEBOOK_COURSE_MIME = "application/facebook.course";
-    public static final String RUNKEEPER_MIME = "application/runkeeper+xml";
+    //public static final String RUNKEEPER_MIME = "application/runkeeper+xml";
 
     // UriMatcher used to match against incoming requests
+    @SuppressWarnings("WeakerAccess")
     static final int GPX = 1;
+    @SuppressWarnings("WeakerAccess")
     static final int TCX = 2;
+    @SuppressWarnings("WeakerAccess")
     static final int NIKE = 3;
+    @SuppressWarnings("WeakerAccess")
     static final int MAPS = 4;
+    @SuppressWarnings("WeakerAccess")
     static final int FACEBOOK_COURSE = 5;
+    @SuppressWarnings("WeakerAccess")
     static final int RUNKEEPER = 6;
     private UriMatcher uriMatcher;
 
@@ -82,25 +95,29 @@ public class ActivityProvider extends ContentProvider {
     private Pair<File, OutputStream> openCacheFile(String name) {
         for (int i = 0; i < 3; i++) {
             try {
+                Context ctx = getContext();
+                assert ctx != null;
+                //noinspection UnusedAssignment
                 File path = null;
                 switch (i) {
                     case 0:
                     default:
-                        path = getContext().getExternalCacheDir();
+                        path = ctx.getExternalCacheDir();
                         break;
                     case 1:
-                        path = getContext().getExternalFilesDir("tcx");
+                        path = ctx.getExternalFilesDir("tcx");
                         break;
                     case 2:
-                        path = getContext().getCacheDir();
+                        path = ctx.getCacheDir();
                         break;
                 }
-                final File file = new File(path.getAbsolutePath() + File.separator + name);
+                @SuppressWarnings("ConstantConditions") final File file = new File(path.getAbsolutePath() + File.separator + name);
                 final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 Log.e(getClass().getName(), Integer.toString(i) + ": putting cache file in: "
                         + file.getAbsolutePath());
+                //noinspection Convert2Diamond
                 return new Pair<File, OutputStream>(file, out);
-            } catch (IOException ex) {
+            } catch (IOException | NullPointerException ignored) {
             }
         }
 
@@ -108,7 +125,7 @@ public class ActivityProvider extends ContentProvider {
     }
 
     @Override
-    public ParcelFileDescriptor openFile(Uri uri, String mode)
+    public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode)
             throws FileNotFoundException {
 
         final int res = uriMatcher.match(uri);
@@ -155,10 +172,12 @@ public class ActivityProvider extends ContentProvider {
                         final boolean includeMap = true;
                         String str = map.export(activityId, includeMap, null).toString();
                         out.second.write(str.getBytes());
-                    } else //noinspection ConstantConditions
-                        if (res == RUNKEEPER) {
-                        RunKeeper map = new RunKeeper(mDB);
-                        map.export(activityId, new OutputStreamWriter(out.second));
+                    } else {
+                       //noinspection ConstantConditions
+                       if (res == RUNKEEPER) {
+                            RunKeeper map = new RunKeeper(mDB);
+                            map.export(activityId, new OutputStreamWriter(out.second));
+                        }
                     }
                     out.second.flush();
                     out.second.close();
@@ -168,6 +187,7 @@ public class ActivityProvider extends ContentProvider {
                 }
                 DBHelper.closeDB(mDB);
 
+                //noinspection UnnecessaryLocalVariable
                 ParcelFileDescriptor pfd = ParcelFileDescriptor.open(out.first,
                         ParcelFileDescriptor.MODE_READ_ONLY);
                 return pfd;
@@ -177,23 +197,23 @@ public class ActivityProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues contentvalues, String s,
-            String[] as) {
+    public int update(@NonNull Uri uri, ContentValues contentvalues, String s,
+                      String[] as) {
         return 0;
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] as) {
+    public int delete(@NonNull Uri uri, String s, String[] as) {
         return 0;
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues contentvalues) {
+    public Uri insert(@NonNull Uri uri, ContentValues contentvalues) {
         return null;
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         switch (uriMatcher.match(uri)) {
             case GPX:
                 return GPX_MIME;
@@ -210,8 +230,8 @@ public class ActivityProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String s, String[] as1,
-            String s1) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String s, String[] as1,
+                        String s1) {
         return null;
     }
 }
