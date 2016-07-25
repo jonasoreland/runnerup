@@ -372,7 +372,7 @@ public class KXmlSerializer implements XmlSerializer {
         if (standalone != null) {
             writer.write("standalone='");
             writer.write(
-                standalone.booleanValue() ? "yes" : "no");
+                    standalone ? "yes" : "no");
             writer.write("' ");
         }
         writer.write("?>");

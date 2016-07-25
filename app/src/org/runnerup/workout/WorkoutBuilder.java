@@ -177,6 +177,7 @@ public class WorkoutBuilder {
             }
             repeat.steps.add(step);
 
+            //noinspection ConstantIfStatement
             if (true) {
                 Step rest = null;
                 switch (intervalRestType) {

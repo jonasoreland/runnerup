@@ -31,7 +31,7 @@ import java.util.List;
 
 public interface Synchronizer {
 
-    public enum RequestMethod { GET, POST, PATCH, PUT; }
+    public enum RequestMethod { GET, POST, PATCH, PUT }
 
     enum AuthMethod {
         OAUTH2, USER_PASS

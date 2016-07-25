@@ -39,7 +39,7 @@ public class StartActivityHeadsetButtonReceiver extends HeadsetButtonReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-            KeyEvent event = (KeyEvent) intent
+            KeyEvent event = intent
                     .getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (KeyEvent.ACTION_DOWN == event.getAction()) {
                 Intent startBroadcastIntent = new Intent();

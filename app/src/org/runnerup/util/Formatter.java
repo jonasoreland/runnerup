@@ -106,7 +106,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             setLang(defaultLocale);
             return result;
         }
-    };
+    }
 
     public static Locale getAudioLocale(Context ctx) {
         Resources res = ctx.getResources();
