@@ -17,7 +17,9 @@
 
 package org.runnerup.view;
 
+import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
@@ -27,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.database.Cursor;
@@ -37,6 +40,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+//import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +52,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -58,7 +66,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class MainLayout extends TabActivity {
+public class MainLayout extends TabActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Drawable myGetDrawable(int resId) {
         Drawable d = getResources().getDrawable(resId);
@@ -129,47 +138,89 @@ public class MainLayout extends TabActivity {
                 .setIndicator(getString(R.string.Settings), myGetDrawable(R.drawable.ic_tab_setup))
                 .setContent(new Intent(this, SettingsActivity.class)));
 
-        // Set tabs Colors
-        tabHost.setBackgroundColor(Color.BLACK);
-        tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
         tabHost.setCurrentTab(0);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         if (upgradeState == UpgradeState.UPGRADE) {
             whatsNew();
         }
+        requestGpsPermissions(this, tabHost.getCurrentView());
 
-        handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()
+        //Will request storage permissions if needed
+        handleBundled(this, tabHost.getCurrentView(), getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()
                 + "/..");
 
         // if we were called from an intent-filter because user opened "runnerup.db.export", load it
         final Uri data = getIntent().getData();
         if (data != null) {
-            String filePath = null;
-            if ("content".equals(data.getScheme())) {
-                Cursor cursor = this.getContentResolver().query(data, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
-                cursor.moveToFirst();
-                filePath = cursor.getString(0);
-                cursor.close();
+            if (SettingsActivity.requestReadStoragePermissions(MainLayout.this)) {
+                String filePath = null;
+                if ("content".equals(data.getScheme())) {
+                    Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
+                    cursor.moveToFirst();
+                    filePath = cursor.getString(0);
+                    cursor.close();
+                } else {
+                    filePath = data.getPath();
+                }
+                Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
+                DBHelper.importDatabase(MainLayout.this, filePath);
             } else {
-                filePath = data.getPath();
+                Toast.makeText(this, "Storage permission not granted in Android settings, predefined workouts are not imported.",
+                        Toast.LENGTH_SHORT).show();
             }
-            Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
-            DBHelper.importDatabase(MainLayout.this, filePath);
         }
     }
 
-    void handleBundled(AssetManager mgr, String src, String dst) {
+    void handleBundled(final Activity activity, final View view, AssetManager mgr, String src, String dst) {
         String list[] = null;
+
         try {
             list = mgr.list(src);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (list != null) {
-            for (String aList : list) {
+             for (String aList : list) {
                 boolean isFile = false;
                 String add = aList;
+
+                String key = "install_bundled_" + add;
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+                if (pref.contains(key)) {
+                    Log.e(getClass().getName(), "Skip: " + key);
+                    continue;
+                }
+
+                Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
+                if (!SettingsActivity.requestReadStoragePermissions(activity) && Build.VERSION.SDK_INT >= 16) {
+                    //TODO Defer this handling to when the permission response is received
+                    //The "bundled" handling should be moved to when needed, not startup
+                    Log.e(getClass().getName(), "No storage permission for "+add);
+                    //Only request permissions once, if granted import will be done next
+//                    if (view == null){
+                        //Toast, not intrusive popup at every start
+                        Toast.makeText(activity, "Storage permission not granted in Android settings, predefined workouts are not imported.",
+                              Toast.LENGTH_SHORT).show();
+//                    } else{
+                        //Snackbar is a better option, in android.support.design.widget.Snackbar;
+                        //However, requires tabHost.getCurrentView() and a AppCompat Theme for TabHost
+                        //Replace TabHost first, a popup is too intrusive
+//                        Snackbar.make(view, "Storage permission is required to import predefined workouts",
+//                                Snackbar.LENGTH_INDEFINITE)
+//                                .setAction(R.string.OK, new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//                                        ActivityCompat.requestPermissions(activity,
+//                                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                                                REQUEST_LOCATION);
+//                                    }
+//                                })
+//                                .show();
+//                    }
+                    break;
+                }
+
                 try {
                     InputStream is = mgr.open(src + File.separator + add);
                     is.close();
@@ -177,7 +228,6 @@ public class MainLayout extends TabActivity {
                 } catch (Exception ex) {
                 }
 
-                Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
                 if (isFile == false) {
                     File dstDir = new File(dst + File.separator + add);
                     if (!dstDir.mkdir() || !dstDir.isDirectory()) {
@@ -186,9 +236,9 @@ public class MainLayout extends TabActivity {
                         continue;
                     }
                     if (dst == null)
-                        handleBundled(mgr, src + File.separator + add, add);
+                        handleBundled(activity, view, mgr, src + File.separator + add, add);
                     else
-                        handleBundled(mgr, src + File.separator + add, dst + File.separator + add);
+                        handleBundled(activity, view, mgr, src + File.separator + add, dst + File.separator + add);
                 } else {
                     String tmp = dst + File.separator + add;
                     File dstFile = new File(tmp);
@@ -199,25 +249,21 @@ public class MainLayout extends TabActivity {
                         continue;
                     }
 
-                    String key = "install_bundled_" + add;
-                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-                    if (pref.contains(key)) {
-                        Log.e(getClass().getName(), "Skip: " + key);
-                        continue;
-
-                    }
-
                     pref.edit().putBoolean(key, true).commit();
-                    Log.e(getClass().getName(), "Copying: " + tmp);
-                    InputStream input = null;
-                    try {
-                        input = mgr.open(src + File.separator + add);
-                        FileUtil.copy(input, tmp);
-                        handleHooks(src, add);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        FileUtil.close(input);
+                    //Write permissions should be granted already here, then write should be granted automatically
+                    //No extra user information
+                    if (SettingsActivity.requestWriteStoragePermissions(activity)) {
+                        Log.e(getClass().getName(), "Copying: " + tmp);
+                        InputStream input = null;
+                        try {
+                            input = mgr.open(src + File.separator + add);
+                            FileUtil.copy(input, tmp);
+                            handleHooks(src, add);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            FileUtil.close(input);
+                        }
                     }
                 }
             }
@@ -275,6 +321,43 @@ public class MainLayout extends TabActivity {
         wv.loadUrl("file:///android_asset/changes.html");
     }
 
+    public static void requestGpsPermissions(final Activity activity, final View view)
+    {
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+//                if (view == null){
+                    //Toast, not intrusive popup at every start
+                    Toast.makeText(activity, "GPS permission not granted in Android settings",
+                            Toast.LENGTH_SHORT).show();
+//                } else{
+//                    //Snackbar is a better option, in android.support.design.widget.Snackbar;
+//                    //However, requires tabHost.getCurrentView() and a AppCompat Theme for TabHost
+//                    //Replace TabHost first, a popup is too intrusive
+//                    Snackbar.make(view, "GPS permission is required",
+//                            Snackbar.LENGTH_INDEFINITE)
+//                            .setAction(R.string.OK, new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View view) {
+//                                    ActivityCompat.requestPermissions(activity,
+//                                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+//                                            REQUEST_LOCATION);
+//                                }
+//                            })
+//                            .show();
+//                }
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        REQUEST_LOCATION);
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -308,5 +391,27 @@ public class MainLayout extends TabActivity {
             startActivity(i);
         }
         return true;
+    }
+
+    /**
+     * Id to identify a permission request.
+     */
+    private static final int REQUEST_LOCATION = 0;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_LOCATION) {
+            // Check if the only required permission has been granted (could react on the response)
+            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                String s = "Location permission was not granted";
+                Log.i("MainLayout", s);
+                Toast.makeText(MainLayout.this, s, Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

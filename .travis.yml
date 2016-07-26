@@ -1,12 +1,15 @@
 language: android
 
+jdk:
+  - oraclejdk8
+
 android:
     components:
         - tools
         - tools #update to latest, cannot control version
         - platform-tools #latest
         - build-tools-24.0.1
-        - android-22
+        - android-24
         - extra
         - extra-android-m2repository
         - extra-google-google_play_services

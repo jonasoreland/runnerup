@@ -215,7 +215,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         tabHost.addTab(tabSpec);
 
         tabHost.setOnTabChangedListener(onTabChangeListener);
-        tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
+        //tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
         simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         simpleAudioListAdapter.reload();

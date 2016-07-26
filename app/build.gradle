@@ -68,6 +68,8 @@ android {
         // Disable some specific checks completely, some specific with path in lint.xml
         disable 'MissingTranslation','MissingQuantity','ImpliedQuantity','InvalidPackage'
     }
+
+    useLibrary 'org.apache.http.legacy'
 }
 
 repositories {
@@ -76,7 +78,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.android.support:appcompat-v7:24.1.1'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
     latestCompile 'com.getpebble:pebblekit:3.0.0'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
