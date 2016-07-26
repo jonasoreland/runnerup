@@ -15,8 +15,8 @@ project.ext {
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '24.0.1'
-    compileSdkVersion = 22
-    targetSdkVersion = 22
+    compileSdkVersion = 24
+    targetSdkVersion = 24
     versionName = "1.53"
     versionCode = 14000053
 

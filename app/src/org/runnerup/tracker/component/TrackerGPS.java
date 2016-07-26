@@ -16,14 +16,17 @@
  */
 package org.runnerup.tracker.component;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 
 import org.runnerup.R;
 import org.runnerup.tracker.GpsStatus;
@@ -40,7 +43,7 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TrackerGPS extends DefaultTrackerComponent implements TickListener {
 
-    private final boolean mWithoutGps = false;
+    private boolean mWithoutGps = false;
     private int frequency_ms = 0;
     private Location mLastLocation;
     private final Tracker tracker;
@@ -76,6 +79,11 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
     @Override
     public ResultCode onConnecting(final Callback callback, Context context) {
+        if (ContextCompat.checkSelfPermission(this.tracker,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            mWithoutGps = true;
+        }
         try {
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -133,21 +141,24 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
     @Override
     public ResultCode onEnd(Callback callback, Context context) {
-        if (mWithoutGps == false) {
-            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            try {
-                lm.removeUpdates(tracker);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (mWithoutGps == false) {
+                LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+                try {
+                    lm.removeUpdates(tracker);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
-            if (mGpsStatus != null) {
-                mGpsStatus.stop(this);
+                if (mGpsStatus != null) {
+                    mGpsStatus.stop(this);
+                }
+                mGpsStatus = null;
+                mConnectCallback = null;
             }
-            mGpsStatus = null;
-            mConnectCallback = null;
         }
-
         return ResultCode.RESULT_OK;
     }
 

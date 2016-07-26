@@ -82,6 +82,9 @@ android {
         // Disable some specific checks completely, some specific with path in lint.xml
         disable 'MissingTranslation','MissingQuantity','ImpliedQuantity','InvalidPackage'
     }
+
+    //Froyo compatibility
+    useLibrary 'org.apache.http.legacy'
 }
 
 repositories {
@@ -90,7 +93,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    //design uses com.android.support:appcompat, not explicitly required
+    compile 'com.android.support:design:24.1.1'
     latestCompile 'com.google.android.gms:play-services:6.1.11'
     latestCompile 'com.getpebble:pebblekit:3.0.0'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
@@ -120,7 +124,7 @@ if (rootProject.file("release.properties").exists()) {
     android.signingConfigs.release.keyAlias props.keyAlias
     android.signingConfigs.release.keyPassword props.keyAliasPassword
 } else {
-    project.logger.warn('INFO: Set the values storeFile, storePassword, keyAlias, and keyPassword in release.properties to sign the release.')
+    project.logger.info('INFO: Set the values storeFile, storePassword, keyAlias, and keyPassword in release.properties to sign the release.')
     android.buildTypes.release.signingConfig = null
 }
 

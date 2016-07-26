@@ -49,6 +49,6 @@ if (rootProject.file("release.properties").exists()) {
     android.signingConfigs.release.keyAlias = props.keyAlias
     android.signingConfigs.release.keyPassword = props.keyAliasPassword
 } else {
-    project.logger.warn('INFO: Set the values storeFile, storePassword, keyAlias, and keyPassword in release.properties to sign the release.')
+    project.logger.info('INFO: Set the values storeFile, storePassword, keyAlias, and keyPassword in release.properties to sign the release.')
     android.buildTypes.release.signingConfig = null
 }
