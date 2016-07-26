@@ -23,7 +23,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Log;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -272,7 +271,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             String amsg = conn.getResponseMessage();
             conn.connect();
 
-            if (responseCode != HttpStatus.SC_OK) {
+            if (responseCode != HttpURLConnection.HTTP_OK) {
                 throw new Exception(amsg);
             }
 
@@ -286,7 +285,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             responseCode = conn.getResponseCode();
             amsg = conn.getResponseMessage();
             conn.disconnect();
-            if (responseCode == HttpStatus.SC_OK) {
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 s = Status.OK;
                 s.activityId = mID;
                 return s;
@@ -355,7 +354,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             final JSONObject reply = SyncHelper.parse(in);
             final int code = conn.getResponseCode();
             conn.disconnect();
-            if (code == HttpStatus.SC_OK)
+            if (code == HttpURLConnection.HTTP_OK)
                 return reply;
         } finally {
             if (conn != null)

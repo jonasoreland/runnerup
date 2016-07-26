@@ -82,9 +82,6 @@ android {
         // Disable some specific checks completely, some specific with path in lint.xml
         disable 'MissingTranslation','MissingQuantity','ImpliedQuantity','InvalidPackage'
     }
-
-    //Froyo compatibility
-    useLibrary 'org.apache.http.legacy'
 }
 
 repositories {

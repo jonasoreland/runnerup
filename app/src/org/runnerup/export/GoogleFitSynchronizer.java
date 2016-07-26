@@ -23,7 +23,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Log;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -193,9 +192,9 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
             int code = connect.getResponseCode();
             try {
-                if (code == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                if (code == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                     continue;
-                } else if (code != HttpStatus.SC_OK) {
+                } else if (code != HttpURLConnection.HTTP_OK) {
                     Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
                     status = Status.ERROR;
                     break;
@@ -244,7 +243,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
             int code = conn.getResponseCode();
             conn.disconnect();
 
-            if (code != HttpStatus.SC_OK) {
+            if (code != HttpURLConnection.HTTP_OK) {
                 throw new Exception("got a " + code + " response code from upload");
             } else {
                 JSONArray data = reply.getJSONArray("dataSource");

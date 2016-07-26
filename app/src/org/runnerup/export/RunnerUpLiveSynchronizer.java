@@ -27,12 +27,15 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
@@ -222,12 +225,18 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
             int type = intent.getIntExtra(PARAM_IN_TYPE, 0);
             String serverAdress = intent.getStringExtra(PARAM_IN_SERVERADRESS);
 
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(serverAdress);
-
-            httpPost.setHeader("content-type", "application/json");
-            JSONObject data = new JSONObject();
+            URL url;
+            HttpURLConnection connect = null;
             try {
+                url = new URL(serverAdress);
+                connect = (HttpURLConnection) url.openConnection();
+
+                connect.setDoOutput(true);
+                connect.addRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connect.setRequestMethod(RequestMethod.POST.name());
+
+                JSONObject data = new JSONObject();
+
                 data.put("userName", username);
                 data.put("password", password);
                 data.put("lat", lat);
@@ -237,14 +246,23 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
                 data.put("TotalDistance", mElapsedDistance);
                 data.put("TotalTime", mElapsedTime);
                 data.put("Pace", pace);
-                StringEntity entity = new StringEntity(data.toString(), HTTP.UTF_8);
-                httpPost.setEntity(entity);
+                final OutputStream out = new BufferedOutputStream(connect.getOutputStream());
+                out.write(data.toString().getBytes());
+                out.flush();
+                out.close();
 
-                httpClient.execute(httpPost);
-                /* HttpResponse response = */
-                // String test = response.toString();
-            } catch (Exception e) {
+                final int code = connect.getResponseCode();
+                if (code != HttpURLConnection.HTTP_OK) {
+                    //Probably too verbose at errors
+                    Log.v(getClass().getSimpleName(), "Failed to push data: "+code);
+                }
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            }
+            finally {
+                if (connect != null) {
+                    connect.disconnect();
+                }
             }
         }
     }
