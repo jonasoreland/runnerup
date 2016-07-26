@@ -50,10 +50,10 @@ public class WidgetUtil {
         Resources res = ctx.getResources(); // Resource object to get Drawables
         TextView txtTab = new TextView(ctx);
         txtTab.setText(title);
-        txtTab.setTextColor(Color.WHITE);
-        txtTab.setGravity(Gravity.CENTER_HORIZONTAL);
+        //txtTab.setTextColor(Color.WHITE);
+        //txtTab.setGravity(Gravity.CENTER_HORIZONTAL);
         Drawable drawable = res.getDrawable(R.drawable.tab_indicator_holo);
-        WidgetUtil.setBackground(txtTab, drawable); // R.drawable.tab_indicator_holo);
+        WidgetUtil.setBackground(txtTab, drawable);
 
         int h = (25 * drawable.getIntrinsicHeight()) / 10;
         txtTab.setPadding(0, h, 0, h);

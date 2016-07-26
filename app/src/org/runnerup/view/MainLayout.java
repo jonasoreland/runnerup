@@ -129,9 +129,9 @@ public class MainLayout extends TabActivity {
                 .setIndicator(getString(R.string.Settings), myGetDrawable(R.drawable.ic_tab_setup))
                 .setContent(new Intent(this, SettingsActivity.class)));
 
-        // Set tabs Colors
-        tabHost.setBackgroundColor(Color.BLACK);
-        tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
+        //// Set tabs Colors
+        //tabHost.setBackgroundColor(Color.BLACK);
+        //tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
         tabHost.setCurrentTab(0);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
