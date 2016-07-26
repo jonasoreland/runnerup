@@ -33,11 +33,11 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.tracker.WorkoutObserver;
@@ -49,11 +49,10 @@ import org.runnerup.workout.WorkoutInfo;
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
-    public static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+    private static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
     private final Context context;
-    private final double mMinLiveLogDelayMillis = 5000;
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String postUrl = POST_URL;
@@ -96,10 +95,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null) {
-            return true;
-        }
-        return false;
+        return username != null && password != null;
     }
 
     @Override
@@ -152,7 +148,8 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
             case DB.LOCATION.TYPE_DISCARD:
                 return 6;
         }
-        assert (false);
+        //Instead of assert (false);
+        if (BuildConfig.DEBUG) { throw new AssertionError(); }
         return 0;
     }
 
@@ -160,6 +157,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     public void workoutEvent(WorkoutInfo workoutInfo, int type) {
 
         if (type == DB.LOCATION.TYPE_GPS) {
+            double mMinLiveLogDelayMillis = 5000;
             if (System.currentTimeMillis()-mTimeLastLog < mMinLiveLogDelayMillis) {
                 return;
             }
