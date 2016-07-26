@@ -23,13 +23,14 @@
   <string name="cue_recovery">återhämtning</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>
+  <string name="cue_perhour">per timme</string>
   <string name="cue_started">startad</string>
   <string name="cue_paused">pausad</string>
   <string name="cue_resumed">återupptagen</string>
   <string name="cue_stopped">stoppad</string>
   <string name="cue_completed">slutförd</string>
   <string name="cue_speedup">öka tempo</string>
-  <string name="cue_slowdown">sakta ned</string>
+  <string name="cue_slowdown">sakta ner</string>
   <plurals name="cue_hour">
     <item quantity="one">timma</item>
     <item quantity="other">timmar</item>
@@ -63,7 +64,7 @@
   <string name="cue_activity_resumed">aktivitet återupptagen</string>
   <string name="cue_activity_stopped">aktivitet stoppad</string>
   <string name="cue_lap_started">varv startat</string>
-  <string name="cue_lap_completed">varv färdigt</string>
+  <string name="cue_lap_completed">varv slutfört</string>
   <string name="cue_warmup_started">uppvärmning startad</string>
   <string name="cue_cooldown_started">nedvarvning startad</string>
 </resources>
