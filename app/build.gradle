@@ -1,5 +1,15 @@
 apply plugin: 'com.android.application'
 
+import java.util.regex.Pattern
+
+def doExtractStringFromManifest(name) {
+    def manifestFile = file(android.sourceSets.main.manifest.srcFile)
+    def pattern = Pattern.compile(name + "=\"(.*?)\"")
+    def matcher = pattern.matcher(manifestFile.getText())
+    matcher.find()
+    return matcher.group(1)
+}
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -44,6 +54,10 @@ android {
             versionName rootProject.ext.versionName
             versionCode 8000053
         }
+    }
+
+    defaultConfig {
+        applicationId = doExtractStringFromManifest("package")
     }
 
     signingConfigs {
