@@ -356,8 +356,8 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public void insertAccounts(SQLiteDatabase arg0) {
-        boolean yet = true;
-        boolean notyet = false;
+        final boolean yet = true;
+        final boolean notyet = false;
 
         if (notyet) {
             /**
