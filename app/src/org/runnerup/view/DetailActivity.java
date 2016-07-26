@@ -212,7 +212,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_upload);
         th.addTab(tabSpec);
 
-        th.getTabWidget().setBackgroundColor(Color.DKGRAY);
+        //th.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
         {
             ListView lv = (ListView) findViewById(R.id.laplist);
