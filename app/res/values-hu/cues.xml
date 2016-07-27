@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">tevékenység</string>
+  <string name="cue_interval">intervallum</string>
+  <string name="cue_lap">kör</string>
+  <string name="cue_warmup">bemelegítés</string>
+  <string name="cue_cooldown">levezetés</string>
+  <string name="cue_current">jelenlegi</string>
+  <string name="cue_recovery">regeneráció</string>
+  <string name="cue_perkilometer">per kilométer</string>
+  <string name="cue_permile">per mérföld</string>
+  <string name="cue_perhour">per óra</string>
+  <string name="cue_started">elkezdve</string>
+  <string name="cue_paused">szüneteltetve</string>
+  <string name="cue_resumed">folytatva</string>
+  <string name="cue_stopped">megállítva</string>
+  <string name="cue_completed">teljesítve</string>
+  <string name="cue_speedup">gyorsíts</string>
+  <string name="cue_slowdown">lassíts</string>
+  <plurals name="cue_hour">
+    <item quantity="one">óra</item>
+    <item quantity="other">óra</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">perc</item>
+    <item quantity="other">perc</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">másodperc</item>
+    <item quantity="other">másodperc</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">méter</item>
+    <item quantity="other">méter</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilométer</item>
+    <item quantity="other">kilométer</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">mérföld</item>
+    <item quantity="other">mérföld</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">ütés per perc</item>
+    <item quantity="other">ütés per perc</item>
+  </plurals>
+  <string name="cue_activity_started">tevékenység elkezdve</string>
+  <string name="cue_activity_paused">tevékenység szüneteltetve</string>
+  <string name="cue_activity_resumed">tevékenység folytatva</string>
+  <string name="cue_activity_stopped">tevékenység megállítva</string>
+  <string name="cue_lap_started">kör elkezdve</string>
+  <string name="cue_lap_completed">kör teljesítve</string>
+  <string name="cue_warmup_started">bemelegítés elkezdve</string>
+  <string name="cue_cooldown_started">levezetés elkezdve</string>
+</resources>
