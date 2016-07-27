@@ -17,8 +17,10 @@
 
 package org.runnerup.tracker;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.GpsSatellite;
 import android.location.Location;
 import android.location.LocationListener;
@@ -26,13 +28,14 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 
 import org.runnerup.util.TickListener;
 /**
- * 
+ *
  * This is a helper class that is used to determine when the GPS status is good
  * enough (isFixed())
- * 
+ *
  */
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -74,16 +77,19 @@ public class GpsStatus implements LocationListener,
     public void start(TickListener listener) {
         clear(true);
         this.listener = listener;
-        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        try {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        } catch (Exception ex) {
-            lm = null;
-        }
-
-        if (lm != null) {
-            locationManager = lm;
-            locationManager.addGpsStatusListener(this);
+        if (ContextCompat.checkSelfPermission(this.context,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            try {
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            } catch (Exception ex) {
+                lm = null;
+            }
+            if (lm != null) {
+                locationManager = lm;
+                locationManager.addGpsStatusListener(this);
+            }
         }
     }
 
@@ -91,7 +97,11 @@ public class GpsStatus implements LocationListener,
         this.listener = null;
         if (locationManager != null) {
             locationManager.removeGpsStatusListener(this);
-            locationManager.removeUpdates(this);
+            if (ContextCompat.checkSelfPermission(this.context,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                locationManager.removeUpdates(this);
+            }
             locationManager = null;
         }
     }

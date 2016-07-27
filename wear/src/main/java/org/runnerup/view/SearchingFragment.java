@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 
 import org.runnerup.R;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+//@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class SearchingFragment extends Fragment {
 
     private CircledImageView mButton;
@@ -48,9 +48,11 @@ public class SearchingFragment extends Fragment {
         View view = inflater.inflate(R.layout.searching, container, false);
         super.onViewCreated(view, savedInstanceState);
 
-        mButton = (CircledImageView) view.findViewById(R.id.icon_searching);
-        AnimationDrawable frameAnimation = (AnimationDrawable) mButton.getForeground();
-        frameAnimation.start();
+        if (Build.VERSION.SDK_INT >= 23) {
+            mButton = (CircledImageView) view.findViewById(R.id.icon_searching);
+            AnimationDrawable frameAnimation = (AnimationDrawable) mButton.getForeground();
+            frameAnimation.start();
+        }
 
         return view;
     }

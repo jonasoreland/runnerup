@@ -17,7 +17,9 @@
 
 package org.runnerup.view;
 
+import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
@@ -27,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.database.Cursor;
@@ -37,6 +40,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,6 +52,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -56,9 +64,12 @@ import org.runnerup.widget.WidgetUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class MainLayout extends TabActivity {
+public class MainLayout extends TabActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Drawable myGetDrawable(int resId) {
         Drawable d = getResources().getDrawable(resId);
@@ -129,91 +140,100 @@ public class MainLayout extends TabActivity {
                 .setIndicator(getString(R.string.Settings), myGetDrawable(R.drawable.ic_tab_setup))
                 .setContent(new Intent(this, SettingsActivity.class)));
 
-        //// Set tabs Colors
-        //tabHost.setBackgroundColor(Color.BLACK);
-        //tabHost.getTabWidget().setBackgroundColor(Color.BLACK);
         tabHost.setCurrentTab(0);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         if (upgradeState == UpgradeState.UPGRADE) {
             whatsNew();
         }
+        //GPS is essential, always nag user if not granted
+        requestGpsPermissions(this, tabHost.getCurrentView());
 
-        handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath()
-                + "/..");
+        //Import workouts/schemes. No permission needed
+        handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath() + "/..");
 
         // if we were called from an intent-filter because user opened "runnerup.db.export", load it
         final Uri data = getIntent().getData();
         if (data != null) {
-            String filePath = null;
-            if ("content".equals(data.getScheme())) {
-                Cursor cursor = this.getContentResolver().query(data, new String[] { android.provider.MediaStore.Images.ImageColumns.DATA }, null, null, null);
-                cursor.moveToFirst();
-                filePath = cursor.getString(0);
-                cursor.close();
+            if (SettingsActivity.requestReadStoragePermissions(MainLayout.this)) {
+                String filePath = null;
+                if ("content".equals(data.getScheme())) {
+                    Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
+                    cursor.moveToFirst();
+                    filePath = cursor.getString(0);
+                    cursor.close();
+                } else {
+                    filePath = data.getPath();
+                }
+                Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
+                DBHelper.importDatabase(MainLayout.this, filePath);
             } else {
-                filePath = data.getPath();
+                Toast.makeText(this, "Storage permission not granted in Android settings, db is not imported.",
+                        Toast.LENGTH_SHORT).show();
             }
-            Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
-            DBHelper.importDatabase(MainLayout.this, filePath);
         }
     }
 
-    void handleBundled(AssetManager mgr, String src, String dst) {
+    void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
         String list[] = null;
+
         try {
-            list = mgr.list(src);
+            list = mgr.list(srcBase);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (list != null) {
-            for (String aList : list) {
+            for (String add : list) {
                 boolean isFile = false;
-                String add = aList;
+
+                String src = srcBase + File.separator + add;
+                String dst = dstBase + File.separator + add;
                 try {
-                    InputStream is = mgr.open(src + File.separator + add);
+                    InputStream is = mgr.open(src);
                     is.close();
                     isFile = true;
                 } catch (Exception ex) {
+                    //Normal, src is directory for first call
                 }
 
-                Log.e(getClass().getName(), "Found: " + dst + ", " + add + ", isFile: " + isFile);
-                if (isFile == false) {
-                    File dstDir = new File(dst + File.separator + add);
-                    if (!dstDir.mkdir() || !dstDir.isDirectory()) {
-                        Log.e(getClass().getName(), "Failed to copy " + add + " as \"" + dst
+                Log.v(getClass().getName(), "Found: " + src + ", " + dst + ", isFile: " + isFile);
+
+                if (!isFile) {
+                    //The request is hierarchical, source is still on a directory level
+                    File dstDir = new File(dstBase);
+                    dstDir.mkdir();
+                    if (!dstDir.isDirectory()) {
+                        Log.w(getClass().getName(), "Failed to copy " + src + " as \"" + dstBase
                                 + "\" is not a directory!");
                         continue;
                     }
-                    if (dst == null)
-                        handleBundled(mgr, src + File.separator + add, add);
-                    else
-                        handleBundled(mgr, src + File.separator + add, dst + File.separator + add);
+                    handleBundled(mgr, src, dst);
                 } else {
-                    String tmp = dst + File.separator + add;
-                    File dstFile = new File(tmp);
+                    //Source is a file, ready to copy
+                    File dstFile = new File(dst);
                     if (dstFile.isDirectory() || dstFile.isFile()) {
-                        Log.e(getClass().getName(), "Skip: " + tmp +
+                        Log.v(getClass().getName(), "Skip: " + dst +
                                 ", isDirectory(): " + dstFile.isDirectory() +
                                 ", isFile(): " + dstFile.isFile());
                         continue;
                     }
 
+                    //Only copy if the key do not exist already
                     String key = "install_bundled_" + add;
                     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
                     if (pref.contains(key)) {
-                        Log.e(getClass().getName(), "Skip: " + key);
+                        Log.v(getClass().getName(), "Skip already existing pref: " + key);
                         continue;
-
                     }
 
                     pref.edit().putBoolean(key, true).commit();
-                    Log.e(getClass().getName(), "Copying: " + tmp);
+
+                    Log.v(getClass().getName(), "Copying: " + dst);
                     InputStream input = null;
                     try {
-                        input = mgr.open(src + File.separator + add);
-                        FileUtil.copy(input, tmp);
-                        handleHooks(src, add);
+                        input = mgr.open(src);
+                        FileUtil.copy(input, dst);
+                        handleHooks(add);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
@@ -224,9 +244,9 @@ public class MainLayout extends TabActivity {
         }
     }
 
-    private void handleHooks(String path, String file) {
-        if (file.contains("_audio_cues.xml")) {
-            String name = file.substring(0, file.indexOf("_audio_cues.xml"));
+    private void handleHooks(String key) {
+        if (key.contains("_audio_cues.xml")) {
+            String name = key.substring(0, key.indexOf("_audio_cues.xml"));
 
             SQLiteDatabase mDB = DBHelper.getWritableDatabase(this);
 
@@ -275,6 +295,43 @@ public class MainLayout extends TabActivity {
         wv.loadUrl("file:///android_asset/changes.html");
     }
 
+    public static void requestGpsPermissions(final Activity activity, final View view) {
+        String[] requiredPerms = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        List<String> defaultPerms = new ArrayList<>();
+        List<String> shouldPerms = new ArrayList<>();
+        for (final String perm : requiredPerms) {
+            if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, perm)) {
+                    shouldPerms.add(perm);
+                } else {
+                    defaultPerms.add(perm);
+                }
+            }
+        }
+        if (defaultPerms.size() > 0) {
+            // No explanation needed, we can request the permission.
+            final String[] perms = new String[defaultPerms.size()];
+            defaultPerms.toArray(perms);
+            ActivityCompat.requestPermissions(activity, perms, REQUEST_LOCATION);
+        }
+
+        if (shouldPerms.size() > 0) {
+            //Snackbar, no popup
+            final String[] perms = new String[shouldPerms.size()];
+            shouldPerms.toArray(perms);
+            Snackbar.make(view, "GPS permission is required",
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.OK, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(activity, perms, REQUEST_LOCATION);
+                        }
+                    })
+                    .show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -308,5 +365,32 @@ public class MainLayout extends TabActivity {
             startActivity(i);
         }
         return true;
+    }
+
+    /**
+     * Id to identify a permission request.
+     */
+    private static final int REQUEST_LOCATION = 1000;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_LOCATION) {
+            // Check if the only required permission has been granted (could react on the response)
+            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                String s = "Permission response OK: " + grantResults.length;
+                Log.v("MainLayout", s);
+                //Toast.makeText(MainLayout.this, s, Toast.LENGTH_SHORT).show();
+            } else {
+                String s = "Location Permission was not granted: ";
+                Log.i("MainLayout", s);
+                Toast.makeText(MainLayout.this, s, Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            String s = "Unexpected permission request: " + requestCode;
+            Log.w("MainLayout", s);
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }

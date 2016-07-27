@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -246,7 +247,7 @@ public class RunActivity extends Activity implements TickListener {
 
             if (mTracker != null) {
                 Location l2 = mTracker.getLastKnownLocation();
-                if (!l2.equals(l)) {
+                if (l2 != null && !l2.equals(l)) {
                     l = l2;
                 }
             }
