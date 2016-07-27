@@ -32,7 +32,6 @@ import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,7 +115,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         out.close();
 
         JSONObject response = null;
-        if (conn.getResponseCode() == HttpStatus.SC_OK) {
+        if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
             try {
                 response = SyncHelper.parse(conn.getInputStream());
             } finally {
@@ -191,7 +190,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = in.readLine();
 
-            if (conn.getResponseCode() == HttpStatus.SC_OK) {
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 if (line.contains("<result>success</result>")) {
                     // Store the authentication token.
                     getCookies(conn);
@@ -496,7 +495,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         SyncHelper.postMulti(conn, parts);
 
         int code = conn.getResponseCode();
-        if (code != HttpStatus.SC_OK && code != HttpStatus.SC_MOVED_TEMPORARILY) {
+        if (code != HttpURLConnection.HTTP_OK && code != HttpURLConnection.HTTP_MOVED_TEMP) {
             throw new Exception("got a " + code + " response code from upload");
         }
 

@@ -23,7 +23,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.util.Log;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -232,7 +231,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 int responseCode = conn.getResponseCode();
                 String amsg = conn.getResponseMessage();
                 getCookies(conn);
-                if (responseCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+                if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                     String redirect = conn.getHeaderField("Location");
                     conn.disconnect();
                     conn = (HttpURLConnection) new URL(BASE_URL + redirect)
@@ -243,7 +242,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     responseCode = conn.getResponseCode();
                     amsg = conn.getResponseMessage();
                     getCookies(conn);
-                } else if (responseCode != HttpStatus.SC_OK) {
+                } else if (responseCode != HttpURLConnection.HTTP_OK) {
                     Log.e(getName(), "FunBeatSynchronizer::connect() - got " + responseCode
                             + ", msg: " + amsg);
                 }
@@ -388,7 +387,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             String amsg = conn.getResponseMessage();
             getCookies(conn);
             String redirect = null;
-            if (responseCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+            if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                 redirect = conn.getHeaderField("Location");
                 conn.disconnect();
                 conn = (HttpURLConnection) new URL(BASE_URL + redirect)
@@ -399,7 +398,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 responseCode = conn.getResponseCode();
                 amsg = conn.getResponseMessage();
                 getCookies(conn);
-            } else if (responseCode != HttpStatus.SC_OK) {
+            } else if (responseCode != HttpURLConnection.HTTP_OK) {
                 Log.e(getName(), "FunBeatSynchronizer::upload() - got " + responseCode + ", msg: "
                         + amsg);
             }
@@ -434,7 +433,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 responseCode = conn.getResponseCode();
                 amsg = conn.getResponseMessage();
                 getCookies(conn);
-                if (responseCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+                if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                     redirect = conn.getHeaderField("Location");
                     conn.disconnect();
                     conn = (HttpURLConnection) new URL(BASE_URL + redirect)
@@ -513,7 +512,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             final JSONObject reply = SyncHelper.parse(in);
             final int code = conn.getResponseCode();
             conn.disconnect();
-            if (code == HttpStatus.SC_OK) {
+            if (code == HttpURLConnection.HTTP_OK) {
                 parseFeed(feedUpdater, reply);
                 return Status.OK;
             }

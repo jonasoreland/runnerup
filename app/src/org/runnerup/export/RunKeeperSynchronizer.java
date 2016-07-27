@@ -29,7 +29,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -342,7 +341,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 conn.addRequestProperty("Content-Type", "application/vnd.com.runkeeper.FitnessActivityFeed+json");
 
                 InputStream input = new BufferedInputStream(conn.getInputStream());
-                if (conn.getResponseCode() == HttpStatus.SC_OK) {
+                if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     JSONObject resp = SyncHelper.parse(input);
                     requestUrl = parseForNext(resp, list);
                     s = Status.OK;
@@ -431,7 +430,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             String amsg = conn.getResponseMessage();
             conn.disconnect();
             conn = null;
-            if (responseCode >= HttpStatus.SC_OK && responseCode < HttpStatus.SC_MULTIPLE_CHOICES) {
+            if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
                 s.activityId = mID;
                 return s;
@@ -488,7 +487,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             conn.addRequestProperty("Authorization", "Bearer " + access_token);
             conn.addRequestProperty("Content-type", "application/vnd.com.runkeeper.FitnessActivity+json");
 
-            if (conn.getResponseCode() == HttpStatus.SC_OK) {
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedInputStream input = new BufferedInputStream(conn.getInputStream());
                 JSONObject resp = SyncHelper.parse(input);
                 activity = RunKeeper.parseToActivity(resp, getLapLength());
@@ -672,7 +671,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         JSONObject obj = SyncHelper.parse(in);
 
         conn.disconnect();
-        if (responseCode == HttpStatus.SC_OK) {
+        if (responseCode == HttpURLConnection.HTTP_OK) {
             return obj;
         }
         throw new IOException(amsg);

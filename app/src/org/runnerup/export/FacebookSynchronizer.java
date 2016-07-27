@@ -27,7 +27,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
@@ -284,7 +283,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         int code = conn.getResponseCode();
         String msg = conn.getResponseMessage();
 
-        if (code != HttpStatus.SC_OK) {
+        if (code != HttpURLConnection.HTTP_OK) {
             conn.disconnect();
             throw new Exception("Got code: " + code + ", msg: " + msg + " from " + url.toString());
         } else {

@@ -27,14 +27,17 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.tracker.WorkoutObserver;
@@ -46,11 +49,10 @@ import org.runnerup.workout.WorkoutInfo;
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
-    public static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+    private static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
     private final Context context;
-    private final double mMinLiveLogDelayMillis = 5000;
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String postUrl = POST_URL;
@@ -93,10 +95,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null) {
-            return true;
-        }
-        return false;
+        return username != null && password != null;
     }
 
     @Override
@@ -149,7 +148,8 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
             case DB.LOCATION.TYPE_DISCARD:
                 return 6;
         }
-        assert (false);
+        //Instead of assert (false);
+        if (BuildConfig.DEBUG) { throw new AssertionError(); }
         return 0;
     }
 
@@ -157,6 +157,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     public void workoutEvent(WorkoutInfo workoutInfo, int type) {
 
         if (type == DB.LOCATION.TYPE_GPS) {
+            double mMinLiveLogDelayMillis = 5000;
             if (System.currentTimeMillis()-mTimeLastLog < mMinLiveLogDelayMillis) {
                 return;
             }
@@ -222,12 +223,18 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
             int type = intent.getIntExtra(PARAM_IN_TYPE, 0);
             String serverAdress = intent.getStringExtra(PARAM_IN_SERVERADRESS);
 
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(serverAdress);
-
-            httpPost.setHeader("content-type", "application/json");
-            JSONObject data = new JSONObject();
+            URL url;
+            HttpURLConnection connect = null;
             try {
+                url = new URL(serverAdress);
+                connect = (HttpURLConnection) url.openConnection();
+
+                connect.setDoOutput(true);
+                connect.addRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connect.setRequestMethod(RequestMethod.POST.name());
+
+                JSONObject data = new JSONObject();
+
                 data.put("userName", username);
                 data.put("password", password);
                 data.put("lat", lat);
@@ -237,14 +244,23 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
                 data.put("TotalDistance", mElapsedDistance);
                 data.put("TotalTime", mElapsedTime);
                 data.put("Pace", pace);
-                StringEntity entity = new StringEntity(data.toString(), HTTP.UTF_8);
-                httpPost.setEntity(entity);
+                final OutputStream out = new BufferedOutputStream(connect.getOutputStream());
+                out.write(data.toString().getBytes());
+                out.flush();
+                out.close();
 
-                httpClient.execute(httpPost);
-                /* HttpResponse response = */
-                // String test = response.toString();
-            } catch (Exception e) {
+                final int code = connect.getResponseCode();
+                if (code != HttpURLConnection.HTTP_OK) {
+                    //Probably too verbose at errors
+                    Log.v(getClass().getSimpleName(), "Failed to push data: "+code);
+                }
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
+            }
+            finally {
+                if (connect != null) {
+                    connect.disconnect();
+                }
             }
         }
     }
