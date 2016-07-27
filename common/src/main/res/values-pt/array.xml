@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Milhas</item>
+    <item>Quilómetros</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Aquecimento</item>
+    <item>Actividade</item>
+    <item>Descanso</item>
+    <item>Recuperação</item>
+    <item>Arrefecimento</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <!--same order as above, same values as Dimension-->
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Corrida</item>
+    <item>Bicicleta</item>
+    <item>Outra</item>
+  </string-array>
+  <!--Audio cue languages-->
+  <!--Note: keep in same order as languagesNames-->
+</resources>
