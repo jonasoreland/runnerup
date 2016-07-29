@@ -17,6 +17,7 @@
 
 package org.runnerup.export;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,13 +28,18 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -66,6 +72,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -161,7 +170,7 @@ public class SyncManager {
 
     public long load(String synchronizerName) {
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
         };
         String args[] = {
             synchronizerName
@@ -227,6 +236,8 @@ public class SyncManager {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
         } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
             synchronizer = new RunningFreeOnlineSynchronizer();
+        } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
+            synchronizer = new FileSynchronizer(this);
         }
 
         if (synchronizer != null) {
@@ -324,10 +335,16 @@ public class SyncManager {
             case USER_PASS:
                 askUsernamePassword(l, false);
                 return;
+            case FILEPERMISSION:
+                askFileUrl(l);
+                return;
         }
     }
 
     private void handleAuthComplete(Synchronizer synchronizer, Status s) {
+        handleAuthComplete(synchronizer, s, null, null);
+    }
+    private void handleAuthComplete(Synchronizer synchronizer, Status s, String url, String format) {
         Callback cb = authCallback;
         authCallback = null;
         authSynchronizer = null;
@@ -343,6 +360,12 @@ public class SyncManager {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
+                if (!TextUtils.isEmpty(url)) {
+                    tmp.put(DB.ACCOUNT.URL, url);
+                }
+                if (!TextUtils.isEmpty(format)) {
+                    tmp.put(DB.ACCOUNT.FORMAT, format);
+                }
                 String args[] = {
                     Long.toString(synchronizer.getId())
                 };
@@ -386,10 +409,10 @@ public class SyncManager {
         cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
-                    boolean isChecked) {
+                                         boolean isChecked) {
                 tv2.setInputType(InputType.TYPE_CLASS_TEXT
                         | (isChecked ? 0
-                                : InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                        : InputType.TYPE_TEXT_VARIATION_PASSWORD));
             }
         });
         if (sync.getAuthNotice() != null) {
@@ -439,8 +462,9 @@ public class SyncManager {
         dialog.show();
     }
 
+
     private void testUserPass(final Synchronizer l, final JSONObject authConfig,
-            final boolean showPassword) {
+                              final boolean showPassword) {
         mSpinner.setTitle("Testing login " + l.getName());
 
         new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
@@ -465,6 +489,116 @@ public class SyncManager {
                 handleAuthComplete(l, result);
             }
         }.execute(l);
+    }
+
+    private void askFileUrl(final Synchronizer sync) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle(sync.getName());
+
+        final View view = View.inflate(mActivity, R.layout.filepermission, null);
+        final TextView tv1 = (TextView) view.findViewById(R.id.fileuri);
+        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
+        //TODO radiobutton?
+        final CheckBox cbtcx = (CheckBox) view.findViewById(R.id.tcxformat);
+        final CheckBox cbgpx = (CheckBox) view.findViewById(R.id.gpxformat);
+        cbtcx.setChecked(true);
+
+        String path;
+        if (Build.VERSION.SDK_INT >= 19) {
+            path = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOCUMENTS).getPath();
+        } else {
+            path = Environment.getExternalStorageDirectory().getPath();
+        }
+        path += File.separator + "RunnerUp";
+        tv1.setText(path);
+
+        String s = "";
+        if(!checkStoragePermissions(mActivity)) {
+            s = "Note: Storage permission must be granted in Android settings";
+        }
+        if (sync.getAuthNotice() != null) {
+            s += sync.getAuthNotice();
+        }
+        if ("".equals(s)) {
+            tvAuthNotice.setVisibility(View.VISIBLE);
+            tvAuthNotice.setText(s);
+        } else {
+            tvAuthNotice.setVisibility(View.GONE);
+        }
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(view);
+        builder.setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Set default values
+                ContentValues config = new ContentValues();
+                config.put(DB.ACCOUNT.AUTH_CONFIG, tv1.getText().toString());
+                config.put("_id", sync.getId());
+                String format = "";
+                if (cbtcx.isChecked()) {
+                    format = "tcx,";
+                }
+                if (cbgpx.isChecked()) {
+                    format += "gpx,";
+                }
+                config.put(DB.ACCOUNT.FORMAT, format);
+                sync.init(config);
+
+                //Set URL used for displaying
+                String url = "";
+                try {
+                    url = (new File(sync.getAuthConfig())).toURI().toURL().toString();
+                } catch (MalformedURLException e) {}
+
+                handleAuthComplete(sync, sync.connect(), url, format);
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handleAuthComplete(sync, Status.SKIP);
+            }
+        });
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                    handleAuthComplete(sync, Status.CANCEL);
+                }
+                return false;
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private boolean checkStoragePermissions(final Activity activity) {
+        boolean result = true;
+        String[] requiredPerms;
+        if (Build.VERSION.SDK_INT >= 16) {
+            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        } else {
+            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        }
+        List<String> defaultPerms = new ArrayList<>();
+        for (final String perm : requiredPerms) {
+            if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {
+                //Normally, ActivityCompat.shouldShowRequestPermissionRationale(activity, perm)
+                //should be used here but this is needed anyway (no specific motivation)
+                defaultPerms.add(perm);
+            }
+        }
+        if (defaultPerms.size() > 0) {
+            // Request permission, dont care about the result
+            final String[] perms = new String[defaultPerms.size()];
+            defaultPerms.toArray(perms);
+            ActivityCompat.requestPermissions(activity, perms, 0);
+            result = false;
+        }
+        return result;
     }
 
     private long mID = 0;
@@ -1137,7 +1271,7 @@ public class SyncManager {
         }
 
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
         };
 
         Cursor c = null;
@@ -1168,7 +1302,8 @@ public class SyncManager {
                 DB.ACCOUNT.NAME,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.FLAGS
+                DB.ACCOUNT.FLAGS,
+                DB.ACCOUNT.FORMAT
         };
 
         SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);

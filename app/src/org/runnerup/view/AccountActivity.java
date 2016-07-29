@@ -51,6 +51,7 @@ import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.widget.WidgetUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -132,7 +133,9 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.FLAGS,
                 DB.ACCOUNT.ICON,
-                DB.ACCOUNT.AUTH_CONFIG
+                DB.ACCOUNT.AUTH_CONFIG,
+                DB.ACCOUNT.AUTH_METHOD,
+                DB.ACCOUNT.FORMAT
         };
 
         String args[] = {
@@ -166,7 +169,10 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             if (tmp.containsKey(DB.ACCOUNT.URL)) {
                 Button btn = new Button(this);
                 btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
-                btn.setOnClickListener(urlButtonClick);
+                //TODO SDK 24 requires the file URI to be handled as FileProvider, dont care yet
+                if(Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.AUTH_METHOD).contains("filepermission")) {
+                    btn.setOnClickListener(urlButtonClick);
+                }
                 btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));
                 addRow(getResources().getString(R.string.Website) + ":", btn);
             }

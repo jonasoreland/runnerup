@@ -28,6 +28,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import org.runnerup.R;
@@ -36,6 +37,7 @@ import org.runnerup.db.entities.DBEntity;
 import org.runnerup.export.DigifitSynchronizer;
 import org.runnerup.export.EndomondoSynchronizer;
 import org.runnerup.export.FacebookSynchronizer;
+import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.FunBeatSynchronizer;
 import org.runnerup.export.GarminSynchronizer;
 import org.runnerup.export.GoogleFitSynchronizer;
@@ -51,6 +53,7 @@ import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.util.FileUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -525,6 +528,16 @@ public class DBHelper extends SQLiteOpenHelper implements
             values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
             values.put(DB.ACCOUNT.URL, "http://www.runningfreeonline.com");
             values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
+            insertAccount(arg0, values);
+        }
+
+        if (DBVERSION >= 28 /*29 xxx*/) {
+            ContentValues values = new ContentValues();
+            values.put(DB.ACCOUNT.NAME, FileSynchronizer.NAME);
+            values.put(DB.ACCOUNT.FORMAT, "tcx");
+            values.put(DB.ACCOUNT.AUTH_METHOD, "filepermission");
+            values.put(DB.ACCOUNT.ICON, R.drawable.a16_localfile);
+            values.put(DB.ACCOUNT.URL, "");
             insertAccount(arg0, values);
         }
     }

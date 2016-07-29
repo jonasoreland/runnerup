@@ -34,8 +34,7 @@ public interface Synchronizer {
     public enum RequestMethod { GET, POST, PATCH, PUT }
 
     enum AuthMethod {
-        OAUTH2, USER_PASS
-
+        OAUTH2, USER_PASS, FILEPERMISSION
     }
 
     enum Status {
@@ -75,8 +74,8 @@ public interface Synchronizer {
     public void init(ContentValues config);
 
     /**
-	 *
-	 */
+     *
+     */
     public String getAuthConfig();
 
     /**
