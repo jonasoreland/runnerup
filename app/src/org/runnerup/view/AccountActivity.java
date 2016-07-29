@@ -170,6 +170,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 Button btn = new Button(this);
                 btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
                 //TODO SDK 24 requires the file URI to be handled as FileProvider, dont care yet
+                //For <= 24, something like OI File Manager is needed too
                 if(Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.AUTH_METHOD).contains("filepermission")) {
                     btn.setOnClickListener(urlButtonClick);
                 }
