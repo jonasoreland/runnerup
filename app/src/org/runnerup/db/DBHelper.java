@@ -62,7 +62,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 28;
+    private static final int DBVERSION = 29;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -501,7 +501,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             insertAccount(arg0, values);
         }
 
-        if (notyet/*DBVERSION >= 29*/) {
+        if (DBVERSION >= 29) {
             values = new ContentValues();
             values.put(DB.ACCOUNT.NAME, FileSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
