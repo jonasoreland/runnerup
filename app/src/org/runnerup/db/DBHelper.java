@@ -45,6 +45,7 @@ import org.runnerup.export.MapMyRunSynchronizer;
 import org.runnerup.export.NikePlusSynchronizer;
 import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
+import org.runnerup.export.RunnerUpWebSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
@@ -59,7 +60,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 28;
+    private static final int DBVERSION = 29;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -525,6 +526,16 @@ public class DBHelper extends SQLiteOpenHelper implements
             values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
             values.put(DB.ACCOUNT.URL, "http://www.runningfreeonline.com");
             values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
+            insertAccount(arg0, values);
+        }
+
+        if (DBVERSION >= 29) {
+            ContentValues values = new ContentValues();
+            values.put(DB.ACCOUNT.NAME, RunnerUpWebSynchronizer.NAME);
+            values.put(DB.ACCOUNT.FORMAT, "tcx");
+            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+            values.put(DB.ACCOUNT.ICON, R.drawable.b01_runnerupweb);
+            values.put(DB.ACCOUNT.URL, "https://github.com/rickyepoderi/runnerupweb");
             insertAccount(arg0, values);
         }
     }
