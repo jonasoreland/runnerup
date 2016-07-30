@@ -473,6 +473,7 @@ public class SyncManager {
 
         String path;
         if (Build.VERSION.SDK_INT >= 19) {
+            //noinspection InlinedApi
             path = Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_DOCUMENTS).getPath();
         } else {
@@ -549,6 +550,7 @@ public class SyncManager {
         boolean result = true;
         String[] requiredPerms;
         if (Build.VERSION.SDK_INT >= 16) {
+            //noinspection InlinedApi
             requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
         } else {
             requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
