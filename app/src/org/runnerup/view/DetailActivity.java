@@ -1360,7 +1360,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private void shareActivity() {
         final int which[] = {
-            -1
+            1 //TODO preselect tcx - choice should be remembered
         };
         final CharSequence items[] = {
                 "gpx", "tcx" /* "nike+xml" */
@@ -1380,11 +1380,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         final Intent intent = new Intent(Intent.ACTION_SEND);
 
                         intent.setType(WorkoutFileProvider.MIME);
+                        //Use of content:// instead of file:// is not supported in ES and other apps
+                        //Solid Explorer File Manager works though
                         Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
                                 + "/" + mID
-                                + "/" + "activity." + fmt);
+                                + "/" + "RunnerUp_" + mID + "." + fmt);
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        context.startActivity(Intent.createChooser(intent, "Share workout..."));
+                        context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
 
                     }
                 });
