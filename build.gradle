@@ -19,6 +19,7 @@ project.ext {
     targetSdkVersion = 24
     versionName = "1.53"
     versionCode = 14000053
+    froyoVersionCode = 8000053
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set
