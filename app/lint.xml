@@ -4,6 +4,10 @@
         <ignore path="../GraphView/**" />
         <ignore path="../ANT-Android-SDKs/**" />
     </issue>
+    <issue id="InvalidPackage">
+        <ignore path="**/com.squareup.okio/**" />
+        <ignore path="**/com.vividsolutions/**" />
+    </issue>
     <issue id="ResourceType">
         <warning path="src/org/runnerup/view/MainLayout.java" />
     </issue>
