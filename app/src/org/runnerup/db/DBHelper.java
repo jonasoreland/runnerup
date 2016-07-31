@@ -28,6 +28,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import org.runnerup.R;
@@ -36,6 +37,7 @@ import org.runnerup.db.entities.DBEntity;
 import org.runnerup.export.DigifitSynchronizer;
 import org.runnerup.export.EndomondoSynchronizer;
 import org.runnerup.export.FacebookSynchronizer;
+import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.FunBeatSynchronizer;
 import org.runnerup.export.GarminSynchronizer;
 import org.runnerup.export.GoogleFitSynchronizer;
@@ -51,6 +53,7 @@ import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.util.FileUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +62,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 28;
+    private static final int DBVERSION = 29;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -356,139 +359,109 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public void insertAccounts(SQLiteDatabase arg0) {
-        final boolean yet = true;
         final boolean notyet = false;
 
-        if (notyet) {
-            /**
-             * just removing warning from notyet
-             */
-        }
+        ContentValues values;
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, GarminSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
-            values.put(DB.ACCOUNT.URL, "http://connect.garmin.com/");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, GarminSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
+        values.put(DB.ACCOUNT.URL, "http://connect.garmin.com/");
+        insertAccount(arg0, values);
 
-        if (yet)
-        {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunKeeperSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "runkeeper");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
-            values.put(DB.ACCOUNT.URL, "http://runkeeper.com/");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, RunKeeperSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "runkeeper");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
+        values.put(DB.ACCOUNT.URL, "http://runkeeper.com/");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, JoggSESynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "gpx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a5_jogg);
-            values.put(DB.ACCOUNT.URL, "http://jogg.se/");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, JoggSESynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "gpx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a5_jogg);
+        values.put(DB.ACCOUNT.URL, "http://jogg.se/");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, FunBeatSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
-            values.put(DB.ACCOUNT.URL, "http://www.funbeat.se/");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, FunBeatSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
+        values.put(DB.ACCOUNT.URL, "http://www.funbeat.se/");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, MapMyRunSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a3_mapmyrun_logo);
-            values.put(DB.ACCOUNT.URL, "http://www.mapmyrun.com/");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, MapMyRunSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a3_mapmyrun_logo);
+        values.put(DB.ACCOUNT.URL, "http://www.mapmyrun.com/");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, NikePlusSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "nikeplus,gpx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a4_nikeplus);
-            values.put(DB.ACCOUNT.URL, "http://nikeplus.nike.com");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, NikePlusSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "nikeplus,gpx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a4_nikeplus);
+        values.put(DB.ACCOUNT.URL, "http://nikeplus.nike.com");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, EndomondoSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "endomondotrack");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a6_endomondo);
-            values.put(DB.ACCOUNT.URL, "http://www.endomondo.com");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, EndomondoSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "endomondotrack");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a6_endomondo);
+        values.put(DB.ACCOUNT.URL, "http://www.endomondo.com");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunningAHEADSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
-            values.put(DB.ACCOUNT.URL, "http://www.runningahead.com");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, RunningAHEADSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
+        values.put(DB.ACCOUNT.URL, "http://www.runningahead.com");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, DigifitSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a9_digifit);
-            values.put(DB.ACCOUNT.URL, "http://www.digifit.com");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, DigifitSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a9_digifit);
+        values.put(DB.ACCOUNT.URL, "http://www.digifit.com");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, StravaSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a10_strava);
-            values.put(DB.ACCOUNT.URL, "http://www.strava.com");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, StravaSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a10_strava);
+        values.put(DB.ACCOUNT.URL, "http://www.strava.com");
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunnerUpLiveSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "none");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a8_runneruplive);
-            values.put(DB.ACCOUNT.URL, "http://weide.devsparkles.se/Demo/Map");
-            values.put(DB.ACCOUNT.FLAGS, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, RunnerUpLiveSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "none");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a8_runneruplive);
+        values.put(DB.ACCOUNT.URL, "http://weide.devsparkles.se/Demo/Map");
+        values.put(DB.ACCOUNT.FLAGS, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
+        insertAccount(arg0, values);
 
-        if (yet) {
-            ContentValues values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, FacebookSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a11_facebook);
-            values.put(DB.ACCOUNT.URL, "http://www.facebook.com");
-            insertAccount(arg0, values);
-        }
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, FacebookSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a11_facebook);
+        values.put(DB.ACCOUNT.URL, "http://www.facebook.com");
+        insertAccount(arg0, values);
 
         if (notyet) {
-            ContentValues values = new ContentValues();
+            values = new ContentValues();
             values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "");
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
@@ -498,7 +471,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
 
         if (DBVERSION >= 26) {
-            ContentValues values = new ContentValues();
+            values = new ContentValues();
             values.put(DB.ACCOUNT.NAME, RuntasticSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
@@ -508,7 +481,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
 
         if (DBVERSION >= 27) {
-            ContentValues values = new ContentValues();
+            values = new ContentValues();
             values.put(DB.ACCOUNT.NAME, GoogleFitSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "");
             values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
@@ -518,13 +491,23 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
 
         if (DBVERSION >= 28) {
-            ContentValues values = new ContentValues();
+            values = new ContentValues();
             values.put(DB.ACCOUNT.NAME, RunningFreeOnlineSynchronizer.NAME);
             values.put(DB.ACCOUNT.FORMAT, "tcx");
             values.put(DB.ACCOUNT.AUTH_METHOD, "post");
             values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
             values.put(DB.ACCOUNT.URL, "http://www.runningfreeonline.com");
             values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
+            insertAccount(arg0, values);
+        }
+
+        if (DBVERSION >= 29) {
+            values = new ContentValues();
+            values.put(DB.ACCOUNT.NAME, FileSynchronizer.NAME);
+            values.put(DB.ACCOUNT.FORMAT, "tcx");
+            values.put(DB.ACCOUNT.AUTH_METHOD, "filepermission");
+            values.put(DB.ACCOUNT.ICON, R.drawable.a16_localfile);
+            values.put(DB.ACCOUNT.URL, "");
             insertAccount(arg0, values);
         }
     }

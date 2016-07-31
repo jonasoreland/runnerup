@@ -17,6 +17,7 @@
 
 package org.runnerup.export;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,14 +27,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -66,6 +71,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,22 +87,9 @@ public class SyncManager {
     private SQLiteDatabase mDB = null;
     private Activity mActivity = null;
     private Context mContext = null;
-    private final Map<String, Synchronizer> synchronizers = new HashMap<String, Synchronizer>();
-    private final Map<Long, Synchronizer> synchronizersById = new HashMap<Long, Synchronizer>();
+    private final Map<String, Synchronizer> synchronizers = new HashMap<>();
+    private final Map<Long, Synchronizer> synchronizersById = new HashMap<>();
 
-    public interface ProgressDialogInterface {
-        void setCancelable(boolean cancelable);
-        void show();
-        void dismiss();
-        void setTitle(String title);
-        void setMessage(String message);
-        Button getButton(int pos);
-        void cancel();
-        void setCanceledOnTouchOutside(boolean canceled);
-        void setMax(int max);
-        void setButton(int pos, CharSequence arg, OnClickListener listener);
-        void setProgress(int progress);
-    }
     private ProgressDialog mSpinner = null;
 
     public enum SyncMode {
@@ -142,18 +135,6 @@ public class SyncManager {
         }
     }
 
-    public synchronized boolean isClosed() {
-        return mDB == null;
-    }
-
-    public void remove(String synchronizerName) {
-        Synchronizer u = synchronizers.get(synchronizerName);
-        synchronizers.remove(synchronizerName);
-        if (u != null) {
-            this.synchronizersById.remove(u.getId());
-        }
-    }
-
     public void clear() {
         synchronizers.clear();
         synchronizersById.clear();
@@ -161,7 +142,7 @@ public class SyncManager {
 
     public long load(String synchronizerName) {
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
         };
         String args[] = {
             synchronizerName
@@ -171,6 +152,7 @@ public class SyncManager {
         long id = -1;
         if (c.moveToFirst()) {
             ContentValues config = DBHelper.get(c);
+            //noinspection ConstantConditions
             id = config.getAsLong("_id");
             add(config);
         }
@@ -182,7 +164,7 @@ public class SyncManager {
     public Synchronizer add(ContentValues config) {
         if (config == null) {
             Log.e(getClass().getName(), "Add null!");
-            assert (false);
+            if (BuildConfig.DEBUG) { throw new AssertionError(); }
             return null;
         }
 
@@ -227,14 +209,14 @@ public class SyncManager {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
         } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
             synchronizer = new RunningFreeOnlineSynchronizer();
+        } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
+            synchronizer = new FileSynchronizer();
         }
 
         if (synchronizer != null) {
             if (!config.containsKey(DB.ACCOUNT.FLAGS)) {
                 if (BuildConfig.DEBUG) {
-                    String s = null;
-                    //noinspection ResultOfMethodCallIgnored
-                    s.charAt(3);
+                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 }
             }
             synchronizer.init(config);
@@ -311,8 +293,8 @@ public class SyncManager {
         mSpinner.dismiss();
     }
 
-    Synchronizer authSynchronizer = null;
-    Callback authCallback = null;
+    private Synchronizer authSynchronizer = null;
+    private Callback authCallback = null;
 
     private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
         authSynchronizer = l;
@@ -322,12 +304,18 @@ public class SyncManager {
                 mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
                 return;
             case USER_PASS:
-                askUsernamePassword(l, false);
+                askUsernamePassword(l);
+                return;
+            case FILEPERMISSION:
+                askFileUrl(l);
                 return;
         }
     }
 
     private void handleAuthComplete(Synchronizer synchronizer, Status s) {
+        handleAuthComplete(synchronizer, s, null, null);
+    }
+    private void handleAuthComplete(Synchronizer synchronizer, Status s, String url, String format) {
         Callback cb = authCallback;
         authCallback = null;
         authSynchronizer = null;
@@ -343,6 +331,12 @@ public class SyncManager {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
+                if (!TextUtils.isEmpty(url)) {
+                    tmp.put(DB.ACCOUNT.URL, url);
+                }
+                if (!TextUtils.isEmpty(format)) {
+                    tmp.put(DB.ACCOUNT.FORMAT, format);
+                }
                 String args[] = {
                     Long.toString(synchronizer.getId())
                 };
@@ -365,7 +359,7 @@ public class SyncManager {
         return null;
     }
 
-    private void askUsernamePassword(final Synchronizer sync, boolean showPassword) {
+    private void askUsernamePassword(final Synchronizer sync) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(sync.getName());
 
@@ -376,20 +370,17 @@ public class SyncManager {
         final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
         String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
-        String username = authConfig.optString("username", "");
-        String password = authConfig.optString("password", "");
+        String username = authConfig != null ? authConfig.optString("username", "") : null;
+        String password = authConfig != null ? authConfig.optString("password", "") : null;
         tv1.setText(username);
         tv2.setText(password);
-        cb.setChecked(showPassword);
-        tv2.setInputType(InputType.TYPE_CLASS_TEXT
-                | (showPassword ? 0 : InputType.TYPE_TEXT_VARIATION_PASSWORD));
         cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
-                    boolean isChecked) {
+                                         boolean isChecked) {
                 tv2.setInputType(InputType.TYPE_CLASS_TEXT
                         | (isChecked ? 0
-                                : InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                        : InputType.TYPE_TEXT_VARIATION_PASSWORD));
             }
         });
         if (sync.getAuthNotice() != null) {
@@ -406,12 +397,13 @@ public class SyncManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
+                    //noinspection ConstantConditions
                     authConfig.put("username", tv1.getText());
                     authConfig.put("password", tv2.getText());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                testUserPass(sync, authConfig, cb.isChecked());
+                testUserPass(sync, authConfig);
             }
         });
         builder.setNeutralButton("Skip", new OnClickListener() {
@@ -439,8 +431,8 @@ public class SyncManager {
         dialog.show();
     }
 
-    private void testUserPass(final Synchronizer l, final JSONObject authConfig,
-            final boolean showPassword) {
+
+    private void testUserPass(final Synchronizer l, final JSONObject authConfig) {
         mSpinner.setTitle("Testing login " + l.getName());
 
         new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
@@ -465,6 +457,120 @@ public class SyncManager {
                 handleAuthComplete(l, result);
             }
         }.execute(l);
+    }
+
+    private void askFileUrl(final Synchronizer sync) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle(sync.getName());
+
+        final View view = View.inflate(mActivity, R.layout.filepermission, null);
+        final TextView tv1 = (TextView) view.findViewById(R.id.fileuri);
+        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
+
+        final CheckBox cbtcx = (CheckBox) view.findViewById(R.id.tcxformat);
+        final CheckBox cbgpx = (CheckBox) view.findViewById(R.id.gpxformat);
+        cbtcx.setChecked(true);
+
+        String path;
+        if (Build.VERSION.SDK_INT >= 19) {
+            //noinspection InlinedApi
+            path = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOCUMENTS).getPath();
+        } else {
+            path = Environment.getExternalStorageDirectory().getPath();
+        }
+        path += File.separator + "RunnerUp";
+        tv1.setText(path);
+
+        String s = "";
+        if(!checkStoragePermissions(mActivity)) {
+            s = "Note: Storage permission must be granted in Android settings";
+        }
+        if (sync.getAuthNotice() != null) {
+            s += sync.getAuthNotice();
+        }
+        if ("".equals(s)) {
+            tvAuthNotice.setVisibility(View.VISIBLE);
+            tvAuthNotice.setText(s);
+        } else {
+            tvAuthNotice.setVisibility(View.GONE);
+        }
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        builder.setView(view);
+        builder.setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Set default values
+                ContentValues config = new ContentValues();
+                config.put(DB.ACCOUNT.AUTH_CONFIG, tv1.getText().toString());
+                config.put("_id", sync.getId());
+                String format = "";
+                if (cbtcx.isChecked()) {
+                    format = "tcx,";
+                }
+                if (cbgpx.isChecked()) {
+                    format += "gpx,";
+                }
+                config.put(DB.ACCOUNT.FORMAT, format);
+                sync.init(config);
+
+                //Set URL used for displaying
+                String url;
+                try {
+                    url = (new File(sync.getAuthConfig())).toURI().toURL().toString();
+                } catch (MalformedURLException e) {
+                    url = "";
+                }
+
+                handleAuthComplete(sync, sync.connect(), url, format);
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                handleAuthComplete(sync, Status.SKIP);
+            }
+        });
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                    handleAuthComplete(sync, Status.CANCEL);
+                }
+                return false;
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private boolean checkStoragePermissions(final Activity activity) {
+        boolean result = true;
+        String[] requiredPerms;
+        if (Build.VERSION.SDK_INT >= 16) {
+            //noinspection InlinedApi
+            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        } else {
+            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        }
+        List<String> defaultPerms = new ArrayList<>();
+        for (final String perm : requiredPerms) {
+            if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {
+                //Normally, ActivityCompat.shouldShowRequestPermissionRationale(activity, perm)
+                //should be used here but this is needed anyway (no specific motivation)
+                defaultPerms.add(perm);
+            }
+        }
+        if (defaultPerms.size() > 0) {
+            // Request permission, dont care about the result
+            final String[] perms = new String[defaultPerms.size()];
+            defaultPerms.toArray(perms);
+            ActivityCompat.requestPermissions(activity, perms, 0);
+            result = false;
+        }
+        return result;
     }
 
     private long mID = 0;
@@ -590,11 +696,11 @@ public class SyncManager {
         disableSynchronizer(disconnectCallback, synchronizers.get(synchronizer), clearUploads);
     }
 
-    public void disableSynchronizer(Callback callback, Synchronizer synchronizer, boolean clearUploads) {
+    private void disableSynchronizer(Callback callback, Synchronizer synchronizer, boolean clearUploads) {
         resetDB(callback, synchronizer, clearUploads);
     }
 
-    void resetDB(final Callback callback, final Synchronizer synchronizer, final boolean clearUploads) {
+    private void resetDB(final Callback callback, final Synchronizer synchronizer, final boolean clearUploads) {
         final String args[] = {
             Long.toString(synchronizer.getId())
         };
@@ -662,9 +768,9 @@ public class SyncManager {
         public final String workoutName;
     }
 
-    Callback listWorkoutCallback = null;
-    HashSet<String> pendingListWorkout = null;
-    ArrayList<WorkoutRef> workoutRef = null;
+    private Callback listWorkoutCallback = null;
+    private HashSet<String> pendingListWorkout = null;
+    private ArrayList<WorkoutRef> workoutRef = null;
 
     public void loadWorkoutList(ArrayList<WorkoutRef> workoutRef, Callback callback,
             HashSet<String> wourkouts) {
@@ -678,7 +784,7 @@ public class SyncManager {
         nextListWorkout();
     }
 
-    public void nextListWorkout() {
+    private void nextListWorkout() {
         if (pendingListWorkout.isEmpty()) {
             doneListing();
             return;
@@ -695,11 +801,11 @@ public class SyncManager {
         doListWorkout(synchronizer);
     }
 
-    protected void doListWorkout(final Synchronizer synchronizer) {
+    private void doListWorkout(final Synchronizer synchronizer) {
         final ProgressDialog copySpinner = mSpinner;
 
         copySpinner.setMessage("Listing from " + synchronizer.getName());
-        final ArrayList<Pair<String, String>> list = new ArrayList<Pair<String, String>>();
+        final ArrayList<Pair<String, String>> list = new ArrayList<>();
 
         new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
 
@@ -785,20 +891,24 @@ public class SyncManager {
                     try {
                         synchronizer.downloadWorkout(w, ref.workoutKey);
                         if (w != f) {
-                            if (compareFiles(w, f) != true) {
+                            if (!compareFiles(w, f)) {
                                 Log.e(getClass().getName(), "overwriting " + f.getPath() + " with "
                                         + w.getPath());
                                 // TODO dialog
+                                //noinspection ResultOfMethodCallIgnored
                                 f.delete();
+                                //noinspection ResultOfMethodCallIgnored
                                 w.renameTo(f);
                             } else {
                                 Log.e(getClass().getName(), "file identical...deleting temporary "
                                         + w.getPath());
+                                //noinspection ResultOfMethodCallIgnored
                                 w.delete();
                             }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        //noinspection ResultOfMethodCallIgnored
                         w.delete();
                     }
                 }
@@ -815,7 +925,7 @@ public class SyncManager {
         }.execute("string");
     }
 
-    public static boolean compareFiles(File w, File f) {
+    private static boolean compareFiles(File w, File f) {
         if (w.length() != f.length())
             return false;
 
@@ -839,6 +949,7 @@ public class SyncManager {
                 }
             } while (true);
         } catch (Exception ex) {
+            //f1, f2 checked
         }
 
         if (f1 != null) {
@@ -862,8 +973,8 @@ public class SyncManager {
     /**
      * Load synchronizer private data
      *
-     * @param synchronizer
-     * @return
+     * @param synchronizer The instance
+     * @return The private data
      * @throws Exception
      */
     String loadData(Synchronizer synchronizer) throws Exception {
@@ -877,19 +988,7 @@ public class SyncManager {
         return out.toString();
     }
 
-    /**
-     * Get preferences
-     *
-     * @return
-     */
-    public SharedPreferences getPreferences(Synchronizer synchronizer) {
-        if (synchronizer == null)
-            return PreferenceManager.getDefaultSharedPreferences(mContext);
-        else
-            return mContext.getSharedPreferences(synchronizer.getName(), Context.MODE_PRIVATE);
-    }
-
-    public Resources getResources() {
+    private Resources getResources() {
         return mContext.getResources();
     }
 
@@ -900,9 +999,9 @@ public class SyncManager {
     /**
      * Synch set of activities for a specific synchronizer
      */
-    List<SyncActivityItem> syncActivitiesList = null;
-    Callback syncActivityCallback = null;
-    StringBuffer cancelSync = null;
+    private List<SyncActivityItem> syncActivitiesList = null;
+    private Callback syncActivityCallback = null;
+    private StringBuffer cancelSync = null;
 
     public void syncActivities(SyncMode mode, Callback synchCallback, String synchronizerName, List<SyncActivityItem> list,
                                final StringBuffer cancel) {
@@ -954,7 +1053,7 @@ public class SyncManager {
         mSpinner.setMax(list.size());
     }
 
-    protected boolean checkCancel(StringBuffer cancel) {
+    private boolean checkCancel(StringBuffer cancel) {
         if (cancel != null) {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cancel) {
@@ -964,7 +1063,7 @@ public class SyncManager {
         return false;
     }
 
-    void syncNextActivity(final Synchronizer synchronizer, SyncMode mode) {
+    private void syncNextActivity(final Synchronizer synchronizer, SyncMode mode) {
         if (checkCancel(cancelSync)) {
             mSpinner.cancel();
             syncActivityCallback.run(synchronizer.getName(), Synchronizer.Status.CANCEL);
@@ -1046,10 +1145,10 @@ public class SyncManager {
         }.execute(synchronizer);
     }
 
-    Callback feedCallback = null;
-    Set<String> feedProviders = null;
-    FeedList feedList = null;
-    StringBuffer feedCancel = null;
+    private Callback feedCallback = null;
+    private Set<String> feedProviders = null;
+    private FeedList feedList = null;
+    private StringBuffer feedCancel = null;
 
     public void synchronizeFeed(Callback cb, Set<String> providers, FeedList dst, StringBuffer cancel) {
         feedCallback = cb;
@@ -1059,7 +1158,7 @@ public class SyncManager {
         nextSyncFeed();
     }
 
-    void nextSyncFeed() {
+    private void nextSyncFeed() {
         if (checkCancel(feedCancel)) {
             feedProviders.clear();
         }
@@ -1083,7 +1182,7 @@ public class SyncManager {
         syncFeed(synchronizer);
     }
 
-    void syncFeed(final Synchronizer synchronizer) {
+    private void syncFeed(final Synchronizer synchronizer) {
         if (synchronizer == null) {
             nextSyncFeed();
             return;
@@ -1132,12 +1231,12 @@ public class SyncManager {
         liveLoggers.clear();
         Resources res = getResources();
         String key = res.getString(R.string.pref_runneruplive_active);
-        if (PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(key, false) == false) {
+        if (!PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(key, false)) {
             return;
         }
 
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
         };
 
         Cursor c = null;
@@ -1162,13 +1261,14 @@ public class SyncManager {
     }
 
     public Set<String> feedSynchronizersSet(Context ctx) {
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         String[] from = new String[] {
                 "_id",
                 DB.ACCOUNT.NAME,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.FLAGS
+                DB.ACCOUNT.FLAGS,
+                DB.ACCOUNT.FORMAT
         };
 
         SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
@@ -1177,7 +1277,7 @@ public class SyncManager {
             do {
                 final ContentValues tmp = DBHelper.get(c);
                 final Synchronizer synchronizer = add(tmp);
-                final String name = tmp.getAsString(DB.ACCOUNT.NAME);
+                @SuppressWarnings("ConstantConditions") final String name = tmp.getAsString(DB.ACCOUNT.NAME);
                 final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
                 if (isConfigured(name) &&
                         Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED) &&

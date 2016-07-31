@@ -31,11 +31,10 @@ import java.util.List;
 
 public interface Synchronizer {
 
-    public enum RequestMethod { GET, POST, PATCH, PUT }
+    enum RequestMethod { GET, POST, PATCH, PUT }
 
     enum AuthMethod {
-        OAUTH2, USER_PASS
-
+        OAUTH2, USER_PASS, FILEPERMISSION
     }
 
     enum Status {
@@ -53,64 +52,64 @@ public interface Synchronizer {
         LIVE, // live feed of activity
         SKIP_MAP, // skip map in upload
         ACTIVITY_LIST, //list recorded activities
-        GET_ACTIVITY //downlaod recorded activity
+        GET_ACTIVITY //download recorded activity
 
     }
 
     /**
      * @return
      */
-    public long getId();
+    long getId();
 
     /**
      * @return name of this synchronizer
      */
-    public String getName();
+    String getName();
 
     /**
      * Init synchronizer
      *
      * @param config
      */
-    public void init(ContentValues config);
+    void init(ContentValues config);
+
+    /**
+     *
+     */
+    String getAuthConfig();
 
     /**
 	 *
 	 */
-    public String getAuthConfig();
-
-    /**
-	 *
-	 */
-    public Intent getAuthIntent(Activity activity);
+    Intent getAuthIntent(Activity activity);
 
     /**
      * Is synchronizer configured
      */
-    public boolean isConfigured();
+    boolean isConfigured();
 
     /**
      * Reset configuration (i.e password, oauth-token...)
      */
-    public void reset();
+    void reset();
 
     /**
      * Connect
      *
      * @return true ok false cancel/fail
      */
-    public Status connect();
+    Status connect();
 
     /**
      * handle result from authIntent
      */
-    public Status getAuthResult(int resultCode, Intent data);
+    Status getAuthResult(int resultCode, Intent data);
 
     /**
      * @param db
      * @param mID
      */
-    public Status upload(SQLiteDatabase db, long mID);
+    Status upload(SQLiteDatabase db, long mID);
 
     /**
      * Check if an synchronizer supports a feature
@@ -118,14 +117,14 @@ public interface Synchronizer {
      * @param f
      * @return
      */
-    public boolean checkSupport(Feature f);
+    boolean checkSupport(Feature f);
 
     /**
      * List workouts NOTE: this is not list of activities!
      *
      * @return list of Pair<synchronizerName,Workout>
      */
-    public Status listWorkouts(List<Pair<String, String>> list);
+    Status listWorkouts(List<Pair<String, String>> list);
 
     /**
      * Download workout with key and store it in dst NOTE: this is download
@@ -133,48 +132,46 @@ public interface Synchronizer {
      *
      * @param dst
      * @param key
-     * @return
      */
-    public void downloadWorkout(File dst, String key) throws Exception;
+    void downloadWorkout(File dst, String key) throws Exception;
 
     /**
      * List all recorded and online stored activities
      *
      * @return Status
      */
-    public Status listActivities(List<SyncActivityItem> list);
+    Status listActivities(List<SyncActivityItem> list);
     /**
      * Download a selected activity and records in the RunnerUp database
      *  @param db
      * @param item the ActivityItem of the activity to be downloaded
      */
-    public Status download(SQLiteDatabase db, SyncActivityItem item);
+    Status download(SQLiteDatabase db, SyncActivityItem item);
 
     /**
      * logout
      *
-     * @return
      */
-    public void logout();
+    void logout();
 
 
     /**
      * @param feedUpdater
      * @return
      */
-    public Status getFeed(FeedUpdater feedUpdater);
+    Status getFeed(FeedUpdater feedUpdater);
 
-    public Status refreshToken();
+    Status refreshToken();
 
     /**
      * Get any authorization user notice to be shown when user enters username/password.
      * @return A string resource id or null.
      */
-    public Integer getAuthNotice();
+    Integer getAuthNotice();
 
     /**
      * Set any authorization user notice to be shown when user enters username/password.
      * @param authNotice String resource id or null.
      */
-    public void setAuthNotice(Integer authNotice);
+    void setAuthNotice(Integer authNotice);
 }
