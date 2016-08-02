@@ -94,18 +94,22 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
         values.put(DB.LOCATION.TIME, arg0.getTime());
         values.put(DB.LOCATION.LATITUDE, (float) arg0.getLatitude());
         values.put(DB.LOCATION.LONGITUDE, (float) arg0.getLongitude());
+        if (arg0.hasAltitude()) {
+            values.put(DB.LOCATION.ALTITUDE, (float) arg0.getAltitude());
+        }
+
+        //Accuracy related, normally not used in exports
+        //Most GPS chips also includes no of sats: arg0.getExtras().getInt("satellites", -1)
         if (arg0.hasAccuracy()) {
             values.put(DB.LOCATION.ACCURANCY, arg0.getAccuracy());
         }
         if (arg0.hasSpeed()) {
             values.put(DB.LOCATION.SPEED, arg0.getSpeed());
         }
-        if (arg0.hasAltitude()) {
-            values.put(DB.LOCATION.ALTITUDE, (float) arg0.getAltitude());
-        }
         if (arg0.hasBearing()) {
             values.put(DB.LOCATION.BEARING, arg0.getBearing());
         }
+
         if (hrValue != null) {
             values.put(DB.LOCATION.HR, hrValue);
         }

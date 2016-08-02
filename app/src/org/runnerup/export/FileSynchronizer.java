@@ -118,7 +118,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 tcx.export(mID, new OutputStreamWriter(out));
             }
             if (mFormat.contains("gpx")) {
-                GPX gpx = new GPX(db);
+                GPX gpx = new GPX(db, true);
                 File file = new File(fileBase + "gpx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 gpx.export(mID, new OutputStreamWriter(out));
