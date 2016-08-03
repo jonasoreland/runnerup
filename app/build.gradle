@@ -43,7 +43,7 @@ android {
 
     productFlavors {
         latest {
-            minSdkVersion 14
+            minSdkVersion 15
             targetSdkVersion rootProject.ext.compileSdkVersion
             versionName rootProject.ext.versionName
             versionCode rootProject.ext.versionCode
@@ -99,10 +99,10 @@ repositories {
 dependencies {
     //design uses com.android.support:appcompat, not explicitly required
     compile 'com.android.support:design:24.1.1'
-    latestCompile 'com.google.android.gms:play-services:6.1.11'
+    latestCompile 'com.google.android.gms:play-services-wearable:9.4.0'
     latestCompile 'com.getpebble:pebblekit:3.0.0'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
-        transitive = true
+    compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar'){
+        transitive=true
     }
     compile files('../GraphView/public/graphview-3.1.jar')
     compile project(':common')

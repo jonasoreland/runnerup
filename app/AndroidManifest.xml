@@ -20,7 +20,7 @@
 	xmlns:tools="http://schemas.android.com/tools">
 
         <uses-sdk
-            android:minSdkVersion="14" />
+            android:minSdkVersion="15" />
 
 		<uses-feature
   			android:glEsVersion="0x00020000"
@@ -142,6 +142,7 @@
 
 		<service android:name=".tracker.Tracker" />
 		<service android:name=".export.RunnerUpLiveSynchronizer$LiveService" />
+		<service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService" />
 
 		<receiver
 		    android:name=".tracker.component.HeadsetButtonReceiver"
