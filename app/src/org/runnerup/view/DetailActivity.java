@@ -57,10 +57,11 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
+
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.mapbox.mapboxsdk.geometry.BoundingBox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.Icon;
@@ -228,27 +229,36 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
         graphTab = (LinearLayout) findViewById(R.id.tab_graph);
         {
-            graphView = new LineGraphView(this, getString(R.string.Pace)) {
+            graphView = new GraphView(this);
+            graphView.setTitle(getString(R.string.Pace));
+            graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
-                protected String formatLabel(double value, boolean isValueX) {
-                    if (!isValueX) {
-                        return formatter.formatPace(Formatter.TXT_SHORT, value);
-                    } else
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
                         return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
-                }
-            };
-
-            graphView2 = new LineGraphView(this, getString(R.string.Heart_rate)) {
-                @Override
-                protected String formatLabel(double value, boolean isValueX) {
-                    if (!isValueX) {
-                        return Integer.toString((int) Math.round(value));
                     } else {
-                        return formatter.formatDistance(Formatter.TXT_SHORT,
-                                (long) value);
+                        return formatter.formatPace(Formatter.TXT_SHORT, value);
                     }
                 }
-            };
+            });
+            //enable zoom
+            graphView.getViewport().setScalable(true);
+            graphView.getViewport().setScrollable(true);
+
+            graphView2 = new GraphView(this);
+            graphView2.setTitle(getString(R.string.Heart_rate));
+            graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
+                        return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+                    } else {
+                        return Integer.toString((int) Math.round(value));
+                    }
+                }
+            });
+            graphView2.getViewport().setScalable(true);
+            graphView2.getViewport().setScrollable(true);
         }
         hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
         hrzonesBar = new HRZonesBar(this);
@@ -804,8 +814,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         double avg_pace = 0;
         double min_pace = Double.MAX_VALUE;
         double max_pace = Double.MIN_VALUE;
-        List<GraphViewData> paceList = null;
-        List<GraphViewData> hrList = null;
+        List<DataPoint> paceList = null;
+        List<DataPoint> hrList = null;
 
         boolean showHR = false;
         boolean showHRZhist = false;
@@ -816,12 +826,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
 
         public GraphProducer(int graphIntervalSeconds, int graphAverageSeconds) {
-            this.paceList = new ArrayList<GraphViewData>();
+            this.paceList = new ArrayList<DataPoint>();
             this.interval = graphIntervalSeconds;
             this.time = new double[graphAverageSeconds];
             this.distance = new double[graphAverageSeconds];
 
-            this.hrList = new ArrayList<GraphViewData>();
+            this.hrList = new ArrayList<DataPoint>();
             this.hr = new int[graphAverageSeconds];
 
             Resources res = getResources();
@@ -916,8 +926,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             }
             if (avg_dist > 0) {
                 double pace = avg_time / avg_dist / 1000.0;
-                paceList.add(new GraphViewData(tot_distance, pace));
-                hrList.add(new GraphViewData(tot_distance, Math.round(avg_hr)));
+                paceList.add(new DataPoint(tot_distance, pace));
+                hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
                 acc_time = 0;
 
                 tot_avg_hr += avg_hr;
@@ -930,18 +940,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         class GraphFilter {
 
             double data[] = null;
-            final List<GraphViewData> source;
+            final List<DataPoint> source;
 
-            GraphFilter(List<GraphViewData> paceList) {
+            GraphFilter(List<DataPoint> paceList) {
                 source = paceList;
                 data = new double[paceList.size()];
                 for (int i = 0; i < paceList.size(); i++)
-                    data[i] = paceList.get(i).valueY;
+                    data[i] = paceList.get(i).getY();
             }
 
             void complete() {
                 for (int i = 0; i < source.size(); i++)
-                    source.set(i, new GraphViewData(source.get(i).valueX, data[i]));
+                    source.set(i, new DataPoint(source.get(i).getX(), data[i]));
             }
 
             void init(double window[], double val) {
@@ -1094,13 +1104,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 Log.e(getClass().getName(), "");
                 f.complete();
             }
-            GraphViewSeries graphViewData = new GraphViewSeries(
-                    paceList.toArray(new GraphViewData[paceList.size()]));
+            LineGraphSeries<DataPoint> graphViewData = new LineGraphSeries<>(
+                    paceList.toArray(new DataPoint[paceList.size()]));
             graphView.addSeries(graphViewData); // data
-            graphView.redrawAll();
             if (showHR) {
-                GraphViewSeries graphViewData2 = new GraphViewSeries(
-                        hrList.toArray(new GraphViewData[hrList.size()]));
+                LineGraphSeries<DataPoint> graphViewData2 = new LineGraphSeries<>(
+                        hrList.toArray(new DataPoint[hrList.size()]));
                 graphView2.addSeries(graphViewData2); // data
 
                 if (showHRZhist) {
