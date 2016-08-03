@@ -140,11 +140,10 @@ public class ActivityProvider extends ContentProvider {
                 final List<String> list = uri.getPathSegments();
                 final String id = list.get(list.size() - 2);
                 final long activityId = Long.parseLong(id);
-                final Pair<File, OutputStream> out = openCacheFile("activity."
-                        + list.get(list.size() - 3));
+                final String parcelFile = "activity." + list.get(list.size() - 3);
+                final Pair<File, OutputStream> out = openCacheFile(parcelFile);
                 if (out == null) {
-                    Log.e(getClass().getName(), "Failed to open cacheFile(" + "activity."
-                            + list.get(list.size() - 3) + ")");
+                    Log.e(getClass().getName(), "Failed to open cacheFile(" + parcelFile + ")");
                     return null;
                 }
 
