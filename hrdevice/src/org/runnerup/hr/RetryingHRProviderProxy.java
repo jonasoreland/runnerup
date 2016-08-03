@@ -302,14 +302,16 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
         state = State.OPENED;
         requestedState = State.OPENED;
-        client.onDisconnectResult(disconnectOK);
+        if (client != null)
+            client.onDisconnectResult(disconnectOK);
     }
 
     @Override
     public void onCloseResult(boolean closeOK) {
         state = State.CLOSED;
         requestedState = State.CLOSED;
-        client.onConnectResult(closeOK);
+        if (client != null)
+            client.onConnectResult(closeOK);
     }
 
     @Override
