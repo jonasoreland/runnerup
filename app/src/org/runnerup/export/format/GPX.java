@@ -49,11 +49,17 @@ public class GPX {
     KXmlSerializer mXML = null;
     String notes = null;
     SimpleDateFormat simpleDateFormat = null;
+    private final boolean mPrivateExtensions;
 
     public GPX(SQLiteDatabase mDB) {
+        this(mDB, false);
+    }
+
+    public GPX(SQLiteDatabase mDB, boolean privateExtensions) {
         this.mDB = mDB;
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.mPrivateExtensions = privateExtensions;
     }
 
     String formatTime(long time) {
@@ -136,7 +142,9 @@ public class GPX {
         String[] pColumns = {
                 DB.LOCATION.LAP, DB.LOCATION.TIME,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
-                DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR
+                DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE,
+                DB.LOCATION.ACCURANCY, DB.LOCATION.BEARING, DB.LOCATION.SPEED,
+                DB.LOCATION.HR, DB.LOCATION.CADENCE
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
@@ -172,15 +180,57 @@ public class GPX {
                             mXML.text(formatTime(time));
                             mXML.endTag("", "time");
 
-                            if (!cLocation.isNull(6)) {
-                                mXML.startTag("", "extensions");
-                                mXML.startTag("", "gpxtpx:TrackPointExtension");
-                                mXML.startTag("", "gpxtpx:hr");
-                                String bpm = Integer.toString(cLocation.getInt(6));
-                                mXML.text(bpm);
-                                mXML.endTag("", "gpxtpx:hr");
-                                mXML.endTag("", "gpxtpx:TrackPointExtension");
-                                mXML.endTag("", "extensions");
+                            {
+                                //Garmin's GPX extensions for non standard data (other variants exists too, like Cluetrust)
+                                //Check app specific like Strava: https://strava.github.io/api/v3/uploads/
+                                //mIncludeAccuracy is 
+                                boolean isAccuracy = !cLocation.isNull(6) && mPrivateExtensions;
+                                boolean isBearing = !cLocation.isNull(7) && mPrivateExtensions;
+                                boolean isSpeed = !cLocation.isNull(8) && mPrivateExtensions;
+                                boolean isHr = !cLocation.isNull(9);
+                                boolean isCad = !cLocation.isNull(10);
+                                boolean isAny = isAccuracy || isBearing || isSpeed || isHr || isCad;
+                                if (isAny) {
+                                    mXML.startTag("", "extensions");
+                                    mXML.startTag("", "gpxtpx:TrackPointExtension");
+                                }
+
+                                if (isAccuracy) {
+                                    mXML.startTag("", "accuracy");
+                                    String val = Float.toString(cLocation.getFloat(6));
+                                    mXML.text(val);
+                                    mXML.endTag("", "accuracy");
+                                }
+                                if (isBearing) {
+                                    mXML.startTag("", "bearing");
+                                    String val = Float.toString(cLocation.getFloat(7));
+                                    mXML.text(val);
+                                    mXML.endTag("", "bearing");
+                                }
+                                if (isSpeed) {
+                                    mXML.startTag("", "speed");
+                                    String val = Float.toString(cLocation.getFloat(8));
+                                    mXML.text(val);
+                                    mXML.endTag("", "speed");
+                                }
+                                if (isHr) {
+                                    mXML.startTag("", "gpxtpx:hr");
+                                    String bpm = Integer.toString(cLocation.getInt(9));
+                                    mXML.text(bpm);
+                                    mXML.endTag("", "gpxtpx:hr");
+                                }
+                                if (isCad) {
+                                    //Not supported by Strava?
+                                    mXML.startTag("", "gpxtpx:cad");
+                                    String val = Float.toString(cLocation.getFloat(10));
+                                    mXML.text(val);
+                                    mXML.endTag("", "gpxtpx:cad");
+                                }
+
+                                if (isAny) {
+                                    mXML.endTag("", "gpxtpx:TrackPointExtension");
+                                    mXML.endTag("", "extensions");
+                                }
                             }
 
                             mXML.endTag("", "trkpt");
