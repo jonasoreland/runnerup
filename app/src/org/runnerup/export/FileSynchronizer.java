@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FileSynchronizer extends DefaultSynchronizer {
@@ -41,8 +42,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     private long id = 0;
     private String mPath = null;
-    private String mFormat = null;
-
+    
     FileSynchronizer() {
     }
 
@@ -58,12 +58,10 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     @Override
     public void init(ContentValues config) {
-        //Note: config is a subset of the db fields or "added" values here
+        //Note: config contains a subset of account, primarily AUTH_CONFIG
         //Reuse AUTH_CONFIG to communicate with SyncManager to not change structure too much
-        //AUTH_CONFIG could include other info like filename format in addition to path
+        //path is also in URL (used for display), path is needed in connect()
         mPath = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-        //FORMAT is added explicitly
-        mFormat = config.getAsString(DB.ACCOUNT.FORMAT);
         id = config.getAsLong("_id");
     }
 
@@ -108,16 +106,19 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if ((s = connect()) != Status.OK) {
             return s;
         }
+        ContentValues config = SyncManager.loadConfig(db, this.getName());
+        String format = config.getAsString(DB.ACCOUNT.FORMAT);
 
         try {
-            String fileBase = new File(mPath).getAbsolutePath() + File.separator + "RunnerUp_" + mID + ".";
-            if (mFormat.contains("tcx")) {
+            String fileBase = new File(mPath).getAbsolutePath() + File.separator +
+            String.format(Locale.getDefault(), "RunnerUp_%04d.", mID);
+            if (format.contains("tcx")) {
                 TCX tcx = new TCX(db);
                 File file = new File(fileBase + "tcx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 tcx.export(mID, new OutputStreamWriter(out));
             }
-            if (mFormat.contains("gpx")) {
+            if (format.contains("gpx")) {
                 GPX gpx = new GPX(db, true);
                 File file = new File(fileBase + "gpx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
