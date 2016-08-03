@@ -134,8 +134,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 DB.ACCOUNT.FLAGS,
                 DB.ACCOUNT.ICON,
                 DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.AUTH_METHOD,
-                DB.ACCOUNT.FORMAT
+                DB.ACCOUNT.AUTH_METHOD
         };
 
         String args[] = {

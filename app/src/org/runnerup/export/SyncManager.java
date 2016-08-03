@@ -142,10 +142,10 @@ public class SyncManager {
 
     public long load(String synchronizerName) {
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
         String args[] = {
-            synchronizerName
+                synchronizerName
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
                 args, null, null, null, null);
@@ -158,6 +158,23 @@ public class SyncManager {
         }
         c.close();
         return id;
+    }
+
+    public static ContentValues loadConfig(SQLiteDatabase db, String synchronizerName) {
+        ContentValues config = null;
+                String from[] = new String[] {
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
+        };
+        String args[] = {
+                synchronizerName
+        };
+        Cursor c = db.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
+                args, null, null, null, null);
+        if (c.moveToFirst()) {
+            config = DBHelper.get(c);
+        }
+        c.close();
+        return config;
     }
 
     @SuppressWarnings("null")
@@ -513,7 +530,6 @@ public class SyncManager {
                 if (cbgpx.isChecked()) {
                     format += "gpx,";
                 }
-                config.put(DB.ACCOUNT.FORMAT, format);
                 sync.init(config);
 
                 //Set URL used for displaying
@@ -1236,7 +1252,7 @@ public class SyncManager {
         }
 
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
 
         Cursor c = null;
@@ -1267,8 +1283,7 @@ public class SyncManager {
                 DB.ACCOUNT.NAME,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.FLAGS,
-                DB.ACCOUNT.FORMAT
+                DB.ACCOUNT.FLAGS
         };
 
         SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
