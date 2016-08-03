@@ -6,3 +6,9 @@
 -dontwarn com.vividsolutions.jts.awt.**
 -dontwarn android.support.**
 -dontwarn com.squareup.okhttp.**
+-keep public class android.util.FloatMath
+-dontwarn com.almeros.android.multitouch.TwoFingerGestureDetector
+-dontwarn com.google.android.gms.common.GooglePlayServicesUtil
+-dontnote android.net.http.*
+-dontnote org.apache.commons.codec.**
+-dontnote org.apache.http.**
