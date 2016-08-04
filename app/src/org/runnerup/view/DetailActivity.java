@@ -1379,8 +1379,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         final CharSequence fmt = items[which[0]];
                         final Intent intent = new Intent(Intent.ACTION_SEND);
 
-                        intent.setType(WorkoutFileProvider.MIME);
-                        //Use of content:// instead of file:// is not supported in ES and other apps
+                        if (fmt.equals("tcx")) {
+                            intent.setType("application/vnd.garmin." + fmt + "+xml");
+                        } else {
+                            intent.setType("application/" + fmt + "+xml");
+                        }
+                        //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
                         //Solid Explorer File Manager works though
                         Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
                                 + "/" + mID
