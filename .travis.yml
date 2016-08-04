@@ -5,13 +5,13 @@ jdk:
 
 android:
     components:
-        - tools
-        - tools #update to latest, cannot control version
+        - tools #latest for "builtin" sdk
+        - tools #latest
         - platform-tools #latest
         - build-tools-24.0.1
         - android-24
-        - extra
         - extra-android-m2repository
+        - extra-google-m2repository
         - extra-google-google_play_services
 
 notifications:
@@ -20,12 +20,14 @@ notifications:
 #cache between builds
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
   
 cache:
   directories:
-  - $HOME/.m2
-  - $HOME/.gradle
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 
 script:
     - ./gradlew lintFroyoRelease  assembleFroyoRelease
