@@ -56,12 +56,16 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
 import com.mapbox.mapboxsdk.geometry.BoundingBox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.Icon;
@@ -253,7 +257,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     if (isValueX) {
                         return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
                     } else {
-                        return Integer.toString((int) Math.round(value));
+                        return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
                     }
                 }
             });
@@ -1107,10 +1111,30 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             LineGraphSeries<DataPoint> graphViewData = new LineGraphSeries<>(
                     paceList.toArray(new DataPoint[paceList.size()]));
             graphView.addSeries(graphViewData); // data
+            graphView.getViewport().setMinX(graphView.getViewport().getMinX(true));
+            graphView.getViewport().setMaxX(graphView.getViewport().getMaxX(true));
+            graphViewData.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    String msg = getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
+                            getString(R.string.Pace) + ": " + formatter.formatPace(Formatter.TXT_SHORT, dataPoint.getY());
+                    Toast.makeText(DetailActivity.this, msg, Toast.LENGTH_SHORT).show();
+                }
+            });
             if (showHR) {
                 LineGraphSeries<DataPoint> graphViewData2 = new LineGraphSeries<>(
                         hrList.toArray(new DataPoint[hrList.size()]));
                 graphView2.addSeries(graphViewData2); // data
+                graphView2.getViewport().setMinX(graphView2.getViewport().getMinX(true));
+                graphView2.getViewport().setMaxX(graphView2.getViewport().getMaxX(true));
+                graphViewData2.setOnDataPointTapListener(new OnDataPointTapListener() {
+                    @Override
+                    public void onTap(Series series, DataPointInterface dataPoint) {
+                        String msg = getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
+                                getString(R.string.Heart_rate) + ": " + formatter.formatHeartRate(Formatter.TXT_SHORT, dataPoint.getY());
+                        Toast.makeText(DetailActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
                 if (showHRZhist) {
                     System.err.print("HR Zones:");

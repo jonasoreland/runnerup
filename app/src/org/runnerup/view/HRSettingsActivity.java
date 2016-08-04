@@ -156,9 +156,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                     }
                 }
             });
-            //enable zoom
-            graphView.getViewport().setScalable(true);
-            graphView.getViewport().setScrollable(true);
             graphLayout.addView(graphView);
         }
 
@@ -525,6 +522,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                         DataPoint empty[] = {};
                         graphViewSeries = new LineGraphSeries<>(empty);
                         graphView.addSeries(graphViewSeries);
+                        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                            @Override
+                            public String formatLabel(double value, boolean isValueX) {
+                                if (isValueX) {
+                                    return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+                                } else {
+                                    return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
+                                }
+                            }
+                        });
                     }
 
                     graphViewListData.add(new DataPoint((age - timerStartTime) / 1000, hrValue));
