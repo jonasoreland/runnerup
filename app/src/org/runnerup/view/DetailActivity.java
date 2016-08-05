@@ -188,8 +188,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         fillHeaderData();
         requery();
 
+        if (Build.VERSION.SDK_INT >= 15) {
         loadRoute();
-
+        } else {
+            map = null;
+        }
         TabHost th = (TabHost) findViewById(R.id.tabhost);
         th.setup();
         TabSpec tabSpec = th.newTabSpec("notes");
@@ -233,36 +236,38 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
         graphTab = (LinearLayout) findViewById(R.id.tab_graph);
         {
-            graphView = new GraphView(this);
-            graphView.setTitle(getString(R.string.Pace));
-            graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                @Override
-                public String formatLabel(double value, boolean isValueX) {
-                    if (isValueX) {
-                        return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
-                    } else {
-                        return formatter.formatPace(Formatter.TXT_SHORT, value);
+            if (Build.VERSION.SDK_INT > 8) {
+                graphView = new GraphView(this);
+                graphView.setTitle(getString(R.string.Pace));
+                graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                    @Override
+                    public String formatLabel(double value, boolean isValueX) {
+                        if (isValueX) {
+                            return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+                        } else {
+                            return formatter.formatPace(Formatter.TXT_SHORT, value);
+                        }
                     }
-                }
-            });
-            //enable zoom
-            graphView.getViewport().setScalable(true);
-            graphView.getViewport().setScrollable(true);
+                });
+                //enable zoom
+                graphView.getViewport().setScalable(true);
+                graphView.getViewport().setScrollable(true);
 
-            graphView2 = new GraphView(this);
-            graphView2.setTitle(getString(R.string.Heart_rate));
-            graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                @Override
-                public String formatLabel(double value, boolean isValueX) {
-                    if (isValueX) {
-                        return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
-                    } else {
-                        return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
+                graphView2 = new GraphView(this);
+                graphView2.setTitle(getString(R.string.Heart_rate));
+                graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                    @Override
+                    public String formatLabel(double value, boolean isValueX) {
+                        if (isValueX) {
+                            return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+                        } else {
+                            return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
+                        }
                     }
-                }
-            });
-            graphView2.getViewport().setScalable(true);
-            graphView2.getViewport().setScrollable(true);
+                });
+                graphView2.getViewport().setScalable(true);
+                graphView2.getViewport().setScrollable(true);
+            }
         }
         hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
         hrzonesBar = new HRZonesBar(this);
@@ -1340,6 +1345,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             protected void onPostExecute(Route route) {
 
                 if (route != null) {
+                    if (Build.VERSION.SDK_INT > 8) {
                     graphData.complete(graphView);
                     if (!graphData.HasHRInfo()) {
                         graphTab.addView(graphView);
@@ -1359,7 +1365,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     } else {
                         hrzonesBarLayout.setVisibility(View.GONE);
                     }
-
+                    }
                     if (map != null) {
                         if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.FROYO) {
                             PathOverlay overlay = new PathOverlay(Color.RED, 3);

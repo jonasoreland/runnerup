@@ -19,7 +19,7 @@
     package="org.runnerup" xmlns:tools="http://schemas.android.com/tools">
 
     <uses-sdk
-        tools:overrideLibrary="com.mapbox.mapboxsdk"
+        tools:overrideLibrary="com.mapbox.mapboxsdk, com.jjoe64.graphview"
         android:minSdkVersion="8" android:targetSdkVersion="18"/>
 
     <application

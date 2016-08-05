@@ -104,9 +104,7 @@ dependencies {
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
         transitive = true
     }
-    //Using the GraphView submodule jar, could use gradle or compile sources
-    //compile 'com.jjoe64:graphview:4.1.0'
-    compile files('../GraphView/public/graphview-4.1.0.jar')
+    compile 'com.jjoe64:graphview:4.1.0'
     compile project(':common')
     compile project(':hrdevice')
     latestWearApp project(':wear')
