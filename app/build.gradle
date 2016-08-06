@@ -101,7 +101,7 @@ dependencies {
     compile 'com.android.support:design:24.1.1'
     latestCompile 'com.google.android.gms:play-services-wearable:9.4.0'
     latestCompile 'com.getpebble:pebblekit:3.0.0'
-    compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar'){
+    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar'){
         transitive=true
     }
     compile files('../GraphView/public/graphview-3.1.jar')

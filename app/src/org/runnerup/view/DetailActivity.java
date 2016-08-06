@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -61,15 +60,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-import com.mapbox.mapboxsdk.MapboxAccountManager;
-import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
-import com.mapbox.mapboxsdk.annotations.PolylineOptions;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
@@ -84,6 +75,7 @@ import org.runnerup.export.Synchronizer.Feature;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
+import org.runnerup.util.MapWrapper;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
@@ -91,7 +83,6 @@ import org.runnerup.workout.Intensity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -124,8 +115,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private EditText notes = null;
     private MenuItem recomputeMenuItem = null;
 
-    private MapView mapView = null;
-    private MapboxMap map;
+    private MapWrapper mapWrapper = null;
     private LinearLayout graphTab = null;
     private GraphView graphView;
     private GraphView graphView2;
@@ -136,11 +126,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private SyncManager syncManager = null;
     private Formatter formatter = null;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MapboxAccountManager.start(this, getString(R.string.mapboxAccessToken));
+        MapWrapper.start(this, getString(R.string.mapboxAccessToken));
         setContentView(R.layout.detail);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
@@ -157,7 +149,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         } else if (mode.contentEquals("details")) {
             this.mode = MODE_DETAILS;
         } else {
-            if (BuildConfig.DEBUG) { throw new AssertionError(); }
+            if (BuildConfig.DEBUG) {
+                throw new AssertionError();
+            }
         }
 
         saveButton = (Button) findViewById(R.id.save_button);
@@ -169,16 +163,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         activityPace = (TextView) findViewById(R.id.activity_pace);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
-        mapView = (MapView) findViewById(R.id.mapview);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(MapboxMap mapboxMap) {
-                map = mapboxMap;
+        MapView mapView = (MapView) findViewById(R.id.mapview);
+        mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
 
-                new LoadRoute().execute();
-            }
-        });
+        mapWrapper.onCreate(savedInstanceState);
 
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
@@ -208,22 +196,24 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
-        tabSpec = th.newTabSpec("map");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
-        tabSpec.setContent(R.id.tab_map);
-        th.addTab(tabSpec);
+        if (!BuildConfig.FLAVOR.equals("froyo")) {
+            tabSpec = th.newTabSpec("map");
+            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
+            tabSpec.setContent(R.id.tab_map);
+            th.addTab(tabSpec);
+        }
+        if (Build.VERSION.SDK_INT > 8) {
+            new LoadGraph().execute();
 
-        tabSpec = th.newTabSpec("graph");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
-        tabSpec.setContent(R.id.tab_graph);
-        th.addTab(tabSpec);
-
+            tabSpec = th.newTabSpec("graph");
+            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
+            tabSpec.setContent(R.id.tab_graph);
+            th.addTab(tabSpec);
+        }
         tabSpec = th.newTabSpec("share");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Upload)));
         tabSpec.setContent(R.id.tab_upload);
         th.addTab(tabSpec);
-
-        //th.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
         {
             ListView lv = (ListView) findViewById(R.id.laplist);
@@ -238,7 +228,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             lv.setAdapter(adapter);
         }
         graphTab = (LinearLayout) findViewById(R.id.tab_graph);
-        {
+        if (Build.VERSION.SDK_INT > 8) {
             graphView = new LineGraphView(this, getString(R.string.Pace)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
@@ -311,25 +301,25 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+        mapWrapper.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        mapWrapper.onPause();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        mapWrapper.onSaveInstanceState(outState);
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        mapWrapper.onLowMemory();
     }
 
     @Override
@@ -337,7 +327,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         super.onDestroy();
         DBHelper.closeDB(mDB);
         syncManager.close();
-        mapView.onDestroy();
+        mapWrapper.onDestroy();
     }
 
     private void requery() {
@@ -345,7 +335,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             /**
              * Laps
              */
-            String[] from = new String[] {
+            String[] from = new String[]{
                     "_id", DB.LAP.LAP, DB.LAP.INTENSITY,
                     DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.PLANNED_TIME,
                     DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE, DB.LAP.AVG_HR
@@ -406,7 +396,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         alreadySynched.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
                             && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS),
-                                    DB.ACCOUNT.FLAG_UPLOAD)) {
+                            DB.ACCOUNT.FLAG_UPLOAD)) {
                         pendingSynchronizers.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     }
                 } while (c.moveToNext());
@@ -430,7 +420,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private void fillHeaderData() {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
-        String[] from = new String[] {
+        String[] from = new String[]{
                 DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT,
                 DB.ACTIVITY.SPORT
@@ -526,12 +516,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     .getAsLong(DB.LAP.TIME) : 0;
             tv3.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
             TextView tv4 = (TextView) view.findViewById(R.id.lap_list_pace);
-            if (t != 0 && d != 0)
-            {
+            if (t != 0 && d != 0) {
                 tv4.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
-            }
-            else
-            {
+            } else {
                 tv4.setText("");
             }
             int hr = laps[position].containsKey(DB.LAP.AVG_HR) ? laps[position]
@@ -630,7 +617,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
         tmp.put(DB.ACTIVITY.SPORT, sport.getValueInt());
         String whereArgs[] = {
-            Long.toString(mID)
+                Long.toString(mID)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
     }
@@ -811,11 +798,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 return i;
         }
         return -1;
-    }
-
-    class Route {
-        final List<LatLng> path = new ArrayList<>(10);
-        final ArrayList<MarkerViewOptions > markers = new ArrayList<>(10);
     }
 
     class GraphProducer {
@@ -1172,7 +1154,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             return showHR;
         }
 
-        public boolean HasHRZHist () { return showHR && showHRZhist; }
+        public boolean HasHRZHist() {
+            return showHR && showHRZhist;
+        }
     }
 
     private double calculateAverage(int[] data) {
@@ -1184,7 +1168,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         return (double) sum / data.length;
     }
 
-    private class LoadRoute extends AsyncTask<Void, Void, Route> {
+    private class LoadGraph extends AsyncTask<Void, Void, Void> {
         final GraphProducer graphData = new GraphProducer();
 
         final String[] from = new String[]{
@@ -1196,15 +1180,30 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 DB.LOCATION.HR
         };
 
+        private class LatLng {
+            Double lat, lon;
+
+            LatLng(Double lat, Double lon) {
+                this.lat = lat;
+                this.lon = lon;
+            }
+
+            public Double getLatitude() {
+                return lat;
+            }
+
+            public Double getLongitude() {
+                return lat;
+            }
+        }
+
         @Override
-        protected Route doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
 
             int cnt = 0;
-            Route route = null;
             Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
                     null, null, null, "_id", null);
             if (c.moveToFirst()) {
-                route = new Route();
                 double acc_distance = 0;
                 double tot_distance = 0;
                 int cnt_distance = 0;
@@ -1216,13 +1215,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     cnt++;
                     LocationEntity loc = new LocationEntity(c);
                     LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
-                    route.path.add(point);
                     int type = loc.getType();
                     long time = loc.getTime();
                     int lap = loc.getLap();
                     if (loc.getHr() != null)
                         hr = loc.getHr();
-                    MarkerViewOptions m;
                     switch (type) {
                         case DB.LOCATION.TYPE_START:
                         case DB.LOCATION.TYPE_END:
@@ -1250,30 +1247,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                                 lastTime = time;
                             }
                             lastLocation = point;
-
-                            String title = null;
-                            int color = Color.WHITE;
-                            switch (type) {
-                                case DB.LOCATION.TYPE_START:
-                                    color = Color.GREEN;
-                                    title = getResources().getString(R.string.Start);
-                                    break;
-                                case DB.LOCATION.TYPE_END:
-                                    color = Color.RED;
-                                    title = getResources().getString(R.string.Stop);
-                                    break;
-                                case DB.LOCATION.TYPE_PAUSE:
-                                    color = Color.CYAN;
-                                    title = getResources().getString(R.string.Pause);
-                                    break;
-                                case DB.LOCATION.TYPE_RESUME:
-                                    color = Color.BLUE;
-                                    title = getResources().getString(R.string.Resume);
-                                    break;
-                            }
-                            //TODO Set icon color, probably using static icons
-                            m = new MarkerViewOptions().title(title).position(point);
-                            route.markers.add(m);
                             break;
                         case DB.LOCATION.TYPE_GPS:
                             float res[] = {
@@ -1300,105 +1273,46 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             if (acc_distance >= formatter.getUnitMeters()) {
                                 cnt_distance++;
                                 acc_distance = 0;
-                                m = new MarkerViewOptions()
-                                        .title("" + cnt_distance + " " + formatter.getUnitString())
-                                        .position(point);
-                                //TODO Set icon color, probably using static icons
-                                route.markers.add(m);
                             }
                             lastLocation = point;
                             break;
                     }
                 } while (c.moveToNext());
 
-                // only keep 10 distance points to not overload the map with markers
-                if (tot_distance > 1 + 10 * formatter.getUnitMeters()) {
-                    double step = tot_distance / (10 * formatter.getUnitMeters());
-                    double current = 0;
-                    for (Iterator<MarkerViewOptions> iterator = route.markers.iterator(); iterator.hasNext(); ) {
-                        MarkerViewOptions m = iterator.next();
-                        if (getString(R.string.Distance_marker).equals(m.toString())) {
-                            current++;
-                            if (current >= step) {
-                                current -= step;
-                            } else {
-                                iterator.remove();
-                            }
-                        }
-                    }
-                    Log.i(getClass().getName(), "Too big activity, keeping only 10 of " + (int) (tot_distance / formatter.getUnitMeters()) + " distance markers");
-                }
                 Log.e(getClass().getName(), "Finished loading " + cnt + " points");
             }
             c.close();
-            return route;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Route route) {
+        protected void onPostExecute(Void route) {
 
-            if (route != null) {
-                graphData.complete(graphView);
-                if (!graphData.HasHRInfo()) {
-                    graphTab.addView(graphView);
-                } else {
-                    graphTab.addView(graphView,
-                            new LayoutParams(
-                                    LayoutParams.MATCH_PARENT, 0, 0.5f));
+            graphData.complete(graphView);
+            if (!graphData.HasHRInfo()) {
+                graphTab.addView(graphView);
+            } else {
+                graphTab.addView(graphView,
+                        new LayoutParams(
+                                LayoutParams.MATCH_PARENT, 0, 0.5f));
 
-                    graphTab.addView(graphView2,
-                            new LayoutParams(
-                                    LayoutParams.MATCH_PARENT, 0, 0.5f));
-                }
+                graphTab.addView(graphView2,
+                        new LayoutParams(
+                                LayoutParams.MATCH_PARENT, 0, 0.5f));
+            }
 
-                if (graphData.HasHRZHist()) {
-                    hrzonesBarLayout.setVisibility(View.VISIBLE);
-                    hrzonesBarLayout.addView(hrzonesBar);
-                } else {
-                    hrzonesBarLayout.setVisibility(View.GONE);
-                }
-
-                if (map != null) {
-                    if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.FROYO) {
-                        LatLng[] pointsArray = new LatLng[route.path.size()];
-                        route.path.toArray(pointsArray);
-                        map.addPolyline(new PolylineOptions()
-                                .add(pointsArray)
-                                .color(Color.RED)
-                                .width(3));
-                        Log.e(getClass().getName(), "Added polyline");
-                        int cnt = 0;
-                        for (MarkerViewOptions m : route.markers) {
-                            cnt++;
-                            map.addMarker(m);
-                        }
-                        Log.e(getClass().getName(), "Added " + cnt + " markers");
-
-                        //There seem to be no way to get bounds from polyline or LatLong[]...
-                        LatLng n = null, s = null, w = null, e = null;
-                        for (LatLng l : route.path) {
-                            if(n==null || l.getLatitude() > n.getLatitude())
-                                n=l;
-                            if(s==null || l.getLatitude() < s.getLatitude())
-                                s=l;
-                            if(w==null || l.getLongitude() < w.getLongitude())
-                                w=l;
-                            if(e==null || l.getLongitude() > e.getLongitude())
-                                e=l;
-                        }
-                        //zoom on map
-                        @SuppressWarnings("ConstantConditions") final LatLngBounds box = new LatLngBounds.Builder().include(n).include(s).include(w).include(e).build();
-                        map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
-                    }
-                    route = null; // release mem for old...
-                }
+            if (graphData.HasHRZHist()) {
+                hrzonesBarLayout.setVisibility(View.VISIBLE);
+                hrzonesBarLayout.addView(hrzonesBar);
+            } else {
+                hrzonesBarLayout.setVisibility(View.GONE);
             }
         }
     }
 
     private void shareActivity() {
         final int which[] = {
-            1 //TODO preselect tcx - choice should be remembered
+                1 //TODO preselect tcx - choice should be remembered
         };
         final CharSequence items[] = {
                 "gpx", "tcx" /* "nike+xml" */
