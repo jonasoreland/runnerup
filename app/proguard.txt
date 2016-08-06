@@ -12,3 +12,5 @@
 -dontnote android.net.http.*
 -dontnote org.apache.commons.codec.**
 -dontnote org.apache.http.**
+-dontwarn javax.annotation.**
+-dontwarn sun.misc.Unsafe
