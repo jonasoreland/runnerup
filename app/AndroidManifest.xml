@@ -142,7 +142,6 @@
 
 		<service android:name=".tracker.Tracker" />
 		<service android:name=".export.RunnerUpLiveSynchronizer$LiveService" />
-		<service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService" />
 
 		<receiver
 		    android:name=".tracker.component.HeadsetButtonReceiver"
