@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "https://oss.sonatype.org/content/groups/public/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.2'
