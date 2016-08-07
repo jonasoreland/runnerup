@@ -75,6 +75,7 @@ public class AboutPreference extends DialogPreference {
 
     @Override
     protected void onBindDialogView(View view) {
+        super.onBindDialogView(view);
         if (!isPlayPref()) {
             WebView wv = (WebView) view.findViewById(R.id.web_view1);
             wv.loadUrl("file:///android_asset/changes.html");
