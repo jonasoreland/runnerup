@@ -93,14 +93,14 @@ android {
 
 repositories {
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/groups/public/" }
+    maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
 }
 
 dependencies {
     //design uses com.android.support:appcompat, not explicitly required
     compile 'com.android.support:design:24.1.1'
     latestCompile 'com.google.android.gms:play-services-wearable:9.4.0'
-    latestCompile 'com.getpebble:pebblekit:3.0.0'
+    latestCompile 'com.getpebble:pebblekit:3.1.0'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
         transitive = true
     }
