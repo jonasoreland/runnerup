@@ -26,7 +26,8 @@ import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.runnerup.R;
 
@@ -43,7 +44,11 @@ public class AboutPreference extends DialogPreference {
         init();
     }
 
-    void init() {
+    public static boolean isGooglePlayServicesAvailable(Context context) {
+        return  GoogleApiAvailability.getInstance ().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
+    }
+
+    private void init() {
         setNegativeButtonText(null);
         Context ctx = getContext();
         Resources res = ctx.getResources();
@@ -56,7 +61,7 @@ public class AboutPreference extends DialogPreference {
         }
         String str = res.getString(R.string.Google_Play_Services_Legal_Notices);
         if (str.contentEquals(this.getTitle())) {
-            CharSequence msg = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this
+            CharSequence msg = GoogleApiAvailability.getInstance ().getOpenSourceSoftwareLicenseInfo(this
                     .getContext());
             if (msg != null) {
                 this.setDialogMessage(msg);
