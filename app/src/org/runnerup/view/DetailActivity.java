@@ -132,7 +132,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MapWrapper.start(this, getString(R.string.mapboxAccessToken));
+        MapWrapper.start(this);
         setContentView(R.layout.detail);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 

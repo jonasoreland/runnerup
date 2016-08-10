@@ -19,6 +19,8 @@ package org.runnerup.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -26,6 +28,8 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.mapbox.mapboxsdk.MapboxAccountManager;
@@ -65,9 +69,25 @@ public class MapWrapper implements Constants {
         this.mapView = mapView;
     }
 
-    public static void start(Context context, String accessToken) {
-        //Must be called before setContentView() in 4,1.1
-        MapboxAccountManager.start(context, accessToken);
+    public static void start(Context context) {
+        //Must be called before setContentView() in 4.1.1
+        MapboxAccountManager.start(context, context.getString(R.string.mapboxAccessToken));
+    }
+
+    private void setStyle() {
+        if (map != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            Resources res = context.getResources();
+            String val = prefs.getString(res.getString(R.string.pref_mapbox_default_style), "");
+
+            if (TextUtils.isEmpty(val)) {
+                //The preferences should prevent from setting an empty value for display reasons
+                //However, that handling is not so easy
+                //(Mapbox seem to handle no style set OK though).
+                val = res.getString(R.string.mapboxDefaultStyle);
+            }
+            map.setStyleUrl(val);
+        }
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -76,7 +96,7 @@ public class MapWrapper implements Constants {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
-                map.setStyleUrl("mapbox://styles/mapbox/outdoors-v9");
+                setStyle();
 
                 new LoadRoute().execute();
             }
@@ -84,6 +104,7 @@ public class MapWrapper implements Constants {
     }
 
     public void onResume() {
+        setStyle();
         mapView.onResume();
     }
 

@@ -46,7 +46,7 @@ public class MapWrapper implements Constants {
     public MapWrapper(Context context, SQLiteDatabase mDB, long mID, Formatter formatter, MapView mapView) {
     }
 
-    public static void start(Context context, String accessToken) {
+    public static void start(Context context) {
     }
 
     public void onCreate(Bundle savedInstanceState) {
