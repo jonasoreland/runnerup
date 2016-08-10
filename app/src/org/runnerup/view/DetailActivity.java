@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -61,17 +60,12 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-import com.mapbox.mapboxsdk.geometry.BoundingBox;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.overlay.Icon;
-import com.mapbox.mapboxsdk.overlay.Marker;
-import com.mapbox.mapboxsdk.overlay.PathOverlay;
-import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.maps.MapView;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
-import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.LocationEntity;
@@ -81,6 +75,7 @@ import org.runnerup.export.Synchronizer.Feature;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
+import org.runnerup.util.MapWrapper;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
@@ -88,56 +83,56 @@ import org.runnerup.workout.Intensity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DetailActivity extends AppCompatActivity implements Constants {
 
-    long mID = 0;
-    SQLiteDatabase mDB = null;
-    final HashSet<String> pendingSynchronizers = new HashSet<String>();
-    final HashSet<String> alreadySynched = new HashSet<String>();
+    private long mID = 0;
+    private SQLiteDatabase mDB = null;
+    private final HashSet<String> pendingSynchronizers = new HashSet<>();
+    private final HashSet<String> alreadySynched = new HashSet<>();
 
-    boolean lapHrPresent = false;
-    ContentValues laps[] = null;
-    final ArrayList<ContentValues> reports = new ArrayList<ContentValues>();
-    final ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+    private boolean lapHrPresent = false;
+    private ContentValues[] laps = null;
+    private final ArrayList<ContentValues> reports = new ArrayList<>();
+    private final ArrayList<BaseAdapter> adapters = new ArrayList<>(2);
 
-    int mode; // 0 == save 1 == details
-    final static int MODE_SAVE = 0;
-    final static int MODE_DETAILS = 1;
-    boolean edit = false;
-    boolean uploading = false;
+    private int mode; // 0 == save 1 == details
+    private final static int MODE_SAVE = 0;
+    private final static int MODE_DETAILS = 1;
+    private boolean edit = false;
+    private boolean uploading = false;
 
-    Button saveButton = null;
-    Button discardButton = null;
-    Button uploadButton = null;
-    Button resumeButton = null;
-    TextView activityTime = null;
-    TextView activityPace = null;
-    TextView activityDistance = null;
+    private Button saveButton = null;
+    private Button uploadButton = null;
+    private Button resumeButton = null;
+    private TextView activityTime = null;
+    private TextView activityPace = null;
+    private TextView activityDistance = null;
 
-    TitleSpinner sport = null;
-    EditText notes = null;
-    MenuItem recomputeMenuItem = null;
+    private TitleSpinner sport = null;
+    private EditText notes = null;
+    private MenuItem recomputeMenuItem = null;
 
-    MapView map = null;
-    AsyncTask<String, String, Route> loadRouteTask = null;
-    LinearLayout graphTab = null;
-    GraphView graphView;
-    GraphView graphView2;
+    private MapWrapper mapWrapper = null;
+    private LinearLayout graphTab = null;
+    private GraphView graphView;
+    private GraphView graphView2;
 
-    LinearLayout hrzonesBarLayout;
-    HRZonesBar hrzonesBar;
+    private LinearLayout hrzonesBarLayout;
+    private HRZonesBar hrzonesBar;
 
-    SyncManager syncManager = null;
-    Formatter formatter = null;
+    private SyncManager syncManager = null;
+    private Formatter formatter = null;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MapWrapper.start(this);
         setContentView(R.layout.detail);
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
@@ -154,11 +149,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         } else if (mode.contentEquals("details")) {
             this.mode = MODE_DETAILS;
         } else {
-            assert (false);
+            if (BuildConfig.DEBUG) {
+                throw new AssertionError();
+            }
         }
 
         saveButton = (Button) findViewById(R.id.save_button);
-        discardButton = (Button) findViewById(R.id.discard_button);
+        Button discardButton = (Button) findViewById(R.id.discard_button);
         resumeButton = (Button) findViewById(R.id.resume_button);
         uploadButton = (Button) findViewById(R.id.upload_button);
         activityTime = (TextView) findViewById(R.id.activity_time);
@@ -166,7 +163,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         activityPace = (TextView) findViewById(R.id.activity_pace);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
-        map = (MapView) findViewById(R.id.mapview);
+        MapView mapView = (MapView) findViewById(R.id.mapview);
+        mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
+
+        mapWrapper.onCreate(savedInstanceState);
+
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
         if (this.mode == MODE_SAVE) {
@@ -183,8 +184,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         fillHeaderData();
         requery();
 
-        loadRoute();
-
         TabHost th = (TabHost) findViewById(R.id.tabhost);
         th.setup();
         TabSpec tabSpec = th.newTabSpec("notes");
@@ -197,22 +196,24 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
-        tabSpec = th.newTabSpec("map");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
-        tabSpec.setContent(R.id.tab_map);
-        th.addTab(tabSpec);
+        if (!BuildConfig.FLAVOR.equals("froyo")) {
+            tabSpec = th.newTabSpec("map");
+            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
+            tabSpec.setContent(R.id.tab_map);
+            th.addTab(tabSpec);
+        }
+        if (Build.VERSION.SDK_INT > 8) {
+            new LoadGraph().execute();
 
-        tabSpec = th.newTabSpec("graph");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
-        tabSpec.setContent(R.id.tab_graph);
-        th.addTab(tabSpec);
-
+            tabSpec = th.newTabSpec("graph");
+            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
+            tabSpec.setContent(R.id.tab_graph);
+            th.addTab(tabSpec);
+        }
         tabSpec = th.newTabSpec("share");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Upload)));
         tabSpec.setContent(R.id.tab_upload);
         th.addTab(tabSpec);
-
-        //th.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
         {
             ListView lv = (ListView) findViewById(R.id.laplist);
@@ -227,7 +228,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             lv.setAdapter(adapter);
         }
         graphTab = (LinearLayout) findViewById(R.id.tab_graph);
-        {
+        if (Build.VERSION.SDK_INT > 8) {
             graphView = new LineGraphView(this, getString(R.string.Pace)) {
                 @Override
                 protected String formatLabel(double value, boolean isValueX) {
@@ -280,7 +281,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 deleteButtonClick.onClick(null);
                 break;
             case R.id.menu_edit_activity:
-                if (edit == false) {
+                if (!edit) {
                     setEdit(true);
                     notes.requestFocus();
                     requery();
@@ -298,18 +299,43 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mapWrapper.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapWrapper.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapWrapper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapWrapper.onLowMemory();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         DBHelper.closeDB(mDB);
         syncManager.close();
+        mapWrapper.onDestroy();
     }
 
-    void requery() {
+    private void requery() {
         {
             /**
              * Laps
              */
-            String[] from = new String[] {
+            String[] from = new String[]{
                     "_id", DB.LAP.LAP, DB.LAP.INTENSITY,
                     DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.PLANNED_TIME,
                     DB.LAP.PLANNED_DISTANCE, DB.LAP.PLANNED_PACE, DB.LAP.AVG_HR
@@ -370,7 +396,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         alreadySynched.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
                             && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS),
-                                    DB.ACCOUNT.FLAG_UPLOAD)) {
+                            DB.ACCOUNT.FLAG_UPLOAD)) {
                         pendingSynchronizers.add(tmp.getAsString(DB.ACCOUNT.NAME));
                     }
                 } while (c.moveToNext());
@@ -391,10 +417,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    void fillHeaderData() {
+    private void fillHeaderData() {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
-        String[] from = new String[] {
+        String[] from = new String[]{
                 DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT,
                 DB.ACTIVITY.SPORT
@@ -441,7 +467,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    class LapListAdapter extends BaseAdapter {
+    private class LapListAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -490,12 +516,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     .getAsLong(DB.LAP.TIME) : 0;
             tv3.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
             TextView tv4 = (TextView) view.findViewById(R.id.lap_list_pace);
-            if (t != 0 && d != 0)
-            {
+            if (t != 0 && d != 0) {
                 tv4.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
-            }
-            else
-            {
+            } else {
                 tv4.setText("");
             }
             int hr = laps[position].containsKey(DB.LAP.AVG_HR) ? laps[position]
@@ -514,7 +537,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    class ReportListAdapter extends BaseAdapter {
+    private class ReportListAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -589,17 +612,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    void saveActivity() {
+    private void saveActivity() {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
         tmp.put(DB.ACTIVITY.SPORT, sport.getValueInt());
         String whereArgs[] = {
-            Long.toString(mID)
+                Long.toString(mID)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
     }
 
-    final OnLongClickListener clearUploadClick = new OnLongClickListener() {
+    private final OnLongClickListener clearUploadClick = new OnLongClickListener() {
 
         @Override
         public boolean onLongClick(View arg0) {
@@ -629,7 +652,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     };
 
-    final OnClickListener saveButtonClick = new OnClickListener() {
+    private final OnClickListener saveButtonClick = new OnClickListener() {
         public void onClick(View v) {
             saveActivity();
             if (mode == MODE_DETAILS) {
@@ -649,7 +672,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener discardButtonClick = new OnClickListener() {
+    private final OnClickListener discardButtonClick = new OnClickListener() {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
             builder.setTitle(getString(R.string.Discard_activity));
@@ -676,7 +699,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     @Override
     public void onBackPressed() {
-        if (uploading == true) {
+        if (uploading) {
             /**
              * Ignore while uploading
              */
@@ -689,14 +712,14 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    final OnClickListener resumeButtonClick = new OnClickListener() {
+    private final OnClickListener resumeButtonClick = new OnClickListener() {
         public void onClick(View v) {
             DetailActivity.this.setResult(RESULT_FIRST_USER);
             DetailActivity.this.finish();
         }
     };
 
-    final OnClickListener uploadButtonClick = new OnClickListener() {
+    private final OnClickListener uploadButtonClick = new OnClickListener() {
         public void onClick(View v) {
             uploading = true;
             syncManager.startUploading(new SyncManager.Callback() {
@@ -709,7 +732,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    public final OnCheckedChangeListener onSendChecked = new OnCheckedChangeListener() {
+    private final OnCheckedChangeListener onSendChecked = new OnCheckedChangeListener() {
 
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
@@ -718,7 +741,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 // Only accept long clicks
                 arg0.setChecked(true);
             } else {
-                if (arg1 == true) {
+                if (arg1) {
                     pendingSynchronizers.add((String) arg0.getTag());
                 } else {
                     pendingSynchronizers.remove(arg0.getTag());
@@ -734,7 +757,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener deleteButtonClick = new OnClickListener() {
+    private final OnClickListener deleteButtonClick = new OnClickListener() {
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     DetailActivity.this);
@@ -777,11 +800,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         return -1;
     }
 
-    class Route {
-        final List<LatLng> path = new ArrayList<LatLng>(10);
-        final ArrayList<Marker> markers = new ArrayList<Marker>(10);
-    }
-
     class GraphProducer {
         static final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
         static final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec
@@ -798,8 +816,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         double[] hrzHist = null;
 
         double tot_avg_hr = 0;
-        int min_hr = Integer.MAX_VALUE;
-        int max_hr = 0;
 
         double avg_pace = 0;
         double min_pace = Double.MAX_VALUE;
@@ -816,12 +832,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
 
         public GraphProducer(int graphIntervalSeconds, int graphAverageSeconds) {
-            this.paceList = new ArrayList<GraphViewData>();
+            this.paceList = new ArrayList<>();
             this.interval = graphIntervalSeconds;
             this.time = new double[graphAverageSeconds];
             this.distance = new double[graphAverageSeconds];
 
-            this.hrList = new ArrayList<GraphViewData>();
+            this.hrList = new ArrayList<>();
             this.hr = new int[graphAverageSeconds];
 
             Resources res = getResources();
@@ -889,8 +905,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             double avg_time = sum_time;
             double avg_dist = sum_distance;
             double avg_hr = calculateAverage(hr);
-            //noinspection ConstantIfStatement,ConstantIfStatement
-            if (true) {
+            {
                 // remove max/min pace to (maybe) get smoother graph
                 double max_pace[] = {
                         0, 0, 0
@@ -1139,23 +1154,24 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             return showHR;
         }
 
-        public boolean HasHRZHist () { return showHR && showHRZhist; }
+        public boolean HasHRZHist() {
+            return showHR && showHRZhist;
+        }
     }
 
-    public double calculateAverage(int[] data) {
+    private double calculateAverage(int[] data) {
         int sum = 0;
 
         for (int aData : data) {
             sum = sum + aData;
         }
-        double average = (double) sum / data.length;
-        return average;
+        return (double) sum / data.length;
     }
 
-    private void loadRoute() {
+    private class LoadGraph extends AsyncTask<Void, Void, Void> {
         final GraphProducer graphData = new GraphProducer();
 
-        final String[] from = new String[] {
+        final String[] from = new String[]{
                 DB.LOCATION.LATITUDE,
                 DB.LOCATION.LONGITUDE,
                 DB.LOCATION.TYPE,
@@ -1164,203 +1180,139 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 DB.LOCATION.HR
         };
 
-        loadRouteTask = new AsyncTask<String, String, Route>() {
+        private class LatLng {
+            Double lat, lon;
 
-            @Override
-            protected Route doInBackground(String... params) {
+            LatLng(Double lat, Double lon) {
+                this.lat = lat;
+                this.lon = lon;
+            }
 
-                int cnt = 0;
-                Route route = null;
-                Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
-                        null, null, null, "_id", null);
-                if (c.moveToFirst()) {
-                    route = new Route();
-                    double acc_distance = 0;
-                    double tot_distance = 0;
-                    int cnt_distance = 0;
-                    LatLng lastLocation = null;
-                    long lastTime = 0;
-                    int lastLap = -1;
-                    int hr = 0;
-                    do {
-                        cnt++;
-                        LocationEntity loc = new LocationEntity(c);
-                        LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
-                        route.path.add(point);
-                        int type = loc.getType();
-                        long time = loc.getTime();
-                        int lap = loc.getLap();
-                        if (loc.getHr() != null)
-                            hr = loc.getHr();
-                        Marker m;
-                        switch (type) {
-                            case DB.LOCATION.TYPE_START:
-                            case DB.LOCATION.TYPE_END:
-                            case DB.LOCATION.TYPE_PAUSE:
-                            case DB.LOCATION.TYPE_RESUME:
-                                if (type == DB.LOCATION.TYPE_PAUSE)
-                                {
-                                    if (lap != lastLap) {
-                                        graphData.clear(tot_distance);
-                                    } else if (lastTime != 0 && lastLocation != null) {
-                                        float res[] = {
-                                            0
-                                        };
-                                        Location.distanceBetween(lastLocation.getLatitude(),
-                                                lastLocation.getLongitude(), point.getLatitude(),
-                                                point.getLongitude(), res);
-                                        graphData.addObservation(time - lastTime, res[0],
-                                                tot_distance, hr);
-                                        // hrList.clear();
-                                        graphData.clear(tot_distance);
-                                    }
-                                    lastLap = lap;
-                                    lastTime = 0;
-                                } else if (type == DB.LOCATION.TYPE_RESUME)
-                                {
-                                    lastLap = lap;
-                                    lastTime = time;
-                                }
-                                lastLocation = point;
+            public Double getLatitude() {
+                return lat;
+            }
 
-                                String title = null;
-                                int color = Color.WHITE;
-                                switch (type) {
-                                    case DB.LOCATION.TYPE_START:
-                                        color = Color.GREEN;
-                                        title = getResources().getString(R.string.Start);
-                                        break;
-                                    case DB.LOCATION.TYPE_END:
-                                        color = Color.RED;
-                                        title = getResources().getString(R.string.Stop);
-                                        break;
-                                    case DB.LOCATION.TYPE_PAUSE:
-                                        color = Color.CYAN;
-                                        title = getResources().getString(R.string.Pause);
-                                        break;
-                                    case DB.LOCATION.TYPE_RESUME:
-                                        color = Color.BLUE;
-                                        title = getResources().getString(R.string.Resume);
-                                        break;
-                                }
-                                m = new Marker(title, null, point);
-                                m.setIcon(new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, String.format("#%06X", 0xFFFFFF & color)));
-                                route.markers.add(m);
-                                break;
-                            case DB.LOCATION.TYPE_GPS:
-                                float res[] = {
-                                    0
-                                };
-                                if (lastLocation == null) {
-                                    lastLocation = point;
-                                }
-                                Location.distanceBetween(lastLocation.getLatitude(),
-                                        lastLocation.getLongitude(), point.getLatitude(), point.getLongitude(),
-                                        res);
-                                acc_distance += res[0];
-                                tot_distance += res[0];
+            public Double getLongitude() {
+                return lat;
+            }
+        }
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            int cnt = 0;
+            Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
+                    null, null, null, "_id", null);
+            if (c.moveToFirst()) {
+                double acc_distance = 0;
+                double tot_distance = 0;
+                int cnt_distance = 0;
+                LatLng lastLocation = null;
+                long lastTime = 0;
+                int lastLap = -1;
+                int hr = 0;
+                do {
+                    cnt++;
+                    LocationEntity loc = new LocationEntity(c);
+                    LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
+                    int type = loc.getType();
+                    long time = loc.getTime();
+                    int lap = loc.getLap();
+                    if (loc.getHr() != null)
+                        hr = loc.getHr();
+                    switch (type) {
+                        case DB.LOCATION.TYPE_START:
+                        case DB.LOCATION.TYPE_END:
+                        case DB.LOCATION.TYPE_PAUSE:
+                        case DB.LOCATION.TYPE_RESUME:
+                            if (type == DB.LOCATION.TYPE_PAUSE) {
                                 if (lap != lastLap) {
                                     graphData.clear(tot_distance);
-                                } else if (lastTime != 0) {
-                                    graphData.addObservation(time - lastTime, res[0], tot_distance,
-                                            hr);
+                                } else if (lastTime != 0 && lastLocation != null) {
+                                    float res[] = {
+                                            0
+                                    };
+                                    Location.distanceBetween(lastLocation.getLatitude(),
+                                            lastLocation.getLongitude(), point.getLatitude(),
+                                            point.getLongitude(), res);
+                                    graphData.addObservation(time - lastTime, res[0],
+                                            tot_distance, hr);
+                                    // hrList.clear();
+                                    graphData.clear(tot_distance);
                                 }
                                 lastLap = lap;
+                                lastTime = 0;
+                            } else if (type == DB.LOCATION.TYPE_RESUME) {
+                                lastLap = lap;
                                 lastTime = time;
-
-                                if (acc_distance >= formatter.getUnitMeters()) {
-                                    cnt_distance++;
-                                    acc_distance = 0;
-                                    m = new Marker("" + cnt_distance + " " + formatter.getUnitString(), getString(R.string.Distance_marker), point);
-                                    m.setIcon(new Icon(getApplicationContext(), Icon.Size.MEDIUM, null, String.format("#%06X", 0xFFFFFF & Color.YELLOW)));
-                                    route.markers.add(m);
-                                }
+                            }
+                            lastLocation = point;
+                            break;
+                        case DB.LOCATION.TYPE_GPS:
+                            float res[] = {
+                                    0
+                            };
+                            if (lastLocation == null) {
                                 lastLocation = point;
-                                break;
-                        }
-                    } while (c.moveToNext());
-
-                    // only keep 10 distance points to not overload the map with markers
-                    if (tot_distance > 1 + 10 * formatter.getUnitMeters()) {
-                        double step = tot_distance / (10 * formatter.getUnitMeters());
-                        double current = 0;
-                        for (Iterator<Marker> iterator = route.markers.iterator(); iterator.hasNext();) {
-                            Marker m = iterator.next();
-                            if (getString(R.string.Distance_marker).equals(m.getDescription())) {
-                                current++;
-                                if (current >= step) {
-                                    current -= step;
-                                } else {
-                                    iterator.remove();
-                                }
                             }
-                        }
-                        Log.i(getClass().getName(), "Too big activity, keeping only 10 of " + (int)(tot_distance / formatter.getUnitMeters()) + " distance markers");
+                            Location.distanceBetween(lastLocation.getLatitude(),
+                                    lastLocation.getLongitude(), point.getLatitude(), point.getLongitude(),
+                                    res);
+                            acc_distance += res[0];
+                            tot_distance += res[0];
+
+                            if (lap != lastLap) {
+                                graphData.clear(tot_distance);
+                            } else if (lastTime != 0) {
+                                graphData.addObservation(time - lastTime, res[0], tot_distance,
+                                        hr);
+                            }
+                            lastLap = lap;
+                            lastTime = time;
+
+                            if (acc_distance >= formatter.getUnitMeters()) {
+                                cnt_distance++;
+                                acc_distance = 0;
+                            }
+                            lastLocation = point;
+                            break;
                     }
-                    Log.e(getClass().getName(), "Finished loading " + cnt + " points");
-                }
-                c.close();
-                return route;
+                } while (c.moveToNext());
+
+                Log.e(getClass().getName(), "Finished loading " + cnt + " points");
             }
-            @Override
-            protected void onPostExecute(Route route) {
+            c.close();
+            return null;
+        }
 
-                if (route != null) {
-                    graphData.complete(graphView);
-                    if (!graphData.HasHRInfo()) {
-                        graphTab.addView(graphView);
-                    } else {
-                        graphTab.addView(graphView,
-                                new LayoutParams(
-                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
+        @Override
+        protected void onPostExecute(Void route) {
 
-                        graphTab.addView(graphView2,
-                                new LayoutParams(
-                                        LayoutParams.MATCH_PARENT, 0, 0.5f));
-                    }
+            graphData.complete(graphView);
+            if (!graphData.HasHRInfo()) {
+                graphTab.addView(graphView);
+            } else {
+                graphTab.addView(graphView,
+                        new LayoutParams(
+                                LayoutParams.MATCH_PARENT, 0, 0.5f));
 
-                    if (graphData.HasHRZHist()) {
-                        hrzonesBarLayout.setVisibility(View.VISIBLE);
-                        hrzonesBarLayout.addView(hrzonesBar);
-                    } else {
-                        hrzonesBarLayout.setVisibility(View.GONE);
-                    }
-
-                    if (map != null) {
-                        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.FROYO) {
-                            PathOverlay overlay = new PathOverlay(Color.RED, 3);
-                            overlay.addPoints(route.path);
-                            overlay.setOptimizePath(true);
-                            map.addOverlay(overlay);
-                            Log.e(getClass().getName(), "Added polyline");
-                            int cnt = 0;
-                            for (Marker m : route.markers) {
-                                cnt++;
-                                map.addMarker(m);
-                            }
-                            Log.e(getClass().getName(), "Added " + cnt + " markers");
-
-                            //zoom on map
-                            final BoundingBox box = BoundingBox.fromLatLngs(route.path);
-                            double laSpan = box.getLatitudeSpan() / 2.f;
-                            double loSpan = box.getLongitudeSpan() / 2.f;
-                            map.zoomToBoundingBox(new BoundingBox(box.getLatNorth() + laSpan, box.getLonEast() + loSpan, box.getLatSouth() - laSpan, box.getLonWest() - loSpan), true);
-                            if (map.getZoomLevel() > 18.0f) {
-                                Log.w("Map", "Zoom too big, zooming down a bit");
-                                map.setZoom(18.0f);
-                            }
-                        }
-                        route = null; // release mem for old...
-                    }
-                }
+                graphTab.addView(graphView2,
+                        new LayoutParams(
+                                LayoutParams.MATCH_PARENT, 0, 0.5f));
             }
-        }.execute("kalle");
+
+            if (graphData.HasHRZHist()) {
+                hrzonesBarLayout.setVisibility(View.VISIBLE);
+                hrzonesBarLayout.addView(hrzonesBar);
+            } else {
+                hrzonesBarLayout.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void shareActivity() {
         final int which[] = {
-            1 //TODO preselect tcx - choice should be remembered
+                1 //TODO preselect tcx - choice should be remembered
         };
         final CharSequence items[] = {
                 "gpx", "tcx" /* "nike+xml" */

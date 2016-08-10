@@ -19,8 +19,8 @@
     package="org.runnerup" xmlns:tools="http://schemas.android.com/tools">
 
     <uses-sdk
-        tools:overrideLibrary="com.mapbox.mapboxsdk"
-        android:minSdkVersion="8" android:targetSdkVersion="18"/>
+        tools:overrideLibrary="com.mapbox.mapboxsdk, com.mapzen.lost"
+        android:minSdkVersion="10" android:targetSdkVersion="24"/>
 
     <application
         android:icon="@drawable/icon"

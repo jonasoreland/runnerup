@@ -19,27 +19,36 @@ package org.runnerup.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+
+import org.runnerup.R;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TextPreference extends android.preference.EditTextPreference {
 
     public TextPreference(Context context) {
         super(context);
+        this.context = context;
     }
 
     public TextPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
     }
 
     public TextPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.context = context;
     }
+
+    private Context context;
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue,
-            Object defaultValue) {
+                                     Object defaultValue) {
         super.onSetInitialValue(restorePersistedValue, defaultValue);
         super.setSummary(super.getPersistedString(""));
     }
@@ -48,7 +57,19 @@ public class TextPreference extends android.preference.EditTextPreference {
     protected void onDialogClosed(boolean ok) {
         super.onDialogClosed(ok);
         if (ok) {
-            super.setSummary(super.getPersistedString(""));
+            String val = super.getPersistedString("");
+            if (TextUtils.isEmpty(val)) {
+                //If empty, use the default value
+                //This could be a default setting and should not be hardcoded in a widget
+                //However, getting the default value in the xml seems hard and a similar
+                //onPreferenceChange() in SettingsActivity is not much better
+                Resources res = context.getResources();
+                if (this.getKey().equals(res.getString(R.string.pref_mapbox_default_style))) {
+                    val = res.getString(R.string.mapboxDefaultStyle);
+                    super.setText(val);
+                }
+            }
+            super.setSummary(val);
         }
     }
 }
