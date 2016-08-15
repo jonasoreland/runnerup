@@ -1,5 +1,4 @@
 -dontobfuscate
--dontoptimize
 -dontwarn com.dsi.ant.**
 -dontwarn com.samsung.**
 -dontwarn okio.**
