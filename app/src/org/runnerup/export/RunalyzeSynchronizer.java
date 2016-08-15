@@ -61,6 +61,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     private String _password;
     private String _username;
     private String _url;
+    private Boolean _version3 = null;
 
     /**
      * Empty constructor.
@@ -77,12 +78,16 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     public void init(ContentValues config) {
         _id = config.getAsLong("_id");
         String auth = config.getAsString(Constants.DB.ACCOUNT.AUTH_CONFIG);
+        //Log.d(getName(), "Initializing: " + auth);
         if (auth != null) {
             try {
                 JSONObject json = new JSONObject(auth);
                 _username = json.optString("username", null);
                 _password = json.optString("password", null);
                 _url = json.optString(Constants.DB.ACCOUNT.URL, null);
+                if (json.has("version3")) {
+                    _version3 = json.optBoolean("version3");
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -139,6 +144,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         _username = null;
         _password = null;
         _url = PUBLIC_URL;
+        _version3 = null;
         clearCookies();
     }
 
@@ -154,6 +160,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             json.put("username", _username);
             json.put("password", _password);
             json.put(Constants.DB.ACCOUNT.URL, _url);
+            if (_version3 != null) {
+                json.put("version3", _version3);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -230,6 +239,38 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     }
 
     /**
+     * Runalyze v3 needs to login with a valid session cookie. So we need to first request the
+     * login page and then perform the login. Besides this method in v2 returns just a 404 which
+     * let us to know it is a 2.x.
+     * @return The return code or -1 in case of strange error
+     */
+    protected int prepareLogin() {
+        try {
+            URL url = new URL(_url + "/en/login");
+            Log.d(getName(), "URL=" + url);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setInstanceFollowRedirects(false);
+            conn.setDoOutput(true);
+            conn.connect();
+            clearCookies();
+            if (conn.getResponseCode() == 200) {
+                Log.d(getName(), getResponse(conn.getInputStream()));
+                getCookies(conn);
+            }
+            return conn.getResponseCode();
+        } catch (MalformedURLException e) {
+            Log.e(getName(), "Malformed URL", e);
+        } catch (ProtocolException e) {
+            Log.e(getName(), "Protocol Exception", e);
+        } catch (IOException e) {
+            Log.e(getName(), "IO Exception", e);
+        }
+        return -1;
+    }
+
+
+    /**
      * Method that performs a silent login in runalyze and save the cookies for later use.
      * @return The status
      */
@@ -237,20 +278,25 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         OutputStreamWriter writer = null;
         try {
             Log.d(getName(), "Login enter");
-            URL login = new URL(_url + "/login.php");
-            Log.d(getName(), "URL=" + login);
-            HttpURLConnection conn = (HttpURLConnection) login.openConnection();
+            URL url = new URL(_url + (_version3? "/en/login_check" : "/login.php"));
+            Log.d(getName(), "URL=" + url);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
+            addCookies(conn);
             writer = new OutputStreamWriter(conn.getOutputStream());
-            writer.write("username=" + URLEncoder.encode(_username, "UTF-8")
-                    + "&password=" + URLEncoder.encode(_password, "UTF-8")
+            writer.write((_version3? "_username=" : "username=" )
+                    + URLEncoder.encode(_username, "UTF-8")
+                    + (_version3? "&_password=" : "&password=")
+                    + URLEncoder.encode(_password, "UTF-8")
                     + "&submit=Login");
             writer.flush();
             conn.connect();
-            Log.d(getName(), getResponse(conn.getInputStream()));
-            if (conn.getResponseCode() == 302) {
+            String response = getResponse(conn.getInputStream());
+            // v3 just redirects you again to /en/login so check it
+            if (conn.getResponseCode() == 302 && !response.contains("/en/login")) {
+                clearCookies();
                 getCookies(conn);
                 Log.d(getName(), "Login exit OK");
                 return Status.OK;
@@ -294,8 +340,31 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             // TODO: do a timestamp to check for inactivity (15min or something)
             return Synchronizer.Status.OK;
         } else {
-            // do a login
-            return login();
+            Status s;
+            // do a login and check username and password
+            if (_version3 == null) {
+                int rc = prepareLogin();
+                if (rc == 404) {
+                    // it's a v2 version
+                    Log.d(getName(), "Detected version 2.x");
+                    _version3 = false;
+                } else if (rc == 200) {
+                    // it's v3 version
+                    Log.d(getName(), "Detected version 3.x");
+                    _version3 = true;
+                } else {
+                    // strange error
+                    return Status.ERROR;
+                }
+                s = login();
+            } else {
+                // the version is known
+                if (_version3) {
+                    prepareLogin();
+                }
+                s = login();
+            }
+            return s;
         }
     }
 
@@ -314,8 +383,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         OutputStreamWriter writer = null;
         try {
             RunalyzePost post = new RunalyzePost(db);
-            URL login = new URL(_url + "/call/call.Training.create.php?json=true");
-            HttpURLConnection conn = (HttpURLConnection) login.openConnection();
+            URL url = new URL(_url + (_version3? "/activity/add" : "/call/call.Training.create.php"));
+            Log.d(getName(), "URL=" + url);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setInstanceFollowRedirects(false);
             conn.setDoOutput(true);
