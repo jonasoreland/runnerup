@@ -61,7 +61,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     private String _password;
     private String _username;
     private String _url;
-    private Boolean _version3 = null;
+    private boolean _version3;
 
     /**
      * Empty constructor.
@@ -85,9 +85,6 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
                 _username = json.optString("username", null);
                 _password = json.optString("password", null);
                 _url = json.optString(Constants.DB.ACCOUNT.URL, null);
-                if (json.has("version3")) {
-                    _version3 = json.optBoolean("version3");
-                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -144,7 +141,6 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         _username = null;
         _password = null;
         _url = PUBLIC_URL;
-        _version3 = null;
         clearCookies();
     }
 
@@ -160,9 +156,6 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             json.put("username", _username);
             json.put("password", _password);
             json.put(Constants.DB.ACCOUNT.URL, _url);
-            if (_version3 != null) {
-                json.put("version3", _version3);
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -342,28 +335,20 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         } else {
             Status s;
             // do a login and check username and password
-            if (_version3 == null) {
-                int rc = prepareLogin();
-                if (rc == 404) {
-                    // it's a v2 version
-                    Log.d(getName(), "Detected version 2.x");
-                    _version3 = false;
-                } else if (rc == 200) {
-                    // it's v3 version
-                    Log.d(getName(), "Detected version 3.x");
-                    _version3 = true;
-                } else {
-                    // strange error
-                    return Status.ERROR;
-                }
-                s = login();
+            int rc = prepareLogin();
+            if (rc == 404) {
+                // it's a v2 version
+                Log.d(getName(), "Detected version 2.x");
+                _version3 = false;
+            } else if (rc == 200) {
+                // it's v3 version
+                Log.d(getName(), "Detected version 3.x");
+                _version3 = true;
             } else {
-                // the version is known
-                if (_version3) {
-                    prepareLogin();
-                }
-                s = login();
+                // strange error
+                return Status.ERROR;
             }
+            s = login();
             return s;
         }
     }
