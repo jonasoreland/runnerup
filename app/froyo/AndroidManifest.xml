@@ -20,7 +20,7 @@
 
     <uses-sdk
         tools:overrideLibrary="com.mapbox.mapboxsdk, com.jjoe64.graphview"
-        android:minSdkVersion="8" android:targetSdkVersion="18"/>
+        android:minSdkVersion="8" android:targetSdkVersion="24"/>
 
     <application
         android:icon="@drawable/icon"

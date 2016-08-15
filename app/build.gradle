@@ -43,7 +43,7 @@ android {
 
     productFlavors {
         latest {
-            minSdkVersion 14
+            minSdkVersion 15
             targetSdkVersion rootProject.ext.compileSdkVersion
             versionName rootProject.ext.versionName
             versionCode rootProject.ext.versionCode
@@ -101,8 +101,8 @@ dependencies {
     compile 'com.android.support:design:24.1.1'
     latestCompile 'com.google.android.gms:play-services-wearable:9.4.0'
     latestCompile 'com.getpebble:pebblekit:3.1.0'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
-        transitive = true
+    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar'){
+        transitive=true
     }
     compile 'com.jjoe64:graphview:4.1.0'
     compile project(':common')

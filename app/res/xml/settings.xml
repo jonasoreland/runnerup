@@ -129,6 +129,13 @@
             android:title="@string/Advanced_options">
 
         <org.runnerup.widget.TextPreference
+            android:defaultValue="@string/mapboxDefaultStyle"
+            android:inputType="text"
+            android:key="@string/pref_mapbox_default_style"
+            android:persistent="true"
+            android:title="@string/Mapbox_default_style" />
+
+        <org.runnerup.widget.TextPreference
             android:defaultValue="http://weide.devsparkles.se/api/Resource/"
             android:dependency="@string/pref_runneruplive_active"
             android:inputType="text"
