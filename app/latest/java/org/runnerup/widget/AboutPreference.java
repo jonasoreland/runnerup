@@ -78,18 +78,11 @@ public class AboutPreference extends DialogPreference {
         super.onBindDialogView(view);
         if (!isPlayPref()) {
             WebView wv = (WebView) view.findViewById(R.id.web_view1);
-            wv.loadUrl("file:///android_asset/changes.html");
+            wv.loadUrl("file:///android_asset/about.html");
         }
     }
 
     private void init(Context context) {
-        try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            this.setDialogTitle("RunnerUp v" + pInfo.versionName);
-        } catch (NameNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         if (isPlayPref()) {
             setNegativeButtonText(null);
             CharSequence msg = GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(this

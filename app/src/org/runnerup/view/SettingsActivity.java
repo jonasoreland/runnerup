@@ -41,6 +41,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
@@ -70,7 +71,7 @@ public class SettingsActivity extends PreferenceActivity
         }
 
         //remove google play notices from froyo since we do not use it
-        if (!AboutPreference.isGooglePlayServicesAvailable(this)) {
+        if (BuildConfig.FLAVOR.equals("froyo") && !AboutPreference.isGooglePlayServicesAvailable(this)) {
             Preference pref = findPreference("googleplayserviceslegalnotices");
             PreferenceCategory category = (PreferenceCategory)findPreference("aboutcategory");
             category.removePreference(pref);
@@ -227,6 +228,7 @@ public class SettingsActivity extends PreferenceActivity
             return false;
         }
     };
+
     final OnPreferenceClickListener onPruneClick = new OnPreferenceClickListener() {
 
         @Override
