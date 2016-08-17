@@ -76,13 +76,7 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
         }
     }
 
-    @Override
-    public void onLocationChanged(Location arg0) {
-        super.onLocationChanged(arg0);
-        onLocationChanged(arg0, null);
-    }
-
-    public void onLocationChanged(Location arg0, Integer hrValue) {
+    public void onLocationChanged(Location arg0, @SuppressWarnings("UnusedParameters") Long elapsed, @SuppressWarnings("UnusedParameters") Double distance, Integer hrValue) {
         ContentValues values;
         synchronized (mLock) {
             if (mKey == null)
@@ -110,6 +104,12 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
             values.put(DB.LOCATION.BEARING, arg0.getBearing());
         }
 
+        //if (elapsed != null) {
+        //    values.put(DB.LOCATION2.ELAPSED, elapsed);
+        //}
+        //if (distance != null) {
+        //    values.put(DB.LOCATION2.DISTANCE, distance);
+        //}
         if (hrValue != null) {
             values.put(DB.LOCATION.HR, hrValue);
         }

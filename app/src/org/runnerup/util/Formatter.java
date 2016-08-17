@@ -38,21 +38,22 @@ import java.util.Locale;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Formatter implements OnSharedPreferenceChangeListener {
 
-    Context context = null;
-    Resources resources = null;
-    LocaleResources cueResources = null;
-    SharedPreferences sharedPreferences = null;
-    java.text.DateFormat dateFormat = null;
-    java.text.DateFormat timeFormat = null;
-    HRZones hrZones = null;
+    private Context context = null;
+    private Resources resources = null;
+    private LocaleResources cueResources = null;
+    private SharedPreferences sharedPreferences = null;
+    private java.text.DateFormat dateFormat = null;
+    private java.text.DateFormat timeFormat = null;
+    //private HRZones hrZones = null;
+    private final Locale defaultLocale;
 
-    boolean km = true;
-    String base_unit = "km";
-    double base_meters = km_meters;
+    private boolean km = true;
+    private String base_unit = "km";
+    private double base_meters = km_meters;
 
     public final static double km_meters = 1000.0;
     public final static double mi_meters = 1609.34;
-    public final static double FEETS_PER_METER = 3.2808;
+    //public final static double FEET_PER_METER = 3.2808;
 
     public static final int CUE = 1; // for text to speech
     public static final int CUE_SHORT = 2; // brief for tts
@@ -64,14 +65,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public Formatter(Context ctx) {
         context = ctx;
         resources = ctx.getResources();
-        cueResources = getLangResources(ctx);
+        cueResources = getCueLangResources(ctx);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         dateFormat = android.text.format.DateFormat.getDateFormat(ctx);
         timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
-        hrZones = new HRZones(context);
+        //hrZones = new HRZones(context);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                !ctx.getResources().getConfiguration().getLocales().isEmpty()) {
+            defaultLocale = ctx.getResources().getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            defaultLocale = ctx.getResources().getConfiguration().locale;
+        }
         setUnit();
     }
 
@@ -84,12 +92,23 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         LocaleResources(Context ctx, Locale locale) {
             resources = ctx.getResources();
             configuration = resources.getConfiguration();
-            defaultLocale = configuration.locale;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                    !ctx.getResources().getConfiguration().getLocales().isEmpty()) {
+                defaultLocale = configuration.getLocales().get(0);
+            } else {
+                //noinspection deprecation
+                defaultLocale = configuration.locale;
+            }
             audioLocale = locale;
         }
 
         void setLang(Locale locale) {
-            configuration.locale = locale;
+            if (Build.VERSION.SDK_INT >= 17) {
+                configuration.setLocale(locale);
+            } else {
+                //noinspection deprecation
+                configuration.locale = locale;
+            }
             resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         }
 
@@ -119,13 +138,18 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return null;
     }
 
-    private LocaleResources getLangResources(Context ctx) {
+    private LocaleResources getCueLangResources(Context ctx) {
         Locale loc = getAudioLocale(ctx);
-        if (loc != null) {
-            return new LocaleResources(ctx,loc);
-        } else {
-            return new LocaleResources(ctx, ctx.getResources().getConfiguration().locale);
+        if (loc == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                    !ctx.getResources().getConfiguration().getLocales().isEmpty()) {
+                loc = ctx.getResources().getConfiguration().getLocales().get(0);
+            } else {
+                //noinspection deprecation
+                loc = ctx.getResources().getConfiguration().locale;
+            }
         }
+        return new LocaleResources(ctx, loc);
     }
 
     public String getCueString(int msgId) {
@@ -151,8 +175,23 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
     }
 
+    public String getDistanceUnit(int target) {
+        switch (target) {
+            case CUE:
+            case CUE_LONG:
+            case CUE_SHORT:
+            case TXT_LONG:
+                //No string for long - not used
+                // return resources.getString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile);
+            case TXT:
+            case TXT_SHORT:
+                return resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi);
+        }
+        return null;
+    }
+
     public static boolean getUseKilometers(Resources res, SharedPreferences prefs, Editor editor) {
-        boolean _km = true;
+        boolean _km;
         String unit = prefs.getString(res.getString(R.string.pref_unit), null);
         if (unit == null)
             _km = guessDefaultUnit(res, prefs, editor);
@@ -369,13 +408,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
+     * @return pace unit string
+     */
+    public String getPaceUnit() {//Resources resources, SharedPreferences sharedPreferences) {
+        int du = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
+        return resources.getString(R.string.metrics_elapsed_min) + "/" + resources.getString(du);
+    }
+
+    /**
      * @param seconds_per_meter
      * @return string suitable for printing according to settings
      */
     private String txtPace(double seconds_per_meter, boolean includeUnit) {
         long val = Math.round(base_meters * seconds_per_meter);
         String str = DateUtils.formatElapsedTime(val);
-        if (includeUnit == false)
+        if (!includeUnit)
             return str;
         else {
             int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
@@ -448,8 +495,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private String txtSpeed(double meter_per_seconds, boolean includeUnit) {
         double distance_per_seconds = meter_per_seconds / base_meters;
         double distance_per_hour = distance_per_seconds * 3600;
-        String str = String.format("%.1f", distance_per_hour);
-        if (includeUnit == false)
+        String str = String.format(defaultLocale, "%.1f", distance_per_hour);
+        if (!includeUnit)
             return str;
         else {
             int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
@@ -463,11 +510,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private String cueSpeed(double meter_per_seconds) {
         double distance_per_seconds = meter_per_seconds / base_meters;
         double distance_per_hour = distance_per_seconds * 3600;
-        String str = String.format("%.1f", distance_per_hour);
-        String s = str +
+        String str = String.format(defaultLocale, "%.1f", distance_per_hour);
+        return str +
                 " " + (km ? cueResources.getQuantityString(R.plurals.cue_kilometer, 2) : cueResources.getQuantityString(R.plurals.cue_mile, 2)) +
                 " " + cueResources.getString(R.string.cue_perhour);
-        return s;
     }
 
     /**
@@ -477,12 +523,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      */
     public String formatDateTime(int target, long seconds_since_epoch) {
         // ignore target
-        String s = dateFormat.format(seconds_since_epoch * 1000) +
-                " " +
-                timeFormat.format(seconds_since_epoch * 1000);
         // milliseconds
                                                                  // as argument
-        return s;
+        return dateFormat.format(seconds_since_epoch * 1000) +
+                " " +
+                timeFormat.format(seconds_since_epoch * 1000);
     }
 
     /**

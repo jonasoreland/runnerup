@@ -98,13 +98,13 @@ repositories {
 
 dependencies {
     //design uses com.android.support:appcompat, not explicitly required
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:design:24.2.0'
     latestCompile 'com.google.android.gms:play-services-wearable:9.4.0'
     latestCompile 'com.getpebble:pebblekit:3.1.0'
-    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.1.1@aar'){
+    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0-beta.2@aar'){
         transitive=true
     }
-    compile 'com.jjoe64:graphview:4.1.0'
+    compile 'com.jjoe64:graphview:4.1.1'
     compile project(':common')
     compile project(':hrdevice')
     latestWearApp project(':wear')

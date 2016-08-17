@@ -19,7 +19,7 @@
 	package="org.runnerup">
 
         <uses-sdk
-            android:minSdkVersion="14" />
+            android:minSdkVersion="15" />
 
 	<application
 	    android:icon="@drawable/icon"

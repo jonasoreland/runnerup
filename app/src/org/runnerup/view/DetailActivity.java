@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,7 +29,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -208,7 +208,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             th.addTab(tabSpec);
         }
         if (Build.VERSION.SDK_INT > 8) {
-            new LoadGraph().execute();
+            new LoadGraph().execute(new LoadParam(mDB, mID));
 
             tabSpec = th.newTabSpec("graph");
             tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
@@ -234,38 +234,40 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
         graphTab = (LinearLayout) findViewById(R.id.tab_graph);
         if (Build.VERSION.SDK_INT > 8) {
-            if (Build.VERSION.SDK_INT > 8) {
-                graphView = new GraphView(this);
-                graphView.setTitle(getString(R.string.Pace));
-                graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                    @Override
-                    public String formatLabel(double value, boolean isValueX) {
-                        if (isValueX) {
-                            return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
-                        } else {
-                            return formatter.formatPace(Formatter.TXT_SHORT, value);
-                        }
+            graphView = new GraphView(this);
+            graphView.setTitle(getString(R.string.Pace));
+            graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
+                        return formatter.formatDistance(Formatter.TXT, (long) value);
+                    } else {
+                        return formatter.formatPace(Formatter.TXT_SHORT, value);
                     }
-                });
-                //enable zoom
-                graphView.getViewport().setScalable(true);
-                graphView.getViewport().setScrollable(true);
+                }
+            });
+            graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getPaceUnit());
+            graphView.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getUnitString());
+            //enable zoom
+            graphView.getViewport().setScalable(true);
+            graphView.getViewport().setScrollable(true);
 
-                graphView2 = new GraphView(this);
-                graphView2.setTitle(getString(R.string.Heart_rate));
-                graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                    @Override
-                    public String formatLabel(double value, boolean isValueX) {
-                        if (isValueX) {
-                            return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
-                        } else {
-                            return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
-                        }
+            graphView2 = new GraphView(this);
+            graphView2.setTitle(getString(R.string.Heart_rate));
+            graphView2.getGridLabelRenderer().setVerticalAxisTitle("bpm");
+            graphView2.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getUnitString());
+            graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                @Override
+                public String formatLabel(double value, boolean isValueX) {
+                    if (isValueX) {
+                        return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+                    } else {
+                        return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
                     }
-                });
-                graphView2.getViewport().setScalable(true);
-                graphView2.getViewport().setScrollable(true);
-            }
+                }
+            });
+            graphView2.getViewport().setScalable(true);
+            graphView2.getViewport().setScrollable(true);
         }
         hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
         hrzonesBar = new HRZonesBar(this);
@@ -483,6 +485,14 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
+    static class ViewHolderLapList {
+        TextView tv0;
+        TextView tv1;
+        TextView tv2;
+        TextView tv3;
+        TextView tv4;
+        TextView tvHr;
+    }
     private class LapListAdapter extends BaseAdapter {
 
         @Override
@@ -502,51 +512,61 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
-            View view = inflater.inflate(R.layout.laplist_row, parent, false);
-            TextView tv0 = (TextView) view.findViewById(R.id.lap_list_type);
+            View view = convertView;
+            ViewHolderLapList viewHolder;
+
+            if (view == null) {
+                viewHolder = new ViewHolderLapList();
+                LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
+                view = inflater.inflate(R.layout.laplist_row, parent, false);
+                viewHolder.tv0 = (TextView) view.findViewById(R.id.lap_list_type);
+                viewHolder.tv1 = (TextView) view.findViewById(R.id.lap_list_id);
+                viewHolder.tv2 = (TextView) view.findViewById(R.id.lap_list_distance);
+                viewHolder.tv3 = (TextView) view.findViewById(R.id.lap_list_time);
+                viewHolder.tv4 = (TextView) view.findViewById(R.id.lap_list_pace);
+                viewHolder.tvHr = (TextView) view.findViewById(R.id.lap_list_hr);
+
+                view.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolderLapList) view.getTag();
+            }
             int i = laps[position].getAsInteger(DB.LAP.INTENSITY);
             Intensity intensity = Intensity.values()[i];
             switch (intensity) {
                 case ACTIVE:
-                    tv0.setText("");
+                    viewHolder.tv0.setText("");
                     break;
                 case COOLDOWN:
                 case RESTING:
                 case RECOVERY:
                 case WARMUP:
                 case REPEAT:
-                    tv0.setText("(" + getResources().getString(intensity.getTextId()) + ")");
+                    viewHolder.tv0.setText("(" + getResources().getString(intensity.getTextId()) + ")");
                 default:
                     break;
 
             }
-            TextView tv1 = (TextView) view.findViewById(R.id.lap_list_id);
-            tv1.setText(laps[position].getAsString("_id"));
-            TextView tv2 = (TextView) view.findViewById(R.id.lap_list_distance);
+            viewHolder.tv1.setText(laps[position].getAsString("_id"));
             float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position]
                     .getAsFloat(DB.LAP.DISTANCE) : 0;
-            tv2.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) d));
-            TextView tv3 = (TextView) view.findViewById(R.id.lap_list_time);
+            viewHolder.tv2.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) d));
             long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position]
                     .getAsLong(DB.LAP.TIME) : 0;
-            tv3.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
-            TextView tv4 = (TextView) view.findViewById(R.id.lap_list_pace);
+            viewHolder.tv3.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
             if (t != 0 && d != 0) {
-                tv4.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                viewHolder.tv4.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
             } else {
-                tv4.setText("");
+                viewHolder.tv4.setText("");
             }
             int hr = laps[position].containsKey(DB.LAP.AVG_HR) ? laps[position]
                     .getAsInteger(DB.LAP.AVG_HR) : 0;
-            TextView tvHr = (TextView) view.findViewById(R.id.lap_list_hr);
             if (hr > 0) {
-                tvHr.setVisibility(View.VISIBLE);
-                tvHr.setText(formatter.formatHeartRate(Formatter.TXT_LONG, hr) + " bpm");
+                viewHolder.tvHr.setVisibility(View.VISIBLE);
+                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.TXT_LONG, hr) + " bpm");
             } else if (lapHrPresent) {
-                tvHr.setVisibility(View.INVISIBLE);
+                viewHolder.tvHr.setVisibility(View.INVISIBLE);
             } else {
-                tvHr.setVisibility(View.GONE);
+                viewHolder.tvHr.setVisibility(View.GONE);
             }
 
             return view;
@@ -581,7 +601,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 Button b = new Button(DetailActivity.this);
                 b.setText(getString(R.string.Configure_accounts));
                 b.setBackgroundResource(R.drawable.btn_blue);
-                b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    b.setTextColor(getResources().getColorStateList(R.color.btn_text_color, getTheme()));
+                } else {
+                    //noinspection deprecation
+                    b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
+                }
                 b.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -594,15 +619,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 return b;
             }
 
-            ContentValues tmp = reports.get(position);
-            String name = tmp.getAsString("name");
-
             LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
-            View view = inflater.inflate(R.layout.reportlist_row, parent, false);
+
+            //ViewHolder pattern fails (?), should not be important anyway
+            @SuppressLint("ViewHolder") View view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
             TextView tv0 = (TextView) view.findViewById(R.id.account_id);
             CheckBox cb = (CheckBox) view.findViewById(R.id.report_sent);
             TextView tv1 = (TextView) view.findViewById(R.id.account_name);
+
+            ContentValues tmp = reports.get(position);
+            String name = tmp.getAsString("name");
             cb.setChecked(false);
             cb.setEnabled(false);
             cb.setTag(name);
@@ -808,19 +835,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         requery();
     }
 
-    public static int position(String arr[], String key) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i].contentEquals(key))
-                return i;
-        }
-        return -1;
-    }
+//    public static int position(String arr[], String key) {
+//        for (int i = 0; i < arr.length; i++) {
+//            if (arr[i].contentEquals(key))
+//                return i;
+//        }
+//        return -1;
+//    }
 
     class GraphProducer {
-        static final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
-        static final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec
-
         final int interval;
+        boolean first = true;
         int pos = 0;
         double time[] = null;
         double distance[] = null;
@@ -843,13 +868,20 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         boolean showHRZhist = false;
         HRZones hrCalc = null;
 
-        GraphProducer() {
-            this(GRAPH_INTERVAL_SECONDS, GRAPH_AVERAGE_SECONDS);
-        }
+        public GraphProducer(int noPoints) {
+            final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
+            final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec
 
-        public GraphProducer(int graphIntervalSeconds, int graphAverageSeconds) {
+            final int graphAverageSeconds;
+            if (noPoints < 60) {
+                //This is short, maybe when testing. Dont bother to check time between points
+                graphAverageSeconds = 1;
+                this.interval = 2;
+            } else {
+                graphAverageSeconds = GRAPH_AVERAGE_SECONDS;
+                this.interval = GRAPH_INTERVAL_SECONDS;
+            }
             this.paceList = new ArrayList<>();
-            this.interval = graphIntervalSeconds;
             this.time = new double[graphAverageSeconds];
             this.distance = new double[graphAverageSeconds];
 
@@ -868,10 +900,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 showHRZhist = true;
             }
 
-            clear(0);
+            clearSmooth(0);
         }
 
-        void clear(double tot_distance) {
+        void clearSmooth(double tot_distance) {
             if (pos >= (this.time.length / 2) && (acc_time >= 1000 * (interval / 2))
                     && sum_distance > 0) {
                 emit(tot_distance);
@@ -888,28 +920,32 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             acc_time = 0;
         }
 
-        void addObservation(double delta_time, double delta_distance, double tot_distance, int hr) {
+        void addObservation(double delta_time, double delta_distance, double tot_distance, LocationEntity loc) {
             if (delta_time < 500)
                 return;
-            if (hr > 0) {
-                showHR = true;
-            }
 
+            //Update moving average
             int p = pos % this.time.length;
             sum_time -= this.time[p];
             sum_distance -= this.distance[p];
             sum_time += delta_time;
             sum_distance += delta_distance;
-
             this.time[p] = delta_time;
             this.distance[p] = delta_distance;
-            this.hr[p] = hr;
-            pos = (pos + 1);
 
-            if (showHRZhist && hr > 0) {
-                this.hrzHist[hrCalc.getZoneInt(hr)] += delta_time;
+            if (loc.getHr() != null) {
+                showHR = true;
+                int hr = loc.getHr();
+                this.hr[p] = hr;
+
+                if (showHRZhist && hr > 0) {
+                    this.hrzHist[hrCalc.getZoneInt(hr)] += delta_time;
+                }
+            } else {
+                this.hr[p] = 0;
             }
 
+            pos += 1;
             acc_time += delta_time;
 
             if (pos >= this.time.length && (acc_time >= 1000 * interval) && sum_distance > 0) {
@@ -920,7 +956,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         void emit(double tot_distance) {
             double avg_time = sum_time;
             double avg_dist = sum_distance;
-            double avg_hr = calculateAverage(hr);
+            double avg_hr = calculateAverageHr(hr);
             {
                 double max_pace[] = {
                         0, 0, 0
@@ -941,11 +977,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         min_pace[2] = this.distance[i];
                     }
                 }
-                avg_time -= (max_pace[1] + min_pace[1]);
-                avg_dist -= (max_pace[2] + min_pace[2]);
+                //avg_time -= (max_pace[1] + min_pace[1]);
+                //avg_dist -= (max_pace[2] + min_pace[2]);
             }
+
             if (avg_dist > 0) {
                 double pace = avg_time / avg_dist / 1000.0;
+                if (first) {
+                    paceList.add(new DataPoint(0, pace));
+                    hrList.add(new DataPoint(0, Math.round(avg_hr)));
+                    first = false;
+                }
                 paceList.add(new DataPoint(tot_distance, pace));
                 hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
                 acc_time = 0;
@@ -1193,134 +1235,71 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private double calculateAverage(int[] data) {
+    private double calculateAverageHr(int[] data) {
         int sum = 0;
+        int no = 0;
 
         for (int aData : data) {
+            if (aData> 0) {
             sum = sum + aData;
+                no++;
         }
-        return (double) sum / data.length;
+    }
+        //TODO Average of pointe, not over time
+        if(no==0){
+            return 0;
+        } else {
+            return (double) sum / no;
+        }
     }
 
-    private class LoadGraph extends AsyncTask<Void, Void, Void> {
-        final GraphProducer graphData = new GraphProducer();
+    class LoadParam {
+        public LoadParam(SQLiteDatabase mDB, long mID) {
+            this.mDB = mDB;
+            this.mID = mID;
+        }
+        final SQLiteDatabase mDB;
+        final long mID;
+    }
 
-        final String[] from = new String[]{
-                DB.LOCATION.LATITUDE,
-                DB.LOCATION.LONGITUDE,
-                DB.LOCATION.TYPE,
-                DB.LOCATION.TIME,
-                DB.LOCATION.LAP,
-                DB.LOCATION.HR
-        };
+    private class LoadGraph extends AsyncTask<LoadParam, Void, GraphProducer> {
+        @Override
+        protected GraphProducer doInBackground(LoadParam... params) {
 
-        private class LatLng {
-            Double lat, lon;
+            LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(params[0].mDB, params[0].mID);
+            GraphProducer graphData = new GraphProducer(ll.getCount());
+            double lastDistance = 0;
+            long lastTime = 0;
+            int lastLap = -1;
+            Double tot_distance = 0.0;
+            for (LocationEntity loc : ll) {
+                Long time = loc.getTime();
+                time = time != null ? time : lastTime;
+                Integer lap = loc.getLap();
+                lap = lap != null ? lap : 0;
+                tot_distance = loc.getDistance();
+                tot_distance = tot_distance != null ? tot_distance : lastDistance;
 
-            LatLng(Double lat, Double lon) {
-                this.lat = lat;
-                this.lon = lon;
+                if (lap != lastLap) {
+                    graphData.clearSmooth(tot_distance);
+                    lastLap = lap;
+                }
+                graphData.addObservation(time - lastTime, tot_distance - lastDistance,
+                        tot_distance, loc);
+                lastTime = time;
+                lastDistance = tot_distance;
+
             }
+            graphData.clearSmooth(tot_distance);
 
-            public Double getLatitude() {
-                return lat;
-            }
-
-            public Double getLongitude() {
-                return lat;
-            }
+            //    Log.e(getClass().getName(), "Finished loading " + cnt + " points");
+            //}
+            ll.close();
+            return graphData;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-
-            int cnt = 0;
-            Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
-                    null, null, null, "_id", null);
-            if (c.moveToFirst()) {
-                double acc_distance = 0;
-                double tot_distance = 0;
-                int cnt_distance = 0;
-                LatLng lastLocation = null;
-                long lastTime = 0;
-                int lastLap = -1;
-                int hr = 0;
-                do {
-                    cnt++;
-                    LocationEntity loc = new LocationEntity(c);
-                    LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
-                    int type = loc.getType();
-                    long time = loc.getTime();
-                    int lap = loc.getLap();
-                    if (loc.getHr() != null)
-                        hr = loc.getHr();
-                    switch (type) {
-                        case DB.LOCATION.TYPE_START:
-                        case DB.LOCATION.TYPE_END:
-                        case DB.LOCATION.TYPE_PAUSE:
-                        case DB.LOCATION.TYPE_RESUME:
-                            if (type == DB.LOCATION.TYPE_PAUSE) {
-                                if (lap != lastLap) {
-                                    graphData.clear(tot_distance);
-                                } else if (lastTime != 0 && lastLocation != null) {
-                                    float res[] = {
-                                            0
-                                    };
-                                    Location.distanceBetween(lastLocation.getLatitude(),
-                                            lastLocation.getLongitude(), point.getLatitude(),
-                                            point.getLongitude(), res);
-                                    graphData.addObservation(time - lastTime, res[0],
-                                            tot_distance, hr);
-                                    // hrList.clear();
-                                    graphData.clear(tot_distance);
-                                }
-                                lastLap = lap;
-                                lastTime = 0;
-                            } else if (type == DB.LOCATION.TYPE_RESUME) {
-                                lastLap = lap;
-                                lastTime = time;
-                            }
-                            lastLocation = point;
-                            break;
-                        case DB.LOCATION.TYPE_GPS:
-                            float res[] = {
-                                    0
-                            };
-                            if (lastLocation == null) {
-                                lastLocation = point;
-                            }
-                            Location.distanceBetween(lastLocation.getLatitude(),
-                                    lastLocation.getLongitude(), point.getLatitude(), point.getLongitude(),
-                                    res);
-                            acc_distance += res[0];
-                            tot_distance += res[0];
-
-                            if (lap != lastLap) {
-                                graphData.clear(tot_distance);
-                            } else if (lastTime != 0) {
-                                graphData.addObservation(time - lastTime, res[0], tot_distance,
-                                        hr);
-                            }
-                            lastLap = lap;
-                            lastTime = time;
-
-                            if (acc_distance >= formatter.getUnitMeters()) {
-                                cnt_distance++;
-                                acc_distance = 0;
-                            }
-                            lastLocation = point;
-                            break;
-                    }
-                } while (c.moveToNext());
-
-                Log.e(getClass().getName(), "Finished loading " + cnt + " points");
-            }
-            c.close();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void route) {
+        protected void onPostExecute(GraphProducer graphData) {
 
             if (Build.VERSION.SDK_INT > 8) {
                 graphData.complete(graphView);

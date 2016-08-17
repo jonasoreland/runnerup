@@ -21,10 +21,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,8 +45,9 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import static org.runnerup.util.Formatter.TXT_SHORT;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 public class MapWrapper implements Constants {
@@ -83,7 +82,7 @@ public class MapWrapper implements Constants {
             if (TextUtils.isEmpty(val)) {
                 //The preferences should prevent from setting an empty value for display reasons
                 //However, that handling is not so easy
-                //(Mapbox seem to handle no style set OK though).
+                //(MapBox seem to handle no style set OK though).
                 val = res.getString(R.string.mapboxDefaultStyle);
             }
             map.setStyleUrl(val);
@@ -98,7 +97,7 @@ public class MapWrapper implements Constants {
                 map = mapboxMap;
                 setStyle();
 
-                new LoadRoute().execute();
+                new LoadRoute().execute(new LoadParam(mDB, mID));
             }
         });
     }
@@ -129,176 +128,123 @@ public class MapWrapper implements Constants {
         final ArrayList<MarkerViewOptions > markers = new ArrayList<>(10);
     }
 
-    private class LoadRoute extends AsyncTask<Void, Void, Route> {
-        final String[] from = new String[]{
-                DB.LOCATION.LATITUDE,
-                DB.LOCATION.LONGITUDE,
-                DB.LOCATION.TYPE,
-                DB.LOCATION.TIME,
-                DB.LOCATION.LAP,
-                DB.LOCATION.HR
-        };
+    private class LoadParam {
+        public LoadParam(SQLiteDatabase mDB, long mID) {
+            this.mDB = mDB;
+            this.mID = mID;
+        }
+        final SQLiteDatabase mDB;
+        final long mID;
+    }
 
+    private class LoadRoute extends AsyncTask<LoadParam, Void, Route> {
         @Override
-        protected Route doInBackground(Void... voids) {
+        protected Route doInBackground(LoadParam... params) {
 
-            int cnt = 0;
-            Route route = null;
-            Cursor c = mDB.query(DB.LOCATION.TABLE, from, "activity_id == " + mID,
-                    null, null, null, "_id", null);
-            if (c.moveToFirst()) {
-                route = new Route();
-                double acc_distance = 0;
-                double tot_distance = 0;
-                int cnt_distance = 0;
-                LatLng lastLocation = null;
-                long lastTime = 0;
-                int lastLap = -1;
-                do {
-                    cnt++;
-                    LocationEntity loc = new LocationEntity(c);
-                    LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
-                    route.path.add(point);
-                    int type = loc.getType();
-                    long time = loc.getTime();
-                    int lap = loc.getLap();
-                    MarkerViewOptions m;
-                    switch (type) {
-                        case DB.LOCATION.TYPE_START:
-                        case DB.LOCATION.TYPE_END:
-                        case DB.LOCATION.TYPE_PAUSE:
-                        case DB.LOCATION.TYPE_RESUME:
-                            if (type == DB.LOCATION.TYPE_PAUSE) {
-                                if (lap == lastLap && lastTime != 0 && lastLocation != null) {
-                                    float res[] = {
-                                            0
-                                    };
-                                    Location.distanceBetween(lastLocation.getLatitude(),
-                                            lastLocation.getLongitude(), point.getLatitude(),
-                                            point.getLongitude(), res);
-                                }
-                                lastLap = lap;
-                                lastTime = 0;
-                            } else if (type == DB.LOCATION.TYPE_RESUME) {
-                                lastLap = lap;
-                                lastTime = time;
-                            }
-                            lastLocation = point;
-
-                            String title = null;
-                            int color = Color.WHITE;
-                            switch (type) {
-                                case DB.LOCATION.TYPE_START:
-                                    color = Color.GREEN;
-                                    title = context.getResources().getString(R.string.Start);
-                                    break;
-                                case DB.LOCATION.TYPE_END:
-                                    color = Color.RED;
-                                    title = context.getResources().getString(R.string.Stop);
-                                    break;
-                                case DB.LOCATION.TYPE_PAUSE:
-                                    color = Color.CYAN;
-                                    title = context.getResources().getString(R.string.Pause);
-                                    break;
-                                case DB.LOCATION.TYPE_RESUME:
-                                    color = Color.BLUE;
-                                    title = context.getResources().getString(R.string.Resume);
-                                    break;
-                            }
-                            //TODO Set icon color, probably using static icons
-                            m = new MarkerViewOptions().title(title).position(point);
-                            route.markers.add(m);
-                            break;
-                        case DB.LOCATION.TYPE_GPS:
-                            float res[] = {
-                                    0
-                            };
-                            if (lastLocation == null) {
-                                lastLocation = point;
-                            }
-                            Location.distanceBetween(lastLocation.getLatitude(),
-                                    lastLocation.getLongitude(), point.getLatitude(), point.getLongitude(),
-                                    res);
-                            acc_distance += res[0];
-                            tot_distance += res[0];
-
-                            lastLap = lap;
-                            lastTime = time;
-
-                            if (acc_distance >= formatter.getUnitMeters()) {
-                                cnt_distance++;
-                                acc_distance = 0;
-                                m = new MarkerViewOptions()
-                                        .title("" + cnt_distance + " " + formatter.getUnitString())
-                                        .position(point);
-                                //TODO Set icon color, probably using static icons
-                                route.markers.add(m);
-                            }
-                            lastLocation = point;
-                            break;
-                    }
-                } while (c.moveToNext());
-
-                // only keep 10 distance points to not overload the map with markers
-                if (tot_distance > 1 + 10 * formatter.getUnitMeters()) {
-                    double step = tot_distance / (10 * formatter.getUnitMeters());
-                    double current = 0;
-                    for (Iterator<MarkerViewOptions> iterator = route.markers.iterator(); iterator.hasNext(); ) {
-                        MarkerViewOptions m = iterator.next();
-                        if (context.getString(R.string.Distance_marker).equals(m.toString())) {
-                            current++;
-                            if (current >= step) {
-                                current -= step;
-                            } else {
-                                iterator.remove();
-                            }
-                        }
-                    }
-                    Log.i(getClass().getName(), "Too big activity, keeping only 10 of " + (int) (tot_distance / formatter.getUnitMeters()) + " distance markers");
+            Route route = new Route();
+            LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(params[0].mDB, params[0].mID);
+            int lastLap = -1;
+            for (LocationEntity loc : ll) {
+                LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
+                route.path.add(point);
+                int type = loc.getType();
+                MarkerViewOptions m;
+                String title = null;
+                int color = Color.WHITE;
+                //Start/end markers are not set in db, special handling
+                if(route.markers.isEmpty()) {
+                    type = DB.LOCATION.TYPE_START;
                 }
-                Log.e(getClass().getName(), "Finished loading " + cnt + " points");
+                switch (type) {
+                    case DB.LOCATION.TYPE_START:
+                        color = Color.GREEN;
+                        title = context.getResources().getString(R.string.Start);
+                        break;
+                    case DB.LOCATION.TYPE_END:
+                        color = Color.RED;
+                        title = context.getResources().getString(R.string.Stop);
+                        break;
+                    case DB.LOCATION.TYPE_PAUSE:
+                        color = Color.CYAN;
+                        title = context.getResources().getString(R.string.Pause);
+                        break;
+                    case DB.LOCATION.TYPE_RESUME:
+                        color = Color.BLUE;
+                        title = context.getResources().getString(R.string.Resume);
+                        break;
+                    case DB.LOCATION.TYPE_GPS:
+                        break;
+                }
+
+                if (lastLap != loc.getLap()) {
+                    if (lastLap >= 0) {
+                        title = context.getString(R.string.cue_lap) + " " + loc.getLap();
+                    }
+                    lastLap = loc.getLap();
+                }
+                if (title != null) {
+                    String snippet = formatter.formatDistance(TXT_SHORT, loc.getDistance().longValue()) + " " +
+                            formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed()/1000.0));
+                    m = new MarkerViewOptions().title(title).position(point).snippet(snippet);
+
+                    if (type == DB.LOCATION.TYPE_START) {
+                        m.snippet(null);
+                    }
+                    //TODO Set icon color, probably using static icons
+                    // Create an Icon object for the marker to use
+                    //IconFactory iconFactory = IconFactory.getInstance(DrawCustomMarkerActivity.this);
+                    //Drawable iconDrawable = ContextCompat.getDrawable(DrawCustomMarkerActivity.this, R.drawable.purple_marker);
+                    //Icon icon = iconFactory.fromDrawable(iconDrawable);
+                    route.markers.add(m);
+                }
             }
-            c.close();
+            ll.close();
+            //Track is ended with a pause, replace with end
+            if(!route.markers.isEmpty()) {
+                MarkerViewOptions m = route.markers.get(route.markers.size() - 1);
+                if (m.getTitle().equals(context.getResources().getString(R.string.Pause))) {
+                    m.title(context.getResources().getString(R.string.Stop));
+                }
+            }
             return route;
         }
 
         @Override
         protected void onPostExecute(Route route) {
 
-            if (route != null) {
-                if (map != null) {
-                    if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.FROYO) {
-                        LatLng[] pointsArray = new LatLng[route.path.size()];
-                        route.path.toArray(pointsArray);
-                        map.addPolyline(new PolylineOptions()
-                                .add(pointsArray)
-                                .color(Color.RED)
-                                .width(3));
-                        Log.e(getClass().getName(), "Added polyline");
-                        int cnt = 0;
-                        for (MarkerViewOptions m : route.markers) {
-                            cnt++;
-                            map.addMarker(m);
-                        }
-                        Log.e(getClass().getName(), "Added " + cnt + " markers");
+            if (route != null && map != null &&
+                    android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                LatLng[] pointsArray = new LatLng[route.path.size()];
+                route.path.toArray(pointsArray);
+                map.addPolyline(new PolylineOptions()
+                        .add(pointsArray)
+                        .color(Color.RED)
+                        .width(3));
+                Log.e(getClass().getName(), "Added polyline");
+                int cnt = 0;
+                for (MarkerViewOptions m : route.markers) {
+                    cnt++;
+                    map.addMarker(m);
+                }
+                Log.d(getClass().getName(), "Added " + cnt + " markers");
 
-                        //There seem to be no way to get bounds from polyline or LatLong[]...
-                        LatLng n = null, s = null, w = null, e = null;
-                        for (LatLng l : route.path) {
-                            if(n==null || l.getLatitude() > n.getLatitude())
-                                n=l;
-                            if(s==null || l.getLatitude() < s.getLatitude())
-                                s=l;
-                            if(w==null || l.getLongitude() < w.getLongitude())
-                                w=l;
-                            if(e==null || l.getLongitude() > e.getLongitude())
-                                e=l;
-                        }
-                        //zoom on map
-                        @SuppressWarnings("ConstantConditions") final LatLngBounds box = new LatLngBounds.Builder().include(n).include(s).include(w).include(e).build();
-                        map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
-                    }
-                    route = null; // release mem for old...
+                //There seem to be no way to get bounds from polyline or LatLong[]...
+                LatLng n = null, s = null, w = null, e = null;
+                for (LatLng l : route.path) {
+                    if (n == null || l.getLatitude() > n.getLatitude())
+                        n = l;
+                    if (s == null || l.getLatitude() < s.getLatitude())
+                        s = l;
+                    if (w == null || l.getLongitude() < w.getLongitude())
+                        w = l;
+                    if (e == null || l.getLongitude() > e.getLongitude())
+                        e = l;
+                }
+                if (n != null && s != null && w != null && e != null){
+                    //zoom on map
+                    @SuppressWarnings("ConstantConditions") final LatLngBounds box =
+                            new LatLngBounds.Builder().include(n).include(s).include(w).include(e).build();
+                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
                 }
             }
         }
