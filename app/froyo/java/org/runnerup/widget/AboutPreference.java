@@ -39,6 +39,10 @@ public class AboutPreference extends DialogPreference {
         init();
     }
 
+    public static boolean isGooglePlayServicesAvailable(Context context) {
+        return  false;
+    }
+
     void init() {
         setNegativeButtonText(null);
         Context ctx = getContext();
