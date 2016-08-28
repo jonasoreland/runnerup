@@ -23,14 +23,18 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.mapbox.mapboxsdk.MapboxAccountManager;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -97,7 +101,7 @@ public class MapWrapper implements Constants {
                 map = mapboxMap;
                 setStyle();
 
-                new LoadRoute().execute(new LoadParam(mDB, mID));
+                new LoadRoute().execute(new LoadParam(context, mDB, mID));
             }
         });
     }
@@ -129,10 +133,12 @@ public class MapWrapper implements Constants {
     }
 
     private class LoadParam {
-        public LoadParam(SQLiteDatabase mDB, long mID) {
+        public LoadParam(Context context, SQLiteDatabase mDB, long mID) {
+            this.context = context;
             this.mDB = mDB;
             this.mID = mID;
         }
+        final Context context;
         final SQLiteDatabase mDB;
         final long mID;
     }
@@ -143,33 +149,35 @@ public class MapWrapper implements Constants {
 
             Route route = new Route();
             LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(params[0].mDB, params[0].mID);
-            int lastLap = -1;
+            IconFactory iconFactory = IconFactory.getInstance(params[0].context);
+
+            int lastLap = 0;
             for (LocationEntity loc : ll) {
                 LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
                 route.path.add(point);
                 int type = loc.getType();
                 MarkerViewOptions m;
                 String title = null;
-                int color = Color.WHITE;
+                Drawable iconDrawable = null;
                 //Start/end markers are not set in db, special handling
                 if(route.markers.isEmpty()) {
                     type = DB.LOCATION.TYPE_START;
                 }
                 switch (type) {
                     case DB.LOCATION.TYPE_START:
-                        color = Color.GREEN;
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.start_map_marker);
                         title = context.getResources().getString(R.string.Start);
                         break;
                     case DB.LOCATION.TYPE_END:
-                        color = Color.RED;
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.end_map_marker);
                         title = context.getResources().getString(R.string.Stop);
                         break;
                     case DB.LOCATION.TYPE_PAUSE:
-                        color = Color.CYAN;
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.pause_map_marker);
                         title = context.getResources().getString(R.string.Pause);
                         break;
                     case DB.LOCATION.TYPE_RESUME:
-                        color = Color.BLUE;
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.resume_map_marker);
                         title = context.getResources().getString(R.string.Resume);
                         break;
                     case DB.LOCATION.TYPE_GPS:
@@ -180,21 +188,18 @@ public class MapWrapper implements Constants {
                     if (lastLap >= 0) {
                         title = context.getString(R.string.cue_lap) + " " + loc.getLap();
                     }
+                    iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.lap_map_marker);
                     lastLap = loc.getLap();
                 }
                 if (title != null) {
                     String snippet = formatter.formatDistance(TXT_SHORT, loc.getDistance().longValue()) + " " +
                             formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed()/1000.0));
-                    m = new MarkerViewOptions().title(title).position(point).snippet(snippet);
+                    Icon icon = iconFactory.fromDrawable(iconDrawable);
+                    m = new MarkerViewOptions().title(title).position(point).snippet(snippet).icon(icon).anchor(0.5f,86f/96f);
 
                     if (type == DB.LOCATION.TYPE_START) {
                         m.snippet(null);
                     }
-                    //TODO Set icon color, probably using static icons
-                    // Create an Icon object for the marker to use
-                    //IconFactory iconFactory = IconFactory.getInstance(DrawCustomMarkerActivity.this);
-                    //Drawable iconDrawable = ContextCompat.getDrawable(DrawCustomMarkerActivity.this, R.drawable.purple_marker);
-                    //Icon icon = iconFactory.fromDrawable(iconDrawable);
                     route.markers.add(m);
                 }
             }
@@ -202,9 +207,9 @@ public class MapWrapper implements Constants {
             //Track is ended with a pause, replace with end
             if(!route.markers.isEmpty()) {
                 MarkerViewOptions m = route.markers.get(route.markers.size() - 1);
-                if (m.getTitle().equals(context.getResources().getString(R.string.Pause))) {
-                    m.title(context.getResources().getString(R.string.Stop));
-                }
+                Drawable iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.end_map_marker);
+                Icon icon = iconFactory.fromDrawable(iconDrawable);
+                m.title(context.getResources().getString(R.string.Stop)).icon(icon);
             }
             return route;
         }
@@ -214,38 +219,24 @@ public class MapWrapper implements Constants {
 
             if (route != null && map != null &&
                     android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+
+                //zoom on map
+                @SuppressWarnings("ConstantConditions") final LatLngBounds box =
+                        new LatLngBounds.Builder().includes(route.path).build();
+                map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
+
                 LatLng[] pointsArray = new LatLng[route.path.size()];
                 route.path.toArray(pointsArray);
                 map.addPolyline(new PolylineOptions()
                         .add(pointsArray)
                         .color(Color.RED)
                         .width(3));
-                Log.e(getClass().getName(), "Added polyline");
-                int cnt = 0;
+                Log.v(getClass().getName(), "Added polyline");
+
                 for (MarkerViewOptions m : route.markers) {
-                    cnt++;
                     map.addMarker(m);
                 }
-                Log.d(getClass().getName(), "Added " + cnt + " markers");
-
-                //There seem to be no way to get bounds from polyline or LatLong[]...
-                LatLng n = null, s = null, w = null, e = null;
-                for (LatLng l : route.path) {
-                    if (n == null || l.getLatitude() > n.getLatitude())
-                        n = l;
-                    if (s == null || l.getLatitude() < s.getLatitude())
-                        s = l;
-                    if (w == null || l.getLongitude() < w.getLongitude())
-                        w = l;
-                    if (e == null || l.getLongitude() > e.getLongitude())
-                        e = l;
-                }
-                if (n != null && s != null && w != null && e != null){
-                    //zoom on map
-                    @SuppressWarnings("ConstantConditions") final LatLngBounds box =
-                            new LatLngBounds.Builder().include(n).include(s).include(w).include(e).build();
-                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
-                }
+                Log.v(getClass().getName(), "Added " + route.markers.size() + " markers");
             }
         }
     }

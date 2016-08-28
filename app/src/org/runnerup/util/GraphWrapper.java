@@ -17,7 +17,6 @@
 
 package org.runnerup.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -60,16 +59,16 @@ public class GraphWrapper implements Constants {
     /**
      * Called when the activity is first created.
      */
-    public GraphWrapper(Activity activity, LinearLayout graphTab, LinearLayout hrzonesBarLayout, final Formatter formatter, SQLiteDatabase mDB, long mID) {
+    public GraphWrapper(Context context, LinearLayout graphTab, LinearLayout hrzonesBarLayout, final Formatter formatter, SQLiteDatabase mDB, long mID) {
         this.graphTab = graphTab;
         this.hrzonesBarLayout = hrzonesBarLayout;
         this.formatter = formatter;
 
         if (Build.VERSION.SDK_INT > 8) {
-            new LoadGraph().execute(new LoadParam(activity, mDB, mID));
+            new LoadGraph().execute(new LoadParam(context, mDB, mID));
 
-            graphView = new GraphView(activity);
-            graphView.setTitle(activity.getString(R.string.Pace));
+            graphView = new GraphView(context);
+            graphView.setTitle(context.getString(R.string.Pace));
             graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
                 public String formatLabel(double value, boolean isValueX) {
@@ -86,8 +85,8 @@ public class GraphWrapper implements Constants {
             graphView.getViewport().setScalable(true);
             graphView.getViewport().setScrollable(true);
 
-            graphView2 = new GraphView(activity);
-            graphView2.setTitle(activity.getString(R.string.Heart_rate));
+            graphView2 = new GraphView(context);
+            graphView2.setTitle(context.getString(R.string.Heart_rate));
             graphView2.getGridLabelRenderer().setVerticalAxisTitle("bpm");
             graphView2.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.TXT));
             graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
@@ -103,7 +102,7 @@ public class GraphWrapper implements Constants {
             graphView2.getViewport().setScalable(true);
             graphView2.getViewport().setScrollable(true);
         }
-         hrzonesBar = new HRZonesBar(activity);
+         hrzonesBar = new HRZonesBar(context);
     }
 
      class GraphProducer {
@@ -131,7 +130,7 @@ public class GraphWrapper implements Constants {
         boolean showHRZhist = false;
         HRZones hrCalc = null;
 
-        public GraphProducer(Activity activity, int noPoints) {
+        public GraphProducer(Context context, int noPoints) {
             final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
             final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec
 
@@ -151,8 +150,8 @@ public class GraphWrapper implements Constants {
             this.hrList = new ArrayList<>();
             this.hr = new int[graphAverageSeconds];
 
-            Resources res = activity.getResources();
-            Context ctx = activity.getApplicationContext();
+            Resources res = context.getResources();
+            Context ctx = context.getApplicationContext();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
             this.hrCalc = new HRZones(res, prefs);
             if (hrCalc.isConfigured()) {
@@ -517,12 +516,12 @@ public class GraphWrapper implements Constants {
     }
 
     class LoadParam {
-        public LoadParam(Activity activity, SQLiteDatabase mDB, long mID) {
-            this.activity = activity;
+        public LoadParam(Context context, SQLiteDatabase mDB, long mID) {
+            this.context = context;
             this.mDB = mDB;
             this.mID = mID;
         }
-        final Activity activity;
+        final Context context;
         final SQLiteDatabase mDB;
         final long mID;
     }
@@ -532,7 +531,7 @@ public class GraphWrapper implements Constants {
         protected GraphProducer doInBackground(LoadParam... params) {
 
             LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(params[0].mDB, params[0].mID);
-            GraphProducer graphData = new GraphProducer(params[0].activity, ll.getCount());
+            GraphProducer graphData = new GraphProducer(params[0].context, ll.getCount());
             double lastDistance = 0;
             long lastTime = 0;
             int lastLap = -1;
