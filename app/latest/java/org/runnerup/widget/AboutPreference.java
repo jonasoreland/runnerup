@@ -95,6 +95,13 @@ public class AboutPreference extends DialogPreference {
                 this.setDialogMessage(msg);
             }
         } else {
+            try {
+                PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+                this.setDialogTitle(context.getString(R.string.About_RunnerUp)+" v" + pInfo.versionName);
+            } catch (NameNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             if (isGooglePlayServicesAvailable(context)) {
                 setNegativeButtonText(context.getString(R.string.OK));
                 setPositiveButtonText(context.getString(R.string.Rate_RunnerUp));
