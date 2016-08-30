@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 
 import org.runnerup.util.TickListener;
+
 /**
  *
  * This is a helper class that is used to determine when the GPS status is good
@@ -157,6 +158,7 @@ public class GpsStatus implements LocationListener,
         if (locationManager == null)
             return;
 
+        //noinspection MissingPermission
         android.location.GpsStatus gpsStatus = locationManager
                 .getGpsStatus(null);
 
