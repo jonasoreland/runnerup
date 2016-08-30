@@ -35,5 +35,5 @@ dependencies {
     //https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar
     provided files('libs/samsung_ble_sdk_200.jar')
     //https://www.thisisant.com/developer/resources/downloads/
-    provided files('libs/antpluginlib_3-1-0.jar')
+    provided files('libs/antpluginlib_3-5-0.jar')
 }
