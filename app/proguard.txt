@@ -10,3 +10,5 @@
 -dontnote org.apache.http.**
 -dontwarn javax.annotation.**
 -dontwarn sun.misc.Unsafe
+-dontwarn java.lang.invoke.**
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
