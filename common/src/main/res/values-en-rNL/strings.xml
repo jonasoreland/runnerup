@@ -125,7 +125,7 @@
   <string name="Edit_activity">Activiteit bewerken</string>
   <string name="Share_activity">Activiteit delen</string>
   <string name="Delete_activity">Activiteit verwijderen</string>
-  <string name="Recompute_activity">Activiteit herberekenen</string>
+  <string name="Merge_activity">Activiteit herberekenen</string>
   <string name="Configure_heart_rate_zones">Hartslagzones instellen</string>
   <string name="Clear_heart_rate_zone_settings">Hartslagzone instellingen verwijderen</string>
   <string name="Manage_accounts">Accounts beheren</string>

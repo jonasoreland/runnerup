@@ -127,7 +127,7 @@
   <string name="Edit_activity">Aktivität bearbeiten</string>
   <string name="Share_activity">Aktivität teilen</string>
   <string name="Delete_activity">Aktivität löschen</string>
-  <string name="Recompute_activity">Aktivität neu berechnen</string>
+  <string name="Merge_activity">Aktivität neu berechnen</string>
   <string name="Configure_heart_rate_zones">Herzfrequenzzonen konfigurieren</string>
   <string name="Clear_heart_rate_zone_settings">Herzfrequenzzoneneinstellungen zurücksetzen</string>
   <string name="Manage_accounts">Benutzerkonten verwalten</string>

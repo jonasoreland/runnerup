@@ -127,7 +127,7 @@
   <string name="Edit_activity">Edytuj aktywność</string>
   <string name="Share_activity">Udostępnij aktywność</string>
   <string name="Delete_activity">Usuń aktywność</string>
-  <string name="Recompute_activity">Przelicz aktywność</string>
+  <string name="Merge_activity">Przelicz aktywność</string>
   <string name="Configure_heart_rate_zones">Ustaw strefy tętna</string>
   <string name="Clear_heart_rate_zone_settings">Wyczyść ustawienia stref tętna</string>
   <string name="Manage_accounts">Zarządzaj kontami</string>

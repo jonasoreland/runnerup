@@ -73,6 +73,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.ActivityCleaner;
+import org.runnerup.db.ActivityMerger;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.SyncManager;
@@ -120,7 +121,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     TitleSpinner sport = null;
     EditText notes = null;
-    MenuItem recomputeMenuItem = null;
+    MenuItem mergeMenuItem = null;
 
     MapView map = null;
     AsyncTask<String, String, Route> loadRouteTask = null;
@@ -260,15 +261,16 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         uploadButton.setEnabled(value);
         WidgetUtil.setEditable(notes, value);
         sport.setEnabled(value);
-        if (recomputeMenuItem != null)
-            recomputeMenuItem.setEnabled(value);
+        if (mergeMenuItem != null) {
+            mergeMenuItem.setEnabled(value);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mode == MODE_DETAILS) {
             getMenuInflater().inflate(R.menu.detail_menu, menu);
-            recomputeMenuItem = menu.findItem(R.id.menu_recompute_activity);
+            mergeMenuItem = menu.findItem(R.id.menu_merge_activity);
         }
         return true;
     }
@@ -286,9 +288,26 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     requery();
                 }
                 break;
-            case R.id.menu_recompute_activity:
-                new ActivityCleaner().recompute(mDB, mID);
-                requery();
+            case R.id.menu_merge_activity:
+                if (ActivityMerger.canMerge(mDB, mID)) {
+                    ActivityMerger.merge(mDB, mID);
+                    requery();
+                    fillHeaderData();
+                    loadRoute();
+                } else {
+                    AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+                    builder1.setMessage("Previous activity must be of the same type to merge.");
+                    builder1.setCancelable(true);
+                    builder1.setNeutralButton("OK",
+                            new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    AlertDialog alert11 = builder1.create();
+                    alert11.show();
+                }
                 break;
             case R.id.menu_share_activity:
                 shareActivity();

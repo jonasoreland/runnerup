@@ -127,7 +127,7 @@
   <string name="Edit_activity">Редактировать</string>
   <string name="Share_activity">Опубликовать</string>
   <string name="Delete_activity">Удалить</string>
-  <string name="Recompute_activity">Пересчитать</string>
+  <string name="Merge_activity">Пересчитать</string>
   <string name="Configure_heart_rate_zones">Настройка зон ЧСС</string>
   <string name="Clear_heart_rate_zone_settings">Очистить зоны ЧСС</string>
   <string name="Manage_accounts">Управление аккаунтами</string>
