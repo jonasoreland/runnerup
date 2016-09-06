@@ -387,7 +387,9 @@ public class RunalyzePost {
                 writeNomalField("comment", c.getString(5), "", writer);
                 writeNomalField("pace", seconds2MinuteAndSeconds(Math.round(c.getFloat(1)*1000.0F/c.getFloat(2))), "", writer);
                 writeNomalField("sportid", runnerupSport2RunalyzeSport(c.getInt(6)), null, writer);
-                writeNomalField("typeid", runnerupSport2RunalyzeType(c.getInt(6)), null, writer);
+                // the type is finally blank, it was decided better not to provide anything
+                // previously it was called with runnerupSport2RunalyzeType(c.getInt(6))
+                writeNomalField("typeid", "", null, writer);
                 // it seems that the activity_id in runalyze is set in "class.ParserAbstractSingle.php"
                 // and it is just the timestamp in seconds of the activity
                 writeNomalField("activity_id", Long.toString(c.getLong(0)), null, writer);
