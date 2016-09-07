@@ -19,12 +19,15 @@ package org.runnerup.db.entities;
 
 import android.annotation.TargetApi;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -37,12 +40,120 @@ public class LocationEntity extends AbstractEntity {
         super();
     }
 
-    public LocationEntity(Cursor c) {
+    private LocationEntity(Cursor c, LocationEntity lastLocation) {
         super();
         try {
             toContentValues(c);
+            if (this.getDistance() == null || this.getElapsed() == null) {
+                //Compatibility, old activities
+                Double distance = 0.0;
+                Long elapsed = 0L;
+                if (lastLocation != null) {
+                    //First point is zero
+                    int type = this.getType();
+                    distance = lastLocation.getDistance();
+                    elapsed = lastLocation.getElapsed();
+                    switch (type) {
+                        case Constants.DB.LOCATION.TYPE_START:
+                        case Constants.DB.LOCATION.TYPE_END:
+                        case Constants.DB.LOCATION.TYPE_RESUME:
+                            break;
+                        case Constants.DB.LOCATION.TYPE_PAUSE:
+                        case Constants.DB.LOCATION.TYPE_GPS:
+                            float res[] = {
+                                    0
+                            };
+                            Location.distanceBetween(lastLocation.getLatitude(),
+                                    lastLocation.getLongitude(), this.getLatitude(), this.getLongitude(),
+                                    res);
+                            distance += res[0];
+                            elapsed += this.getTime() - lastLocation.getTime();
+                            break;
+                    }
+                }
+                this.setDistance(distance);
+                this.setElapsed(elapsed);
+            }
         } catch (Exception e) {
             Log.e(Constants.LOG, e.getMessage());
+        }
+    }
+
+    public static class LocationList<E> implements Iterable<E> {
+        LocationIterator iter;
+        final long mID;
+        final SQLiteDatabase mDB;
+
+        public LocationList(SQLiteDatabase mDB, long mID) {
+            this.mID = mID;
+            this.mDB = mDB;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Iterator<E> iterator() {
+            iter = new LocationIterator(this.mID, this.mDB);
+            return iter;
+        }
+
+        public int getCount() {
+            return iter == null ? 0 : iter.getCount();
+        }
+
+        public void close() {
+            if (iter != null) {iter.close();}
+        }
+
+        private class LocationIterator implements Iterator<E> {
+            private LocationIterator(long mID, SQLiteDatabase mDB) {
+                c = mDB.query(Constants.DB.LOCATION.TABLE, from, "activity_id == " + mID,
+                        null, null, null, "_id", null);
+                if (!c.moveToFirst()) {
+                    c.close();
+                }
+            }
+
+            final String[] from = new String[]{
+                    Constants.DB.LOCATION.LATITUDE,
+                    Constants.DB.LOCATION.LONGITUDE,
+                    Constants.DB.LOCATION.TYPE,
+                    Constants.DB.LOCATION.TIME,
+                    Constants.DB.LOCATION.LAP,
+                    Constants.DB.LOCATION.HR
+            };
+            Cursor c = null;
+            E prev = null;
+
+            public int getCount() {
+                return c.getCount();
+            }
+
+            public void close() {
+                if (!c.isClosed()) {
+                    c.close();
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                return !c.isClosed() && !c.isLast();
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public E next() {
+                c.moveToNext();
+                prev = (E)new LocationEntity(c, (LocationEntity)prev);
+                if (c.isLast()) {
+                    c.close();
+                }
+                return prev;
+            }
+
+            @Override
+            public void remove() {
+                next();
+            }
         }
     }
 
@@ -131,9 +242,40 @@ public class LocationEntity extends AbstractEntity {
     }
 
     /**
+     * Distance of the location
+     */
+
+    private void setDistance(Double value) {
+        values().put(Constants.DB.LOCATION2.DISTANCE, value);
+    }
+
+    public Double getDistance() {
+        if (values().containsKey(Constants.DB.LOCATION2.DISTANCE)) {
+            return values().getAsDouble(Constants.DB.LOCATION2.DISTANCE);
+        }
+        return null;
+    }
+
+    /**
+     * Elapsed time in ms, excluding pauses
+     */
+
+    private void setElapsed(Long value) {
+        values().put(Constants.DB.LOCATION2.ELAPSED, value);
+    }
+
+    public Long getElapsed() {
+        if (values().containsKey(Constants.DB.LOCATION2.ELAPSED)) {
+            return values().getAsLong(Constants.DB.LOCATION2.ELAPSED);
+        }
+        return null;
+    }
+
+
+    /**
      * Accuracy of the location
      */
-    public void setAccuracy(Float value) {
+    private void setAccuracy(Float value) {
         values().put(Constants.DB.LOCATION.ACCURANCY, value);
     }
 
@@ -175,7 +317,7 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Bearing of the location
      */
-    public void setBearing(Float value) {
+    private void setBearing(Float value) {
         values().put(Constants.DB.LOCATION.BEARING, value);
     }
 
@@ -203,7 +345,7 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Cadence at the location
      */
-    public void setCadence(Integer value) {
+    private void setCadence(Integer value) {
         values().put(Constants.DB.LOCATION.CADENCE, value);
     }
 
@@ -216,7 +358,7 @@ public class LocationEntity extends AbstractEntity {
 
     @Override
     protected List<String> getValidColumns() {
-        List<String> columns = new ArrayList<String>();
+        List<String> columns = new ArrayList<>();
         columns.add(Constants.DB.PRIMARY_KEY);
         columns.add(Constants.DB.LOCATION.ACTIVITY);
         columns.add(Constants.DB.LOCATION.LAP);

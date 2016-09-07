@@ -189,6 +189,7 @@
   <string name="Unit_preference">Unit preference</string>
   <string name="Auto_start_GPS">Auto start GPS</string>
   <string name="Advanced_options">Advanced options</string>
+  <string name="Mapbox_default_style">Mapbox default style</string>
   <string name="RunnerUp_live_address">RunnerUp live address</string>
   <string name="Autopause_after_s">Autopause after (s)</string>
   <string name="Autopause_min_pace_minkm">Autopause min pace (min/km)</string>
@@ -293,7 +294,6 @@
   <string name="RunnerUp_workout">RunnerUp workout: </string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nHere is a workout I think you might like.</string>
   <string name="Share_workout">Share workout...</string>
-  <string name="Not_much_to_say_at_this_point">Not much to say at this point</string>
   <string name="New_audio_scheme">New audio scheme</string>
   <string name="Default">Default</string>
   <string name="Notes_about_your_workout">Notes about your workout</string>

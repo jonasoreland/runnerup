@@ -672,7 +672,7 @@ public class Tracker extends android.app.Service implements
             }
             mActivityLastLocation = arg0;
 
-            mDBWriter.onLocationChanged(arg0, hrValue);
+            mDBWriter.onLocationChanged(arg0, mElapsedTimeMillis, mElapsedDistance, hrValue);
 
             switch (mLocationType) {
                 case DB.LOCATION.TYPE_START:
@@ -816,15 +816,6 @@ public class Tracker extends android.app.Service implements
 
     public Double getCurrentSpeed() {
         return getCurrentSpeed(System.currentTimeMillis(), 3000);
-    }
-
-    public Double getCurrentPace() {
-        Double speed = getCurrentSpeed();
-        if (speed == null)
-            return null;
-        if (speed == 0.0)
-            return Double.MAX_VALUE;
-        return 1000 / (speed * 60);
     }
 
     private Double getCurrentSpeed(long now, long maxAge) {

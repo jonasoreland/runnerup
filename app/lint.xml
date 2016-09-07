@@ -11,5 +11,8 @@
     <issue id="ResourceType">
         <warning path="src/org/runnerup/view/MainLayout.java" />
     </issue>
-
+    <issue id="InvalidPackage">
+        <ignore regexp=".*okio.*" />
+        <ignore regexp=".*retrofit.*" />
+    </issue>
 </lint>

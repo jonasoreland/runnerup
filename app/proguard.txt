@@ -8,4 +8,7 @@
 -dontnote android.net.http.*
 -dontnote org.apache.commons.codec.**
 -dontnote org.apache.http.**
--dontwarn com.almeros.android.multitouch.TwoFingerGestureDetector
+-dontwarn javax.annotation.**
+-dontwarn sun.misc.Unsafe
+-dontwarn java.lang.invoke.**
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
