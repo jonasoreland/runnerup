@@ -43,7 +43,7 @@ android {
 
     productFlavors {
         latest {
-            minSdkVersion 14
+            minSdkVersion 15
             targetSdkVersion rootProject.ext.compileSdkVersion
             versionName rootProject.ext.versionName
             versionCode rootProject.ext.versionCode
@@ -98,13 +98,14 @@ repositories {
 
 dependencies {
     //design uses com.android.support:appcompat, not explicitly required
-    compile 'com.android.support:design:24.1.1'
+    latestCompile 'com.android.support:design:24.2.0'
+    froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
     latestCompile 'com.google.android.gms:play-services-wearable:9.4.0'
     latestCompile 'com.getpebble:pebblekit:3.1.0'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') {
-        transitive = true
+    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0-beta.2@aar'){
+        transitive=true
     }
-    compile 'com.jjoe64:graphview:3.1.4'
+    compile 'com.jjoe64:graphview:4.1.1'
     compile project(':common')
     compile project(':hrdevice')
     latestWearApp project(':wear')

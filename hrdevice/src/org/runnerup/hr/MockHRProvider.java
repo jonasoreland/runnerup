@@ -51,7 +51,7 @@ public class MockHRProvider implements HRProvider {
 
         @Override
         public void run() {
-            if (mIsScanning) {
+            if (mIsScanning &&  BluetoothAdapter.getDefaultAdapter() != null) {
                 String dev = "00:43:A8:23:10:"
                         + String.format("%02X", System.currentTimeMillis() % 256);
                 hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, BluetoothAdapter

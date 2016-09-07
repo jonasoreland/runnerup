@@ -52,7 +52,11 @@ public class AboutPreference extends DialogPreference {
     }
 
     public static boolean isGooglePlayServicesAvailable(Context context) {
-        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
+        boolean res = false;
+        try {
+            res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
+        } catch (Exception e) {}
+        return res;
     }
 
     private boolean isPlayPref() {

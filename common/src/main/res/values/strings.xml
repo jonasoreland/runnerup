@@ -189,6 +189,7 @@
   <string name="Unit_preference">Unit preference</string>
   <string name="Auto_start_GPS">Auto start GPS</string>
   <string name="Advanced_options">Advanced options</string>
+  <string name="Mapbox_default_style">Mapbox default style</string>
   <string name="RunnerUp_live_address">RunnerUp live address</string>
   <string name="Autopause_after_s">Autopause after (s)</string>
   <string name="Autopause_min_pace_minkm">Autopause min pace (min/km)</string>
