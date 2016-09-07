@@ -34,7 +34,7 @@ public interface Synchronizer {
     enum RequestMethod { GET, POST, PATCH, PUT }
 
     enum AuthMethod {
-        OAUTH2, USER_PASS, FILEPERMISSION
+        OAUTH2, USER_PASS, FILEPERMISSION, USER_PASS_URL
     }
 
     enum Status {

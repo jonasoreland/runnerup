@@ -34,6 +34,26 @@
         android:layout_height="wrap_content" >
 
         <TableRow
+            android:id="@+id/table_row_url"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/text_view_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Website" />
+
+            <EditText
+                android:id="@+id/url_input"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="textEmailAddress" />
+
+        </TableRow>
+
+        <TableRow
             android:id="@+id/table_row1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >

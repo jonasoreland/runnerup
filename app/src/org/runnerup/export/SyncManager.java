@@ -47,6 +47,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -228,6 +229,8 @@ public class SyncManager {
             synchronizer = new RunningFreeOnlineSynchronizer();
         } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
             synchronizer = new FileSynchronizer();
+        } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
+            synchronizer = new RunalyzeSynchronizer();
         }
 
         if (synchronizer != null) {
@@ -321,7 +324,8 @@ public class SyncManager {
                 mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
                 return;
             case USER_PASS:
-                askUsernamePassword(l);
+            case USER_PASS_URL:
+                askUsernamePassword(l, authMethod);
                 return;
             case FILEPERMISSION:
                 askFileUrl(l);
@@ -376,7 +380,7 @@ public class SyncManager {
         return null;
     }
 
-    private void askUsernamePassword(final Synchronizer sync) {
+    private void askUsernamePassword(final Synchronizer sync, final AuthMethod authMethod) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(sync.getName());
 
@@ -384,7 +388,9 @@ public class SyncManager {
         final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
         final TextView tv1 = (TextView) view.findViewById(R.id.username);
         final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
+        final TextView urlInput = (TextView) view.findViewById(R.id.url_input);
         final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
+        final TableRow rowUrl = (TableRow) view.findViewById(R.id.table_row_url);
         String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
         String username = authConfig != null ? authConfig.optString("username", "") : null;
@@ -406,6 +412,12 @@ public class SyncManager {
         } else {
             tvAuthNotice.setVisibility(View.GONE);
         }
+        if (AuthMethod.USER_PASS_URL.equals(authMethod)) {
+            rowUrl.setVisibility(View.VISIBLE);
+            urlInput.setText(authConfig.optString(DB.ACCOUNT.URL));
+        } else {
+            rowUrl.setVisibility(View.GONE);
+        }
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -417,6 +429,9 @@ public class SyncManager {
                     //noinspection ConstantConditions
                     authConfig.put("username", tv1.getText());
                     authConfig.put("password", tv2.getText());
+                    if (authMethod == AuthMethod.USER_PASS_URL) {
+                        authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
