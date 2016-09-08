@@ -86,10 +86,10 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
         }
 
         values.put(DB.LOCATION.TIME, arg0.getTime());
-        values.put(DB.LOCATION.LATITUDE, (float) arg0.getLatitude());
-        values.put(DB.LOCATION.LONGITUDE, (float) arg0.getLongitude());
+        values.put(DB.LOCATION.LATITUDE, arg0.getLatitude());
+        values.put(DB.LOCATION.LONGITUDE, arg0.getLongitude());
         if (arg0.hasAltitude()) {
-            values.put(DB.LOCATION.ALTITUDE, (float) arg0.getAltitude());
+            values.put(DB.LOCATION.ALTITUDE, arg0.getAltitude());
         }
 
         //Accuracy related, normally not used in exports
