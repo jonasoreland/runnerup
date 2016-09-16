@@ -22,7 +22,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
-import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 
@@ -36,47 +35,45 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class LocationEntity extends AbstractEntity {
 
+    private Double mDistance;
+    private Long mElapsed;
+
     public LocationEntity() {
         super();
     }
 
     private LocationEntity(Cursor c, LocationEntity lastLocation) {
         super();
-        try {
-            toContentValues(c);
-            if (this.getDistance() == null || this.getElapsed() == null) {
-                //Compatibility, old activities
-                Double distance = 0.0;
-                Long elapsed = 0L;
-                if (lastLocation != null) {
-                    //First point is zero
-                    int type = this.getType();
-                    distance = lastLocation.getDistance();
-                    elapsed = lastLocation.getElapsed();
-                    switch (type) {
-                        case Constants.DB.LOCATION.TYPE_START:
-                        case Constants.DB.LOCATION.TYPE_END:
-                        case Constants.DB.LOCATION.TYPE_RESUME:
-                            break;
-                        case Constants.DB.LOCATION.TYPE_PAUSE:
-                        case Constants.DB.LOCATION.TYPE_GPS:
-                            float res[] = {
-                                    0
-                            };
-                            Location.distanceBetween(lastLocation.getLatitude(),
-                                    lastLocation.getLongitude(), this.getLatitude(), this.getLongitude(),
-                                    res);
-                            distance += res[0];
-                            elapsed += this.getTime() - lastLocation.getTime();
-                            break;
-                    }
-                }
-                this.setDistance(distance);
-                this.setElapsed(elapsed);
+        toContentValues(c);
+
+        // Compute distance and elapsed
+        Double distance = 0.0;
+        Long elapsed = 0L;
+        if (lastLocation != null) {
+            //First point is zero
+            int type = this.getType();
+            distance = lastLocation.getDistance();
+            elapsed = lastLocation.getElapsed();
+            switch (type) {
+                case Constants.DB.LOCATION.TYPE_START:
+                case Constants.DB.LOCATION.TYPE_END:
+                case Constants.DB.LOCATION.TYPE_RESUME:
+                    break;
+                case Constants.DB.LOCATION.TYPE_PAUSE:
+                case Constants.DB.LOCATION.TYPE_GPS:
+                    float res[] = {
+                            0
+                    };
+                    Location.distanceBetween(lastLocation.getLatitude(),
+                            lastLocation.getLongitude(), this.getLatitude(), this.getLongitude(),
+                            res);
+                    distance += res[0];
+                    elapsed += this.getTime() - lastLocation.getTime();
+                    break;
             }
-        } catch (Exception e) {
-            Log.e(Constants.LOG, e.getMessage());
         }
+        mDistance = distance;
+        mElapsed = elapsed;
     }
 
     public static class LocationList<E> implements Iterable<E> {
@@ -245,30 +242,15 @@ public class LocationEntity extends AbstractEntity {
      * Distance of the location
      */
 
-    private void setDistance(Double value) {
-        values().put(Constants.DB.LOCATION2.DISTANCE, value);
-    }
-
     public Double getDistance() {
-        if (values().containsKey(Constants.DB.LOCATION2.DISTANCE)) {
-            return values().getAsDouble(Constants.DB.LOCATION2.DISTANCE);
-        }
-        return null;
+        return mDistance;
     }
 
     /**
      * Elapsed time in ms, excluding pauses
      */
-
-    private void setElapsed(Long value) {
-        values().put(Constants.DB.LOCATION2.ELAPSED, value);
-    }
-
     public Long getElapsed() {
-        if (values().containsKey(Constants.DB.LOCATION2.ELAPSED)) {
-            return values().getAsLong(Constants.DB.LOCATION2.ELAPSED);
-        }
-        return null;
+        return mElapsed;
     }
 
 

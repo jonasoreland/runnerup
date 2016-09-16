@@ -68,13 +68,6 @@ public interface Constants {
             public static final int TYPE_DISCARD = 6;
         }
 
-        //Not in database, calculated from locations
-        public interface LOCATION2 {
-            //public static final String TABLE = "location";
-            public static final String DISTANCE = "distance";
-            public static final String ELAPSED = "elapsed";
-       }
-
         public interface LAP {
             public static final String TABLE = "lap";
             public static final String ACTIVITY = "activity_id";
