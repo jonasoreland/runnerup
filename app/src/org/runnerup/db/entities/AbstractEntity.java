@@ -21,7 +21,6 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
@@ -83,7 +82,7 @@ public abstract class AbstractEntity implements DBEntity {
         }
 
         if (getValidColumns().containsAll(Arrays.asList(c.getColumnNames()))) {
-            DatabaseUtils.cursorRowToContentValues(c, values());
+            this.cursorRowToContentValues(c, values());
         } else {
             throw new IllegalArgumentException("Cursor " + c.toString() + " is incompatible with the Entity " + this.getClass().getName());
         }
@@ -91,6 +90,32 @@ public abstract class AbstractEntity implements DBEntity {
         for (String column : getValidColumns()) {
             if (values().get(column) == null)
                 values().remove(column);
+        }
+    }
+
+    // This is a replacement for DatabaseUtils.cursorRowToContentValues
+    // see https://code.google.com/p/android/issues/detail?id=22219
+    private static void cursorRowToContentValues(Cursor cursor, ContentValues values) {
+        String[] columns = cursor.getColumnNames();
+        int length = columns.length;
+        for (int i = 0; i < length; i++) {
+            switch (cursor.getType(i)) {
+                case Cursor.FIELD_TYPE_NULL:
+                    values.putNull(columns[i]);
+                    break;
+                case Cursor.FIELD_TYPE_INTEGER:
+                    values.put(columns[i], cursor.getLong(i));
+                    break;
+                case Cursor.FIELD_TYPE_FLOAT:
+                    values.put(columns[i], cursor.getDouble(i));
+                    break;
+                case Cursor.FIELD_TYPE_STRING:
+                    values.put(columns[i], cursor.getString(i));
+                    break;
+                case Cursor.FIELD_TYPE_BLOB:
+                    values.put(columns[i], cursor.getBlob(i));
+                    break;
+            }
         }
     }
 
