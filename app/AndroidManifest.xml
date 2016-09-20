@@ -47,8 +47,7 @@
 
 		<activity
 			android:name=".view.MainLayout"
-			android:label="@string/app_name"
-			android:screenOrientation="sensorPortrait">
+			android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -65,44 +64,33 @@
 			</intent-filter>
   		</activity>
 
-		<activity android:name=".view.StartActivity"
-		    android:screenOrientation="sensorPortrait" />
+		<activity android:name=".view.StartActivity"/>
 
-		<activity android:name="org.runnerup.view.FeedActivity"
-		    android:screenOrientation="sensorPortrait" />
+		<activity android:name="org.runnerup.view.FeedActivity"/>
 
 		<activity android:name=".view.RunActivity"
-		    android:configChanges="keyboardHidden|orientation"
-		    android:screenOrientation="sensorPortrait" />
+		    android:configChanges="keyboardHidden|orientation"/>
 
-		<activity android:name=".view.SettingsActivity"
-		    android:screenOrientation="sensorPortrait" />
+		<activity android:name=".view.SettingsActivity"/>
 
 		<activity android:name=".view.AudioCueSettingsActivity"
-		    android:screenOrientation="sensorPortrait"
 			android:theme="@style/Theme.AppCompat" />
 
 		<activity android:name=".view.DetailActivity"
 			android:configChanges="orientation|screenSize|uiMode"
-		    android:screenOrientation="sensorPortrait"
-			android:theme="@style/Theme.AppCompat" />
+		    android:theme="@style/Theme.AppCompat" />
 
-		<activity android:name=".view.HistoryActivity"
-		    android:screenOrientation="sensorPortrait" />
+		<activity android:name=".view.HistoryActivity"/>
 
 		<activity android:name=".view.AccountListActivity"
-		    android:screenOrientation="sensorPortrait"
 			android:theme="@style/Theme.AppCompat" />
 
 		<activity android:name=".view.AccountActivity"
-		    android:screenOrientation="sensorPortrait"
 			android:theme="@style/Theme.AppCompat" />
 
-		<activity android:name=".view.UploadActivity"
-		    android:screenOrientation="sensorPortrait" />
+		<activity android:name=".view.UploadActivity"/>
 
-		<activity android:name=".view.ManageWorkoutsActivity"
-		    android:screenOrientation="sensorPortrait" >
+		<activity android:name=".view.ManageWorkoutsActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
   				<action android:name="android.intent.action.EDIT" />
@@ -129,15 +117,12 @@
             tools:ignore="ExportedContentProvider" />
 
 		<activity android:name=".export.oauth2client.OAuth2Activity"
-		    android:screenOrientation="sensorPortrait"
 			android:theme="@style/Theme.AppCompat" />
 
 		<activity android:name=".view.HRSettingsActivity"
-		    android:screenOrientation="sensorPortrait"
 			android:theme="@style/Theme.AppCompat" />
 
 		<activity android:name=".view.HRZonesActivity"
-		    android:screenOrientation="sensorPortrait"
 			android:theme="@style/Theme.AppCompat" />
 
 		<service android:name=".tracker.Tracker" />
@@ -164,7 +149,6 @@
 			android:required="false" />
 
 		<activity
-			android:name=".view.CreateAdvancedWorkout"
-			android:screenOrientation="sensorPortrait" />
+			android:name=".view.CreateAdvancedWorkout"/>
 	</application>
 </manifest>
