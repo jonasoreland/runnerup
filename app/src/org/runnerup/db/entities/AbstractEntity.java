@@ -17,10 +17,12 @@
 
 package org.runnerup.db.entities;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
@@ -82,7 +84,11 @@ public abstract class AbstractEntity implements DBEntity {
         }
 
         if (getValidColumns().containsAll(Arrays.asList(c.getColumnNames()))) {
-            this.cursorRowToContentValues(c, values());
+            if (Build.VERSION.SDK_INT > 10) {
+                this.cursorRowToContentValues(c, values());
+            } else {
+                DatabaseUtils.cursorRowToContentValues(c, values());
+            }
         } else {
             throw new IllegalArgumentException("Cursor " + c.toString() + " is incompatible with the Entity " + this.getClass().getName());
         }
@@ -95,6 +101,7 @@ public abstract class AbstractEntity implements DBEntity {
 
     // This is a replacement for DatabaseUtils.cursorRowToContentValues
     // see https://code.google.com/p/android/issues/detail?id=22219
+    @SuppressLint("NewApi")
     private static void cursorRowToContentValues(Cursor cursor, ContentValues values) {
         String[] columns = cursor.getColumnNames();
         int length = columns.length;
