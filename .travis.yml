@@ -3,6 +3,16 @@ language: android
 jdk:
   - oraclejdk8
 
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
 android:
     components:
         - tools #latest for "builtin" sdk (24.4.1 in Android-24)
