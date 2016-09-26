@@ -92,7 +92,9 @@ android {
 }
 
 repositories {
-    mavenCentral()
+    //jcenter and mavenCentral normally have the same packages but there may be a delay after updating the primary
+    jcenter() //Google
+    mavenCentral() //MapBox GraphView
     maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
 }
 
@@ -105,7 +107,7 @@ dependencies {
     latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0-beta.2@aar'){
         transitive=true
     }
-    compile 'com.jjoe64:graphview:4.1.1'
+    compile 'com.jjoe64:graphview:4.2.1'
     compile project(':common')
     compile project(':hrdevice')
     latestWearApp project(':wear')
