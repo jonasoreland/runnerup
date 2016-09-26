@@ -110,6 +110,8 @@ public class Tracker extends android.app.Service implements
      * Last location given by LocationManager
      */
     Location mLastLocation = null;
+    //Second to last location - to get speed
+    Location mLast2Location = null;
 
     /**
      * Last location given by LocationManager when in state STARTED
@@ -692,6 +694,7 @@ public class Tracker extends android.app.Service implements
 
             notificationStateManager.displayNotificationState(activityOngoingState);
         }
+        mLast2Location = mLastLocation;
         mLastLocation = arg0;
     }
 
@@ -821,11 +824,16 @@ public class Tracker extends android.app.Service implements
     private Double getCurrentSpeed(long now, long maxAge) {
         if (mLastLocation == null)
             return null;
-        if (!mLastLocation.hasSpeed())
-            return null;
         if (now > mLastLocation.getTime() + maxAge)
             return null;
-        return (double) mLastLocation.getSpeed();
+        double speed = mLastLocation.getSpeed();
+        if ((!mLastLocation.hasSpeed() || speed == 0.0f)
+                && mLastLocation != null && mLast2Location != null &&
+                mLastLocation.getTime() > mLast2Location.getTime() ) {
+            //Some Android (at least emulators) do not implement getSpeed() (even if hasSpeed() is true)
+            speed = mLastLocation.distanceTo(mLast2Location) * 1000 / (mLastLocation.getTime() - mLast2Location.getTime());
+        }
+        return speed;
     }
 
     public double getHeartbeats() {

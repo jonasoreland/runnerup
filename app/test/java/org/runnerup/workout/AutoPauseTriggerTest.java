@@ -26,6 +26,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+//Hint: Local Unit Test can use System.out.print for printouts
+
 public class AutoPauseTriggerTest {
     @Test
     public void shouldSetPauseIfSpeedIsLow() {
@@ -38,6 +40,7 @@ public class AutoPauseTriggerTest {
         Workout workout = mock(Workout.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
         when(workout.getSpeed((Scope) any())).thenReturn(9d);
+        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
 
@@ -60,6 +63,7 @@ public class AutoPauseTriggerTest {
         Workout workout = mock(Workout.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
         when(workout.getSpeed((Scope) any())).thenReturn(11d);
+        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
 
@@ -82,6 +86,7 @@ public class AutoPauseTriggerTest {
         Workout workout = mock(Workout.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
         when(workout.getSpeed((Scope) any())).thenReturn(9d);
+        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
 
@@ -91,6 +96,7 @@ public class AutoPauseTriggerTest {
         sut.onTick(workout);
 
         when(workout.getSpeed((Scope) any())).thenReturn(11d);
+        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
         when(location.getTime()).thenReturn(5000L);
         sut.onTick(workout);
 
@@ -108,12 +114,14 @@ public class AutoPauseTriggerTest {
         Workout workout = mock(Workout.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
         when(workout.getSpeed((Scope) any())).thenReturn(9d);
+        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
 
         sut.onTick(workout);
         sut.onTick(workout);
         when(workout.getSpeed((Scope) any())).thenReturn(11d);
+        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
         when(location.getTime()).thenReturn(5000L);
         sut.onTick(workout);
         verify(workout, never()).onPause(workout);
