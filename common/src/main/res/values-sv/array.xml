@@ -34,11 +34,6 @@
     <item>Löpning</item>
     <item>Cykling</item>
     <item>Övrigt</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>Löpning</item>
-    <item>Cykling</item>
-    <item>Övrigt</item>
     <item>Orientering</item>
     <item>Gång</item>
   </string-array>

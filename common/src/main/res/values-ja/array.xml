@@ -34,11 +34,6 @@
     <item>ランニング</item>
     <item>サイクリング</item>
     <item>その他</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>ランニング</item>
-    <item>サイクリング</item>
-    <item>その他</item>
     <item>オリエンテーリング</item>
     <item>ウォーキング</item>
   </string-array>
