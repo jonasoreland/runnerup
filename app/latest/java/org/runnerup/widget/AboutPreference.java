@@ -38,11 +38,8 @@ import org.runnerup.R;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AboutPreference extends DialogPreference {
 
-    private Context context;
-
     public AboutPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
         init(context);
     }
 
@@ -68,8 +65,8 @@ public class AboutPreference extends DialogPreference {
         if (which == DialogInterface.BUTTON_POSITIVE) {
             if (!isPlayPref()) {
                 try {
-                    Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    Uri uri = Uri.parse("market://details?id=" + this.getContext().getPackageName());
+                    this.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -89,8 +86,7 @@ public class AboutPreference extends DialogPreference {
     private void init(Context context) {
         if (isPlayPref()) {
             setNegativeButtonText(null);
-            CharSequence msg = GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(this
-                    .getContext());
+            CharSequence msg = GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(context);
             if (msg != null) {
                 this.setDialogMessage(msg);
             }
