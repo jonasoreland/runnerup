@@ -220,19 +220,20 @@ public class MapWrapper implements Constants {
             if (route != null && map != null &&
                     android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 
-                //zoom on map
-                @SuppressWarnings("ConstantConditions") final LatLngBounds box =
-                        new LatLngBounds.Builder().includes(route.path).build();
-                map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
+                if (route.path.size() > 0) {
+                    //zoom on map
+                    @SuppressWarnings("ConstantConditions") final LatLngBounds box =
+                            new LatLngBounds.Builder().includes(route.path).build();
+                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
 
-                LatLng[] pointsArray = new LatLng[route.path.size()];
-                route.path.toArray(pointsArray);
-                map.addPolyline(new PolylineOptions()
-                        .add(pointsArray)
-                        .color(Color.RED)
-                        .width(3));
-                Log.v(getClass().getName(), "Added polyline");
-
+                    LatLng[] pointsArray = new LatLng[route.path.size()];
+                    route.path.toArray(pointsArray);
+                    map.addPolyline(new PolylineOptions()
+                            .add(pointsArray)
+                            .color(Color.RED)
+                            .width(3));
+                    Log.v(getClass().getName(), "Added polyline");
+                }
                 for (MarkerViewOptions m : route.markers) {
                     map.addMarker(m);
                 }
