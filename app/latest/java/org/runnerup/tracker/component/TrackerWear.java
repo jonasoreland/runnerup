@@ -103,16 +103,18 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     private boolean hasPlay() {
-        boolean res = false;
+        int result;
         try {
-            res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) !=
-                    ConnectionResult.SUCCESS;
-        } catch(Exception e){}
-        return res;
+            result = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        } catch(Exception e) {
+            return false;
+        }
+        return (result == ConnectionResult.SUCCESS);
     }
 
     @Override
     public TrackerComponent.ResultCode onInit(final Callback callback, Context context) {
+        this.context = context;
         if (!hasPlay()) {
             return ResultCode.RESULT_NOT_SUPPORTED;
         }
@@ -126,7 +128,6 @@ public class TrackerWear extends DefaultTrackerComponent
         }
 
         tracker.registerTrackerStateListener(this);
-        this.context = context;
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
