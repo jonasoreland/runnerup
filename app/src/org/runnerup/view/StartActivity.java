@@ -619,6 +619,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             gpsInfoLayout.setVisibility(View.GONE);
             startButton.setEnabled(manualSetValue);
             startButton.setText(getString(R.string.Save_activity));
+            startButton.setEnabled(true);
             return;
         } else if (mGpsStatus.isEnabled() == false) {
             startButton.setEnabled(true);

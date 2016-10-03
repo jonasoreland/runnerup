@@ -50,6 +50,7 @@
         android:layout_below="@+id/manual_date"
         android:prompt="@string/Type"
         android:text="@string/Start_hour"
+        android:defaultValue="now"
         runnerup:type="timepicker" />
 
     <org.runnerup.widget.TitleSpinner
@@ -72,6 +73,7 @@
         android:prompt="@string/Type"
         android:inputType="numberDecimal"
         android:text="@string/Distance"
+        android:defaultValue="0"
         runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner
