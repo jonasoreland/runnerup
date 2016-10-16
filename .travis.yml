@@ -18,8 +18,8 @@ android:
         - tools #latest for "builtin" sdk (24.4.1 in Android-24)
         #To update SDK Tools to latest, another update is required
         #- tools #latest, 25.2.2 as of 2016-09-25
-        - platform-tools #latest, 24.0.3 as of 2016-09-25
-        - build-tools-24.0.2
+        - platform-tools #latest, 24.0.4 as of 2016-10-16
+        - build-tools-24.0.3
         - android-24
         - extra-android-m2repository
         - extra-google-m2repository
