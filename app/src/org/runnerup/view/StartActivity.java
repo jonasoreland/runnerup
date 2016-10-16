@@ -32,7 +32,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,6 +55,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
@@ -88,72 +88,72 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StartActivity extends Activity implements TickListener, GpsInformation {
 
-    final static String TAB_BASIC = "basic";
-    final static String TAB_INTERVAL = "interval";
+    private final static String TAB_BASIC = "basic";
+    private final static String TAB_INTERVAL = "interval";
     final static String TAB_ADVANCED = "advanced";
-    final static String TAB_MANUAL = "manual";
+    private final static String TAB_MANUAL = "manual";
 
-    boolean skipStopGps = false;
-    Tracker mTracker = null;
-    org.runnerup.tracker.GpsStatus mGpsStatus = null;
+    private boolean skipStopGps = false;
+    private Tracker mTracker = null;
+    private org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
-    TabHost tabHost = null;
-    Button startButton = null;
-    TextView gpsInfoView1 = null;
-    TextView gpsInfoView2 = null;
-    View gpsInfoLayout = null;
-    TextView hrInfo = null;
+    private TabHost tabHost = null;
+    private Button startButton = null;
+    private TextView gpsInfoView1 = null;
+    private TextView gpsInfoView2 = null;
+    private View gpsInfoLayout = null;
+    private TextView hrInfo = null;
 
-    ImageButton hrButton = null;
-    TextView hrValueText = null;
-    FrameLayout hrLayout = null;
-    boolean batteryLevelMessageShowed = false;
+    private ImageButton hrButton = null;
+    private TextView hrValueText = null;
+    private FrameLayout hrLayout = null;
+    private boolean batteryLevelMessageShowed = false;
 
-    ImageButton wearButton = null;
-    TextView wearValueText = null;
-    FrameLayout wearLayout = null;
+    //private ImageButton wearButton = null;
+    private TextView wearValueText = null;
+    private FrameLayout wearLayout = null;
 
-    TitleSpinner simpleAudioSpinner = null;
-    AudioSchemeListAdapter simpleAudioListAdapter = null;
-    TitleSpinner simpleTargetType = null;
-    TitleSpinner simpleTargetPaceValue = null;
-    TitleSpinner simpleTargetHrz = null;
-    HRZonesListAdapter hrZonesAdapter = null;
+    private TitleSpinner simpleAudioSpinner = null;
+    private AudioSchemeListAdapter simpleAudioListAdapter = null;
+    private TitleSpinner simpleTargetType = null;
+    private TitleSpinner simpleTargetPaceValue = null;
+    private TitleSpinner simpleTargetHrz = null;
+    private HRZonesListAdapter hrZonesAdapter = null;
 
-    TitleSpinner intervalType = null;
-    TitleSpinner intervalTime = null;
-    TitleSpinner intervalDistance = null;
-    TitleSpinner intervalRestType = null;
-    TitleSpinner intervalRestTime = null;
-    TitleSpinner intervalRestDistance = null;
-    TitleSpinner intervalAudioSpinner = null;
-    AudioSchemeListAdapter intervalAudioListAdapter = null;
+    private TitleSpinner intervalType = null;
+    private TitleSpinner intervalTime = null;
+    private TitleSpinner intervalDistance = null;
+    private TitleSpinner intervalRestType = null;
+    private TitleSpinner intervalRestTime = null;
+    private TitleSpinner intervalRestDistance = null;
+    private TitleSpinner intervalAudioSpinner = null;
+    private AudioSchemeListAdapter intervalAudioListAdapter = null;
 
-    TitleSpinner advancedWorkoutSpinner = null;
-    WorkoutListAdapter advancedWorkoutListAdapter = null;
-    TitleSpinner advancedAudioSpinner = null;
-    AudioSchemeListAdapter advancedAudioListAdapter = null;
-    Button advancedDownloadWorkoutButton = null;
-    Workout advancedWorkout = null;
-    ListView advancedStepList = null;
-    final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
+    private TitleSpinner advancedWorkoutSpinner = null;
+    private WorkoutListAdapter advancedWorkoutListAdapter = null;
+    private TitleSpinner advancedAudioSpinner = null;
+    private AudioSchemeListAdapter advancedAudioListAdapter = null;
+    private Button advancedDownloadWorkoutButton = null;
+    private Workout advancedWorkout = null;
+    private final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
 
-    boolean manualSetValue = false;
-    TitleSpinner manualSport = null;
-    TitleSpinner manualDate = null;
-    TitleSpinner manualTime = null;
-    TitleSpinner manualDistance = null;
-    TitleSpinner manualDuration = null;
-    TitleSpinner manualPace = null;
-    EditText manualNotes = null;
+    private boolean manualSetValue = false;
+    private TitleSpinner manualSport = null;
+    private TitleSpinner manualDate = null;
+    private TitleSpinner manualTime = null;
+    private TitleSpinner manualDistance = null;
+    private TitleSpinner manualDuration = null;
+    private TitleSpinner manualPace = null;
+    private EditText manualNotes = null;
 
-    SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB = null;
 
-    Formatter formatter = null;
+    private Formatter formatter = null;
     private NotificationStateManager notificationStateManager;
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
@@ -188,7 +188,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         hrValueText = (TextView) findViewById(R.id.hr_value_text);
         hrLayout = (FrameLayout) findViewById(R.id.hr_layout);
 
-        wearButton = (ImageButton) findViewById(R.id.wear_button);
+        //wearButton = (ImageButton) findViewById(R.id.wear_button);
         wearValueText = (TextView) findViewById(R.id.wear_value_text);
         wearLayout = (FrameLayout) findViewById(R.id.wear_layout);
 
@@ -267,7 +267,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 return newValue;
             }
         });
-        advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
+        ListView advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
         advancedDownloadWorkoutButton = (Button) findViewById(R.id.advanced_download_button);
@@ -330,7 +330,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             loadAdvanced(null);
         }
 
-        if (mIsBound == false || mTracker == null) {
+        if (!mIsBound || mTracker == null) {
             bindGpsTracker();
         } else {
             onGpsTrackerBound();
@@ -433,7 +433,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 case CONNECTED:
                 case STARTED:
                 case PAUSED:
-                    assert(false);
+                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
                     return;
                 case ERROR:
                     break;
@@ -462,7 +462,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     private void stopGps() {
         Log.e(getClass().getName(), "StartActivity.stopGps() skipStop: " + this.skipStopGps);
-        if (skipStopGps == true)
+        if (skipStopGps)
             return;
 
         if (mGpsStatus != null)
@@ -514,14 +514,13 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 if (dontShowAgain.isChecked()) {
                     prefs.edit().putBoolean(pref_key, true).commit();
                 }
-                return;
             }
         });
 
         prompt.show();
     }
 
-    final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
+    private final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
 
         @Override
         public void onTabChanged(String tabId) {
@@ -564,12 +563,12 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         return w;
     }
 
-    final OnClickListener startButtonClick = new OnClickListener() {
+    private final OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
                 manualSaveButtonClick.onClick(v);
                 return;
-            } else if (mGpsStatus.isEnabled() == false) {
+            } else if (!mGpsStatus.isEnabled()) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
@@ -598,7 +597,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    final OnClickListener hrButtonClick = new OnClickListener() {
+    private final OnClickListener hrButtonClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
 
@@ -620,13 +619,13 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             startButton.setEnabled(manualSetValue);
             startButton.setText(getString(R.string.Save_activity));
             return;
-        } else if (mGpsStatus.isEnabled() == false) {
+        } else if (!mGpsStatus.isEnabled()) {
             startButton.setEnabled(true);
             startButton.setText(getString(R.string.Enable_GPS));
-        } else if (mGpsStatus.isLogging() == false) {
+        } else if (!mGpsStatus.isLogging()) {
             startButton.setEnabled(true);
             startButton.setText(getString(R.string.Start_GPS));
-        } else if (mGpsStatus.isFixed() == false) {
+        } else if (!mGpsStatus.isFixed()) {
             startButton.setEnabled(false);
             startButton.setText(getString(R.string.Waiting_for_GPS));
             notificationStateManager.displayNotificationState(gpsSearchingState);
@@ -671,7 +670,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 }
                 if (hrVal != null) {
                     hrButton.setEnabled(false);
-                    hrValueText.setText(Integer.toString(hrVal));
+                    hrValueText.setText(String.format(Locale.getDefault(), "%d", hrVal));
 
                     if (!batteryLevelMessageShowed) {
                         batteryLevelMessageShowed = true;
@@ -770,7 +769,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
         if (requestCode == 112) {
             skipStopGps = false;
-            if (mIsBound == false || mTracker == null) {
+            if (!mIsBound || mTracker == null) {
                 bindGpsTracker();
             } else {
                 onGpsTrackerBound();
@@ -783,10 +782,28 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     @Override
     public void onTick() {
-        updateView();
+
+        //If some (simple dropdown) Spinners are expanded, updating the view will close the popup
+        if (!(simpleAudioSpinner.isExpandedDropDown() ||
+                intervalAudioSpinner.isExpandedDropDown() ||
+                simpleTargetType.isExpandedDropDown() ||
+                simpleTargetPaceValue.isExpandedDropDown() ||
+                simpleTargetHrz.isExpandedDropDown() ||
+                intervalType.isExpandedDropDown() ||
+                intervalTime.isExpandedDropDown() ||
+                intervalDistance.isExpandedDropDown() ||
+                intervalRestType.isExpandedDropDown() ||
+                intervalRestTime.isExpandedDropDown() ||
+                intervalRestDistance.isExpandedDropDown() ||
+                intervalAudioSpinner.isExpandedDropDown() ||
+                advancedAudioSpinner.isExpandedDropDown() ||
+                advancedWorkoutSpinner.isExpandedDropDown()
+        )) {
+            updateView();
+        }
     }
 
-    final OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
+    private final OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
 
         @Override
         public void onClose(TitleSpinner spinner, boolean ok) {
@@ -798,6 +815,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     void updateTargetView() {
         Dimension dim = Dimension.valueOf(simpleTargetType.getValueInt());
+        //noinspection ConstantConditions
         if (dim == null) {
             simpleTargetPaceValue.setEnabled(false);
             simpleTargetHrz.setEnabled(false);
@@ -816,7 +834,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     }
 
-    final OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
+    private final OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -833,7 +851,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    final OnSetValueListener intervalRestTypeSetValue = new OnSetValueListener() {
+    private final OnSetValueListener intervalRestTypeSetValue = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -876,7 +894,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         }
                     });
             builder.show();
-            return;
         }
     }
 
@@ -892,7 +909,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     final class WorkoutStepsAdapter extends BaseAdapter {
 
-        List<StepListEntry> steps = new ArrayList<StepListEntry>();
+        List<StepListEntry> steps = new ArrayList<>();
 
         @Override
         public int getCount() {
@@ -912,7 +929,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             StepListEntry entry = steps.get(position);
-            StepButton button = null;
+            StepButton button;
             if (convertView != null && convertView instanceof StepButton) {
                 button = (StepButton) convertView;
             } else {
@@ -925,7 +942,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     }
 
-    final Runnable onWorkoutChanged = new Runnable() {
+    private final Runnable onWorkoutChanged = new Runnable() {
         @Override
         public void run() {
             String name = advancedWorkoutSpinner.getValue().toString();
@@ -944,13 +961,12 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                                 }
                             });
                     builder.show();
-                    return;
                 }
             }
         }
     };
 
-    final OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
+    private final OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -969,7 +985,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     };
 
-    final OnSetValueListener onSetValueManual = new OnSetValueListener() {
+    private final OnSetValueListener onSetValueManual = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -998,10 +1014,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         double pace = seconds / dist;
         manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, pace));
         manualPace.setVisibility(View.VISIBLE);
-        return;
     }
 
-    final OnSetValueListener onSetManualDistance = new OnSetValueListener() {
+    private final OnSetValueListener onSetManualDistance = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -1019,7 +1034,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     };
 
-    final OnSetValueListener onSetManualDuration = new OnSetValueListener() {
+    private final OnSetValueListener onSetManualDuration = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -1036,7 +1051,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
     };
 
-    final OnClickListener manualSaveButtonClick = new OnClickListener() {
+    private final OnClickListener manualSaveButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
