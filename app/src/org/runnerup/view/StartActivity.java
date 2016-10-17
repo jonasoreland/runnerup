@@ -158,6 +158,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
     private boolean headsetRegistered = false;
+    private int updateViewTicks = 0;
 
     /** Called when the activity is first created. */
     @Override
@@ -784,22 +785,33 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     public void onTick() {
 
         //If some (simple dropdown) Spinners are expanded, updating the view will close the popup
-        if (!(simpleAudioSpinner.isExpandedDropDown() ||
-                intervalAudioSpinner.isExpandedDropDown() ||
-                simpleTargetType.isExpandedDropDown() ||
-                simpleTargetPaceValue.isExpandedDropDown() ||
-                simpleTargetHrz.isExpandedDropDown() ||
-                intervalType.isExpandedDropDown() ||
-                intervalTime.isExpandedDropDown() ||
-                intervalDistance.isExpandedDropDown() ||
-                intervalRestType.isExpandedDropDown() ||
-                intervalRestTime.isExpandedDropDown() ||
-                intervalRestDistance.isExpandedDropDown() ||
-                intervalAudioSpinner.isExpandedDropDown() ||
-                advancedAudioSpinner.isExpandedDropDown() ||
-                advancedWorkoutSpinner.isExpandedDropDown()
-        )) {
+        //The status for the 'dropdown' may not be updated when the status is closed, so force an update
+        //if status seem to change or "timeout" occurs
+        if (updateViewTicks > 30 ||
+                startButton.isEnabled() != mGpsStatus.isEnabled() ||
+                (mTracker != null && (
+                     mTracker.isComponentConnected(TrackerHRM.NAME) && !hrButton.isEnabled() ||
+                     mTracker.isComponentConnected(TrackerWear.NAME) && wearValueText.getVisibility() != View.VISIBLE)) ||
+
+                !(simpleAudioSpinner.isExpandedDropDown() ||
+                        intervalAudioSpinner.isExpandedDropDown() ||
+                        simpleTargetType.isExpandedDropDown() ||
+                        simpleTargetPaceValue.isExpandedDropDown() ||
+                        simpleTargetHrz.isExpandedDropDown() ||
+                        intervalType.isExpandedDropDown() ||
+                        intervalTime.isExpandedDropDown() ||
+                        intervalDistance.isExpandedDropDown() ||
+                        intervalRestType.isExpandedDropDown() ||
+                        intervalRestTime.isExpandedDropDown() ||
+                        intervalRestDistance.isExpandedDropDown() ||
+                        intervalAudioSpinner.isExpandedDropDown() ||
+                        advancedAudioSpinner.isExpandedDropDown() ||
+                        advancedWorkoutSpinner.isExpandedDropDown()
+                )) {
             updateView();
+            updateViewTicks=0;
+        } else {
+            updateViewTicks++;
         }
     }
 
