@@ -31,6 +31,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
