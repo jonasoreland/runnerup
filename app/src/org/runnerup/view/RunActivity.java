@@ -43,7 +43,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
-import org.runnerup.common.BuildConfig;
+import org.runnerup.BuildConfig;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;

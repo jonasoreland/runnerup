@@ -21,7 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.os.Build;
 
-import org.runnerup.common.BuildConfig;
+import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
 
 import java.util.ArrayList;

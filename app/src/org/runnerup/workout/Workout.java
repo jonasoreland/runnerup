@@ -23,7 +23,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 
-import org.runnerup.common.BuildConfig;
+import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
