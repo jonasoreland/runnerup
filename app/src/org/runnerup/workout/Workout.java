@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Build;
 
+import org.runnerup.common.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
@@ -109,7 +110,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onInit(Workout w) {
-        assert (w == this);
+        if (BuildConfig.DEBUG && w != this) { throw new AssertionError(); }
         for (Step a : steps) {
             a.onInit(this);
         }
@@ -126,7 +127,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onEnd(Workout w) {
-        assert (w == this);
+        if (BuildConfig.DEBUG && w != this) { throw new AssertionError(); }
         for (Step a : steps) {
             a.onEnd(this);
         }
@@ -137,7 +138,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onStart(Scope s, Workout w) {
-        assert (w == this);
+        if (BuildConfig.DEBUG && w != this) { throw new AssertionError(); }
 
         initFeedback();
 
@@ -296,7 +297,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             case LAP:
                 if (currentStep != null)
                     return currentStep.getDistance(this, scope);
-                assert (false);
+                if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 break;
             case CURRENT:
                 break;
@@ -313,7 +314,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             case LAP:
                 if (currentStep != null)
                     return currentStep.getTime(this, scope);
-                assert (false);
+                if (org.runnerup.BuildConfig.DEBUG) { throw new AssertionError(); }
                 break;
             case CURRENT:
                 return System.currentTimeMillis() / 1000; // now
@@ -334,7 +335,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             case LAP:
                 if (currentStep != null)
                     return currentStep.getSpeed(this, scope);
-                assert (false);
+                if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 break;
             case CURRENT:
                 Double s = tracker.getCurrentSpeed();

@@ -148,7 +148,6 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
             case DB.LOCATION.TYPE_DISCARD:
                 return 6;
         }
-        //Instead of assert (false);
         if (BuildConfig.DEBUG) { throw new AssertionError(); }
         return 0;
     }
