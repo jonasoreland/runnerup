@@ -373,6 +373,16 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed () {
+        if (!getAutoStartGps() && mGpsStatus.isLogging()) {
+            stopGps();
+            updateView();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
