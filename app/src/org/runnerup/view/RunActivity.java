@@ -43,6 +43,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
+import org.runnerup.BuildConfig;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
@@ -316,7 +317,7 @@ public class RunActivity extends Activity implements TickListener {
                 // we were paused before stopButtonClick...don't resume
             }
         } else {
-            assert (false);
+            if (BuildConfig.DEBUG) { throw new AssertionError(); }
         }
     }
 

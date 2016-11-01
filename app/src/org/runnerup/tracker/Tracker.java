@@ -31,6 +31,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
@@ -177,7 +178,7 @@ public class Tracker extends android.app.Service implements
             case PAUSED:
             case ERROR:
             case STOPPED:
-                assert(false);
+                if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 return;
             case CLEANUP:
                 /**
@@ -272,7 +273,7 @@ public class Tracker extends android.app.Service implements
             case PAUSED:
             case ERROR:
             case STOPPED:
-                assert(false);
+                if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 return;
         }
 
@@ -311,7 +312,7 @@ public class Tracker extends android.app.Service implements
     }
 
     private long createActivity(int sport) {
-        assert (state.get() == TrackerState.INIT);
+        if (BuildConfig.DEBUG && state.get() != TrackerState.INIT) { throw new AssertionError(); }
         /**
          * Create an Activity instance
          */
@@ -332,7 +333,7 @@ public class Tracker extends android.app.Service implements
 
     public void start() {
 //        Log.e(getClass().getName(), "Tracker.start() state: " + state.get());
-        assert (state.get() == TrackerState.CONNECTED);
+        if (BuildConfig.DEBUG && state.get() != TrackerState.CONNECTED) { throw new AssertionError(); }
 
         // connect workout and tracker
         workout.setTracker(this);
@@ -486,7 +487,7 @@ public class Tracker extends android.app.Service implements
             case INITIALIZED:
             case CONNECTING:
             case CONNECTED:
-                assert (false);
+                if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 return;
             case PAUSED:
             case STOPPED:
@@ -525,7 +526,7 @@ public class Tracker extends android.app.Service implements
                 // it's ok to "abort" connecting
                 break;
             case STARTED:
-                assert(false);
+                if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 return;
             case CLEANUP:
                 return;
@@ -559,8 +560,11 @@ public class Tracker extends android.app.Service implements
     };
 
     public void completeActivity(boolean save) {
-        assert (state.get() == TrackerState.PAUSED ||
-                state.get() == TrackerState.STOPPED);
+        if (BuildConfig.DEBUG &&
+                state.get() != TrackerState.PAUSED &&
+                state.get() != TrackerState.STOPPED) {
+            throw new AssertionError();
+        }
 
         setNextLocationType(DB.LOCATION.TYPE_END);
         if (mActivityLastLocation != null) {
@@ -668,7 +672,7 @@ public class Tracker extends android.app.Service implements
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
                     mHeartbeatMillis += timeDiff; // TODO handle loss of HRM
-                                                  // connection
+                    // connection
                     mMaxHR = Math.max(hrValue, mMaxHR);
                 }
             }
@@ -687,7 +691,7 @@ public class Tracker extends android.app.Service implements
                 case DB.LOCATION.TYPE_PAUSE:
                     break;
                 case DB.LOCATION.TYPE_END:
-                    assert (false);
+                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
                     break;
             }
             liveLog(mLocationType);
