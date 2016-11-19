@@ -180,7 +180,7 @@
   <string name="Autolap">Giri automatici</string>
   <string name="Autolap_m">Giro automatico (m)</string>
   <string name="Autopause">Pausa automatica</string>
-  <string name="Enable_RunnerUpLive">Abilita RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Abilita Live</string>
   <string name="Headset_key_startstop">Usa tasti auricolari per avviare/interrompere</string>
   <string name="Activity_countdown">Countdown inizio attività</string>
   <string name="Countdown_time_s">Durata countdown (s)</string>

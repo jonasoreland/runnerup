@@ -182,7 +182,7 @@
   <string name="Autolap">Autolap</string>
   <string name="Autolap_m">Autolap (m)</string>
   <string name="Autopause">Autopause</string>
-  <string name="Enable_RunnerUpLive">Enable RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Enable Live</string>
   <string name="Headset_key_startstop">Headset key start/stop</string>
   <string name="Activity_countdown">Activity countdown</string>
   <string name="Countdown_time_s">Countdown time (s)</string>
