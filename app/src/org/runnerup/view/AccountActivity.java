@@ -23,11 +23,14 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +40,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -45,13 +49,13 @@ import android.widget.TextView;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.widget.WidgetUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -65,6 +69,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
     long flags;
     SyncManager syncManager = null;
+    private EditText mRunnerUpLiveApiAddress = null;
 
     /** Called when the activity is first created. */
 
@@ -175,6 +180,18 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 }
                 btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));
                 addRow(getResources().getString(R.string.Website) + ":", btn);
+            }
+
+            if (tmp.getAsString(DB.ACCOUNT.NAME).equals(RunnerUpLiveSynchronizer.NAME)) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+                final Resources res = this.getResources();
+                final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+                String postUrl = prefs.getString(res.getString(R.string.pref_runneruplive_serveradress), POST_URL);
+
+                mRunnerUpLiveApiAddress = new EditText(this.getApplicationContext());
+                mRunnerUpLiveApiAddress.setSingleLine();
+                mRunnerUpLiveApiAddress.setText(postUrl, TextView.BufferType.EDITABLE);
+                addRow(getResources().getString(R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
             }
 
             flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
@@ -337,6 +354,14 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     final OnClickListener okButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (mRunnerUpLiveApiAddress != null) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                final Resources res = getResources();
+
+                prefs.edit().putString(res.getString(R.string.pref_runneruplive_serveradress),
+                        mRunnerUpLiveApiAddress.getText().toString()).apply();
+                mRunnerUpLiveApiAddress = null;
+            }
             finish();
         }
     };
