@@ -180,7 +180,7 @@
   <string name="Autolap">Automatische ronde</string>
   <string name="Autolap_m">Automatische ronde (m)</string>
   <string name="Autopause">Automatische pauze</string>
-  <string name="Enable_RunnerUpLive">Aanzetten RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Aanzetten Live</string>
   <string name="Headset_key_startstop">Headset-toets start/stop</string>
   <string name="Activity_countdown">Aftellen activiteit</string>
   <string name="Countdown_time_s">Aftellen tijd (s)</string>

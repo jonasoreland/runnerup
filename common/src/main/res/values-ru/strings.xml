@@ -180,7 +180,7 @@
   <string name="Autolap">Авто круг</string>
   <string name="Autolap_m">Авто круг (м)</string>
   <string name="Autopause">Авто пауза</string>
-  <string name="Enable_RunnerUpLive">Включить RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Включить Live</string>
   <string name="Headset_key_startstop">Кнопка гарнитуры старт/стоп</string>
   <string name="Activity_countdown">Отсчёт до начала тренировки</string>
   <string name="Countdown_time_s">Отсчитывать время (c)</string>

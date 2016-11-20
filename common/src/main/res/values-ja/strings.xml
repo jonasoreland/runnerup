@@ -180,7 +180,7 @@
   <string name="Autolap">自動ラップ</string>
   <string name="Autolap_m">自動ラップ (m)</string>
   <string name="Autopause">自動一時休止</string>
-  <string name="Enable_RunnerUpLive">RunnerUp ライブを有効にする</string>
+  <string name="Enable_RunnerUpLive">ライブを有効にする</string>
   <string name="Headset_key_startstop">ヘッドセットのキーで開始/休止</string>
   <string name="Activity_countdown">アクティビティ カウントダウン</string>
   <string name="Countdown_time_s">カウントダウン時間 (s)</string>

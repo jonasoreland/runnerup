@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
+import org.runnerup.BuildConfig;
 
 import java.util.HashMap;
 
@@ -238,7 +239,10 @@ public class TrackerComponentCollection implements TrackerComponent {
                                     if (!pending.containsKey(key))
                                         return;
                                     TrackerComponent check = pending.remove(key);
-                                    assert (check == component);
+                                    if (BuildConfig.DEBUG && check != component){
+                                        Log.e(getName(), component.getName() + " != " + check.getName());
+                                        throw new AssertionError();
+                                    }
                                     components.put(key, new Pair<TrackerComponent, ResultCode>(
                                             component, resultCode));
                                     if (pending.isEmpty()) {

@@ -180,7 +180,7 @@
   <string name="Autolap">Vuelta automática</string>
   <string name="Autolap_m">Vuelta automática (m)</string>
   <string name="Autopause">Pausar automáticamente</string>
-  <string name="Enable_RunnerUpLive">Activar RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Activar Live</string>
   <string name="Headset_key_startstop">Botón del auticular comienza/termina</string>
   <string name="Activity_countdown">Cuenta atrás para actividad</string>
   <string name="Countdown_time_s">Tiempo de cuenta atrás (s)</string>

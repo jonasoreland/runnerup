@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.os.Build;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
 
 import java.util.ArrayList;
@@ -349,7 +350,7 @@ public class Step implements TickComponent {
         } else if (s == Scope.LAP) {
             return d - lapStartDistance;
         }
-        assert (false);
+        if (BuildConfig.DEBUG) { throw new AssertionError(); }
         return 0;
     }
 
@@ -360,7 +361,7 @@ public class Step implements TickComponent {
         } else if (s == Scope.LAP) {
             return t - lapStartTime;
         }
-        assert (false);
+        if (org.runnerup.BuildConfig.DEBUG) { throw new AssertionError(); }
         return 0;
     }
 

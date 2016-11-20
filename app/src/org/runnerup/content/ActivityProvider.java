@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.format.GPX;
@@ -96,7 +97,7 @@ public class ActivityProvider extends ContentProvider {
         for (int i = 0; i < 3; i++) {
             try {
                 Context ctx = getContext();
-                assert ctx != null;
+                if (BuildConfig.DEBUG && ctx == null) { throw new AssertionError(); }
                 //noinspection UnusedAssignment
                 File path = null;
                 switch (i) {

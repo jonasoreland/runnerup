@@ -176,7 +176,7 @@
   <string name="Autolap">Rundenautomatik</string>
   <string name="Autolap_m">Rundenautomatik (m)</string>
   <string name="Autopause">Pausenautomatik</string>
-  <string name="Enable_RunnerUpLive">RunnerUpLive aktivieren</string>
+  <string name="Enable_RunnerUpLive">Live aktivieren</string>
   <string name="Headset_key_startstop">Headset Taste start/stop</string>
   <string name="Activity_countdown">Aktivität Countdown</string>
   <string name="Countdown_time_s">Countdown-Zeit (s)</string>

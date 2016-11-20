@@ -180,7 +180,7 @@
   <string name="Autolap">Tour automatique</string>
   <string name="Autolap_m">Tour automatique (m)</string>
   <string name="Autopause">Pause automatique</string>
-  <string name="Enable_RunnerUpLive">Activer RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Activer Live</string>
   <string name="Headset_key_startstop">Touche de casque début/fin</string>
   <string name="Activity_countdown">Compte à rebours avant démarrage séance</string>
   <string name="Countdown_time_s">Compte à rebours (s)</string>

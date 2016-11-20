@@ -56,6 +56,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
@@ -433,7 +434,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 case CONNECTED:
                 case STARTED:
                 case PAUSED:
-                    assert(false);
+                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
                     return;
                 case ERROR:
                     break;

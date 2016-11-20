@@ -98,13 +98,14 @@ public class GpsStatus implements LocationListener,
         this.listener = null;
         if (locationManager != null) {
             locationManager.removeGpsStatusListener(this);
-            if (ContextCompat.checkSelfPermission(this.context,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
+
+            try {
                 locationManager.removeUpdates(this);
+            } catch (SecurityException ex) {
+                //Ignore if user turn off GPS
             }
-            locationManager = null;
         }
+        locationManager = null;
     }
 
     @Override

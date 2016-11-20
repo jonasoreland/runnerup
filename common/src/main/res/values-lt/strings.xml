@@ -180,7 +180,7 @@
   <string name="Autolap">Automatinis etapas</string>
   <string name="Autolap_m">Automatinis etapas (m)</string>
   <string name="Autopause">Automatinė pauzė</string>
-  <string name="Enable_RunnerUpLive">Leisti RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Leisti Live</string>
   <string name="Headset_key_startstop">Laisvų rankų įrangos start/stop mygtukas</string>
   <string name="Activity_countdown">Veiklos atskaita</string>
   <string name="Countdown_time_s">Atskaitos laikas (s)</string>

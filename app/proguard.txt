@@ -12,3 +12,5 @@
 -dontwarn sun.misc.Unsafe
 -dontwarn java.lang.invoke.**
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn okhttp3.internal.http.HttpEngine
+-dontwarn okhttp3.internal.Platform
