@@ -136,15 +136,6 @@
             android:title="@string/Mapbox_default_style" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="http://weide.devsparkles.se/api/Resource/"
-            android:dependency="@string/pref_runneruplive_active"
-            android:inputType="text"
-            android:key="@string/pref_runneruplive_serveradress"
-            android:persistent="true"
-            android:title="@string/RunnerUp_live_address"
-            android:enabled="true" />
-
-        <org.runnerup.widget.TextPreference
             android:defaultValue="3"
             android:dependency="@string/pref_autopause_active"
             android:inputType="number"
