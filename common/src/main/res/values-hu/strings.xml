@@ -180,7 +180,7 @@
   <string name="Autolap">Automata kör</string>
   <string name="Autolap_m">Automata kör (m)</string>
   <string name="Autopause">Automata szünet</string>
-  <string name="Enable_RunnerUpLive">RunnerUpLive engedélyezése</string>
+  <string name="Enable_RunnerUpLive">Live engedélyezése</string>
   <string name="Headset_key_startstop">Fülhallgató gomb indítás/megállítás</string>
   <string name="Activity_countdown">Tevékenység visszaszámlálás</string>
   <string name="Countdown_time_s">Visszaszámlálás ideje (s)</string>

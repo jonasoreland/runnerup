@@ -180,7 +180,7 @@
   <string name="Autolap">Putaran otomatis</string>
   <string name="Autolap_m">Putaran otomatis (m)</string>
   <string name="Autopause">Jeda otomatis</string>
-  <string name="Enable_RunnerUpLive">Hidupkan RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Hidupkan Live</string>
   <string name="Headset_key_startstop">Tombol start/stop headset</string>
   <string name="Activity_countdown">Hitung mundur aktivitas</string>
   <string name="Countdown_time_s">Waktu hitung mundur (d)</string>

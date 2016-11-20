@@ -312,7 +312,6 @@ public class Tracker extends android.app.Service implements
     }
 
     private long createActivity(int sport) {
-        if (BuildConfig.DEBUG && state.get() != TrackerState.INIT) { throw new AssertionError(); }
         /**
          * Create an Activity instance
          */
@@ -691,7 +690,7 @@ public class Tracker extends android.app.Service implements
                 case DB.LOCATION.TYPE_PAUSE:
                     break;
                 case DB.LOCATION.TYPE_END:
-                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                    if (!internal && BuildConfig.DEBUG) { throw new AssertionError(); }
                     break;
             }
             liveLog(mLocationType);

@@ -31,12 +31,14 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ViewTreeObserver;
 
 import com.mapbox.mapboxsdk.MapboxAccountManager;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
@@ -100,7 +102,6 @@ public class MapWrapper implements Constants {
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
                 setStyle();
-
                 new LoadRoute().execute(new LoadParam(context, mDB, mID));
             }
         });
@@ -129,15 +130,16 @@ public class MapWrapper implements Constants {
 
     class Route {
         final List<LatLng> path = new ArrayList<>(10);
-        final ArrayList<MarkerViewOptions > markers = new ArrayList<>(10);
+        final ArrayList<MarkerViewOptions> markers = new ArrayList<>(10);
     }
 
     private class LoadParam {
-        public LoadParam(Context context, SQLiteDatabase mDB, long mID) {
+        LoadParam(Context context, SQLiteDatabase mDB, long mID) {
             this.context = context;
             this.mDB = mDB;
             this.mID = mID;
         }
+
         final Context context;
         final SQLiteDatabase mDB;
         final long mID;
@@ -160,7 +162,7 @@ public class MapWrapper implements Constants {
                 String title = null;
                 Drawable iconDrawable = null;
                 //Start/end markers are not set in db, special handling
-                if(route.markers.isEmpty()) {
+                if (route.markers.isEmpty()) {
                     type = DB.LOCATION.TYPE_START;
                 }
                 switch (type) {
@@ -193,9 +195,9 @@ public class MapWrapper implements Constants {
                 }
                 if (title != null) {
                     String snippet = formatter.formatDistance(TXT_SHORT, loc.getDistance().longValue()) + " " +
-                            formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed()/1000.0));
+                            formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed() / 1000.0));
                     Icon icon = iconFactory.fromDrawable(iconDrawable);
-                    m = new MarkerViewOptions().title(title).position(point).snippet(snippet).icon(icon).anchor(0.5f,86f/96f);
+                    m = new MarkerViewOptions().title(title).position(point).snippet(snippet).icon(icon).anchor(0.5f, 86f / 96f);
 
                     if (type == DB.LOCATION.TYPE_START) {
                         m.snippet(null);
@@ -205,7 +207,7 @@ public class MapWrapper implements Constants {
             }
             ll.close();
             //Track is ended with a pause, replace with end
-            if(!route.markers.isEmpty()) {
+            if (!route.markers.isEmpty()) {
                 MarkerViewOptions m = route.markers.get(route.markers.size() - 1);
                 Drawable iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.end_map_marker);
                 Icon icon = iconFactory.fromDrawable(iconDrawable);
@@ -220,11 +222,7 @@ public class MapWrapper implements Constants {
             if (route != null && map != null &&
                     android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 
-                if (route.path.size() > 0) {
-                    //zoom on map
-                    @SuppressWarnings("ConstantConditions") final LatLngBounds box =
-                            new LatLngBounds.Builder().includes(route.path).build();
-                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(box, 50));
+                if (route.path.size() > 1) {
 
                     LatLng[] pointsArray = new LatLng[route.path.size()];
                     route.path.toArray(pointsArray);
@@ -233,9 +231,42 @@ public class MapWrapper implements Constants {
                             .color(Color.RED)
                             .width(3));
                     Log.v(getClass().getName(), "Added polyline");
+
+                    final LatLngBounds box =
+                            new LatLngBounds.Builder().includes(route.path).build();
+                    final CameraUpdate initialCameraPosition = CameraUpdateFactory.newLatLngBounds(box, 50);
+                    map.moveCamera(initialCameraPosition);
+
+                    //Since MapBox 4.2.0-beta.3 moving the camera in onMapReady is not working if map is not visible
+                    //The workaround (so far) is to try move the camera at view updates as long as position is 0,0
+                    //https://github.com/mapbox/mapbox-gl-native/issues/6855#event-841575956 (and related issues)
+                    mapView.getViewTreeObserver().addOnGlobalLayoutListener(
+                            new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @SuppressWarnings("deprecation")
+                                // We check which build version we are using.
+                                @Override
+                                public void onGlobalLayout() {
+                                    if (map.getCameraPosition().target.getLatitude() != 0 ||
+                                            map.getCameraPosition().target.getLongitude() != 0) {
+                                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                                            mapView.getViewTreeObserver()
+                                                    .removeGlobalOnLayoutListener(this);
+                                        } else {
+                                            mapView.getViewTreeObserver()
+                                                    .removeOnGlobalLayoutListener(this);
+                                        }
+
+                                    } else {
+                                        map.moveCamera(initialCameraPosition);
+                                    }
+                                }
+                            });
                 }
-                for (MarkerViewOptions m : route.markers) {
-                    map.addMarker(m);
+
+                if (route.markers.size() > 0) {
+                    for (MarkerViewOptions m : route.markers) {
+                        map.addMarker(m);
+                    }
                 }
                 Log.v(getClass().getName(), "Added " + route.markers.size() + " markers");
             }
