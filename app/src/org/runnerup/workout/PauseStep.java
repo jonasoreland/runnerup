@@ -20,6 +20,8 @@ package org.runnerup.workout;
 import android.annotation.TargetApi;
 import android.os.Build;
 
+import org.runnerup.BuildConfig;
+
 import java.util.HashMap;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -32,7 +34,7 @@ public class PauseStep extends Step {
     @Override
     public void onInit(Workout s) {
         super.onInit(s);
-        assert (getIntensity() == Intensity.RESTING && getDurationType() == Dimension.TIME);
+        if (BuildConfig.DEBUG && (getIntensity() != Intensity.RESTING || getDurationType() != Dimension.TIME)) { throw new AssertionError(); }
         saveDurationValue = super.durationValue;
     }
 
