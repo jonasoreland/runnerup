@@ -21,6 +21,8 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.util.Log;
 
+import org.runnerup.BuildConfig;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TargetTrigger extends Trigger {
 
@@ -213,7 +215,7 @@ public class TargetTrigger extends Trigger {
                 if (dimension == Dimension.PACE) {
                     return delta_time / delta_distance;
                 } else {
-                    assert (dimension == Dimension.SPEED);
+                    if (BuildConfig.DEBUG && dimension != Dimension.SPEED) { throw new AssertionError(); }
                     return delta_distance / delta_time;
                 }
             case DISTANCE:
