@@ -180,7 +180,7 @@
   <string name="Autolap">Auto-okrążenie</string>
   <string name="Autolap_m">Auto-okrążenie (m)</string>
   <string name="Autopause">Autopauza</string>
-  <string name="Enable_RunnerUpLive">Włącz RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Włącz Live</string>
   <string name="Headset_key_startstop">Sterowanie słuchawkami (start/stop/pauza)</string>
   <string name="Activity_countdown">Odliczanie</string>
   <string name="Countdown_time_s">Czas odliczania (s)</string>
