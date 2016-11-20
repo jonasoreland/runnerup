@@ -180,7 +180,7 @@
   <string name="Autolap">Volta automática</string>
   <string name="Autolap_m">Volta automática (m)</string>
   <string name="Autopause">Pausa automática</string>
-  <string name="Enable_RunnerUpLive">Ativar RunnerUpLive</string>
+  <string name="Enable_RunnerUpLive">Ativar Live</string>
   <string name="Headset_key_startstop">Chave do headset inicia/para</string>
   <string name="Activity_countdown">Contagem regressiva de atividade</string>
   <string name="Countdown_time_s">Tempo da contagem regressiva (s)</string>
