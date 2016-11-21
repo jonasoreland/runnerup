@@ -94,7 +94,7 @@ public class WorkoutBuilder {
         } else if (target == Dimension.HRZ) {
             HRZones hrCalc = new HRZones(res, prefs);
             int zone = prefs.getInt(res.getString(R.string.pref_basic_target_hrz), 0);
-            if (zone > 0) {
+            if (zone >= 0) {
                 Pair<Integer, Integer> vals = hrCalc.getHRValues(zone + 1);
                 if (vals != null) {
                     step.targetType = Dimension.HR;
