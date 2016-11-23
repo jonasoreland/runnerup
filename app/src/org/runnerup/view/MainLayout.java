@@ -33,6 +33,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -120,6 +121,15 @@ public class MainLayout extends TabActivity
 
         Log.e(getClass().getName(), "app-version: " + versionCode + ", upgradeState: " + upgradeState
                 + ", km: " + km);
+
+        // convert pref_mute from string to boolean
+        Resources res = getResources();
+        pref.edit().putString(res.getString(R.string.pref_mute), "yes").commit();
+        try {
+            String v = pref.getString(res.getString(R.string.pref_mute), "no");
+            pref.edit().putBoolean(res.getString(R.string.pref_mute), v.equalsIgnoreCase("yes")).commit();
+        } catch (Exception e) {
+        }
 
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
         PreferenceManager.setDefaultValues(this, R.xml.audio_cue_settings, true);
