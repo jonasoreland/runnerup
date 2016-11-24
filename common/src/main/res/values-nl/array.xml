@@ -34,11 +34,6 @@
     <item>Lopen</item>
     <item>Fietsen</item>
     <item>Andere</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>Lopen</item>
-    <item>Fietsen</item>
-    <item>Andere</item>
     <item>Orienteren</item>
     <item>Wandelen</item>
   </string-array>

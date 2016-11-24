@@ -29,11 +29,6 @@
     <item>Córrer</item>
     <item>Ciclisme</item>
     <item>Altre</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>Córrer</item>
-    <item>Ciclisme</item>
-    <item>Altre</item>
     <item>Orientació</item>
     <item>Caminar</item>
   </string-array>

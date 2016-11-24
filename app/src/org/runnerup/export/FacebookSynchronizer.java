@@ -356,7 +356,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         Part<?> parts[] = new Part<?>[list.size()];
         list.toArray(parts);
 
-        URL url2 = new URL(sport == DB.ACTIVITY.SPORT_RUNNING ? RUN_ENDPOINT : BIKE_ENDPOINT);
+        URL url2 = new URL(sport == DB.ACTIVITY.SPORT_BIKING ? BIKE_ENDPOINT : RUN_ENDPOINT);
         return createObj(url2, parts);
     }
 

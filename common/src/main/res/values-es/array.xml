@@ -34,11 +34,6 @@
     <item>Carrera</item>
     <item>Ciclismo</item>
     <item>Otro</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>Carrera</item>
-    <item>Ciclismo</item>
-    <item>Otro</item>
     <item>Orientación</item>
     <item>Caminar</item>
   </string-array>
