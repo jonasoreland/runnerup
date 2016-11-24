@@ -23,11 +23,14 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +40,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -45,26 +49,27 @@ import android.widget.TextView;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.widget.WidgetUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountActivity extends AppCompatActivity implements Constants {
-    long synchronizerID = -1;
-    String synchronizer = null;
-    Integer synchronizerIcon = null;
+    private long synchronizerID = -1;
+    private String synchronizer = null;
+    private Integer synchronizerIcon = null;
 
-    SQLiteDatabase mDB = null;
-    final ArrayList<Cursor> mCursors = new ArrayList<Cursor>();
+    private SQLiteDatabase mDB = null;
+    private final ArrayList<Cursor> mCursors = new ArrayList<>();
 
-    long flags;
-    SyncManager syncManager = null;
+    private long flags;
+    private SyncManager syncManager = null;
+    private EditText mRunnerUpLiveApiAddress = null;
 
     /** Called when the activity is first created. */
 
@@ -145,6 +150,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
         if (c.moveToFirst()) {
             ContentValues tmp = DBHelper.get(c);
+            //noinspection ConstantConditions
             synchronizerID = tmp.getAsLong("_id");
             Synchronizer synchronizer = syncManager.add(tmp);
 
@@ -168,13 +174,25 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             if (tmp.containsKey(DB.ACCOUNT.URL)) {
                 Button btn = new Button(this);
                 btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
-                //TODO SDK 24 requires the file URI to be handled as FileProvider, dont care yet
+                //TODO SDK 24 requires the file URI to be handled as FileProvider, don't care yet
                 //For <= 24, something like OI File Manager is needed too
                 if(Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.AUTH_METHOD).contains("filepermission")) {
                     btn.setOnClickListener(urlButtonClick);
                 }
                 btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));
                 addRow(getResources().getString(R.string.Website) + ":", btn);
+            }
+
+            if (tmp.getAsString(DB.ACCOUNT.NAME).equals(RunnerUpLiveSynchronizer.NAME)) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+                final Resources res = this.getResources();
+                final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+                String postUrl = prefs.getString(res.getString(R.string.pref_runneruplive_serveradress), POST_URL);
+
+                mRunnerUpLiveApiAddress = new EditText(this.getApplicationContext());
+                mRunnerUpLiveApiAddress.setSingleLine();
+                mRunnerUpLiveApiAddress.setText(postUrl, TextView.BufferType.EDITABLE);
+                addRow(getResources().getString(R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
             }
 
             flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
@@ -249,7 +267,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         return true;
     }
 
-    final OnClickListener clearUploadsButtonClick = new OnClickListener() {
+    private final OnClickListener clearUploadsButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -276,7 +294,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener uploadButtonClick = new OnClickListener() {
+    private final OnClickListener uploadButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
@@ -289,7 +307,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener downloadButtonClick = new OnClickListener() {
+    private final OnClickListener downloadButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -303,7 +321,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener urlButtonClick = new OnClickListener() {
+    private final OnClickListener urlButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String) v
@@ -312,7 +330,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnCheckedChangeListener sendCBChecked = new OnCheckedChangeListener() {
+    private final OnCheckedChangeListener sendCBChecked = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             ContentValues tmp = new ContentValues();
@@ -334,14 +352,22 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener okButtonClick = new OnClickListener() {
+    private final OnClickListener okButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (mRunnerUpLiveApiAddress != null) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                final Resources res = getResources();
+
+                prefs.edit().putString(res.getString(R.string.pref_runneruplive_serveradress),
+                        mRunnerUpLiveApiAddress.getText().toString()).commit();
+                mRunnerUpLiveApiAddress = null;
+            }
             finish();
         }
     };
 
-    final OnClickListener disconnectButtonClick = new OnClickListener() {
+    private final OnClickListener disconnectButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final CharSequence items[] = {
                 getString(R.string.Clear_uploads_from_phone)
@@ -379,13 +405,13 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final SyncManager.Callback callback = new SyncManager.Callback() {
+    private final SyncManager.Callback callback = new SyncManager.Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
         }
     };
 
-    final SyncManager.Callback disconnectCallback = new SyncManager.Callback() {
+    private final SyncManager.Callback disconnectCallback = new SyncManager.Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
             finish();
