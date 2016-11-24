@@ -71,6 +71,12 @@
 		android:persistent="true"
 		android:title="@string/Mute_music_during_audio_cues" />
 
+	<CheckBoxPreference
+		android:defaultValue="true"
+		android:persistent="true"
+		android:key="@string/cue_hrm_connection"
+		android:title="@string/HRM_connection_audio_cue" />
+
 	<PreferenceCategory android:key="cueinfo" android:title="@string/Cue_information">
 		<CheckBoxPreference
 			android:defaultValue="false"
