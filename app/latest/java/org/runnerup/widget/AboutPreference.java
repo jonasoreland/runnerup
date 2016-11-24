@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.DialogPreference;
@@ -56,14 +57,15 @@ public class AboutPreference extends DialogPreference {
         return res;
     }
 
-    private boolean isPlayPref() {
-        return this.getKey() != null && this.getKey().contentEquals("googleplayserviceslegalnotices");
+    private boolean isPlayPref(Context ctx) {
+        Resources res = ctx.getResources();
+        return this.getKey() != null && this.getKey().contentEquals(res.getString(R.string.pref_googleplayserviceslegalnotices));
     }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            if (!isPlayPref()) {
+            if (!isPlayPref(this.getContext())) {
                 try {
                     Uri uri = Uri.parse("market://details?id=" + this.getContext().getPackageName());
                     this.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
@@ -77,14 +79,14 @@ public class AboutPreference extends DialogPreference {
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        if (!isPlayPref()) {
+        if (!isPlayPref(this.getContext())) {
             WebView wv = (WebView) view.findViewById(R.id.web_view1);
             wv.loadUrl("file:///android_asset/about.html");
         }
     }
 
     private void init(Context context) {
-        if (isPlayPref()) {
+        if (isPlayPref(context)) {
             setNegativeButtonText(null);
             CharSequence msg = GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(context);
             if (msg != null) {

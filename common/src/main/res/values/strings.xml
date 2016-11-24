@@ -202,8 +202,8 @@
   <string name="Step_countdown_time_s">Step countdown time (s)</string>
   <string name="Smooth_pace_graph">Smooth pace graph</string>
   <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
-  <string name="Poll_interval_ms">Poll interval (ms)</string>
-  <string name="Poll_distance_m">Poll distance (m)</string>
+  <string name="Poll_interval_ms">GPS Poll interval (ms)</string>
+  <string name="Poll_distance_m">GPS Poll distance (m)</string>
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
@@ -308,4 +308,7 @@
   <string name="Unknown">Unknown</string>
   <string name="RunningFreeOnlinePasswordNotice">Note: As password, use the \"secret key\" set on website under Add > Sync Training > SportTracks.</string>
   <string name="GoToWebsite">Go to website</string>
+  <string name="Recording">Recording</string>
+  <string name="Sensors">Sensors</string>
+  <string name="Maintenance">Maintenance</string>
 </resources>
