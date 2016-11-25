@@ -176,17 +176,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                             BluetoothGattCharacteristic.FORMAT_UINT8, 1);
                 }
 
-                if (hrValue == 0) {
-                    if (mIsConnecting) {
-                        reportConnectFailed("got hrValue = 0 => reportConnectFailed");
-                        return;
-                    }
-                    log("got hrValue == 0 => disconnecting");
-                    reportDisconnected();
-                    return;
+                if (hrValue > 0) {
+                    hrTimestamp = System.currentTimeMillis();
                 }
-
-                hrTimestamp = System.currentTimeMillis();
 
                 if (mIsConnecting) {
                     reportConnected(true);
