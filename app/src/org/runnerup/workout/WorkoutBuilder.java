@@ -277,7 +277,7 @@ public class WorkoutBuilder {
             ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
             triggers.add(ev2);
 
-            if (prefs.getBoolean(res.getString(R.string.cue_hrm_connection), true)) {
+            if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), true)) {
                 HRMStateTrigger hrmState = new HRMStateTrigger();
                 hrmState.triggerAction.add(new HRMStateChangeFeedback(hrmState));
                 triggers.add(hrmState);

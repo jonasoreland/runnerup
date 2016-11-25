@@ -74,7 +74,7 @@
 	<CheckBoxPreference
 		android:defaultValue="true"
 		android:persistent="true"
-		android:key="@string/cue_hrm_connection"
+		android:key="@string/pref_cue_hrm_connection"
 		android:title="@string/HRM_connection_audio_cue" />
 
 	<PreferenceCategory android:key="cueinfo" android:title="@string/Cue_information">
