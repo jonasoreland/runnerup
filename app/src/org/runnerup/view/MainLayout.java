@@ -122,12 +122,15 @@ public class MainLayout extends TabActivity
         Log.e(getClass().getName(), "app-version: " + versionCode + ", upgradeState: " + upgradeState
                 + ", km: " + km);
 
-        // convert pref_mute from string to boolean
+        // convert pref_mute to pref_mute_bool
         Resources res = getResources();
-        pref.edit().putString(res.getString(R.string.pref_mute), "yes").commit();
         try {
-            String v = pref.getString(res.getString(R.string.pref_mute), "no");
-            pref.edit().putBoolean(res.getString(R.string.pref_mute), v.equalsIgnoreCase("yes")).commit();
+            if (pref.contains(res.getString(R.string.pref_mute))) {
+                String v = pref.getString(res.getString(R.string.pref_mute), "no");
+                editor.putBoolean(res.getString(R.string.pref_mute_bool), v.equalsIgnoreCase("yes"));
+                editor.remove(res.getString(R.string.pref_mute));
+                editor.commit();
+            }
         } catch (Exception e) {
         }
 

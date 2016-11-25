@@ -79,7 +79,7 @@ public class TrackerTTS extends DefaultTrackerComponent {
     }
 
     RUTextToSpeech getTTS(SharedPreferences prefs) {
-        final boolean mute = prefs.getBoolean(context.getString(R.string.pref_mute), false);
+        final boolean mute = prefs.getBoolean(context.getString(R.string.pref_mute_bool), false);
         ruTTS = new RUTextToSpeech(tts, mute, context);
         return ruTTS;
     }

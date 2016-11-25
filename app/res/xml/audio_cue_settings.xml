@@ -66,7 +66,7 @@
 	<CheckBoxPreference
 		android:defaultValue="false"
 		android:persistent="true"
-		android:key="@string/pref_mute"
+		android:key="@string/pref_mute_bool"
 		android:title="@string/Mute_music_during_audio_cues" />
 
 	<PreferenceCategory android:key="cueinfo" android:title="@string/Cue_information">

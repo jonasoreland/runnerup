@@ -393,7 +393,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 else
                     prefs = getApplicationContext().getSharedPreferences(settingsName + SUFFIX,
                             Context.MODE_PRIVATE);
-                final boolean mute = prefs.getBoolean(getResources().getString(R.string.pref_mute),
+                final boolean mute = prefs.getBoolean(getResources().getString(R.string.pref_mute_bool),
                         false);
 
                 Workout w = Workout.fakeWorkoutForTestingAudioCue();
