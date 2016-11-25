@@ -393,8 +393,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 else
                     prefs = getApplicationContext().getSharedPreferences(settingsName + SUFFIX,
                             Context.MODE_PRIVATE);
-                final String mute = prefs.getString(getResources().getString(R.string.pref_mute),
-                        "no");
+                final boolean mute = prefs.getBoolean(getResources().getString(R.string.pref_mute_bool),
+                        false);
 
                 Workout w = Workout.fakeWorkoutForTestingAudioCue();
                 RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
