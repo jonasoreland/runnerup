@@ -1,7 +1,6 @@
 package org.runnerup.workout.feedback;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.runnerup.R;
 import org.runnerup.workout.HRMStateTrigger;
@@ -15,7 +14,7 @@ public class HRMStateChangeFeedback extends AudioFeedback {
 
     protected String getCue(Workout w, Context ctx) {
         String cue =  ctx.getResources().getString((w.getHeartRate(Scope.CURRENT) == 0)
-                ? R.string.cur_hrm_connection_lost
+                ? R.string.cue_hrm_connection_lost
                 : R.string.cue_hrm_connection_restored);
         return (cue);
     }
