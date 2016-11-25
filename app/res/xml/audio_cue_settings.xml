@@ -63,12 +63,10 @@
 		android:key="@string/cue_end_of_lap"
 		android:title="@string/End_of_lap_audio_cue" />
 
-	<ListPreference
-		android:defaultValue="yes"
-		android:entries="@array/muteEntries"
-		android:entryValues="@array/muteValues"
-		android:key="@string/pref_mute"
+	<CheckBoxPreference
+		android:defaultValue="false"
 		android:persistent="true"
+		android:key="@string/pref_mute"
 		android:title="@string/Mute_music_during_audio_cues" />
 
 	<PreferenceCategory android:key="cueinfo" android:title="@string/Cue_information">
