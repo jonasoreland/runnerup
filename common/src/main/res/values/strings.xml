@@ -311,4 +311,7 @@
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Maintenance</string>
+  <string name="cue_hrm_connection_restored">Restored connection to heart rate monitor</string>
+  <string name="cue_hrm_connection_lost">Lost connection to heart rate monitor</string>
+  <string name="HRM_connection_audio_cue">HRM connection triggered audio cue</string>
 </resources>
