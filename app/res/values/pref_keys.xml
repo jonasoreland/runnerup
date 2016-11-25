@@ -26,7 +26,12 @@
 	<string name="pref_pollDistance">pref_pollDistance</string>
 	<string name="pref_mute">pref_mute</string>
 
-	<string name="cue_time">cue_time</string>
+    <string name="cue_configure_hrzones">cue_configure_hrzones</string>
+    <string name="pref_cue_accounts">pref_cue_accounts</string>
+    <string name="pref_cue_audiocues">pref_cue_audiocues</string>
+    <string name="pref_cue_workouts">pref_cue_workouts</string>
+
+    <string name="cue_time">cue_time</string>
     <string name="cue_time_intervall">cue_time_intervall</string>
     <string name="cue_distance">cue_distance</string>
     <string name="cue_distance_intervall">cue_distance_intervall</string>
@@ -96,7 +101,6 @@
     <string name="pref_mapbox_default_style">pref_mapbox_default_style</string>
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
-    <string name="pref_runneruplive_username">pref_runneruplive_username</string>
 
     <string name="pref_keystartstop_active">pref_keystartstop_active</string>
 
@@ -123,6 +127,11 @@
     <string name="pref_battery_level_high_threshold">batterylevelHighThreshold</string>
     <string name="pref_battery_level_low_notification_discard">batteryLevelLowDialog</string>
 
+    <string name="pref_exportdb">pref_cue_workouts</string>
+    <string name="pref_importdb">pref_importdb</string>
+    <string name="pref_prunedb">pref_prunedb</string>
+    <string name="pref_aboutcategory">pref_aboutcategory</string>
+    <string name="pref_googleplayserviceslegalnotices">pref_googleplayserviceslegalnotices</string>
     <string name="pref_experimental_features">pref_experimental_features</string>
 
     <string name="pref_audio_lang">pref_audio_lang</string>

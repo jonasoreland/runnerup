@@ -34,11 +34,6 @@
     <item>Futás</item>
     <item>Kerékpározás</item>
     <item>Egyéb</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>Futás</item>
-    <item>Kerékpározás</item>
-    <item>Egyév</item>
     <item>Tájfutás</item>
     <item>Gyaloglás</item>
   </string-array>

@@ -34,11 +34,6 @@
     <item>Bėgimas</item>
     <item>Dviračių sportas</item>
     <item>Kita</item>
-  </string-array>
-  <string-array name="sportEntriesExperimental">
-    <item>Bėgimas</item>
-    <item>Dviračių sportas</item>
-    <item>Kita</item>
     <item>Orientacijios sportas</item>
     <item>Ėjimas</item>
   </string-array>

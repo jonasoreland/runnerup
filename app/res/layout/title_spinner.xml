@@ -46,6 +46,7 @@
 
     <Spinner
         android:id="@+id/spinner"
+        android:spinnerMode="dialog"
         android:layout_width="0dp"
         android:layout_height="0dp" />
 </LinearLayout>
