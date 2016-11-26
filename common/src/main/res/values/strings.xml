@@ -160,7 +160,7 @@
   <string name="No">No</string>
   <string name="Loading">Loading…</string>
   <string name="Saving">Saving</string>
-  <string name="Cancellingplease_wait">Cancelling…please wait</string>
+  <string name="Cancellingplease_wait">Cancelling… please wait</string>
   <string name="try_again_later">try again later!</string>
   <string name="Are_you_sure">Are you sure?</string>
   <string name="Configure_audio_cues">Configure audio cues</string>
@@ -170,10 +170,10 @@
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Convert rest-step with type distance to recovery-step for Interval-tab</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Convert rest-step with type distance to recovery-step for Advanced-tab</string>
   <string name="mm31kz513sg5" translatable="false">mm(31);kz(5,13);sg(5)</string>
-  <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to sdcard (e.g for upgrade)</string>
-  <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from sdcard (e.g after upgrade)</string>
+  <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to SD-card (e.g for upgrade)</string>
+  <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from SD-card (e.g after upgrade)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if having set target)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Keep silent when workout start/pause/resume/stop</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Silent start/pause/resume/stop of workouts</string>
   <string name="Test_audio_cue">Test audio cue</string>
   <string name="Accounts">Accounts</string>
   <string name="Audio_cues">Audio cues</string>
