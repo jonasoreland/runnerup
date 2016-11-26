@@ -24,6 +24,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
+import org.matthiaszimmermann.location.egm96.Geoid;
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.LocationListenerBase;
 
@@ -34,12 +35,14 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
     private SQLiteDatabase mDB;
     private java.lang.String mTable;
     private ContentValues mKey;
+    private boolean altitudeCorrection;
 
     public PersistentGpsLoggerListener(SQLiteDatabase _db, String _table,
-            ContentValues _key) {
+            ContentValues _key, boolean altitudeCorrection) {
         this.mLock = new java.lang.Object();
         this.mDB = _db;
         this.mTable = _table;
+        this.altitudeCorrection = altitudeCorrection;
         setKey(_key);
     }
 
@@ -89,7 +92,12 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
         values.put(DB.LOCATION.LATITUDE, arg0.getLatitude());
         values.put(DB.LOCATION.LONGITUDE, arg0.getLongitude());
         if (arg0.hasAltitude()) {
-            values.put(DB.LOCATION.ALTITUDE, arg0.getAltitude());
+            double altitude = arg0.getAltitude();
+            if (this.altitudeCorrection) {
+                altitude -= Geoid.getOffset(arg0.getLatitude(),
+                        arg0.getLongitude());
+            }
+            values.put(DB.LOCATION.ALTITUDE, altitude);
         }
 
         //Accuracy related, normally not used in exports
