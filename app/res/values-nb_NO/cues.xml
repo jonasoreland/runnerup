@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">aktivitet</string>
+  <string name="cue_interval">intervall</string>
+  <string name="cue_lap">runde</string>
+  <string name="cue_warmup">oppvarming</string>
+  <string name="cue_cooldown">nedkjøling</string>
+  <string name="cue_current">nåværende</string>
+  <string name="cue_recovery">restitusjon</string>
+  <string name="cue_perkilometer">per kilometer</string>
+  <string name="cue_permile">per mil</string>
+  <string name="cue_perhour">per time</string>
+  <string name="cue_started">startet</string>
+  <string name="cue_paused">satt på pause</string>
+  <string name="cue_resumed">gjenopptatt</string>
+  <string name="cue_stopped">stoppet</string>
+  <string name="cue_completed">fullført</string>
+  <string name="cue_speedup">tempoøkning</string>
+  <string name="cue_slowdown">sakk av</string>
+  <plurals name="cue_hour">
+    <item quantity="one">time</item>
+    <item quantity="other">timer</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">minutt</item>
+    <item quantity="other">minutter</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">sekund</item>
+    <item quantity="other">sekunder</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">meter</item>
+    <item quantity="other">meter</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">kilometer</item>
+    <item quantity="other">kilometer</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">mil</item>
+    <item quantity="other">mil</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">spm</item>
+    <item quantity="other">spm</item>
+  </plurals>
+  <string name="cue_activity_started">aktivitet startet</string>
+  <string name="cue_activity_paused">aktivitet satt på pause</string>
+  <string name="cue_activity_resumed">aktivitet gjenopptatt</string>
+  <string name="cue_activity_stopped">aktivitet stoppet</string>
+  <string name="cue_lap_started">runde startet</string>
+  <string name="cue_lap_completed">runde fullført</string>
+  <string name="cue_warmup_started">oppvarming startet</string>
+  <string name="cue_cooldown_started">Nedkjøling startet</string>
+</resources>

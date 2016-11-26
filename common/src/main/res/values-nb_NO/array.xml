@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="unitEntries">
+    <item>Mil</item>
+    <item>Kilometer</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Oppvarming</item>
+    <item>Aktivitet</item>
+    <item>Hvile</item>
+    <item>Restitusjon</item>
+    <item>Avkjøling</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Fårestående trykk</item>
+    <item>Tid</item>
+    <item>Distanse</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Ingen</item>
+    <item>Fart</item>
+    <item>Hjerterytmesone</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Springing</item>
+    <item>Sykling</item>
+    <item>Annet</item>
+  </string-array>
+  <string-array name="sportEntriesExperimental">
+    <item>Springing</item>
+    <item>Sykling</item>
+    <item>Annet</item>
+    <item>Orientering</item>
+    <item>Gåing</item>
+  </string-array>
+  <string-array name="muteEntries">
+    <item>Nei</item>
+    <item>Ja</item>
+  </string-array>
+  <string-array name="muteValues">
+    <item>nei</item>
+    <item>ja</item>
+  </string-array>
+  <string-array name="types">
+    <item>Tid</item>
+    <item>Distanse</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Mann</item>
+    <item>Dame</item>
+  </string-array>
+  <!--Audio cue languages-->
+  <string-array name="cueLanguageNames">
+    <item>Engelsk</item>
+    <item>Hollandsk</item>
+    <item>Tysk</item>
+    <item>Japansk</item>
+    <item>Arabisk</item>
+    <item>Russisk</item>
+    <item>Spansk</item>
+    <item>Fransk</item>
+    <item>Italiensk</item>
+    <item>Polsk</item>
+    <item>Tyrkisk</item>
+    <item>Portugisisk</item>
+  </string-array>
+  <!--Note: keep in same order as languagesNames-->
+  <string-array name="cueLanguageCodes">
+    <item>en</item>
+    <item>nl</item>
+    <item>de</item>
+    <item>ja</item>
+    <item>ar</item>
+    <item>ru</item>
+    <item>es</item>
+    <item>fr</item>
+    <item>it</item>
+    <item>pl</item>
+    <item>tr</item>
+    <item>pt</item>
+  </string-array>
+</resources>
