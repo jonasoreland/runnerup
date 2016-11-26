@@ -55,6 +55,7 @@
   </string-array>
   <!--Audio cue languages-->
   <string-array name="cueLanguageNames">
+    <item>Lietuvių</item>
     <item>Anglų</item>
     <item>Olandų</item>
     <item>Vokiečių</item>
@@ -70,6 +71,7 @@
   </string-array>
   <!--Note: keep in same order as languagesNames-->
   <string-array name="cueLanguageCodes">
+    <item>lt</item>
     <item>en</item>
     <item>nl</item>
     <item>de</item>
