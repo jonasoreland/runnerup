@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Пользуйся кнопкой гарнитуры для пуска/остановки RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Для интервальной тренировки по дистанции переводить остановки в интервалы восстановления</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Для продвинутой тренировки по дистанции переводить </string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Экспорт базы данных на карту памяти (перед обновлением)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Импорт базы данных с карты памяти (после обновления)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Помощь голосового тренера в достижении целевых показателей тренировки (если выбран пульс/темп)</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">+ Повторить</string>
   <string name="Discard">Отмена</string>
   <string name="Failed_to_create_workout">Ошибка при создании тренировки</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Голосовые схемы - язык</string>
   <string name="Website">Вебсайт</string>
   <string name="Automatic_upload">Автоматическая выгрузка</string>
@@ -291,7 +288,6 @@
   <string name="RunnerUp_workout">Тренировка RunnerUp:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Привет!\nВот тренировки. Я думаю ты можешь так же .</string>
   <string name="Share_workout">Опубликовать</string>
-  <string name="Not_much_to_say_at_this_point">Автору программы нечего сказать о этом пункте</string>
   <string name="New_audio_scheme">Новая голосовая схема</string>
   <string name="Default">Стандартная</string>
   <string name="Notes_about_your_workout">Примечания о этом занятии</string>

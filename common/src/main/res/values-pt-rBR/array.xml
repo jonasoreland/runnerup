@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Milhas</item>
     <item>Quilômetros</item>
@@ -37,14 +37,6 @@
     <item>Orientação</item>
     <item>Caminhada</item>
   </string-array>
-  <string-array name="muteEntries">
-    <item>Não</item>
-    <item>Sim</item>
-  </string-array>
-  <string-array name="muteValues">
-    <item>não</item>
-    <item>sim</item>
-  </string-array>
   <string-array name="types">
     <item>Tempo</item>
     <item>Distância</item>
@@ -52,35 +44,5 @@
   <string-array name="sexes">
     <item>Masculino</item>
     <item>Feminino</item>
-  </string-array>
-  <!--Audio cue languages-->
-  <string-array name="cueLanguageNames">
-    <item>Inglês</item>
-    <item>Holandês</item>
-    <item>Alemão</item>
-    <item>Japonês</item>
-    <item>Árabe</item>
-    <item>Russo</item>
-    <item>Espanhol</item>
-    <item>Francês</item>
-    <item>Italiano</item>
-    <item>Polonês</item>
-    <item>Turco</item>
-    <item>Português</item>
-  </string-array>
-  <!--Note: keep in same order as languagesNames-->
-  <string-array name="cueLanguageCodes">
-    <item>en</item>
-    <item>nl</item>
-    <item>de</item>
-    <item>ja</item>
-    <item>ar</item>
-    <item>ru</item>
-    <item>es</item>
-    <item>fr</item>
-    <item>it</item>
-    <item>pl</item>
-    <item>tr</item>
-    <item>pt</item>
   </string-array>
 </resources>

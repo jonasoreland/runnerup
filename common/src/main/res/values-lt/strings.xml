@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Naudoti laisvų rankų įrangą RunnerUp paleidimui/stabdymui/pratęsimui</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Konvertuoti poilsio intervalą su atstumo tipu į atsistatymo intervalą \"Intervalo\" skirtuke</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Konvertuoti poilsio intervalą su atstumo tipu į atsistatymo intervalą \"Sudėtingesni\" skirtuke</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksportuoti duomenų bazę į SD kortelę (pvz. atnaujinimui)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importuoti duomenų bazę iš SD kortelės (pvz. po atnaujinimo)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Padėti pasiekti tikslą (jei tikslas yra nustatytas)</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Pridėti pakartojimą</string>
   <string name="Discard">Nutraukti</string>
   <string name="Failed_to_create_workout">Nepavyko sukurti treniruotės</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Garsinių nurodymų kalba </string>
   <string name="Website">Tinklapis</string>
   <string name="Automatic_upload">Automatinis įkėlimas</string>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Mylios</item>
     <item>Kilometrai</item>
@@ -37,14 +37,6 @@
     <item>Orientacijios sportas</item>
     <item>Ėjimas</item>
   </string-array>
-  <string-array name="muteEntries">
-    <item>Ne</item>
-    <item>Taip</item>
-  </string-array>
-  <string-array name="muteValues">
-    <item>ne</item>
-    <item>taip</item>
-  </string-array>
   <string-array name="types">
     <item>Laikas</item>
     <item>Atstumas</item>
@@ -52,37 +44,5 @@
   <string-array name="sexes">
     <item>Vyras</item>
     <item>Moteris</item>
-  </string-array>
-  <!--Audio cue languages-->
-  <string-array name="cueLanguageNames">
-    <item>Lietuvių</item>
-    <item>Anglų</item>
-    <item>Olandų</item>
-    <item>Vokiečių</item>
-    <item>Japonų</item>
-    <item>Arabų</item>
-    <item>Rusų</item>
-    <item>Ispanų</item>
-    <item>Prancūzų</item>
-    <item>Italų</item>
-    <item>Lenkų</item>
-    <item>Turkų</item>
-    <item>Portugalų</item>
-  </string-array>
-  <!--Note: keep in same order as languagesNames-->
-  <string-array name="cueLanguageCodes">
-    <item>lt</item>
-    <item>en</item>
-    <item>nl</item>
-    <item>de</item>
-    <item>ja</item>
-    <item>ar</item>
-    <item>ru</item>
-    <item>es</item>
-    <item>fr</item>
-    <item>it</item>
-    <item>pl</item>
-    <item>tr</item>
-    <item>pt</item>
   </string-array>
 </resources>

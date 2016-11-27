@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Bruk hodesettet ditt til å starte/pause/gjenoppta RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Konverter hvile-steg med typen distanse til restitusjonsteget for intervallfanen</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Konverter hvile-steg med typen distanse til restitusjonsteget for avansert-fanen</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksporter database til SD-kort (f.eks. for oppdatering)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importer database fra SD-kort (f.eks. etter oppdatering)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Hjelpetrener for å nå målet (hvis et mål er satt)</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Legg til gjentagelse</string>
   <string name="Discard">Forkast</string>
   <string name="Failed_to_create_workout">Klarte ikke å lage treningsøkt</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Språk for lydinstrukser</string>
   <string name="Website">Nettside</string>
   <string name="Automatic_upload">Automatisk opplasting</string>
@@ -291,7 +288,6 @@
   <string name="RunnerUp_workout">RunnerUp-treningsøkt:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hei\nHer er en treningsøkt jeg tror du vil like.</string>
   <string name="Share_workout">Del treningsøkt…</string>
-  <string name="Not_much_to_say_at_this_point">Ikke så mye å si per nu</string>
   <string name="New_audio_scheme">Nytt lydopplegg</string>
   <string name="Default">Forvalg</string>
   <string name="Notes_about_your_workout">Notater om din treningsøkt</string>

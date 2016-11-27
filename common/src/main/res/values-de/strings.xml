@@ -165,7 +165,6 @@
   <string name="Downloadeditremove_workouts">Trainingseinheiten herunterladen/bearbeiten/löschen</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Anmerkung: Sie müssen sich auch mit dem Konto verbinden</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Verwende Dein Headset um RunnerUp zu starten/pausieren/fortzusetzen</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Datenbank auf SD-Karte exportieren (z.B. für Aktualisierungen)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Datenbank von SD-Karte importieren (z.B. nach einer Aktualisierung)</string>
   <string name="Test_audio_cue">Audiohinweis testen</string>
@@ -264,8 +263,6 @@
   <string name="Add_repeat">Wiederholung hinzufügen</string>
   <string name="Discard">Verwerfen</string>
   <string name="Failed_to_create_workout">Fehler beim Erstellen der Trainingseinheit</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Audiohinweissprache</string>
   <string name="Website">Webseite</string>
   <string name="Automatic_upload">Automatisch hochladen</string>

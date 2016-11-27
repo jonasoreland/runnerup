@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usar o seu headset para iniciar/pausar/recomeçar o RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Converter passada de descanso com tipo de distância para passada de recuperação, na aba Intervalo</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Converter passada de descanso com tipo de distância para passada de recuperação, na aba Avançado</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporta banco de dados para o cartão SD (por exemplo, para atualização)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importar banco de dados do cartão SD (por exemplo, após atualização)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Treinador para ajudá-lo a atingir a meta (caso tenha definido a meta)</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Adicionar repetição</string>
   <string name="Discard">Descartar</string>
   <string name="Failed_to_create_workout">Falha ao criar o exercício</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Idioma do aviso de áudio</string>
   <string name="Website">Site web</string>
   <string name="Automatic_upload">Envio automático</string>
