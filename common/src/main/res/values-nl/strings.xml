@@ -118,7 +118,7 @@
   <string name="Age">Leeftijd</string>
   <string name="edit">aanpassen</string>
   <string name="Synchronizing">Synchroniseren:</string>
-  <string name="synchronizing_feed">synchroniseren van de feed...</string>
+  <string name="synchronizing_feed">synchroniseren van de feed…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Tabel formaat</string>
   <string name="Clear_uploads">Uploads wissen</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Afwijzen</string>
   <string name="No_way">Absoluut niet</string>
   <string name="No">Nee</string>
-  <string name="Loading">Laden...</string>
+  <string name="Loading">Laden…</string>
   <string name="Saving">Opslaan</string>
-  <string name="Cancellingplease_wait">Annuleren...even geduld aub</string>
+  <string name="Cancellingplease_wait">Annuleren…even geduld aub</string>
   <string name="try_again_later">Probeer het later opnieuw!</string>
   <string name="Are_you_sure">Weet u het zeker?</string>
   <string name="Configure_audio_cues">Auditieve signalen instellen</string>

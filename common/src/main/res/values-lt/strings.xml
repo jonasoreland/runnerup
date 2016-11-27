@@ -118,7 +118,7 @@
   <string name="Age">Amžius</string>
   <string name="edit">redaguoti</string>
   <string name="Synchronizing">Sinchronizavimas</string>
-  <string name="synchronizing_feed">sinchronizuoja kanalą...</string>
+  <string name="synchronizing_feed">sinchronizuoja kanalą…</string>
   <string name="OK">Gerai</string>
   <string name="Table_format">Lentelės formatas</string>
   <string name="Clear_uploads">Išvalyti įkėlimus</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Nutraukti</string>
   <string name="No_way">Jokiu būdu</string>
   <string name="No">Ne</string>
-  <string name="Loading">Kraunasi...</string>
+  <string name="Loading">Kraunasi…</string>
   <string name="Saving">Išsaugoja</string>
-  <string name="Cancellingplease_wait">Nutraukiama...palaukite</string>
+  <string name="Cancellingplease_wait">Nutraukiama…palaukite</string>
   <string name="try_again_later">pabandyk kitą kartą!</string>
   <string name="Are_you_sure">Ar tikrai?</string>
   <string name="Configure_audio_cues">Konfigūruoti garsinius nurodymus</string>
@@ -290,7 +290,7 @@
   <string name="Delete_workout">Ištrinti treniruotę</string>
   <string name="RunnerUp_workout">RunnerUp treniruotė:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Labas\nČia treniruotė, kuri manau tau patiks.</string>
-  <string name="Share_workout">Dalintis treniruote...</string>
+  <string name="Share_workout">Dalintis treniruote…</string>
   <string name="New_audio_scheme">Nauja audio schema</string>
   <string name="Default">Numatyta</string>
   <string name="Notes_about_your_workout">Pastabos apie tavo treniruotę</string>

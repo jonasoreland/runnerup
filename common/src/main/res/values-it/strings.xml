@@ -118,7 +118,7 @@
   <string name="Age">Età</string>
   <string name="edit">modifica</string>
   <string name="Synchronizing">Sincronizzando:</string>
-  <string name="synchronizing_feed">sincronizzando feed...</string>
+  <string name="synchronizing_feed">sincronizzando feed…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Formato tabella</string>
   <string name="Clear_uploads">Svuota caricamenti</string>
@@ -142,7 +142,7 @@
   <string name="Clear_HR_settings">Cancella impostazioni frequenza cardiaca</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitoraggio frequenza cardiaca non supportata per questo dispositivo</string>
   <string name="Select_type_of_Bluetooth_device">Seleziona tipo dispositivo Bluetooth</string>
-  <string name="Scanning">Ricerca...</string>
+  <string name="Scanning">Ricerca…</string>
   <string name="Failed_to_load_workout">Caricamento allenamento fallito!!</string>
   <string name="Icon_list">Lista icone</string>
   <string name="Problem">Problema</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Chiudi</string>
   <string name="No_way">Assolutamente no</string>
   <string name="No">No</string>
-  <string name="Loading">Caricamento...</string>
-  <string name="Saving">Salvando...</string>
-  <string name="Cancellingplease_wait">Cancellando...prego attendere</string>
+  <string name="Loading">Caricamento…</string>
+  <string name="Saving">Salvando…</string>
+  <string name="Cancellingplease_wait">Cancellando…prego attendere</string>
   <string name="try_again_later">riprova più tardi!</string>
   <string name="Are_you_sure">Ne sei sicuro?</string>
   <string name="Configure_audio_cues">Configura riferimenti audio</string>
@@ -206,7 +206,7 @@
   <string name="Experimental_HRM_devices">Dispositivi HRM sperimentali</string>
   <string name="Experimental_features">Funzionalità sperimentali</string>
   <string name="Mock_HRM_devices">Dispositivi HRM \"fantoccio\"</string>
-  <string name="About">A proposito...</string>
+  <string name="About">A proposito…</string>
   <string name="About_RunnerUp">Info su RunnerUp</string>
   <string name="Triggers">Eventi</string>
   <string name="Time_triggered_audio_cue">Riferimento audio attivato per tempo</string>

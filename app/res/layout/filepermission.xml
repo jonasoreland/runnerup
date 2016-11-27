@@ -16,6 +16,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linear1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -42,7 +43,8 @@
                 android:id="@+id/text_view1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="URL" />
+                android:text="URL"
+                tools:ignore="HardcodedText" />
 
             <EditText
                 android:id="@+id/fileuri"
@@ -63,12 +65,14 @@
             android:id="@+id/tcxformat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TCX" />
+            android:text="TCX"
+            tools:ignore="HardcodedText" />
         <CheckBox
             android:id="@+id/gpxformat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GPX" />
+            android:text="GPX"
+            tools:ignore="HardcodedText" />
     </TableRow>
 
 </LinearLayout>

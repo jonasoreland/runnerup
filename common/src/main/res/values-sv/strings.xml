@@ -118,7 +118,7 @@
   <string name="Age">Ålder</string>
   <string name="edit">redigera</string>
   <string name="Synchronizing">Synkroniserar:</string>
-  <string name="synchronizing_feed">synkroniserar flöde...</string>
+  <string name="synchronizing_feed">synkroniserar flöde…</string>
   <string name="OK">Ok</string>
   <string name="Table_format">Tabellformat</string>
   <string name="Clear_uploads">Rensa uppladdningar</string>
@@ -149,16 +149,16 @@
   <string name="Edit_step">Redigera steg</string>
   <string name="Create_new_audio_cue_scheme">Skapa nytt schema för ljudmeddelande</string>
   <string name="Great">Kanon!</string>
-  <string name="OK_darn">Ok... typiskt!</string>
+  <string name="OK_darn">Ok… typiskt!</string>
   <string name="Yes">Ja</string>
   <string name="Create">Skapa</string>
   <string name="Darn">Nedrans!</string>
   <string name="Dismiss">Avslå</string>
   <string name="No_way">Inte alls</string>
   <string name="No">Nej</string>
-  <string name="Loading">Laddar...</string>
+  <string name="Loading">Laddar…</string>
   <string name="Saving">Sparar</string>
-  <string name="Cancellingplease_wait">Avbryter... vänta</string>
+  <string name="Cancellingplease_wait">Avbryter… vänta</string>
   <string name="try_again_later">försök igen senare!</string>
   <string name="Are_you_sure">Är du säker?</string>
   <string name="Configure_audio_cues">Konfigurera ljudmeddelanden</string>
@@ -290,7 +290,7 @@
   <string name="Delete_workout">Ta bort träningspass</string>
   <string name="RunnerUp_workout">RunnerUp träningspass:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hej\nHär är ett träningspass jag tror du skulle gilla.</string>
-  <string name="Share_workout">Dela träningspass...</string>
+  <string name="Share_workout">Dela träningspass…</string>
   <string name="New_audio_scheme">Nytt ljudschema</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om ditt träningspass</string>

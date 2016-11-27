@@ -312,4 +312,5 @@
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Maintenance</string>
+  <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
 </resources>

@@ -118,7 +118,7 @@
   <string name="Age">Возраст</string>
   <string name="edit">Настройка</string>
   <string name="Synchronizing">Синхронизация:</string>
-  <string name="synchronizing_feed">синхронизируем фитнес аккаунты...</string>
+  <string name="synchronizing_feed">синхронизируем фитнес аккаунты…</string>
   <string name="OK">ОК</string>
   <string name="Table_format">Табличное представление</string>
   <string name="Clear_uploads">Очистить загруженные</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Отклонить</string>
   <string name="No_way">Ни за что</string>
   <string name="No">Нет</string>
-  <string name="Loading">Загрузка...</string>
+  <string name="Loading">Загрузка…</string>
   <string name="Saving">Сохранение</string>
-  <string name="Cancellingplease_wait">Отмена... подождите</string>
+  <string name="Cancellingplease_wait">Отмена… подождите</string>
   <string name="try_again_later">попытайся позже</string>
   <string name="Are_you_sure">Уверен?</string>
   <string name="Configure_audio_cues">Настройка голосового сопровождения</string>
@@ -183,7 +183,7 @@
   <string name="Enable_RunnerUpLive">Включить Live</string>
   <string name="Headset_key_startstop">Кнопка гарнитуры старт/стоп</string>
   <string name="Activity_countdown">Отсчёт до начала тренировки</string>
-  <string name="Countdown_time_s">Отсчитывать время (c)</string>
+  <string name="Countdown_time_s">Отсчитывать время ©</string>
   <string name="Unit_preference">Единицы измерений</string>
   <string name="Auto_start_GPS">Автоматически включать GPS</string>
   <string name="Advanced_options">Продвинутые настройки</string>

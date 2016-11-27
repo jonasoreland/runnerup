@@ -118,7 +118,7 @@
   <string name="Age">Umur</string>
   <string name="edit">edit</string>
   <string name="Synchronizing">Menyinkronkan:</string>
-  <string name="synchronizing_feed">menyingkronkan umpan...</string>
+  <string name="synchronizing_feed">menyingkronkan umpan…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Format tabel</string>
   <string name="Clear_uploads">Kosongkan unggahan</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Selesai</string>
   <string name="No_way">Tidak mungkin</string>
   <string name="No">Tidak</string>
-  <string name="Loading">Memuat...</string>
+  <string name="Loading">Memuat…</string>
   <string name="Saving">Menyimpan</string>
-  <string name="Cancellingplease_wait">Membatalkan...harap tunggu</string>
+  <string name="Cancellingplease_wait">Membatalkan…harap tunggu</string>
   <string name="try_again_later">coba lagi nanti!</string>
   <string name="Are_you_sure">Anda yakin?</string>
   <string name="Configure_audio_cues">Pengaturan isyarat suara</string>
@@ -290,7 +290,7 @@
   <string name="Delete_workout">Hapus latihan</string>
   <string name="RunnerUp_workout">Latihan RunnerUp:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Halo\nIni adalah latihan yang bisa dipakai.</string>
-  <string name="Share_workout">Berbagi latihan...</string>
+  <string name="Share_workout">Berbagi latihan…</string>
   <string name="New_audio_scheme">Skema suara baru</string>
   <string name="Default">Baku</string>
   <string name="Notes_about_your_workout">Catatan terkait latihan</string>

@@ -127,9 +127,9 @@
   <string name="Yes">Sí</string>
   <string name="Create">Crea</string>
   <string name="No">No</string>
-  <string name="Loading">S\'està carregant...</string>
+  <string name="Loading">S\'està carregant…</string>
   <string name="Saving">Desant</string>
-  <string name="Cancellingplease_wait">S\'està cancel·lant...</string>
+  <string name="Cancellingplease_wait">S\'està cancel·lant…</string>
   <string name="try_again_later">Torneu a provar més tard!</string>
   <string name="Are_you_sure">N\'esteu segur?</string>
   <string name="Downloadeditremove_workouts">Baixa/edita/suprimeix els progressos</string>
@@ -147,7 +147,7 @@
   <string name="Advanced_options">Opcions avançades</string>
   <string name="Export">Exporta</string>
   <string name="Import">Importa</string>
-  <string name="About">Quant a...</string>
+  <string name="About">Quant a…</string>
   <string name="About_RunnerUp">Quant al RunnerUp</string>
   <string name="Total_distance">Distància total</string>
   <string name="Total_time">Temps total</string>
@@ -167,7 +167,7 @@
   <string name="Advanced">Avançat</string>
   <string name="Manual">Manual</string>
   <string name="Battery_level">Nivell de la bateria</string>
-  <string name="Searching_for_GPS">S\'està cercant el GPS...</string>
+  <string name="Searching_for_GPS">S\'està cercant el GPS…</string>
   <string name="Warning">Atenció</string>
   <string name="Do_not_show_again">No tornis a mostrar</string>
   <string name="Save">Desa</string>
@@ -191,7 +191,7 @@
   <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">S\'està baixant %1$s i sobreescriurà l\'entrenament amb el mateix nom %2$ </string>
   <string name="Delete_workout">Suprimeix l\'entrenament</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nAquest entrenament potser us agradarà.</string>
-  <string name="Share_workout">Comparteix l\'entrenament...</string>
+  <string name="Share_workout">Comparteix l\'entrenament…</string>
   <string name="New_audio_scheme">Esquema nou d\'àudio</string>
   <string name="Default">Per defecte</string>
   <string name="Notes_about_your_workout">Comentaris sobre l\'entrenament</string>

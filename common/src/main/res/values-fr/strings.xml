@@ -118,7 +118,7 @@
   <string name="Age">Age</string>
   <string name="edit">éditer</string>
   <string name="Synchronizing">Synchronisation :</string>
-  <string name="synchronizing_feed">synchronization des actualités...</string>
+  <string name="synchronizing_feed">synchronization des actualités…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Format table</string>
   <string name="Clear_uploads">Supprimer les uploads</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Continuer</string>
   <string name="No_way">Non</string>
   <string name="No">Non</string>
-  <string name="Loading">Chargement...</string>
+  <string name="Loading">Chargement…</string>
   <string name="Saving">Sauvegarde</string>
-  <string name="Cancellingplease_wait">Annulation... veuillez patienter</string>
+  <string name="Cancellingplease_wait">Annulation… veuillez patienter</string>
   <string name="try_again_later">essayez plus tard !</string>
   <string name="Are_you_sure">Êtes-vous sûr ?</string>
   <string name="Configure_audio_cues">Configurer le suivi audio</string>
