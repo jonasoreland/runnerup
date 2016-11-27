@@ -24,8 +24,10 @@ import android.location.Location;
 import android.os.Build;
 import android.util.Pair;
 
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.KXmlSerializer;
+import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.IOException;
@@ -104,16 +106,14 @@ public class TCX {
             } else {
                 // TCX supports only these 3 sports...(cf http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
                 sport = Sport.valueOf(cursor.getInt(3));
-                switch (sport.getDbValue()) {
-                    case DB.ACTIVITY.SPORT_RUNNING:
-                        mXML.attribute("", "Sport", "Running");
-                        break;
-                    case DB.ACTIVITY.SPORT_BIKING:
-                        mXML.attribute("", "Sport", "Biking");
-                        break;
-                    default:
-                        mXML.attribute("", "Sport", "Other");
-                        break;
+                if (sport.IsRunning()) {
+                    mXML.attribute("", "Sport", "Running");
+                }
+                else if (sport.IsCycling()) {
+                    mXML.attribute("", "Sport", "Biking");
+                }
+                else {
+                    mXML.attribute("", "Sport", "Other");
                 }
             }
             mXML.startTag("", "Id");

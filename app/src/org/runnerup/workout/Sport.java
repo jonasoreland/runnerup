@@ -63,4 +63,17 @@ public enum Sport {
                 return OTHER;
         }
     }
+
+    public boolean IsWalking() {
+        return dbValue == DB.ACTIVITY.SPORT_WALKING;
+    }
+
+    public boolean IsRunning() {
+        return dbValue == DB.ACTIVITY.SPORT_RUNNING ||
+                dbValue == DB.ACTIVITY.SPORT_ORIENTEERING;
+    }
+
+    public boolean IsCycling() {
+        return dbValue == DB.ACTIVITY.SPORT_BIKING;
+    }
 }
