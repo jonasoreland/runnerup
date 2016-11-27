@@ -16,7 +16,7 @@ project.ext {
     buildToolsVersion = '25.0.0' //Update Travis manually
     compileSdkVersion = 24
     targetSdkVersion = 24
-    versionName = "1.55"
+    versionName = "1.55b"
     versionCode = 14000055
     froyoVersionCode = 8000055
 
