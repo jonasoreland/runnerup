@@ -117,7 +117,7 @@
   <string name="Age">Leeftijd</string>
   <string name="edit">aanpassen</string>
   <string name="Synchronizing">Synchroniseren:</string>
-  <string name="synchronizing_feed">bezig met synchroniseren van de feed...</string>
+  <string name="synchronizing_feed">bezig met synchroniseren van de feed…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Tabel formaat</string>
   <string name="Clear_uploads">Uploads wissen</string>
@@ -155,9 +155,9 @@
   <string name="Dismiss">Afwijzen</string>
   <string name="No_way">Absoluut niet</string>
   <string name="No">Nee</string>
-  <string name="Loading">Laden...</string>
+  <string name="Loading">Laden…</string>
   <string name="Saving">Opslaan</string>
-  <string name="Cancellingplease_wait">Annuleren...even geduld aub</string>
+  <string name="Cancellingplease_wait">Annuleren…even geduld aub</string>
   <string name="try_again_later">Probeer het later opnieuw!</string>
   <string name="Are_you_sure">Weet u het zeker?</string>
   <string name="Configure_audio_cues">Auditieve signalen instellen</string>
@@ -166,7 +166,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gebruik uw headset om RunnerUp te starten/pauzeren/hervatten</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Omzetten rust-stap met type afstand tot herstel-stap voor Interval-tabblad</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Omzetten rust-stap met type afstand tot herstel-stap voor Geavanceerde-tabblad</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporteer de database naar sdcard (bijv. voor een upgrade)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importeer de database van sdcard (bijv. na een upgrade)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach om u te helpen uw doel te bereiken (als u uw doel reeds heeft ingesteld)</string>
@@ -262,8 +261,6 @@
   <string name="Add_repeat">Herhaling toevoegen</string>
   <string name="Discard">Verwerpen</string>
   <string name="Failed_to_create_workout">Het is niet gelukt om een training te creëren.</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Taal van audiobegeleiding</string>
   <string name="Website">Website</string>
   <string name="Automatic_upload">Automatische upload</string>
@@ -281,7 +278,7 @@
   <string name="Delete_workout">Workout verwijderen</string>
   <string name="RunnerUp_workout">RunnerUp-workout:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Halllo\nHier is een workout waarvan ik denk dat u hem leuk zult vinden.</string>
-  <string name="Share_workout">Workout delen...</string>
+  <string name="Share_workout">Workout delen…</string>
   <string name="New_audio_scheme">Nieuw audioschema</string>
   <string name="Default">Standaard</string>
   <string name="Notes_about_your_workout">Notities aangaande uw workout</string>

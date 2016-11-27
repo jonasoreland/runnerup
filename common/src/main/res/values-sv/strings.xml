@@ -118,7 +118,7 @@
   <string name="Age">Ålder</string>
   <string name="edit">redigera</string>
   <string name="Synchronizing">Synkroniserar:</string>
-  <string name="synchronizing_feed">synkroniserar flöde...</string>
+  <string name="synchronizing_feed">synkroniserar flöde…</string>
   <string name="OK">Ok</string>
   <string name="Table_format">Tabellformat</string>
   <string name="Clear_uploads">Rensa uppladdningar</string>
@@ -149,16 +149,16 @@
   <string name="Edit_step">Redigera steg</string>
   <string name="Create_new_audio_cue_scheme">Skapa nytt schema för ljudmeddelande</string>
   <string name="Great">Kanon!</string>
-  <string name="OK_darn">Ok... typiskt!</string>
+  <string name="OK_darn">Ok… typiskt!</string>
   <string name="Yes">Ja</string>
   <string name="Create">Skapa</string>
   <string name="Darn">Nedrans!</string>
   <string name="Dismiss">Avslå</string>
   <string name="No_way">Inte alls</string>
   <string name="No">Nej</string>
-  <string name="Loading">Laddar...</string>
+  <string name="Loading">Laddar…</string>
   <string name="Saving">Sparar</string>
-  <string name="Cancellingplease_wait">Avbryter... vänta</string>
+  <string name="Cancellingplease_wait">Avbryter… vänta</string>
   <string name="try_again_later">försök igen senare!</string>
   <string name="Are_you_sure">Är du säker?</string>
   <string name="Configure_audio_cues">Konfigurera ljudmeddelanden</string>
@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Använd dina lurar för att starta/pausa/återuppta RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Konvertera vilosteg med distans typ till återhämtningssteg för Interval-tabben</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Konvertera vilosteg med distans typ till återhämtningssteg för Avancerat-tabben</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportera databas till sdkort (t.ex. före uppgradering)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importera databas från sdkort (t.ex. efter uppgradering)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach för att hjälpa dig nå målet (om mål är satt)</string>
@@ -199,8 +198,8 @@
   <string name="Step_countdown_time_s">Nedräkningssteg (s)</string>
   <string name="Smooth_pace_graph">Utjämning tempograf</string>
   <string name="Smooth_pace_filters">Utjämningsfilter tempo (s)</string>
-  <string name="Poll_interval_ms">Uppdaterings intervall (ms)</string>
-  <string name="Poll_distance_m">Uppdaterings distans (m)</string>
+  <string name="Poll_interval_ms">GPS Uppdaterings intervall (ms)</string>
+  <string name="Poll_distance_m">GPS Uppdaterings distans (m)</string>
   <string name="Export">Exportera</string>
   <string name="Import">Importera</string>
   <string name="Experimental_HRM_devices">Experimentella pulsmätare</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Lägg till repetition</string>
   <string name="Discard">Ta bort</string>
   <string name="Failed_to_create_workout">Kunde inte skapa träningspass</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Språk för ljudmedelanden</string>
   <string name="Website">Hemsida</string>
   <string name="Automatic_upload">Automatisk uppladdning</string>
@@ -290,7 +287,7 @@
   <string name="Delete_workout">Ta bort träningspass</string>
   <string name="RunnerUp_workout">RunnerUp träningspass:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hej\nHär är ett träningspass jag tror du skulle gilla.</string>
-  <string name="Share_workout">Dela träningspass...</string>
+  <string name="Share_workout">Dela träningspass…</string>
   <string name="New_audio_scheme">Nytt ljudschema</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om ditt träningspass</string>
@@ -303,4 +300,12 @@
   <string name="Map_not_available_on_Froyo">Karta inte tillgänglig i Froyo</string>
   <string name="No_feed_to_show">Inget flöde att visa</string>
   <string name="Unused_currently">Används ej för närvarande</string>
+  <string name="Maintenance">Underhåll</string>
+  <string name="Mapbox_default_style">Mapbox stil</string>
+  <string name="Recording">Inspelning</string>
+  <string name="RunningFreeOnlinePasswordNotice">Notera: Använd den hemliga nyckel som lösenord från Add > Sync Training > SportTracks.</string>
+  <string name="Sensors">Sensorer</string>
+  <string name="formatting_date_at_time">%1$s %2$s</string>
+  <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
+  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM96)</string>
 </resources>

@@ -189,7 +189,7 @@
   <string name="Unit_preference">Unit preference</string>
   <string name="Auto_start_GPS">Auto start GPS</string>
   <string name="Advanced_options">Advanced options</string>
-  <string name="Mapbox_default_style">Mapbox default style</string>
+  <string name="Mapbox_default_style">Mapbox style</string>
   <string name="RunnerUp_live_address">RunnerUp live address</string>
   <string name="Autopause_after_s">Autopause after (s)</string>
   <string name="Autopause_min_pace_minkm">Autopause min pace (min/km)</string>
@@ -204,7 +204,7 @@
   <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
   <string name="Poll_interval_ms">GPS Poll interval (ms)</string>
   <string name="Poll_distance_m">GPS Poll distance (m)</string>
-  <string name="Adjust_altitude">Adjust altitude to geoid (EGM96)</string>
+  <string name="Adjust_altitude">Adjust GPS altitude to geoid (EGM96)</string>
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
@@ -307,9 +307,10 @@
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
   <string name="Unknown">Unknown</string>
-  <string name="RunningFreeOnlinePasswordNotice">Note: As password, use the \"secret key\" set on website under Add > Sync Training > SportTracks.</string>
+  <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add > Sync Training > SportTracks.</string>
   <string name="GoToWebsite">Go to website</string>
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Maintenance</string>
+  <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
 </resources>

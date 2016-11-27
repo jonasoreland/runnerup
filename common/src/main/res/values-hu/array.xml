@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Mérföld</item>
     <item>Kilométer</item>
@@ -37,14 +37,6 @@
     <item>Tájfutás</item>
     <item>Gyaloglás</item>
   </string-array>
-  <string-array name="muteEntries">
-    <item>Nem</item>
-    <item>Igen</item>
-  </string-array>
-  <string-array name="muteValues">
-    <item>nem</item>
-    <item>igen</item>
-  </string-array>
   <string-array name="types">
     <item>Idő</item>
     <item>Távolság</item>
@@ -53,6 +45,4 @@
     <item>Férfi</item>
     <item>Nő</item>
   </string-array>
-  <!--Audio cue languages-->
-  <!--Note: keep in same order as languagesNames-->
 </resources>

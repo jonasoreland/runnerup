@@ -118,7 +118,7 @@
   <string name="Age">年齢</string>
   <string name="edit">編集</string>
   <string name="Synchronizing">同期中:</string>
-  <string name="synchronizing_feed">フィードを同期中...</string>
+  <string name="synchronizing_feed">フィードを同期中…</string>
   <string name="OK">OK</string>
   <string name="Table_format">テーブル形式</string>
   <string name="Clear_uploads">アップロードをクリア</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">閉じる</string>
   <string name="No_way">とんでもない</string>
   <string name="No">いいえ</string>
-  <string name="Loading">ロード中...</string>
+  <string name="Loading">ロード中…</string>
   <string name="Saving">保存中</string>
-  <string name="Cancellingplease_wait">キャンセル中...しばらくお待ちください</string>
+  <string name="Cancellingplease_wait">キャンセル中…しばらくお待ちください</string>
   <string name="try_again_later">後で再度実行してください!</string>
   <string name="Are_you_sure">よろしいですか?</string>
   <string name="Configure_audio_cues">音声合図の設定</string>
@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">ヘッドセットを使用して RunnerUp を開始/一時休止/再開する</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">インターバルタブの、距離タイプの休憩ステップをリカバリーステップに変換</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">高度タブの、距離タイプの休憩ステップをリカバリーステップに変換</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">SD カードにデータベースをエクスポート (アップグレード用など)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">SD カードからデータベースをインポート (アップグレード後など)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">あなたが目標を達成を支援するためコーチする (目標を設定した場合)</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">繰り返しを追加</string>
   <string name="Discard">破棄</string>
   <string name="Failed_to_create_workout">ワークアウトの作成に失敗しました</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">音声合図の言語</string>
   <string name="Website">Webサイト</string>
   <string name="Automatic_upload">自動アップロード</string>
@@ -290,7 +287,7 @@
   <string name="Delete_workout">ワークアウトを削除</string>
   <string name="RunnerUp_workout">RunnerUp ワークアウト: </string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">やあ\nここにあなたのお好みのワークアウトがあります。</string>
-  <string name="Share_workout">ワークアウトを共有...</string>
+  <string name="Share_workout">ワークアウトを共有…</string>
   <string name="New_audio_scheme">新しい音声合図スキーム</string>
   <string name="Default">デフォルト</string>
   <string name="Notes_about_your_workout">ワークアウトについてのメモ</string>

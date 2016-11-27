@@ -118,7 +118,7 @@
   <string name="Age">Amžius</string>
   <string name="edit">redaguoti</string>
   <string name="Synchronizing">Sinchronizavimas</string>
-  <string name="synchronizing_feed">sinchronizuoja kanalą...</string>
+  <string name="synchronizing_feed">sinchronizuoja kanalą…</string>
   <string name="OK">Gerai</string>
   <string name="Table_format">Lentelės formatas</string>
   <string name="Clear_uploads">Išvalyti įkėlimus</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Nutraukti</string>
   <string name="No_way">Jokiu būdu</string>
   <string name="No">Ne</string>
-  <string name="Loading">Kraunasi...</string>
+  <string name="Loading">Kraunasi…</string>
   <string name="Saving">Išsaugoja</string>
-  <string name="Cancellingplease_wait">Nutraukiama...palaukite</string>
+  <string name="Cancellingplease_wait">Nutraukiama…palaukite</string>
   <string name="try_again_later">pabandyk kitą kartą!</string>
   <string name="Are_you_sure">Ar tikrai?</string>
   <string name="Configure_audio_cues">Konfigūruoti garsinius nurodymus</string>
@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Naudoti laisvų rankų įrangą RunnerUp paleidimui/stabdymui/pratęsimui</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Konvertuoti poilsio intervalą su atstumo tipu į atsistatymo intervalą \"Intervalo\" skirtuke</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Konvertuoti poilsio intervalą su atstumo tipu į atsistatymo intervalą \"Sudėtingesni\" skirtuke</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksportuoti duomenų bazę į SD kortelę (pvz. atnaujinimui)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importuoti duomenų bazę iš SD kortelės (pvz. po atnaujinimo)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Padėti pasiekti tikslą (jei tikslas yra nustatytas)</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Pridėti pakartojimą</string>
   <string name="Discard">Nutraukti</string>
   <string name="Failed_to_create_workout">Nepavyko sukurti treniruotės</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Garsinių nurodymų kalba </string>
   <string name="Website">Tinklapis</string>
   <string name="Automatic_upload">Automatinis įkėlimas</string>
@@ -290,7 +287,7 @@
   <string name="Delete_workout">Ištrinti treniruotę</string>
   <string name="RunnerUp_workout">RunnerUp treniruotė:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Labas\nČia treniruotė, kuri manau tau patiks.</string>
-  <string name="Share_workout">Dalintis treniruote...</string>
+  <string name="Share_workout">Dalintis treniruote…</string>
   <string name="New_audio_scheme">Nauja audio schema</string>
   <string name="Default">Numatyta</string>
   <string name="Notes_about_your_workout">Pastabos apie tavo treniruotę</string>

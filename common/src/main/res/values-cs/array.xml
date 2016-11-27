@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Míle</item>
     <item>Kilometry</item>
@@ -18,14 +18,8 @@
     <item>Cyklistika</item>
     <item>Ostatní</item>
   </string-array>
-  <string-array name="muteEntries">
-    <item>Ne</item>
-    <item>Ano</item>
-  </string-array>
   <string-array name="sexes">
     <item>Muž</item>
     <item>Žena</item>
   </string-array>
-  <!--Audio cue languages-->
-  <!--Note: keep in same order as languagesNames-->
 </resources>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Miles</item>
     <item>Kilometer</item>
@@ -44,45 +44,5 @@
   <string-array name="sexes">
     <item>Man</item>
     <item>Kvinna</item>
-  </string-array>
-  <!--Audio cue languages-->
-  <string-array name="cueLanguageNames">
-    <item>Svenska</item>
-    <item>Engelska</item>
-    <item>Holländska</item>
-    <item>Tyska</item>
-    <item>Japanska</item>
-    <item>Arabiska</item>
-    <item>Ryska</item>
-    <item>Spanska</item>
-    <item>Franska</item>
-    <item>Italienska</item>
-    <item>Polska</item>
-    <item>Turkiska</item>
-    <item>Portugisiska</item>
-    <item>Norska</item>
-    <item>Katalanska</item>
-    <item>Indonesiska</item>
-    <item>Litauiska</item>
-  </string-array>
-  <!--Note: keep in same order as languagesNames-->
-  <string-array name="cueLanguageCodes">
-    <item>sv</item>
-    <item>en</item>
-    <item>nl</item>
-    <item>de</item>
-    <item>ja</item>
-    <item>ar</item>
-    <item>ru</item>
-    <item>es</item>
-    <item>fr</item>
-    <item>it</item>
-    <item>pl</item>
-    <item>tr</item>
-    <item>pt</item>
-    <item>nb</item>
-    <item>ca</item>
-    <item>id</item>
-    <item>lt</item>
   </string-array>
 </resources>

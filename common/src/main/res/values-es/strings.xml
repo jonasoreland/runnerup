@@ -118,7 +118,7 @@
   <string name="Age">Edad</string>
   <string name="edit">editar</string>
   <string name="Synchronizing">Sincronizando:</string>
-  <string name="synchronizing_feed">sincronizando fuente...</string>
+  <string name="synchronizing_feed">sincronizando fuente…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Formato de tabla</string>
   <string name="Clear_uploads">Limpiar subidas</string>
@@ -156,7 +156,7 @@
   <string name="Dismiss">Rechazar</string>
   <string name="No_way">De ninguna manera</string>
   <string name="No">No</string>
-  <string name="Loading">Cargando...</string>
+  <string name="Loading">Cargando…</string>
   <string name="Saving">Guardando</string>
   <string name="Cancellingplease_wait">Cancelando… por favor, espere</string>
   <string name="try_again_later">Inténtalo de nuevo más tarde</string>
@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usa tus auriculares para iniciar/pausar/resumir RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Convertir paso de reposo por tipo distancia a paso de recuperación por intervalo en la pestaña de Intervalo</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Convertir paso de reposo por tipo distancia a paso de recuperación por intervalo en la pestaña de Avanzado</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportar la base de datos a la tarjeta sd (ej. para actualización)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importar la base de datos de la tarjeta sd (ej. después de actualizar)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Entrenador para ayudarte a conseguir tu objetivo (si has seleccionado objetivo)</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Añadir repetición</string>
   <string name="Discard">Descartar</string>
   <string name="Failed_to_create_workout">Fallo al crear la actividad</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Idioma de las indicaciones de audio</string>
   <string name="Website">Página web</string>
   <string name="Automatic_upload">Subida automática</string>
@@ -286,11 +283,11 @@
   <string name="Overwrite_existing">Sobrescribir existentes</string>
   <string name="Create_new_workout">Crear nueva actividad</string>
   <string name="Set_workout_name">Cambiar nombre de la actividad</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Descargar %1$s sobrescribirá el ejercicio  con el mismo nombre</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Descargar %1$s sobrescribirá el ejercicio  con el mismo nombre %2$</string>
   <string name="Delete_workout">Eliminar entrenamiento</string>
   <string name="RunnerUp_workout">Actividades en RunnerUp:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nTengo una actividad que te podría gustar.</string>
-  <string name="Share_workout">Compartir actividad...</string>
+  <string name="Share_workout">Compartir actividad…</string>
   <string name="New_audio_scheme">Nuevo esquema de audio</string>
   <string name="Default">Por defecto</string>
   <string name="Notes_about_your_workout">Notas sobre la actividad</string>
