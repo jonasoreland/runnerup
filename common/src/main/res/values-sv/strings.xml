@@ -198,8 +198,8 @@
   <string name="Step_countdown_time_s">Nedräkningssteg (s)</string>
   <string name="Smooth_pace_graph">Utjämning tempograf</string>
   <string name="Smooth_pace_filters">Utjämningsfilter tempo (s)</string>
-  <string name="Poll_interval_ms">Uppdaterings intervall (ms)</string>
-  <string name="Poll_distance_m">Uppdaterings distans (m)</string>
+  <string name="Poll_interval_ms">GPS Uppdaterings intervall (ms)</string>
+  <string name="Poll_distance_m">GPS Uppdaterings distans (m)</string>
   <string name="Export">Exportera</string>
   <string name="Import">Importera</string>
   <string name="Experimental_HRM_devices">Experimentella pulsmätare</string>
@@ -300,4 +300,12 @@
   <string name="Map_not_available_on_Froyo">Karta inte tillgänglig i Froyo</string>
   <string name="No_feed_to_show">Inget flöde att visa</string>
   <string name="Unused_currently">Används ej för närvarande</string>
+  <string name="Maintenance">Underhåll</string>
+  <string name="Mapbox_default_style">Mapbox stil</string>
+  <string name="Recording">Inspelning</string>
+  <string name="RunningFreeOnlinePasswordNotice">Notera: Använd den hemliga nyckel som lösenord från Add > Sync Training > SportTracks.</string>
+  <string name="Sensors">Sensorer</string>
+  <string name="formatting_date_at_time">%1$s %2$s</string>
+  <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
+  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM96)</string>
 </resources>
