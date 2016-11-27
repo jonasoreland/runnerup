@@ -82,7 +82,7 @@ android {
         lintConfig file("lint.xml")
         checkReleaseBuilds true
         //promote to error
-        fatal 'InlinedApi'
+        fatal 'InlinedApi', 'InconsistentArrays'
         //Should be enabled, see PR #333
         warning 'MissingQuantity', 'ImpliedQuantity'
         // Ignore some specific checks, also some specific with path in lint.xml

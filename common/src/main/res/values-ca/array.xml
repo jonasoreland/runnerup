@@ -14,7 +14,7 @@
     <item>Actiu</item>
     <item>Descans</item>
     <item>Recuperació</item>
-    <item>Refredar</item>
+    <item>Refredament</item>
   </string-array>
   <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
@@ -32,13 +32,9 @@
     <item>Orientació</item>
     <item>Caminar</item>
   </string-array>
-  <string-array name="muteEntries">
-    <item>No</item>
-    <item>Si</item>
-  </string-array>
   <string-array name="muteValues">
     <item>no</item>
-    <item>si</item>
+    <item>sí</item>
   </string-array>
   <string-array name="types">
     <item>Temps</item>
@@ -50,6 +46,7 @@
   </string-array>
   <!--Audio cue languages-->
   <string-array name="cueLanguageNames">
+    <item>Català</item>
     <item>Anglès</item>
     <item>Holandès</item>
     <item>Alemany</item>
@@ -65,6 +62,7 @@
   </string-array>
   <!--Note: keep in same order as languagesNames-->
   <string-array name="cueLanguageCodes">
+    <item>ca</item>
     <item>en</item>
     <item>nl</item>
     <item>de</item>
