@@ -129,7 +129,7 @@
     <string name="pref_battery_level_high_threshold">batterylevelHighThreshold</string>
     <string name="pref_battery_level_low_notification_discard">batteryLevelLowDialog</string>
 
-    <string name="pref_exportdb">pref_cue_workouts</string>
+    <string name="pref_exportdb">pref_exportdb</string>
     <string name="pref_importdb">pref_importdb</string>
     <string name="pref_prunedb">pref_prunedb</string>
     <string name="pref_aboutcategory">pref_aboutcategory</string>
