@@ -204,6 +204,7 @@
   <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
   <string name="Poll_interval_ms">GPS Poll interval (ms)</string>
   <string name="Poll_distance_m">GPS Poll distance (m)</string>
+  <string name="Adjust_altitude">Adjust altitude to geoid (EGM96)</string>
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>

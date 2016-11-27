@@ -82,6 +82,11 @@ public class SettingsActivity extends PreferenceActivity
             category.removePreference(pref);
         }
 
+        //Geoid correction is not included in Froyo
+        if (BuildConfig.FLAVOR.equals("froyo")) {
+            getPreferenceManager().findPreference(res.getString(R.string.pref_altitude_adjust)).setEnabled(false);
+        }
+
         if (!hasHR(this)) {
             getPreferenceManager().findPreference(res.getString(R.string.cue_configure_hrzones)).setEnabled(false);
             getPreferenceManager().findPreference(res.getString(R.string.pref_battery_level_low_threshold)).setEnabled(false);

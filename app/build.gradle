@@ -37,6 +37,7 @@ android {
         latest {
             manifest.srcFile 'latest/AndroidManifest.xml'
             java.srcDirs = ['latest/java']
+            assets.srcDirs = ['latest/assets']
         }
         test.setRoot('test')
     }
