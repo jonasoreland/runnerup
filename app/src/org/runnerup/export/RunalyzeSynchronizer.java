@@ -40,6 +40,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Synchronizer for <em>Runalyze</em> server. See more info in the project <a href="https://runalyze.com/login.php">home page</a>.
@@ -62,6 +64,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     private String _username;
     private String _url;
     private boolean _version3;
+    private String _csrf_token;
 
     /**
      * Empty constructor.
@@ -231,12 +234,23 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         Log.d(getName(), "cookies=" + cookies);
     }
 
-    /**
-     * Runalyze v3 needs to login with a valid session cookie. So we need to first request the
-     * login page and then perform the login. Besides this method in v2 returns just a 404 which
-     * let us to know it is a 2.x.
-     * @return The return code or -1 in case of strange error
-     */
+    protected void getCSRFToken(String response) {
+        Pattern pattern = Pattern.compile("<input type=\"hidden\" name=\"_csrf_token\" value=\"([^\"]+)\">");
+        Matcher matcher = pattern.matcher(response);
+        if (matcher.find()) {
+            _csrf_token = matcher.group(1);
+            Log.d(getName(), "CSRF token = " + _csrf_token);
+        } else {
+            Log.e(getName(), "Failed to get CSRF token");
+        }
+    }
+
+        /**
+         * Runalyze v3 needs to login with a valid session cookie. So we need to first request the
+         * login page and then perform the login. Besides this method in v2 returns just a 404 which
+         * let us to know it is a 2.x.
+         * @return The return code or -1 in case of strange error
+         */
     protected int prepareLogin() {
         try {
             URL url = new URL(_url + "/en/login");
@@ -247,9 +261,11 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             conn.setDoOutput(true);
             conn.connect();
             clearCookies();
+            String response = getResponse(conn.getInputStream());
             if (conn.getResponseCode() == 200) {
-                Log.d(getName(), getResponse(conn.getInputStream()));
+                Log.d(getName(), response);
                 getCookies(conn);
+                getCSRFToken(response);
             }
             return conn.getResponseCode();
         } catch (MalformedURLException e) {
@@ -283,6 +299,8 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
                     + URLEncoder.encode(_username, "UTF-8")
                     + (_version3? "&_password=" : "&password=")
                     + URLEncoder.encode(_password, "UTF-8")
+                    + ((_version3) ? "&_target_path=" + URLEncoder.encode("/dashboard", "UTF-8") : "")
+                    + ((_version3) ? "&_csrf_token=" + URLEncoder.encode(_csrf_token, "UTF-8") : "")
                     + "&submit=Login");
             writer.flush();
             conn.connect();
