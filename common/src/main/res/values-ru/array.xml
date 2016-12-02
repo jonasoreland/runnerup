@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Мили</item>
     <item>Километры</item>
@@ -30,13 +30,12 @@
   </string-array>
   <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
-  <string-array name="muteEntries">
-    <item>Нет</item>
-    <item>Да</item>
-  </string-array>
-  <string-array name="muteValues">
-    <item>Нет</item>
-    <item>Да</item>
+  <string-array name="sportEntries">
+    <item>Бег</item>
+    <item>Велосипед</item>
+    <item>Прочее</item>
+    <item>Ориентирование</item>
+    <item>Ходьба</item>
   </string-array>
   <string-array name="types">
     <item>Время</item>
@@ -46,6 +45,4 @@
     <item>Мужской</item>
     <item>Женский</item>
   </string-array>
-  <!--Audio cue languages-->
-  <!--Note: keep in same order as languagesNames-->
 </resources>

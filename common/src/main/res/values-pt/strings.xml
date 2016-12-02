@@ -105,7 +105,7 @@
   <string name="Darn">Raios!</string>
   <string name="No_way">Nem pensar</string>
   <string name="No">Não</string>
-  <string name="Loading">Carregando...</string>
+  <string name="Loading">Carregando…</string>
   <string name="Saving">Gravando</string>
   <string name="Are_you_sure">Tem certeza?</string>
   <string name="Downloadeditremove_workouts">Baixar/editar/apagar exercícios</string>
@@ -129,8 +129,6 @@
   <string name="Save">Gravar</string>
   <string name="Add_step">Adicionar passo</string>
   <string name="Add_repeat">Adicionar repetição</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Website">Website</string>
   <string name="Automatic_upload">Carregar automaticamente</string>
   <string name="Live">Ao vivo</string>

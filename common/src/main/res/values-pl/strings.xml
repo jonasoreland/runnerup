@@ -156,9 +156,9 @@
   <string name="Dismiss">Zamknij</string>
   <string name="No_way">No way</string>
   <string name="No">Nie</string>
-  <string name="Loading">Ładuje...</string>
+  <string name="Loading">Ładuje…</string>
   <string name="Saving">Zapisuje</string>
-  <string name="Cancellingplease_wait">Anuluje...</string>
+  <string name="Cancellingplease_wait">Anuluje…</string>
   <string name="try_again_later">spróbuj później</string>
   <string name="Are_you_sure">Jesteś pewien?</string>
   <string name="Configure_audio_cues">Konfiguruj wskazówki audio</string>
@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Użyj słuchawek do rozpoczynania/wstrzymania treningu</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Konwertuj interwał \"odpoczynek (dystans)\" na interwał \"regeneracja\" na zakładce \"Interwałowy\"</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Konwertuj interwał \"odpoczynek (dystans)\" na interwał \"regeneracja\" na zakładce \"Rozszerzony\"</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksportuj bazę danych na kartę SD (np. przed aktualizacjią)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importuj bazę danych z karty SD (np. po aktualizacji)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Trener wspomoże Cię w osiągnięciu założonego celu</string>
@@ -206,7 +205,7 @@
   <string name="Experimental_HRM_devices">Eksperymentalne urządzenia HRM</string>
   <string name="Experimental_features">Eksperymentalne funkcje</string>
   <string name="Mock_HRM_devices">Imituj urządzenie HRM</string>
-  <string name="About">O...</string>
+  <string name="About">O…</string>
   <string name="About_RunnerUp">O RunnerUp</string>
   <string name="Triggers">Wyzwalacze</string>
   <string name="Time_triggered_audio_cue">Wskazówki wyzwalane czasowo</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Dodaj powtórzenie</string>
   <string name="Discard">Anuluj</string>
   <string name="Failed_to_create_workout">Błąd przy zapisie treningu</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Język komunikatów</string>
   <string name="Website">Witryna</string>
   <string name="Automatic_upload">Autosynchronizacja</string>
@@ -290,7 +287,7 @@
   <string name="Delete_workout">Usuń trening</string>
   <string name="RunnerUp_workout">Trening RunnerUp:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">To jest trening, który możesz polubić.</string>
-  <string name="Share_workout">Podziel się treningiem...</string>
+  <string name="Share_workout">Podziel się treningiem…</string>
   <string name="New_audio_scheme">Nowy schemat wskazówek</string>
   <string name="Default">Domyślne</string>
   <string name="Notes_about_your_workout">Notatki</string>

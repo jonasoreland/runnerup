@@ -21,6 +21,8 @@ import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,9 +31,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.runnerup.BuildConfig;
+import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
@@ -312,6 +316,9 @@ public class Tracker extends android.app.Service implements
     }
 
     private long createActivity(int sport) {
+        Resources res = getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean altitudeAdjust = prefs.getBoolean(res.getString(R.string.pref_altitude_adjust), true);
         /**
          * Create an Activity instance
          */
@@ -322,7 +329,7 @@ public class Tracker extends android.app.Service implements
         tmp.clear();
         tmp.put(DB.LOCATION.ACTIVITY, mActivityId);
         tmp.put(DB.LOCATION.LAP, 0); // always start with lap 0
-        mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp);
+        mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp, altitudeAdjust);
         return mActivityId;
     }
 

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string-array name="unitEntries">
+    <item>Mil</item>
+    <item>Kilometer</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Oppvarming</item>
+    <item>Aktivitet</item>
+    <item>Hvile</item>
+    <item>Restitusjon</item>
+    <item>Avkjøling</item>
+  </string-array>
+  <!--same order as above, same values as Intensity-->
+  <string-array name="duration_types">
+    <item>Fårestående trykk</item>
+    <item>Tid</item>
+    <item>Distanse</item>
+  </string-array>
+  <!--same order as above, same values as Dimension-->
+  <string-array name="target_types">
+    <item>Ingen</item>
+    <item>Fart</item>
+    <item>Hjerterytmesone</item>
+  </string-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Springing</item>
+    <item>Sykling</item>
+    <item>Annet</item>
+    <item>Orientering</item>
+    <item>Gåing</item>
+  </string-array>
+  <string-array name="types">
+    <item>Tid</item>
+    <item>Distanse</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Mann</item>
+    <item>Dame</item>
+  </string-array>
+</resources>

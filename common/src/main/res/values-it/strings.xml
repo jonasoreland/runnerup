@@ -118,7 +118,7 @@
   <string name="Age">Età</string>
   <string name="edit">modifica</string>
   <string name="Synchronizing">Sincronizzando:</string>
-  <string name="synchronizing_feed">sincronizzando feed...</string>
+  <string name="synchronizing_feed">sincronizzando feed…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Formato tabella</string>
   <string name="Clear_uploads">Svuota caricamenti</string>
@@ -142,7 +142,7 @@
   <string name="Clear_HR_settings">Cancella impostazioni frequenza cardiaca</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitoraggio frequenza cardiaca non supportata per questo dispositivo</string>
   <string name="Select_type_of_Bluetooth_device">Seleziona tipo dispositivo Bluetooth</string>
-  <string name="Scanning">Ricerca...</string>
+  <string name="Scanning">Ricerca…</string>
   <string name="Failed_to_load_workout">Caricamento allenamento fallito!!</string>
   <string name="Icon_list">Lista icone</string>
   <string name="Problem">Problema</string>
@@ -156,9 +156,9 @@
   <string name="Dismiss">Chiudi</string>
   <string name="No_way">Assolutamente no</string>
   <string name="No">No</string>
-  <string name="Loading">Caricamento...</string>
-  <string name="Saving">Salvando...</string>
-  <string name="Cancellingplease_wait">Cancellando...prego attendere</string>
+  <string name="Loading">Caricamento…</string>
+  <string name="Saving">Salvando…</string>
+  <string name="Cancellingplease_wait">Cancellando…prego attendere</string>
   <string name="try_again_later">riprova più tardi!</string>
   <string name="Are_you_sure">Ne sei sicuro?</string>
   <string name="Configure_audio_cues">Configura riferimenti audio</string>
@@ -167,7 +167,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usa gli auricolari per avviare/sospendere/riprendere RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Converti il tratto di riposo di tipo distanza in tratto di recupero per la scheda Intervallo</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Converti il tratto di riposo di tipo distanza in tratto di recupero per la scheda Avanzato</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Esporta database su sdcard (ad esempio prima di un aggiornamento di sistema)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importa database su sdcard (ad esempio dopo un aggiornamento di sistema)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Allenatore (ti aiuta a raggiungere l\'obiettivo - se fissato)</string>
@@ -206,7 +205,7 @@
   <string name="Experimental_HRM_devices">Dispositivi HRM sperimentali</string>
   <string name="Experimental_features">Funzionalità sperimentali</string>
   <string name="Mock_HRM_devices">Dispositivi HRM \"fantoccio\"</string>
-  <string name="About">A proposito...</string>
+  <string name="About">A proposito…</string>
   <string name="About_RunnerUp">Info su RunnerUp</string>
   <string name="Triggers">Eventi</string>
   <string name="Time_triggered_audio_cue">Riferimento audio attivato per tempo</string>
@@ -270,8 +269,6 @@
   <string name="Add_repeat">Aggiungi ripetizione</string>
   <string name="Discard">Scarta</string>
   <string name="Failed_to_create_workout">Impossibile creare l\'attività</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
   <string name="Audio_cue_language">Lingua dei riferimenti audio</string>
   <string name="Website">Sito web</string>
   <string name="Automatic_upload">Upload automatico</string>

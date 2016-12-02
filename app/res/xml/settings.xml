@@ -145,6 +145,12 @@
             android:persistent="true"
             android:title="@string/Countdown_time_s" />
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_altitude_adjust"
+            android:title="@string/Adjust_altitude" />
+
         <org.runnerup.widget.TextPreference
             android:defaultValue="500"
             android:inputType="number"

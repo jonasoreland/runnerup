@@ -16,9 +16,9 @@ project.ext {
     buildToolsVersion = '25.0.0' //Update Travis manually
     compileSdkVersion = 24
     targetSdkVersion = 24
-    versionName = "1.54"
-    versionCode = 14000054
-    froyoVersionCode = 8000054
+    versionName = "1.55b"
+    versionCode = 14000055
+    froyoVersionCode = 8000055
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set

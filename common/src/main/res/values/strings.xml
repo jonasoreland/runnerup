@@ -23,7 +23,7 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
-  <string name="metrics_heartrate">Hr</string>
+  <string name="metrics_heartrate">HR</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
   <string name="Target_pace_HHMMSS">Target pace (HH:MM:SS)</string>
@@ -34,10 +34,10 @@
   <string name="Duration_time_HHMMSS">Duration time (HH:MM:SS)</string>
   <string name="Duration_distance_m">Duration distance (m)</string>
   <!-- strings with argument to provide -->
-  <!-- first argument is a date, second a time, for intance: "Yesterday at 13:32" -->
+  <!-- first argument is a date, second a time, for instance: "Yesterday at 13:32" -->
   <string name="formatting_date_at_time">%1$s at %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">ok, rats</string>
+  <string name="ok_rats">OK, rats</string>
   <!--other-->
   <string name="Google_Play_Services_Legal_Notices">Google Play Services Legal Notices</string>
   <string name="Type">Type</string>
@@ -120,7 +120,7 @@
   <string name="Age">Age</string>
   <string name="edit">edit</string>
   <string name="Synchronizing">Synchronizing:</string>
-  <string name="synchronizing_feed">synchronizing feed...</string>
+  <string name="synchronizing_feed">synchronizing feed…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Table format</string>
   <string name="Clear_uploads">Clear uploads</string>
@@ -158,9 +158,9 @@
   <string name="Dismiss">Dismiss</string>
   <string name="No_way">No way</string>
   <string name="No">No</string>
-  <string name="Loading">Loading...</string>
+  <string name="Loading">Loading…</string>
   <string name="Saving">Saving</string>
-  <string name="Cancellingplease_wait">Cancelling...please wait</string>
+  <string name="Cancellingplease_wait">Cancelling… please wait</string>
   <string name="try_again_later">try again later!</string>
   <string name="Are_you_sure">Are you sure?</string>
   <string name="Configure_audio_cues">Configure audio cues</string>
@@ -169,11 +169,11 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Use your headset to start/pause/resume RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Convert rest-step with type distance to recovery-step for Interval-tab</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Convert rest-step with type distance to recovery-step for Advanced-tab</string>
-  <string name="mm31kz513sg5">mm(31);kz(5,13);sg(5)</string>
-  <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to sdcard (e.g for upgrade)</string>
-  <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from sdcard (e.g after upgrade)</string>
+  <string name="mm31kz513sg5" translatable="false">mm(31);kz(5,13);sg(5)</string>
+  <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to SD-card (e.g for upgrade)</string>
+  <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from SD-card (e.g after upgrade)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if having set target)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Keep silent when workout start/pause/resume/stop</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Silent start/pause/resume/stop of workouts</string>
   <string name="Test_audio_cue">Test audio cue</string>
   <string name="Accounts">Accounts</string>
   <string name="Audio_cues">Audio cues</string>
@@ -189,7 +189,7 @@
   <string name="Unit_preference">Unit preference</string>
   <string name="Auto_start_GPS">Auto start GPS</string>
   <string name="Advanced_options">Advanced options</string>
-  <string name="Mapbox_default_style">Mapbox default style</string>
+  <string name="Mapbox_default_style">Mapbox style</string>
   <string name="RunnerUp_live_address">RunnerUp live address</string>
   <string name="Autopause_after_s">Autopause after (s)</string>
   <string name="Autopause_min_pace_minkm">Autopause min pace (min/km)</string>
@@ -204,6 +204,7 @@
   <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
   <string name="Poll_interval_ms">GPS Poll interval (ms)</string>
   <string name="Poll_distance_m">GPS Poll distance (m)</string>
+  <string name="Adjust_altitude">Adjust GPS altitude to geoid (EGM96)</string>
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
@@ -273,8 +274,8 @@
   <string name="Add_repeat">Add repeat</string>
   <string name="Discard">Discard</string>
   <string name="Failed_to_create_workout">Failed to create workout</string>
-  <string name="_sign_plus">+</string>
-  <string name="_sign_minus">-</string>
+  <string name="_sign_plus" translatable="false">+</string>
+  <string name="_sign_minus" translatable="false">-</string>
   <string name="Audio_cue_language">Audio cue language</string>
   <string name="Website">Website</string>
   <string name="Automatic_upload">Automatic upload</string>
@@ -293,7 +294,7 @@
   <string name="Delete_workout">Delete workout </string>
   <string name="RunnerUp_workout">RunnerUp workout: </string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nHere is a workout I think you might like.</string>
-  <string name="Share_workout">Share workout...</string>
+  <string name="Share_workout">Share workout…</string>
   <string name="New_audio_scheme">New audio scheme</string>
   <string name="Default">Default</string>
   <string name="Notes_about_your_workout">Notes about your workout</string>
@@ -306,7 +307,7 @@
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
   <string name="Unknown">Unknown</string>
-  <string name="RunningFreeOnlinePasswordNotice">Note: As password, use the \"secret key\" set on website under Add > Sync Training > SportTracks.</string>
+  <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add > Sync Training > SportTracks.</string>
   <string name="GoToWebsite">Go to website</string>
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
@@ -314,4 +315,5 @@
   <string name="cue_hrm_connection_restored">Restored connection to heart rate monitor</string>
   <string name="cue_hrm_connection_lost">Lost connection to heart rate monitor</string>
   <string name="HRM_connection_audio_cue">HRM connection triggered audio cue</string>
+  <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
 </resources>
