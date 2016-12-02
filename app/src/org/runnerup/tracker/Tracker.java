@@ -805,6 +805,10 @@ public class Tracker extends android.app.Service implements
         return component.isConnected();
     }
 
+    public HRProvider getHRProvider() {
+        return (trackerHRM.getHrProvider());
+    }
+
     public Integer getCurrentHRValue(long now, long maxAge) {
         HRProvider hrProvider = trackerHRM.getHrProvider();
         if (hrProvider == null)
