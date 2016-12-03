@@ -287,7 +287,7 @@
   <string name="Overwrite_existing">既存を上書き</string>
   <string name="Create_new_workout">新しいワークアウトを作成</string>
   <string name="Set_workout_name">ワークアウト名を設定</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s のダウンロードは %2$ ワークアウトを同じ名前で上書きします</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s のダウンロードは %2$s ワークアウトを同じ名前で上書きします</string>
   <string name="Delete_workout">ワークアウトを削除</string>
   <string name="RunnerUp_workout">RunnerUp ワークアウト: </string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">やあ\nここにあなたのお好みのワークアウトがあります。</string>

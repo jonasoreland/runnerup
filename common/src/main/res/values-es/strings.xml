@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Sobrescribir existentes</string>
   <string name="Create_new_workout">Crear nueva actividad</string>
   <string name="Set_workout_name">Cambiar nombre de la actividad</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Descargar %1$s sobrescribirá el ejercicio  con el mismo nombre %2$</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Descargar %1$s sobrescribirá el ejercicio  con el mismo nombre %2$s</string>
   <string name="Delete_workout">Eliminar entrenamiento</string>
   <string name="RunnerUp_workout">Actividades en RunnerUp:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nTengo una actividad que te podría gustar.</string>

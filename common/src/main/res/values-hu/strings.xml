@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Létező felülírása</string>
   <string name="Create_new_workout">Új edzésterv létrehozása</string>
   <string name="Set_workout_name">Edzésterv neve</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s letöltése felül fogja írni az ugyan olyan nevű %2$ .edzést.</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s letöltése felül fogja írni az ugyan olyan nevű %2$s .edzést.</string>
   <string name="Delete_workout">Edzésterv törlése</string>
   <string name="RunnerUp_workout">RunnerUp edzés:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Szia\nItt van egy edzésterv, ami szerintem tetszene</string>

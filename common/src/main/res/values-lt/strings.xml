@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Perrašyti esamą</string>
   <string name="Create_new_workout">Sukurti naują treniruotę</string>
   <string name="Set_workout_name">Pavadinti treniruotę</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s įkėlimas perrašys %2$ treniruotę tuo pačiu pavadinimu</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s įkėlimas perrašys %2$s treniruotę tuo pačiu pavadinimu</string>
   <string name="Delete_workout">Ištrinti treniruotę</string>
   <string name="RunnerUp_workout">RunnerUp treniruotė:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Labas\nČia treniruotė, kuri manau tau patiks.</string>

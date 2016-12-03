@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Timpa yang sekarang</string>
   <string name="Create_new_workout">Buat latihan baru</string>
   <string name="Set_workout_name">Buat nama latihan</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Mengunduh %1$s akan menimpa latihan %2$ yang bernama sama</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Mengunduh %1$s akan menimpa latihan %2$s yang bernama sama</string>
   <string name="Delete_workout">Hapus latihan</string>
   <string name="RunnerUp_workout">Latihan RunnerUp:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Halo\nIni adalah latihan yang bisa dipakai.</string>

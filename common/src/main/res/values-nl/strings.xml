@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Bestaande overschrijven</string>
   <string name="Create_new_workout">Nieuwe training maken</string>
   <string name="Set_workout_name">Training naam instellen</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s downloaden zal training %2$ met dezelfde naam overschrijven</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s downloaden zal training %2$s met dezelfde naam overschrijven</string>
   <string name="Delete_workout">Training verwijderen</string>
   <string name="RunnerUp_workout">RunnerUp training</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hallo\nHier is een training die je misschien leuk vindt.</string>
