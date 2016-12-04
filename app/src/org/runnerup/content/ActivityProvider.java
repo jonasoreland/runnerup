@@ -59,7 +59,7 @@ public class ActivityProvider extends ContentProvider {
     @SuppressWarnings("WeakerAccess")
     public static final String GPX_MIME = "application/gpx+xml";
     @SuppressWarnings("WeakerAccess")
-    public static final String TCX_MIME = "application/tcx+xml";
+    public static final String TCX_MIME = "application/vnd.garmin.tcx+xml";
     @SuppressWarnings("WeakerAccess")
     public static final String NIKE_MIME = "application/nike+xml";
     @SuppressWarnings("WeakerAccess")
@@ -162,7 +162,7 @@ public class ActivityProvider extends ContentProvider {
                         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
                         //The data must exist if log, use the log option as a possibility to "deactivate" too
                         boolean enabled = prefs.getBoolean(this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy), false);
-                        GPX gpx = new GPX(mDB, enabled);
+                        GPX gpx = new GPX(mDB, true, enabled);
                         gpx.export(activityId, new OutputStreamWriter(out.second));
                         Log.e(getClass().getName(), "export gpx");
                     } else if (res == NIKE) {
