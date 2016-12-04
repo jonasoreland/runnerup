@@ -48,15 +48,13 @@ public class CoachFeedback extends AudioFeedback {
                 sign = -1; // pace is "inverse"
                 break;
             case DISTANCE:
-                break;
             case HR:
-                break;
             case HRZ:
-                break;
+            case CAD:
+            case TEMPERATURE:
+            case PRESSURE:
             case SPEED:
-                break;
             case TIME:
-                break;
             default:
                 break;
         }

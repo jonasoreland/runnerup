@@ -183,13 +183,12 @@ public class TargetTrigger extends Trigger {
                     measure_distance[0] = distance_now;
                 }
             case DISTANCE:
-                break;
             case HR:
-                break;
             case HRZ:
-                break;
+            case CAD:
+            case TEMPERATURE:
+            case PRESSURE:
             case TIME:
-                break;
             default:
                 break;
         }
@@ -219,13 +218,12 @@ public class TargetTrigger extends Trigger {
                     return delta_distance / delta_time;
                 }
             case DISTANCE:
-                break;
             case HR:
-                break;
             case HRZ:
-                break;
+            case CAD:
+            case TEMPERATURE:
+            case PRESSURE:
             case TIME:
-                break;
             default:
                 break;
         }

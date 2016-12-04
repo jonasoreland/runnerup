@@ -131,6 +131,9 @@ public class EndOfLapSuppression extends TriggerSuppression {
         switch (s.getDurationType()) {
             case HR:
             case HRZ:
+            case CAD:
+            case TEMPERATURE:
+            case PRESSURE:
             case PACE:
             case SPEED:
                 return false;

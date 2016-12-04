@@ -113,6 +113,7 @@ public class LocationEntity extends AbstractEntity {
             final String[] from = new String[]{
                     Constants.DB.LOCATION.LATITUDE,
                     Constants.DB.LOCATION.LONGITUDE,
+                    Constants.DB.LOCATION.ALTITUDE,
                     Constants.DB.LOCATION.TYPE,
                     Constants.DB.LOCATION.TIME,
                     Constants.DB.LOCATION.LAP,
@@ -269,6 +270,20 @@ public class LocationEntity extends AbstractEntity {
     }
 
     /**
+     * Satellites for the location
+     */
+    private void setSatelites(int value) {
+        values().put(Constants.DB.LOCATION.SATELLITES, value);
+    }
+
+    public int getSatellites() {
+        if (values().containsKey(Constants.DB.LOCATION.SATELLITES)) {
+            return values().getAsInteger(Constants.DB.LOCATION.SATELLITES);
+        }
+        return -1;
+    }
+
+    /**
      * Altitude of the location
      */
     public void setAltitude(Double value) {
@@ -278,6 +293,20 @@ public class LocationEntity extends AbstractEntity {
     public Double getAltitude() {
         if (values().containsKey(Constants.DB.LOCATION.ALTITUDE)) {
             return values().getAsDouble(Constants.DB.LOCATION.ALTITUDE);
+        }
+        return null;
+    }
+
+    /**
+     * Altitude of the location, raw GPS format (not baro or geoid adjusted)
+     */
+    public void setGPSAltitude(Double value) {
+        values().put(Constants.DB.LOCATION.GPS_ALTITUDE, value);
+    }
+
+    public Double getGPSAltitude() {
+        if (values().containsKey(Constants.DB.LOCATION.GPS_ALTITUDE)) {
+            return values().getAsDouble(Constants.DB.LOCATION.GPS_ALTITUDE);
         }
         return null;
     }
@@ -327,13 +356,41 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Cadence at the location
      */
-    private void setCadence(Integer value) {
+    private void setCadence(Float value) {
         values().put(Constants.DB.LOCATION.CADENCE, value);
     }
 
-    public Integer getCadence() {
+    public Float getCadence() {
         if (values().containsKey(Constants.DB.LOCATION.CADENCE)) {
-            return values().getAsInteger(Constants.DB.LOCATION.CADENCE);
+            return values().getAsFloat(Constants.DB.LOCATION.CADENCE);
+        }
+        return null;
+    }
+
+    /**
+     * Temperature at the location
+     */
+    public void setTemperature(Float value) {
+        values().put(Constants.DB.LOCATION.TEMPERATURE, value);
+    }
+
+    public Float getTemperature() {
+        if (values().containsKey(Constants.DB.LOCATION.TEMPERATURE)) {
+            return values().getAsFloat(Constants.DB.LOCATION.TEMPERATURE);
+        }
+        return null;
+    }
+
+    /**
+     * Pressure at the location
+     */
+    public void setPressure(Float value) {
+        values().put(Constants.DB.LOCATION.PRESSURE, value);
+    }
+
+    public Float getPressure() {
+        if (values().containsKey(Constants.DB.LOCATION.PRESSURE)) {
+            return values().getAsFloat(Constants.DB.LOCATION.PRESSURE);
         }
         return null;
     }
@@ -346,14 +403,23 @@ public class LocationEntity extends AbstractEntity {
         columns.add(Constants.DB.LOCATION.LAP);
         columns.add(Constants.DB.LOCATION.TYPE);
         columns.add(Constants.DB.LOCATION.TIME);
+
+        columns.add(Constants.DB.LOCATION.ELAPSED);
+        columns.add(Constants.DB.LOCATION.DISTANCE);
+
         columns.add(Constants.DB.LOCATION.LATITUDE);
         columns.add(Constants.DB.LOCATION.LONGITUDE);
-        columns.add(Constants.DB.LOCATION.ACCURANCY);
         columns.add(Constants.DB.LOCATION.ALTITUDE);
-        columns.add(Constants.DB.LOCATION.SPEED);
-        columns.add(Constants.DB.LOCATION.BEARING);
+
         columns.add(Constants.DB.LOCATION.HR);
         columns.add(Constants.DB.LOCATION.CADENCE);
+        columns.add(Constants.DB.LOCATION.TEMPERATURE);
+        columns.add(Constants.DB.LOCATION.PRESSURE);
+
+        columns.add(Constants.DB.LOCATION.GPS_ALTITUDE);
+        columns.add(Constants.DB.LOCATION.ACCURANCY);
+        columns.add(Constants.DB.LOCATION.SPEED);
+        columns.add(Constants.DB.LOCATION.BEARING);
         return columns;
     }
 

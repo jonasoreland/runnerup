@@ -221,6 +221,9 @@ public class Step implements TickComponent {
                     case SPEED:
                     case HR:
                     case HRZ:
+                    case CAD:
+                    case TEMPERATURE:
+                    case PRESSURE:
                         break;
                 }
             }
@@ -238,6 +241,9 @@ public class Step implements TickComponent {
                     case TIME:
                     case HR:
                     case HRZ:
+                    case CAD:
+                    case TEMPERATURE:
+                    case PRESSURE:
                         break;
                 }
             }

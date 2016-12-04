@@ -69,6 +69,7 @@ import org.runnerup.workout.Intensity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DetailActivity extends AppCompatActivity implements Constants {
@@ -774,7 +775,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private void shareActivity() {
         final int which[] = {
-                1 //TODO preselect tcx - choice should be remembered
+            1 //TODO preselect tcx - choice should be remembered
         };
         final CharSequence items[] = {
                 "gpx", "tcx" /* "nike+xml" */
@@ -802,7 +803,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         //Solid Explorer File Manager works though
                         Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
                                 + "/" + mID
-                                + "/" + "RunnerUp_" + mID + "." + fmt);
+                                + "/" + String.format(Locale.getDefault(), "RunnerUp_%04d.", mID) + "." + fmt);
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
                         context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
 
