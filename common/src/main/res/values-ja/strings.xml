@@ -33,6 +33,9 @@
   <string name="Rest_distance_m">休憩距離 (m)</string>
   <string name="Duration_time_HHMMSS">持続時間 (HH:MM:SS)</string>
   <string name="Duration_distance_m">持続距離 (m)</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK</string>
   <!--other-->
@@ -46,7 +49,6 @@
   <string name="repeat">繰り返す</string>
   <string name="time">時間</string>
   <string name="distance">距離</string>
-  <string name="Unknown">不明</string>
   <string name="Distance">距離</string>
   <string name="speed">スピード</string>
   <string name="pace">ペース</string>
@@ -186,6 +188,7 @@
   <string name="Unit_preference">単位設定</string>
   <string name="Auto_start_GPS">GPS 自動開始</string>
   <string name="Advanced_options">高度なオプション</string>
+  <string name="Mapbox_default_style">Mapbox スタイル</string>
   <string name="RunnerUp_live_address">RunnerUp ライブアドレス</string>
   <string name="Autopause_after_s">自動一時休止 ～秒後</string>
   <string name="Autopause_min_pace_minkm">自動一時休止 分ペース (分/km)</string>
@@ -200,6 +203,7 @@
   <string name="Smooth_pace_filters">滑らかなペースのフィルター(s)</string>
   <string name="Poll_interval_ms">ポーリング間隔 (ms)</string>
   <string name="Poll_distance_m">ポーリング距離 (m)</string>
+  <string name="Adjust_altitude">GPS の高度をジオイドに調整する (EGM96)</string>
   <string name="Export">エクスポート</string>
   <string name="Import">インポート</string>
   <string name="Experimental_HRM_devices">実験的な HRM デバイス</string>
@@ -283,7 +287,7 @@
   <string name="Overwrite_existing">既存を上書き</string>
   <string name="Create_new_workout">新しいワークアウトを作成</string>
   <string name="Set_workout_name">ワークアウト名を設定</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s のダウンロードは %2$ ワークアウトを同じ名前で上書きします</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s のダウンロードは %2$s ワークアウトを同じ名前で上書きします</string>
   <string name="Delete_workout">ワークアウトを削除</string>
   <string name="RunnerUp_workout">RunnerUp ワークアウト: </string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">やあ\nここにあなたのお好みのワークアウトがあります。</string>
@@ -295,4 +299,15 @@
   <string name="Uploading_to_1s">%1$s へアップロード中</string>
   <string name="Loading_activities">アクティビティをロード中</string>
   <string name="Fetching_activities_from_1s">%1$s からアクティビティを取得中</string>
+  <string name="Map_not_available_on_Froyo">Froyo で地図は利用できません</string>
+  <string name="Distance_marker">距離マーカー</string>
+  <string name="No_feed_to_show">表示するフィードはありません</string>
+  <string name="Unused_currently">現在未使用です。</string>
+  <string name="Unknown">不明</string>
+  <string name="RunningFreeOnlinePasswordNotice">注: ウェブサイトの 追加 &gt; トレーニングの同期 &gt; SportTracks の下で設定したパスワードとして \"秘密鍵\" を使用します。</string>
+  <string name="GoToWebsite">ウェブサイトに移動</string>
+  <string name="Recording">記録中</string>
+  <string name="Sensors">センサー</string>
+  <string name="Maintenance">メンテナンス</string>
+  <string name="latest_feed_click_to_refresh">最新フィード (クリックするとリフレッシュ)</string>
 </resources>

@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Skriv över existerande:</string>
   <string name="Create_new_workout">Skapa nytt träningspass</string>
   <string name="Set_workout_name">Ange namn för träningspass</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Ladda ner %1$s kommer skriva över träningpass %2$ med samma namn</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Ladda ner %1$s kommer skriva över existerande träningpass %2$s</string>
   <string name="Delete_workout">Ta bort träningspass</string>
   <string name="RunnerUp_workout">RunnerUp träningspass:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hej\nHär är ett träningspass jag tror du skulle gilla.</string>

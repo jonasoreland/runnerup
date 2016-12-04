@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Перезаписывать существующие</string>
   <string name="Create_new_workout">Создать новую тренировку</string>
   <string name="Set_workout_name">Называние тренировки</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Загружаемая тренировка %1$s будет перезаписана %2$</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Загружаемая тренировка %1$s будет перезаписана %2$s</string>
   <string name="Delete_workout">Удалить тренировку</string>
   <string name="RunnerUp_workout">Тренировка RunnerUp:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Привет!\nВот тренировки. Я думаю ты можешь так же .</string>
