@@ -21,12 +21,14 @@ import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
@@ -157,7 +159,10 @@ public class ActivityProvider extends ContentProvider {
                         tcx.export(activityId, new OutputStreamWriter(out.second));
                         Log.e(getClass().getName(), "export tcx");
                     } else if (res == GPX) {
-                        GPX gpx = new GPX(mDB);
+                        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+                        //The data must exist if log, use the log option as a possibility to "deactivate" too
+                        boolean enabled = prefs.getBoolean(this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy), false);
+                        GPX gpx = new GPX(mDB, enabled);
                         gpx.export(activityId, new OutputStreamWriter(out.second));
                         Log.e(getClass().getName(), "export gpx");
                     } else if (res == NIKE) {

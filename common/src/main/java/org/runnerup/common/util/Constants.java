@@ -36,13 +36,16 @@ public interface Constants {
             public static final String MAX_HR = "avg_hr";
             public static final String AVG_HR = "max_hr";
             public static final String AVG_CADENCE = "avg_cadence";
+            public static final String META_DATA = "meta_data";
             public static final String DELETED = "deleted";
             public static final String NULLCOLUMNHACK = "nullColumnHack";
+
             public static final int SPORT_RUNNING = 0;
             public static final int SPORT_BIKING = 1;
             public static final int SPORT_OTHER = 2; // unknown
             public static final int SPORT_ORIENTEERING = 3;
             public static final int SPORT_WALKING = 4;
+            public static final String WITH_BAROMETER = "<WithBarometer/>";
         }
 
         public interface LOCATION {
@@ -51,14 +54,20 @@ public interface Constants {
             public static final String LAP = "lap";
             public static final String TYPE = "type";
             public static final String TIME = "time"; // in milliseconds since epoch
+            public static final String ELAPSED = "elapsed";
+            public static final String DISTANCE = "distance";
             public static final String LATITUDE = "latitude";
             public static final String LONGITUDE = "longitude";
             public static final String ACCURANCY = "accurancy";
             public static final String ALTITUDE = "altitude";
+            public static final String GPS_ALTITUDE = "gps_altitude";
             public static final String SPEED = "speed";
             public static final String BEARING = "bearing";
+            public static final String SATELLITES = "satellites";
             public static final String HR = "hr";
             public static final String CADENCE = "cadence";
+            public static final String TEMPERATURE = "temperature";
+            public static final String PRESSURE = "pressure";
 
             public static final int TYPE_START = 1;
             public static final int TYPE_END = 2;
@@ -99,6 +108,9 @@ public interface Constants {
             public static final int PACE = 4;
             public static final int HR = 5;
             public static final int HRZ = 6;
+            public static final int CAD = 7;
+            public static final int TEMPERATURE = 8;
+            public static final int PRESSURE = 9;
         }
 
         public interface ACCOUNT {
