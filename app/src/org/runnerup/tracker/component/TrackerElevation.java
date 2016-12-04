@@ -17,15 +17,18 @@
 
 package org.runnerup.tracker.component;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.tracker.Tracker;
 
@@ -61,10 +64,11 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
         this.trackerPressure = trackerPressure;
     }
 
+    @SuppressLint("NewApi")
     public Double getValue() {
         Double val;
         Float pressure = tracker.getCurrentPressure();
-        if (pressure != null) {
+        if (pressure != null && BuildConfig.VERSION_CODE >= 9) {
             //Pressure available - use it for elevation
             //TODO get real sea level pressure (online) or set offset from start/end
             //noinspection InlinedApi
