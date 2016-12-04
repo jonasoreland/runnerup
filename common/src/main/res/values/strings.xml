@@ -293,7 +293,7 @@
   <string name="Overwrite_existing">Overwrite existing</string>
   <string name="Create_new_workout">Create new workout</string>
   <string name="Set_workout_name">Set workout name</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Downloading %1$s will overwrite %2$ workout with same name</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Downloading %1$s will overwrite %2$s workout with same name</string>
   <string name="Delete_workout">Delete workout </string>
   <string name="RunnerUp_workout">RunnerUp workout: </string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nHere is a workout I think you might like.</string>

@@ -283,7 +283,7 @@
   <string name="Overwrite_existing">Overskriv eksisterende</string>
   <string name="Create_new_workout">Lag ny treningsøkt</string>
   <string name="Set_workout_name">Navngi treningsøkt</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Nedlasting av %1$s vil overskrive %2$-treningsøkten ved samme navn</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Nedlasting av %1$s vil overskrive %2$s-treningsøkten ved samme navn</string>
   <string name="Delete_workout">Slett treningsøkt</string>
   <string name="RunnerUp_workout">RunnerUp-treningsøkt:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hei\nHer er en treningsøkt jeg tror du vil like.</string>
