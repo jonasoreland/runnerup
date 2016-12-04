@@ -9,18 +9,18 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -f  $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
-  - rm -f  $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
+  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 android:
     components:
         - tools #latest for "builtin" sdk (24.4.1 in Android-24)
         #To update SDK Tools to latest, another update is required
-        #- tools #latest, 25.2.2 as of 2016-10-29
-        - platform-tools #latest, 25.0.0 as of 2016-10-29
-        - build-tools-25.0.0
+        #- tools #latest, 25.2.3 as of 2016-12-04
+        - platform-tools #latest, 25.0.1 as of 2016-12-04
+        - build-tools-25.0.1
         - android-24
         - extra-android-m2repository
         - extra-google-m2repository
