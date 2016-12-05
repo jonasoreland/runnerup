@@ -33,6 +33,9 @@
   <string name="Rest_distance_m">Vilodistans (m)</string>
   <string name="Duration_time_HHMMSS">Varaktighet tid (HH:MM:SS)</string>
   <string name="Duration_distance_m">Varaktighet distans (m)</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, nedrans</string>
   <!--other-->
@@ -46,7 +49,6 @@
   <string name="repeat">upprepning</string>
   <string name="time">tid</string>
   <string name="distance">distans</string>
-  <string name="Unknown">Okänt</string>
   <string name="Distance">Distans</string>
   <string name="speed">hastighet</string>
   <string name="pace">tempo</string>
@@ -186,6 +188,7 @@
   <string name="Unit_preference">Måttenhet</string>
   <string name="Auto_start_GPS">Autostarta GPS</string>
   <string name="Advanced_options">Avancerade inställningar</string>
+  <string name="Mapbox_default_style">Mapbox stil</string>
   <string name="RunnerUp_live_address">RunnerUpLive adress</string>
   <string name="Autopause_after_s">Autopausa efter (s)</string>
   <string name="Autopause_min_pace_minkm">Autopaus tempo (min/km)</string>
@@ -200,6 +203,7 @@
   <string name="Smooth_pace_filters">Utjämningsfilter tempo (s)</string>
   <string name="Poll_interval_ms">GPS Uppdaterings intervall (ms)</string>
   <string name="Poll_distance_m">GPS Uppdaterings distans (m)</string>
+  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM96)</string>
   <string name="Export">Exportera</string>
   <string name="Import">Importera</string>
   <string name="Experimental_HRM_devices">Experimentella pulsmätare</string>
@@ -295,17 +299,15 @@
   <string name="Uploading_to_1s">Laddar upp till %1$s</string>
   <string name="Loading_activities">Laddar aktiviteter</string>
   <string name="Fetching_activities_from_1s">Hämtar aktiviteter från %1$s</string>
-  <string name="Distance_marker">Distansmarkör</string>
-  <string name="GoToWebsite">Gå till website</string>
   <string name="Map_not_available_on_Froyo">Karta inte tillgänglig i Froyo</string>
+  <string name="Distance_marker">Distansmarkör</string>
   <string name="No_feed_to_show">Inget flöde att visa</string>
   <string name="Unused_currently">Används ej för närvarande</string>
-  <string name="Maintenance">Underhåll</string>
-  <string name="Mapbox_default_style">Mapbox stil</string>
+  <string name="Unknown">Okänt</string>
+  <string name="RunningFreeOnlinePasswordNotice">Notera: Använd den hemliga nyckel som lösenord från Add &gt; Sync Training &gt; SportTracks.</string>
+  <string name="GoToWebsite">Gå till website</string>
   <string name="Recording">Inspelning</string>
-  <string name="RunningFreeOnlinePasswordNotice">Notera: Använd den hemliga nyckel som lösenord från Add > Sync Training > SportTracks.</string>
   <string name="Sensors">Sensorer</string>
-  <string name="formatting_date_at_time">%1$s %2$s</string>
+  <string name="Maintenance">Underhåll</string>
   <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
-  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM96)</string>
 </resources>
