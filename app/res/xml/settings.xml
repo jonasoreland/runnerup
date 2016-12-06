@@ -53,18 +53,6 @@
                 android:targetClass="org.runnerup.view.HRZonesActivity" />
         </Preference>
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:persistent="true"
-            android:key="@string/pref_bt_experimental"
-            android:title="@string/Experimental_HRM_devices" />
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:persistent="true"
-            android:key="@string/pref_bt_mock"
-            android:title="@string/Mock_HRM_devices" />
-
         <org.runnerup.widget.TextPreference
             android:defaultValue="15"
             android:inputType="number"
