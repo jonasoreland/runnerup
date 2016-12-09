@@ -85,6 +85,8 @@ public class SettingsActivity extends PreferenceActivity
         //Geoid correction is not included in Froyo
         if (BuildConfig.FLAVOR.equals("froyo")) {
             getPreferenceManager().findPreference(res.getString(R.string.pref_altitude_adjust)).setEnabled(false);
+            getPreferenceScreen().removePreference(getPreferenceManager().findPreference("map_preferencescreen"));
+            getPreferenceScreen().removePreference(getPreferenceManager().findPreference("graph_preferencescreen"));
         }
 
         if (!hasHR(this)) {
