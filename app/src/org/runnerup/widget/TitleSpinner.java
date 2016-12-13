@@ -68,8 +68,9 @@ public class TitleSpinner extends LinearLayout {
     private TextView mTitle = null;
     private TextView mValue = null;
     private Spinner mSpinner = null;
+    private boolean mIsExpanded = false;
     private CharSequence mPrompt = null;
-    int mInputType = 0;
+    private int mInputType = 0;
     private final Context mContext;
     private OnSetValueListener mSetValueListener = null;
     private OnCloseDialogListener mCloseDialogListener = null;
@@ -83,18 +84,18 @@ public class TitleSpinner extends LinearLayout {
          * @return
          * @throws java.lang.IllegalArgumentException
          */
-        public String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
+        String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
 
         /**
          * @param newValue
          * @return
          * @throws java.lang.IllegalArgumentException
          */
-        public int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
+        int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
     }
 
     public interface OnCloseDialogListener {
-        public void onClose(TitleSpinner spinner, boolean ok);
+        void onClose(TitleSpinner spinner, boolean ok);
     }
 
     public TitleSpinner(Context context, AttributeSet attrs) {
@@ -156,6 +157,15 @@ public class TitleSpinner extends LinearLayout {
         arr.recycle(); // Do this when done.
     }
 
+    /**
+     * If the spinner is a simple spinner (no popup), then the expansion is deselected if the
+     * calling view is updating
+     * @return  if the simple spinner is expanded
+     */
+    public boolean isExpandedDropDown() {
+        return mIsExpanded;
+    }
+
     private void setupEditText(final Context context, final AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
         mInputType = arr.getInt(R.styleable.TitleSpinner_android_inputType,
                 EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
@@ -199,7 +209,9 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupSpinner(Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
+    private void setupSpinner(@SuppressWarnings("UnusedParameters") Context context,
+                              @SuppressWarnings("UnusedParameters") AttributeSet attrs,
+                              TypedArray arr, CharSequence defaultValue) {
         if (mPrompt != null) {
             mSpinner.setPrompt(mPrompt);
         }
@@ -227,6 +239,7 @@ public class TitleSpinner extends LinearLayout {
         layout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                mIsExpanded = true;
                 mSpinner.performClick();
             }
         });
@@ -245,10 +258,12 @@ public class TitleSpinner extends LinearLayout {
                     onClose(true);
                 }
                 mFirstSetValue = false;
+                mIsExpanded = false;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
+                mIsExpanded = false;
             }
         });
     }
@@ -262,7 +277,7 @@ public class TitleSpinner extends LinearLayout {
         return layout;
     }
 
-    private void setupDatePicker(final Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
+    private void setupDatePicker(final Context context, AttributeSet attrs, @SuppressWarnings("UnusedParameters") TypedArray arr, CharSequence defaultValue) {
         if (defaultValue != null && "today".contentEquals(defaultValue)) {
             DateFormat df = android.text.format.DateFormat.getDateFormat(context);
             defaultValue = df.format(new Date());
@@ -317,7 +332,7 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupTimePicker(final Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
+    private void setupTimePicker(final Context context, AttributeSet attrs, @SuppressWarnings("UnusedParameters") TypedArray arr, CharSequence defaultValue) {
         if (defaultValue != null && "now".contentEquals(defaultValue)) {
             DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
             defaultValue = df.format(new Date());
@@ -374,7 +389,7 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupDurationPicker(final Context context, final AttributeSet attrs, TypedArray arr,
+    private void setupDurationPicker(final Context context, final AttributeSet attrs, @SuppressWarnings("UnusedParameters") TypedArray arr,
                                      CharSequence defaultValue) {
         if (defaultValue != null) {
             mValue.setText(defaultValue);
@@ -407,7 +422,7 @@ public class TitleSpinner extends LinearLayout {
                         onClose(true);
                     }
 
-                    private String getValue(DurationPicker dp) {
+                    private String getValue(@SuppressWarnings("UnusedParameters") DurationPicker dp) {
                         return DateUtils.formatElapsedTime(picker.getEpochTime());
                     }
                 });
@@ -424,7 +439,7 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupDistancePicker(final Context context, AttributeSet attrs, TypedArray arr,
+    private void setupDistancePicker(final Context context, AttributeSet attrs, @SuppressWarnings("UnusedParameters") TypedArray arr,
                                      CharSequence defaultValue) {
         if (defaultValue != null) {
             mValue.setText(defaultValue);
@@ -476,7 +491,7 @@ public class TitleSpinner extends LinearLayout {
         });
     }
 
-    private void setupNumberPicker(final Context context, AttributeSet attrs, final TypedArray arr, CharSequence defaultValue) {
+    private void setupNumberPicker(final Context context, AttributeSet attrs, @SuppressWarnings("UnusedParameters") final TypedArray arr, CharSequence defaultValue) {
         if (defaultValue != null) {
             mValue.setText(defaultValue);
         } else {
@@ -545,13 +560,13 @@ public class TitleSpinner extends LinearLayout {
             mCloseDialogListener.onClose(this, b);
     }
 
-    public void setTitle(String title) {
-        mTitle.setText(title);
-    }
+    //public void setTitle(String title) {
+    //    mTitle.setText(title);
+    //}
 
-    public void setPrompt(String prompt) {
-        mPrompt = prompt;
-    }
+    //public void setPrompt(String prompt) {
+    //    mPrompt = prompt;
+    //}
 
     private void loadValue(String defaultValue) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -611,7 +626,7 @@ public class TitleSpinner extends LinearLayout {
         return 0;
     }
 
-    int getSelectionValue(int value) {
+    private int getSelectionValue(int value) {
         if (values == null)
             return value;
         int p = 0;
@@ -625,7 +640,7 @@ public class TitleSpinner extends LinearLayout {
         return 0;
     }
 
-    int getRealValue(int value) {
+    private int getRealValue(int value) {
         if (values == null)
             return value;
         if (value >= 0 && value < values.length)
