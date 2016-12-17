@@ -22,18 +22,7 @@
                 android:startColor="#15743C"
                 android:endColor="#1b5934"
                 android:angle="270" />
-            <stroke
-                android:width="2dp"
-                android:color="#777777" />
-          <corners android:bottomRightRadius="15dp"
-                   android:bottomLeftRadius="15dp"
-                   android:topRightRadius="15dp"
-                   android:topLeftRadius="15dp"/>
-            <padding
-                android:left="10dp"
-                android:top="10dp"
-                android:right="10dp"
-                android:bottom="10dp" />
+            <corners android:radius="5dp"/>
         </shape>
     </item>
     <item android:state_enabled="false">
@@ -42,18 +31,7 @@
                 android:startColor="#777777"
                 android:endColor="#171717"
                 android:angle="270" />
-            <stroke
-                android:width="2dp"
-                android:color="#777777" />
-          <corners android:bottomRightRadius="15dp"
-                   android:bottomLeftRadius="15dp"
-                   android:topRightRadius="15dp"
-                   android:topLeftRadius="15dp"/>
-            <padding
-                android:left="10dp"
-                android:top="10dp"
-                android:right="10dp"
-                android:bottom="10dp" />
+            <corners android:radius="5dp"/>
         </shape>
     </item>
 	<item>
@@ -62,18 +40,7 @@
                 android:startColor="#7fb883"
                 android:endColor="#1b5934"
                 android:angle="270" />
-            <stroke
-                android:width="2dp"
-                android:color="#777777" />
-          <corners android:bottomRightRadius="15dp"
-                   android:bottomLeftRadius="15dp"
-                   android:topRightRadius="15dp"
-                   android:topLeftRadius="15dp"/>
-            <padding
-                android:left="10dp"
-                android:top="10dp"
-                android:right="10dp"
-                android:bottom="10dp" />
+            <corners android:radius="5dp"/>
         </shape>
     </item>
 </selector>

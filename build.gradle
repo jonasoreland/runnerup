@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.2.3'
     }
 
 }
@@ -13,12 +13,12 @@ project.ext {
     //Note that Android Studio does not know about the 'ext' module and will warn
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
-    buildToolsVersion = '25.0.1' //Update Travis manually
-    compileSdkVersion = 24
-    targetSdkVersion = 24
-    versionName = "1.55b"
-    versionCode = 14000055
-    froyoVersionCode = 8000055
+    buildToolsVersion = '25.0.2' //Update Travis manually
+    compileSdkVersion = 25
+    targetSdkVersion = 25
+    versionName = "1.56"
+    versionCode = 14000056
+    froyoVersionCode = 8000056
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set

@@ -33,6 +33,9 @@
   <string name="Rest_distance_m">Distância do descanso (m)</string>
   <string name="Duration_time_HHMMSS">Tempo de duração (HH:MM:SS)</string>
   <string name="Duration_distance_m">Distância da duração (m)</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s às %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, ratos</string>
   <!--other-->
@@ -46,7 +49,6 @@
   <string name="repeat">repita</string>
   <string name="time">tempo</string>
   <string name="distance">distância</string>
-  <string name="Unknown">Desconhecido</string>
   <string name="Distance">Distância</string>
   <string name="speed">velocidade</string>
   <string name="pace">ritmo</string>
@@ -186,13 +188,14 @@
   <string name="Unit_preference">Preferência de unidade</string>
   <string name="Auto_start_GPS">Início automático do gps</string>
   <string name="Advanced_options">Opções avançadas</string>
+  <string name="Mapbox_default_style">Estilo do Mapbox</string>
   <string name="RunnerUp_live_address">Endereço do RunnerUp live</string>
   <string name="Autopause_after_s">Pausa automática após (s)</string>
   <string name="Autopause_min_pace_minkm">Pausa automática no ritmo mínimo (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Converter descanso na aba Intervalo</string>
   <string name="Convert_rest_on_Advanced_tab">Converter descanso na aba Avançado</string>
-  <string name="Target_pace_moving_average_seconds">Média em segundos da meta de ritmo em movimento</string>
-  <string name="Target_pace_grace_seconds">Tolerância em segundos da meta de ritmo</string>
+  <string name="Target_pace_moving_average_seconds">Média em segundos em movimento do pace alvo</string>
+  <string name="Target_pace_grace_seconds">Tolerância em segundos do pace alvo</string>
   <string name="Autolap_during_intervals">Volta automática durante os intervalos</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Adicionar contagem regressiva após a passada que terminar com o pressionamento do usuário</string>
   <string name="Step_countdown_time_s">Tempo da contagem regressiva após a passada (s)</string>
@@ -200,6 +203,7 @@
   <string name="Smooth_pace_filters">Filtro(s) do ritmo suave</string>
   <string name="Poll_interval_ms">Intervalo da pesquisa (ms)</string>
   <string name="Poll_distance_m">Distância da pesquisa (m)</string>
+  <string name="Adjust_altitude">Ajustar a altitude do GPS para geoid (EGM96)</string>
   <string name="Export">Exportar</string>
   <string name="Import">Importar</string>
   <string name="Experimental_HRM_devices">Experim. - Dispos. HRM</string>
@@ -295,4 +299,15 @@
   <string name="Uploading_to_1s">Enviando para %1$s</string>
   <string name="Loading_activities">Carregando atividades</string>
   <string name="Fetching_activities_from_1s">Obtendo atividades de %1$s</string>
+  <string name="Map_not_available_on_Froyo">Mapa não disponível no Froyo</string>
+  <string name="Distance_marker">Marcador de distância</string>
+  <string name="No_feed_to_show">Nenhum feed para motrar</string>
+  <string name="Unused_currently">Atualmente não utilizado.</string>
+  <string name="Unknown">Desconhecido</string>
+  <string name="RunningFreeOnlinePasswordNotice">Nota: Use a \"chave secreta\" como senha definida no site web em Adicionar &gt; Sincronizar treino &gt; Trajetos de esporte.</string>
+  <string name="GoToWebsite">Ir ao site web</string>
+  <string name="Recording">Gravando</string>
+  <string name="Sensors">Sensores</string>
+  <string name="Maintenance">Manutenção</string>
+  <string name="latest_feed_click_to_refresh">Últimos feeds (clique para atualizar)</string>
 </resources>

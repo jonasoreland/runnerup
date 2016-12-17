@@ -37,6 +37,7 @@ import org.runnerup.workout.feedback.AudioCountdownFeedback;
 import org.runnerup.workout.feedback.AudioFeedback;
 import org.runnerup.workout.feedback.CoachFeedback;
 import org.runnerup.workout.feedback.CountdownFeedback;
+import org.runnerup.workout.feedback.HRMStateChangeFeedback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -275,6 +276,12 @@ public class WorkoutBuilder {
             ev2.skipCounter = 1; // skip above
             ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
             triggers.add(ev2);
+
+            if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
+                HRMStateTrigger hrmState = new HRMStateTrigger();
+                hrmState.triggerAction.add(new HRMStateChangeFeedback(hrmState));
+                triggers.add(hrmState);
+            }
         }
 
         Step stepArr[] = new Step[steps.size()];

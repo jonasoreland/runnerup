@@ -60,6 +60,7 @@ import org.runnerup.widget.WidgetUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -174,6 +175,14 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.hrsettings_menu, menu);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Resources res = getResources();
+        boolean isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_experimental), false);
+        MenuItem item = menu.findItem(R.id.menu_hrdevice_expermental);
+        item.setChecked(isChecked);
+        isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
+        item = menu.findItem(R.id.menu_hrdevice_mock);
+        item.setChecked(isChecked);
         return true;
     }
 
@@ -182,12 +191,29 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         switch (item.getItemId()) {
             case R.id.menu_hrsettings_clear:
                 clearHRSettings();
-                break;
+                return true;
             case R.id.menu_hrzones:
                 hrZonesClick.onClick(null);
-                break;
+                return true;
+            case R.id.menu_hrdevice_expermental:
+            case R.id.menu_hrdevice_mock:
+                boolean isChecked = !item.isChecked();
+                item.setChecked(isChecked);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Resources res = getResources();
+                SharedPreferences.Editor editor = prefs.edit();
+                int key;
+                if (item.getItemId() == R.id.menu_hrdevice_expermental) {
+                    key = R.string.pref_bt_experimental;
+                } else {
+                    key = R.string.pref_bt_mock;
+                }
+                editor.putBoolean(res.getString(key), isChecked);
+                editor.commit();
+                providers = HRManager.getHRProviderList(this);
+                return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
     
     @Override
@@ -514,7 +540,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 if(data.hasHeartRate)
                     hrValue = data.hrValue;
 
-                tvHR.setText(Long.toString(hrValue));
+                tvHR.setText(String.format(Locale.getDefault(), "%d", hrValue));
 
                 if (age != lastTimestamp) {
                     if (graphViewSeries == null) {
