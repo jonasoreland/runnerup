@@ -386,7 +386,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             String first = profile.getString("firstName");
             String last = profile.getString("lastName");
             String userUrl = profile.has("avatarFullUrl") ? profile.getString("avatarFullUrl") : null;
-            JSONObject feed = makeGetRequest(String.format(MY_FEED_URL, access_token, 1, 25));
+            JSONObject feed = makeGetRequest(String.format(Locale.ENGLISH, MY_FEED_URL, access_token, 1, 25));
             JSONArray arr = feed.getJSONArray("events");
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject e = arr.getJSONObject(i);
@@ -427,7 +427,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     private void getFriendsFeed(SimpleDateFormat df, List<ContentValues> result) {
         try {
-            JSONObject feed = makeGetRequest(String.format(FRIEND_FEED_URL, access_token, 1, 25));
+            JSONObject feed = makeGetRequest(String.format(Locale.ENGLISH, FRIEND_FEED_URL, access_token, 1, 25));
 
             if (!feed.has("friends")) {
                 Log.i(getClass().getSimpleName(), "No friends found, skipping their feed...");

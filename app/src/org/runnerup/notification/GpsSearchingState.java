@@ -13,6 +13,8 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.GpsInformation;
 import org.runnerup.view.MainLayout;
 
+import java.util.Locale;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GpsSearchingState implements NotificationState {
     private final Context context;
@@ -40,7 +42,7 @@ public class GpsSearchingState implements NotificationState {
 
     @Override
     public Notification createNotification() {
-        builder.setContentText(String.format("%s: %d/%d%s",
+        builder.setContentText(String.format(Locale.getDefault(), "%s: %d/%d%s",
                 context.getString(R.string.GPS_satellites),
                 gpsInformation.getSatellitesFixed(), gpsInformation.getSatellitesAvailable(),
                 gpsInformation.getGpsAccuracy()));

@@ -405,7 +405,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         SyncHelper.setName(c, o.getJSONObject("from").getString("name"));
         final String IMAGE_URL = "http://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
         c.put(FEED.USER_IMAGE_URL,
-                String.format(IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+                String.format(Locale.ENGLISH, IMAGE_URL, o.getJSONObject("from").getLong("picture")));
         c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
 
         final JSONObject m = o.getJSONObject("message");
@@ -413,7 +413,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         setDistanceDuration(c, m.getString("text.win"));
 
         final String WORKOUT_URL = "http://www.endomondo.com/workouts/%d/%d";
-        c.put(DB.FEED.URL, String.format(WORKOUT_URL,
+        c.put(DB.FEED.URL, String.format(Locale.ENGLISH, WORKOUT_URL,
                 m.getJSONArray("actions").getJSONObject(0).getLong("id"),
                 o.getJSONObject("from").getLong("id")));
         return c;

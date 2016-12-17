@@ -43,6 +43,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -285,7 +286,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         try {
             Pair<String, Sport> res = tcx.exportWithSport(mID, writer);
             Sport sport = res.second;
-            String filename = String.format("activity%s%d.tcx", Long.toString(Math.round(1000 * Math.random())), mID);
+            String filename = String.format(Locale.ENGLISH, "activity%s%d.tcx", Long.toString(Math.round(1000 * Math.random())), mID);
 
             String url = UPLOAD_URL + "?authenticity_token=" + SyncHelper.URLEncode(authToken) + "&qqfile=" +
                     filename;

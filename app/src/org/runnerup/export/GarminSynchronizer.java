@@ -51,6 +51,7 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -526,8 +527,8 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
             Calendar today = Calendar.getInstance();
             int month = today.get(Calendar.MONTH); //jan = 0
-            String str_today = String.format("%1$tY-%1$tm-%1td", today);
-            String workout_url = String.format(CALENDAR_URL, today, month);
+            String str_today = String.format(Locale.ENGLISH, "%1$tY-%1$tm-%1td", today);
+            String workout_url = String.format(Locale.ENGLISH, CALENDAR_URL, today, month);
 
             conn = (HttpURLConnection) new URL(workout_url).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());
