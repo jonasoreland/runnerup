@@ -45,7 +45,7 @@
                 app:circle_radius="40dp"
                 app:circle_radius_pressed="50dp"
                 app:circle_border_width="5dp"
-                app:circle_border_color="@color/white"
+                app:circle_border_color="@android:color/white"
                 />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/Waiting_for_phone"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
