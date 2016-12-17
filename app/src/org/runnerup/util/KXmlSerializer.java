@@ -56,7 +56,7 @@ public class KXmlSerializer implements XmlSerializer {
     private boolean unicode;
     private String encoding;
 
-    private final void check(boolean close) throws IOException {
+    private void check(boolean close) throws IOException {
         if (!pending)
             return;
 
@@ -96,7 +96,7 @@ public class KXmlSerializer implements XmlSerializer {
         writer.write(close ? " />" : ">");
     }
 
-    private final void writeEscaped(String s, int quot) throws IOException {
+    private void writeEscaped(String s, int quot) throws IOException {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             switch (c) {
@@ -206,7 +206,7 @@ public class KXmlSerializer implements XmlSerializer {
         }
     }
 
-    private final String getPrefix(
+    private String getPrefix(
         String namespace,
         boolean includeDefault,
         boolean create)
