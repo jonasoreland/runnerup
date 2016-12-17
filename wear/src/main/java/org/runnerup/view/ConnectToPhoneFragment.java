@@ -37,7 +37,6 @@ import org.runnerup.common.util.ValueModel;
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class ConnectToPhoneFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
-    private TextView mTxt;
     private DelayedConfirmationView mButton;
     private MainActivity activity;
     public ConnectToPhoneFragment() {
@@ -54,7 +53,7 @@ public class ConnectToPhoneFragment extends Fragment implements ValueModel.Chang
         super.onViewCreated(view, savedInstanceState);
 
         mButton = (DelayedConfirmationView) view.findViewById(R.id.icon_open_on_phone);
-        mTxt = (TextView) view.findViewById(R.id.txt_open_on_phone);
+        TextView mTxt = (TextView) view.findViewById(R.id.txt_open_on_phone);
 
         mButton.setListener(mListener);
 

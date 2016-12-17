@@ -82,8 +82,6 @@ public class TrackerWear extends DefaultTrackerComponent
     private final Handler handler = new Handler();
     private Bundle lastCreatedWorkoutEvent;
     private Bundle lastSentWorkoutEvent;
-    private long tickFrequency = 1000;
-    private long tickFrequencyPause = 500; // so that seconds does show "slowly"
     private boolean mWorkoutSenderRunning = false;
 
     private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
@@ -302,6 +300,8 @@ public class TrackerWear extends DefaultTrackerComponent
                 return;
 
             mWorkoutSenderRunning = true;
+            long tickFrequencyPause = 500;
+            long tickFrequency = 1000;
             handler.postDelayed(workoutEventSender,
                     pauseStep ? tickFrequencyPause : tickFrequency);
         }

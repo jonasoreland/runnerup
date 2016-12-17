@@ -98,10 +98,10 @@ public class RunKeeper {
             if (ae.getMaxHr()!=null) {
                 w.name("heart_rate");
                 w.beginArray();
-                exportHeartRate(activityId, startTime, w);
+                exportHeartRate(activityId, w);
                 w.endArray();
             }
-            exportPath("path", activityId, startTime, w);
+            exportPath("path", activityId, w);
             w.name("post_to_facebook").value(false);
             w.name("post_to_twitter").value(false);
             w.endObject();
@@ -110,7 +110,7 @@ public class RunKeeper {
         }
     }
 
-    private void exportHeartRate(long activityId, long startTime, JsonWriter w)
+    private void exportHeartRate(long activityId, JsonWriter w)
             throws IOException {
         String[] pColumns = {
                 DB.LOCATION.TIME, DB.LOCATION.HR
@@ -119,7 +119,7 @@ public class RunKeeper {
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
                 null);
         if (cursor.moveToFirst()) {
-            startTime = cursor.getLong(0);
+            long startTime = cursor.getLong(0);
             do {
                 if (!cursor.isNull(1)) {
                     w.beginObject();
@@ -133,7 +133,7 @@ public class RunKeeper {
         cursor.close();
     }
 
-    private void exportPath(String name, long activityId, long startTime, JsonWriter w)
+    private void exportPath(String name, long activityId, JsonWriter w)
             throws IOException {
         String[] pColumns = {
                 DB.LOCATION.TIME, DB.LOCATION.LATITUDE,
@@ -145,7 +145,7 @@ public class RunKeeper {
         if (cursor.moveToFirst()) {
             w.name(name);
             w.beginArray();
-            startTime = cursor.getLong(0);
+            long startTime = cursor.getLong(0);
             do {
                 w.beginObject();
                 w.name("timestamp").value(

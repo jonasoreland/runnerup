@@ -36,7 +36,6 @@ public class TrackerTTS extends DefaultTrackerComponent {
 
     private TextToSpeech tts;
     private Context context;
-    private RUTextToSpeech ruTTS;
 
     public static final String NAME = "TTS";
 
@@ -80,7 +79,7 @@ public class TrackerTTS extends DefaultTrackerComponent {
 
     RUTextToSpeech getTTS(SharedPreferences prefs) {
         final boolean mute = prefs.getBoolean(context.getString(R.string.pref_mute_bool), false);
-        ruTTS = new RUTextToSpeech(tts, mute, context);
+        RUTextToSpeech ruTTS = new RUTextToSpeech(tts, mute, context);
         return ruTTS;
     }
 }

@@ -39,7 +39,6 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
     private Handler handler = new Handler();
     private TextView mButtonPauseResumeTxt;
     private CircledImageView mButtonPauseResume;
-    private TextView mButtonNewLapTxt;
     private CircledImageView mButtonNewLap;
     private MainActivity activity;
     private long clickCount = 0;
@@ -62,7 +61,7 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
         mButtonPauseResumeTxt = (TextView) view.findViewById(R.id.txt_resume);
         mButtonNewLap = (CircledImageView) view.findViewById(R.id.icon_newlap);
         mButtonNewLap.setOnClickListener(newLapButtonClick);
-        mButtonNewLapTxt = (TextView) view.findViewById(R.id.txt_newlap);
+        TextView mButtonNewLapTxt = (TextView) view.findViewById(R.id.txt_newlap);
 
         return view;
     }

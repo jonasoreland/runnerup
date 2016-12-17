@@ -35,7 +35,6 @@ import org.runnerup.common.util.ValueModel;
 public class StartFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private TextView mTxt;
-    private CircledImageView mButton;
     private MainActivity activity;
 
     public StartFragment() {
@@ -51,7 +50,7 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
         View view = inflater.inflate(R.layout.start, container, false);
         super.onViewCreated(view, savedInstanceState);
 
-        mButton = (CircledImageView) view.findViewById(R.id.icon_start);
+        CircledImageView mButton = (CircledImageView) view.findViewById(R.id.icon_start);
         mButton.setOnClickListener(startButtonClick);
         mTxt = (TextView) view.findViewById(R.id.txt_start);
 

@@ -32,9 +32,6 @@ import org.runnerup.R;
 //@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class SearchingFragment extends Fragment {
 
-    private CircledImageView mButton;
-    private MainActivity activity;
-
     public SearchingFragment() {
     }
 
@@ -49,7 +46,7 @@ public class SearchingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= 23) {
-            mButton = (CircledImageView) view.findViewById(R.id.icon_searching);
+            CircledImageView mButton = (CircledImageView) view.findViewById(R.id.icon_searching);
             AnimationDrawable frameAnimation = (AnimationDrawable) mButton.getForeground();
             frameAnimation.start();
         }
@@ -70,6 +67,6 @@ public class SearchingFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (MainActivity) activity;
+        MainActivity activity1 = (MainActivity) activity;
     }
 }
