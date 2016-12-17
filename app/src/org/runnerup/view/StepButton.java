@@ -64,8 +64,8 @@ public class StepButton extends TableLayout {
     private Step step;
     private Runnable mOnChangedListener = null;
 
-    static final boolean editRepeatCount = true;
-    static final boolean editStepButton = true;
+    private static final boolean editRepeatCount = true;
+    private static final boolean editStepButton = true;
 
     public StepButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -135,7 +135,7 @@ public class StepButton extends TableLayout {
         }
     }
 
-    final OnClickListener onRepeatClickListener = new OnClickListener() {
+    private final OnClickListener onRepeatClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -173,7 +173,7 @@ public class StepButton extends TableLayout {
         }
     };
 
-    final OnClickListener onStepClickListener = new OnClickListener() {
+    private final OnClickListener onStepClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -206,7 +206,7 @@ public class StepButton extends TableLayout {
         }
     };
 
-    Runnable setupEditStep(LayoutInflater inflator, View layout) {
+    private Runnable setupEditStep(LayoutInflater inflator, View layout) {
         final TitleSpinner stepType = (TitleSpinner) layout.findViewById(R.id.step_intensity);
         stepType.setValue(step.getIntensity().getValue());
 

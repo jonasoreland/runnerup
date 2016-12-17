@@ -77,10 +77,10 @@ public class OAuth2Activity extends AppCompatActivity {
         String AUTH_TOKEN = "auth_token";
     }
 
-    boolean mFinished = false;
-    String mRedirectUri = null;
-    ProgressDialog mSpinner = null;
-    Bundle mArgs = null;
+    private boolean mFinished = false;
+    private String mRedirectUri = null;
+    private ProgressDialog mSpinner = null;
+    private Bundle mArgs = null;
 
     @SuppressWarnings("deprecation")
     private void setSavedPassword(WebView wv, boolean val) {

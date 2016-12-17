@@ -44,29 +44,29 @@ public class NumberPicker extends LinearLayout {
         String toString(int value);
     }
 
-    int prevValue;
-    int currValue;
-    int minValue = MIN_VAL;
-    int maxValue = MAX_VAL;
-    boolean wrapValue = true;
+    private int prevValue;
+    private int currValue;
+    private int minValue = MIN_VAL;
+    private int maxValue = MAX_VAL;
+    private boolean wrapValue = true;
 
-    final static int DIGITS = 2;
-    final static int MIN_VAL = 0;
-    final static int MAX_VAL = 59;
+    private final static int DIGITS = 2;
+    private final static int MIN_VAL = 0;
+    private final static int MAX_VAL = 59;
 
-    EditText valueText;
-    OnChangedListener listener;
+    private EditText valueText;
+    private OnChangedListener listener;
 
-    Button decButton;
-    Button incButton;
+    private Button decButton;
+    private Button incButton;
 
-    boolean longInc = false;
-    boolean longDec = false;
-    final Handler longHandler = new Handler();
-    final long longSpeed = 300;
-    final int textSize = 25;
-    int digits = DIGITS;
-    String fmtString = "%0" + digits + "d";
+    private boolean longInc = false;
+    private boolean longDec = false;
+    private final Handler longHandler = new Handler();
+    private final long longSpeed = 300;
+    private final int textSize = 25;
+    private int digits = DIGITS;
+    private String fmtString = "%0" + digits + "d";
 
     public NumberPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -147,7 +147,7 @@ public class NumberPicker extends LinearLayout {
         valueText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
     }
 
-    final Runnable longPressUpdater = new Runnable() {
+    private final Runnable longPressUpdater = new Runnable() {
         public void run() {
             if (longInc) {
                 setValueImpl(currValue + 1);
@@ -185,7 +185,7 @@ public class NumberPicker extends LinearLayout {
         valueText.selectAll();
     }
 
-    final OnClickListener buttonClick = new OnClickListener() {
+    private final OnClickListener buttonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             validateInput(valueText);
@@ -198,7 +198,7 @@ public class NumberPicker extends LinearLayout {
         }
     };
 
-    void buttonLongClick(int i) {
+    private void buttonLongClick(int i) {
         valueText.clearFocus();
         if (i < 0) {
             longDec = true;
@@ -213,7 +213,7 @@ public class NumberPicker extends LinearLayout {
         longHandler.post(longPressUpdater);
     }
 
-    final OnLongClickListener buttonLongClick = new OnLongClickListener() {
+    private final OnLongClickListener buttonLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             if (v == incButton)
@@ -224,7 +224,7 @@ public class NumberPicker extends LinearLayout {
         }
     };
 
-    final OnTouchListener buttonLongTouchListener = new OnTouchListener() {
+    private final OnTouchListener buttonLongTouchListener = new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_UP &&
@@ -236,7 +236,7 @@ public class NumberPicker extends LinearLayout {
         }
     };
 
-    protected void validateInput(EditText tv) {
+    private void validateInput(EditText tv) {
         String str = String.valueOf(tv.getText());
         if ("".equals(str)) {
             updateView();
@@ -269,7 +269,7 @@ public class NumberPicker extends LinearLayout {
         }
     }
 
-    final Formatter formatter = new Formatter() {
+    private final Formatter formatter = new Formatter() {
         final StringBuilder builder = new StringBuilder();
         final java.util.Formatter fmt = new java.util.Formatter(builder);
         final Object[] args = new Object[1];

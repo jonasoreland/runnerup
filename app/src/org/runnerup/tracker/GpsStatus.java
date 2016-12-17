@@ -43,32 +43,32 @@ import org.runnerup.util.TickListener;
 public class GpsStatus implements LocationListener,
         android.location.GpsStatus.Listener {
 
-    static final int HIST_LEN = 3;
+    private static final int HIST_LEN = 3;
 
-    boolean mIsFixed = false;
-    Context context = null;
-    Location mHistory[] = null;
-    LocationManager locationManager = null;
-    TickListener listener = null;
+    private boolean mIsFixed = false;
+    private Context context = null;
+    private Location[] mHistory = null;
+    private LocationManager locationManager = null;
+    private TickListener listener = null;
 
     /**
      * If we get a location with accurancy <= mFixAccurancy mFixed => true
      */
-    final float mFixAccurancy = 10;
+    private final float mFixAccurancy = 10;
 
     /**
      * If we get fixed satellites >= mFixSatellites mFixed => true
      */
-    final int mFixSatellites = 2;
+    private final int mFixSatellites = 2;
 
     /**
      * If we get location updates with time difference <= mFixTime mFixed =>
      * true
      */
-    final int mFixTime = 3;
+    private final int mFixTime = 3;
 
-    int mKnownSatellites = 0;
-    int mUsedInLastFixSatellites = 0;
+    private int mKnownSatellites = 0;
+    private int mUsedInLastFixSatellites = 0;
 
     public GpsStatus(Context ctx) {
         this.context = ctx;

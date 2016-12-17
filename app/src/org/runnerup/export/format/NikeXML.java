@@ -43,9 +43,9 @@ public class NikeXML {
 
     private static final String DEVICE = "iPod";
 
-    SQLiteDatabase mDB = null;
-    KXmlSerializer mXML = null;
-    SimpleDateFormat simpleDateFormat = null;
+    private SQLiteDatabase mDB = null;
+    private KXmlSerializer mXML = null;
+    private SimpleDateFormat simpleDateFormat = null;
 
     public NikeXML(final SQLiteDatabase db) {
         mDB = db;
@@ -553,7 +553,7 @@ public class NikeXML {
         }
     }
 
-    static final double R = 6371.0; // radius of earth in km
+    private static final double R = 6371.0; // radius of earth in km
 
     /**
      * Move a location <em>dist</em> meters in direction of <em>bearing</em>
@@ -563,7 +563,7 @@ public class NikeXML {
      * @param dist
      * @see <url>http://www.movable-type.co.uk/scripts/latlong.html</url>
      */
-    public static void move(final Location l, final double bearing, final double dist) {
+    private static void move(final Location l, final double bearing, final double dist) {
         final double d = dist / 1000.0; // in km
         final double lat1 = Math.toRadians(l.getLatitude());
         final double lon1 = Math.toRadians(l.getLongitude());

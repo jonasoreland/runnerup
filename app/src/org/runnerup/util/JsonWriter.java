@@ -366,7 +366,7 @@ public final class JsonWriter {
      * 
      * @return this writer.
      */
-    public JsonWriter nullValue() throws IOException {
+    private JsonWriter nullValue() throws IOException {
         beforeValue(false);
         out.write("null");
         return this;

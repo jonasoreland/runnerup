@@ -80,27 +80,27 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
-    SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB = null;
 
     private String PHONE_STRING = "my phone";
     public final static String WORKOUT_NAME = "";
 
-    final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<SyncManager.WorkoutRef>();
-    final ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
-    final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<SyncManager.WorkoutRef>>();
-    WorkoutAccountListAdapter adapter = null;
+    private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<SyncManager.WorkoutRef>();
+    private final ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
+    private final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<SyncManager.WorkoutRef>>();
+    private WorkoutAccountListAdapter adapter = null;
 
-    final HashSet<String> loadedProviders = new HashSet<String>();
+    private final HashSet<String> loadedProviders = new HashSet<String>();
 
-    boolean uploading = false;
-    ExpandableListView list = null;
-    CompoundButton currentlySelectedWorkout = null;
-    Button downloadButton = null;
-    Button deleteButton = null;
-    Button shareButton = null;
-    Button createButton = null;
+    private boolean uploading = false;
+    private ExpandableListView list = null;
+    private CompoundButton currentlySelectedWorkout = null;
+    private Button downloadButton = null;
+    private Button deleteButton = null;
+    private Button shareButton = null;
+    private Button createButton = null;
 
-    SyncManager syncManager = null;
+    private SyncManager syncManager = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -277,7 +277,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         out.close();
     }
 
-    protected void launchMain(String fileName) {
+    private void launchMain(String fileName) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), fileName).commit();
 
@@ -318,7 +318,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
     }
 
-    void listLocal() {
+    private void listLocal() {
         ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<SyncManager.WorkoutRef>();
         String[] list = org.runnerup.view.WorkoutListAdapter.load(this);
         if (list != null) {
@@ -339,7 +339,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         syncManager.close();
     }
 
-    void requery() {
+    private void requery() {
         ContentValues allSynchronizers[] = null;
         {
             /**
@@ -400,8 +400,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         return filter(list, newlist, f);
     }
 
-    ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
-            ArrayList<WorkoutRef> newlist, Filter<SyncManager.WorkoutRef> f) {
+    private ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
+                                                     ArrayList<WorkoutRef> newlist, Filter<SyncManager.WorkoutRef> f) {
         for (SyncManager.WorkoutRef w : list) {
             if (f.match(w))
                 newlist.add(w);
@@ -410,7 +410,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     }
 
 
-    final OnClickListener createButtonClick = new OnClickListener() {
+    private final OnClickListener createButtonClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
             final Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
@@ -443,7 +443,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
     };
 
-    final OnClickListener downloadButtonClick = new OnClickListener() {
+    private final OnClickListener downloadButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -549,7 +549,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         listLocal();
     }
 
-    public final OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
+    private final OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
             if (currentlySelectedWorkout != null) {

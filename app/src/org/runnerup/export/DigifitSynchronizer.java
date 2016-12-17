@@ -65,7 +65,7 @@ import java.util.Map;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DigifitSynchronizer extends DefaultSynchronizer {
-    public static final String DIGIFIT_URL = "http://my.digifit.com";
+    private static final String DIGIFIT_URL = "http://my.digifit.com";
 
     public static final String NAME = "Digifit";
 
@@ -361,7 +361,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    protected void init(String username, String password) {
+    private void init(String username, String password) {
         _username = username;
         _password = password;
     }

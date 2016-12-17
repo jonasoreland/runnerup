@@ -29,7 +29,7 @@ import java.io.OutputStream;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FileUtil {
 
-    public static int copy(InputStream src, OutputStream dst) throws IOException {
+    private static int copy(InputStream src, OutputStream dst) throws IOException {
         int cnt = 0;
         byte buf[] = new byte[1024];
         while (src.read(buf) > 0) {
@@ -62,7 +62,7 @@ public class FileUtil {
             }
     }
 
-    public static void close(OutputStream input) {
+    private static void close(OutputStream input) {
         if (input != null)
             try {
                 input.close();

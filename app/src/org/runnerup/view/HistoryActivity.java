@@ -49,11 +49,11 @@ import org.runnerup.workout.Sport;
 public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
-    SQLiteDatabase mDB = null;
-    Formatter formatter = null;
+    private SQLiteDatabase mDB = null;
+    private Formatter formatter = null;
 
-    ListView listView = null;
-    CursorAdapter cursorAdapter = null;
+    private ListView listView = null;
+    private CursorAdapter cursorAdapter = null;
 
     /** Called when the activity is first created. */
 

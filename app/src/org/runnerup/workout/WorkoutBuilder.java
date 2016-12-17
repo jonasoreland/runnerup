@@ -228,8 +228,8 @@ public class WorkoutBuilder {
                 AudioCueSettingsActivity.SUFFIX);
     }
 
-    public static SharedPreferences getSubPreferences(Context ctx, SharedPreferences pref,
-            String key, String defaultVal, String suffix) {
+    private static SharedPreferences getSubPreferences(Context ctx, SharedPreferences pref,
+                                                       String key, String defaultVal, String suffix) {
         String name = pref.getString(key, null);
         if (name == null || name.contentEquals(defaultVal)) {
             return pref;

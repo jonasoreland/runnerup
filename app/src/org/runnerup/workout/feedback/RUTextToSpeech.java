@@ -36,11 +36,11 @@ import java.util.Locale;
 public class RUTextToSpeech {
 
     private static final String UTTERANCE_ID = "RUTextTospeech";
-    boolean mute = false;
-    final boolean trace = true;
-    final TextToSpeech textToSpeech;
-    final AudioManager audioManager;
-    long id = (long) (System.nanoTime() + (1000 * Math.random()));
+    private boolean mute = false;
+    private final boolean trace = true;
+    private final TextToSpeech textToSpeech;
+    private final AudioManager audioManager;
+    private long id = (long) (System.nanoTime() + (1000 * Math.random()));
 
     class Entry {
         final String text;
@@ -52,8 +52,8 @@ public class RUTextToSpeech {
         }
     }
 
-    final HashSet<String> cueSet = new HashSet<String>();
-    final ArrayList<Entry> cueList = new ArrayList<Entry>();
+    private final HashSet<String> cueSet = new HashSet<String>();
+    private final ArrayList<Entry> cueList = new ArrayList<Entry>();
 
     public RUTextToSpeech(TextToSpeech tts, boolean mute_, Context context) {
         this.textToSpeech = tts;
@@ -150,7 +150,7 @@ public class RUTextToSpeech {
         return TextToSpeech.ERROR;
     }
 
-    final HashSet<String> outstanding = new HashSet<String>();
+    private final HashSet<String> outstanding = new HashSet<String>();
 
     void utteranceCompleted(String id) {
         outstanding.remove(id);

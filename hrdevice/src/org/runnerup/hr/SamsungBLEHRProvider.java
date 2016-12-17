@@ -72,7 +72,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
     }
 
     static final String NAME = "SamsungBLE";
-    static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
+    private static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
 
     private final Context context;
     private BluetoothAdapter btAdapter = null;

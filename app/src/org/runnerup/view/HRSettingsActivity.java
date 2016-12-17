@@ -70,37 +70,37 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private final Handler handler = new Handler();
     private final StringBuffer logBuffer = new StringBuffer();
 
-    List<HRProvider> providers = null;
-    String btName;
-    String btAddress;
-    String btProviderName;
-    HRProvider hrProvider = null;
+    private List<HRProvider> providers = null;
+    private String btName;
+    private String btAddress;
+    private String btProviderName;
+    private HRProvider hrProvider = null;
 
-    Button connectButton = null;
-    Button scanButton = null;
-    TextView tvBTName = null;
-    TextView tvHR = null;
-    TextView tvLog = null;
-    TextView tvBatteryLevel = null;
+    private Button connectButton = null;
+    private Button scanButton = null;
+    private TextView tvBTName = null;
+    private TextView tvHR = null;
+    private TextView tvLog = null;
+    private TextView tvBatteryLevel = null;
 
-    Formatter formatter = null;
-    GraphView graphView = null;
-    LineGraphSeries<DataPoint> graphViewSeries = null;
-    final ArrayList<DataPoint> graphViewListData = new ArrayList<>();
-    DataPoint graphViewArrayData[] = new DataPoint[0];
-    static final int GRAPH_HISTORY_SECONDS = 180;
+    private Formatter formatter = null;
+    private GraphView graphView = null;
+    private LineGraphSeries<DataPoint> graphViewSeries = null;
+    private final ArrayList<DataPoint> graphViewListData = new ArrayList<>();
+    private DataPoint[] graphViewArrayData = new DataPoint[0];
+    private static final int GRAPH_HISTORY_SECONDS = 180;
 
-    DeviceAdapter deviceAdapter = null;
-    boolean mIsScanning = false;
+    private DeviceAdapter deviceAdapter = null;
+    private boolean mIsScanning = false;
 
-    final OnClickListener hrZonesClick = new OnClickListener() {
+    private final OnClickListener hrZonesClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
             startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
         }
     };
     
-    final OnClickListener scanButtonClick = new OnClickListener() {
+    private final OnClickListener scanButtonClick = new OnClickListener() {
         public void onClick(View v) {
             clear();
             stopTimer();
@@ -235,7 +235,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
     }
     
-    int lineNo = 0;
+    private int lineNo = 0;
 
     private void log(String msg) {
         logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
@@ -245,7 +245,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         tvLog.setText(logBuffer.toString());
     }
 
-    void clearHRSettings() {
+    private void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Clear_HR_settings));
         builder.setMessage(getString(R.string.Are_you_sure));
@@ -305,7 +305,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
     }
 
-    public void notSupported() {
+    private void notSupported() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device));
         builder.setMessage(getString(R.string.try_again_later));
@@ -453,7 +453,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         builder.show();
     }
 
-    void connect() {
+    private void connect() {
         stopTimer();
         if (hrProvider == null || btName == null || btAddress == null) {
             updateView();
@@ -503,9 +503,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         return btAddress;
     }
 
-    Timer hrReader = null;
+    private Timer hrReader = null;
 
-    void startTimer() {
+    private void startTimer() {
         hrReader = new Timer();
         hrReader.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -519,7 +519,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }, 0, 500);
     }
 
-    void stopTimer() {
+    private void stopTimer() {
         if (hrReader == null)
             return;
 
@@ -528,10 +528,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         hrReader = null;
     }
 
-    long lastTimestamp = 0;
-    long timerStartTime = 0;
+    private long lastTimestamp = 0;
+    private long timerStartTime = 0;
 
-    protected void readHR() {
+    private void readHR() {
         if (hrProvider != null) {
             HRData data = hrProvider.getHRData();
             if(data != null) {

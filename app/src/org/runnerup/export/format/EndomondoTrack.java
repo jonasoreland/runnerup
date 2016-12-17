@@ -42,8 +42,8 @@ import java.util.TimeZone;
 public class EndomondoTrack {
 
     long mID = 0;
-    SQLiteDatabase mDB = null;
-    SimpleDateFormat simpleDateFormat = null;
+    private SQLiteDatabase mDB = null;
+    private SimpleDateFormat simpleDateFormat = null;
 
     public EndomondoTrack(final SQLiteDatabase db) {
         mDB = db;

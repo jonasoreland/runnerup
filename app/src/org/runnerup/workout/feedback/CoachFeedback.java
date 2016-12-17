@@ -34,9 +34,9 @@ import org.runnerup.workout.Workout;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CoachFeedback extends AudioFeedback {
 
-    int sign = 1;
-    Range range = null;
-    TargetTrigger trigger = null;
+    private int sign = 1;
+    private Range range = null;
+    private TargetTrigger trigger = null;
 
     public CoachFeedback(Scope scope, Dimension dimension, Range range, TargetTrigger trigger) {
         super(scope, dimension);

@@ -63,17 +63,17 @@ import java.util.zip.GZIPOutputStream;
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
-    public static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
-    public static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
-    public static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
+    private static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
+    private static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
+    private static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String deviceId = null;
     private String authToken = null;
 
-    public static final Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer, Sport>();
+    private static final Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer, Sport>();
     public static final Map<Sport, Integer> sport2endomondoMap = new HashMap<Sport, Integer>();
     static {
         //list of sports ID can be found at

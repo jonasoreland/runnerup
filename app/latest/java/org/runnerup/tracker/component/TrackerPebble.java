@@ -153,7 +153,7 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
 
     }
 
-    public void customizeWatchApp() {
+    private void customizeWatchApp() {
         try {
             final String customAppName = "RunnerUp";
             final Bitmap customIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_icon_runnerup30x30);

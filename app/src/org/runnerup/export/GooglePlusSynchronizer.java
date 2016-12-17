@@ -48,33 +48,33 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     /**
      * @todo register OAuth2Server
      */
-    protected String mClientId = null;
-    protected String mClientSecret = null;
-    protected String projectId = null;
+    private String mClientId = null;
+    private String mClientSecret = null;
+    private String projectId = null;
 
-    protected String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
-    protected String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
+    private String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
+    private String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
 
-    protected String sRedirectUrl = "http://localhost";
+    private String sRedirectUrl = "http://localhost";
 
     private static final String SCOPES = "https://www.googleapis.com/auth/plus.me " +
             "https://www.googleapis.com/auth/plus.login " +
             "https://www.googleapis.com/auth/plus.stream.write";
     private long id = 0;
 
-    public String getAccessToken() {
+    String getAccessToken() {
         return access_token;
     }
 
-    public String getRefreshToken() {
+    private String getRefreshToken() {
         return refresh_token;
     }
 
-    public long getTokenNow() {
+    private long getTokenNow() {
         return token_now;
     }
 
-    public long getExpireTime() {
+    private long getExpireTime() {
         return expire_time;
     }
 
@@ -105,11 +105,11 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
         this.mClientId = clientId;
     }
 
-    public void setProjectId(String projectId) {
+    private void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 
-    public String getProjectId() {
+    String getProjectId() {
         return projectId;
     }
 
@@ -137,7 +137,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
         return sTokenUrl;
     }
 
-    public String getScopes() { return SCOPES; }
+    String getScopes() { return SCOPES; }
 
     @Override
     public String getAuthExtra() {

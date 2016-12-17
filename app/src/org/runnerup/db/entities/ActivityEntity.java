@@ -240,7 +240,7 @@ public class ActivityEntity extends AbstractEntity {
         return Constants.DB.ACTIVITY.NULLCOLUMNHACK;
     }
 
-    public void addLap(LapEntity lap) {
+    private void addLap(LapEntity lap) {
         if (lap.getActivityId() != null && (this.getId() == null || !lap.getActivityId().equals(this.getId()))) {
             throw new IllegalArgumentException("Foreign key of lap (" + lap.getActivityId() +
                     ") doesn't match the activity primary key (" + this.getId() + ")");
@@ -253,7 +253,7 @@ public class ActivityEntity extends AbstractEntity {
         getLaps().add(lap);
     }
 
-    public void addLaps(List<LapEntity> laps) {
+    private void addLaps(List<LapEntity> laps) {
         for (LapEntity lap : laps) {
             this.addLap(lap);
         }
@@ -268,7 +268,7 @@ public class ActivityEntity extends AbstractEntity {
         return laps;
     }
 
-    public void addPoint(LocationEntity point) {
+    private void addPoint(LocationEntity point) {
         if (point.getActivityId() != null && (this.getId() == null || !point.getActivityId().equals(this.getId()))) {
             throw new IllegalArgumentException("Foreign key of point (" + point.getActivityId() +
                     ") doesn't match the activity primary key (" + this.getId() + ")");
@@ -281,7 +281,7 @@ public class ActivityEntity extends AbstractEntity {
         getLocationPoints().add(point);
     }
 
-    public void addPoints(List<LocationEntity> points) {
+    private void addPoints(List<LocationEntity> points) {
         for (LocationEntity point : points) {
             this.addPoint(point);
         }

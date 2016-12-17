@@ -34,10 +34,10 @@ import java.util.HashMap;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TrackerComponentCollection implements TrackerComponent {
 
-    final Handler handler = new Handler();
-    final HashMap<String, Pair<TrackerComponent, ResultCode>> components =
+    private final Handler handler = new Handler();
+    private final HashMap<String, Pair<TrackerComponent, ResultCode>> components =
             new HashMap<String, Pair<TrackerComponent, ResultCode>>();
-    final HashMap<String, TrackerComponent> pending =
+    private final HashMap<String, TrackerComponent> pending =
             new HashMap<String, TrackerComponent>();
 
     public TrackerComponent addComponent(TrackerComponent component) {

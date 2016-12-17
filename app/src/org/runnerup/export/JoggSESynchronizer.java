@@ -58,9 +58,9 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     private static String MASTER_USER = null;
     private static String MASTER_KEY = null;
 
-    public static final String BASE_URL = "http://jogg.se/iphoneservice/iphoneservice.asmx";
+    private static final String BASE_URL = "http://jogg.se/iphoneservice/iphoneservice.asmx";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private boolean isConnected = false;

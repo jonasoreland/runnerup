@@ -80,14 +80,14 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Tracker extends android.app.Service implements
         LocationListener, Constants {
-    public static final int MAX_HR_AGE = 3000; // 3s
+    private static final int MAX_HR_AGE = 3000; // 3s
 
     private final Handler handler = new Handler();
 
-    TrackerComponentCollection components = new TrackerComponentCollection();
+    private TrackerComponentCollection components = new TrackerComponentCollection();
     //Some trackers may select separate sensors depending on sport, handled in onBind()
     TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
-    TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
+    private TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
     TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
     private TrackerCadence trackerCadence = (TrackerCadence) components.addComponent(new TrackerCadence());
     private TrackerTemperature trackerTemperature = (TrackerTemperature) components.addComponent(new TrackerTemperature());
@@ -95,47 +95,47 @@ public class Tracker extends android.app.Service implements
     private TrackerElevation trackerElevation = (TrackerElevation) components.addComponent(new TrackerElevation(this, trackerGPS, trackerPressure));
     TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(
             new TrackerReceiver(this));
-    TrackerWear trackerWear; // created if version is sufficient
-    TrackerPebble trackerPebble; // created if version is sufficient
+    private TrackerWear trackerWear; // created if version is sufficient
+    private TrackerPebble trackerPebble; // created if version is sufficient
     /**
      * Work-around for http://code.google.com/p/android/issues/detail?id=23937
      */
-    boolean mBug23937Checked = false;
-    long mBug23937Delta = 0;
+    private boolean mBug23937Checked = false;
+    private long mBug23937Delta = 0;
 
     /**
 	 *
 	 */
-    long mLapId = 0;
-    long mActivityId = 0;
-    long mElapsedTimeMillis = 0;
-    double mElapsedDistance = 0;
-    double mHeartbeats = 0;
-    double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
-    long mMaxHR = 0;
+    private long mLapId = 0;
+    private long mActivityId = 0;
+    private long mElapsedTimeMillis = 0;
+    private double mElapsedDistance = 0;
+    private double mHeartbeats = 0;
+    private double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
+    private long mMaxHR = 0;
 
     final boolean mWithoutGps = false;
 
-    TrackerState nextState; //
-    final ValueModel<TrackerState> state = new ValueModel<TrackerState>(TrackerState.INIT);
-    int mLocationType = DB.LOCATION.TYPE_START;
+    private TrackerState nextState; //
+    private final ValueModel<TrackerState> state = new ValueModel<TrackerState>(TrackerState.INIT);
+    private int mLocationType = DB.LOCATION.TYPE_START;
 
     /**
      * Last location given by LocationManager
      */
-    Location mLastLocation = null;
+    private Location mLastLocation = null;
     //Second to last location - to get speed
-    Location mLast2Location = null;
+    private Location mLast2Location = null;
 
     /**
      * Last location given by LocationManager when in state STARTED
      */
-    Location mActivityLastLocation = null;
+    private Location mActivityLastLocation = null;
 
-    SQLiteDatabase mDB = null;
-    PersistentGpsLoggerListener mDBWriter = null;
-    PowerManager.WakeLock mWakeLock = null;
-    final List<WorkoutObserver> liveLoggers = new ArrayList<WorkoutObserver>();
+    private SQLiteDatabase mDB = null;
+    private PersistentGpsLoggerListener mDBWriter = null;
+    private PowerManager.WakeLock mWakeLock = null;
+    private final List<WorkoutObserver> liveLoggers = new ArrayList<WorkoutObserver>();
 
     private Workout workout = null;
 
@@ -625,7 +625,7 @@ public class Tracker extends android.app.Service implements
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
     }
 
-    void setNextLocationType(int newType) {
+    private void setNextLocationType(int newType) {
         ContentValues key = mDBWriter.getKey();
         key.put(DB.LOCATION.TYPE, newType);
         mDBWriter.setKey(key);
@@ -835,7 +835,7 @@ public class Tracker extends android.app.Service implements
         return (trackerHRM.getHrProvider());
     }
 
-    public Integer getCurrentHRValue(long now, long maxAge) {
+    private Integer getCurrentHRValue(long now, long maxAge) {
         HRProvider hrProvider = trackerHRM.getHrProvider();
         if (hrProvider == null)
             return null;

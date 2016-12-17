@@ -267,7 +267,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         return conn;
     }
 
-    public static byte[] gzip(String string) throws IOException {
+    private static byte[] gzip(String string) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream(string.length());
         GZIPOutputStream gos = new GZIPOutputStream(os);
         gos.write(string.getBytes());

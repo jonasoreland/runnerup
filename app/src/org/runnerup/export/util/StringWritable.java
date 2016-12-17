@@ -25,7 +25,7 @@ import java.io.OutputStream;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StringWritable implements Writable {
-    final String s;
+    private final String s;
 
     public StringWritable(String s) {
         this.s = s;

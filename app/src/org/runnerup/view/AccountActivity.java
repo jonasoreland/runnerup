@@ -127,7 +127,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         syncManager.close();
     }
 
-    void fillData() {
+    private void fillData() {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
         String[] from = new String[] {
@@ -234,7 +234,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         mCursors.add(c);
     }
 
-    void addRow(String string, View btn) {
+    private void addRow(String string, View btn) {
         TableLayout table = (TableLayout) findViewById(R.id.account_table);
         TableRow row = new TableRow(this);
         TextView title = new TextView(this);

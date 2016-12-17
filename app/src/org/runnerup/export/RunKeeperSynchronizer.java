@@ -648,7 +648,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return Status.OK;
     }
 
-    JSONObject requestFeed(long from) throws IOException, JSONException {
+    private JSONObject requestFeed(long from) throws IOException, JSONException {
         URL newurl = new URL(FEED_URL);
         HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
         conn.setDoOutput(true);

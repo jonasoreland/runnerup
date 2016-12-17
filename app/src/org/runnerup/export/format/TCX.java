@@ -50,11 +50,11 @@ import java.util.TimeZone;
 public class TCX {
 
     long mID = 0;
-    SQLiteDatabase mDB = null;
-    KXmlSerializer mXML = null;
-    String notes = null;
-    SimpleDateFormat simpleDateFormat = null;
-    Sport sport = null;
+    private SQLiteDatabase mDB = null;
+    private KXmlSerializer mXML = null;
+    private String notes = null;
+    private SimpleDateFormat simpleDateFormat = null;
+    private Sport sport = null;
 
     private boolean addGratuitousTrack = false;
 
@@ -64,7 +64,7 @@ public class TCX {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    String formatTime(long time) {
+    private String formatTime(long time) {
         return simpleDateFormat.format(new Date(time));
     }
 

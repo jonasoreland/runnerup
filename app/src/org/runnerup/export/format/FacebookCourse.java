@@ -43,9 +43,9 @@ import java.util.Locale;
 public class FacebookCourse {
 
     long mID = 0;
-    SQLiteDatabase mDB = null;
-    Formatter formatter = null;
-    final SimpleDateFormat dateFormat = new SimpleDateFormat(
+    private SQLiteDatabase mDB = null;
+    private Formatter formatter = null;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
     public FacebookCourse(Context ctx, SQLiteDatabase db) {
@@ -53,17 +53,17 @@ public class FacebookCourse {
         formatter = new Formatter(ctx);
     }
 
-    String formatTime(long time) {
+    private String formatTime(long time) {
         return dateFormat.format(new Date(time));
     }
 
-    JSONObject pace(double distance, double duration) throws JSONException {
+    private JSONObject pace(double distance, double duration) throws JSONException {
         if (distance != 0)
             return pace(duration / distance);
         return null;
     }
 
-    JSONObject pace(double val) throws JSONException {
+    private JSONObject pace(double val) throws JSONException {
         if (formatter.getUnitMeters() == Formatter.km_meters) {
             return new JSONObject().put("value", val).put("units", "s/m");
         } else {

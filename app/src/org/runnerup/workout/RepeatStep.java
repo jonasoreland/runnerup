@@ -35,8 +35,8 @@ public class RepeatStep extends Step {
 
     final ArrayList<Step> steps = new ArrayList<Step>();
 
-    int currentStep = 0;
-    int currentRepeat = 0;
+    private int currentStep = 0;
+    private int currentRepeat = 0;
 
     public RepeatStep() {
         this.intensity = Intensity.REPEAT;

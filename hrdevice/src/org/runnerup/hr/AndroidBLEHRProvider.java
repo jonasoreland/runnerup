@@ -60,13 +60,13 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     }
 
     static final String NAME = "AndroidBLE";
-    static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
+    private static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
 
-    static final UUID[] SCAN_UUIDS = {
+    private static final UUID[] SCAN_UUIDS = {
         HRP_SERVICE
     };
-    static boolean AVOID_SCAN_WITH_UUID = false;
-    static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = false;
+    private static boolean AVOID_SCAN_WITH_UUID = false;
+    private static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = false;
 
     static {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -524,7 +524,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     };
 
-    final HashSet<String> mScanDevices = new HashSet<String>();
+    private final HashSet<String> mScanDevices = new HashSet<String>();
 
     @Override
     public void startScan() {

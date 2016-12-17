@@ -47,9 +47,9 @@ import static org.runnerup.common.util.Constants.DB;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GoogleFitData {
 
-    public static final int SECONDS_TO_MILLIS = 1000;
-    public static final int MICRO_TO_NANOS = 1000000;
-    public static final int SECONDS_TO_NANOS = 1000000000;
+    private static final int SECONDS_TO_MILLIS = 1000;
+    private static final int MICRO_TO_NANOS = 1000000;
+    private static final int SECONDS_TO_NANOS = 1000000000;
     private static final Map<Sport, Integer> ACTIVITY_TYPE;
     static {
         Map<Sport, Integer> aMap = new HashMap<>();
@@ -124,11 +124,11 @@ public class GoogleFitData {
         this.mContext = ctx;
     }
 
-    public final String getProjectId() {
+    private String getProjectId() {
         return mProjectId;
     }
 
-    public final SQLiteDatabase getDB() {
+    private SQLiteDatabase getDB() {
         return mDB;
     }
 
@@ -182,7 +182,7 @@ public class GoogleFitData {
             w.beginObject();
             w.name("dataStreamId").value(type.getDataStreamId(this));
             w.name("dataStreamName").value(type.getDataName());
-            w.name("type").value(type.SOURCE_TYPE);
+            w.name("type").value(DataSourceType.SOURCE_TYPE);
             w.name("dataType");
             w.beginObject();
             w.name("name").value(type.getDataType());

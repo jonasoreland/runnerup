@@ -59,27 +59,27 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Garmin";
 
-    public static final String CHOOSE_URL = "http://connect.garmin.com/";
+    private static final String CHOOSE_URL = "http://connect.garmin.com/";
 
-    public static final String START_URL = "https://connect.garmin.com/signin";
-    public static final String LOGIN_URL = "https://connect.garmin.com/signin";
-    public static final String CHECK_URL = "http://connect.garmin.com/user/username";
-    public static final String UPLOAD_URL = "https://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
-    public static final String LIST_WORKOUTS_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
-    public static final String GET_WORKOUT_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
-    public static final String CALENDAR_URL = "https://connect.garmin.com/proxy/calendar-service/year/%1$tY/month/%2$d/day/%1te/start/1";
-    public static final String SCHEDULE_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule?workoutScheduleId=";
-    public static final String SET_TYPE_URL = "https://connect.garmin.com/proxy/activity-service-1.2/json/type/";
+    private static final String START_URL = "https://connect.garmin.com/signin";
+    private static final String LOGIN_URL = "https://connect.garmin.com/signin";
+    private static final String CHECK_URL = "http://connect.garmin.com/user/username";
+    private static final String UPLOAD_URL = "https://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
+    private static final String LIST_WORKOUTS_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
+    private static final String GET_WORKOUT_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workout/";
+    private static final String CALENDAR_URL = "https://connect.garmin.com/proxy/calendar-service/year/%1$tY/month/%2$d/day/%1te/start/1";
+    private static final String SCHEDULE_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutschedule?workoutScheduleId=";
+    private static final String SET_TYPE_URL = "https://connect.garmin.com/proxy/activity-service-1.2/json/type/";
 
     //TCX format supports only 2 sports by default (Running / Biking);
     // Otherwise "other" is chosen and we have to edit the workout to add the real sport
     //list of sports ID can be found on Garmin website when editing an activity:
-    public static final Map<Sport, String> sport2garminMap = new HashMap<Sport, String>();
+    private static final Map<Sport, String> sport2garminMap = new HashMap<Sport, String>();
     static {
         sport2garminMap.put(Sport.WALKING, "walking");
     }
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private boolean isConnected = false;

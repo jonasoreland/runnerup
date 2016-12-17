@@ -26,9 +26,9 @@ import android.widget.LinearLayout;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DurationPicker extends LinearLayout {
 
-    final NumberPicker hours;
-    final NumberPicker minutes;
-    final NumberPicker seconds;
+    private final NumberPicker hours;
+    private final NumberPicker minutes;
+    private final NumberPicker seconds;
 
     public DurationPicker(Context context, AttributeSet attrs) {
         super(context, attrs);

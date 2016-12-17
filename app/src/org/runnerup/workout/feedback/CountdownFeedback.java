@@ -34,10 +34,10 @@ import java.util.HashMap;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CountdownFeedback extends Feedback {
 
-    Scope scope = Scope.STEP;
-    Dimension dimension = Dimension.TIME;
-    TextView textView = null;
-    Formatter formatter;
+    private Scope scope = Scope.STEP;
+    private Dimension dimension = Dimension.TIME;
+    private TextView textView = null;
+    private Formatter formatter;
 
     public CountdownFeedback(Scope s, Dimension d) {
         this.scope = s;

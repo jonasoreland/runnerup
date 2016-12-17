@@ -29,7 +29,7 @@ public class ListTrigger extends Trigger {
     Scope scope = Scope.ACTIVITY;
     Dimension dimension = Dimension.TIME;
 
-    int pos = Integer.MAX_VALUE;
+    private int pos = Integer.MAX_VALUE;
     ArrayList<Double> triggerTimes = new ArrayList<Double>();
 
     @Override

@@ -58,20 +58,20 @@ import java.util.Set;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedActivity extends Activity implements Constants {
 
-    SQLiteDatabase mDB = null;
-    SyncManager syncManager = null;
-    Formatter formatter = null;
+    private SQLiteDatabase mDB = null;
+    private SyncManager syncManager = null;
+    private Formatter formatter = null;
 
-    FeedList feed = null;
-    ListView feedList = null;
-    FeedListAdapter feedAdapter = null;
+    private FeedList feed = null;
+    private ListView feedList = null;
+    private FeedListAdapter feedAdapter = null;
 
-    Button refreshButton = null;
-    LinearLayout feedHeader = null;
-    TextView feedStatus = null;
+    private Button refreshButton = null;
+    private LinearLayout feedHeader = null;
+    private TextView feedStatus = null;
     ProgressBar feedProgressBar = null;
 
-    Button feedAccountButton = null;
+    private Button feedAccountButton = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,7 +116,7 @@ public class FeedActivity extends Activity implements Constants {
         startSync();
     }
 
-    void startSync() {
+    private void startSync() {
         syncManager.clear();
         Set<String> set = syncManager.feedSynchronizersSet(this);
         if (!set.isEmpty()) {
@@ -133,7 +133,7 @@ public class FeedActivity extends Activity implements Constants {
         }
     }
 
-    final Callback syncDone = new Callback() {
+    private final Callback syncDone = new Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
             refreshButton.setEnabled(true);

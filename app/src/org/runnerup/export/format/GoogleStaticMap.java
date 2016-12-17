@@ -32,7 +32,7 @@ import java.net.URLEncoder;
 public class GoogleStaticMap {
 
     long mID = 0;
-    SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB = null;
 
     public GoogleStaticMap(SQLiteDatabase mDB) {
         this.mDB = mDB;
@@ -52,7 +52,7 @@ public class GoogleStaticMap {
         Log.e("GoogleStaticMap", " => " + dst.toString());
     }
 
-    public static void encode(StringBuffer buf, long val) {
+    private static void encode(StringBuffer buf, long val) {
         val <<= 1;
         if (val < 0) {
             val = ~val;
@@ -67,13 +67,13 @@ public class GoogleStaticMap {
         } while (val != 0);
     }
 
-    public static void encode(StringBuffer dst, long latitude1, long longitude1, long latitude0,
-            long longitude0) {
+    private static void encode(StringBuffer dst, long latitude1, long longitude1, long latitude0,
+                               long longitude0) {
         encode(dst, latitude1 - latitude0);
         encode(dst, longitude1 - longitude0);
     }
 
-    public long countLocations(long activityId) {
+    private long countLocations(long activityId) {
         long count = 0;
         String[] args = {
             Long.toString(activityId)

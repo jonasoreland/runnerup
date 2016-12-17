@@ -49,16 +49,16 @@ import java.util.Vector;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZonesActivity extends AppCompatActivity implements Constants {
 
-    TitleSpinner ageSpinner;
-    TitleSpinner sexSpinner;
-    TitleSpinner maxHRSpinner;
-    HRZones hrZones;
-    HRZoneCalculator hrZoneCalculator;
+    private TitleSpinner ageSpinner;
+    private TitleSpinner sexSpinner;
+    private TitleSpinner maxHRSpinner;
+    private HRZones hrZones;
+    private HRZoneCalculator hrZoneCalculator;
 
-    final Vector<EditText> zones = new Vector<EditText>();
-    boolean skipSave = false;
+    private final Vector<EditText> zones = new Vector<EditText>();
+    private boolean skipSave = false;
 
-    View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
+    private View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
         TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
         TextView tv = (TextView) row.findViewById(R.id.zonetext);
         EditText lo = (EditText) row.findViewById(R.id.zonelo);
@@ -165,7 +165,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    protected void recomputeMaxHR() {
+    private void recomputeMaxHR() {
         new Handler().post(new Runnable() {
 
             @Override
@@ -183,7 +183,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         });
     }
 
-    protected void recomputeZones() {
+    private void recomputeZones() {
         new Handler().post(new Runnable() {
 
             @Override
@@ -202,7 +202,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         });
     }
 
-    protected void saveHR() {
+    private void saveHR() {
         try {
             Vector<Integer> vals = new Vector<Integer>();
             System.err.print("saving: ");
@@ -217,7 +217,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    void clearHRSettings() {
+    private void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Clear_heart_rate_zone_settings));
         builder.setMessage(getString(R.string.Are_you_sure));

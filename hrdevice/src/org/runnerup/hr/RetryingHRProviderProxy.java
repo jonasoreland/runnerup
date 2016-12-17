@@ -319,7 +319,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
         log(msg);
     }
 
-    public void log(final String msg) {
+    private void log(final String msg) {
 
         String res = "[ RetryingHRProviderProxy: " +
                 provider.getProviderName() +

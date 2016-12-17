@@ -82,7 +82,7 @@ public class Encryption {
      * @param key
      * @throws Exception
      */
-    public static void encrypt(final InputStream in, final OutputStream out, final String key)
+    private static void encrypt(final InputStream in, final OutputStream out, final String key)
             throws Exception {
         final PBEKeySpec keySpec = new PBEKeySpec(key.toCharArray());
         final SecretKeyFactory keyFactory = SecretKeyFactory

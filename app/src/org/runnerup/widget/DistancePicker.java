@@ -30,11 +30,11 @@ import org.runnerup.util.Formatter;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DistancePicker extends LinearLayout {
 
-    long baseUnitMeters;
+    private long baseUnitMeters;
 
-    final NumberPicker unitMeters; // e.g km or mi
-    final TextView unitString;
-    final NumberPicker meters;
+    private final NumberPicker unitMeters; // e.g km or mi
+    private final TextView unitString;
+    private final NumberPicker meters;
 
     public DistancePicker(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -66,7 +66,7 @@ public class DistancePicker extends LinearLayout {
         }
     }
 
-    public void setBaseUint(long baseUnit, String baseString) {
+    private void setBaseUint(long baseUnit, String baseString) {
         baseUnitMeters = baseUnit;
         unitString.setText(baseString);
         meters.setRange(0, (int) baseUnitMeters - 1, true);

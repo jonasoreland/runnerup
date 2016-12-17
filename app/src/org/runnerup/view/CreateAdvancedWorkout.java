@@ -33,15 +33,15 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class CreateAdvancedWorkout extends Activity {
 
-    Workout advancedWorkout = null;
-    TitleSpinner advancedWorkoutSpinner = null;
-    Button addStepButton = null;
-    Button addRepeatButton = null;
-    Button saveWorkoutButton = null;
-    Button discardWorkoutButton = null;
-    ListView advancedStepList = null;
-    final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
-    boolean dontAskAgain = false;
+    private Workout advancedWorkout = null;
+    private TitleSpinner advancedWorkoutSpinner = null;
+    private Button addStepButton = null;
+    private Button addRepeatButton = null;
+    private Button saveWorkoutButton = null;
+    private Button discardWorkoutButton = null;
+    private ListView advancedStepList = null;
+    private final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
+    private boolean dontAskAgain = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +148,7 @@ public class CreateAdvancedWorkout extends Activity {
     }
 
 
-    final View.OnClickListener onAddButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener onAddButtonClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
@@ -180,7 +180,7 @@ public class CreateAdvancedWorkout extends Activity {
     };
 
 
-    final View.OnClickListener onDeleteButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener onDeleteButtonClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
@@ -243,7 +243,7 @@ public class CreateAdvancedWorkout extends Activity {
         }
     };
 
-    final Runnable onWorkoutChanged = new Runnable() {
+    private final Runnable onWorkoutChanged = new Runnable() {
         @Override
         public void run() {
             String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
@@ -268,7 +268,7 @@ public class CreateAdvancedWorkout extends Activity {
         }
     };
 
-    final View.OnClickListener addStepButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener addStepButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             advancedWorkout.addStep(new Step());
@@ -277,7 +277,7 @@ public class CreateAdvancedWorkout extends Activity {
         }
     };
 
-    final View.OnClickListener addRepeatStepButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener addRepeatStepButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             advancedWorkout.addStep(new RepeatStep());
@@ -286,7 +286,7 @@ public class CreateAdvancedWorkout extends Activity {
         }
     };
 
-    final View.OnClickListener saveWorkoutButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener saveWorkoutButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
@@ -313,7 +313,7 @@ public class CreateAdvancedWorkout extends Activity {
         return;
     }
 
-    final View.OnClickListener discardWorkoutButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener discardWorkoutButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this);

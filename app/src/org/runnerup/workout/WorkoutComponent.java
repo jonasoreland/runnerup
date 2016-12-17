@@ -19,7 +19,7 @@ package org.runnerup.workout;
 
 import java.util.HashMap;
 
-public interface WorkoutComponent {
+interface WorkoutComponent {
     /**
      * Called before workout begins
      */

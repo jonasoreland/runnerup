@@ -62,16 +62,16 @@ import java.util.HashMap;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AudioCueSettingsActivity extends PreferenceActivity {
 
-    boolean started = false;
-    boolean delete = false;
-    String settingsName = null;
-    AudioSchemeListAdapter adapter = null;
-    SQLiteDatabase mDB = null;
-    MenuItem newSettings;
+    private boolean started = false;
+    private boolean delete = false;
+    private String settingsName = null;
+    private AudioSchemeListAdapter adapter = null;
+    private SQLiteDatabase mDB = null;
+    private MenuItem newSettings;
 
     private String DEFAULT = "Default";
     public static final String SUFFIX = "_audio_cues";
-    static final String PREFS_DIR = "shared_prefs";
+    private static final String PREFS_DIR = "shared_prefs";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,7 +220,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         return true;
     }
 
-    void createNewAudioScheme(String scheme) {
+    private void createNewAudioScheme(String scheme) {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.AUDIO_SCHEMES.NAME, scheme);
         tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
@@ -254,14 +254,14 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         mDB.delete(DB.AUDIO_SCHEMES.TABLE, DB.AUDIO_SCHEMES.NAME + "= ?", args);
     }
 
-    void updateSortOrder(String name) {
+    private void updateSortOrder(String name) {
         mDB.execSQL("UPDATE " + DB.AUDIO_SCHEMES.TABLE + " set " + DB.AUDIO_SCHEMES.SORT_ORDER +
                 " = (SELECT MAX(" + DB.AUDIO_SCHEMES.SORT_ORDER + ") + 1 FROM "
                 + DB.AUDIO_SCHEMES.TABLE + ") " +
                 " WHERE " + DB.AUDIO_SCHEMES.NAME + " = '" + name + "'");
     }
 
-    final OnSetValueListener onSetValueListener = new OnSetValueListener() {
+    private final OnSetValueListener onSetValueListener = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -338,7 +338,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         dialog.show();
     }
 
-    final OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
+    private final OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             Resources res = getResources();
@@ -378,7 +378,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     };
 
-    final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
+    private final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 
         TextToSpeech tts = null;
         final ArrayList<Feedback> feedback = new ArrayList<Feedback>();

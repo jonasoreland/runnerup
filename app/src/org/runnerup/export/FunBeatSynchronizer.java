@@ -61,26 +61,26 @@ import java.util.Map;
 public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "FunBeat";
-    public static final String BASE_URL = "http://www.funbeat.se";
-    public static final String START_URL = BASE_URL + "/index.aspx";
-    public static final String LOGIN_URL = BASE_URL + "/index.aspx";
-    public static final String UPLOAD_URL = BASE_URL
+    private static final String BASE_URL = "http://www.funbeat.se";
+    private static final String START_URL = BASE_URL + "/index.aspx";
+    private static final String LOGIN_URL = BASE_URL + "/index.aspx";
+    private static final String UPLOAD_URL = BASE_URL
             + "/importexport/upload.aspx";
 
-    public static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
-    public static final String FEED_URL = API_URL + "GetMyNewsFeed";
+    private static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
+    private static final String FEED_URL = API_URL + "GetMyNewsFeed";
 
     private static String APP_ID = null;
     private static String APP_SECRET = null;
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String loginID = null;
     private String loginSecretHashed = null;
 
-    static final Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
+    private static final Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer, Sport>();
+    private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
     static {
         // the best (known) way to get ID for a given sport is:
         // 1) create a workout on the website funbeat.se with the desired sport type

@@ -37,7 +37,7 @@ public class TrackerTTS extends DefaultTrackerComponent {
     private TextToSpeech tts;
     private Context context;
 
-    public static final String NAME = "TTS";
+    private static final String NAME = "TTS";
 
     @Override
     public String getName() {

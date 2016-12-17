@@ -88,7 +88,7 @@ public abstract class Bt20Base extends BtHRBase {
 
     // private Context context = null;
 
-    public Bt20Base(@SuppressWarnings("UnusedParameters") Context ctx) {
+    Bt20Base(@SuppressWarnings("UnusedParameters") Context ctx) {
         // context = ctx;
     }
 
@@ -587,9 +587,9 @@ public abstract class Bt20Base extends BtHRBase {
         public abstract int findNextAlignment(byte buffer[]);
     }
 
-    public abstract int getFrameSize();
+    protected abstract int getFrameSize();
 
-    public abstract int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr);
+    protected abstract int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr);
 
     public static class ZephyrHRM extends Bt20BaseOld {
 

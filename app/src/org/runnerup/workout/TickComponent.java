@@ -17,6 +17,6 @@
 
 package org.runnerup.workout;
 
-public interface TickComponent extends WorkoutComponent {
+interface TickComponent extends WorkoutComponent {
     boolean onTick(Workout w);
 }

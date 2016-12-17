@@ -189,7 +189,7 @@ public class MainLayout extends TabActivity
         }
     }
 
-    void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
+    private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
         String list[] = null;
 
         try {
@@ -274,7 +274,7 @@ public class MainLayout extends TabActivity
         }
     }
 
-    public final OnClickListener onRateClick = new OnClickListener() {
+    private final OnClickListener onRateClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
             try {
@@ -286,7 +286,7 @@ public class MainLayout extends TabActivity
         }
     };
 
-    public void whatsNew() {
+    private void whatsNew() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.whatsnew, null);
@@ -310,7 +310,7 @@ public class MainLayout extends TabActivity
         wv.loadUrl("file:///android_asset/changes.html");
     }
 
-    public static void requestGpsPermissions(final Activity activity, final View view) {
+    private static void requestGpsPermissions(final Activity activity, final View view) {
         String[] requiredPerms = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         List<String> defaultPerms = new ArrayList<>();
         List<String> shouldPerms = new ArrayList<>();

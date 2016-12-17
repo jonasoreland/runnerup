@@ -479,13 +479,13 @@ public class WorkoutSerializer {
         writeJSON(new FileWriter(fout), workout);
     }
 
-    public static void writeJSON(Writer out, Workout workout) throws JSONException, IOException {
+    private static void writeJSON(Writer out, Workout workout) throws JSONException, IOException {
         JSONObject obj = createJSON(workout);
         out.write(obj.toString());
         out.flush();
     }
 
-    public static JSONObject createJSON(Workout workout) throws JSONException {
+    private static JSONObject createJSON(Workout workout) throws JSONException {
         Stack<jsonstep> stepStack = new Stack<jsonstep>();
         ArrayList<jsonstep> stepList = new ArrayList<jsonstep>();
         int no = 1;

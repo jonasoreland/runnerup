@@ -30,13 +30,13 @@ import android.widget.TextView;
 import org.runnerup.util.HRZones;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HRZonesListAdapter extends BaseAdapter {
+class HRZonesListAdapter extends BaseAdapter {
 
     /**
 	 * 
 	 */
     HRZones hrZones = null;
-    LayoutInflater inflater = null;
+    private LayoutInflater inflater = null;
 
     public HRZonesListAdapter(Context ctx, LayoutInflater inflater) {
         super();
@@ -49,8 +49,8 @@ public class HRZonesListAdapter extends BaseAdapter {
         return hrZones.getCount();
     }
 
-    String lastString = null;
-    int lastPosition = -1;
+    private String lastString = null;
+    private int lastPosition = -1;
 
     @Override
     public Object getItem(int position) {

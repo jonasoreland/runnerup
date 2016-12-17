@@ -46,12 +46,12 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Workout implements WorkoutComponent, WorkoutInfo {
 
-    long lap = 0;
-    int currentStepNo = -1;
-    Step currentStep = null;
-    boolean paused = false;
+    private long lap = 0;
+    private int currentStepNo = -1;
+    private Step currentStep = null;
+    private boolean paused = false;
     final ArrayList<Step> steps = new ArrayList<Step>();
-    final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<WorkoutStepListener>();
+    private final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<WorkoutStepListener>();
     int sport = DB.ACTIVITY.SPORT_RUNNING;
     private boolean mute;
 
@@ -92,12 +92,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
     }
 
-    final PendingFeedback pendingFeedback = new PendingFeedback();
+    private final PendingFeedback pendingFeedback = new PendingFeedback();
 
     Tracker tracker = null;
     SharedPreferences audioCuePrefs;
-    HRZones hrZones = null;
-    RUTextToSpeech textToSpeech = null;
+    private HRZones hrZones = null;
+    private RUTextToSpeech textToSpeech = null;
 
     public static final String KEY_TTS = "tts";
     public static final String KEY_COUNTER_VIEW = "CountdownView";

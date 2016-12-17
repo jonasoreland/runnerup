@@ -384,7 +384,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
-    public void insertAccounts(SQLiteDatabase arg0) {
+    private void insertAccounts(SQLiteDatabase arg0) {
         final boolean notyet = false;
 
         ContentValues values;
@@ -548,7 +548,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
-    void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
+    private void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
         String cols[] = {
             "_id"
         };

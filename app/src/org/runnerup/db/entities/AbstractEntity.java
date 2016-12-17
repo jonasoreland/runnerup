@@ -43,14 +43,14 @@ public abstract class AbstractEntity implements DBEntity {
     protected abstract String getNullColumnHack();
 
 
-    public AbstractEntity() {
+    AbstractEntity() {
         this.mContentValues = new ContentValues();
     }
 
     /**
      * Returns the {@code ContentValues} wrapped by this object.
      */
-    protected final ContentValues values() {
+    final ContentValues values() {
         return mContentValues;
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractEntity implements DBEntity {
         return null;
     }
 
-    public void setId(Long value) {
+    private void setId(Long value) {
         values().put(Constants.DB.PRIMARY_KEY, value);
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractEntity implements DBEntity {
         }
     }
 
-    protected void toContentValues(Cursor c) {
+    void toContentValues(Cursor c) {
         if (c.isClosed() || c.isAfterLast() || c.isBeforeFirst()) {
             throw new CursorIndexOutOfBoundsException("Cursor not readable");
         }

@@ -42,12 +42,12 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class RunInfoFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
-    List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-    long dataUpdateTime;
-    long headersTimestamp;
-    Handler handler = new Handler();
-    boolean handlerOutstanding = false;
-    Runnable periodicTick = new Runnable() {
+    private List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
+    private long dataUpdateTime;
+    private long headersTimestamp;
+    private Handler handler = new Handler();
+    private boolean handlerOutstanding = false;
+    private Runnable periodicTick = new Runnable() {
         @Override
         public void run() {
             update();
@@ -87,7 +87,7 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
         return view;
     }
 
-    void startTimer() {
+    private void startTimer() {
         if (handlerOutstanding)
             return;
         handlerOutstanding = true;

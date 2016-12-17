@@ -60,13 +60,13 @@ import java.util.concurrent.TimeUnit;
 public class RunKeeper {
 
     long mID = 0;
-    SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB = null;
 
     public RunKeeper(SQLiteDatabase db) {
         mDB = db;
     }
 
-    static String formatTime(long time) {
+    private static String formatTime(long time) {
         return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US)
                 .format(new Date(time));
     }

@@ -172,7 +172,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * @return The string with the
      * @throws IOException
      */
-    protected String getResponse(InputStream is) throws IOException {
+    private String getResponse(InputStream is) throws IOException {
         String result = null;
         BufferedInputStream input = null;
         ByteArrayOutputStream output = null;
@@ -234,7 +234,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         Log.d(getName(), "cookies=" + cookies);
     }
 
-    protected void getCSRFToken(String response) {
+    private void getCSRFToken(String response) {
         Pattern pattern = Pattern.compile("<input type=\"hidden\" name=\"_csrf_token\" value=\"([^\"]+)\">");
         Matcher matcher = pattern.matcher(response);
         if (matcher.find()) {
@@ -251,7 +251,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
          * let us to know it is a 2.x.
          * @return The return code or -1 in case of strange error
          */
-    protected int prepareLogin() {
+        private int prepareLogin() {
         try {
             URL url = new URL(_url + "/en/login");
             Log.d(getName(), "URL=" + url);
@@ -283,7 +283,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * Method that performs a silent login in runalyze and save the cookies for later use.
      * @return The status
      */
-    protected Status login() {
+    private Status login() {
         OutputStreamWriter writer = null;
         try {
             Log.d(getName(), "Login enter");

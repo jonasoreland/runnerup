@@ -50,12 +50,12 @@ import java.util.Set;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public abstract class DefaultSynchronizer implements Synchronizer {
 
-    protected final Set<String> cookies = new HashSet<String>();
-    protected final FormValues formValues = new FormValues();
+    final Set<String> cookies = new HashSet<String>();
+    final FormValues formValues = new FormValues();
 
     private Integer authNotice;
 
-    public DefaultSynchronizer() {
+    DefaultSynchronizer() {
         super();
         logout();
     }
@@ -132,7 +132,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return persistActivity(db, download(item));
     }
 
-    protected ActivityEntity download(SyncActivityItem item) {
+    ActivityEntity download(SyncActivityItem item) {
         Log.e(Constants.LOG, "No download method implemented for the synchronizer " + getName());
         return null;
     }
@@ -190,7 +190,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return Status.ERROR;
     }
 
-    protected void addCookies(HttpURLConnection conn) {
+    void addCookies(HttpURLConnection conn) {
         boolean first = true;
         StringBuilder buf = new StringBuilder();
         for (String cookie : cookies) {
@@ -202,7 +202,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         conn.addRequestProperty("Cookie", buf.toString());
     }
 
-    protected void getCookies(HttpURLConnection conn) {
+    void getCookies(HttpURLConnection conn) {
         List<String> connCookies = conn.getHeaderFields().get("Set-Cookie");
         /**
          * work-around for weird android 2.2 bug ref
@@ -218,11 +218,11 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         }
     }
 
-    protected void clearCookies() {
+    void clearCookies() {
         cookies.clear();
     }
 
-    protected String getFormValues(HttpURLConnection conn) throws IOException {
+    String getFormValues(HttpURLConnection conn) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         StringBuilder buf = new StringBuilder();
         String s = null;

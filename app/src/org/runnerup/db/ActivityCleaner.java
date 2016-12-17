@@ -31,9 +31,9 @@ import java.util.ArrayList;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityCleaner implements Constants {
-    long _totalSumHr = 0;
-    int _totalCount = 0;
-    int _totalMaxHr = 0;
+    private long _totalSumHr = 0;
+    private int _totalCount = 0;
+    private int _totalMaxHr = 0;
 
     /**
      * recompute laps aggregates based on locations

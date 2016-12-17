@@ -27,7 +27,7 @@ import java.util.UUID;
  * Created by jonas on 11/1/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-public abstract class BtHRBase implements HRProvider {
+abstract class BtHRBase implements HRProvider {
     static final UUID HRP_SERVICE = UUID
             .fromString("0000180D-0000-1000-8000-00805f9b34fb");
     static final UUID BATTERY_SERVICE = UUID
@@ -43,10 +43,10 @@ public abstract class BtHRBase implements HRProvider {
     static final UUID CCC = UUID
             .fromString("00002902-0000-1000-8000-00805f9b34fb");
 
-    protected HRProvider.HRClient hrClient;
-    protected Handler hrClientHandler;
+    HRProvider.HRClient hrClient;
+    Handler hrClientHandler;
 
-    protected void log (final String msg) {
+    void log(final String msg) {
         if (hrClient != null) {
             if(Looper.myLooper() == Looper.getMainLooper()) {
                 hrClient.log(this, msg);

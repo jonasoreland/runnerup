@@ -69,7 +69,7 @@ public class TitleSpinner extends LinearLayout {
     private TextView mTitle = null;
     private TextView mValue = null;
     private Spinner mSpinner = null;
-    int mInputType = 0;
+    private int mInputType = 0;
     private final Context mContext;
     private OnSetValueListener mSetValueListener = null;
     private OnCloseDialogListener mCloseDialogListener = null;
@@ -587,7 +587,7 @@ public class TitleSpinner extends LinearLayout {
         return 0;
     }
 
-    int getSelectionValue(int value) {
+    private int getSelectionValue(int value) {
         if (values == null)
             return value;
         int p = 0;
@@ -601,7 +601,7 @@ public class TitleSpinner extends LinearLayout {
         return 0;
     }
 
-    int getRealValue(int value) {
+    private int getRealValue(int value) {
         if (values == null)
             return value;
         if (value >= 0 && value < values.length)

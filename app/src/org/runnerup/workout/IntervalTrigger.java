@@ -28,9 +28,9 @@ public class IntervalTrigger extends Trigger {
 
     double first = 120;
     double interval = 120;
-    final int count = 0; // endless
+    private final int count = 0; // endless
 
-    double next = 0;
+    private double next = 0;
 
     @Override
     public boolean onTick(Workout w) {

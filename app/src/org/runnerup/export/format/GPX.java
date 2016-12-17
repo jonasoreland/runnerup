@@ -36,20 +36,20 @@ import java.util.TimeZone;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GPX {
 
-    final boolean export_rest_laps = false;
+    private final boolean export_rest_laps = false;
 
     enum RestLapMode {
         EMPTY_TRKSEG,
         START_STOP_TRKSEG
     }
 
-    final RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
+    private final RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
 
     long mID = 0;
-    SQLiteDatabase mDB = null;
-    KXmlSerializer mXML = null;
-    String notes = null;
-    SimpleDateFormat simpleDateFormat = null;
+    private SQLiteDatabase mDB = null;
+    private KXmlSerializer mXML = null;
+    private String notes = null;
+    private SimpleDateFormat simpleDateFormat = null;
     final private boolean mGarminExt; //Also Cluetrust
     private final boolean mAccuracyExtensions;
 
@@ -65,7 +65,7 @@ public class GPX {
         this.mAccuracyExtensions = accuracyExtensions;
     }
 
-    String formatTime(long time) {
+    private String formatTime(long time) {
         return simpleDateFormat.format(new Date(time));
     }
 

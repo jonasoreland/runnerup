@@ -35,12 +35,12 @@ public class Bitfield {
             return clear(flags, bit);
     }
 
-    public static long set(long flags, int bit) {
+    private static long set(long flags, int bit) {
         long val = (1 << bit);
         return flags | val;
     }
 
-    public static long clear(long flags, int bit) {
+    private static long clear(long flags, int bit) {
         long val = (1 << bit);
         return flags & (~val);
     }

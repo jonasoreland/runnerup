@@ -51,15 +51,15 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.runningahead.com/oauth2/authorize";
-    public static final String TOKEN_URL = "https://api.runningahead.com/oauth2/token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runningahead";
+    private static final String AUTH_URL = "https://www.runningahead.com/oauth2/authorize";
+    private static final String TOKEN_URL = "https://api.runningahead.com/oauth2/token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/runningahead";
 
-    public static final String REST_URL = "https://api.runningahead.com/rest";
-    public static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";
+    private static final String REST_URL = "https://api.runningahead.com/rest";
+    private static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";
 
     private long id = 0;
     private String access_token = null;

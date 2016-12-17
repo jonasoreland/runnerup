@@ -27,9 +27,9 @@ import java.util.HashMap;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class PauseStep extends Step {
 
-    long elapsedTime = 0;
-    long lastTime = 0;
-    double saveDurationValue = 0;
+    private long elapsedTime = 0;
+    private long lastTime = 0;
+    private double saveDurationValue = 0;
 
     @Override
     public void onInit(Workout s) {

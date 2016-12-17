@@ -38,11 +38,11 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class CountdownFragment extends Fragment {
 
-    long dataUpdateTime;
-    List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-    Handler handler = new Handler();
-    boolean handlerOutstanding = false;
-    Runnable periodicTick = new Runnable() {
+    private long dataUpdateTime;
+    private List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
+    private Handler handler = new Handler();
+    private boolean handlerOutstanding = false;
+    private Runnable periodicTick = new Runnable() {
         @Override
         public void run() {
             update();
@@ -71,7 +71,7 @@ public class CountdownFragment extends Fragment {
         return view;
     }
 
-    void startTimer() {
+    private void startTimer() {
         if (handlerOutstanding)
             return;
         handlerOutstanding = true;

@@ -42,7 +42,7 @@ import java.util.zip.GZIPOutputStream;
 public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     public static final String NAME = "GoogleFit";
-    public static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
+    private static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
     public static final String REST_DATASOURCE = "dataSources";
     public static final String REST_DATASETS = "datasets";
     public static final String REST_SESSIONS = "sessions";
@@ -72,7 +72,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
         return NAME;
     }
 
-    public Context getContext() {
+    private Context getContext() {
         return context;
     }
 
@@ -234,7 +234,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
         return connect;
     }
 
-    public List<String> listExistingDataSources() throws Exception {
+    private List<String> listExistingDataSources() throws Exception {
         HttpURLConnection conn = null;
         List<String> dataStreamIds = new ArrayList<String>();
         try {

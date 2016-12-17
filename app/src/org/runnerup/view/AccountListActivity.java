@@ -56,11 +56,11 @@ import org.runnerup.widget.WidgetUtil;
 public class AccountListActivity extends AppCompatActivity implements Constants,
         LoaderCallbacks<Cursor> {
 
-    SQLiteDatabase mDB = null;
-    SyncManager mSyncManager = null;
-    boolean mTabFormat = false;
-    ListView mListView;
-    CursorAdapter mCursorAdapter;
+    private SQLiteDatabase mDB = null;
+    private SyncManager mSyncManager = null;
+    private boolean mTabFormat = false;
+    private ListView mListView;
+    private CursorAdapter mCursorAdapter;
 
     /** Called when the activity is first created. */
 
@@ -229,7 +229,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     }
 
-    final OnClickListener configureButtonClick = new OnClickListener() {
+    private final OnClickListener configureButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final String synchronizerName = (String) v.getTag();
             if (mSyncManager.isConfigured(synchronizerName)) {
@@ -255,7 +255,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     }
 
-    final SyncManager.Callback callback = new SyncManager.Callback() {
+    private final SyncManager.Callback callback = new SyncManager.Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
             if (status == Synchronizer.Status.OK) {
@@ -264,7 +264,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     };
 
-    void startActivity(String synchronizer, boolean edit) {
+    private void startActivity(String synchronizer, boolean edit) {
         Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
         intent.putExtra("synchronizer", synchronizer);
         intent.putExtra("edit", edit);

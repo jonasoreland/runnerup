@@ -15,11 +15,11 @@ import java.util.HashSet;
  * Created by jonas on 9/18/14.
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class DisabledEntriesAdapter extends BaseAdapter {
+class DisabledEntriesAdapter extends BaseAdapter {
 
-    String[] entries;
-    LayoutInflater inflator;
-    HashSet<String> disabled;
+    private String[] entries;
+    private LayoutInflater inflator;
+    private HashSet<String> disabled;
 
     public DisabledEntriesAdapter(Context ctx, int id) {
         inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

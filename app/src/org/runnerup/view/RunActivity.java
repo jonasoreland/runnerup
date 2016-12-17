@@ -63,27 +63,27 @@ import java.util.TimerTask;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RunActivity extends Activity implements TickListener {
-    Workout workout = null;
-    Tracker mTracker = null;
-    final Handler handler = new Handler();
+    private Workout workout = null;
+    private Tracker mTracker = null;
+    private final Handler handler = new Handler();
 
-    Button pauseButton = null;
-    Button stopButton = null;
-    Button newLapButton = null;
-    TextView activityTime = null;
-    TextView activityDistance = null;
-    TextView activityPace = null;
-    TextView lapTime = null;
-    TextView lapDistance = null;
-    TextView lapPace = null;
-    TextView intervalTime = null;
-    TextView intervalDistance = null;
-    TextView intervalPace = null;
-    TextView countdownView = null;
-    ListView workoutList = null;
-    View tableRowInterval = null;
-    org.runnerup.workout.Step currentStep = null;
-    Formatter formatter = null;
+    private Button pauseButton = null;
+    private Button stopButton = null;
+    private Button newLapButton = null;
+    private TextView activityTime = null;
+    private TextView activityDistance = null;
+    private TextView activityPace = null;
+    private TextView lapTime = null;
+    private TextView lapDistance = null;
+    private TextView lapPace = null;
+    private TextView intervalTime = null;
+    private TextView intervalDistance = null;
+    private TextView intervalPace = null;
+    private TextView countdownView = null;
+    private ListView workoutList = null;
+    private View tableRowInterval = null;
+    private org.runnerup.workout.Step currentStep = null;
+    private Formatter formatter = null;
     private TextView activityHr;
     private TextView lapHr;
     private TextView intervalHr;
@@ -95,10 +95,10 @@ public class RunActivity extends Activity implements TickListener {
         public int level;
     }
 
-    final ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
-    final ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
-    boolean simpleWorkout;
-    HRZones hrZones = null;
+    private final ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
+    private final ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+    private boolean simpleWorkout;
+    private HRZones hrZones = null;
 
     /** Called when the activity is first created. */
 
@@ -161,7 +161,7 @@ public class RunActivity extends Activity implements TickListener {
 
     }
 
-    void onGpsTrackerBound() {
+    private void onGpsTrackerBound() {
         if (mTracker == null) {
             // should not happen
             return;
@@ -217,9 +217,9 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    Timer timer = null;
+    private Timer timer = null;
 
-    void startTimer() {
+    private void startTimer() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -233,7 +233,7 @@ public class RunActivity extends Activity implements TickListener {
         }, 0, 500);
     }
 
-    void stopTimer() {
+    private void stopTimer() {
         if (timer != null) {
             timer.cancel();
             timer.purge();
@@ -241,7 +241,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    Location l = null;
+    private Location l = null;
 
     public void onTick() {
         if (workout != null) {
@@ -257,7 +257,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    final OnClickListener stopButtonClick = new OnClickListener() {
+    private final OnClickListener stopButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (timer != null) {
                 workout.onStop(workout);
@@ -321,7 +321,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    final OnClickListener pauseButtonClick = new OnClickListener() {
+    private final OnClickListener pauseButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (workout.isPaused()) {
                 workout.onResume(workout);
@@ -344,13 +344,13 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    final OnClickListener newLapButtonClick = new OnClickListener() {
+    private final OnClickListener newLapButtonClick = new OnClickListener() {
         public void onClick(View v) {
             workout.onNewLap();
         }
     };
 
-    final OnClickListener nextStepButtonClick = new OnClickListener() {
+    private final OnClickListener nextStepButtonClick = new OnClickListener() {
         public void onClick(View v) {
             workout.onNextStep();
         }
@@ -446,7 +446,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     };
 
-    void bindGpsTracker() {
+    private void bindGpsTracker() {
         // Establish a connection with the service. We use an explicit
         // class name because we want a specific service implementation that
         // we know will be running in our own process (and thus won't be
@@ -456,7 +456,7 @@ public class RunActivity extends Activity implements TickListener {
         mIsBound = true;
     }
 
-    void unbindGpsTracker() {
+    private void unbindGpsTracker() {
         if (mIsBound) {
             // Detach our existing connection.
             getApplicationContext().unbindService(mConnection);

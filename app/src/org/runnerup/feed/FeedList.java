@@ -39,12 +39,12 @@ import java.util.TimeZone;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class FeedList extends Observable implements Constants {
 
-    static final int MAX_ITEMS = 50;
-    static final long TIME_MARGIN = 5 * 60; // 5 minutes
+    private static final int MAX_ITEMS = 50;
+    private static final long TIME_MARGIN = 5 * 60; // 5 minutes
 
-    final SQLiteDatabase mDB;
-    List<ContentValues> list = new ArrayList<ContentValues>();
-    boolean filterDuplicates = true;
+    private final SQLiteDatabase mDB;
+    private List<ContentValues> list = new ArrayList<ContentValues>();
+    private boolean filterDuplicates = true;
 
     public FeedList(SQLiteDatabase db) {
         mDB = db;
@@ -74,7 +74,7 @@ public class FeedList extends Observable implements Constants {
         mDB.execSQL("DELETE FROM " + DB.FEED.TABLE);
     }
 
-    public void prune() {
+    private void prune() {
         if (list.size() >= MAX_ITEMS + 1) {
             ContentValues tmp = list.get(MAX_ITEMS);
             long start_time = tmp.getAsLong(DB.FEED.START_TIME);
@@ -230,7 +230,7 @@ public class FeedList extends Observable implements Constants {
         return tmp.getAsInteger(DB.FEED.FEED_TYPE) == DB.FEED.FEED_TYPE_ACTIVITY;
     }
 
-    public static boolean match(ContentValues c0, ContentValues c1, boolean filterDuplicates) {
+    private static boolean match(ContentValues c0, ContentValues c1, boolean filterDuplicates) {
         boolean same_account = c0.getAsLong(DB.FEED.ACCOUNT_ID) == c1.getAsLong(DB.FEED.ACCOUNT_ID);
         if (same_account) {
             /**

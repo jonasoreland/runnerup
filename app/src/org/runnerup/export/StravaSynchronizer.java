@@ -51,14 +51,14 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
-    public static final String TOKEN_URL = "https://www.strava.com/oauth/token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
+    private static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
+    private static final String TOKEN_URL = "https://www.strava.com/oauth/token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
 
-    public static final String REST_URL = "https://www.strava.com/api/v3/uploads";
+    private static final String REST_URL = "https://www.strava.com/api/v3/uploads";
 
     private long id = 0;
     private String access_token = null;

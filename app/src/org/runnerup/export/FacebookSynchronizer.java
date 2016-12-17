@@ -58,20 +58,20 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.facebook.com/dialog/oauth";
-    public static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/facebook";
+    private static final String AUTH_URL = "https://www.facebook.com/dialog/oauth";
+    private static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/facebook";
 
     private static final String COURSE_ENDPOINT = "https://graph.facebook.com/me/objects/fitness.course";
     private static final String RUN_ENDPOINT = "https://graph.facebook.com/me/fitness.runs";
     private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
     private static final String WALK_ENDPOINT = "https://graph.facebook.com/me/fitness.walks";
 
-    final boolean uploadComment = false;
-    final boolean explicitly_shared = false; // Doesn't work now...don't know why...
+    private final boolean uploadComment = false;
+    private final boolean explicitly_shared = false; // Doesn't work now...don't know why...
 
     private long id = 0;
     private String access_token = null;
@@ -80,7 +80,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     private boolean skipMapInPost = false;
     private final Context context;
 
-    final SimpleDateFormat dateFormat = new SimpleDateFormat(
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
     FacebookSynchronizer(Context context, SyncManager syncManager) {
@@ -215,7 +215,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         token_now = 0;
     }
 
-    public static final long ONE_DAY = 24 * 60 * 60;
+    private static final long ONE_DAY = 24 * 60 * 60;
 
     @Override
     public Status connect() {

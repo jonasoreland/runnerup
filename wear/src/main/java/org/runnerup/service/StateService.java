@@ -201,7 +201,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         }
     }
 
-    Bundle getBundle(Bundle src, long lastUpdateTime) {
+    private Bundle getBundle(Bundle src, long lastUpdateTime) {
         if (src == null)
             return null;
 
@@ -261,7 +261,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         }
     }
 
-    public void setPhoneNode(DataEvent ev) {
+    private void setPhoneNode(DataEvent ev) {
         if (ev.getType() == DataEvent.TYPE_CHANGED) {
             phoneNode = new String(ev.getDataItem().getData());
         } else if (ev.getType() == DataEvent.TYPE_DELETED) {
@@ -283,7 +283,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         pauseStep.set(pause);
     }
 
-    static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
+    private static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
         if (!dataItem.isDataValid())
             return null;
 

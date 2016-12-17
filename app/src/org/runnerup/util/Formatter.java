@@ -55,7 +55,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public final static double mi_meters = 1609.34;
     //public final static double FEET_PER_METER = 3.2808;
 
-    public static final int CUE = 1; // for text to speech
+    private static final int CUE = 1; // for text to speech
     public static final int CUE_SHORT = 2; // brief for tts
     public static final int CUE_LONG = 3; // long for tts
     public static final int TXT = 4; // same as TXT_SHORT but without unit
@@ -489,7 +489,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param seconds_per_meter
      * @return
      */
-    public String formatSpeed(int target, double seconds_per_meter) {
+    private String formatSpeed(int target, double seconds_per_meter) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
@@ -616,11 +616,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    public String formatRemainingTime(int target, double value) {
+    private String formatRemainingTime(int target, double value) {
         return formatElapsedTime(target, Math.round(value));
     }
 
-    public String formatRemainingDistance(int target, double value) {
+    private String formatRemainingDistance(int target, double value) {
         return formatDistance(target, Math.round(value));
     }
 

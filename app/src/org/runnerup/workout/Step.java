@@ -31,7 +31,7 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class Step implements TickComponent {
 
-    String name = null;
+    private String name = null;
 
     /**
      * Intensity
@@ -53,7 +53,7 @@ public class Step implements TickComponent {
     /**
      * Autolap (m)
      */
-    double autolap = 0;
+    private double autolap = 0;
 
     /**
      * Triggers
@@ -182,12 +182,12 @@ public class Step implements TickComponent {
         }
     }
 
-    double stepStartTime = 0;
-    double stepStartDistance = 0;
-    double stepStartHeartbeats = 0;
-    double lapStartTime = 0;
-    double lapStartDistance = 0;
-    double lapStartHeartbeats = 0;
+    private double stepStartTime = 0;
+    private double stepStartDistance = 0;
+    private double stepStartHeartbeats = 0;
+    private double lapStartTime = 0;
+    private double lapStartDistance = 0;
+    private double lapStartHeartbeats = 0;
 
     @Override
     public void onStart(Scope what, Workout s) {

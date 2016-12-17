@@ -51,21 +51,21 @@ import java.util.regex.Matcher;
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
-    public static final String BASE_URL = "https://www.runtastic.com";
-    public static final String START_URL = BASE_URL + "/en/login";
-    public static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";
-    public static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
-    public static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
+    private static final String BASE_URL = "https://www.runtastic.com";
+    private static final String START_URL = BASE_URL + "/en/login";
+    private static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";
+    private static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
+    private static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
 
     private Integer userId = null;
     private String authToken = null;
 
-    static final Map<Integer, Sport> runtastic2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2runtasticMap = new HashMap<Sport, Integer>();
+    private static final Map<Integer, Sport> runtastic2sportMap = new HashMap<Integer, Sport>();
+    private static final Map<Sport, Integer> sport2runtasticMap = new HashMap<Sport, Integer>();
     static {
         runtastic2sportMap.put(1, Sport.RUNNING);
         runtastic2sportMap.put(3, Sport.BIKING);

@@ -33,9 +33,9 @@ import java.util.Vector;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRZones {
 
-    int zones[] = null;
-    final String key;
-    final SharedPreferences prefs;
+    private int[] zones = null;
+    private final String key;
+    private final SharedPreferences prefs;
 
     public HRZones(Context ctx) {
         this(ctx.getResources(), PreferenceManager

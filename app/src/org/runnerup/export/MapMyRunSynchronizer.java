@@ -56,15 +56,15 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     private static final String IMPORT_URL = BASE_URL + "/workouts/import_tcx";
     private static final String UPDATE_URL = BASE_URL + "/workouts/edit_workout";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String md5pass = null;
     private String user_id = null;
     private String user_key = null;
 
-    static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<Sport, Integer>();
+    private static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<Integer, Sport>();
+    private static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<Sport, Integer>();
     static {
         // V3 API (what we use): 16 is Walking (specifically a long walk)
         // V7 API is different: 11: Biking, 16: Running, 9: Walk

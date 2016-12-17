@@ -38,7 +38,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     private Context context;
     private boolean headsetRegistered = false;
 
-    public static final String NAME = "Receiver";
+    private static final String NAME = "Receiver";
 
     public TrackerReceiver(Tracker tracker) {
         this.tracker = tracker;

@@ -48,16 +48,16 @@ import java.util.HashSet;
 public class AntPlus extends BtHRBase {
 
     static final String NAME = "AntPlus";
-    static final String DISPLAY_NAME = "ANT+";
+    private static final String DISPLAY_NAME = "ANT+";
 
-    final Context context;
-    int hrValue;
-    long hrTimestamp;
+    private final Context context;
+    private int hrValue;
+    private long hrTimestamp;
 
-    HRDeviceRef connectRef = null;
+    private HRDeviceRef connectRef = null;
 
     AntPlusHeartRatePcc hrPcc = null;
-    AsyncScanController<AntPlusHeartRatePcc> hrScanCtrl = null;
+    private AsyncScanController<AntPlusHeartRatePcc> hrScanCtrl = null;
 
     private boolean mIsScanning = false;
     private boolean mIsConnected = false;
@@ -150,8 +150,8 @@ public class AntPlus extends BtHRBase {
         }
     }
 
-    final HashSet<String> mScanDevices = new HashSet<String>();
-    final IAsyncScanResultReceiver scanReceiver = new IAsyncScanResultReceiver() {
+    private final HashSet<String> mScanDevices = new HashSet<String>();
+    private final IAsyncScanResultReceiver scanReceiver = new IAsyncScanResultReceiver() {
 
         @Override
         public void onSearchResult(final AsyncScanResultDeviceInfo arg0) {
@@ -209,9 +209,9 @@ public class AntPlus extends BtHRBase {
                 resultReceiver, stateReceiver);
     }
 
-    AntPlusHeartRatePcc antDevice = null;
+    private AntPlusHeartRatePcc antDevice = null;
 
-    final IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver = new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
+    private final IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver = new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
 
         @Override
         public void onResultReceived(AntPlusHeartRatePcc arg0,
@@ -254,7 +254,7 @@ public class AntPlus extends BtHRBase {
         }
     };
 
-    final IHeartRateDataReceiver heartRateDataReceiver = new IHeartRateDataReceiver() {
+    private final IHeartRateDataReceiver heartRateDataReceiver = new IHeartRateDataReceiver() {
 
         @Override
         public void onNewHeartRateData(long arg0, EnumSet<EventFlag> arg1,
@@ -289,7 +289,7 @@ public class AntPlus extends BtHRBase {
         }
     };
 
-    final IDeviceStateChangeReceiver stateReceiver = new IDeviceStateChangeReceiver() {
+    private final IDeviceStateChangeReceiver stateReceiver = new IDeviceStateChangeReceiver() {
 
         @Override
         public void onDeviceStateChange(DeviceState arg0) {
@@ -335,7 +335,7 @@ public class AntPlus extends BtHRBase {
         }
     }
 
-    protected void reportConnected(final boolean b) {
+    private void reportConnected(final boolean b) {
         hrClientHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -351,7 +351,7 @@ public class AntPlus extends BtHRBase {
         });
     }
 
-    protected void reportDisconnected(final boolean b) {
+    private void reportDisconnected(final boolean b) {
         disconnectImpl();
         hrClientHandler.post(new Runnable() {
             @Override

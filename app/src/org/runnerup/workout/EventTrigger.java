@@ -25,7 +25,7 @@ public class EventTrigger extends Trigger {
 
     Scope scope = Scope.STEP;
     Event event = Event.STARTED;
-    int counter = 0;
+    private int counter = 0;
     int skipCounter = 0;
     int maxCounter = Integer.MAX_VALUE;
 

@@ -78,7 +78,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             + "/v1.0/me/home/feed?access_token=%s&start=%d&count=%d";
     private static final String FRIEND_FEED_URL = BASE_URL
             + "/v1.0/me/friends/feed?access_token=%s&startIndex=%d&count=%d";
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String access_token = null;
@@ -342,7 +342,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    JSONObject makeGetRequest(String url) throws MalformedURLException, IOException, JSONException {
+    private JSONObject makeGetRequest(String url) throws MalformedURLException, IOException, JSONException {
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();

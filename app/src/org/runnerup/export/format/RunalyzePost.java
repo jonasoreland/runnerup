@@ -58,7 +58,7 @@ public class RunalyzePost {
      * @param activityId The activity id
      * @return The cursor associated to the list of locations of the activity
      */
-    public Cursor createLocationCursor(long activityId) {
+    private Cursor createLocationCursor(long activityId) {
         String[] columns = {
                 Constants.DB.LOCATION.TIME,
                 Constants.DB.LOCATION.LATITUDE,
@@ -78,7 +78,7 @@ public class RunalyzePost {
      * @param writer The writer to write with
      * @throws IOException Some error writing the value
      */
-    public void writeValue(String value, String defaultValue, Writer writer) throws IOException {
+    private void writeValue(String value, String defaultValue, Writer writer) throws IOException {
         try {
             if (value == null) {
                 value = defaultValue;
@@ -96,7 +96,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeArrTime(Cursor c, Writer writer) throws IOException {
+    private void writeArrTime(Cursor c, Writer writer) throws IOException {
         writer.write("arr_time");
         writer.write("=");
         if (c.moveToFirst()) {
@@ -116,7 +116,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeArrDist(Cursor c, Writer writer) throws IOException {
+    private void writeArrDist(Cursor c, Writer writer) throws IOException {
         writer.write("arr_dist");
         writer.write("=");
         if (c.moveToFirst()) {
@@ -149,7 +149,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeLocationField(String name, int column, String defaultValue, Cursor c, Writer writer) throws IOException {
+    private void writeLocationField(String name, int column, String defaultValue, Cursor c, Writer writer) throws IOException {
         writer.write(name);
         writer.write("=");
         if (c.moveToFirst()) {
@@ -168,7 +168,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeLocationFields(long activityId, Writer writer) throws IOException {
+    private void writeLocationFields(long activityId, Writer writer) throws IOException {
         Cursor c = null;
         try {
             c = createLocationCursor(activityId);
@@ -194,7 +194,7 @@ public class RunalyzePost {
      * @param activityId The activity id
      * @return The cursor associated to the list of laps of the activity
      */
-    public Cursor createLapCursor(long activityId) {
+    private Cursor createLapCursor(long activityId) {
         String[] columns = {
                 Constants.DB.LAP.DISTANCE,
                 Constants.DB.LAP.TIME,
@@ -212,7 +212,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeNomalField(String name, String value, String defaultValue, Writer writer) throws IOException {
+    private void writeNomalField(String name, String value, String defaultValue, Writer writer) throws IOException {
         writer.write(name);
         writer.write("=");
         writeValue(value, defaultValue, writer);
@@ -224,7 +224,7 @@ public class RunalyzePost {
      * @param seconds The seconds to transform
      * @return The string with the seconds in format mm:ss
      */
-    public String seconds2MinuteAndSeconds(long seconds) {
+    private String seconds2MinuteAndSeconds(long seconds) {
         // runalyze has some data that is expressed in mm:ss (TIME_MINUTES)
         // you can check it in class.FormularValueParser.php method validateTimeMinutes
         long m = seconds / 60;
@@ -238,7 +238,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeLapFields(long activityId, Writer writer) throws IOException {
+    private void writeLapFields(long activityId, Writer writer) throws IOException {
         Cursor c = null;
         try {
             c = createLapCursor(activityId);
@@ -265,7 +265,7 @@ public class RunalyzePost {
      * @param activityId The activity id
      * @return The cursor associated to the activity
      */
-    public Cursor createActivityCursor(long activityId) {
+    private Cursor createActivityCursor(long activityId) {
         String[] columns = {
                 Constants.DB.ACTIVITY.START_TIME,
                 Constants.DB.ACTIVITY.TIME,
@@ -362,7 +362,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeActivityFields(long activityId, Writer writer) throws IOException {
+    private void writeActivityFields(long activityId, Writer writer) throws IOException {
         Cursor c = null;
         try {
             c = createActivityCursor(activityId);
@@ -401,7 +401,7 @@ public class RunalyzePost {
      * @param writer The writer to write.
      * @throws IOException Some error
      */
-    public void writeFixedFields(Writer writer) throws IOException {
+    private void writeFixedFields(Writer writer) throws IOException {
         writeNomalField("creator", "", null, writer);
         writeNomalField("creator_details", "", null, writer);
         writeNomalField("timezone_offset", Integer.toString(TimeZone.getDefault().getRawOffset() / 60000), null, writer);
