@@ -58,7 +58,7 @@ public class Step implements TickComponent {
     /**
      * Triggers
      */
-    final ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+    final ArrayList<Trigger> triggers = new ArrayList<>();
 
     /**
      * @return the name

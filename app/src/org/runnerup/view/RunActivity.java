@@ -95,8 +95,8 @@ public class RunActivity extends Activity implements TickListener {
         public int level;
     }
 
-    private final ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
-    private final ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
+    private final ArrayList<WorkoutRow> workoutRows = new ArrayList<>();
+    private final ArrayList<BaseAdapter> adapters = new ArrayList<>(2);
     private boolean simpleWorkout;
 
     /** Called when the activity is first created. */
@@ -178,7 +178,7 @@ public class RunActivity extends Activity implements TickListener {
              * Countdown view can't be bound until RunActivity is started
              *   since it's not created until then
              */
-            HashMap<String, Object> bindValues = new HashMap<String, Object>();
+            HashMap<String, Object> bindValues = new HashMap<>();
             bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
             workout.onBind(workout, bindValues);
         }

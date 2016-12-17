@@ -908,7 +908,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     final class WorkoutStepsAdapter extends BaseAdapter {
 
-        List<StepListEntry> steps = new ArrayList<StepListEntry>();
+        List<StepListEntry> steps = new ArrayList<>();
 
         @Override
         public int getCount() {

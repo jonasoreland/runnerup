@@ -42,8 +42,8 @@ public class ActivityEntity extends AbstractEntity {
 
     public ActivityEntity() {
         super();
-        laps = new ArrayList<LapEntity>();
-        locationPoints = new ArrayList<LocationEntity>();
+        laps = new ArrayList<>();
+        locationPoints = new ArrayList<>();
     }
 
     public ActivityEntity(Cursor c) {

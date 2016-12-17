@@ -27,8 +27,8 @@ import java.util.HashMap;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public abstract class Trigger implements TickComponent {
 
-    ArrayList<Feedback> triggerAction = new ArrayList<Feedback>();
-    final ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<TriggerSuppression>();
+    ArrayList<Feedback> triggerAction = new ArrayList<>();
+    final ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<>();
 
     @Override
     public void onInit(Workout s) {

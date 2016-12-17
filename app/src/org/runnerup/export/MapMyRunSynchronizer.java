@@ -63,8 +63,8 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     private String user_id = null;
     private String user_key = null;
 
-    private static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<Integer, Sport>();
-    private static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<Sport, Integer>();
+    private static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<>();
+    private static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<>();
     static {
         // V3 API (what we use): 16 is Walking (specifically a long walk)
         // V7 API is different: 11: Biking, 16: Running, 9: Walk

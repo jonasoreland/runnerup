@@ -32,7 +32,7 @@ import android.os.Bundle;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class LocationListenerBase implements LocationListener {
 
-    private final java.util.LinkedList<LocationListener> mClients = new java.util.LinkedList<LocationListener>();
+    private final java.util.LinkedList<LocationListener> mClients = new java.util.LinkedList<>();
 
     public void register(LocationListener l) {
         synchronized (mClients) {

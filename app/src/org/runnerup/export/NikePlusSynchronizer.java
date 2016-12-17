@@ -248,13 +248,13 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("user-agent", USER_AGENT);
             conn.addRequestProperty("appid", APP_ID);
-            Part<StringWritable> part1 = new Part<StringWritable>("runXML",
+            Part<StringWritable> part1 = new Part<>("runXML",
                     new StringWritable(xml.toString()));
             part1.setFilename("runXML.xml");
             part1.setContentType("text/plain; charset=US-ASCII");
             part1.setContentTransferEncoding("8bit");
 
-            Part<StringWritable> part2 = new Part<StringWritable>("gpxXML",
+            Part<StringWritable> part2 = new Part<>("gpxXML",
                     new StringWritable(gpx.toString()));
             part2.setFilename("gpxXML.xml");
             part2.setContentType("text/plain; charset=US-ASCII");
@@ -328,7 +328,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",
                     Locale.getDefault());
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
-            List<ContentValues> result = new ArrayList<ContentValues>();
+            List<ContentValues> result = new ArrayList<>();
             getOwnFeed(df, result);
             getFriendsFeed(df, result);
             FeedList.sort(result);

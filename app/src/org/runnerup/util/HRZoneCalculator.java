@@ -75,10 +75,10 @@ public class HRZoneCalculator {
             return null;
 
         if (zone + 1 < zoneLimitsPct.length)
-            return new Pair<Integer, Integer>(zoneLimitsPct[zone],
+            return new Pair<>(zoneLimitsPct[zone],
                     zoneLimitsPct[zone + 1]);
         else
-            return new Pair<Integer, Integer>(zoneLimitsPct[zone], 100);
+            return new Pair<>(zoneLimitsPct[zone], 100);
     }
 
     public Pair<Integer, Integer> computeHRZone(int zone, int maxHR) {
@@ -86,7 +86,7 @@ public class HRZoneCalculator {
         if (limits == null)
             return null;
 
-        return new Pair<Integer, Integer>((int) Math.round(limits.first * maxHR / 100.0),
+        return new Pair<>((int) Math.round(limits.first * maxHR / 100.0),
                 (int) Math.round(limits.second * maxHR / 100.0d));
     }
 }

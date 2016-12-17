@@ -81,7 +81,7 @@ public class WorkoutSerializer {
         JSONArray steps = obj.getJSONArray("workoutSteps");
         int stepNo = 0;
         JSONObject step = null;
-        ArrayList<jsonstep> list = new ArrayList<jsonstep>(4);
+        ArrayList<jsonstep> list = new ArrayList<>(4);
         while ((step = steps.optJSONObject(stepNo)) != null)
         {
             jsonstep js = parseStep(step, convertRestToRecovery);
@@ -173,7 +173,7 @@ public class WorkoutSerializer {
         }
     }
 
-    private static final Pair<Dimension, Double> NullDimensionPair = new Pair<Dimension, Double>(null,
+    private static final Pair<Dimension, Double> NullDimensionPair = new Pair<>(null,
             0.0);
 
     private static Pair<Dimension, Double> getDuration(JSONObject obj, Intensity intensity)
@@ -201,7 +201,7 @@ public class WorkoutSerializer {
             return NullDimensionPair;
         }
 
-        return new Pair<Dimension, Double>(dim, val);
+        return new Pair<>(dim, val);
     }
 
     private static void putDuration(JSONObject obj, Step step, Dimension durationType,
@@ -275,7 +275,7 @@ public class WorkoutSerializer {
         return val;
     }
 
-    private static final Pair<Dimension, Range> NullTargetPair = new Pair<Dimension, Range>(null, null);
+    private static final Pair<Dimension, Range> NullTargetPair = new Pair<>(null, null);
 
     private static Pair<Dimension, Range> getTarget(JSONObject obj) {
         String targetTypeKey = getString(obj, "targetTypeKey");
@@ -306,7 +306,7 @@ public class WorkoutSerializer {
             return NullTargetPair;
         }
 
-        return new Pair<Dimension, Range>(dim, range);
+        return new Pair<>(dim, range);
     }
 
     private static void putTarget(JSONObject obj, Step step, Dimension targetType, Range targetValue) throws JSONException {
@@ -486,8 +486,8 @@ public class WorkoutSerializer {
     }
 
     private static JSONObject createJSON(Workout workout) throws JSONException {
-        Stack<jsonstep> stepStack = new Stack<jsonstep>();
-        ArrayList<jsonstep> stepList = new ArrayList<jsonstep>();
+        Stack<jsonstep> stepStack = new Stack<>();
+        ArrayList<jsonstep> stepList = new ArrayList<>();
         int no = 1;
         int group = 1;
         Workout.StepListEntry prev = null;

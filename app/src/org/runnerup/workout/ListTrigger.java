@@ -30,7 +30,7 @@ public class ListTrigger extends Trigger {
     Dimension dimension = Dimension.TIME;
 
     private int pos = Integer.MAX_VALUE;
-    ArrayList<Double> triggerTimes = new ArrayList<Double>();
+    ArrayList<Double> triggerTimes = new ArrayList<>();
 
     @Override
     public boolean onTick(Workout w) {

@@ -622,7 +622,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     class DeviceAdapter extends BaseAdapter {
 
-        final ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
+        final ArrayList<HRDeviceRef> deviceList = new ArrayList<>();
         LayoutInflater inflater = null;
         Resources resources = null;
 

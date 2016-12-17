@@ -64,8 +64,8 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     private Integer userId = null;
     private String authToken = null;
 
-    private static final Map<Integer, Sport> runtastic2sportMap = new HashMap<Integer, Sport>();
-    private static final Map<Sport, Integer> sport2runtasticMap = new HashMap<Sport, Integer>();
+    private static final Map<Integer, Sport> runtastic2sportMap = new HashMap<>();
+    private static final Map<Sport, Integer> sport2runtasticMap = new HashMap<>();
     static {
         runtastic2sportMap.put(1, Sport.RUNNING);
         runtastic2sportMap.put(3, Sport.BIKING);

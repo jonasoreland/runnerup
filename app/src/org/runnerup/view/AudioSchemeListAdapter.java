@@ -41,7 +41,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
     private LayoutInflater inflater = null;
     private SQLiteDatabase mDB = null;
     private boolean createNewItem = true;
-    private final ArrayList<String> audioSchemes = new ArrayList<String>();
+    private final ArrayList<String> audioSchemes = new ArrayList<>();
 
     public AudioSchemeListAdapter(SQLiteDatabase db, LayoutInflater inflater, boolean createNew) {
         super();

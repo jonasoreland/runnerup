@@ -193,8 +193,8 @@ public class RunKeeper {
             return null;
         }
 
-        List<LapEntity> laps = new ArrayList<LapEntity>();
-        List<LocationEntity> locations = new ArrayList<LocationEntity>();
+        List<LapEntity> laps = new ArrayList<>();
+        List<LocationEntity> locations = new ArrayList<>();
 
         JSONArray distance = response.getJSONArray("distance");
         JSONArray path = response.getJSONArray("path");
@@ -325,13 +325,13 @@ public class RunKeeper {
     }
 
     private static SortedMap<Long, HashMap<String, String>> createPointsMap(JSONArray distance, JSONArray path, JSONArray hr) throws JSONException {
-        SortedMap<Long, HashMap<String, String>> result = new TreeMap<Long, HashMap<String, String>>();
+        SortedMap<Long, HashMap<String, String>> result = new TreeMap<>();
 
         if (distance != null && distance.length() > 0) {
             for (int i = 0; i < distance.length(); i++) {
                 JSONObject o = distance.getJSONObject(i);
                 Long key = TimeUnit.SECONDS.toMillis((long) Float.parseFloat(o.getString("timestamp")));
-                HashMap<String, String> value = new HashMap<String, String>();
+                HashMap<String, String> value = new HashMap<>();
                 String valueMapKey = "distance";
                 String valueMapValue = o.getString(valueMapKey);
                 value.put(valueMapKey, valueMapValue);
@@ -345,7 +345,7 @@ public class RunKeeper {
                 Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
-                    value = new HashMap<String, String>();
+                    value = new HashMap<>();
                 }
                 String[] attrs = new String[] {"latitude", "longitude", "altitude", "type"};
                 for (String valueMapKey : attrs) {
@@ -362,7 +362,7 @@ public class RunKeeper {
                 Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
-                    value = new HashMap<String, String>();
+                    value = new HashMap<>();
                 }
                 String valueMapKey = "heart_rate";
                 String valueMapValue = o.getString(valueMapKey);

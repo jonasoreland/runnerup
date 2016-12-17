@@ -28,7 +28,7 @@ class DisabledEntriesAdapter extends BaseAdapter {
 
     public void addDisabled(int i) {
         if (disabled == null)
-            disabled = new HashSet<String>();
+            disabled = new HashSet<>();
         if (i < entries.length)
             disabled.add(entries[i]);
     }

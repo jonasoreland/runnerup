@@ -39,7 +39,7 @@ import java.util.List;
 public class CountdownFragment extends Fragment {
 
     private long dataUpdateTime;
-    private final List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
+    private final List<Pair<String, TextView>> textViews = new ArrayList<>(3);
     private final Handler handler = new Handler();
     private boolean handlerOutstanding = false;
     private final Runnable periodicTick = new Runnable() {
@@ -61,7 +61,7 @@ public class CountdownFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.countdown, container, false);
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.COUNTDOWN,
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.COUNTDOWN,
                 (TextView) view.findViewById(R.id.countdown_txt)));
         return view;
     }

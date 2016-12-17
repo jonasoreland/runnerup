@@ -33,7 +33,7 @@ public class RepeatStep extends Step {
         return steps;
     }
 
-    final ArrayList<Step> steps = new ArrayList<Step>();
+    final ArrayList<Step> steps = new ArrayList<>();
 
     private int currentStep = 0;
     private int currentRepeat = 0;

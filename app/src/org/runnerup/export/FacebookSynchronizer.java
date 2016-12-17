@@ -299,10 +299,10 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         obj.put("og:title", "a RunnerUp course");
         obj.put("fitness", course);
 
-        Part<StringWritable> themePart = new Part<StringWritable>(
+        Part<StringWritable> themePart = new Part<>(
                 "access_token", new StringWritable(
-                        SyncHelper.URLEncode(access_token)));
-        Part<StringWritable> payloadPart = new Part<StringWritable>("object",
+                SyncHelper.URLEncode(access_token)));
+        Part<StringWritable> payloadPart = new Part<>("object",
                 new StringWritable(obj.toString()));
         Part<?> parts[] = {
                 themePart, payloadPart
@@ -327,26 +327,26 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
             return null;
         }
         String id = ref.getString("id");
-        ArrayList<Part<?>> list = new ArrayList<Part<?>>();
-        list.add(new Part<StringWritable>("access_token",
+        ArrayList<Part<?>> list = new ArrayList<>();
+        list.add(new Part<>("access_token",
                 new StringWritable(SyncHelper.URLEncode(access_token))));
-        list.add(new Part<StringWritable>("course",
+        list.add(new Part<>("course",
                 new StringWritable(id)));
         boolean explicitly_shared = false;
         if (explicitly_shared)
-            list.add(new Part<StringWritable>(
+            list.add(new Part<>(
                     "fb:explicitly_shared", new StringWritable("true")));
 
-        list.add(new Part<StringWritable>(
+        list.add(new Part<>(
                 "start_time", new StringWritable(formatTime(runObj.getLong("startTime")))));
         if (runObj.has("endTime")) {
-            list.add(new Part<StringWritable>(
+            list.add(new Part<>(
                     "end_time", new StringWritable(formatTime(runObj.getLong("endTime")))));
         }
 
         boolean uploadComment = false;
         if (uploadComment && runObj.has("comment")) {
-            list.add(new Part<StringWritable>(
+            list.add(new Part<>(
                     "message", new StringWritable(runObj.getString("comment"))));
         }
 

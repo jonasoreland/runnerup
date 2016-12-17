@@ -50,7 +50,7 @@ import java.util.Set;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public abstract class DefaultSynchronizer implements Synchronizer {
 
-    final Set<String> cookies = new HashSet<String>();
+    final Set<String> cookies = new HashSet<>();
     final FormValues formValues = new FormValues();
 
     private Integer authNotice;
@@ -154,7 +154,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         }
 
         //update with activity id
-        activity.putPoints(new ArrayList<LocationEntity>(activity.getLocationPoints()));
+        activity.putPoints(new ArrayList<>(activity.getLocationPoints()));
         // insert location and end transaction unsuccessfully
         if (DBHelper.bulkInsert(activity.getLocationPoints(), db) != activity.getLocationPoints().size()) {
             db.endTransaction();
@@ -162,7 +162,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         }
 
         //update with activity id
-        activity.putLaps(new ArrayList<LapEntity>(activity.getLaps()));
+        activity.putLaps(new ArrayList<>(activity.getLaps()));
         // insert all lap objects
         if (DBHelper.bulkInsert(activity.getLaps(), db) != activity.getLaps().size()) {
             db.endTransaction();

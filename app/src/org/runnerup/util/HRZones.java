@@ -111,9 +111,9 @@ public class HRZones {
     public Pair<Integer, Integer> getHRValues(int zone) {
         if (zones != null && zone < zones.length) {
             if (zone == 0) {
-                return new Pair<Integer, Integer>(0, zones[0]);
+                return new Pair<>(0, zones[0]);
             } else {
-                return new Pair<Integer, Integer>(zones[zone - 1], zones[zone]);
+                return new Pair<>(zones[zone - 1], zones[zone]);
             }
         }
         return null;

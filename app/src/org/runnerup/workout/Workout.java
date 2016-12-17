@@ -50,14 +50,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     private int currentStepNo = -1;
     private Step currentStep = null;
     private boolean paused = false;
-    final ArrayList<Step> steps = new ArrayList<Step>();
-    private final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<WorkoutStepListener>();
+    final ArrayList<Step> steps = new ArrayList<>();
+    private final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<>();
     int sport = DB.ACTIVITY.SPORT_RUNNING;
     private boolean mute;
 
     class PendingFeedback {
         int depth = 0;
-        final HashSet<Feedback> set = new HashSet<Feedback>(); // For uniquing
+        final HashSet<Feedback> set = new HashSet<>(); // For uniquing
 
         void init() {
             depth++;
@@ -581,7 +581,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public List<StepListEntry> getStepList() {
-        ArrayList<StepListEntry> list = new ArrayList<StepListEntry>();
+        ArrayList<StepListEntry> list = new ArrayList<>();
         for (Step s : steps) {
             s.getSteps(null, 0, list);
         }

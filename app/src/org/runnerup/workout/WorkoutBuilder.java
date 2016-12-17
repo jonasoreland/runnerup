@@ -412,7 +412,7 @@ public class WorkoutBuilder {
              * autolap 500m and interval-trigger-distance 1000 then remove the
              * trigger
              */
-            ArrayList<TriggerSuppression> list = new ArrayList<TriggerSuppression>();
+            ArrayList<TriggerSuppression> list = new ArrayList<>();
             if (step.getAutolap() > 0) {
                 list.add(new EndOfLapSuppression(step.getAutolap()));
             }
@@ -432,8 +432,8 @@ public class WorkoutBuilder {
     }
 
     private static ArrayList<Trigger> createDefaultTriggers(Resources res, SharedPreferences prefs) {
-        ArrayList<Feedback> feedback = new ArrayList<Feedback>();
-        ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+        ArrayList<Feedback> feedback = new ArrayList<>();
+        ArrayList<Trigger> triggers = new ArrayList<>();
 
         if (prefs.getBoolean(res.getString(R.string.cue_time), false)) {
             long val = 0;
@@ -522,7 +522,7 @@ public class WorkoutBuilder {
         }
 
         double first = 0;
-        ArrayList<Double> list = new ArrayList<Double>();
+        ArrayList<Double> list = new ArrayList<>();
         switch (step.getDurationType()) {
             case TIME:
                 first = 60; // 1 minute
@@ -559,7 +559,7 @@ public class WorkoutBuilder {
         /**
          * Then create a list trigger for reminder...
          */
-        ArrayList<Double> triggerTimes = new ArrayList<Double>();
+        ArrayList<Double> triggerTimes = new ArrayList<>();
         for (Double d : list) {
             if (d >= step.getDurationValue())
                 continue;

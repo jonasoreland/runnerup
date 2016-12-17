@@ -58,14 +58,14 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     private final IBinder mBinder = new LocalBinder();
     private GoogleApiClient mGoogleApiClient;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private final HashSet<Node> connectedNodes = new HashSet<Node>();
+    private final HashSet<Node> connectedNodes = new HashSet<>();
 
     private String phoneNode;
 
     private Bundle data;
     private Bundle headers;
-    private final ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
-    private final ValueModel<Boolean> pauseStep = new ValueModel<Boolean>();
+    private final ValueModel<TrackerState> trackerState = new ValueModel<>();
+    private final ValueModel<Boolean> pauseStep = new ValueModel<>();
     private MainActivity pauseStepListener;
 
     @Override

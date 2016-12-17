@@ -43,7 +43,7 @@ public class FeedList extends Observable implements Constants {
     private static final long TIME_MARGIN = 5 * 60; // 5 minutes
 
     private final SQLiteDatabase mDB;
-    private List<ContentValues> list = new ArrayList<ContentValues>();
+    private List<ContentValues> list = new ArrayList<>();
     private boolean filterDuplicates = true;
 
     public FeedList(SQLiteDatabase db) {
@@ -96,13 +96,13 @@ public class FeedList extends Observable implements Constants {
         int discarded = 0;
 
         FeedUpdater() {
-            currList = new ArrayList<ContentValues>(list.size());
+            currList = new ArrayList<>(list.size());
             for (ContentValues c : list) { // initialize list with already
                                            // present items
                 if (!isHeaderDate(c))
                     currList.add(c);
             }
-            addList = new ArrayList<ContentValues>(list.size());
+            addList = new ArrayList<>(list.size());
         }
 
         public void start(String synchronizerName) {
@@ -176,7 +176,7 @@ public class FeedList extends Observable implements Constants {
     }
 
     public static List<ContentValues> addHeaders(List<ContentValues> oldList) {
-        List<ContentValues> newList = new ArrayList<ContentValues>(oldList.size());
+        List<ContentValues> newList = new ArrayList<>(oldList.size());
         Calendar lastDate = Calendar.getInstance();
         lastDate.setTimeInMillis(0);
         Calendar tmp = Calendar.getInstance();

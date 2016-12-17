@@ -79,8 +79,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     private String loginID = null;
     private String loginSecretHashed = null;
 
-    private static final Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer, Sport>();
-    private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
+    private static final Map<Integer, Sport> funbeat2sportMap = new HashMap<>();
+    private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<>();
     static {
         // the best (known) way to get ID for a given sport is:
         // 1) create a workout on the website funbeat.se with the desired sport type
@@ -358,18 +358,18 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             String fileKey = SyncHelper.findName(formValues.keySet(), "FileUpload");
             String uploadKey = SyncHelper.findName(formValues.keySet(), "UploadButton");
 
-            Part<StringWritable> part1 = new Part<StringWritable>(viewKey,
+            Part<StringWritable> part1 = new Part<>(viewKey,
                     new StringWritable(formValues.get(viewKey)));
 
-            Part<StringWritable> part2 = new Part<StringWritable>(eventKey,
+            Part<StringWritable> part2 = new Part<>(eventKey,
                     new StringWritable(formValues.get(eventKey)));
 
-            Part<StringWritable> part3 = new Part<StringWritable>(fileKey,
+            Part<StringWritable> part3 = new Part<>(fileKey,
                     new StringWritable(writer.toString()));
             part3.setContentType("application/octet-stream");
             part3.setFilename("jonas.tcx");
 
-            Part<StringWritable> part4 = new Part<StringWritable>(uploadKey,
+            Part<StringWritable> part4 = new Part<>(uploadKey,
                     new StringWritable(formValues.get(uploadKey)));
             Part<?> parts[] = {
                     part1, part2, part3, part4

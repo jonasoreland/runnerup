@@ -235,7 +235,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     private List<String> listExistingDataSources() throws Exception {
         HttpURLConnection conn = null;
-        List<String> dataStreamIds = new ArrayList<String>();
+        List<String> dataStreamIds = new ArrayList<>();
         try {
             conn = getHttpURLConnection(REST_DATASOURCE, RequestMethod.GET);
             final JSONObject reply = SyncHelper.parse(new GZIPInputStream(conn.getInputStream()));

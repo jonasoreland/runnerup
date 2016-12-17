@@ -55,7 +55,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
     private HRZones hrZones;
     private HRZoneCalculator hrZoneCalculator;
 
-    private final Vector<EditText> zones = new Vector<EditText>();
+    private final Vector<EditText> zones = new Vector<>();
     private boolean skipSave = false;
 
     private View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
@@ -204,7 +204,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
 
     private void saveHR() {
         try {
-            Vector<Integer> vals = new Vector<Integer>();
+            Vector<Integer> vals = new Vector<>();
             System.err.print("saving: ");
             for (int i = 0; i < zones.size(); i += 2) {
                 vals.add(Integer.valueOf(zones.get(i).getText().toString()));

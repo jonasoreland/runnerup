@@ -381,7 +381,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     private final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 
         TextToSpeech tts = null;
-        final ArrayList<Feedback> feedback = new ArrayList<Feedback>();
+        final ArrayList<Feedback> feedback = new ArrayList<>();
 
         private final OnInitListener mTTSOnInitListener = new OnInitListener() {
 
@@ -398,7 +398,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
                 Workout w = Workout.fakeWorkoutForTestingAudioCue();
                 RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
-                HashMap<String, Object> bindValues = new HashMap<String, Object>();
+                HashMap<String, Object> bindValues = new HashMap<>();
                 bindValues.put(Workout.KEY_TTS, rutts);
                 bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
                 bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));

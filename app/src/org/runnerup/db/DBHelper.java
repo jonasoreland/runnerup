@@ -582,7 +582,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static ContentValues[] toArray(Cursor c) {
-        ArrayList<ContentValues> list = new ArrayList<ContentValues>();
+        ArrayList<ContentValues> list = new ArrayList<>();
         if (c.moveToFirst()) {
             do {
                 list.add(get(c));
@@ -610,7 +610,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         String from[] = { "_id" };
         Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0",
                 null, null, null, null, null);
-        final ArrayList<Long> list = new ArrayList<Long>(10);
+        final ArrayList<Long> list = new ArrayList<>(10);
         if (c.moveToFirst()) {
             do {
                 list.add(c.getLong(0));

@@ -101,7 +101,7 @@ public final class SyncHelper {
     }
 
     private static Map<String, String> parseAttributes(String attributesStr) {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         Matcher matcher = attributePattern.matcher(attributesStr);
         while (matcher.find()) {
             String key = matcher.group(1);
@@ -172,7 +172,7 @@ public final class SyncHelper {
 
     public static Map<String, String> parseHtml(String html) {
         Matcher matcher = inputPattern.matcher(html);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
 
         while (matcher.find()) {
             Map<String, String> attributes = parseAttributes(matcher.group(1));

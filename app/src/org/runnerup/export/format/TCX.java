@@ -151,7 +151,7 @@ public class TCX {
             mXML.endDocument();
             mXML = null;
             cursor.close();
-            return new Pair<String, Sport>(id, sport);
+            return new Pair<>(id, sport);
         } catch (IOException e) {
             cursor.close();
             mXML = null;

@@ -150,7 +150,7 @@ public class AntPlus extends BtHRBase {
         }
     }
 
-    private final HashSet<String> mScanDevices = new HashSet<String>();
+    private final HashSet<String> mScanDevices = new HashSet<>();
     private final IAsyncScanResultReceiver scanReceiver = new IAsyncScanResultReceiver() {
 
         @Override

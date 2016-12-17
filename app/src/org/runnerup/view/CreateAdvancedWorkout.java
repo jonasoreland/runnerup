@@ -86,7 +86,7 @@ public class CreateAdvancedWorkout extends Activity {
     @TargetApi(Build.VERSION_CODES.FROYO)
     final class WorkoutStepsAdapter extends BaseAdapter {
 
-        List<Workout.StepListEntry> steps = new ArrayList<Workout.StepListEntry>();
+        List<Workout.StepListEntry> steps = new ArrayList<>();
 
         @Override
         public int getCount() {

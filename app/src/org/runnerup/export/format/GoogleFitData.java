@@ -63,50 +63,50 @@ public class GoogleFitData {
     }
     private static final Map<DataSourceType, List<DataTypeField>> DATA_TYPE_FIELDS;
     static {
-        Map<DataSourceType, List<DataTypeField>> fieldsMap = new HashMap<DataSourceType, List<DataTypeField>>();
+        Map<DataSourceType, List<DataTypeField>> fieldsMap = new HashMap<>();
 
-        List<DataTypeField> fields = new ArrayList<DataTypeField>();
+        List<DataTypeField> fields = new ArrayList<>();
         Pair<String, String> floatPoint = Pair.create("floatPoint", "fpVal");
         Pair<String, String> integer = Pair.create("integer", "intVal");
 
         fields.add(new DataTypeField("activity", integer, DB.ACTIVITY.SPORT));
         fieldsMap.put(DataSourceType.ACTIVITY_SEGMENT, fields);
 
-        fields = new ArrayList<DataTypeField>();
+        fields = new ArrayList<>();
         fields.add(new DataTypeField("bpm", floatPoint, DB.LOCATION.HR));
         fieldsMap.put(DataSourceType.ACTIVITY_HEARTRATE, fields);
 
-        fields = new ArrayList<DataTypeField>();
+        fields = new ArrayList<>();
         fields.add(new DataTypeField("latitude", floatPoint, DB.LOCATION.LATITUDE));
         fields.add(new DataTypeField("longitude", floatPoint, DB.LOCATION.LONGITUDE));
         fields.add(new DataTypeField("accuracy", floatPoint, DB.LOCATION.ACCURANCY));
         fields.add(new DataTypeField("altitude", floatPoint, DB.LOCATION.ALTITUDE));
         fieldsMap.put(DataSourceType.ACTIVITY_LOCATION, fields);
 
-        fields = new ArrayList<DataTypeField>();
+        fields = new ArrayList<>();
         fields.add(new DataTypeField("speed", floatPoint, DB.LOCATION.SPEED));
         fieldsMap.put(DataSourceType.ACTIVITY_SPEED, fields);
 
-        fields = new ArrayList<DataTypeField>();
+        fields = new ArrayList<>();
         fields.add(new DataTypeField("activity", integer, DB.ACTIVITY.SPORT));
         fields.add(new DataTypeField("duration", integer, DB.ACTIVITY.TIME));
         fields.add(new DataTypeField("num_segments", integer, "1"));
         fieldsMap.put(DataSourceType.ACTIVITY_SUMMARY, fields);
 
-        fields = new ArrayList<DataTypeField>();
+        fields = new ArrayList<>();
         fields.add(new DataTypeField("average", floatPoint, "AVG(" + DB.LOCATION.HR + ")"));
         fields.add(new DataTypeField("max", floatPoint, "MAX(" + DB.LOCATION.HR + ")"));
         fields.add(new DataTypeField("min", floatPoint, "MIN(" + DB.LOCATION.HR + ")"));
         fieldsMap.put(DataSourceType.HEARTRATE_SUMMARY, fields);
 
-        fields = new ArrayList<DataTypeField>();
+        fields = new ArrayList<>();
         fields.add(new DataTypeField("low_latitude", floatPoint, "MIN(" + DB.LOCATION.LATITUDE + ")"));
         fields.add(new DataTypeField("high_latitude", floatPoint, "MAX(" + DB.LOCATION.LATITUDE + ")"));
         fields.add(new DataTypeField("low_longitude", floatPoint, "MIN(" + DB.LOCATION.LONGITUDE + ")"));
         fields.add(new DataTypeField("high_longitude", floatPoint, "MAX(" + DB.LOCATION.LONGITUDE + ")"));
         fieldsMap.put(DataSourceType.LOCATION_SUMMARY, fields);
 
-        fields = new ArrayList<DataTypeField>();
+        fields = new ArrayList<>();
         fields.add(new DataTypeField("average", floatPoint, "AVG(" + DB.LOCATION.SPEED + ")"));
         fields.add(new DataTypeField("max", floatPoint, "MAX(" + DB.LOCATION.SPEED + ")"));
         fields.add(new DataTypeField("min", floatPoint, "MIN(" + DB.LOCATION.SPEED + ")"));
@@ -134,7 +134,7 @@ public class GoogleFitData {
 
 
     public final List<DataSourceType> getActivityDataSourceTypes(long activityId) {
-        List<DataSourceType> neededSources = new ArrayList<DataSourceType>();
+        List<DataSourceType> neededSources = new ArrayList<>();
 
         String[] pColumns = {DB.LOCATION.TIME};
 
@@ -267,13 +267,13 @@ public class GoogleFitData {
 
     private String exportSourceDataPoints(DataSourceType source, long activityId, StringWriter writer) {
 
-        ArrayList<String> pColumns = new ArrayList<String>();
+        ArrayList<String> pColumns = new ArrayList<>();
         pColumns.add("MIN(" + DB.LOCATION.TIME + ") AS MIN");
         pColumns.add("MAX(" + DB.LOCATION.TIME + ")");
         Cursor minMaxTime = getDB().query(DB.LOCATION.TABLE, pColumns.toArray(new String[pColumns.size()]), DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
         minMaxTime.moveToFirst();
 
-        pColumns = new ArrayList<String>();
+        pColumns = new ArrayList<>();
         pColumns.add(DB.LOCATION.TIME);
         List<DataTypeField> fields = DATA_TYPE_FIELDS.get(source);
         for (DataTypeField field : fields) {
@@ -331,7 +331,7 @@ public class GoogleFitData {
 
     private String exportActivitySummary(DataSourceType source, long activityId, StringWriter writer) {
 
-        ArrayList<String> pColumns = new ArrayList<String>();
+        ArrayList<String> pColumns = new ArrayList<>();
         pColumns.add(DB.ACTIVITY.START_TIME);
         pColumns.add(DB.ACTIVITY.TIME);
         List<DataTypeField> fields = DATA_TYPE_FIELDS.get(source);

@@ -85,12 +85,12 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     private String PHONE_STRING = "my phone";
     public final static String WORKOUT_NAME = "";
 
-    private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<SyncManager.WorkoutRef>();
-    private final ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
-    private final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<SyncManager.WorkoutRef>>();
+    private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<>();
+    private final ArrayList<ContentValues> providers = new ArrayList<>();
+    private final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<>();
     private WorkoutAccountListAdapter adapter = null;
 
-    private final HashSet<String> loadedProviders = new HashSet<String>();
+    private final HashSet<String> loadedProviders = new HashSet<>();
 
     private boolean uploading = false;
     private CompoundButton currentlySelectedWorkout = null;
@@ -311,7 +311,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     }
 
     private void listLocal() {
-        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<SyncManager.WorkoutRef>();
+        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<>();
         String[] list = org.runnerup.view.WorkoutListAdapter.load(this);
         if (list != null) {
             for (String s : list) {
@@ -388,7 +388,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
             Filter<SyncManager.WorkoutRef> f) {
-        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<SyncManager.WorkoutRef>();
+        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<>();
         return filter(list, newlist, f);
     }
 
@@ -472,7 +472,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         private void downloadWorkout(WorkoutRef selected) {
             uploading = true;
-            HashSet<WorkoutRef> list = new HashSet<WorkoutRef>();
+            HashSet<WorkoutRef> list = new HashSet<>();
             list.add((WorkoutRef) currentlySelectedWorkout.getTag());
             syncManager.loadWorkouts(list, new SyncManager.Callback() {
                 @Override
@@ -724,7 +724,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 ArrayList<WorkoutRef> list = workouts.get(synchronizerName);
                 list.clear();
 
-                HashSet<String> tmp = new HashSet<String>();
+                HashSet<String> tmp = new HashSet<>();
                 tmp.add(synchronizerName);
 
                 syncManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);

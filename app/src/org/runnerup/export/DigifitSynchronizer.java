@@ -227,7 +227,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     }
 
     public void downloadActivity(File dst, String key) throws Exception {
-        Map<String, String> exportParameters = new HashMap<String, String>();
+        Map<String, String> exportParameters = new HashMap<>();
         exportParameters.put("id", key);
         exportParameters.put("format", "tcx");
 
@@ -372,7 +372,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
     public Status activityList(List<Pair<String, String>> list) {
         Status errorStatus = Status.ERROR;
-        Map<String, String> requestParameters = new HashMap<String, String>();
+        Map<String, String> requestParameters = new HashMap<>();
         DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US);
         Date now = new Date();
 
@@ -417,7 +417,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                 title.append(" (").append(startTime.substring(0, startTime.indexOf("T")))
                         .append(")");
 
-                list.add(new Pair<String, String>(id, title.toString()));
+                list.add(new Pair<>(id, title.toString()));
             }
 
             return Status.OK;
@@ -482,9 +482,9 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
         String filename = "RunnerUp.tcx";
 
-        Part<StringWritable> themePart = new Part<StringWritable>("theme", new StringWritable(
+        Part<StringWritable> themePart = new Part<>("theme", new StringWritable(
                 SyncHelper.URLEncode("site")));
-        Part<StringWritable> payloadPart = new Part<StringWritable>("userFiles",
+        Part<StringWritable> payloadPart = new Part<>("userFiles",
                 new StringWritable(payload));
         payloadPart.setFilename(filename);
         payloadPart.setContentType("application/octet-stream");

@@ -223,7 +223,7 @@ public class FeedEntity extends AbstractEntity {
 
     @Override
     public ArrayList<String> getValidColumns() {
-        ArrayList<String> columns = new ArrayList<String>();
+        ArrayList<String> columns = new ArrayList<>();
         columns.add(Constants.DB.PRIMARY_KEY);
         columns.add(Constants.DB.FEED.ACCOUNT_ID);
         columns.add(Constants.DB.FEED.EXTERNAL_ID);

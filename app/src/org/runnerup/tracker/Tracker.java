@@ -117,7 +117,7 @@ public class Tracker extends android.app.Service implements
     final boolean mWithoutGps = false;
 
     private TrackerState nextState; //
-    private final ValueModel<TrackerState> state = new ValueModel<TrackerState>(TrackerState.INIT);
+    private final ValueModel<TrackerState> state = new ValueModel<>(TrackerState.INIT);
     private int mLocationType = DB.LOCATION.TYPE_START;
 
     /**
@@ -135,7 +135,7 @@ public class Tracker extends android.app.Service implements
     private SQLiteDatabase mDB = null;
     private PersistentGpsLoggerListener mDBWriter = null;
     private PowerManager.WakeLock mWakeLock = null;
-    private final List<WorkoutObserver> liveLoggers = new ArrayList<WorkoutObserver>();
+    private final List<WorkoutObserver> liveLoggers = new ArrayList<>();
 
     private Workout workout = null;
 
@@ -395,7 +395,7 @@ public class Tracker extends android.app.Service implements
         /**
          * Let components populate bindValues
          */
-        HashMap<String, Object> bindValues = new HashMap<String, Object>();
+        HashMap<String, Object> bindValues = new HashMap<>();
         Context ctx = getApplicationContext();
         bindValues.put(TrackerComponent.KEY_CONTEXT, ctx);
         bindValues.put(Workout.KEY_FORMATTER, new Formatter(ctx));

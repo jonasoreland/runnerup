@@ -63,7 +63,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
     private SQLiteDatabase mDB = null;
     private Formatter formatter = null;
-    private final List<SyncActivityItem> allSyncActivities = new ArrayList<SyncActivityItem>();
+    private final List<SyncActivityItem> allSyncActivities = new ArrayList<>();
 
     private int syncCount = 0;
     private Button actionButton = null;
@@ -195,7 +195,7 @@ public class UploadActivity extends ListActivity implements Constants {
     }
 
     private void filterAlreadyPresentActivities() {
-        List<SyncActivityItem> presentActivities = new ArrayList<SyncActivityItem>();
+        List<SyncActivityItem> presentActivities = new ArrayList<>();
         final String[] from = new String[]{
                 DB.PRIMARY_KEY, DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
@@ -412,7 +412,7 @@ public class UploadActivity extends ListActivity implements Constants {
     };
 
     private List<SyncActivityItem> getSelectedActivities() {
-        List<SyncActivityItem> selected = new ArrayList<SyncActivityItem>();
+        List<SyncActivityItem> selected = new ArrayList<>();
         for (SyncActivityItem tmp : allSyncActivities) {
             if (tmp.synchronize(syncMode))
                 selected.add(tmp);

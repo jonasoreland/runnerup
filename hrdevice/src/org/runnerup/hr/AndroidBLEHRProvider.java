@@ -494,7 +494,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     };
 
-    private final HashSet<String> mScanDevices = new HashSet<String>();
+    private final HashSet<String> mScanDevices = new HashSet<>();
 
     @Override
     public void startScan() {

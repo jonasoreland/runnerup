@@ -458,8 +458,8 @@ public class NikeXML {
         try {
             final Pos p = new Pos();
             int lastLap = 0;
-            final Vector<Location> locHist = new Vector<Location>();
-            final Vector<Pos> posHist = new Vector<Pos>();
+            final Vector<Location> locHist = new Vector<>();
+            final Vector<Pos> posHist = new Vector<>();
             if (c.moveToFirst()) {
                 do {
                     final int type = c.getInt(5);

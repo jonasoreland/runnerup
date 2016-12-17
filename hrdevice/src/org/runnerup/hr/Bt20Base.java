@@ -198,7 +198,7 @@ public abstract class Bt20Base extends BtHRBase {
         hrClientHandler.post(new Runnable() {
             @Override
             public void run() {
-                Set<BluetoothDevice> list = new HashSet<BluetoothDevice>();
+                Set<BluetoothDevice> list = new HashSet<>();
                 list.addAll(btAdapter.getBondedDevices());
                 publishDevice(list);
             }

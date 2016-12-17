@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
 
     private GridViewPager pager;
     private StateService mStateService;
-    final private ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
+    final private ValueModel<TrackerState> trackerState = new ValueModel<>();
     private boolean pauseStep = false;
 
     private static final int RUN_INFO_ROW = 0;

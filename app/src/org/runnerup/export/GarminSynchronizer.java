@@ -74,7 +74,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     //TCX format supports only 2 sports by default (Running / Biking);
     // Otherwise "other" is chosen and we have to edit the workout to add the real sport
     //list of sports ID can be found on Garmin website when editing an activity:
-    private static final Map<Sport, String> sport2garminMap = new HashMap<Sport, String>();
+    private static final Map<Sport, String> sport2garminMap = new HashMap<>();
     static {
         sport2garminMap.put(Sport.WALKING, "walking");
     }
@@ -430,7 +430,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             conn.setRequestMethod(RequestMethod.POST.name());
             addCookies(conn);
 
-            Part<StringWritable> part2 = new Part<StringWritable>("data",
+            Part<StringWritable> part2 = new Part<>("data",
                     new StringWritable(writer.toString()));
             part2.setFilename("RunnerUp.tcx");
             part2.setContentType("application/octet-stream");
@@ -549,7 +549,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     if (obj.optString("date").equals(str_today)) {
                         title = '*' + title; //mark workout scheduled for today
                     }
-                    list.add(new Pair<String, String>(getWorkoutIdFromSchedule(obj.getString("id")),
+                    list.add(new Pair<>(getWorkoutIdFromSchedule(obj.getString("id")),
                             title + ".json"));
                 }
             } else {
@@ -582,7 +582,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     obj = arr.optJSONObject(i);
                     if (obj == null)
                         break;
-                    list.add(new Pair<String, String>(obj.getString("workoutId"), obj
+                    list.add(new Pair<>(obj.getString("workoutId"), obj
                             .getString("workoutName") + ".json"));
                 }
             } else {

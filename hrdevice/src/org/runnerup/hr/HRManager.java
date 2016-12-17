@@ -115,7 +115,7 @@ public class HRManager {
             /* dummy if to remove warning on experimental */
         }
 
-        List<HRProvider> providers = new ArrayList<HRProvider>();
+        List<HRProvider> providers = new ArrayList<>();
         if (SamsungBLEHRProvider.checkLibrary()) {
             providers.add(new SamsungBLEHRProvider(ctx));
         }

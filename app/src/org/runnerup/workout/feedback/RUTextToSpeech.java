@@ -51,8 +51,8 @@ public class RUTextToSpeech {
         }
     }
 
-    private final HashSet<String> cueSet = new HashSet<String>();
-    private final ArrayList<Entry> cueList = new ArrayList<Entry>();
+    private final HashSet<String> cueSet = new HashSet<>();
+    private final ArrayList<Entry> cueList = new ArrayList<>();
 
     public RUTextToSpeech(TextToSpeech tts, boolean mute_, Context context) {
         this.textToSpeech = tts;
@@ -134,7 +134,7 @@ public class RUTextToSpeech {
             outstanding.add(utId);
 
             if (params == null) {
-                params = new HashMap<String, String>();
+                params = new HashMap<>();
             }
             params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
             int res = textToSpeech.speak(text, queueMode, params);
@@ -150,7 +150,7 @@ public class RUTextToSpeech {
         return TextToSpeech.ERROR;
     }
 
-    private final HashSet<String> outstanding = new HashSet<String>();
+    private final HashSet<String> outstanding = new HashSet<>();
 
     void utteranceCompleted(String id) {
         outstanding.remove(id);
@@ -178,7 +178,7 @@ public class RUTextToSpeech {
 
                 HashMap<String, String> params = e.params;
                 if (params == null) {
-                    params = new HashMap<String, String>();
+                    params = new HashMap<>();
                 }
                 params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
                 int res = textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, params);

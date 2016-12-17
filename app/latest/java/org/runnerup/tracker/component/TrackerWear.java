@@ -76,7 +76,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private GoogleApiClient mGoogleApiClient;
     private Formatter formatter;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private final HashSet<Node> connectedNodes = new HashSet<Node>();
+    private final HashSet<Node> connectedNodes = new HashSet<>();
     private String wearNode;
 
     private final Handler handler = new Handler();
@@ -84,15 +84,15 @@ public class TrackerWear extends DefaultTrackerComponent
     private Bundle lastSentWorkoutEvent;
     private boolean mWorkoutSenderRunning = false;
 
-    private final List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
+    private final List<Pair<Scope, Dimension>> items = new ArrayList<>(3);
     private Step currentStep;
     private boolean pauseStep;
 
     public TrackerWear(Tracker tracker) {
         this.tracker = tracker;
-        items.add(new Pair<Scope, Dimension>(Scope.ACTIVITY, Dimension.TIME));
-        items.add(new Pair<Scope, Dimension>(Scope.ACTIVITY, Dimension.DISTANCE));
-        items.add(new Pair<Scope, Dimension>(Scope.LAP, Dimension.PACE));
+        items.add(new Pair<>(Scope.ACTIVITY, Dimension.TIME));
+        items.add(new Pair<>(Scope.ACTIVITY, Dimension.DISTANCE));
+        items.add(new Pair<>(Scope.LAP, Dimension.PACE));
     }
 
     @Override

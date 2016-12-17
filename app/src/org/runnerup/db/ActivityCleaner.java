@@ -43,7 +43,7 @@ public class ActivityCleaner implements Constants {
                 DB.LAP.LAP
         };
 
-        ArrayList<Long> laps = new ArrayList<Long>();
+        ArrayList<Long> laps = new ArrayList<>();
         Cursor c = db.query(DB.LAP.TABLE, cols, DB.LAP.ACTIVITY + " = " + activityId,
                 null, null, null, "_id", null);
         if (c.moveToFirst()) {
@@ -191,7 +191,7 @@ public class ActivityCleaner implements Constants {
             DB.LAP.LAP
         };
 
-        ArrayList<Long> laps = new ArrayList<Long>();
+        ArrayList<Long> laps = new ArrayList<>();
         Cursor c = db.query(DB.LOCATION.LAP, cols, DB.LAP.ACTIVITY + " = "
                 + activityId, null, null, null, "_id", null);
         if (c.moveToFirst()) {

@@ -36,13 +36,13 @@ public class TrackerComponentCollection implements TrackerComponent {
 
     private final Handler handler = new Handler();
     private final HashMap<String, Pair<TrackerComponent, ResultCode>> components =
-            new HashMap<String, Pair<TrackerComponent, ResultCode>>();
+            new HashMap<>();
     private final HashMap<String, TrackerComponent> pending =
-            new HashMap<String, TrackerComponent>();
+            new HashMap<>();
 
     public TrackerComponent addComponent(TrackerComponent component) {
         components.put(component.getName(),
-                new Pair<TrackerComponent, ResultCode>(component, ResultCode.RESULT_OK));
+                new Pair<>(component, ResultCode.RESULT_OK));
         return component;
     }
 
@@ -215,12 +215,12 @@ public class TrackerComponentCollection implements TrackerComponent {
                                Context context) {
         synchronized (components) {
             HashMap<String, Pair<TrackerComponent, ResultCode>> list =
-                    new HashMap<String, Pair<TrackerComponent, ResultCode>>();
+                    new HashMap<>();
             list.putAll(components);
             components.clear();
 
             for (TrackerComponent component : pending.values()) {
-                list.put(component.getName(), new Pair<TrackerComponent, ResultCode>(component, ResultCode.RESULT_PENDING));
+                list.put(component.getName(), new Pair<>(component, ResultCode.RESULT_PENDING));
             }
             pending.clear();
 
@@ -243,7 +243,7 @@ public class TrackerComponentCollection implements TrackerComponent {
                                         Log.e(getName(), component.getName() + " != " + check.getName());
                                         throw new AssertionError();
                                     }
-                                    components.put(key, new Pair<TrackerComponent, ResultCode>(
+                                    components.put(key, new Pair<>(
                                             component, resultCode));
                                     if (pending.isEmpty()) {
                                         Log.e(getName(), " => runCallback()");
@@ -257,7 +257,7 @@ public class TrackerComponentCollection implements TrackerComponent {
                 }, context);
                 Log.e(getName(), component.getName() + " " + msg + " => " + res);
                 if (res != ResultCode.RESULT_PENDING) {
-                    components.put(key, new Pair<TrackerComponent, ResultCode>(component, res));
+                    components.put(key, new Pair<>(component, res));
                 } else {
                     pending.put(key, component);
                 }

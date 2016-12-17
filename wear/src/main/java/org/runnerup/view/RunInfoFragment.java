@@ -42,7 +42,7 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class RunInfoFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
-    private final List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
+    private final List<Pair<String, TextView>> textViews = new ArrayList<>(3);
     private long dataUpdateTime;
     private long headersTimestamp;
     private final Handler handler = new Handler();
@@ -66,18 +66,18 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.card3, container, false);
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.DATA + "0",
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.DATA + "0",
                 (TextView) view.findViewById(R.id.textView1)));
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.DATA + "1",
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.DATA + "1",
                 (TextView) view.findViewById(R.id.textView2)));
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.DATA + "2",
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.DATA + "2",
                 (TextView) view.findViewById(R.id.textView3)));
 
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.HEADER + "0",
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.HEADER + "0",
                 (TextView) view.findViewById(R.id.textViewHeader1)));
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.HEADER + "1",
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.HEADER + "1",
                 (TextView) view.findViewById(R.id.textViewHeader2)));
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.HEADER + "2",
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.HEADER + "2",
                 (TextView) view.findViewById(R.id.textViewHeader3)));
         return view;
     }

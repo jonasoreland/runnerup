@@ -97,8 +97,8 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     private String feed_password = null;
     private String feed_access_token = null;
 
-    public static final Map<String, Sport> runkeeper2sportMap = new HashMap<String, Sport>();
-    public static final Map<Sport, String> sport2runkeeperMap = new HashMap<Sport, String>();
+    public static final Map<String, Sport> runkeeper2sportMap = new HashMap<>();
+    public static final Map<Sport, String> sport2runkeeperMap = new HashMap<>();
     static {
         //sports list can be found at http://developer.runkeeper.com/healthgraph/fitness-activities#past
         /**
@@ -120,7 +120,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         }
     }
 
-    public static final Map<String, Integer> POINT_TYPE = new HashMap<String, Integer>();
+    public static final Map<String, Integer> POINT_TYPE = new HashMap<>();
     static {
         POINT_TYPE.put("start", DB.LOCATION.TYPE_START);
         POINT_TYPE.put("end", DB.LOCATION.TYPE_END);
@@ -579,7 +579,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return s;
         }
 
-        List<ContentValues> reply = new ArrayList<ContentValues>();
+        List<ContentValues> reply = new ArrayList<>();
         long from = System.currentTimeMillis();
         final int MAX_ITER = 5;
         for (int iter = 0; iter < MAX_ITER && reply.size() < 25; iter++) {
