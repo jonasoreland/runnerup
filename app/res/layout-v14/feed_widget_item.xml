@@ -90,7 +90,7 @@
             android:maxLines="5"
             android:layout_gravity="fill"
             android:layout_rowSpan="2"
-            android:autoText="false"
+            android:inputType="none"
             android:textSize="12sp" />
 
 

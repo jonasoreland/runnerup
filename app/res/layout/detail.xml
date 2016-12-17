@@ -134,8 +134,7 @@
                         android:gravity="top|left"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
-                        android:hint="@string/Notes_about_your_workout"
-                        android:singleLine="false" />
+                        android:hint="@string/Notes_about_your_workout" />
 
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"
@@ -222,8 +221,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/Upload_activity"
-            android:singleLine="false" />
+            android:text="@string/Upload_activity" />
 
         <Button
             android:id="@+id/save_button"
