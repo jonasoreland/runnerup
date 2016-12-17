@@ -14,15 +14,17 @@
         <TextView
             android:id="@+id/total_time"
             style="@style/RunHeader"
+            android:layout_marginStart="5dp"
             android:layout_marginLeft="5dp"
-            android:gravity="left"
+            android:gravity="start"
             android:text="@string/Device" />
 
         <TextView
             android:id="@+id/total_pace"
             style="@style/RunHeader"
+            android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/Heart_rate" />
     </LinearLayout>
 
@@ -38,6 +40,7 @@
             android:id="@+id/header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" >
 
             <TextView
@@ -54,12 +57,14 @@
             <TextView
                 android:id="@+id/hr_device"
                 style="@style/RunInfo"
+                android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
-                android:gravity="left" />
+                android:gravity="start" />
 
             <TextView
                 android:id="@+id/hr_value"
                 style="@style/RunInfo"
+                android:layout_marginEnd="3dp"
                 android:layout_marginRight="3dp"
                 android:text="" />
         </LinearLayout>

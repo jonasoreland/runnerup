@@ -33,8 +33,10 @@
             android:id="@+id/account_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:layout_marginStart="200dp"
             android:layout_marginLeft="200dp" />
 
         <ImageView
@@ -43,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/account_list_name"
             android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/account_list_name"
             android:layout_toRightOf="@+id/account_list_name"
             android:scaleType="center" />
     </LinearLayout>

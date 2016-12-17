@@ -31,20 +31,21 @@
         <TextView
             android:id="@+id/total_time"
             style="@style/RunHeader"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/time" />
 
         <TextView
             android:id="@+id/total_distance"
             style="@style/RunHeader"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/distance" />
 
         <TextView
             android:id="@+id/total_pace"
             style="@style/RunHeader"
+            android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/pace" />
     </LinearLayout>
 
@@ -60,6 +61,7 @@
             android:id="@+id/header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" >
 
             <TextView
@@ -85,6 +87,7 @@
             <TextView
                 android:id="@+id/activity_pace"
                 style="@style/RunInfo"
+                android:layout_marginEnd="3dp"
                 android:layout_marginRight="3dp" />
         </LinearLayout>
     </LinearLayout>
@@ -131,7 +134,7 @@
                         android:id="@+id/notes_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="top|left"
+                        android:gravity="top|start"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
                         android:hint="@string/Notes_about_your_workout" />
@@ -142,7 +145,7 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        android:background="@color/black">
+                        android:background="@android:color/black">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -211,6 +214,7 @@
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
             android:text="@string/Resume"
+            android:drawableEnd="@drawable/ic_av_play_arrow"
             android:drawableRight="@drawable/ic_av_play_arrow"
             android:drawablePadding="-32dp" />
 

@@ -30,7 +30,7 @@
     	    android:layout_height="wrap_content"
     	    android:layout_weight="1"
     	    android:layout_width="0dp"
-    	    android:gravity="left"
+    	    android:gravity="start"
     	    android:text="@string/intensity" />
 
     	<TextView
@@ -38,7 +38,7 @@
     	    android:layout_width="0dp"
     	    android:layout_height="wrap_content"
     	    android:layout_weight="1"
-    	    android:gravity="left"
+    	    android:gravity="start"
     	    android:text="@string/distance" />
 
 	    <TextView
@@ -46,14 +46,14 @@
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
-	        android:gravity="left" />
+	        android:gravity="start" />
 
 	    <TextView
 	        android:id="@+id/step_pace"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
     	    android:layout_width="0dp"
-    	    android:gravity="left" />
+    	    android:gravity="start" />
 
 	</LinearLayout>
 </LinearLayout>

@@ -34,25 +34,26 @@
             <TextView
                 android:id="@+id/activity_header_time"
                 style="@style/RunHeader"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="@string/time" />
 
             <TextView
                 android:id="@+id/activity_header_distance"
                 style="@style/RunHeader"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="@string/distance" />
 
             <TextView
                 android:id="@+id/activity_header_pace"
                 style="@style/RunHeader"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="@string/pace" />
             <TextView
                 android:id="@+id/activity_header_hr"
                 style="@style/RunHeader"
+                android:layout_marginEnd="3dp"
                 android:layout_marginRight="3dp"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="@string/metrics_heartrate" />
         </TableRow>
 
@@ -68,6 +69,7 @@
 
                 <TextView
                     style="@style/RunHeader"
+                    android:layout_marginStart="10dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/Total" />
             </LinearLayout>
@@ -90,6 +92,7 @@
                 <TextView
                     android:id="@+id/activity_hr"
                     style="@style/RunInfo"
+                    android:layout_marginEnd="3dp"
                     android:layout_marginRight="3dp" />
             </TableRow>
         </LinearLayout>
@@ -107,6 +110,7 @@
 
                 <TextView
                     style="@style/RunHeader"
+                    android:layout_marginStart="10dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/Interval" />
             </LinearLayout>
@@ -130,6 +134,7 @@
                 <TextView
                     android:id="@+id/interval_hr"
                     style="@style/RunInfo"
+                    android:layout_marginEnd="3dp"
                     android:layout_marginRight="3dp" />
             </TableRow>
         </LinearLayout>
@@ -146,6 +151,7 @@
 
                 <TextView
                     style="@style/RunHeader"
+                    android:layout_marginStart="10dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/Lap" />
             </LinearLayout>
@@ -153,7 +159,7 @@
             <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right" >
+                android:layout_gravity="end" >
 
                 <TextView
                     android:id="@+id/lap_time"
@@ -169,6 +175,7 @@
                 <TextView
                     android:id="@+id/lap_hr"
                     style="@style/RunInfo"
+                    android:layout_marginEnd="3dp"
                     android:layout_marginRight="3dp" />
             </TableRow>
         </LinearLayout>
@@ -218,6 +225,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
             android:text="@string/New_lap"
+            android:drawableEnd="@drawable/ic_av_newlap"
             android:drawableRight="@drawable/ic_av_newlap"
             android:drawablePadding="-32dp" />
 
@@ -229,6 +237,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
             android:text="@string/Pause"
+            android:drawableEnd="@drawable/ic_av_pause"
             android:drawableRight="@drawable/ic_av_pause"
             android:drawablePadding="-32dp" />
     </TableRow>
@@ -247,6 +256,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_red"
             android:text="@string/Stop"
+            android:drawableEnd="@drawable/ic_av_stop"
             android:drawableRight="@drawable/ic_av_stop"
             android:drawablePadding="-32dp" />
     </TableRow>

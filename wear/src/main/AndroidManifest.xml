@@ -25,7 +25,8 @@
         android:theme="@android:style/Theme.DeviceDefault"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:keepScreenOn="true">
+        android:keepScreenOn="true"
+        android:supportsRtl="true">
 
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 
@@ -51,6 +52,6 @@
 
         <service android:name=".service.StateService"></service>
 
-</application>
+    </application>
 
 </manifest>
