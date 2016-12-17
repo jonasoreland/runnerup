@@ -72,7 +72,7 @@ import java.util.concurrent.TimeUnit;
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
-    private static Context context = null;
+    private Context context = null;
     /**
      * @todo register OAuth2Server
      */
