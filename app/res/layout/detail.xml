@@ -213,7 +213,6 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
             android:text="@string/Resume"
             android:drawableEnd="@drawable/ic_av_play_arrow"
@@ -225,7 +224,6 @@
             android:id="@+id/upload_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
             android:text="@string/Upload_activity" />
 
@@ -234,7 +232,6 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/discard_button"
             android:background="@drawable/btn_green"
             android:text="@string/Save_activity" />
 
@@ -243,7 +240,6 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="@drawable/btn_red"
             android:text="@string/Discard_activity" />
     </LinearLayout>

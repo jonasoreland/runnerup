@@ -19,7 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/latest_feed_click_to_refresh"
-        android:id="@+id/textView"
         android:layout_above="@+id/widget_empty"
         android:layout_toEndOf="@+id/widget_app_icon"
         android:layout_toRightOf="@+id/widget_app_icon"

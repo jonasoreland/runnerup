@@ -16,7 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relative_layout1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
@@ -33,9 +32,6 @@
             android:id="@+id/account_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
             android:layout_marginStart="200dp"
             android:layout_marginLeft="200dp" />
 
@@ -43,10 +39,6 @@
             android:id="@+id/account_list_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/account_list_name"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/account_list_name"
-            android:layout_toRightOf="@+id/account_list_name"
             android:scaleType="center" />
     </LinearLayout>
 
