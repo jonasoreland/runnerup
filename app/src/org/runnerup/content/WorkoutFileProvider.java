@@ -73,9 +73,8 @@ public class WorkoutFileProvider extends ContentProvider {
                 // Note: I don't care what mode they ask for - they're only
                 // getting
                 // read only
-                ParcelFileDescriptor pfd = ParcelFileDescriptor.open(file,
+                return ParcelFileDescriptor.open(file,
                         ParcelFileDescriptor.MODE_READ_ONLY);
-                return pfd;
 
                 // Otherwise unrecognised Uri
             default:

@@ -62,8 +62,7 @@ public class FeedWidgetService extends RemoteViewsService {
                     Log.w(getClass().getSimpleName(), "getViewAt: " + position + " is invalid position!");
                     return null;
                 }
-                final RemoteViews rv = getViewFactorizedAt(position);
-                return rv;
+                return getViewFactorizedAt(position);
             }
 
             // code is mainly a copy/paste from FeedActivity.java:getViewAt - however it could/should be done properly byy refactoring

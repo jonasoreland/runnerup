@@ -660,8 +660,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public static Workout fakeWorkoutForTestingAudioCue() {
-        FakeWorkout w = new FakeWorkout();
-        return w;
+        return new FakeWorkout();
     }
 
     public void setMute(boolean mute) {

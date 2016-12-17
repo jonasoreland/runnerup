@@ -74,8 +74,7 @@ public class MainLayout extends TabActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Drawable myGetDrawable(int resId) {
-        Drawable d = getResources().getDrawable(resId);
-        return d;
+        return getResources().getDrawable(resId);
     }
 
     private enum UpgradeState {

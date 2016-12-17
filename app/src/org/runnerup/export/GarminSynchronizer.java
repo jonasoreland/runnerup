@@ -211,7 +211,6 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         /**
          * Then login using a post
          */
-        String login = LOGIN_URL;
         FormValues kv = new FormValues();
         kv.put("login", "login");
         kv.put("login:loginUsernameField", username);
@@ -219,7 +218,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         kv.put("login:signInButton", "Sign In");
         kv.put("javax.faces.ViewState", "j_id1");
 
-        conn = (HttpURLConnection) new URL(login).openConnection();
+        conn = (HttpURLConnection) new URL(LOGIN_URL).openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");

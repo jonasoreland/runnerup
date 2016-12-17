@@ -48,7 +48,7 @@ public class HRData {
 
     @Override
     public String toString() {
-        String sb = "HRData{" + ", hrValue=" + (hasHeartRate ? hrValue : "<no_heart_rate_data>") +
+        return "HRData{" + ", hrValue=" + (hasHeartRate ? hrValue : "<no_heart_rate_data>") +
                 '\n' +
                 ", timeStampIsFromDevice=" + timeStampIsFromDevice +
                 '\n' +
@@ -57,7 +57,6 @@ public class HRData {
                 ", rrIntervals=" + (hasRrIntervals ? Arrays.toString(rrIntervals) : "<no_rr_interval_data>") +
                 '\n' +
                 '}';
-        return sb;
     }
 
     public HRData setHeartRate(long heartRate){

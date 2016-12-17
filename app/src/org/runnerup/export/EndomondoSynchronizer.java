@@ -171,7 +171,6 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             /**
 			 *
 			 */
-            String login = AUTH_URL;
             FormValues kv = new FormValues();
             kv.put("email", username);
             kv.put("password", password);
@@ -180,7 +179,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             kv.put("deviceId", deviceId);
             kv.put("country", "N/A");
 
-            conn = (HttpURLConnection) new URL(login).openConnection();
+            conn = (HttpURLConnection) new URL(AUTH_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");

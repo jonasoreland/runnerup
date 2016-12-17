@@ -546,8 +546,7 @@ public class RunActivity extends Activity implements TickListener {
 
         private View getLapRow(ContentValues tmp, View convertView, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
-            View view = inflater.inflate(R.layout.laplist_row, parent, false);
-            return view;
+            return inflater.inflate(R.layout.laplist_row, parent, false);
         }
 
         @Override

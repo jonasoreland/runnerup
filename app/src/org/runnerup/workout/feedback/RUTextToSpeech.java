@@ -160,8 +160,7 @@ public class RUTextToSpeech {
     }
 
     private boolean requestFocus() {
-        final AudioManager am = audioManager;
-        int result = am.requestAudioFocus(
+        int result = audioManager.requestAudioFocus(
                 null,// afChangeListener,
                 AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);

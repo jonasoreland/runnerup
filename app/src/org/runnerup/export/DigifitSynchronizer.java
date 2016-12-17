@@ -314,9 +314,8 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";
         JSONObject response = callDigifitEndpoint(getUploadUrl, new JSONObject());
 
-        String uploadUrl = response.getJSONObject("response").getJSONObject("upload_url")
+        return response.getJSONObject("response").getJSONObject("upload_url")
                 .getString("URL");
-        return uploadUrl;
     }
 
     private JSONObject getWorkoutFileId(String key) throws IOException, MalformedURLException,

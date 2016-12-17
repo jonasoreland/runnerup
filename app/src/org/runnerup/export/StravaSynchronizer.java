@@ -193,14 +193,13 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             return s;
         }
 
-        String URL = REST_URL;
         GPX gpx = new GPX(db, true, false);
         HttpURLConnection conn = null;
         Exception ex = null;
         try {
             StringWriter writer = new StringWriter();
             gpx.export(mID, writer);
-            conn = (HttpURLConnection) new URL(URL).openConnection();
+            conn = (HttpURLConnection) new URL(REST_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
 

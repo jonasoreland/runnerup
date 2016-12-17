@@ -80,8 +80,7 @@ public class FeedList extends Observable implements Constants {
             long start_time = tmp.getAsLong(DB.FEED.START_TIME);
             mDB.execSQL("DELETE FROM " + DB.FEED.TABLE + " WHERE " + DB.FEED.START_TIME + " < "
                     + start_time);
-            List<ContentValues> swap = list.subList(0, MAX_ITEMS);
-            list = swap;
+            list = list.subList(0, MAX_ITEMS);
         }
     }
 
