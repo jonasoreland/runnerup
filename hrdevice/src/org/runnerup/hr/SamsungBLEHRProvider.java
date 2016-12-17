@@ -256,7 +256,6 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
             log(" => startHR()");
             // triggered from DummyReadForSecLevelCheck
             startHR();
-            return;
         }
 
         private void startHR() {
@@ -279,7 +278,6 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
             }
             if (btGatt.readDescriptor(mHRMccc) == false) {
                 reportConnectFailed("readDescriptor() is failed");
-                return;
             }
             // Continue in onDescriptorRead
         }

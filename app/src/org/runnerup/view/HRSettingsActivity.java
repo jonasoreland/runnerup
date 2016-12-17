@@ -231,7 +231,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
         if (requestCode == 123) {
             startScan();
-            return;
         }
     }
     
@@ -318,7 +317,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         };
         builder.setNegativeButton(getString(R.string.ok_rats), listener);
         builder.show();
-        return;
     }
 
     private void clear() {

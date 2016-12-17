@@ -377,19 +377,15 @@ public class TrackerWear extends DefaultTrackerComponent
         //note: skip state checking, do that in receiver instead
         if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
             sendLocalBroadcast(Intents.PAUSE_WORKOUT);
-            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
             sendLocalBroadcast(Intents.RESUME_WORKOUT);
-            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
             sendLocalBroadcast(Intents.NEW_LAP);
-            return;
         } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
             /* send broadcast to StartActivity */
             Intent startBroadcastIntent = new Intent();
             startBroadcastIntent.setAction(Intents.START_WORKOUT);
             context.sendBroadcast(startBroadcastIntent);
-            return;
         }
     }
 

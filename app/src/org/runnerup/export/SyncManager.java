@@ -290,7 +290,6 @@ public class SyncManager {
                         callback.run(synchronizerName, status);
                     }
                 }, l, s.authMethod);
-                return;
         }
     }
 
@@ -329,7 +328,6 @@ public class SyncManager {
                 return;
             case FILEPERMISSION:
                 askFileUrl(l);
-                return;
         }
     }
 
@@ -367,7 +365,6 @@ public class SyncManager {
             }
             case NEED_AUTH:
                 handleAuth(cb, synchronizer, s.authMethod);
-                return;
         }
     }
 
@@ -681,11 +678,9 @@ public class SyncManager {
                                         return;
                                     case OK:
                                         doUpload(synchronizer);
-                                        return;
                                 }
                             }
                         }, synchronizer, result.authMethod);
-                        return;
                 }
             }
         }.execute(synchronizer);

@@ -113,19 +113,15 @@ public class TrackerReceiver extends DefaultTrackerComponent {
                 workout.onResume(workout);
             else
                 workout.onPause(workout);
-            return;
         } else if (Constants.Intents.NEW_LAP.contentEquals(action)) {
             workout.onNewLapOrNextStep();
-            return;
         } else if (Constants.Intents.PAUSE_WORKOUT.contentEquals(action)) {
             if (workout.isPaused())
                 return;
             workout.onPause(workout);
-            return;
         } else if (Constants.Intents.RESUME_WORKOUT.contentEquals(action)) {
             if (workout.isPaused())
                 workout.onResume(workout);
-            return;
         }
     }
 

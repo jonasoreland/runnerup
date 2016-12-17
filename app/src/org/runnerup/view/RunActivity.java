@@ -295,7 +295,6 @@ public class RunActivity extends Activity implements TickListener {
             workout.onSave();
             mTracker = null;
             finish();
-            return;
         } else if (resultCode == Activity.RESULT_CANCELED) {
             /**
              * they discarded
@@ -304,7 +303,6 @@ public class RunActivity extends Activity implements TickListener {
             workout.onDiscard();
             mTracker = null;
             finish();
-            return;
         } else if (resultCode == Activity.RESULT_FIRST_USER) {
             startTimer();
             if (requestCode == 0) {

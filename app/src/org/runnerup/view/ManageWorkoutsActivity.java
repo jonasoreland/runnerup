@@ -147,13 +147,10 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 ManageWorkoutsActivity.this.finish();
-                                return;
                             }
                         });
                 builder.show();
-                return;
             }
-            return;
         }
         // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
     }
@@ -233,7 +230,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             e.printStackTrace();
                         }
                         launchMain(saveName);
-                        return;
                     }
                 });
         builder.setNegativeButton(getString(R.string.No_way),
@@ -242,7 +238,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         // Do nothing but close the dialog
                         dialog.dismiss();
                         finish();
-                        return;
                     }
                 });
 
@@ -261,7 +256,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
 
         builder.show();
-        return;
     }
 
     private void saveImport(String file, InputStream is) throws IOException {
@@ -285,7 +279,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
-        return;
     }
 
     @Override
@@ -460,7 +453,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 downloadWorkout(selected);
-                                return;
                             }
                         });
                 builder.setNegativeButton(getString(R.string.No),
@@ -520,7 +512,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             deleteWorkout(selected);
-                            return;
                         }
                     });
             builder.setNegativeButton(getString(R.string.No),
@@ -532,7 +523,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
                     });
             builder.show();
-            return;
         }
     };
 

@@ -211,7 +211,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     log("firmware => startHR()");
                     // triggered from DummyReadForSecLevelCheck
                     startHR();
-                    return;
                 } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
                     log("batterylevel: " + arg0);
                     batteryLevel = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
@@ -220,7 +219,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     log(" => startHR()");
                     // triggered from DummyReadForSecLevelCheck
                     startHR();
-                    return;
 
                 } else {
                     log("Unknown characteristic received: " + charUuid);
@@ -380,7 +378,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             }
             if (btGatt.readDescriptor(mHRMccc) == false) {
                 reportConnectFailed("readDescriptor() is failed");
-                return;
             }
             // Continue in onDescriptorRead
         }

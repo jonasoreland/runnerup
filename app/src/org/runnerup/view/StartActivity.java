@@ -524,7 +524,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 if (dontShowAgain.isChecked()) {
                     prefs.edit().putBoolean(pref_key, true).commit();
                 }
-                return;
             }
         });
 
@@ -894,7 +893,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                         }
                     });
             builder.show();
-            return;
         }
     }
 
@@ -962,7 +960,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                                 }
                             });
                     builder.show();
-                    return;
                 }
             }
         }
@@ -1016,7 +1013,6 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         double pace = seconds / dist;
         manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, pace));
         manualPace.setVisibility(View.VISIBLE);
-        return;
     }
 
     private final OnSetValueListener onSetManualDistance = new OnSetValueListener() {

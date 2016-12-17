@@ -200,14 +200,12 @@ public class CreateAdvancedWorkout extends Activity {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 deleteStep(stepButton);
-                                return;
                             }
                         });
                 builder.setNegativeButton(getString(R.string.No),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                return;
                             }
                         });
                 builder.show();
@@ -257,7 +255,6 @@ public class CreateAdvancedWorkout extends Activity {
                                 }
                             });
                     builder.show();
-                    return;
                 }
             }
         }
@@ -305,7 +302,6 @@ public class CreateAdvancedWorkout extends Activity {
                     }
                 });
         builder.show();
-        return;
     }
 
     private final View.OnClickListener discardWorkoutButtonClick = new View.OnClickListener() {
@@ -322,18 +318,15 @@ public class CreateAdvancedWorkout extends Activity {
                             //noinspection ResultOfMethodCallIgnored
                             f.delete();
                             finish();
-                            return;
                         }
                     });
             builder.setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            return;
                         }
                     });
             builder.show();
-            return;
         }
     };
 }

@@ -341,7 +341,6 @@ public class AntPlus extends BtHRBase {
             public void run() {
                 if (hrClient == null) {
                     disconnectImpl();
-                    return;
                 } else if (mIsConnecting) {
                     mIsConnected = b;
                     mIsConnecting = false;

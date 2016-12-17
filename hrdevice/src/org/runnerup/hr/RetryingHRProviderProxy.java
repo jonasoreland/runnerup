@@ -227,7 +227,6 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
                 log("client.onConnectResult(true)");
                 client.onConnectResult(true);
             }
-            return;
         } else {
             if (!checkMaxAttempts()) {
                 state = State.OPENED;
@@ -247,7 +246,6 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
                 }
             }, delayMillis);
 
-            return;
         }
     }
 
