@@ -282,11 +282,7 @@ public class FeedList extends Observable implements Constants {
                 }
         }
 
-        if (overlaps(c0, c1, print)) {
-            return true;
-        }
-
-        return false;
+        return overlaps(c0, c1, print);
     }
 
     private static boolean overlaps(ContentValues c0, ContentValues c1, boolean print) {

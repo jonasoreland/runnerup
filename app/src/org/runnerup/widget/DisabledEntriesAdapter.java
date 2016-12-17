@@ -87,9 +87,6 @@ class DisabledEntriesAdapter extends BaseAdapter {
         if (str == null)
             return true;
 
-        if (disabled.contains(str))
-            return false;
-
-        return true;
+        return !disabled.contains(str);
     }
 }

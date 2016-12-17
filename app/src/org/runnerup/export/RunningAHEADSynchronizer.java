@@ -169,9 +169,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-        return true;
+        return access_token != null;
     }
 
     @Override

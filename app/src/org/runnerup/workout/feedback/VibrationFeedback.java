@@ -29,10 +29,7 @@ public class VibrationFeedback extends Feedback {
 
     @Override
     public boolean equals(Feedback _other) {
-        if (!(_other instanceof VibrationFeedback))
-            return false;
-
-        return true;
+        return _other instanceof VibrationFeedback;
     }
 
     @Override

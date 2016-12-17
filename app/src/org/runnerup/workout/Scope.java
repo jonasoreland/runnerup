@@ -45,9 +45,7 @@ public enum Scope {
     }
 
     public boolean equal(Scope what) {
-        if (what == null || what.value != this.value)
-            return false;
-        return true;
+        return !(what == null || what.value != this.value);
     }
 
     public int getCueId() {

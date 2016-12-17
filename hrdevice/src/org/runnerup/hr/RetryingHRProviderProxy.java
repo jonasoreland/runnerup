@@ -67,9 +67,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
     private boolean checkMaxAttempts() {
         attempt++;
-        if (attempt > getMaxRetries())
-            return false;
-        return true;
+        return attempt <= getMaxRetries();
     }
 
     private int getRetryDelayMillis() {

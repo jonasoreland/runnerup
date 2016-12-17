@@ -105,9 +105,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null)
-            return true;
-        return false;
+        return username != null && password != null;
     }
 
     @Override

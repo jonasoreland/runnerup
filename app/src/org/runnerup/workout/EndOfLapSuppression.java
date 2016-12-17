@@ -88,11 +88,7 @@ public class EndOfLapSuppression extends TriggerSuppression {
             return false;
         }
 
-        if (w.getTime(s) > minTimeLimit) {
-            return false;
-        }
-
-        return true;
+        return w.getTime(s) <= minTimeLimit;
     }
 
     private boolean suppressInterval(Trigger trigger, Workout w) {

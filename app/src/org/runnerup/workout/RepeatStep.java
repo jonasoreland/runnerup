@@ -105,10 +105,7 @@ public class RepeatStep extends Step {
 
     @Override
     public boolean onTick(Workout w) {
-        if (steps.get(currentStep).onTick(w)) {
-            return true;
-        }
-        return false;
+        return steps.get(currentStep).onTick(w);
     }
 
     @Override

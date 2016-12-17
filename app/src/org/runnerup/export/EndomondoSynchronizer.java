@@ -120,10 +120,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null && deviceId != null && authToken != null) {
-            return true;
-        }
-        return false;
+        return username != null && password != null && deviceId != null && authToken != null;
     }
 
     @Override

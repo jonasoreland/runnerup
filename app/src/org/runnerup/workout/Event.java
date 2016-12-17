@@ -46,9 +46,7 @@ public enum Event {
     }
 
     public boolean equal(Event what) {
-        if (what == null || what.value != this.value)
-            return false;
-        return true;
+        return !(what == null || what.value != this.value);
     }
 
     public int getCueId() {

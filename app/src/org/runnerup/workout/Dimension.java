@@ -58,9 +58,7 @@ public enum Dimension {
     }
 
     public boolean equal(Dimension what) {
-        if (what == null || what.value != this.value)
-            return false;
-        return true;
+        return !(what == null || what.value != this.value);
     }
 
     public static Dimension valueOf(int val) {

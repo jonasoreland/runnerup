@@ -186,12 +186,9 @@ public class RunActivity extends Activity implements TickListener {
         startTimer();
 
         populateWorkoutList();
-        simpleWorkout = false;
-        if (workoutRows.size() == 1 ||
+        simpleWorkout = workoutRows.size() == 1 ||
                 workoutRows.size() == 2
-                && workoutRows.get(0).step.getIntensity() == Intensity.RESTING) {
-            simpleWorkout = true;
-        }
+                        && workoutRows.get(0).step.getIntensity() == Intensity.RESTING;
 
         if (simpleWorkout) {
             newLapButton.setOnClickListener(newLapButtonClick);

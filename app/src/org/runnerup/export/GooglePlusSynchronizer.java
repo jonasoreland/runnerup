@@ -223,10 +223,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-
-        return true;
+        return access_token != null;
     }
 
     @Override

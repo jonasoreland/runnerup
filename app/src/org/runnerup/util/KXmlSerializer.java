@@ -190,11 +190,9 @@ public class KXmlSerializer implements XmlSerializer {
     public boolean getFeature(String name) {
         //return false;
         return (
-            "http://xmlpull.org/v1/doc/features.html#indent-output"
-                .equals(
-                name))
-            ? indent[depth]
-            : false;
+                "http://xmlpull.org/v1/doc/features.html#indent-output"
+                        .equals(
+                                name)) && indent[depth];
     }
 
     public String getPrefix(String namespace, boolean create) {

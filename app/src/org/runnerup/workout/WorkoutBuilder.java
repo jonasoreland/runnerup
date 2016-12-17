@@ -216,9 +216,7 @@ public class WorkoutBuilder {
         // TODO move this somewhere
         long seconds = SafeParse.parseSeconds(newValue, -1);
         long seconds2 = SafeParse.parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
-        if (seconds == seconds2)
-            return true;
-        return false;
+        return seconds == seconds2;
     }
 
     public static SharedPreferences getAudioCuePreferences(Context ctx, SharedPreferences pref,
@@ -584,16 +582,15 @@ public class WorkoutBuilder {
             step.triggers.add(trigger);
         }
 
-        if (true) {
-            /**
-             * Add add information just when pause step starts...
-             */
-            EventTrigger ev = new EventTrigger();
-            ev.event = Event.STARTED;
-            ev.scope = Scope.STEP;
-            ev.triggerAction.add(new AudioCountdownFeedback(Scope.STEP, step.getDurationType()));
-            step.triggers.add(ev);
-        }
+
+        /**
+         * Add add information just when pause step starts...
+         */
+        EventTrigger ev = new EventTrigger();
+        ev.event = Event.STARTED;
+        ev.scope = Scope.STEP;
+        ev.triggerAction.add(new AudioCountdownFeedback(Scope.STEP, step.getDurationType()));
+        step.triggers.add(ev);
     }
 
     public static void prepareWorkout(Resources res, SharedPreferences prefs, Workout w,

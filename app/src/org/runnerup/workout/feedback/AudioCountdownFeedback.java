@@ -63,10 +63,7 @@ public class AudioCountdownFeedback extends Feedback {
         if (scope != other.scope)
             return false;
 
-        if (dimension != other.dimension)
-            return false;
-
-        return true;
+        return dimension == other.dimension;
     }
 
     @Override

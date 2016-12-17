@@ -76,8 +76,6 @@ public enum TrackerState {
     public static boolean equals(TrackerState oldVal, TrackerState newVal) {
         if (oldVal != null && newVal != null)
             return oldVal.getValue() == newVal.getValue();
-        if (oldVal == null && newVal == null)
-            return true;
-        return false;
+        return oldVal == null && newVal == null;
     }
 }

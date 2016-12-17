@@ -72,10 +72,7 @@ public class CoachFeedback extends AudioFeedback {
         if (!dimension.equal(other.dimension))
             return false;
 
-        if (!scope.equal(other.scope))
-            return false;
-
-        return true;
+        return scope.equal(other.scope);
     }
 
     @Override

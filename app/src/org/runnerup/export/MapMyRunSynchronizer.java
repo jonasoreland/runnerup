@@ -117,11 +117,8 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && md5pass != null &&
-                user_id != null && user_key != null) {
-            return true;
-        }
-        return false;
+        return username != null && md5pass != null &&
+                user_id != null && user_key != null;
     }
 
     @Override

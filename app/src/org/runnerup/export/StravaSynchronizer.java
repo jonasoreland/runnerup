@@ -168,9 +168,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-        return true;
+        return access_token != null;
     }
 
     @Override

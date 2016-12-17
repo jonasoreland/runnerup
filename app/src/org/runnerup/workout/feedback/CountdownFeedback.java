@@ -69,10 +69,7 @@ public class CountdownFeedback extends Feedback {
 
     @Override
     public boolean equals(Feedback _other) {
-        if (!(_other instanceof CountdownFeedback))
-            return false;
-
-        return true;
+        return _other instanceof CountdownFeedback;
     }
 
     @Override

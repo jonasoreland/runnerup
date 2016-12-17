@@ -92,10 +92,7 @@ public class AudioFeedback extends Feedback {
         if (this.event != other.event)
             return false;
 
-        if (this.dimension != other.dimension)
-            return false;
-
-        return true;
+        return this.dimension == other.dimension;
     }
 
     String getCue(Workout w, Context ctx) {

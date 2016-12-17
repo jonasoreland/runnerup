@@ -51,12 +51,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
             return false;
 
-        if (!ctx.getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_BLUETOOTH_LE)) {
-            return false;
-        }
-
-        return true;
+        return ctx.getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_BLUETOOTH_LE);
     }
 
     static final String NAME = "AndroidBLE";
@@ -361,9 +357,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         private boolean isHeartRateInUINT16(byte b) {
-            if ((b & 1) != 0)
-                return true;
-            return false;
+            return (b & 1) != 0;
         }
 
         private void startHR() {

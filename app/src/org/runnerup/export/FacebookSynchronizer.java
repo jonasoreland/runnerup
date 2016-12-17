@@ -199,10 +199,8 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
+        return access_token != null;
 
-        return true;
     }
 
     @Override

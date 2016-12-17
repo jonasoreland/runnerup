@@ -240,9 +240,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         private boolean isHeartRateInUINT16(byte b) {
-            if ((b & 1) != 0)
-                return true;
-            return false;
+            return (b & 1) != 0;
         }
 
         @Override
@@ -410,10 +408,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                              * 00000011(0x03) - LE Limited Discoverable Mode and
                              * LE General Discoverable Mode
                              */
-                            if ((flag & LIMITED_AND_GENERAL_DISC_MASK) > 0)
-                                return false;
-                            else
-                                return true;
+                            return (flag & LIMITED_AND_GENERAL_DISC_MASK) <= 0;
                         } else if (len == 1) {
                             continue;// ignore that packet and continue with the
                                      // rest
