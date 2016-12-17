@@ -132,7 +132,7 @@ public class FeedList extends Observable implements Constants {
 
             for (int i = startIndex; i <= endIndex; i++) {
                 ContentValues c = currList.get(i);
-                if (match(values, c, filterDuplicates) == true) {
+                if (match(values, c, filterDuplicates)) {
                     // Set already contains matching row...skip this
                     discarded++;
                     return;

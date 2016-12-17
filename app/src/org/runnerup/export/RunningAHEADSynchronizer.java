@@ -219,13 +219,13 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
             JSONObject data = obj.getJSONObject("data");
 
             boolean found = false;
-            if (found == false) {
+            if (!found) {
                 try {
                     found = data.getJSONArray("workoutIds").length() == 1;
                 } catch (JSONException e) {
                 }
             }
-            if (found == false) {
+            if (!found) {
                 try {
                     found = data.getJSONArray("ids").length() == 1;
                 } catch (JSONException e) {

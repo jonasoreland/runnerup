@@ -178,7 +178,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
         while (currentStep != null) {
             boolean finished = currentStep.onTick(this);
-            if (finished == false)
+            if (!finished)
                 break;
 
             onNextStep();

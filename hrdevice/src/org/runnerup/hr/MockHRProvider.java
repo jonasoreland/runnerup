@@ -116,7 +116,7 @@ public class MockHRProvider implements HRProvider {
         public void run() {
             hrValue = (int) (150 + 40 * Math.random());
             hrTimestamp = System.currentTimeMillis();
-            if (mIsConnected == true) {
+            if (mIsConnected) {
                 hrClientHandler.postDelayed(hrUpdate, 750);
             }
         }

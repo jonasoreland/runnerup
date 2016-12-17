@@ -36,7 +36,7 @@ import org.runnerup.R;
 public class WidgetUtil {
 
     public static void setEditable(EditText editText, boolean onoff) {
-        if (onoff == true) {
+        if (onoff) {
             editText.setClickable(onoff);
             editText.setFocusable(onoff);
             editText.setFocusableInTouchMode(onoff);

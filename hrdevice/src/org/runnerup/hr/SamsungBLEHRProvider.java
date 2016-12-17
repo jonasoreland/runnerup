@@ -276,7 +276,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                 reportConnectFailed("CCC for HEART RATE MEASUREMENT charateristic not found!");
                 return;
             }
-            if (btGatt.readDescriptor(mHRMccc) == false) {
+            if (!btGatt.readDescriptor(mHRMccc)) {
                 reportConnectFailed("readDescriptor() is failed");
             }
             // Continue in onDescriptorRead
@@ -449,7 +449,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                 return;
             }
 
-            if (btGatt.readCharacteristic(firmwareIdCharc) == false) {
+            if (!btGatt.readCharacteristic(firmwareIdCharc)) {
                 reportConnectFailed("firmware revison reading is failed!");
             }
             // continue in onCharacteristicRead
@@ -600,7 +600,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
             return;
         }
 
-        if (mIsConnecting == false && mIsConnected == false)
+        if (!mIsConnecting && !mIsConnected)
             return;
 
         mIsConnected = false;

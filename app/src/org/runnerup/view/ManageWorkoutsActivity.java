@@ -202,7 +202,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         dialog.dismiss();
                         String saveName = fileName;
                         try {
-                            if (exists && selected[0] == false) {
+                            if (exists && !selected[0]) {
                                 String name = "";
                                 String tmp[] = fileName.split("\\.");
                                 if (tmp.length > 0) {
@@ -373,7 +373,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     @Override
     public void onBackPressed() {
-        if (uploading == true) {
+        if (uploading) {
             /**
              * Ignore while uploading
              */

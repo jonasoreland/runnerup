@@ -326,7 +326,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             loadAdvanced(null);
         }
 
-        if (mIsBound == false || mTracker == null) {
+        if (!mIsBound || mTracker == null) {
             bindGpsTracker();
         } else {
             onGpsTrackerBound();
@@ -472,7 +472,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     private void stopGps() {
         Log.e(getClass().getName(), "StartActivity.stopGps() skipStop: " + this.skipStopGps);
-        if (skipStopGps == true)
+        if (skipStopGps)
             return;
 
         if (mGpsStatus != null)
@@ -578,7 +578,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
                 manualSaveButtonClick.onClick(v);
                 return;
-            } else if (mGpsStatus.isEnabled() == false) {
+            } else if (!mGpsStatus.isEnabled()) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
@@ -633,13 +633,13 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             startButton.setEnabled(manualSetValue);
             startButton.setText(getString(R.string.Save_activity));
             return;
-        } else if (mGpsStatus.isEnabled() == false) {
+        } else if (!mGpsStatus.isEnabled()) {
             startButton.setEnabled(true);
             startButton.setText(getString(R.string.Enable_GPS));
-        } else if (mGpsStatus.isLogging() == false) {
+        } else if (!mGpsStatus.isLogging()) {
             startButton.setEnabled(true);
             startButton.setText(getString(R.string.Start_GPS));
-        } else if (mGpsStatus.isFixed() == false) {
+        } else if (!mGpsStatus.isFixed()) {
             startButton.setEnabled(false);
             startButton.setText(getString(R.string.Waiting_for_GPS));
             notificationStateManager.displayNotificationState(gpsSearchingState);
@@ -787,7 +787,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         }
         if (requestCode == 112) {
             skipStopGps = false;
-            if (mIsBound == false || mTracker == null) {
+            if (!mIsBound || mTracker == null) {
                 bindGpsTracker();
             } else {
                 onGpsTrackerBound();

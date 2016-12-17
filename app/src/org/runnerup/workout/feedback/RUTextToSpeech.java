@@ -172,7 +172,7 @@ public class RUTextToSpeech {
         if (cueSet.isEmpty()) {
             return;
         }
-        if (mute && requestFocus() == true) {
+        if (mute && requestFocus()) {
             for (Entry e : cueList) {
                 final String utId = getId(e.text);
                 outstanding.add(utId);

@@ -92,7 +92,7 @@ public class TargetTrigger extends Trigger {
             return false;
         }
 
-        if (inited == false) {
+        if (!inited) {
             Log.i(getClass().getName(), "inited == false");
             lastTimestamp = time_now;
             initMeasurement(w, time_now);

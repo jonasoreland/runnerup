@@ -283,7 +283,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private void open() {
         if (hrProvider != null && !hrProvider.isEnabled()) {
-            if (hrProvider.startEnableIntent(this, 0) == true) {
+            if (hrProvider.startEnableIntent(this, 0)) {
                 return;
             }
             hrProvider = null;

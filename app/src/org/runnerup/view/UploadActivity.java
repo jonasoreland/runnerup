@@ -138,7 +138,7 @@ public class UploadActivity extends ListActivity implements Constants {
 
     @Override
     public void onBackPressed() {
-        if (fetching == true) {
+        if (fetching) {
             /**
              * Cancel
              */

@@ -186,7 +186,7 @@ public class WorkoutBuilder {
                         rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
                         break;
                     case 1: // Distance
-                        if (convertRestToRecovery == false) {
+                        if (!convertRestToRecovery) {
                             rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
                         } else {
                             rest = new Step();
@@ -344,7 +344,7 @@ public class WorkoutBuilder {
                 case WARMUP:
                 case COOLDOWN:
                     addPauseStopResumeTriggers(res, step.triggers, prefs);
-                    if (skip_startstop_cue == false) {
+                    if (!skip_startstop_cue) {
                         EventTrigger ev = new EventTrigger();
                         ev.event = Event.STARTED;
                         ev.scope = Scope.STEP;
@@ -489,7 +489,7 @@ public class WorkoutBuilder {
 
     private static void addPauseStopResumeTriggers(Resources res, ArrayList<Trigger> list,
             SharedPreferences prefs) {
-        if (prefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false) == false) {
+        if (!prefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false)) {
             {
                 EventTrigger p = new EventTrigger();
                 p.event = Event.PAUSED;
@@ -601,7 +601,7 @@ public class WorkoutBuilder {
          * Add/remove autolap
          */
         boolean autolap = prefs.getBoolean(res.getString(R.string.pref_autolap_active), false);
-        if (basic == false) {
+        if (!basic) {
             autolap = prefs.getBoolean(res.getString(R.string.pref_step_autolap_active), autolap);
         }
         if (autolap) {

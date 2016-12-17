@@ -35,7 +35,7 @@ public class ListTrigger extends Trigger {
     @Override
     public boolean onTick(Workout w) {
         if (pos < triggerTimes.size()) {
-            if (remaining == false) {
+            if (!remaining) {
                 double now = w.get(scope, dimension);
                 if (now >= triggerTimes.get(pos)) {
                     fire(w);
@@ -53,7 +53,7 @@ public class ListTrigger extends Trigger {
     }
 
     private void scheduleNext(Workout w, double now) {
-        if (remaining == false) {
+        if (!remaining) {
             while (pos < triggerTimes.size() && now >= triggerTimes.get(pos)) {
                 pos++;
             }

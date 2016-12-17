@@ -290,7 +290,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     private void switchTo(String name) {
 
-        if (started == false) {
+        if (!started) {
             // TODO investigate "spurious" onItemSelected during start
             started = true;
             return;
