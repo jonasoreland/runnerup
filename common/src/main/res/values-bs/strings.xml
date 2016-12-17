@@ -120,7 +120,7 @@
   <string name="Age">Godine</string>
   <string name="edit">uredi</string>
   <string name="Synchronizing">Sinhronizacija:</string>
-  <string name="synchronizing_feed">sinhronizacija vrijesti...</string>
+  <string name="synchronizing_feed">sinhronizacija vrijesti…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Format tabele</string>
   <string name="Clear_uploads">Očisti uploade</string>
@@ -158,9 +158,9 @@
   <string name="Dismiss">Otkaži</string>
   <string name="No_way">Nema šanse</string>
   <string name="No">Ne</string>
-  <string name="Loading">Učitavanje...</string>
+  <string name="Loading">Učitavanje…</string>
   <string name="Saving">Snimanje</string>
-  <string name="Cancellingplease_wait">Otkazivanje... molim sačekajte</string>
+  <string name="Cancellingplease_wait">Otkazivanje… molim sačekajte</string>
   <string name="try_again_later">pokušajte ponovo kasnije!</string>
   <string name="Are_you_sure">Jeste li sigurni?</string>
   <string name="Configure_audio_cues">Podesi audio napomene</string>
@@ -291,7 +291,7 @@
   <string name="Delete_workout">Obriši trening</string>
   <string name="RunnerUp_workout">RunnerUp trening:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Zdravo\nEvo treninga koji bi vam se mogao sviđati.</string>
-  <string name="Share_workout">Podijeli trening...</string>
+  <string name="Share_workout">Podijeli trening…</string>
   <string name="New_audio_scheme">Nova audio šema</string>
   <string name="Default">Standardno</string>
   <string name="Notes_about_your_workout">Napomene o treningu</string>
