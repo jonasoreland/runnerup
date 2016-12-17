@@ -30,7 +30,7 @@ Releases can be downloaded either:
 
 * on the [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
 * on [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup).
-* directly on [GitHub](https://github.com/jonasoreland/runnerup/releases/tag/v1.47).
+* directly on [GitHub](https://github.com/jonasoreland/runnerup/releases).
 
 [![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup)
 
