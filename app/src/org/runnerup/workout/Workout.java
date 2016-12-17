@@ -632,9 +632,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 case ACTIVITY:
                     return (10 * 60 + 50 * 60 * Math.random());
                 case STEP:
-                    return (1 * 60 + 5 * 60 * Math.random());
+                    return (/*1 **/ 60 + 5 * 60 * Math.random());
                 case LAP:
-                    return (1 * 60 + 5 * 60 * Math.random());
+                    return (/*1 **/ 60 + 5 * 60 * Math.random());
                 case CURRENT:
                     return System.currentTimeMillis() / 1000;
             }

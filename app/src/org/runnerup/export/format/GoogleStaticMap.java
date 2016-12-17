@@ -42,7 +42,7 @@ public class GoogleStaticMap {
         long lat0 = 0, lot0 = 0;
         StringBuffer dst = new StringBuffer();
         for (int i = 0; i + 1 < args.length; i += 2) {
-            long lat = Long.parseLong(args[i + 0]);
+            long lat = Long.parseLong(args[i /*+ 0*/]);
             long lot = Long.parseLong(args[i + 1]);
             encode(dst, lat, lot, lat0, lot0);
             System.err.print("[ " + lat + ", " + lot + "] ");

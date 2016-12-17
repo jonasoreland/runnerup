@@ -155,7 +155,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         for (int zone = 0; zone < zones.size() / 2; zone++) {
             Pair<Integer, Integer> values = hrZones.getHRValues(zone + 1);
             if (values != null) {
-                EditText lo = zones.get(2 * zone + 0);
+                EditText lo = zones.get(2 * zone /*+ 0*/);
                 EditText hi = zones.get(2 * zone + 1);
                 lo.setText(Integer.toString(values.first));
                 hi.setText(Integer.toString(values.second));
@@ -193,7 +193,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
                     for (int i = 0; i < zoneCount; i++) {
                         Pair<Integer, Integer> val = hrZoneCalculator.computeHRZone(i + 1, maxHR);
-                        zones.get(2 * i + 0).setText(Integer.toString(val.first));
+                        zones.get(2 * i /*+ 0*/).setText(Integer.toString(val.first));
                         zones.get(2 * i + 1).setText(Integer.toString(val.second));
                     }
                 } catch (NumberFormatException ex) {
