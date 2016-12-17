@@ -210,7 +210,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * last one should be kept. Original method stores (and then sends) the two of them.
      * @param conn The connection after the login was made
      */
-    protected void getCookies(HttpURLConnection conn) {
+    void getCookies(HttpURLConnection conn) {
         Map<String, List<String>> headers = conn.getHeaderFields();
         Map<String, String> tmpCookies = new HashMap<>();
         for (Map.Entry<String, List<String>> e : headers.entrySet()) {

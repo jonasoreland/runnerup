@@ -40,7 +40,7 @@ public class EventTrigger extends Trigger {
     }
 
     @Override
-    public void fire(Workout s) {
+    void fire(Workout s) {
         if (counter >= skipCounter && (counter < maxCounter)) {
             super.fire(s);
         }

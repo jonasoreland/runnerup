@@ -63,7 +63,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     }
 
     @Override
-    public String getScopes() {
+    String getScopes() {
         return SCOPES;
     }
 
