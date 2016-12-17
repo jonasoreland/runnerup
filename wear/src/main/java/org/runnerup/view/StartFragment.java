@@ -41,11 +41,6 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.start, container, false);
         super.onViewCreated(view, savedInstanceState);

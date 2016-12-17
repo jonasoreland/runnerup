@@ -59,11 +59,6 @@ public class CountdownFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.countdown, container, false);
         textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.COUNTDOWN,
@@ -104,11 +99,6 @@ public class CountdownFragment extends Fragment {
         startTimer();
         reset();
         update();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @Override

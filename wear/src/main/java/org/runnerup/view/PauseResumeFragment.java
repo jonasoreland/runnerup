@@ -47,11 +47,6 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.newlap_pause_resume, container, false);
         super.onViewCreated(view, savedInstanceState);

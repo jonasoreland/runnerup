@@ -142,11 +142,6 @@ public class FeedActivity extends Activity implements Constants {
     };
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         DBHelper.closeDB(mDB);

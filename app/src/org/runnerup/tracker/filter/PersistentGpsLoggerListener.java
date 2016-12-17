@@ -140,19 +140,4 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
             mDB.insert(mTable, null, values);
         }
     }
-
-    @Override
-    public void onProviderDisabled(String arg0) {
-        super.onProviderDisabled(arg0);
-    }
-
-    @Override
-    public void onProviderEnabled(String arg0) {
-        super.onProviderEnabled(arg0);
-    }
-
-    @Override
-    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-        super.onStatusChanged(arg0, arg1, arg2);
-    }
 }

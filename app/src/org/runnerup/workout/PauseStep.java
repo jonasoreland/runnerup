@@ -39,11 +39,6 @@ public class PauseStep extends Step {
     }
 
     @Override
-    public void onBind(Workout s, HashMap<String, Object> bindValues) {
-        super.onBind(s, bindValues);
-    }
-
-    @Override
     public void onStart(Scope what, Workout s) {
         if (what == Scope.STEP) {
             s.tracker.pause();

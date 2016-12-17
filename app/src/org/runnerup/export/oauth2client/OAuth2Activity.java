@@ -206,11 +206,6 @@ public class OAuth2Activity extends AppCompatActivity {
 
                     new AsyncTask<String, String, Integer>() {
                         @Override
-                        protected void onPreExecute() {
-                            super.onPreExecute();
-                        }
-
-                        @Override
                         protected Integer doInBackground(String... params) {
                             int resultCode = Activity.RESULT_OK;
                             HttpURLConnection conn = null;

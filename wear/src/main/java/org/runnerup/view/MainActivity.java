@@ -72,11 +72,6 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         getApplicationContext().bindService(new Intent(this, StateService.class),
@@ -92,11 +87,6 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         }
         getApplicationContext().unbindService(mStateServiceConnection);
         mStateService = null;
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
     private class PagerAdapter extends FragmentGridPagerAdapter

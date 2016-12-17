@@ -64,11 +64,6 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.card3, container, false);
         textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.DATA + "0",

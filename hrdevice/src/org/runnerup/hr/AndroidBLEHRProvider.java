@@ -236,12 +236,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt,
-                                          BluetoothGattCharacteristic characteristic, int status) {
-            super.onCharacteristicWrite(gatt, characteristic, status);
-        }
-
-        @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status,
                                             int newState) {
 
@@ -300,22 +294,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             if (!enableNotification(true, mHRMcharac)) {
                 reportConnectFailed("Failed to enable notification in onDescriptorRead");
             }
-        }
-
-        @Override
-        public void onDescriptorWrite(BluetoothGatt gatt,
-                                      BluetoothGattDescriptor descriptor, int status) {
-            super.onDescriptorWrite(gatt, descriptor, status);
-        }
-
-        @Override
-        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-            super.onReadRemoteRssi(gatt, rssi, status);
-        }
-
-        @Override
-        public void onReliableWriteCompleted(BluetoothGatt gatt, int status) {
-            super.onReliableWriteCompleted(gatt, status);
         }
 
         @Override
