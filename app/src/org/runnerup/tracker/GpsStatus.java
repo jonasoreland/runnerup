@@ -209,6 +209,7 @@ public class GpsStatus implements LocationListener,
         return mUsedInLastFixSatellites;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isEnabled() {
         LocationManager lm = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);

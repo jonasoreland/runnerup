@@ -32,12 +32,15 @@ public class FeedWidgetProvider extends AppWidgetProvider {
         public void setCancelable(boolean cancelable) {}
         public void show() {}
         public void dismiss() {}
+        @SuppressWarnings("EmptyMethod")
         public void setTitle(String title) {}
+        @SuppressWarnings("EmptyMethod")
         public void setMessage(String message) {}
         public Button getButton(int pos) { return null; }
         public void cancel() {}
         public void setCanceledOnTouchOutside(boolean canceled) {}
         public void setMax(int max) {}
+        @SuppressWarnings("EmptyMethod")
         public void setButton(int pos, String arg, DialogInterface.OnClickListener listener) {}
         public void setProgress(int progress) {}
     }

@@ -211,6 +211,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         return sWritableDB;
     }
 
+    @SuppressWarnings("EmptyMethod")
     public static synchronized void closeDB(SQLiteDatabase db) {
     }
 

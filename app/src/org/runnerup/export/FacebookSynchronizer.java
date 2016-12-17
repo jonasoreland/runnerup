@@ -361,6 +361,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return dateFormat.format(new Date(1000 * long1));
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void deleteCourse(JSONObject ref) {
     }
 
