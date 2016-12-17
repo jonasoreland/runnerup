@@ -22,8 +22,6 @@ import android.os.Build;
 
 import org.runnerup.BuildConfig;
 
-import java.util.HashMap;
-
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class PauseStep extends Step {
 

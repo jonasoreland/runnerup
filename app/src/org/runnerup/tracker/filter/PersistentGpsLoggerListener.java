@@ -22,7 +22,6 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
-import android.os.Bundle;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.LocationListenerBase;

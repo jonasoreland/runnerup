@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
