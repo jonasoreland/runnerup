@@ -186,7 +186,7 @@
   <string name="Unit_preference">Preferencia de unidad</string>
   <string name="Auto_start_GPS">Iniciar GPS automáticamente</string>
   <string name="Advanced_options">Opciones avanzadas</string>
-  <string name="RunnerUp_live_address">Dirección en linea de RunnerUp</string>
+  <string name="RunnerUp_live_address">Dirección en línea de RunnerUp</string>
   <string name="Autopause_after_s">Parar automáticamente después de (s)</string>
   <string name="Autopause_min_pace_minkm">Ritmo de parada automático (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Convertir reposo en la pestaña de Intervalo</string>

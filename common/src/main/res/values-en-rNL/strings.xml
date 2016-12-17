@@ -34,7 +34,7 @@
   <string name="Duration_time_HHMMSS">Duur tijd (HH:MM:SS)</string>
   <string name="Duration_distance_m">Duur afstand (m)</string>
   <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">ok, rats</string>
+  <string name="ok_rats">OK, rats</string>
   <!--other-->
   <string name="Google_Play_Services_Legal_Notices">Google Play Services Wettelijke Bepalingen</string>
   <string name="Type">Type</string>

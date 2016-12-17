@@ -52,7 +52,7 @@
   <string name="Remaining">Restante</string>
   <string name="Lap">Volta</string>
   <string name="New_lap">Nova volta</string>
-  <string name="Next_lap">Proxima volta</string>
+  <string name="Next_lap">Próxima volta</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Parar</string>
   <string name="Workout">Exercício</string>
@@ -99,7 +99,7 @@
   <string name="Waiting_for_GPS">Esperando pelo GPS</string>
   <string name="Start_activity">Iniciar atividade</string>
   <string name="Problem">Problema</string>
-  <string name="Great">Otimo!</string>
+  <string name="Great">Ótimo!</string>
   <string name="Yes">Sim</string>
   <string name="Create">Criar</string>
   <string name="Darn">Raios!</string>
