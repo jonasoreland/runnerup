@@ -117,6 +117,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         System.err.println("StateService.onCreate()");
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean checkConnection() {
         return mGoogleApiClient != null && mGoogleApiClient.isConnected();
     }

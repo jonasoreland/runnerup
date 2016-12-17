@@ -952,6 +952,7 @@ public class SyncManager {
         }.execute("string");
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean compareFiles(File w, File f) {
         if (w.length() != f.length())
             return false;

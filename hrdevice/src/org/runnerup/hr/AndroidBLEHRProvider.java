@@ -405,8 +405,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
     };
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean enableNotification(boolean onoff,
-            BluetoothGattCharacteristic charac) {
+                                       BluetoothGattCharacteristic charac) {
         if (btGatt == null)
             return false;
 
@@ -707,10 +708,12 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         return this.batteryLevel;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean checkBtGatt(BluetoothGatt gatt) {
         return checkBtGatt(gatt, false);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean checkBtGattOnlyLogError(BluetoothGatt gatt) {
         return checkBtGatt(gatt, true);
     }

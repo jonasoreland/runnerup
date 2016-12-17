@@ -477,6 +477,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         // continue in onCharacteristicRead
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean enableNotification(boolean onoff, BluetoothGattCharacteristic charac) {
         if (btGatt == null) {
             log("enableNotfication("+onoff+ ", " + charac + "): btGatt == null");

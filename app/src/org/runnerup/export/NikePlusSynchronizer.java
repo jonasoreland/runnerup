@@ -360,6 +360,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
         return new JSONObject();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean parsePayload(ContentValues c, JSONObject p) throws NumberFormatException,
             JSONException {
         long duration = Long.parseLong(p.getString("duration")) / 1000;
