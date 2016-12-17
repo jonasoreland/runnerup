@@ -63,7 +63,7 @@
     <item>6</item>
   </integer-array>
   <!-- Note: keep in same order as DB.ACCOUNT.SPORT_ -->
-  <string-array name="sportEntries" tools:ignore="InconsistentArrays">
+  <string-array name="sportEntries">
     <item>Running</item>
     <item>Biking</item>
     <item>Other</item>

@@ -24,6 +24,8 @@
     <item>Corrida</item>
     <item>Bicicleta</item>
     <item>Outra</item>
+    <item>Orienteering</item>
+    <item>Walking</item>
   </string-array>
   <!--Audio cue languages-->
   <!--Note: keep in same order as languagesNames-->
