@@ -16,7 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -32,19 +31,16 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/activity_header_time"
                 style="@style/RunHeader"
                 android:gravity="end"
                 android:text="@string/time" />
 
             <TextView
-                android:id="@+id/activity_header_distance"
                 style="@style/RunHeader"
                 android:gravity="end"
                 android:text="@string/distance" />
 
             <TextView
-                android:id="@+id/activity_header_pace"
                 style="@style/RunHeader"
                 android:gravity="end"
                 android:text="@string/pace" />
@@ -116,7 +112,6 @@
             </LinearLayout>
 
             <TableRow
-                android:id="@+id/table_row_interval0"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
 

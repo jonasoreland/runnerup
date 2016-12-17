@@ -6,8 +6,7 @@
 
   <TableRow
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:id="@+id/workout_row">
+    android:layout_height="fill_parent">
 
     <Button
       android:layout_width="30dp"

@@ -16,7 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -29,19 +28,16 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/total_time"
             style="@style/RunHeader"
             android:gravity="end"
             android:text="@string/time" />
 
         <TextView
-            android:id="@+id/total_distance"
             style="@style/RunHeader"
             android:gravity="end"
             android:text="@string/distance" />
 
         <TextView
-            android:id="@+id/total_pace"
             style="@style/RunHeader"
             android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
@@ -58,20 +54,17 @@
         android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" >
 
             <TextView
-                android:id="@+id/text_view01"
                 style="@style/RunHeader"
                 android:text="@string/Total" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_layout3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
