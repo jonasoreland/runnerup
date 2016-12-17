@@ -20,8 +20,7 @@
   <string name="cue_warmup">warm up</string>
   <string name="cue_cooldown">cool down</string>
   <string name="cue_current">current</string>
-  <string name="cue_recovery">recovery</string>
-  <string name="cue_perkilometer">per kilometer</string>
+    <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>
   <string name="cue_started">started</string>
   <string name="cue_paused">paused</string>
@@ -66,8 +65,7 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_started">activity started</string>
-  <string name="cue_activity_paused">activity paused</string>
+    <string name="cue_activity_paused">activity paused</string>
   <string name="cue_activity_resumed">activity resumed</string>
   <string name="cue_activity_stopped">activity stopped</string>
   <string name="cue_lap_started">lap started</string>

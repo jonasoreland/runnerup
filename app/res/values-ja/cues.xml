@@ -20,8 +20,7 @@
   <string name="cue_warmup">ウォームアップ</string>
   <string name="cue_cooldown">クールダウン</string>
   <string name="cue_current">現在</string>
-  <string name="cue_recovery">リカバリー</string>
-  <string name="cue_perkilometer">キロメートル当り</string>
+    <string name="cue_perkilometer">キロメートル当り</string>
   <string name="cue_permile">マイル当り</string>
   <string name="cue_started">開始しました</string>
   <string name="cue_paused">一時休止しました</string>
@@ -51,8 +50,7 @@
   <plurals name="cue_bpm">
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_started">アクティビティを開始しました</string>
-  <string name="cue_activity_paused">アクティビティを一時停止しました</string>
+    <string name="cue_activity_paused">アクティビティを一時停止しました</string>
   <string name="cue_activity_resumed">アクティビティを再開しました</string>
   <string name="cue_activity_stopped">アクティビティを停止しました</string>
   <string name="cue_lap_started">ラップを開始しました</string>

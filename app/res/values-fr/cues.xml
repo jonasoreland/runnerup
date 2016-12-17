@@ -20,8 +20,7 @@
   <string name="cue_warmup">échauffement</string>
   <string name="cue_cooldown">refroidissement</string>
   <string name="cue_current">actuellement</string>
-  <string name="cue_recovery">récupération</string>
-  <string name="cue_perkilometer">par kilomètre</string>
+    <string name="cue_perkilometer">par kilomètre</string>
   <string name="cue_permile">par mille</string>
   <string name="cue_started">démarré</string>
   <string name="cue_paused">pausé</string>
@@ -58,8 +57,7 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_started">activité démarrée</string>
-  <string name="cue_activity_paused">activité pausée</string>
+    <string name="cue_activity_paused">activité pausée</string>
   <string name="cue_activity_resumed">activité reprise</string>
   <string name="cue_activity_stopped">activité stoppée</string>
   <string name="cue_lap_started">tour démarré</string>

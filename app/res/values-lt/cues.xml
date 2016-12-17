@@ -20,8 +20,7 @@
   <string name="cue_warmup">apšilimas</string>
   <string name="cue_cooldown">atvėsimas</string>
   <string name="cue_current">dabar</string>
-  <string name="cue_recovery">atsistatymas</string>
-  <string name="cue_perkilometer">per kilometrą</string>
+    <string name="cue_perkilometer">per kilometrą</string>
   <string name="cue_permile">per mylią</string>
   <string name="cue_started">pradėta</string>
   <string name="cue_paused">pauzė</string>
@@ -65,8 +64,7 @@
     <item quantity="few">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_started">veikla pradėta</string>
-  <string name="cue_activity_paused">veikla pristabdyta</string>
+    <string name="cue_activity_paused">veikla pristabdyta</string>
   <string name="cue_activity_resumed">veikla tęsiama</string>
   <string name="cue_activity_stopped">veikla sustabdyta</string>
   <string name="cue_lap_started">etapas pradėtas</string>

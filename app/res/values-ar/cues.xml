@@ -18,7 +18,6 @@
   <string name="cue_warmup">الإحماء</string>
   <string name="cue_cooldown">الراحة</string>
   <string name="cue_current">الحالي</string>
-  <string name="cue_recovery">التعافي</string>
   <string name="cue_perkilometer">بالكيلومتر</string>
   <string name="cue_permile">بالميل</string>
   <string name="cue_started">ابتداء</string>
