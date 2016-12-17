@@ -70,9 +70,6 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
     private static final String WALK_ENDPOINT = "https://graph.facebook.com/me/fitness.walks";
 
-    private final boolean uploadComment = false;
-    private final boolean explicitly_shared = false; // Doesn't work now...don't know why...
-
     private long id = 0;
     private String access_token = null;
     private long token_now = 0;
@@ -337,6 +334,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 new StringWritable(SyncHelper.URLEncode(access_token))));
         list.add(new Part<StringWritable>("course",
                 new StringWritable(id)));
+        boolean explicitly_shared = false;
         if (explicitly_shared)
             list.add(new Part<StringWritable>(
                     "fb:explicitly_shared", new StringWritable("true")));
@@ -348,6 +346,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                     "end_time", new StringWritable(formatTime(runObj.getLong("endTime")))));
         }
 
+        boolean uploadComment = false;
         if (uploadComment && runObj.has("comment")) {
             list.add(new Part<StringWritable>(
                     "message", new StringWritable(runObj.getString("comment"))));

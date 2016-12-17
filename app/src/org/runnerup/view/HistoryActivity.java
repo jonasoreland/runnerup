@@ -52,7 +52,6 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     private SQLiteDatabase mDB = null;
     private Formatter formatter = null;
 
-    private ListView listView = null;
     private CursorAdapter cursorAdapter = null;
 
     /** Called when the activity is first created. */
@@ -61,7 +60,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history);
-        listView = (ListView) findViewById(R.id.history_list);
+        ListView listView = (ListView) findViewById(R.id.history_list);
 
         mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);

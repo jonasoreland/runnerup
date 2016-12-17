@@ -115,33 +115,26 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     private FrameLayout hrLayout = null;
     private boolean batteryLevelMessageShowed = false;
 
-    private ImageButton wearButton = null;
     private TextView wearValueText = null;
     private FrameLayout wearLayout = null;
 
-    private TitleSpinner simpleAudioSpinner = null;
     private AudioSchemeListAdapter simpleAudioListAdapter = null;
     private TitleSpinner simpleTargetType = null;
     private TitleSpinner simpleTargetPaceValue = null;
     private TitleSpinner simpleTargetHrz = null;
     private HRZonesListAdapter hrZonesAdapter = null;
 
-    private TitleSpinner intervalType = null;
     private TitleSpinner intervalTime = null;
     private TitleSpinner intervalDistance = null;
-    private TitleSpinner intervalRestType = null;
     private TitleSpinner intervalRestTime = null;
     private TitleSpinner intervalRestDistance = null;
-    private TitleSpinner intervalAudioSpinner = null;
     private AudioSchemeListAdapter intervalAudioListAdapter = null;
 
     private TitleSpinner advancedWorkoutSpinner = null;
     private WorkoutListAdapter advancedWorkoutListAdapter = null;
-    private TitleSpinner advancedAudioSpinner = null;
     private AudioSchemeListAdapter advancedAudioListAdapter = null;
     private Button advancedDownloadWorkoutButton = null;
     private Workout advancedWorkout = null;
-    private ListView advancedStepList = null;
     private final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
 
     private boolean manualSetValue = false;
@@ -191,7 +184,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         hrValueText = (TextView) findViewById(R.id.hr_value_text);
         hrLayout = (FrameLayout) findViewById(R.id.hr_layout);
 
-        wearButton = (ImageButton) findViewById(R.id.wear_button);
+        ImageButton wearButton = (ImageButton) findViewById(R.id.wear_button);
         wearValueText = (TextView) findViewById(R.id.wear_value_text);
         wearLayout = (FrameLayout) findViewById(R.id.wear_layout);
 
@@ -222,7 +215,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
         simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         simpleAudioListAdapter.reload();
-        simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
+        TitleSpinner simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
         simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
         simpleTargetType = (TitleSpinner) findViewById(R.id.tab_basic_target_type);
         simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.tab_basic_target_pace_max);
@@ -231,25 +224,25 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
 
-        intervalType = (TitleSpinner) findViewById(R.id.interval_type);
+        TitleSpinner intervalType = (TitleSpinner) findViewById(R.id.interval_type);
         intervalTime = (TitleSpinner) findViewById(R.id.interval_time);
         intervalTime.setOnSetValueListener(onSetTimeValidator);
         intervalDistance = (TitleSpinner) findViewById(R.id.interval_distance);
         intervalType.setOnSetValueListener(intervalTypeSetValue);
 
-        intervalRestType = (TitleSpinner) findViewById(R.id.interval_rest_type);
+        TitleSpinner intervalRestType = (TitleSpinner) findViewById(R.id.interval_rest_type);
         intervalRestTime = (TitleSpinner) findViewById(R.id.interval_rest_time);
         intervalRestTime.setOnSetValueListener(onSetTimeValidator);
         intervalRestDistance = (TitleSpinner) findViewById(R.id.interval_rest_distance);
         intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
         intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         intervalAudioListAdapter.reload();
-        intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
+        TitleSpinner intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
         intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
 
         advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         advancedAudioListAdapter.reload();
-        advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
+        TitleSpinner advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
         advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
         advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advanced_workout_spinner);
         advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
@@ -270,7 +263,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 return newValue;
             }
         });
-        advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
+        ListView advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
         advancedDownloadWorkoutButton = (Button) findViewById(R.id.advanced_download_button);

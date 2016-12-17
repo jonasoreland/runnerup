@@ -59,7 +59,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     private SQLiteDatabase mDB = null;
     private SyncManager mSyncManager = null;
     private boolean mTabFormat = false;
-    private ListView mListView;
     private CursorAdapter mCursorAdapter;
 
     /** Called when the activity is first created. */
@@ -72,7 +71,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
-        mListView = (ListView) findViewById(R.id.account_list);
+        ListView mListView = (ListView) findViewById(R.id.account_list);
         mListView.setDividerHeight(10);
         mCursorAdapter = new AccountListAdapter(this, null);
         mListView.setAdapter(mCursorAdapter);

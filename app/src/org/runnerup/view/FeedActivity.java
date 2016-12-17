@@ -63,7 +63,6 @@ public class FeedActivity extends Activity implements Constants {
     private Formatter formatter = null;
 
     private FeedList feed = null;
-    private ListView feedList = null;
     private FeedListAdapter feedAdapter = null;
 
     private Button refreshButton = null;
@@ -85,7 +84,7 @@ public class FeedActivity extends Activity implements Constants {
         feed.load(); // load from DB
 
         feedAdapter = new FeedListAdapter(this, feed);
-        feedList = (ListView) findViewById(R.id.feed_list);
+        ListView feedList = (ListView) findViewById(R.id.feed_list);
         feedList.setAdapter(feedAdapter);
         feedList.setDividerHeight(2);
 

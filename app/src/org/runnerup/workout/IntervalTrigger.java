@@ -28,7 +28,6 @@ public class IntervalTrigger extends Trigger {
 
     double first = 120;
     double interval = 120;
-    private final int count = 0; // endless
 
     private double next = 0;
 
@@ -52,6 +51,7 @@ public class IntervalTrigger extends Trigger {
             while (next <= now) {
                 next += interval;
             }
+            int count = 0; //endless
             if (count != 0 && (next > (first + interval * (count - 1)))) {
                 // no more occurrences
                 next = 0;

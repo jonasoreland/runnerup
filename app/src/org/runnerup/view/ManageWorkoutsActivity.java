@@ -93,7 +93,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     private final HashSet<String> loadedProviders = new HashSet<String>();
 
     private boolean uploading = false;
-    private ExpandableListView list = null;
     private CompoundButton currentlySelectedWorkout = null;
     private Button downloadButton = null;
     private Button deleteButton = null;
@@ -113,7 +112,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         adapter = new WorkoutAccountListAdapter(this);
-        list = (ExpandableListView) findViewById(R.id.expandable_list_view);
+        ExpandableListView list = (ExpandableListView) findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
         downloadButton = (Button) findViewById(R.id.download_workout_button);
         downloadButton.setOnClickListener(downloadButtonClick);

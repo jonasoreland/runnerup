@@ -35,11 +35,6 @@ public class CreateAdvancedWorkout extends Activity {
 
     private Workout advancedWorkout = null;
     private TitleSpinner advancedWorkoutSpinner = null;
-    private Button addStepButton = null;
-    private Button addRepeatButton = null;
-    private Button saveWorkoutButton = null;
-    private Button discardWorkoutButton = null;
-    private ListView advancedStepList = null;
     private final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
     private boolean dontAskAgain = false;
 
@@ -58,20 +53,20 @@ public class CreateAdvancedWorkout extends Activity {
 
         dontAskAgain = false;
 
-        advancedStepList = (ListView) findViewById(R.id.new_advnced_workout_steps);
+        ListView advancedStepList = (ListView) findViewById(R.id.new_advnced_workout_steps);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 
-        addStepButton = (Button) findViewById(R.id.add_step_button);
+        Button addStepButton = (Button) findViewById(R.id.add_step_button);
         addStepButton.setOnClickListener(addStepButtonClick);
 
-        addRepeatButton = (Button) findViewById(R.id.add_repeat_button);
+        Button addRepeatButton = (Button) findViewById(R.id.add_repeat_button);
         addRepeatButton.setOnClickListener(addRepeatStepButtonClick);
 
-        saveWorkoutButton = (Button) findViewById(R.id.workout_save_button);
+        Button saveWorkoutButton = (Button) findViewById(R.id.workout_save_button);
         saveWorkoutButton.setOnClickListener(saveWorkoutButtonClick);
 
-        discardWorkoutButton = (Button) findViewById(R.id.workout_discard_button);
+        Button discardWorkoutButton = (Button) findViewById(R.id.workout_discard_button);
         discardWorkoutButton.setOnClickListener(discardWorkoutButtonClick);
 
         try {

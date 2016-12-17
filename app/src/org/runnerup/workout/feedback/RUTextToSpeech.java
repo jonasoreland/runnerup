@@ -37,7 +37,6 @@ public class RUTextToSpeech {
 
     private static final String UTTERANCE_ID = "RUTextTospeech";
     private boolean mute = false;
-    private final boolean trace = true;
     private final TextToSpeech textToSpeech;
     private final AudioManager audioManager;
     private long id = (long) (System.nanoTime() + (1000 * Math.random()));
@@ -92,6 +91,7 @@ public class RUTextToSpeech {
 
     int speak(String text, int queueMode, HashMap<String, String> params) {
 
+        boolean trace = true;
         if (queueMode == TextToSpeech.QUEUE_FLUSH) {
             if (trace) {
                 Log.e(getClass().getName(), "speak (mute: " + mute + "): " + text);

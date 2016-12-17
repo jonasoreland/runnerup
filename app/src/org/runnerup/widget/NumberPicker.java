@@ -63,7 +63,6 @@ public class NumberPicker extends LinearLayout {
     private boolean longInc = false;
     private boolean longDec = false;
     private final Handler longHandler = new Handler();
-    private final long longSpeed = 300;
     private final int textSize = 25;
     private int digits = DIGITS;
     private String fmtString = "%0" + digits + "d";
@@ -156,6 +155,7 @@ public class NumberPicker extends LinearLayout {
             } else {
                 return;
             }
+            long longSpeed = 300;
             longHandler.postDelayed(this, longSpeed);
         }
     };

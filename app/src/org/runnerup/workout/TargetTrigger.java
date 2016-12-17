@@ -30,6 +30,7 @@ public class TargetTrigger extends Trigger {
     private boolean paused = false;
 
     private int graceCount = 30; //
+    @SuppressWarnings("FieldCanBeLocal")
     private final int initialGrace = 20;
     private int minGraceCount = 30; //
 
@@ -40,6 +41,7 @@ public class TargetTrigger extends Trigger {
 
     private int cntMeasures = 0;
     private double[] measure = null;
+    @SuppressWarnings("FieldCanBeLocal")
     private int skip_values = 1;
     private double[] sort_measure = null;
     private double lastTimestamp = 0;

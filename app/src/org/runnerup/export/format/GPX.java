@@ -36,8 +36,6 @@ import java.util.TimeZone;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class GPX {
 
-    private final boolean export_rest_laps = false;
-
     enum RestLapMode {
         EMPTY_TRKSEG,
         START_STOP_TRKSEG
@@ -177,6 +175,7 @@ public class GPX {
         boolean pok = cLocation.moveToFirst();
 
         while (lok) {
+            boolean export_rest_laps = false;
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
                 long lap = cLap.getLong(0);
                 while (pok && cLocation.getLong(0) != lap) {

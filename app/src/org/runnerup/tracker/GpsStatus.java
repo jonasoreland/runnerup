@@ -54,17 +54,20 @@ public class GpsStatus implements LocationListener,
     /**
      * If we get a location with accurancy <= mFixAccurancy mFixed => true
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private final float mFixAccurancy = 10;
 
     /**
      * If we get fixed satellites >= mFixSatellites mFixed => true
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private final int mFixSatellites = 2;
 
     /**
      * If we get location updates with time difference <= mFixTime mFixed =>
      * true
      */
+    @SuppressWarnings("FieldCanBeLocal")
     private final int mFixTime = 3;
 
     private int mKnownSatellites = 0;
