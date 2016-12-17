@@ -29,31 +29,31 @@
   <string name="cue_speedup">versnellen</string>
   <string name="cue_slowdown">vertragen</string>
   <plurals name="cue_hour">
-    <item quantity="one">uur</item>
-    <item quantity="other">uren</item>
+    <item quantity="one">%d uur</item>
+    <item quantity="other">%d uren</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">minuut</item>
-    <item quantity="other">minuten</item>
+    <item quantity="one">%d minuut</item>
+    <item quantity="other">%d minuten</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">seconde</item>
-    <item quantity="other">seconden</item>
+    <item quantity="one">%d seconde</item>
+    <item quantity="other">%d seconden</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">meter</item>
-    <item quantity="other">meters</item>
+    <item quantity="one">%d meter</item>
+    <item quantity="other">%d meters</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilometer</item>
-    <item quantity="other">kilometers</item>
+    <item quantity="one">%d kilometer</item>
+    <item quantity="other">%d kilometers</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">mijl</item>
-    <item quantity="other">mijlen</item>
+    <item quantity="one">%d mijl</item>
+    <item quantity="other">%d mijlen</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">bpm</item>
-    <item quantity="other">bpm</item>
+    <item quantity="one">%d bpm</item>
+    <item quantity="other">%d bpm</item>
   </plurals>
 </resources>

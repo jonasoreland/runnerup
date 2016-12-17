@@ -84,8 +84,8 @@ android {
         checkReleaseBuilds true
         //promote to error
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Should be enabled, see PR #333
-        warning 'MissingQuantity', 'ImpliedQuantity'
+        //Required as Froyo support dropped in com.android.support:design:24.1.0
+        warning 'GradleCompatible'
         // Ignore some specific checks, also some specific with path in lint.xml
         warning 'MissingTranslation'
         showAll true

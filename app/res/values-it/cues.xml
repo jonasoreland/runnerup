@@ -23,7 +23,6 @@
   <string name="cue_recovery">recupero</string>
   <string name="cue_perkilometer">al kilometro</string>
   <string name="cue_permile">al miglio</string>
-  <string name="cue_perhour">all\'ora</string>
   <string name="cue_started">iniziato</string>
   <string name="cue_paused">interrotto</string>
   <string name="cue_resumed">ripreso</string>
@@ -32,32 +31,32 @@
   <string name="cue_speedup">accelera</string>
   <string name="cue_slowdown">rallenta</string>
   <plurals name="cue_hour">
-    <item quantity="one">ora</item>
-    <item quantity="other">ore</item>
+    <item quantity="one">%d ora</item>
+    <item quantity="other">%d ore</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">minuto</item>
-    <item quantity="other">minuti</item>
+    <item quantity="one">%d minuto</item>
+    <item quantity="other">%d minuti</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">secondo</item>
-    <item quantity="other">secondi</item>
+    <item quantity="one">%d secondo</item>
+    <item quantity="other">%d secondi</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">metro</item>
-    <item quantity="other">metri</item>
+    <item quantity="one">%d metro</item>
+    <item quantity="other">%d metri</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">chilometro</item>
-    <item quantity="other">chilometri</item>
+    <item quantity="one">%d chilometro</item>
+    <item quantity="other">%d chilometri</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">miglio</item>
-    <item quantity="other">miglia</item>
+    <item quantity="one">%d miglio</item>
+    <item quantity="other">%d miglia</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">bpm</item>
-    <item quantity="other">bpm</item>
+    <item quantity="one">%d bpm</item>
+    <item quantity="other">%d bpm</item>
   </plurals>
   <string name="cue_activity_started">attività iniziata</string>
   <string name="cue_activity_paused">attività interrotta</string>

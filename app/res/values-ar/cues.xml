@@ -29,51 +29,51 @@
   <string name="cue_speedup">زيادة السرعة</string>
   <string name="cue_slowdown">إبطاء السرعة</string>
   <plurals name="cue_hour">
-    <item quantity="zero">صفر</item>
-    <item quantity="one">ساعة واحدة</item>
-    <item quantity="two">ساعتان</item>
-    <item quantity="few">بضع ساعات</item>
-    <item quantity="many">ساعات كثيرة</item>
-    <item quantity="other">أخرى</item>
+    <item quantity="zero">%d صفر</item>
+    <item quantity="one">%d ساعة واحدة</item>
+    <item quantity="two">%d ساعتان</item>
+    <item quantity="few">%d بضع ساعات</item>
+    <item quantity="many">%d ساعات كثيرة</item>
+    <item quantity="other">%d أخرى</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="zero">صفر</item>
-    <item quantity="one">دقيقة</item>
-    <item quantity="two">دقيقتان</item>
-    <item quantity="few">بضع دقائق</item>
-    <item quantity="many">دقائق كثيرة</item>
-    <item quantity="other">أخرى</item>
+    <item quantity="zero">%d صفر</item>
+    <item quantity="one">%d دقيقة</item>
+    <item quantity="two">%d دقيقتان</item>
+    <item quantity="few">%d بضع دقائق</item>
+    <item quantity="many">%d دقائق كثيرة</item>
+    <item quantity="other">%d أخرى</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="zero">صفر</item>
-    <item quantity="one">ثانية واحدة</item>
-    <item quantity="two">ثانيتان</item>
-    <item quantity="few">بضع ثواني</item>
-    <item quantity="many">ثواني كثيرة</item>
-    <item quantity="other">اخرى</item>
+    <item quantity="zero">%d صفر</item>
+    <item quantity="one">%d ثانية واحدة</item>
+    <item quantity="two">%d ثانيتان</item>
+    <item quantity="few">%d بضع ثواني</item>
+    <item quantity="many">%d ثواني كثيرة</item>
+    <item quantity="other">%d اخرى</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="zero">صفر</item>
-    <item quantity="one">متر واحد</item>
-    <item quantity="two">متران</item>
-    <item quantity="few">بضعة أمتار </item>
-    <item quantity="many">أمتار كثيرة</item>
-    <item quantity="other">أخرى</item>
+    <item quantity="zero">%d صفر</item>
+    <item quantity="one">%d متر واحد</item>
+    <item quantity="two">%d متران</item>
+    <item quantity="few">%d بضعة أمتار</item>
+    <item quantity="many">%d أمتار كثيرة</item>
+    <item quantity="other">%d أخرى</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="zero">صفر</item>
-    <item quantity="one">كيلو متر واحد</item>
-    <item quantity="two">كيلومتران</item>
-    <item quantity="few">بضع كيلومترات</item>
-    <item quantity="many">كيلومترات كثيرة </item>
-    <item quantity="other">اخرى</item>
+    <item quantity="zero">%d صفر</item>
+    <item quantity="one">%d كيلو متر واحد</item>
+    <item quantity="two">%d كيلومتران</item>
+    <item quantity="few">%d بضع كيلومترات</item>
+    <item quantity="many">%d كيلومترات كثيرة </item>
+    <item quantity="other">%d اخرى</item>
   </plurals>
   <plurals name="cue_mile">
     <item quantity="zero">صفر</item>
-    <item quantity="one">ميل واحد</item>
-    <item quantity="two">ميلان</item>
-    <item quantity="few">بضع أميال</item>
-    <item quantity="many">أميال كثيرة</item>
-    <item quantity="other">اخرى</item>
+    <item quantity="one">%d ميل واحد</item>
+    <item quantity="two">%d ميلان</item>
+    <item quantity="few">%d بضع أميال</item>
+    <item quantity="many">%d أميال كثيرة</item>
+    <item quantity="other">%d اخرى</item>
   </plurals>
 </resources>

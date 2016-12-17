@@ -23,7 +23,6 @@
   <string name="cue_recovery">regeneráció</string>
   <string name="cue_perkilometer">per kilométer</string>
   <string name="cue_permile">per mérföld</string>
-  <string name="cue_perhour">per óra</string>
   <string name="cue_started">elkezdve</string>
   <string name="cue_paused">szüneteltetve</string>
   <string name="cue_resumed">folytatva</string>
@@ -32,32 +31,32 @@
   <string name="cue_speedup">gyorsíts</string>
   <string name="cue_slowdown">lassíts</string>
   <plurals name="cue_hour">
-    <item quantity="one">óra</item>
-    <item quantity="other">óra</item>
+    <item quantity="one">%d óra</item>
+    <item quantity="other">%d óra</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">perc</item>
-    <item quantity="other">perc</item>
+    <item quantity="one">%d perc</item>
+    <item quantity="other">%d perc</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">másodperc</item>
-    <item quantity="other">másodperc</item>
+    <item quantity="one">%d másodperc</item>
+    <item quantity="other">%d másodperc</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">méter</item>
-    <item quantity="other">méter</item>
+    <item quantity="one">%d méter</item>
+    <item quantity="other">%d méter</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilométer</item>
-    <item quantity="other">kilométer</item>
+    <item quantity="one">%d kilométer</item>
+    <item quantity="other">%d kilométer</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">mérföld</item>
-    <item quantity="other">mérföld</item>
+    <item quantity="one">%d mérföld</item>
+    <item quantity="other">%d mérföld</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">ütés per perc</item>
-    <item quantity="other">ütés per perc</item>
+    <item quantity="one">%d ütés per perc</item>
+    <item quantity="other">%d ütés per perc</item>
   </plurals>
   <string name="cue_activity_started">tevékenység elkezdve</string>
   <string name="cue_activity_paused">tevékenység szüneteltetve</string>
