@@ -68,7 +68,6 @@ public class TitleSpinner extends LinearLayout {
     private TextView mTitle = null;
     private TextView mValue = null;
     private Spinner mSpinner = null;
-    private CharSequence mPrompt = null;
     int mInputType = 0;
     private final Context mContext;
     private OnSetValueListener mSetValueListener = null;
@@ -114,7 +113,7 @@ public class TitleSpinner extends LinearLayout {
         if (title != null) {
             mTitle.setText(title);
         }
-        mPrompt = arr.getText(R.styleable.TitleSpinner_android_prompt);
+        //Note: R.styleable.TitleSpinner_android_prompt is not used
 
         CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
         CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
@@ -169,9 +168,6 @@ public class TitleSpinner extends LinearLayout {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
-                if (mPrompt != null) {
-                    alert.setMessage(mPrompt);
-                }
 
                 edit.setText(mValue.getText());
                 edit.setInputType(mInputType);
@@ -200,9 +196,7 @@ public class TitleSpinner extends LinearLayout {
     }
 
     private void setupSpinner(Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
-        if (mPrompt != null) {
-            mSpinner.setPrompt(mPrompt);
-        }
+        mSpinner.setPrompt(mTitle.getText());
 
         int entriesId = arr.getResourceId(R.styleable.TitleSpinner_android_entries, 0);
         int valuesId = arr.getResourceId(R.styleable.TitleSpinner_values, 0);
@@ -282,9 +276,6 @@ public class TitleSpinner extends LinearLayout {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
-                if (mPrompt != null) {
-                    alert.setMessage(mPrompt);
-                }
 
                 final LinearLayout layout = createLayout(context);
                 layout.addView(datePicker);
@@ -337,9 +328,6 @@ public class TitleSpinner extends LinearLayout {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
-                if (mPrompt != null) {
-                    alert.setMessage(mPrompt);
-                }
 
                 timePicker.setIs24HourView(true);
                 final LinearLayout layout = createLayout(context);
@@ -390,9 +378,6 @@ public class TitleSpinner extends LinearLayout {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
-                if (mPrompt != null) {
-                    alert.setMessage(mPrompt);
-                }
 
                 final DurationPicker picker = new DurationPicker(context, attrs);
                 picker.setEpochTime(SafeParse.parseSeconds(mValue.getText().toString(), 0));
@@ -441,9 +426,6 @@ public class TitleSpinner extends LinearLayout {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
-                if (mPrompt != null) {
-                    alert.setMessage(mPrompt);
-                }
 
                 distancePicker.setDistance((long) SafeParse.parseDouble(
                         mValue.getText().toString(), 0));
@@ -493,9 +475,6 @@ public class TitleSpinner extends LinearLayout {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
                 alert.setTitle(mTitle.getText());
-                if (mPrompt != null) {
-                    alert.setMessage(mPrompt);
-                }
 
                 numberPicker.setValue(SafeParse.parseInt(mValue.getText().toString(), 0));
 
@@ -547,10 +526,6 @@ public class TitleSpinner extends LinearLayout {
 
     public void setTitle(String title) {
         mTitle.setText(title);
-    }
-
-    public void setPrompt(String prompt) {
-        mPrompt = prompt;
     }
 
     private void loadValue(String defaultValue) {
