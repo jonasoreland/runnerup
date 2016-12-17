@@ -159,7 +159,8 @@
                 <LinearLayout
                     android:id="@+id/tab_lap"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/laplist"
@@ -172,7 +173,8 @@
                 <LinearLayout
                     android:id="@+id/tab_upload"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/report_list"
