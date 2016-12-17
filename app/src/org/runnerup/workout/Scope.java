@@ -32,7 +32,7 @@ public enum Scope {
     int value = 0;
     int cueId = 0;
 
-    private Scope(int val, int cueId) {
+    Scope(int val, int cueId) {
         this.value = val;
         this.cueId = cueId;
     }

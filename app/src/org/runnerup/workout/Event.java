@@ -33,7 +33,7 @@ public enum Event {
     int value = 0;
     final int cueId;
 
-    private Event(int val, int cueId) {
+    Event(int val, int cueId) {
         this.value = val;
         this.cueId = cueId;
     }

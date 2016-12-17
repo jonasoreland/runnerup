@@ -41,7 +41,7 @@ public enum Dimension {
     int value = 0;
     int textId = 0;
 
-    private Dimension(int val, int textId) {
+    Dimension(int val, int textId) {
         this.value = val;
         this.textId = textId;
     }

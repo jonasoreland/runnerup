@@ -84,18 +84,18 @@ public class TitleSpinner extends LinearLayout {
          * @return
          * @throws java.lang.IllegalArgumentException
          */
-        public String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
+        String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
 
         /**
          * @param newValue
          * @return
          * @throws java.lang.IllegalArgumentException
          */
-        public int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
+        int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
     }
 
     public interface OnCloseDialogListener {
-        public void onClose(TitleSpinner spinner, boolean ok);
+        void onClose(TitleSpinner spinner, boolean ok);
     }
 
     public TitleSpinner(Context context, AttributeSet attrs) {

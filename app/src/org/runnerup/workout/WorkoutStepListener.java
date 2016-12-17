@@ -18,5 +18,5 @@ package org.runnerup.workout;
  * Created by jonas on 12/28/14.
  */
 public interface WorkoutStepListener {
-    public void onStepChanged(Step oldStep, Step newStep);
+    void onStepChanged(Step oldStep, Step newStep);
 }

@@ -21,5 +21,5 @@ import org.runnerup.workout.WorkoutInfo;
  */
 public interface WorkoutObserver {
     // @note: type is in Constants.DB.LOCATION.TYPE
-    public void workoutEvent(WorkoutInfo workoutInfo, int type);
+    void workoutEvent(WorkoutInfo workoutInfo, int type);
 }

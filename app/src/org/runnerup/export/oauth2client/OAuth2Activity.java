@@ -58,23 +58,23 @@ public class OAuth2Activity extends AppCompatActivity {
      */
     public interface OAuth2ServerCredentials {
 
-        public static final String AUTH_ARGUMENTS = "auth_arguments";
+        String AUTH_ARGUMENTS = "auth_arguments";
 
         /**
          * Used as title when opening authorization dialog
          * 
          * @return
          */
-        public static final String NAME = "name";
-        public static final String CLIENT_ID = "client_id";
-        public static final String CLIENT_SECRET = "client_secret";
-        public static final String AUTH_URL = "auth_url";
-        public static final String AUTH_EXTRA = "auth_extra";
-        public static final String TOKEN_URL = "token_url";
-        public static final String REDIRECT_URI = "redirect_uri";
-        public static final String REVOKE_URL = "revoke_url";
+        String NAME = "name";
+        String CLIENT_ID = "client_id";
+        String CLIENT_SECRET = "client_secret";
+        String AUTH_URL = "auth_url";
+        String AUTH_EXTRA = "auth_extra";
+        String TOKEN_URL = "token_url";
+        String REDIRECT_URI = "redirect_uri";
+        String REVOKE_URL = "revoke_url";
 
-        public static final String AUTH_TOKEN = "auth_token";
+        String AUTH_TOKEN = "auth_token";
     }
 
     boolean mFinished = false;
