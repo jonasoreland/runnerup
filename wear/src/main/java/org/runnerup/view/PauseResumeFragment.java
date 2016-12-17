@@ -36,7 +36,7 @@ import org.runnerup.common.util.ValueModel;
 public class PauseResumeFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private static final long SCROLL_DELAY = 1500; // 1.5s
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private TextView mButtonPauseResumeTxt;
     private CircledImageView mButtonPauseResume;
     private CircledImageView mButtonNewLap;
@@ -95,7 +95,7 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
         mButtonPauseResume.setEnabled(false);
     }
 
-    private View.OnClickListener pauseButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener pauseButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             clickCount++;
@@ -119,7 +119,7 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
         }
     };
 
-    private View.OnClickListener newLapButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener newLapButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             clickCount++;

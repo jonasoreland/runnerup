@@ -17,8 +17,8 @@ import java.util.HashSet;
 @TargetApi(Build.VERSION_CODES.FROYO)
 class DisabledEntriesAdapter extends BaseAdapter {
 
-    private String[] entries;
-    private LayoutInflater inflator;
+    private final String[] entries;
+    private final LayoutInflater inflator;
     private HashSet<String> disabled;
 
     public DisabledEntriesAdapter(Context ctx, int id) {

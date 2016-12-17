@@ -39,10 +39,10 @@ import java.util.List;
 public class CountdownFragment extends Fragment {
 
     private long dataUpdateTime;
-    private List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-    private Handler handler = new Handler();
+    private final List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
+    private final Handler handler = new Handler();
     private boolean handlerOutstanding = false;
-    private Runnable periodicTick = new Runnable() {
+    private final Runnable periodicTick = new Runnable() {
         @Override
         public void run() {
             update();

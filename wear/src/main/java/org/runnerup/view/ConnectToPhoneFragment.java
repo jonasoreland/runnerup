@@ -94,7 +94,7 @@ public class ConnectToPhoneFragment extends Fragment implements ValueModel.Chang
             updateView(newState);
     }
 
-    private DelayedConfirmationView.DelayedConfirmationListener mListener = new DelayedConfirmationView.DelayedConfirmationListener() {
+    private final DelayedConfirmationView.DelayedConfirmationListener mListener = new DelayedConfirmationView.DelayedConfirmationListener() {
         @Override
         public void onTimerFinished(View view) {
             updateView(activity.getTrackerState());

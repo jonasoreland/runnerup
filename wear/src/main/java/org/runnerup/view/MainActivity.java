@@ -225,7 +225,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         pager.setCurrentItem(RUN_INFO_ROW, curr.x, true);
     }
 
-    private ServiceConnection mStateServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mStateServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             if (mStateService == null) {

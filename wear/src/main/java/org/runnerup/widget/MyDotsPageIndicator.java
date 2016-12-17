@@ -35,10 +35,10 @@ import org.runnerup.R;
 public class MyDotsPageIndicator implements GridViewPager.OnPageChangeListener, GridViewPager.OnAdapterChangeListener {
 
     // margin, size
-    private Point unselected = new Point(4,2);
-    private Point selected = new Point(6,1);
+    private final Point unselected = new Point(4,2);
+    private final Point selected = new Point(6,1);
 
-    private LinearLayout layout;
+    private final LinearLayout layout;
     private GridViewPager pager;
 
     public MyDotsPageIndicator(LinearLayout layout) {

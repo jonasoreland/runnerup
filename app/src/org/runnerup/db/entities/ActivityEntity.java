@@ -36,9 +36,9 @@ import java.util.concurrent.TimeUnit;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class ActivityEntity extends AbstractEntity {
 
-    private List<LapEntity> laps;
+    private final List<LapEntity> laps;
 
-    private List<LocationEntity> locationPoints;
+    private final List<LocationEntity> locationPoints;
 
     public ActivityEntity() {
         super();

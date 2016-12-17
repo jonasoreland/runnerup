@@ -35,7 +35,7 @@ import org.runnerup.view.MainActivity;
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class ListenerService extends WearableListenerService {
 
-    private int notificationId = 10;
+    private final int notificationId = 10;
 
     @Override
     public void onCreate() {

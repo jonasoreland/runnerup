@@ -44,7 +44,7 @@ public class TextPreference extends android.preference.EditTextPreference {
         this.context = context;
     }
 
-    private Context context;
+    private final Context context;
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue,

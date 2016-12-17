@@ -53,7 +53,7 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
     private Formatter formatter;
     private boolean isMetric;
     private boolean bMetricSent;
-    private Tracker tracker;
+    private final Tracker tracker;
 
     public TrackerPebble(Tracker tracker) {
         this.tracker = tracker;

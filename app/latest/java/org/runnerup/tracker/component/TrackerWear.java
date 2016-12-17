@@ -71,12 +71,12 @@ public class TrackerWear extends DefaultTrackerComponent
         MessageApi.MessageListener, DataApi.DataListener, WorkoutStepListener, ValueModel.ChangeListener<TrackerState> {
 
     public static final String NAME = "WEAR";
-    private Tracker tracker;
+    private final Tracker tracker;
     private Context context;
     private GoogleApiClient mGoogleApiClient;
     private Formatter formatter;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private HashSet<Node> connectedNodes = new HashSet<Node>();
+    private final HashSet<Node> connectedNodes = new HashSet<Node>();
     private String wearNode;
 
     private final Handler handler = new Handler();
@@ -84,7 +84,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private Bundle lastSentWorkoutEvent;
     private boolean mWorkoutSenderRunning = false;
 
-    private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
+    private final List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
     private Step currentStep;
     private boolean pauseStep;
 
@@ -287,7 +287,7 @@ public class TrackerWear extends DefaultTrackerComponent
         }
     }
 
-    private Runnable workoutEventSender = new Runnable() {
+    private final Runnable workoutEventSender = new Runnable() {
         @Override
         public void run() {
             sendWorkoutEvent();

@@ -34,7 +34,7 @@ import org.runnerup.workout.Workout;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TrackerReceiver extends DefaultTrackerComponent {
 
-    private Tracker tracker;
+    private final Tracker tracker;
     private Context context;
     private boolean headsetRegistered = false;
 

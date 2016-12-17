@@ -52,10 +52,10 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     private String mClientSecret = null;
     private String projectId = null;
 
-    private String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
-    private String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
+    private final String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
+    private final String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
 
-    private String sRedirectUrl = "http://localhost";
+    private final String sRedirectUrl = "http://localhost";
 
     private static final String SCOPES = "https://www.googleapis.com/auth/plus.me " +
             "https://www.googleapis.com/auth/plus.login " +

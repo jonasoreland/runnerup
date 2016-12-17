@@ -82,7 +82,7 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
         }
     }
 
-    private View.OnClickListener startButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener startButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             activity.getStateService().sendStart();
