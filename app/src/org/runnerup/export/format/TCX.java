@@ -142,6 +142,32 @@ public class TCX {
         }
     }
 
+    private void exportLapHeartRate(long activityId, long lapId) throws IOException {
+        Cursor c = mDB.rawQuery("SELECT AVG(" + DB.LOCATION.HR + "), MAX(" + DB.LOCATION.HR + ")" +
+                     " FROM " + DB.LOCATION.TABLE +
+                     " WHERE " + DB.LOCATION.ACTIVITY + " = " + activityId +
+                               " and " + DB.LOCATION.LAP + " = " + lapId +
+                               " and " + DB.LOCATION.HR + " is not null", null);
+        boolean ok = c.moveToFirst();
+        if (ok)  {
+            if (!c.isNull(0)) {
+                mXML.startTag("", "AverageHeartRateBpm");
+                mXML.startTag("", "Value");
+                mXML.text(Integer.toString(Math.round(c.getFloat(0))));
+                mXML.endTag("", "Value");
+                mXML.endTag("", "AverageHeartRateBpm");
+            }
+            if (!c.isNull(1)) {
+                mXML.startTag("", "MaximumHeartRateBpm");
+                mXML.startTag("", "Value");
+                mXML.text(Integer.toString(c.getInt(1)));
+                mXML.endTag("", "Value");
+                mXML.endTag("", "MaximumHeartRateBpm");
+            }
+        }
+        c.close();
+    }
+
     private void exportLaps(long activityId, long startTime) throws IOException {
         String[] lColumns = {
                 DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
@@ -183,15 +209,13 @@ public class TCX {
                 mXML.startTag("", "Calories");
                 mXML.text("0");
                 mXML.endTag("", "Calories");
+                this.exportLapHeartRate(activityId, lap);
                 mXML.startTag("", "Intensity");
                 mXML.text("Active");
                 mXML.endTag("", "Intensity");
                 mXML.startTag("", "TriggerMethod");
                 mXML.text("Manual");
                 mXML.endTag("", "TriggerMethod");
-                int maxHR = 0;
-                long sumHR = 0;
-                long cntHR = 0;
                 int cntTrackpoints = 0;
 
                 if (pok && cLocation.getLong(0) == lap) {
@@ -237,10 +261,6 @@ public class TCX {
                             if (!cLocation.isNull(6)) {
                                 int hr = cLocation.getInt(6);
                                 if (hr > 0) {
-                                    maxHR = hr > maxHR ? hr : maxHR;
-                                    sumHR += hr;
-                                    cntHR++;
-
                                     mXML.startTag("", "HeartRateBpm");
                                     mXML.startTag("", "Value");
                                     String bpm = Integer.toString(hr);
@@ -271,19 +291,6 @@ public class TCX {
                     mXML.endTag("", "Track");
                 }
 
-                if (cntHR > 0) {
-                    mXML.startTag("", "AverageHeartRateBpm");
-                    mXML.startTag("", "Value");
-                    mXML.text(Integer.toString((int) (sumHR / cntHR)));
-                    mXML.endTag("", "Value");
-                    mXML.endTag("", "AverageHeartRateBpm");
-
-                    mXML.startTag("", "MaximumHeartRateBpm");
-                    mXML.startTag("", "Value");
-                    mXML.text(Integer.toString(maxHR));
-                    mXML.endTag("", "Value");
-                    mXML.endTag("", "MaximumHeartRateBpm");
-                }
                 mXML.endTag("", "Lap");
             }
             lok = cLap.moveToNext();
