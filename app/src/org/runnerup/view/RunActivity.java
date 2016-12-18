@@ -96,7 +96,7 @@ public class RunActivity extends Activity implements TickListener {
     }
 
     private final ArrayList<WorkoutRow> workoutRows = new ArrayList<>();
-    private final ArrayList<BaseAdapter> adapters = new ArrayList<>(2);
+    //private final ArrayList<BaseAdapter> adapters = new ArrayList<>(2);
     private boolean simpleWorkout;
 
     /** Called when the activity is first created. */
@@ -208,9 +208,9 @@ public class RunActivity extends Activity implements TickListener {
             row.lap = null;
             workoutRows.add(row);
         }
-        for (BaseAdapter a : adapters) {
-            a.notifyDataSetChanged();
-        }
+        //for (BaseAdapter a : adapters) {
+        //    a.notifyDataSetChanged();
+        //}
     }
 
     private Timer timer = null;
@@ -307,8 +307,7 @@ public class RunActivity extends Activity implements TickListener {
             startTimer();
             if (requestCode == 0) {
                 workout.onResume(workout);
-            } else {
-                // we were paused before stopButtonClick...don't resume
+                //else: we were paused before stopButtonClick...don't resume
             }
         } else {
             if (BuildConfig.DEBUG) { throw new AssertionError(); }

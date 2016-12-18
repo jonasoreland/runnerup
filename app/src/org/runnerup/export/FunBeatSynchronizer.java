@@ -80,7 +80,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     private String loginSecretHashed = null;
 
     private static final Map<Integer, Sport> funbeat2sportMap = new HashMap<>();
-    private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<>();
+    //private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<>();
     static {
         // the best (known) way to get ID for a given sport is:
         // 1) create a workout on the website funbeat.se with the desired sport type
@@ -91,9 +91,9 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         funbeat2sportMap.put(51, Sport.OTHER);
         funbeat2sportMap.put(26, Sport.ORIENTEERING);
         funbeat2sportMap.put(417, Sport.WALKING);
-        for (Integer i : funbeat2sportMap.keySet()) {
-            sport2funbeatMap.put(funbeat2sportMap.get(i), i);
-        }
+        //for (Integer i : funbeat2sportMap.keySet()) {
+        //    sport2funbeatMap.put(funbeat2sportMap.get(i), i);
+        //}
     }
 
     FunBeatSynchronizer(SyncManager syncManager) {
