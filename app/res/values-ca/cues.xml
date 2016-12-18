@@ -23,7 +23,6 @@
   <string name="cue_recovery">recuperació</string>
   <string name="cue_perkilometer">per kilòmetre</string>
   <string name="cue_permile">per milla</string>
-  <string name="cue_perhour">per hora</string>
   <string name="cue_started">iniciat</string>
   <string name="cue_paused">pausat</string>
   <string name="cue_resumed">continuada</string>
@@ -32,32 +31,32 @@
   <string name="cue_speedup">accelera</string>
   <string name="cue_slowdown">frena</string>
   <plurals name="cue_hour">
-    <item quantity="one">hora</item>
-    <item quantity="other">hores</item>
+    <item quantity="one">%d hora</item>
+    <item quantity="other">%d hores</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">minut</item>
-    <item quantity="other">minuts</item>
+    <item quantity="one">%d minut</item>
+    <item quantity="other">%d minuts</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">segon</item>
-    <item quantity="other">segons</item>
+    <item quantity="one">%d segon</item>
+    <item quantity="other">%d segons</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">metre</item>
-    <item quantity="other">metres</item>
+    <item quantity="one">%d metre</item>
+    <item quantity="other">%d metres</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilòmetre</item>
-    <item quantity="other">kilòmetres</item>
+    <item quantity="one">%d kilòmetre</item>
+    <item quantity="other">%d kilòmetres</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">milla</item>
-    <item quantity="other">milles</item>
+    <item quantity="one">%d milla</item>
+    <item quantity="other">%d milles</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">bpm</item>
-    <item quantity="other">bpm</item>
+    <item quantity="one">%d bpm</item>
+    <item quantity="other">%d bpm</item>
   </plurals>
   <string name="cue_activity_started">activitat iniciada</string>
   <string name="cue_activity_paused">activitat pausada</string>

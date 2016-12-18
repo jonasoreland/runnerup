@@ -23,7 +23,6 @@
   <string name="cue_recovery">oporavak</string>
   <string name="cue_perkilometer">po kilometru</string>
   <string name="cue_permile">po milji</string>
-  <string name="cue_perhour">po satu</string>
   <string name="cue_started">pokrenuto</string>
   <string name="cue_paused">pauzirano</string>
   <string name="cue_resumed">nastavljeno</string>
@@ -32,39 +31,39 @@
   <string name="cue_speedup">ubrzaj</string>
   <string name="cue_slowdown">uspori</string>
   <plurals name="cue_hour">
-    <item quantity="one">sat</item>
-    <item quantity="few">sati</item>
-    <item quantity="other">sati</item>
+    <item quantity="one">%d sat</item>
+    <item quantity="few">%d sati</item>
+    <item quantity="other">%d sati</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">minuta</item>
-    <item quantity="few">minuta</item>
-    <item quantity="other">minuta</item>
+    <item quantity="one">%d minuta</item>
+    <item quantity="few">%d minuta</item>
+    <item quantity="other">%d minuta</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">sekunda</item>
-    <item quantity="few">sekundi</item>
-    <item quantity="other">sekundi</item>
+    <item quantity="one">%d sekunda</item>
+    <item quantity="few">%d sekundi</item>
+    <item quantity="other">%d sekundi</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">metar</item>
-    <item quantity="few">metara</item>
-    <item quantity="other">metara</item>
+    <item quantity="one">%d metar</item>
+    <item quantity="few">%d metara</item>
+    <item quantity="other">%d metara</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilometar</item>
-    <item quantity="few">kilometara</item>
-    <item quantity="other">kilometara</item>
+    <item quantity="one">%d kilometar</item>
+    <item quantity="few">%d kilometara</item>
+    <item quantity="other">%d kilometara</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">milja</item>
-    <item quantity="few">milja</item>
-    <item quantity="other">milja</item>
+    <item quantity="one">%d milja</item>
+    <item quantity="few">%d milja</item>
+    <item quantity="other">%d milja</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">bpm</item>
-    <item quantity="few">bpm</item>
-    <item quantity="other">bpm</item>
+    <item quantity="one">%d bpm</item>
+    <item quantity="few">%d bpm</item>
+    <item quantity="other">%d bpm</item>
   </plurals>
   <string name="cue_activity_started">aktivnost pokrenuta</string>
   <string name="cue_activity_paused">aktivnost pauzirana</string>

@@ -23,7 +23,6 @@
   <string name="cue_recovery">リカバリー</string>
   <string name="cue_perkilometer">キロメートル当り</string>
   <string name="cue_permile">マイル当り</string>
-  <string name="cue_perhour">時間当り</string>
   <string name="cue_started">開始しました</string>
   <string name="cue_paused">一時休止しました</string>
   <string name="cue_resumed">再開しました</string>
@@ -32,25 +31,25 @@
   <string name="cue_speedup">スピードアップ</string>
   <string name="cue_slowdown">スローダウン</string>
   <plurals name="cue_hour">
-    <item quantity="other">時間</item>
+    <item quantity="other">%d 時間</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="other">分</item>
+    <item quantity="other">%d 分</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="other">秒</item>
+    <item quantity="other">%d 秒</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="other">メートル</item>
+    <item quantity="other">%d メートル</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="other">キロメートル</item>
+    <item quantity="other">%d キロメートル</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="other">マイル</item>
+    <item quantity="other">%d マイル</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="other">bpm</item>
+    <item quantity="other">%d bpm</item>
   </plurals>
   <string name="cue_activity_started">アクティビティを開始しました</string>
   <string name="cue_activity_paused">アクティビティを一時停止しました</string>

@@ -23,7 +23,6 @@
   <string name="cue_recovery">récupération</string>
   <string name="cue_perkilometer">par kilomètre</string>
   <string name="cue_permile">par mille</string>
-  <string name="cue_perhour">par heure</string>
   <string name="cue_started">démarré</string>
   <string name="cue_paused">pausé</string>
   <string name="cue_resumed">repris</string>
@@ -32,32 +31,32 @@
   <string name="cue_speedup">accélérer !</string>
   <string name="cue_slowdown">ralentir !</string>
   <plurals name="cue_hour">
-    <item quantity="one">heure</item>
-    <item quantity="other">heures</item>
+    <item quantity="one">%d heure</item>
+    <item quantity="other">%d heures</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">minute</item>
-    <item quantity="other">minutes</item>
+    <item quantity="one">%d minute</item>
+    <item quantity="other">%d minutes</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">seconde</item>
-    <item quantity="other">secondes</item>
+    <item quantity="one">%d seconde</item>
+    <item quantity="other">%d secondes</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">mètre</item>
-    <item quantity="other">mètres</item>
+    <item quantity="one">%d mètre</item>
+    <item quantity="other">%d mètres</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilomètre</item>
-    <item quantity="other">kilomètres</item>
+    <item quantity="one">%d kilomètre</item>
+    <item quantity="other">%d kilomètres</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">mile</item>
-    <item quantity="other">milles</item>
+    <item quantity="one">%d mile</item>
+    <item quantity="other">%d milles</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">bpm</item>
-    <item quantity="other">bpm</item>
+    <item quantity="one">%d bpm</item>
+    <item quantity="other">%d bpm</item>
   </plurals>
   <string name="cue_activity_started">activité démarrée</string>
   <string name="cue_activity_paused">activité pausée</string>

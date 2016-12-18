@@ -23,7 +23,6 @@
   <string name="cue_recovery">recuperación</string>
   <string name="cue_perkilometer">por kilómetro</string>
   <string name="cue_permile">por milla</string>
-  <string name="cue_perhour">por hora</string>
   <string name="cue_started">empezado</string>
   <string name="cue_paused">en pausa</string>
   <string name="cue_resumed">reanudado</string>
@@ -32,32 +31,32 @@
   <string name="cue_speedup">acelerar</string>
   <string name="cue_slowdown">decelerar</string>
   <plurals name="cue_hour">
-    <item quantity="one">horas</item>
-    <item quantity="other">horas</item>
+    <item quantity="one">%d horas</item>
+    <item quantity="other">%d horas</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">minuto</item>
-    <item quantity="other">minutos</item>
+    <item quantity="one">%d minuto</item>
+    <item quantity="other">%d minutos</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">segundo</item>
-    <item quantity="other">segundos</item>
+    <item quantity="one">%d segundo</item>
+    <item quantity="other">%d segundos</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">metro</item>
-    <item quantity="other">metros</item>
+    <item quantity="one">%d metro</item>
+    <item quantity="other">%d metros</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilómetro</item>
-    <item quantity="other">kilómetros</item>
+    <item quantity="one">%d kilómetro</item>
+    <item quantity="other">%d kilómetros</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">milla</item>
-    <item quantity="other">millas</item>
+    <item quantity="one">%d milla</item>
+    <item quantity="other">%d millas</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">bpm</item>
-    <item quantity="other">pulsaciones por minuto</item>
+    <item quantity="one">%d bpm</item>
+    <item quantity="other">%d pulsaciones por minuto</item>
   </plurals>
   <string name="cue_activity_started">actividad iniciada</string>
   <string name="cue_activity_paused">actividad pausada</string>

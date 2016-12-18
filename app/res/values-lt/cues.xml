@@ -23,7 +23,6 @@
   <string name="cue_recovery">atsistatymas</string>
   <string name="cue_perkilometer">per kilometrą</string>
   <string name="cue_permile">per mylią</string>
-  <string name="cue_perhour">per valandą</string>
   <string name="cue_started">pradėta</string>
   <string name="cue_paused">pauzė</string>
   <string name="cue_resumed">tęsiama</string>
@@ -32,39 +31,39 @@
   <string name="cue_speedup">greičiau</string>
   <string name="cue_slowdown">lėčiau</string>
   <plurals name="cue_hour">
-    <item quantity="one">valanda</item>
-    <item quantity="few">valandos</item>
-    <item quantity="other">valandos</item>
+    <item quantity="one">%d valanda</item>
+    <item quantity="few">%d valandos</item>
+    <item quantity="other">%d valandos</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">minutė</item>
-    <item quantity="few">minutės</item>
-    <item quantity="other">minutės</item>
+    <item quantity="one">%d minutė</item>
+    <item quantity="few">%d minutės</item>
+    <item quantity="other">%d minutės</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">sekundė</item>
-    <item quantity="few">sekundės</item>
-    <item quantity="other">sekundės</item>
+    <item quantity="one">%d sekundė</item>
+    <item quantity="few">%d sekundės</item>
+    <item quantity="other">%d sekundės</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">metras</item>
-    <item quantity="few">metrai</item>
-    <item quantity="other">metrai</item>
+    <item quantity="one">%d metras</item>
+    <item quantity="few">%d metrai</item>
+    <item quantity="other">%d metrai</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">kilometras</item>
-    <item quantity="few">kilometrai</item>
-    <item quantity="other">kilometrai</item>
+    <item quantity="one">%d kilometras</item>
+    <item quantity="few">%d kilometrai</item>
+    <item quantity="other">%d kilometrai</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">mylia</item>
-    <item quantity="few">mylios</item>
-    <item quantity="other">mylios</item>
+    <item quantity="one">%d mylia</item>
+    <item quantity="few">%d mylios</item>
+    <item quantity="other">%d mylios</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">bpm</item>
-    <item quantity="few">bpm</item>
-    <item quantity="other">bpm</item>
+    <item quantity="one">%d bpm</item>
+    <item quantity="few">%d bpm</item>
+    <item quantity="other">%d bpm</item>
   </plurals>
   <string name="cue_activity_started">veikla pradėta</string>
   <string name="cue_activity_paused">veikla pristabdyta</string>
