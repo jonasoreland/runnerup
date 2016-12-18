@@ -41,8 +41,10 @@
 	    android:icon="@drawable/ic_launcher"
 	    android:label="@string/app_name"
 		android:supportsRtl="true"
+		android:allowBackup="true"
 		android:extractNativeLibs="true"
-		android:theme="@style/AppTheme">
+		android:theme="@style/AppTheme"
+		android:fullBackupContent="@xml/backup_descriptor">
 
 		<activity
 			android:name=".view.MainLayout"
@@ -61,7 +63,18 @@
 				<data android:host="*" />
 				<data android:pathPattern="runnerup.db.export" />
 			</intent-filter>
-  		</activity>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<!--FirebaseAppIndexing-->
+				<data
+					android:host="github.com"
+					android:pathPrefix="/jonasoreland/runnerup"
+					android:scheme="http" />
+			</intent-filter>
+		</activity>
 
 		<activity android:name=".view.StartActivity"/>
 
@@ -86,14 +99,14 @@
 		<activity android:name=".view.UploadActivity"/>
 
 		<activity android:name=".view.ManageWorkoutsActivity">
-			<intent-filter>
+			<intent-filter tools:ignore="GoogleAppIndexingWarning">
 				<action android:name="android.intent.action.VIEW" />
   				<action android:name="android.intent.action.EDIT" />
   				<category android:name="android.intent.category.DEFAULT" />
   				<data android:mimeType="application/vnd.garmin.workout+json"/>
 			</intent-filter>
 <!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
-			<intent-filter>
+			<intent-filter tools:ignore="GoogleAppIndexingWarning">
 				<action android:name="android.intent.action.VIEW" />
   				<action android:name="android.intent.action.EDIT" />
   				<category android:name="android.intent.category.DEFAULT" />
