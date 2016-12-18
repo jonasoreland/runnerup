@@ -89,6 +89,9 @@ android {
         // Ignore some specific checks, also some specific with path in lint.xml
         warning 'MissingTranslation'
         showAll true
+        //debug issues in Travis
+        textReport true
+        textOutput 'stdout'
     }
 }
 
