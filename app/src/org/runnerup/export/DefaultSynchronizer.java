@@ -202,7 +202,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
 
     void getCookies(HttpURLConnection conn) {
         List<String> connCookies = conn.getHeaderFields().get("Set-Cookie");
-        /**
+        /*
          * work-around for weird android 2.2 bug ref
          * http://stackoverflow.com/questions
          * /9134657/nullpointer-exception-with-

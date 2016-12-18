@@ -159,7 +159,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         cookies.clear();
 
         try {
-            /**
+            /*
              * connect to START_URL to get cookies/formValues
              */
             conn = (HttpURLConnection) new URL(START_URL).openConnection();
@@ -178,7 +178,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                 return Status.ERROR;
 
 
-            /**
+            /*
              * Then login using a post
              */
             FormValues kv = new FormValues();

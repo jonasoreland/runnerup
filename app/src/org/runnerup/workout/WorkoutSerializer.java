@@ -250,7 +250,7 @@ public class WorkoutSerializer {
         if (unit.equalsIgnoreCase("dimensionless"))
             return val;
 
-        /**
+        /*
          * The below are one I found in the json objects...
          */
         if (unit.equalsIgnoreCase("centimeter"))
@@ -262,7 +262,7 @@ public class WorkoutSerializer {
         if (unit.equalsIgnoreCase("bpm"))
             return val;
 
-        /**
+        /*
          * The below I just added for "completeness"
          */
         if (unit.equalsIgnoreCase("millimeter"))
@@ -363,7 +363,7 @@ public class WorkoutSerializer {
 
         double factor = 1.0;
         Dimension unitDim = dim;
-        /**
+        /*
          * The below are one I found in the json objects...
          */
         if (unit.equalsIgnoreCase("centimetersPerMillisecond")) {
@@ -375,7 +375,7 @@ public class WorkoutSerializer {
             // not implemented
         }
 
-        /**
+        /*
          * The below I just added for "completeness"
          */
         else if (unit.equalsIgnoreCase("metersPerMillisecond")) {

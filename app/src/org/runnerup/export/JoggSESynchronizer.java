@@ -142,7 +142,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         Exception ex = null;
         HttpURLConnection conn = null;
         try {
-            /**
+            /*
              * Login by making an empty save-gpx call and see what error message
              * you get Invalid/"Invalid Userdetails" => wrong user/pass
              * NOK/"Root element is missing" => OK

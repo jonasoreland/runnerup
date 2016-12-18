@@ -98,7 +98,7 @@ public class GoogleStaticMap {
         StringBuffer dst = null;
         do {
             dst = new StringBuffer();
-            /**
+            /*
 			 * 
 			 */
             final int points = maxLen / avgLen;

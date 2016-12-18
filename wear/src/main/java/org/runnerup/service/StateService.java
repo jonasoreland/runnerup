@@ -87,7 +87,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                         /* read already existing data */
                         readData();
 
-                        /** get info about connected nodes in background */
+                        /* get info about connected nodes in background */
                         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
                                 new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                                     @Override

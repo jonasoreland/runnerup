@@ -54,7 +54,7 @@ public class ValueModel<T> {
         T oldValue = value;
         value = newValue;
 
-        /**
+        /*
          * iterate over copy so that this can be modified during iteration
          * (i.e by onValueChanged())
          */

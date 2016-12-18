@@ -232,7 +232,7 @@ public class FeedList extends Observable implements Constants {
     private static boolean match(ContentValues c0, ContentValues c1, boolean filterDuplicates) {
         boolean same_account = c0.getAsLong(DB.FEED.ACCOUNT_ID) == c1.getAsLong(DB.FEED.ACCOUNT_ID);
         if (same_account) {
-            /**
+            /*
              * Always filter duplicates from same account
              */
             if (c0.containsKey(DB.FEED.EXTERNAL_ID) && c1.containsKey(DB.FEED.EXTERNAL_ID)) {
@@ -309,7 +309,7 @@ public class FeedList extends Observable implements Constants {
         boolean broken1 = c1.containsKey(DB.FEED.FLAGS)
                 && c1.getAsString(DB.FEED.FLAGS).contains("brokenStartTime");
         if (broken0 || broken1) {
-            /**
+            /*
              * check if same day, if so compare distance/duration instead
              */
             Calendar d0 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));

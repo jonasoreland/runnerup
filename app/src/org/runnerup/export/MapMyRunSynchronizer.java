@@ -178,7 +178,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 pass = toHexString(Encryption.md5(password));
             }
 
-            /**
+            /*
              * get user id/key
              */
             conn = (HttpURLConnection) new URL(GET_USER_URL).openConnection();

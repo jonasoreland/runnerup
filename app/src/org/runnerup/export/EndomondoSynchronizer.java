@@ -158,7 +158,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        /**
+        /*
          * Generate deviceId
          */
         deviceId = UUID.randomUUID().toString();
@@ -168,7 +168,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         logout();
         try {
 
-            /**
+            /*
 			 *
 			 */
             FormValues kv = new FormValues();

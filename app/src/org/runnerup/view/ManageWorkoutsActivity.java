@@ -334,7 +334,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     private void requery() {
         ContentValues allSynchronizers[] = null;
         {
-            /**
+            /*
              * Accounts/reports
              */
             String sql = "SELECT DISTINCT "
@@ -374,7 +374,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     @Override
     public void onBackPressed() {
         if (uploading) {
-            /**
+            /*
              * Ignore while uploading
              */
             return;

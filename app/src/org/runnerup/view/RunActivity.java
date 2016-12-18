@@ -174,7 +174,7 @@ public class RunActivity extends Activity implements TickListener {
         workout = mTracker.getWorkout();
 
         {
-            /**
+            /*
              * Countdown view can't be bound until RunActivity is started
              *   since it's not created until then
              */
@@ -260,7 +260,7 @@ public class RunActivity extends Activity implements TickListener {
                 stopTimer(); // set timer=null;
                 mTracker.stopForeground(true); // remove notification
                 Intent intent = new Intent(RunActivity.this, DetailActivity.class);
-                /**
+                /*
                  * The same activity is used to show details and to save
                  * activity they show almost the same information
                  */
@@ -288,7 +288,7 @@ public class RunActivity extends Activity implements TickListener {
             return;
         }
         if (resultCode == Activity.RESULT_OK) {
-            /**
+            /*
              * they saved
              */
             workout.onComplete(Scope.ACTIVITY, workout);
@@ -296,7 +296,7 @@ public class RunActivity extends Activity implements TickListener {
             mTracker = null;
             finish();
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            /**
+            /*
              * they discarded
              */
             workout.onComplete(Scope.ACTIVITY, workout);

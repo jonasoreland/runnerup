@@ -262,7 +262,7 @@ public class Step implements TickComponent {
             t.onStop(s);
         }
 
-        /**
+        /*
          * Save current lap so that it shows in DetailActivity
          */
         long distance = Math.round(s.getDistance(Scope.LAP));
@@ -273,7 +273,7 @@ public class Step implements TickComponent {
             tmp.put(DB.LAP.DISTANCE, distance);
             tmp.put(DB.LAP.TIME, time);
             tmp.put(DB.LAP.AVG_HR, Math.round(hr));
-            s.saveLap(tmp, /** next lap */
+            s.saveLap(tmp, /* next lap */
             false);
         }
     }
@@ -334,7 +334,7 @@ public class Step implements TickComponent {
                 tmp.put(DB.LAP.DISTANCE, distance);
                 tmp.put(DB.LAP.TIME, time);
                 tmp.put(DB.LAP.AVG_HR, Math.round(hr));
-                s.saveLap(tmp, /** next lap */
+                s.saveLap(tmp, /* next lap */
                 true);
             }
         }

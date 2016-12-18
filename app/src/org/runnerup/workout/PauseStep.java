@@ -66,7 +66,7 @@ public class PauseStep extends Step {
         lastTime = now;
         elapsedTime += diff;
         if (paused) {
-            /**
+            /*
              * to make sure that actual pause time is save...we increase the
              * durationValue every time elapsedTime is increased if we're
              * currently paused to handle repeats, this is later restored in

@@ -230,7 +230,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     private void deleteAudioScheme() {
         delete = true;
         getPreferenceManager().getSharedPreferences().edit().clear().commit();
-        /**
+        /*
          * Can only delete file in "next" activity...cause on destory on this,
          * will save file...
          */
@@ -239,7 +239,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     }
 
     private void deleteAudioSchemeImpl(String name) {
-        /**
+        /*
          * Start by deleting file...then delete from table...so we don't get
          * stray files
          */

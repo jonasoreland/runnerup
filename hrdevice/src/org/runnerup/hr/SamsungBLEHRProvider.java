@@ -335,7 +335,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                     ", mIsConnecting: " + mIsConnecting + ", mIsScanning: " + mIsScanning);
 
             if (!broadcast) {
-                /**
+                /*
                  * If connect was called and btDevice was unknown, we scan for
                  * it before btGatt.connect()
                  */
@@ -560,7 +560,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         btDevice = dev;
         if (ref.deviceName == null || dev.getName() == null ||
                 !ref.deviceName.contentEquals(dev.getName())) {
-            /**
+            /*
              * If device doesn't match name, scan for before connecting
              */
             log("Scan before connect");

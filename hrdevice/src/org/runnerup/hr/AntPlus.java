@@ -299,7 +299,7 @@ public class AntPlus extends BtHRBase {
                     break;
                 case DEAD:
                     if (mIsConnected) {
-                        /** don't silent reconnect, let upper lay handle that */
+                        /* don't silent reconnect, let upper lay handle that */
                         reportDisconnected(true);
                         return;
                     }

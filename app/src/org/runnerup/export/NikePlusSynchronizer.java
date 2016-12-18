@@ -169,7 +169,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
         HttpURLConnection conn = null;
         try {
-            /**
+            /*
              * get user id/key
              */
             String url = String.format(LOGIN_URL, CLIENT_ID, CLIENT_SECRET, APP_ID);

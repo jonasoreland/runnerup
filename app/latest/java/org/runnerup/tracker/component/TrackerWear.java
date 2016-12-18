@@ -142,7 +142,7 @@ public class TrackerWear extends DefaultTrackerComponent
                         /* read already existing data */
                         readData();
 
-                        /** get info about connected nodes in background */
+                        /* get info about connected nodes in background */
                         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).
 
                                 setResultCallback(

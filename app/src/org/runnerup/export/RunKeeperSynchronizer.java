@@ -101,7 +101,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     public static final Map<Sport, String> sport2runkeeperMap = new HashMap<>();
     static {
         //sports list can be found at http://developer.runkeeper.com/healthgraph/fitness-activities#past
-        /**
+        /*
          * Running, Cycling, Mountain Biking, Walking, Hiking, Downhill Skiing, Cross-Country Skiing,
          * Snowboarding, Skating, Swimming, Wheelchair, Rowing, Elliptical, Other, Yoga, Pilates,
          * CrossFit, Spinning, Zumba, Barre, Group Workout, Dance, Bootcamp, Boxing / MMA, Meditation,
@@ -277,7 +277,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return Synchronizer.Status.OK;
         }
 
-        /**
+        /*
          * Get the fitnessActivities end-point
          */
         String uri = null;
@@ -407,7 +407,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return s;
         }
 
-        /**
+        /*
          * Get the fitnessActivities end-point
          */
         HttpURLConnection conn = null;

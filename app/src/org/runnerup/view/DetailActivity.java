@@ -292,7 +292,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private void requery() {
         {
-            /**
+            /*
              * Laps
              */
             String[] from = new String[]{
@@ -316,7 +316,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
 
         {
-            /**
+            /*
              * Accounts/reports
              */
             String sql = "SELECT DISTINCT "
@@ -703,7 +703,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onBackPressed() {
         if (uploading) {
-            /**
+            /*
              * Ignore while uploading
              */
             return;

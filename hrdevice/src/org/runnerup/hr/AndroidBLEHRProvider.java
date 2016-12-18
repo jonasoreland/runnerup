@@ -552,7 +552,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         btDevice = dev;
         if (ref.deviceName == null || dev.getName() == null
                 || !dev.getName().contentEquals(ref.deviceName)) {
-            /**
+            /*
              * If device doesn't match name, scan for before connecting
              */
             log("Scan before connect");

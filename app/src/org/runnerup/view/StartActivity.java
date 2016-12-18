@@ -339,7 +339,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         super.onPause();
 
         if (getAutoStartGps()) {
-            /**
+            /*
              * If autoStartGps, then stop it during pause
              */
             stopGps();
@@ -585,12 +585,12 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             } else if (mTracker.getState() == TrackerState.CONNECTED) {
                 mGpsStatus.stop(StartActivity.this);
 
-                /**
+                /*
                  * unregister receivers
                  */
                 unregisterStartEventListener();
 
-                /**
+                /*
                  * This will start the advancedWorkoutSpinner!
                  */
                 mTracker.setWorkout(prepareWorkout());

@@ -53,7 +53,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         return audioSchemes.size() +
-                /** default */
+                /* default */
                 1 +
                 (createNewItem ? 1 : 0);
     }

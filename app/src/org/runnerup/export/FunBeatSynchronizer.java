@@ -181,7 +181,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         }
 
         try {
-            /**
+            /*
              * connect to START_URL to get cookies/formValues
              */
             conn = (HttpURLConnection) new URL(START_URL).openConnection();
@@ -196,7 +196,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             }
             conn.disconnect();
 
-            /**
+            /*
              * Then login using a post
              */
             FormValues kv = new FormValues();

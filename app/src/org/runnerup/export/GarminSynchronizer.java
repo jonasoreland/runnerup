@@ -193,7 +193,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
         HttpURLConnection conn = null;
 
-        /**
+        /*
          * connect to START_URL to get cookies
          */
         conn = (HttpURLConnection) new URL(START_URL).openConnection();
@@ -208,7 +208,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
         conn.disconnect();
 
-        /**
+        /*
          * Then login using a post
          */
         FormValues kv = new FormValues();
@@ -236,7 +236,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
         conn.disconnect();
 
-        /**
+        /*
          * An finally check that all is OK
          */
         return checkLogin();
