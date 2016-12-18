@@ -37,9 +37,6 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
 
-/**
- * Created by jonas on 12/11/14.
- */
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TrackerGPS extends DefaultTrackerComponent implements TickListener {
 

@@ -28,9 +28,6 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.workout.Workout;
 
-/**
- * Created by jonas on 12/11/14.
- */
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TrackerReceiver extends DefaultTrackerComponent {
 

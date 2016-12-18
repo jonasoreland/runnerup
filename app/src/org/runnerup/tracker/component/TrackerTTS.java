@@ -28,9 +28,6 @@ import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import java.util.HashMap;
 
-/**
- * Created by jonas on 12/11/14.
- */
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TrackerTTS extends DefaultTrackerComponent {
 

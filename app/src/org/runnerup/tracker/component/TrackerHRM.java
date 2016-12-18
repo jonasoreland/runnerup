@@ -30,9 +30,6 @@ import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 
-/**
- * Created by jonas on 12/11/14.
- */
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TrackerHRM extends DefaultTrackerComponent {
 

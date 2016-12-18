@@ -28,9 +28,6 @@ import android.widget.LinearLayout;
 
 import org.runnerup.R;
 
-/**
- * Created by jonas on 12/27/14.
- */
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class MyDotsPageIndicator implements GridViewPager.OnPageChangeListener, GridViewPager.OnAdapterChangeListener {
 

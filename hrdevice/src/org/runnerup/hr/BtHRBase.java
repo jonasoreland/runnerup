@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 jonas.oreland@gmail.com
+ * Copyright (C) 2014 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,9 +23,6 @@ import android.os.Looper;
 
 import java.util.UUID;
 
-/**
- * Created by jonas on 11/1/14.
- */
 @TargetApi(Build.VERSION_CODES.FROYO)
 abstract class BtHRBase implements HRProvider {
     static final UUID HRP_SERVICE = UUID
