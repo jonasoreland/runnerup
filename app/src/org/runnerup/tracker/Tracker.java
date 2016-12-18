@@ -17,6 +17,7 @@
 
 package org.runnerup.tracker;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
@@ -773,6 +774,7 @@ public class Tracker extends android.app.Service implements
         return mBinder;
     }
 
+    @SuppressLint("Wakelock")
     private void wakeLock(boolean get) {
         if (mWakeLock != null) {
             if (mWakeLock.isHeld()) {

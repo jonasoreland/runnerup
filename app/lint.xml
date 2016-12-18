@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="all">
-        <ignore path="../GraphView/**" />
         <ignore path="../ANT-Android-SDKs/**" />
     </issue>
     <issue id="InvalidPackage">

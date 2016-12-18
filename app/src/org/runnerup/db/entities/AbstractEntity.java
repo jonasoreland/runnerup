@@ -131,6 +131,7 @@ public abstract class AbstractEntity implements DBEntity {
         getValidColumns().toArray(cols);
         Cursor cursor = DB.query(getTableName(), cols, "_id = "
                 + primaryKey, null, null, null, null);
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             if (cursor.moveToFirst()) {
                 toContentValues(cursor);

@@ -130,6 +130,7 @@ public interface Constants {
             int FLAG_FEED = 1;
             int FLAG_LIVE = 2;
             int FLAG_SKIP_MAP = 3;
+            @SuppressWarnings("PointlessBitwiseExpression")
             long DEFAULT_FLAGS =
                     (1 << FLAG_UPLOAD) +
                             (1 << FLAG_FEED) +

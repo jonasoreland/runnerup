@@ -17,6 +17,7 @@
 
 package org.runnerup.util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.util.Base64;
@@ -82,6 +83,7 @@ public class Encryption {
      * @param key
      * @throws Exception
      */
+    @SuppressLint("TrulyRandom")
     private static void encrypt(final InputStream in, final OutputStream out, final String key)
             throws Exception {
         final PBEKeySpec keySpec = new PBEKeySpec(key.toCharArray());

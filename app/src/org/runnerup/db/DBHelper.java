@@ -476,6 +476,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         values.put(DB.ACCOUNT.AUTH_METHOD, "none");
         values.put(DB.ACCOUNT.ICON, R.drawable.a8_runneruplive);
         values.put(DB.ACCOUNT.URL, "http://weide.devsparkles.se/Demo/Map");
+        //noinspection RedundantCast
         values.put(DB.ACCOUNT.FLAGS, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
         insertAccount(arg0, values);
 
