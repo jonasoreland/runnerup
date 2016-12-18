@@ -192,15 +192,16 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
             int code = connect.getResponseCode();
             try {
-                if (code == HttpURLConnection.HTTP_INTERNAL_ERROR) {
-                } else if (code != HttpURLConnection.HTTP_OK) {
-                    Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
-                    status = Status.ERROR;
-                    break;
-                } else {
-                    Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getInputStream())).toString());
-                    status = Status.OK;
-                    break;
+                if (code != HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                    if (code != HttpURLConnection.HTTP_OK) {
+                        Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
+                        status = Status.ERROR;
+                        break;
+                    } else {
+                        Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getInputStream())).toString());
+                        status = Status.OK;
+                        break;
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

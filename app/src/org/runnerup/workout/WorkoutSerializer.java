@@ -92,7 +92,6 @@ public class WorkoutSerializer {
         for (jsonstep s : list) {
             if (s.parentGroup != null) {
                 s.parentStep = findRepeatStep(list, s.parentGroup);
-            } else {
             }
         }
 
@@ -369,10 +368,10 @@ public class WorkoutSerializer {
         if (unit.equalsIgnoreCase("centimetersPerMillisecond")) {
             factor = 1000.0 / 100.0;
             unitDim = Dimension.SPEED;
-        } else if (unit.equalsIgnoreCase("stepsPerMinute")) {
-            // not implemented
-        } else if (unit.equalsIgnoreCase("bpm")) {
-            // not implemented
+        //} else if (unit.equalsIgnoreCase("stepsPerMinute")) {
+        //    // not implemented
+        //} else if (unit.equalsIgnoreCase("bpm")) {
+        //    // not implemented
         }
 
         /*
@@ -434,10 +433,8 @@ public class WorkoutSerializer {
                 break;
             }
             case RESTING:
-                if (convertRestToRecovery && duration.first == Dimension.DISTANCE &&
-                        duration.second != null) {
-                    // fall through
-                } else {
+                if (!convertRestToRecovery || duration.first != Dimension.DISTANCE ||
+                        duration.second == null) {
                     js.step = Step.createPauseStep(duration.first, duration.second);
                     break;
                 }

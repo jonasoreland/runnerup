@@ -600,7 +600,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 tvBatteryLevel.setText(getResources().getText(R.string.Battery_level) + ": " + hrProvider.getBatteryLevel() + "%");
             }
             startTimer();
-        } else {
         }
         updateView();
     }
