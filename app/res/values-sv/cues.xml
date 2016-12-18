@@ -55,12 +55,12 @@
     <item quantity="other">%d miles</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
-    <item quantity="one">%.1f kilometer i timmen</item>
-    <item quantity="other">%.1f kilometer i timmen</item>
+    <item quantity="one">%s kilometer i timmen</item>
+    <item quantity="other">%s kilometer i timmen</item>
   </plurals>
   <plurals name="cue_miles_per_hour">
-    <item quantity="one">%.1f mile i timmen</item>
-    <item quantity="other">%.1f miles i timmen</item>
+    <item quantity="one">%s mile i timmen</item>
+    <item quantity="other">%s miles i timmen</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
