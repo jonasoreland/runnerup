@@ -140,6 +140,7 @@ public class Encryption {
 
         // Read in the previously stored salt and set the iteration count.
         final byte[] salt = new byte[8];
+        //noinspection ResultOfMethodCallIgnored
         in.read(salt);
         final int iterations = 100;
         final PBEParameterSpec parameterSpec = new PBEParameterSpec(salt, iterations);

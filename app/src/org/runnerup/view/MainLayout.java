@@ -215,6 +215,7 @@ public class MainLayout extends TabActivity
                 if (!isFile) {
                     //The request is hierarchical, source is still on a directory level
                     File dstDir = new File(dstBase);
+                    //noinspection ResultOfMethodCallIgnored
                     dstDir.mkdir();
                     if (!dstDir.isDirectory()) {
                         Log.w(getClass().getName(), "Failed to copy " + src + " as \"" + dstBase
