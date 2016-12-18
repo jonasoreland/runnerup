@@ -31,6 +31,17 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    lintOptions {
+        //disable specific checks for specific paths
+        lintConfig file("lint.xml")
+        checkReleaseBuilds true
+        //promote to error
+        fatal 'InlinedApi', 'InconsistentArrays'
+        // Ignore some specific checks, also some specific with path in lint.xml
+        warning 'MissingTranslation'
+        showAll true
+    }
 }
 
 dependencies {
