@@ -40,12 +40,38 @@ public enum Sport {
         return dbValue;
     }
 
-    static public final String textOf(Resources res, int dbValue) {
-        String sports[] = res.getStringArray(R.array.sportEntries);
-        if (0 <= dbValue && dbValue < sports.length) {
-            return sports[dbValue];
+    static public String textOf(int dbValue) {
+        return textOf(null, dbValue);
+    }
+
+    static public String textOf(Resources res, int dbValue) {
+        String sportName = null;
+        if (res != null) {
+            String sports[] = res.getStringArray(R.array.sportEntries);
+            if (0 <= dbValue && dbValue < sports.length) {
+                sportName = sports[dbValue];
+            }
+            if (sportName == null) {
+                sportName = res.getString(R.string.Unknown);
+            }
         }
-        return res.getString(R.string.Unknown);
+        if (sportName == null) {
+            //Some hardcoded values
+            switch (dbValue) {
+                case DB.ACTIVITY.SPORT_RUNNING:
+                case DB.ACTIVITY.SPORT_ORIENTEERING:
+                case DB.ACTIVITY.SPORT_WALKING:
+                    sportName = "Running";
+                    break;
+                case DB.ACTIVITY.SPORT_BIKING:
+                    sportName = "Biking";
+                    break;
+                default:
+                    sportName = "Other";
+                    break;
+            }
+        }
+        return sportName;
     }
 
     static public Sport valueOf(int dbValue) {
@@ -62,5 +88,18 @@ public enum Sport {
             case DB.ACTIVITY.SPORT_OTHER:
                 return OTHER;
         }
+    }
+
+    public boolean IsWalking() {
+        return dbValue == DB.ACTIVITY.SPORT_WALKING;
+    }
+
+    public boolean IsRunning() {
+        return dbValue == DB.ACTIVITY.SPORT_RUNNING ||
+                dbValue == DB.ACTIVITY.SPORT_ORIENTEERING;
+    }
+
+    public boolean IsCycling() {
+        return dbValue == DB.ACTIVITY.SPORT_BIKING;
     }
 }

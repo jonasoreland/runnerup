@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +70,10 @@ import org.runnerup.workout.Intensity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
+
+import static org.runnerup.content.ActivityProvider.GPX_MIME;
+import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class DetailActivity extends AppCompatActivity implements Constants {
@@ -774,7 +779,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private void shareActivity() {
         final int which[] = {
-                1 //TODO preselect tcx - choice should be remembered
+            1 //TODO preselect tcx - choice should be remembered
         };
         final CharSequence items[] = {
                 "gpx", "tcx" /* "nike+xml" */
@@ -794,18 +799,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         final Intent intent = new Intent(Intent.ACTION_SEND);
 
                         if (fmt.equals("tcx")) {
-                            intent.setType("application/vnd.garmin." + fmt + "+xml");
+                            intent.setType(TCX_MIME);
                         } else {
-                            intent.setType("application/" + fmt + "+xml");
+                            intent.setType(GPX_MIME);
                         }
                         //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
                         //Solid Explorer File Manager works though
                         Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
                                 + "/" + mID
-                                + "/" + "RunnerUp_" + mID + "." + fmt);
+                                + "/" + String.format(Locale.getDefault(), "RunnerUp_%04d.%s", mID, fmt));
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
                         context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
-
                     }
                 });
         builder.setNegativeButton(getString(R.string.Cancel),

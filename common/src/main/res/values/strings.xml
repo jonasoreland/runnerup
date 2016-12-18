@@ -53,6 +53,9 @@
   <string name="speed">speed</string>
   <string name="pace">pace</string>
   <string name="heart_rate_zone">heart rate zone</string>
+  <string name="cadence">cadence</string>
+  <string name="temperature">temperature</string>
+  <string name="pressure">pressure</string>
   <string name="Zone">Zone</string>
   <string name="Device">Device</string>
   <string name="Start_hour">Start hour</string>
@@ -316,4 +319,14 @@
   <string name="cue_hrm_connection_lost">Lost connection to heart rate monitor</string>
   <string name="HRM_connection_audio_cue">HRM connection triggered audio cue</string>
   <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
+  <string name="log_extended_gps_summary">Export in GPX only</string>
+  <string name="log_extended_gps_title">Log extended GPS accuracy data</string>
+  <string name="use_step_sensor_title">Step Sensor</string>
+  <string name="use_step_sensor_summary">Use for Cadence</string>
+  <string name="use_temperature_sensor">Temperature Sensor</string>
+  <string name="use_pressure_sensor_title">Pressure Sensor</string>
+  <string name="use_pressure_sensor_summary">Use barometer to calculate elevation</string>
+  <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to GPS Elevation</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Use initial GPS elevation to average barometric elevation</string>
+  <string name="google_play_not_installed">Google Play Services is not installed</string>
 </resources>

@@ -38,6 +38,10 @@ public interface WorkoutInfo {
 
     double getHeartRateZone(Scope scope);
 
+    double getCadence(Scope scope);
+    double getTemperature(Scope scope);
+    double getPressure(Scope scope);
+
     int getSport();
 
     /* TODO make better/more elaborate state visible... */

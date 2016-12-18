@@ -37,6 +37,7 @@ import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Bitfield;
+import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -316,17 +317,16 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     private static URL getSportEndPoint(Sport s) throws Exception {
-        if (s == Sport.RUNNING) return new URL(RUN_ENDPOINT);
-        else if (s == Sport.BIKING) return new URL(BIKE_ENDPOINT);
-        else if (s == Sport.ORIENTEERING) return new URL(RUN_ENDPOINT);
-        else if (s == Sport.WALKING) return new URL(WALK_ENDPOINT);
+        if (s.IsWalking()) return new URL(WALK_ENDPOINT);
+        else if (s.IsRunning()) return new URL(RUN_ENDPOINT);
+        else if (s.IsCycling()) return new URL(BIKE_ENDPOINT);
         return null;
     }
 
 
     private JSONObject createRun(JSONObject ref, JSONObject runObj) throws Exception {
-        int sport = runObj.optInt("sport", DB.ACTIVITY.SPORT_OTHER);
-        URL url = getSportEndPoint(Sport.valueOf(sport));
+        Sport sport = Sport.valueOf(runObj.optInt("sport", DB.ACTIVITY.SPORT_OTHER));
+        URL url = getSportEndPoint(sport);
         if (url == null) {
             /* only running/biking/walking and similar are supported */
             return null;
@@ -356,7 +356,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         Part<?> parts[] = new Part<?>[list.size()];
         list.toArray(parts);
 
-        URL url2 = new URL(sport == DB.ACTIVITY.SPORT_BIKING ? BIKE_ENDPOINT : RUN_ENDPOINT);
+        URL url2 = new URL(sport.IsCycling() ? BIKE_ENDPOINT : RUN_ENDPOINT);
         return createObj(url2, parts);
     }
 

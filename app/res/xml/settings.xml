@@ -74,6 +74,34 @@
             android:title="@string/Headset_key_startstop"
             android:summary="@string/Use_your_headset_to_startpauseresume_RunnerUp" />
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_use_cadence_step_sensor"
+            android:title="@string/use_step_sensor_title"
+            android:summary="@string/use_step_sensor_summary" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_use_temperature_sensor"
+            android:title="@string/use_temperature_sensor" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_use_pressure_sensor"
+            android:title="@string/use_pressure_sensor_title"
+            android:summary="@string/use_pressure_sensor_summary" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:dependency="@string/pref_use_pressure_sensor"
+            android:key="@string/pref_pressure_elevation_gps_average"
+            android:title="@string/adjust_barometer_altitude_from_gps"
+            android:summary="@string/adjust_barometer_elevation_from_gps_summary" />
+
     </PreferenceScreen>
 
     <PreferenceScreen
@@ -152,6 +180,13 @@
             android:key="@string/pref_pollDistance"
             android:persistent="true"
             android:title="@string/Poll_distance_m" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_log_gpx_accuracy"
+            android:title="@string/log_extended_gps_title"
+            android:summary="@string/log_extended_gps_summary" />
 
     </PreferenceScreen>
 
@@ -308,7 +343,7 @@
         <org.runnerup.widget.AboutPreference
             android:key="@string/pref_googleplayserviceslegalnotices"
             android:title="@string/Google_Play_Services_Legal_Notices"
-            android:dialogMessage="Google Play Services is not installed" />
+            android:dialogMessage="@string/google_play_not_installed" />
     </PreferenceCategory>
 
 </PreferenceScreen>

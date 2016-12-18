@@ -399,7 +399,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                     c.put(FEED.ACCOUNT_ID, getId());
                     c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
                     c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-                    c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); // TODO
+                    c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); // TODO, dummy type
                     c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
                     if (e.has("payload")) {
                         JSONObject p = e.getJSONObject("payload");
@@ -445,7 +445,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                     c.put(FEED.ACCOUNT_ID, getId());
                     c.put(FEED.EXTERNAL_ID, e.getString("entityId"));
                     c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-                    c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); // TODO
+                    c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_RUNNING); // TODO, dummy type
                     c.put(FEED.START_TIME, df.parse(e.getString("entityDate")).getTime());
                     if (e.has("payload")) {
                         JSONObject p = e.getJSONObject("payload");

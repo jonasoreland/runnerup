@@ -178,13 +178,13 @@ public class ActivityEntity extends AbstractEntity {
     /**
      * Avarage cadence of the activity
      */
-    public void setAvgCadence(Integer value) {
+    public void setAvgCadence(Float value) {
         values().put(Constants.DB.ACTIVITY.AVG_CADENCE, value);
     }
 
-    public Integer getAvgCadence() {
+    public Float getAvgCadence() {
         if (values().containsKey(Constants.DB.ACTIVITY.AVG_CADENCE)) {
-            return values().getAsInteger(Constants.DB.ACTIVITY.AVG_CADENCE);
+            return values().getAsFloat(Constants.DB.ACTIVITY.AVG_CADENCE);
         }
         return null;
     }
@@ -213,7 +213,7 @@ public class ActivityEntity extends AbstractEntity {
 
     @Override
     protected ArrayList<String> getValidColumns() {
-        ArrayList<String> columns = new ArrayList<String>();
+        ArrayList<String> columns = new ArrayList<>();
         columns.add(Constants.DB.PRIMARY_KEY);
         columns.add(Constants.DB.ACTIVITY.START_TIME);
         columns.add(Constants.DB.ACTIVITY.DISTANCE);

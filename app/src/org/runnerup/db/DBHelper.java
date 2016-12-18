@@ -63,7 +63,7 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 30;
+    private static final int DBVERSION = 31;
     private static final String DBNAME = "runnerup.db";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
@@ -77,7 +77,8 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACTIVITY.SPORT + " integer,")
             + (DB.ACTIVITY.AVG_HR + " integer, ")
             + (DB.ACTIVITY.MAX_HR + " integer, ")
-            + (DB.ACTIVITY.AVG_CADENCE + " integer, ")
+            + (DB.ACTIVITY.AVG_CADENCE + " real, ")
+            + (DB.ACTIVITY.META_DATA + " text, ")
             + ("deleted integer not null default 0, ")
             + "nullColumnHack text null" + ");";
 
@@ -90,12 +91,19 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.LOCATION.TIME + " integer not null, ")
             + (DB.LOCATION.LONGITUDE + " real not null, ")
             + (DB.LOCATION.LATITUDE + " real not null, ")
-            + (DB.LOCATION.ACCURANCY + " real, ")
             + (DB.LOCATION.ALTITUDE + " real, ")
+            + (DB.LOCATION.HR + " integer, ")
+            + (DB.LOCATION.CADENCE + " real, ")
+            + (DB.LOCATION.TEMPERATURE + " real, ")
+            + (DB.LOCATION.PRESSURE + " real, ")
+            + (DB.LOCATION.ELAPSED + " real, ")
+            + (DB.LOCATION.DISTANCE + " real, ")
+            //Additional data, uses one byte for null data
+            + (DB.LOCATION.GPS_ALTITUDE + " real, ")
+            + (DB.LOCATION.ACCURANCY + " real, ")
             + (DB.LOCATION.SPEED + " real, ")
             + (DB.LOCATION.BEARING + " real, ")
-            + (DB.LOCATION.HR + " integer, ")
-            + (DB.LOCATION.CADENCE + " integer ")
+            + (DB.LOCATION.SATELLITES + " integer ")
             + ");";
 
     private static final String CREATE_TABLE_LAP = "create table "
@@ -111,7 +119,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.LAP.PLANNED_PACE + " real, ")
             + (DB.LAP.AVG_HR + " integer, ")
             + (DB.LAP.MAX_HR + " integer, ")
-            + (DB.LAP.AVG_CADENCE + " integer ")
+            + (DB.LAP.AVG_CADENCE + " real ")
             + ");";
 
     private static final String CREATE_TABLE_ACCOUNT = "create table "
@@ -280,16 +288,33 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (oldVersion > 0 && oldVersion < 25 && newVersion >= 25) {
             echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_CADENCE
-                    + " integer");
+                    + " real");
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.CADENCE
-                    + " integer");
+                    + " real");
             echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column "
-                    + DB.ACTIVITY.AVG_CADENCE + " integer");
+                    + DB.ACTIVITY.AVG_CADENCE + " real");
         }
 
         if (oldVersion > 0 && oldVersion < 28 && newVersion >= 28) {
             echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + " add column " + DB.ACCOUNT.AUTH_NOTICE
                     + " integer");
+        }
+
+        if (oldVersion > 0 && oldVersion < 31 && newVersion >= 31) {
+            echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.TEMPERATURE
+                    + " real");
+            echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.PRESSURE
+                    + " real");
+            echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.GPS_ALTITUDE
+                    + " real");
+            echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.SATELLITES
+                    + " integer");
+            echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.ELAPSED
+                    + " real");
+            echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.DISTANCE
+                    + " real");
+            echoDo(arg0, "alter table " + DB.ACTIVITY.TABLE + " add column " + DB.ACTIVITY.META_DATA
+                    + " text");
         }
 
         insertAccounts(arg0);

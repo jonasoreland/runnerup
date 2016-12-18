@@ -24,8 +24,10 @@ import android.location.Location;
 import android.os.Build;
 import android.util.Pair;
 
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.KXmlSerializer;
+import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.IOException;
@@ -81,7 +83,7 @@ public class TCX {
 
         String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
-                DB.ACTIVITY.START_TIME, DB.ACTIVITY.SPORT
+                DB.ACTIVITY.START_TIME, DB.ACTIVITY.SPORT, DB.ACTIVITY.META_DATA
         };
         Cursor cursor = mDB.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
                 + activityId, null, null, null, null);
@@ -93,6 +95,10 @@ public class TCX {
             mXML.setOutput(writer);
             mXML.startDocument("UTF-8", true);
             mXML.startTag("", "TrainingCenterDatabase");
+            mXML.attribute("", "xmlns:xsi",
+                    "http://www.w3.org/2001/XMLSchema-instance");
+            mXML.attribute("", "xmlns:xsd",
+                    "http://www.w3.org/2001/XMLSchema");
             mXML.attribute("", "xmlns:ext",
                     "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
             mXML.attribute("", "xmlns",
@@ -104,29 +110,40 @@ public class TCX {
             } else {
                 // TCX supports only these 3 sports...(cf http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
                 sport = Sport.valueOf(cursor.getInt(3));
-                switch (sport.getDbValue()) {
-                    case DB.ACTIVITY.SPORT_RUNNING:
-                        mXML.attribute("", "Sport", "Running");
-                        break;
-                    case DB.ACTIVITY.SPORT_BIKING:
-                        mXML.attribute("", "Sport", "Biking");
-                        break;
-                    default:
-                        mXML.attribute("", "Sport", "Other");
-                        break;
+                if (sport.IsRunning()) {
+                    mXML.attribute("", "Sport", "Running");
+                }
+                else if (sport.IsCycling()) {
+                    mXML.attribute("", "Sport", "Biking");
+                }
+                else {
+                    mXML.attribute("", "Sport", "Other");
                 }
             }
             mXML.startTag("", "Id");
             String id = formatTime(startTime * 1000);
             mXML.text(id);
             mXML.endTag("", "Id");
-            exportLaps(activityId, startTime * 1000);
+            exportLaps(activityId, startTime * 1000, sport);
             if (!cursor.isNull(1)) {
                 notes = cursor.getString(1);
                 mXML.startTag("", "Notes");
                 mXML.text(notes);
                 mXML.endTag("", "Notes");
             }
+            mXML.startTag("", "Creator");
+            mXML.attribute("", "xsi:type", "Device_t");
+            mXML.startTag("", "Name");
+            String creator = "RunnerUp " + android.os.Build.MODEL;
+            if (!cursor.isNull(4)) {
+                String metaData = cursor.getString(4);
+                if (metaData.contains(DB.ACTIVITY.WITH_BAROMETER)) {
+                    creator += " with barometer";
+                }
+            }
+            mXML.text(creator);
+            mXML.endTag("", "Name");
+            mXML.endTag("", "Creator");
             mXML.endTag("", "Activity");
             mXML.endTag("", "Activities");
             mXML.endTag("", "TrainingCenterDatabase");
@@ -142,7 +159,7 @@ public class TCX {
         }
     }
 
-    private void exportLaps(long activityId, long startTime) throws IOException {
+    private void exportLaps(long activityId, long startTime, Sport sport) throws IOException {
         String[] lColumns = {
                 DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
                 DB.LAP.INTENSITY
@@ -153,7 +170,8 @@ public class TCX {
         String[] pColumns = {
                 DB.LOCATION.LAP, DB.LOCATION.TIME,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
-                DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR
+                DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR,
+                DB.LOCATION.CADENCE, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
@@ -249,6 +267,57 @@ public class TCX {
                                     mXML.endTag("", "HeartRateBpm");
                                 }
                             }
+
+                            boolean isCad = !cLocation.isNull(7);
+                            boolean isBikeCad = isCad && sport.IsCycling();
+                            boolean isRunCad = isCad && !isBikeCad;
+                            //Not supported in .tcx, uncomment for testing
+                            //boolean isTemp = !cLocation.isNull(8);
+                            //boolean isPres = !cLocation.isNull(9);
+                            //boolean isAnyExt = isRunCad || isTemp || isPres;
+                            if (isBikeCad) {
+                                int val = cLocation.getInt(7);
+                                mXML.startTag("", "Cadence");
+                                String sval = Integer.toString(val);
+                                mXML.text(sval);
+                                mXML.endTag("", "Cadence");
+                            }
+                            if (isRunCad) {
+                                mXML.startTag("", "Extensions");
+                                mXML.startTag("", "TPX");
+                                mXML.attribute("", "xmlns",
+                                        "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+                                //"standard" extensions: RunCadence, Speed, Watts
+                            }
+                            if (isRunCad) {
+                                int val = cLocation.getInt(7);
+                                mXML.startTag("", "RunCadence");
+                                String sval = Integer.toString(val);
+                                mXML.text(sval);
+                                mXML.endTag("", "RunCadence");
+                                // Not including "CadenceSensor Footpod" etc
+                            }
+                            //if (isTemp || isPres) {
+                            //    if (isTemp) {
+                            //        int val = cLocation.getInt(8);
+                            //        mXML.startTag("", "ext:Temperature");
+                            //        String sval = Float.toString(val);
+                            //        mXML.text(sval);
+                            //        mXML.endTag("", "ext:Temperature");
+                            //    }
+                            //    if (isPres) {
+                            //        int val = cLocation.getInt(9);
+                            //        mXML.startTag("", "ext:Pressure");
+                            //        String sval = Float.toString(val);
+                            //        mXML.text(sval);
+                            //        mXML.endTag("", "ext:Pressure");
+                            //    }
+                            //}
+                            if (isRunCad) {
+                                mXML.endTag("", "TPX");
+                                mXML.endTag("", "Extensions");
+                            }
+
                             mXML.endTag("", "Trackpoint");
                             last_time = time;
                             last_lat = lat;

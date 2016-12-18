@@ -232,12 +232,12 @@ public class WorkoutSerializer {
                 obj.put("endConditionUnitKey", "centimeter");
                 break;
             case SPEED:
-                break;
             case PACE:
-                break;
             case HR:
-                break;
             case HRZ:
+            case CAD:
+            case TEMPERATURE:
+            case PRESSURE:
                 break;
         }
     }
@@ -346,6 +346,9 @@ public class WorkoutSerializer {
                 obj.put("targetValueUnitKey", "bpm");
                 break;
             case HRZ:
+            case CAD:
+            case TEMPERATURE:
+            case PRESSURE:
                 break;
         }
     }

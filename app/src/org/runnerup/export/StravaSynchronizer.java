@@ -28,6 +28,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -195,23 +196,23 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         }
 
         String URL = REST_URL;
-        TCX tcx = new TCX(db);
+        GPX gpx = new GPX(db, true, false);
         HttpURLConnection conn = null;
         Exception ex = null;
         try {
             StringWriter writer = new StringWriter();
-            tcx.export(mID, writer);
+            gpx.export(mID, writer);
             conn = (HttpURLConnection) new URL(URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
 
-            Part<StringWritable> part0 = new Part<StringWritable>("access_token",
+            Part<StringWritable> part0 = new Part<>("access_token",
                     new StringWritable(access_token));
-            Part<StringWritable> part1 = new Part<StringWritable>("data_type",
-                    new StringWritable("tcx"));
-            Part<StringWritable> part2 = new Part<StringWritable>("file",
+            Part<StringWritable> part1 = new Part<>("data_type",
+                    new StringWritable("gpx"));
+            Part<StringWritable> part2 = new Part<>("file",
                     new StringWritable(writer.toString()));
-            part2.setFilename("RunnerUp.tcx");
+            part2.setFilename("RunnerUp.gpx");
             part2.setContentType("application/octet-stream");
             Part<?> parts[] = {
                     part0, part1, part2

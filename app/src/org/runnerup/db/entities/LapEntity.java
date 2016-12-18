@@ -188,20 +188,20 @@ public class LapEntity extends AbstractEntity {
     /**
      * Avarage cadence of the lap
      */
-    public void setAvgCadence(Integer value) {
+    public void setAvgCadence(Float value) {
         values().put(Constants.DB.LAP.AVG_CADENCE, value);
     }
 
-    public Integer getAvgCadence() {
+    public Float getAvgCadence() {
         if (values().containsKey(Constants.DB.LAP.AVG_CADENCE)) {
-            return values().getAsInteger(Constants.DB.LAP.AVG_CADENCE);
+            return values().getAsFloat(Constants.DB.LAP.AVG_CADENCE);
         }
         return null;
     }
 
     @Override
     public ArrayList<String> getValidColumns() {
-        ArrayList<String> columns = new ArrayList<String>();
+        ArrayList<String> columns = new ArrayList<>();
         columns.add(Constants.DB.PRIMARY_KEY);
         columns.add(Constants.DB.LAP.ACTIVITY);
         columns.add(Constants.DB.LAP.LAP);

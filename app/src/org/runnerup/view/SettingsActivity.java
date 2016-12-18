@@ -44,6 +44,9 @@ import android.util.Log;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.tracker.component.TrackerCadence;
+import org.runnerup.tracker.component.TrackerPressure;
+import org.runnerup.tracker.component.TrackerTemperature;
 import org.runnerup.util.FileUtil;
 import org.runnerup.widget.AboutPreference;
 
@@ -94,7 +97,23 @@ public class SettingsActivity extends PreferenceActivity
             getPreferenceManager().findPreference(res.getString(R.string.pref_battery_level_low_threshold)).setEnabled(false);
             getPreferenceManager().findPreference(res.getString(R.string.pref_battery_level_high_threshold)).setEnabled(false);
         }
+        {
+            Preference pref = findPreference(this.getString(R.string.pref_experimental_features));
+            pref.setSummary(null);
+        }
 
+        if (!TrackerCadence.isAvailable(this)) {
+            Preference pref = findPreference(this.getString(R.string.pref_use_cadence_step_sensor));
+            pref.setEnabled(false);
+        }
+        if (!TrackerTemperature.isAvailable(this)) {
+            Preference pref = findPreference(this.getString(R.string.pref_use_temperature_sensor));
+            pref.setEnabled(false);
+        }
+        if (!TrackerPressure.isAvailable(this)) {
+            Preference pref = findPreference(this.getString(R.string.pref_use_pressure_sensor));
+            pref.setEnabled(false);
+        }
     }
 
     public static boolean hasHR(Context ctx) {

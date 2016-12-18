@@ -253,6 +253,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 return formatHeartRateZone(target, value);
             case SPEED:
                 return formatSpeed(target, value);
+            case CAD:
+                return formatCadence(target, value);
+            case TEMPERATURE:
+                return formatCadence(target, value);//TODO
+            case PRESSURE:
+                return formatCadence(target, value);//TODO
         }
         return "";
     }
@@ -357,6 +363,28 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case TXT_SHORT:
             case TXT_LONG:
                 return Integer.toString(bpm);
+        }
+        return "";
+    }
+
+    /**
+     * Format cadence
+     *
+     * @param target
+     * @param val
+     * @return
+     */
+    public String formatCadence(int target, double val) {
+        switch (target) {
+            case CUE:
+            case CUE_SHORT:
+            case CUE_LONG:
+                return Integer.toString((int) Math.round(val)) + " "
+                        + cueResources.getQuantityString(R.plurals.cue_bpm, (int)val);
+            case TXT:
+            case TXT_SHORT:
+            case TXT_LONG:
+                return Integer.toString((int) Math.round(val));
         }
         return "";
     }
@@ -576,9 +604,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 return formatRemainingTime(target, value);
             case PACE:
             case SPEED:
-                break;
             case HR:
-                break;
+            case CAD:
+            case TEMPERATURE:
+            case PRESSURE:
             default:
                 break;
         }

@@ -29,6 +29,7 @@ import org.runnerup.R;
 import org.runnerup.export.GoogleFitSynchronizer;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.JsonWriter;
+import org.runnerup.workout.Sport;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -49,15 +50,15 @@ public class GoogleFitData {
     public static final int SECONDS_TO_MILLIS = 1000;
     public static final int MICRO_TO_NANOS = 1000000;
     public static final int SECONDS_TO_NANOS = 1000000000;
-    private static final Map<Integer, Integer> ACTIVITY_TYPE;
+    private static final Map<Sport, Integer> ACTIVITY_TYPE;
     static {
-        Map<Integer, Integer> aMap = new HashMap<Integer, Integer>();
+        Map<Sport, Integer> aMap = new HashMap<>();
         // sports list can be found at https://developers.google.com/fit/rest/v1/reference/activity-types
-        aMap.put(DB.ACTIVITY.SPORT_RUNNING, 8);
-        aMap.put(DB.ACTIVITY.SPORT_BIKING, 1);
-        aMap.put(DB.ACTIVITY.SPORT_OTHER, 4);
-        aMap.put(DB.ACTIVITY.SPORT_ORIENTEERING, 4); //not supported so considering unknown
-        aMap.put(DB.ACTIVITY.SPORT_WALKING, 7);
+        aMap.put(Sport.RUNNING, 8);
+        aMap.put(Sport.BIKING, 1);
+        aMap.put(Sport.OTHER, 4);
+        aMap.put(Sport.ORIENTEERING, 4); //not supported so considering unknown
+        aMap.put(Sport.WALKING, 7);
         ACTIVITY_TYPE = Collections.unmodifiableMap(aMap);
     }
     private static final Map<DataSourceType, List<DataTypeField>> DATA_TYPE_FIELDS;
@@ -248,7 +249,7 @@ public class GoogleFitData {
             w.name("value");
             w.beginArray();
             w.beginObject();
-            w.name("intVal").value(ACTIVITY_TYPE.get(cursor.getInt(2)));
+            w.name("intVal").value(ACTIVITY_TYPE.get(Sport.valueOf((cursor.getInt(2)))));
             w.endObject();
             w.endArray();
             w.name("rawTimestampNanos").value(startTime);
@@ -426,7 +427,7 @@ public class GoogleFitData {
             w.name("endTimeMillis").value(endTime);
             w.name("application");
             addApplicationObject(w);
-            w.name("activityType").value(ACTIVITY_TYPE.get(cursor.getInt(cursor.getColumnIndex(DB.ACTIVITY.SPORT))));
+            w.name("activityType").value(ACTIVITY_TYPE.get(Sport.valueOf(cursor.getInt(cursor.getColumnIndex(DB.ACTIVITY.SPORT)))));
             w.endObject();
         } catch (IOException e) {
             e.printStackTrace();

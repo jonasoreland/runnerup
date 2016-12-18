@@ -21,6 +21,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 
 import org.runnerup.common.util.Constants;
+import org.runnerup.workout.Sport;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -289,21 +290,19 @@ public class RunalyzePost {
      * |  5 | Other
      * </pre>
      *
-     * @param sport The sport as used in runnerup
+     * @param dbValue The sport as used in runnerup
      * @return The id of the sport in a string
      */
-    public String runnerupSport2RunalyzeSport(int sport) {
-        switch(sport) {
-            case Constants.DB.ACTIVITY.SPORT_RUNNING:
-                return "1";
-            case Constants.DB.ACTIVITY.SPORT_BIKING:
-                return "3";
-            case Constants.DB.ACTIVITY.SPORT_OTHER:
-            case Constants.DB.ACTIVITY.SPORT_ORIENTEERING:
-            case Constants.DB.ACTIVITY.SPORT_WALKING:
-            default:
-                return "5";
+    public String runnerupSport2RunalyzeSport(int dbValue) {
+        Sport sport = Sport.valueOf(dbValue);
+        if (sport.IsRunning()) {
+            return "1";
         }
+        if (sport.IsCycling()) {
+            return "3";
+        }
+
+        return "5";
     }
 
     /**
@@ -321,22 +320,16 @@ public class RunalyzePost {
      * |  8 | Warm-up            | WU   |       1 |
      * </pre>
      *
-     * @param sport The sport id used in runnerup
+     * @param dbValue The sport id used in runnerup
      * @return The sport id for runalyze in a string
      */
-    public String runnerupSport2RunalyzeType(int sport) {
-        switch(sport) {
-            case Constants.DB.ACTIVITY.SPORT_RUNNING:
-                return "1";
-            case Constants.DB.ACTIVITY.SPORT_BIKING:
-            case Constants.DB.ACTIVITY.SPORT_OTHER:
-            case Constants.DB.ACTIVITY.SPORT_ORIENTEERING:
-            case Constants.DB.ACTIVITY.SPORT_WALKING:
-            default:
-                return "";
+    public String runnerupSport2RunalyzeType(int dbValue) {
+        Sport sport = Sport.valueOf(dbValue);
+        if (sport.IsRunning()) {
+            return "1";
         }
+        return "";
     }
-
     /**
      * <em>Runalyze</em> calculates the calories using the table of sports. By default they
      * are using this:
@@ -348,24 +341,21 @@ public class RunalyzePost {
      * |  4 | Gymnastics |  280 |
      * |  5 | Other      |  500 |
      * </pre>
-     * @param sport The sport id used in runnerup
+     * @param dbValue The sport id used in runnerup
      * @param seconds The time of the activity for the calculation
      * @return The kCal used in string
      */
-    public String calculateKCal(int sport, long seconds) {
-        switch(sport) {
-            case Constants.DB.ACTIVITY.SPORT_RUNNING:
-                return Integer.toString(Math.round((880.0F/3600.0F) * seconds));
-            case Constants.DB.ACTIVITY.SPORT_BIKING:
-                return Integer.toString(Math.round((770.0F/3600.0F) * seconds));
-            case Constants.DB.ACTIVITY.SPORT_OTHER:
-            case Constants.DB.ACTIVITY.SPORT_ORIENTEERING:
-            case Constants.DB.ACTIVITY.SPORT_WALKING:
-            default:
-                return Integer.toString(Math.round((500.0F/3600.0F) * seconds));
+    public String calculateKCal(int dbValue, long seconds) {
+        Sport sport = Sport.valueOf(dbValue);
+        if (sport.IsRunning()) {
+            return Integer.toString(Math.round((880.0F / 3600.0F) * seconds));
         }
+        if (sport.IsCycling()) {
+            return Integer.toString(Math.round((770.0F / 3600.0F) * seconds));
+        }
+        //Constants.DB.ACTIVITY.SPORT_OTHER:
+        return Integer.toString(Math.round((500.0F / 3600.0F) * seconds));
     }
-
     /**
      * Method that writes all the fields that are related to the activity information.
      * @param activityId The activity id to export

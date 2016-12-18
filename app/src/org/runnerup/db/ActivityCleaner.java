@@ -73,6 +73,9 @@ public class ActivityCleaner implements Constants {
                 DB.LOCATION.LONGITUDE,
                 DB.LOCATION.TYPE,
                 DB.LOCATION.HR,
+                //DB.LOCATION.CADENCE,
+                //DB.LOCATION.TEMPERATURE,
+                //DB.LOCATION.PRESSURE,
                 "_id"
         };
 

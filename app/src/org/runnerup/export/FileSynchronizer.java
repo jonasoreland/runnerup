@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 gerhard.olsson@gmail.com
+ * Copyright (C) 2016 gerhard.nospam@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 tcx.export(mID, new OutputStreamWriter(out));
             }
             if (format.contains("gpx")) {
-                GPX gpx = new GPX(db, true);
+                GPX gpx = new GPX(db, true, true);
                 File file = new File(fileBase + "gpx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 gpx.export(mID, new OutputStreamWriter(out));

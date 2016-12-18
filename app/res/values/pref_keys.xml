@@ -124,18 +124,26 @@
     <string name="pref_autopause_active">pref_autopause_active</string>
     <string name="pref_autopause_afterseconds">pref_autopause_afterseconds</string>
     <string name="pref_autopause_minpace">pref_autopause_minpace</string>
-    <string name="pref_min_livelog_delay_millis">pref_min_livelog_delay_millis</string>
+    <!--string name="pref_min_livelog_delay_millis">pref_min_livelog_delay_millis</string-->
 
     <string name="pref_battery_level_low_threshold">batterylevelLowThreshold</string>
     <string name="pref_battery_level_high_threshold">batterylevelHighThreshold</string>
     <string name="pref_battery_level_low_notification_discard">batteryLevelLowDialog</string>
+
+    <string name="pref_use_cadence_step_sensor">pref_use_cadence_step_sensor</string>
+    <string name="pref_use_temperature_sensor">pref_use_temperature_sensor</string>
+    <string name="pref_use_pressure_sensor">pref_use_pressure_sensor</string>
+
+    <string name="pref_pressure_elevation_gps_average">pref_pressure_elevation_gps_average</string>
+    <string name="pref_log_gpx_accuracy">pref_log_gpx_accuracy</string>
+
+    <string name="pref_experimental_features">pref_experimental_features</string>
+
+    <string name="pref_audio_lang">pref_audio_lang</string>
 
     <string name="pref_exportdb">pref_exportdb</string>
     <string name="pref_importdb">pref_importdb</string>
     <string name="pref_prunedb">pref_prunedb</string>
     <string name="pref_aboutcategory">pref_aboutcategory</string>
     <string name="pref_googleplayserviceslegalnotices">pref_googleplayserviceslegalnotices</string>
-    <string name="pref_experimental_features">pref_experimental_features</string>
-
-    <string name="pref_audio_lang">pref_audio_lang</string>
 </resources>

@@ -32,7 +32,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -89,6 +88,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StartActivity extends Activity implements TickListener, GpsInformation {
@@ -102,12 +102,13 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     Tracker mTracker = null;
     org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
-    TabHost tabHost = null;
-    Button startButton = null;
-    TextView gpsInfoView1 = null;
-    TextView gpsInfoView2 = null;
-    View gpsInfoLayout = null;
-    TextView hrInfo = null;
+    private TabHost tabHost = null;
+    private Button startButton = null;
+    private TextView gpsInfoText = null;
+    private TextView gpsInfoView1 = null;
+    private TextView gpsInfoView2 = null;
+    private View gpsInfoLayout = null;
+    private TextView hrInfo = null;
 
     ImageButton hrButton = null;
     TextView hrValueText = null;
@@ -180,6 +181,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         startButton = (Button) findViewById(R.id.start_button);
         startButton.setOnClickListener(startButtonClick);
         gpsInfoLayout = findViewById(R.id.gpsinfo);
+        gpsInfoText = (TextView) findViewById(R.id.gps_info_text);
         gpsInfoView1 = (TextView) findViewById(R.id.gps_info1);
         gpsInfoView2 = (TextView) findViewById(R.id.gps_info2);
         hrInfo = (TextView) findViewById(R.id.hr_info);
@@ -336,6 +338,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         } else {
             onGpsTrackerBound();
         }
+        this.updateView();
     }
 
     @Override
@@ -444,8 +447,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 case CONNECTED:
                 case STARTED:
                 case PAUSED:
-                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
-                    return;
+                    if (BuildConfig.DEBUG) {
+                        //Seem to happen when returning to RunnerUp
+                        Log.e(getClass().getName(),"onGpsTrackerBound unexpected tracker state: "+mTracker.getState().toString());
+                    }
+                    break;
                 case ERROR:
                     break;
             }
@@ -617,13 +623,17 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     };
 
     private void updateView() {
-        {
+        if (!mGpsStatus.isEnabled() || !mGpsStatus.isLogging()) {
+            gpsInfoText.setVisibility(View.GONE);
+            gpsInfoView1.setText("");
+            gpsInfoView2.setText("");
+        } else {
             int cnt0 = mGpsStatus.getSatellitesFixed();
             int cnt1 = mGpsStatus.getSatellitesAvailable();
+            gpsInfoText.setVisibility(View.VISIBLE);
             gpsInfoView1.setText(": " + cnt0 + "/" + cnt1);
+            gpsInfoView2.setText(getGpsAccuracy());
         }
-
-        gpsInfoView2.setText(getGpsAccuracy());
 
         int playIcon = 0;
         if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
@@ -716,15 +726,19 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
 
     @Override
     public String getGpsAccuracy() {
+        String s = "";
         if (mTracker != null) {
             Location l = mTracker.getLastKnownLocation();
 
             if (l != null && l.getAccuracy() > 0) {
-                return String.format(", %s m", l.getAccuracy());
+                s = String.format(Locale.getDefault(), ", %s m", l.getAccuracy());
+            }
+            if (mTracker.getCurrentElevation() != null) {
+                s += String.format(Locale.getDefault(), " (%.1f m)", mTracker.getCurrentElevation());
             }
         }
 
-        return "";
+        return s;
     }
 
     private boolean mIsBound = false;
@@ -787,9 +801,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 onGpsTrackerBound();
             }
         } else {
-            updateView();
             advancedWorkoutListAdapter.reload();
         }
+        updateView();
     }
 
     @Override
