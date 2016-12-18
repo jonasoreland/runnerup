@@ -61,14 +61,17 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private static final UUID[] SCAN_UUIDS = {
         HRP_SERVICE
     };
-    private static boolean AVOID_SCAN_WITH_UUID = false;
-    private static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = false;
+    private final static boolean AVOID_SCAN_WITH_UUID;
+    private final static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN;
 
     static {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             // 4.3
             AVOID_SCAN_WITH_UUID = true;
             CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = true;
+        } else {
+            AVOID_SCAN_WITH_UUID = false;
+            CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = false;
         }
     }
 

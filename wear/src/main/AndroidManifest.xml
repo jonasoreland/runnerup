@@ -50,7 +50,7 @@
             </intent-filter>
         </service>
 
-        <service android:name=".service.StateService"></service>
+        <service android:name=".service.StateService" />
 
     </application>
 

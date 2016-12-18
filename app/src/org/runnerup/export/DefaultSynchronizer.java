@@ -29,8 +29,6 @@ import android.util.Pair;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
-import org.runnerup.db.entities.LapEntity;
-import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.feed.FeedList.FeedUpdater;
