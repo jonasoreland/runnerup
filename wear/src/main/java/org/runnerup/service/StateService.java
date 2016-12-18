@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -91,7 +92,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
                                 new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                                     @Override
-                                    public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                                    public void onResult(@NonNull NodeApi.GetConnectedNodesResult nodes) {
                                         System.err.println("onGetConnectedNodes");
                                         for (Node n : nodes.getNodes()) {
                                             onPeerConnected(n);
@@ -106,7 +107,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 })
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
-                    public void onConnectionFailed(ConnectionResult result) {
+                    public void onConnectionFailed(@NonNull ConnectionResult result) {
                     }
                 })
                 .addApi(Wearable.API)
@@ -128,7 +129,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 .setResultCallback(
                         new ResultCallback<DataItemBuffer>() {
                             @Override
-                            public void onResult(DataItemBuffer dataItems) {
+                            public void onResult(@NonNull DataItemBuffer dataItems) {
                                 for (DataItem dataItem : dataItems) {
                                     phoneNode = dataItem.getUri().getHost();
                                     System.err.println("getDataItem => phoneNode:" + phoneNode);
@@ -141,7 +142,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 .setResultCallback(
                         new ResultCallback<DataItemBuffer>() {
                             @Override
-                            public void onResult(DataItemBuffer dataItems) {
+                            public void onResult(@NonNull DataItemBuffer dataItems) {
                                 for (DataItem dataItem : dataItems) {
                                     TrackerState newState = getTrackerStateFromDataItem(dataItem);
                                     if (newState != null)

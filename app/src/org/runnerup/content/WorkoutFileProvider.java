@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -54,7 +55,7 @@ public class WorkoutFileProvider extends ContentProvider {
     }
 
     @Override
-    public ParcelFileDescriptor openFile(Uri uri, String mode)
+    public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode)
             throws FileNotFoundException {
 
         // Check incoming Uri against the matcher
@@ -88,23 +89,23 @@ public class WorkoutFileProvider extends ContentProvider {
     // //////////////////////////////////////////////////////////////
 
     @Override
-    public int update(Uri uri, ContentValues contentvalues, String s,
-            String[] as) {
+    public int update(@NonNull Uri uri, ContentValues contentvalues, String s,
+                      String[] as) {
         return 0;
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] as) {
+    public int delete(@NonNull Uri uri, String s, String[] as) {
         return 0;
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues contentvalues) {
+    public Uri insert(@NonNull Uri uri, ContentValues contentvalues) {
         return null;
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         if (uriMatcher.match(uri) == 1) {
             return MIME;
         }
@@ -112,8 +113,8 @@ public class WorkoutFileProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String s, String[] as1,
-            String s1) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String s, String[] as1,
+                        String s1) {
         return null;
     }
 }

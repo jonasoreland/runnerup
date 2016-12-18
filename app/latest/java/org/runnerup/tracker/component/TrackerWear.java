@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.Pair;
@@ -149,7 +150,7 @@ public class TrackerWear extends DefaultTrackerComponent
                                         new ResultCallback<NodeApi.GetConnectedNodesResult>() {
 
                                             @Override
-                                            public void onResult (NodeApi.GetConnectedNodesResult nodes){
+                                            public void onResult (@NonNull NodeApi.GetConnectedNodesResult nodes){
                                                 for (Node node : nodes.getNodes()) {
                                                     onPeerConnected(node);
                                                 }
@@ -165,7 +166,7 @@ public class TrackerWear extends DefaultTrackerComponent
                 })
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
-                    public void onConnectionFailed(ConnectionResult result) {
+                    public void onConnectionFailed(@NonNull ConnectionResult result) {
                         callback.run(TrackerWear.this, ResultCode.RESULT_ERROR);
                     }
                 })
@@ -181,7 +182,7 @@ public class TrackerWear extends DefaultTrackerComponent
                 .setResultCallback(
                         new ResultCallback<DataItemBuffer>() {
                             @Override
-                            public void onResult(DataItemBuffer dataItems) {
+                            public void onResult(@NonNull DataItemBuffer dataItems) {
                                 for (DataItem dataItem : dataItems) {
                                     wearNode = dataItem.getUri().getHost();
                                     Log.e(getName(), "getDataItem => wearNode:" + wearNode);
@@ -220,7 +221,7 @@ public class TrackerWear extends DefaultTrackerComponent
                 PutDataRequest.create(path).setData(DataMap.fromBundle(b).toByteArray()))
                 .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
                     @Override
-                    public void onResult(DataApi.DataItemResult dataItemResult) {
+                    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
                         if (!dataItemResult.getStatus().isSuccess()) {
                             Log.e(getName(), "TrackerWear: ERROR: failed to putDataItem, " +
                                     "status code: " + dataItemResult.getStatus().getStatusCode());
