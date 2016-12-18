@@ -212,9 +212,9 @@
   <string name="About">Om</string>
   <string name="About_RunnerUp">Om RunnerUp</string>
   <string name="Triggers">Starta ljud vid</string>
-  <string name="Time_triggered_audio_cue">Tidstriggat ljudmeddelande</string>
+  <string name="Time_triggered_audio_cue">Meddelande triggat av tid</string>
   <string name="Cue_interval_s">Meddelande intervall (s)</string>
-  <string name="Distance_triggered_audio_cue">Distanstriggat meddelande</string>
+  <string name="Distance_triggered_audio_cue">Meddelande triggat av distans</string>
   <string name="Cue_intervall_m">Meddelande intervall (m)</string>
   <string name="End_of_lap_audio_cue">Meddelande vid varvslut</string>
   <string name="Mute_music_during_audio_cues">Tysta musik under ljudmeddelanden</string>
@@ -309,5 +309,8 @@
   <string name="Recording">Inspelning</string>
   <string name="Sensors">Sensorer</string>
   <string name="Maintenance">Underhåll</string>
+  <string name="cue_hrm_connection_restored">Återfått koppling till pulsmätare</string>
+  <string name="cue_hrm_connection_lost">Tappat koppling till pulsmätare</string>
+  <string name="HRM_connection_audio_cue">Meddelande triggat av koppling till pulsmätare</string>
   <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
 </resources>
