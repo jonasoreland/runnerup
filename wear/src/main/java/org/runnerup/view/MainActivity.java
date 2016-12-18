@@ -83,7 +83,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         super.onPause();
         if (mStateService != null) {
             mStateService.unregisterTrackerStateListener(this);
-            mStateService.unregisterPauseStepListener(this);
+            mStateService.unregisterPauseStepListener();
         }
         getApplicationContext().unbindService(mStateServiceConnection);
         mStateService = null;
@@ -266,7 +266,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         }
     }
 
-    public void onPauseStepChanged(final Boolean oldValue, final Boolean newValue) {
+    public void onPauseStepChanged(final Boolean newValue) {
         synchronized (trackerState) {
             runOnUiThread(new Runnable() {
                 @Override

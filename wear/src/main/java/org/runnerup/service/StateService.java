@@ -194,7 +194,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     @Override
     public void onValueChanged(ValueModel<Boolean> instance, Boolean oldValue, Boolean newValue) {
         if (pauseStepListener != null)
-            pauseStepListener.onPauseStepChanged(oldValue, newValue);
+            pauseStepListener.onPauseStepChanged(newValue);
     }
 
     public class LocalBinder extends android.os.Binder {
@@ -341,7 +341,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         this.pauseStepListener = listener;
     }
 
-    public void unregisterPauseStepListener(MainActivity listener) {
+    public void unregisterPauseStepListener() {
         this.pauseStepListener = null;
     }
 
