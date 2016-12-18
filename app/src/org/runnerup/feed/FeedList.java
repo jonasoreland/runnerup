@@ -230,7 +230,7 @@ public class FeedList extends Observable implements Constants {
     }
 
     private static boolean match(ContentValues c0, ContentValues c1, boolean filterDuplicates) {
-        boolean same_account = c0.getAsLong(DB.FEED.ACCOUNT_ID) == c1.getAsLong(DB.FEED.ACCOUNT_ID);
+        boolean same_account = c0.getAsLong(DB.FEED.ACCOUNT_ID).equals(c1.getAsLong(DB.FEED.ACCOUNT_ID));
         if (same_account) {
             /*
              * Always filter duplicates from same account
