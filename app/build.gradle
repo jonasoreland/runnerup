@@ -86,8 +86,8 @@ android {
         fatal 'InlinedApi', 'InconsistentArrays'
         //Required as Froyo support dropped in com.android.support:design:24.1.0
         warning 'GradleCompatible'
-        // Ignore some specific checks, also some specific with path in lint.xml
-        warning 'MissingTranslation'
+        // Ignore some specific checks completely
+        ignore 'MissingTranslation'
         showAll true
         //debug issues in Travis
         textReport true
