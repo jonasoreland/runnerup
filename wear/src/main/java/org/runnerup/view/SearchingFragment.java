@@ -52,6 +52,6 @@ public class SearchingFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        MainActivity activity1 = (MainActivity) activity;
+        //MainActivity activity1 = (MainActivity) activity;
     }
 }

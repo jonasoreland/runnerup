@@ -48,7 +48,7 @@ public class ConnectToPhoneFragment extends Fragment implements ValueModel.Chang
         super.onViewCreated(view, savedInstanceState);
 
         mButton = (DelayedConfirmationView) view.findViewById(R.id.icon_open_on_phone);
-        TextView mTxt = (TextView) view.findViewById(R.id.txt_open_on_phone);
+        //TextView mTxt = (TextView) view.findViewById(R.id.txt_open_on_phone);
 
         mButton.setListener(mListener);
 
