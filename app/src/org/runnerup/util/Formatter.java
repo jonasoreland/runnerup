@@ -526,7 +526,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private String cueSpeed(double meter_per_seconds) {
         double distance_per_seconds = meter_per_seconds / base_meters;
         double distance_per_hour = distance_per_seconds * 3600;
-        return cueResources.getQuantityString(km ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour, (int)distance_per_hour, distance_per_hour);
+        String fmtDistPerHour = txtSpeed(meter_per_seconds, false);
+        return cueResources.getQuantityString(km ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
+                (int)distance_per_hour, fmtDistPerHour);
     }
 
     /**

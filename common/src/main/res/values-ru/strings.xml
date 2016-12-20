@@ -33,6 +33,8 @@
   <string name="Rest_distance_m">Дистанция отдыха (м)</string>
   <string name="Duration_time_HHMMSS">Длительность (чч:мм:сс)</string>
   <string name="Duration_distance_m">Дистанция (м)</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ОК</string>
   <!--other-->
@@ -46,7 +48,6 @@
   <string name="repeat">повторять</string>
   <string name="time">Время</string>
   <string name="distance">Дистанция</string>
-  <string name="Unknown">Неизвестно</string>
   <string name="Distance">Дистанция</string>
   <string name="speed">скорость</string>
   <string name="pace">Темп</string>
@@ -295,4 +296,5 @@
   <string name="Uploading_to_1s">Выгрузка в %1$s</string>
   <string name="Loading_activities">Загрузка данных</string>
   <string name="Fetching_activities_from_1s">Извлечение данных из %1$s</string>
+  <string name="Unknown">Неизвестно</string>
 </resources>

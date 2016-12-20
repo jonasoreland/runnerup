@@ -29,6 +29,8 @@
   <string name="Interval_distance_m">Interval de distància (m)</string>
   <string name="Duration_time_HHMMSS">Duració (HH:MM:SS)</string>
   <string name="Duration_distance_m">Distància de duració (m)</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <!--other-->
   <string name="Google_Play_Services_Legal_Notices">Termes legals dels serveis de Google</string>
@@ -40,7 +42,6 @@
   <string name="repeat">repeteix</string>
   <string name="time">temps</string>
   <string name="distance">distància</string>
-  <string name="Unknown">Desconegut</string>
   <string name="Distance">Distància</string>
   <string name="speed">velocitat</string>
   <string name="Zone">Zona</string>
@@ -197,4 +198,5 @@
   <string name="Uploading_to_1s">S\'està penjant a %1$s</string>
   <string name="Loading_activities">S\'estan carregant les activitats</string>
   <string name="Fetching_activities_from_1s">S\'estan baixant els entrenaments des de %1$s</string>
+  <string name="Unknown">Desconegut</string>
 </resources>
