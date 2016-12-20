@@ -56,9 +56,9 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             case ERROR:
                 return 0;
             case CONNECTING:
-                return 3;
+                return 3; //kMaxConnectRetries
             case RECONNECTING:
-                return 10;
+                return 10; //kMaxReconnectRetries
         }
         return 0;
     }

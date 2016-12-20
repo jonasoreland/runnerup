@@ -301,7 +301,7 @@ public class TrackerWear extends DefaultTrackerComponent
                 return;
 
             mWorkoutSenderRunning = true;
-            long tickFrequencyPause = 500;
+            long tickFrequencyPause = 500; // so that seconds does show "slowly"
             long tickFrequency = 1000;
             handler.postDelayed(workoutEventSender,
                     pauseStep ? tickFrequencyPause : tickFrequency);

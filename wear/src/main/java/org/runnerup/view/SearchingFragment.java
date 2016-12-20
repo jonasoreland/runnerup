@@ -40,8 +40,8 @@ public class SearchingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= 23) {
-            CircledImageView mButton = (CircledImageView) view.findViewById(R.id.icon_searching);
-            AnimationDrawable frameAnimation = (AnimationDrawable) mButton.getForeground();
+            CircledImageView button = (CircledImageView) view.findViewById(R.id.icon_searching);
+            AnimationDrawable frameAnimation = (AnimationDrawable) button.getForeground();
             frameAnimation.start();
         }
 

@@ -45,8 +45,8 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
         View view = inflater.inflate(R.layout.start, container, false);
         super.onViewCreated(view, savedInstanceState);
 
-        CircledImageView mButton = (CircledImageView) view.findViewById(R.id.icon_start);
-        mButton.setOnClickListener(startButtonClick);
+        CircledImageView button = (CircledImageView) view.findViewById(R.id.icon_start);
+        button.setOnClickListener(startButtonClick);
         mTxt = (TextView) view.findViewById(R.id.txt_start);
 
         return view;

@@ -83,9 +83,7 @@ class WorkoutListAdapter extends BaseAdapter {
     public void reload() {
         String[] list = load(inflater.getContext());
         if (list == null) {
-            if (workoutList == null || workoutList.length > 0) {
-                workoutList = new String[0];
-            }
+            workoutList = new String[0];
         } else {
             workoutList = list;
         }

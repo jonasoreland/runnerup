@@ -71,10 +71,10 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
-        ListView mListView = (ListView) findViewById(R.id.account_list);
-        mListView.setDividerHeight(10);
+        ListView listView = (ListView) findViewById(R.id.account_list);
+        listView.setDividerHeight(10);
         mCursorAdapter = new AccountListAdapter(this, null);
-        mListView.setAdapter(mCursorAdapter);
+        listView.setAdapter(mCursorAdapter);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
