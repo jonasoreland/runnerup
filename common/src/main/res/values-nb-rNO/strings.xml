@@ -33,6 +33,8 @@
   <string name="Rest_distance_m">Hviledistanse (m)</string>
   <string name="Duration_time_HHMMSS">Varighet (HH:MM:SS)</string>
   <string name="Duration_distance_m">Varighetsdistanse</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, fillern</string>
   <!--other-->
@@ -46,7 +48,6 @@
   <string name="repeat">gjenta</string>
   <string name="time">tid</string>
   <string name="distance">distanse</string>
-  <string name="Unknown">Ukjent</string>
   <string name="Distance">Distanse</string>
   <string name="speed">hastighet</string>
   <string name="pace">fart</string>
@@ -295,4 +296,5 @@
   <string name="Uploading_to_1s">Laster opp til %1$s</string>
   <string name="Loading_activities">Laster aktiviteter</string>
   <string name="Fetching_activities_from_1s">Henter inn aktiviteter fra %1$s</string>
+  <string name="Unknown">Ukjent</string>
 </resources>

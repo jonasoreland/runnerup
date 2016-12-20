@@ -54,12 +54,12 @@
     <item quantity="other">%d miles</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
-    <item quantity="one">%.1f kilometer per hour</item>
-    <item quantity="other">%.1f kilometers per hour</item>
+    <item quantity="one">%s kilometer per hour</item>
+    <item quantity="other">%s kilometers per hour</item>
   </plurals>
   <plurals name="cue_miles_per_hour">
-    <item quantity="one">%.1f mile per hour</item>
-    <item quantity="other">%.1f miles per hour</item>
+    <item quantity="one">%s mile per hour</item>
+    <item quantity="other">%s miles per hour</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>

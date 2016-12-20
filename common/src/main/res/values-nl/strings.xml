@@ -33,6 +33,8 @@
   <string name="Rest_distance_m">Rust afstand (m)</string>
   <string name="Duration_time_HHMMSS">Duur tijd (HH:MM:SS)</string>
   <string name="Duration_distance_m">Duur afstand (m)</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, rats</string>
   <!--other-->
@@ -46,7 +48,6 @@
   <string name="repeat">herhalen</string>
   <string name="time">tijd</string>
   <string name="distance">afstand</string>
-  <string name="Unknown">Onbekend</string>
   <string name="Distance">Afstand</string>
   <string name="speed">snelheid</string>
   <string name="pace">tempo</string>
@@ -295,4 +296,5 @@
   <string name="Uploading_to_1s">Uploaden naar %1$s</string>
   <string name="Loading_activities">Activiteiten laden</string>
   <string name="Fetching_activities_from_1s">Ophalen activiteiten van %1$s</string>
+  <string name="Unknown">Onbekend</string>
 </resources>

@@ -33,6 +33,8 @@
   <string name="Rest_distance_m">Dystans (m)</string>
   <string name="Duration_time_HHMMSS">Czas trwania (HH:MM:SS)</string>
   <string name="Duration_distance_m">Dystans (m)</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, rats</string>
   <!--other-->
@@ -46,7 +48,6 @@
   <string name="repeat">powtórzenia</string>
   <string name="time">czas</string>
   <string name="distance">dystans</string>
-  <string name="Unknown">Nieznane</string>
   <string name="Distance">Dystans</string>
   <string name="speed">prędkość</string>
   <string name="pace">tempo</string>
@@ -295,4 +296,5 @@
   <string name="Uploading_to_1s">Wysyłam do %1$s</string>
   <string name="Loading_activities">Ładuje treningi</string>
   <string name="Fetching_activities_from_1s">Pobieram treningi z %1$s</string>
+  <string name="Unknown">Nieznane</string>
 </resources>
