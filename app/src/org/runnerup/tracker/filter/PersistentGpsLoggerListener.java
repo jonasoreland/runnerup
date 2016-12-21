@@ -33,7 +33,7 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
     private SQLiteDatabase mDB;
     private java.lang.String mTable;
     private ContentValues mKey;
-    private boolean mLogGpxAccuracy;
+    private final boolean mLogGpxAccuracy;
 
     public PersistentGpsLoggerListener(SQLiteDatabase _db, String _table,
             ContentValues _key, boolean logGpxAccuracy) {

@@ -87,13 +87,13 @@ public class Tracker extends android.app.Service implements
 
     private final TrackerComponentCollection components = new TrackerComponentCollection();
     //Some trackers may select separate sensors depending on sport, handled in onBind()
-    private TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
+    private final TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
     private final TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
     TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
-    private TrackerCadence trackerCadence = (TrackerCadence) components.addComponent(new TrackerCadence());
-    private TrackerTemperature trackerTemperature = (TrackerTemperature) components.addComponent(new TrackerTemperature());
-    private TrackerPressure trackerPressure = (TrackerPressure) components.addComponent(new TrackerPressure());
-    private TrackerElevation trackerElevation = (TrackerElevation) components.addComponent(new TrackerElevation(this, trackerGPS, trackerPressure));
+    private final TrackerCadence trackerCadence = (TrackerCadence) components.addComponent(new TrackerCadence());
+    private final TrackerTemperature trackerTemperature = (TrackerTemperature) components.addComponent(new TrackerTemperature());
+    private final TrackerPressure trackerPressure = (TrackerPressure) components.addComponent(new TrackerPressure());
+    private final TrackerElevation trackerElevation = (TrackerElevation) components.addComponent(new TrackerElevation(this, trackerGPS, trackerPressure));
     TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(
             new TrackerReceiver(this));
     private TrackerWear trackerWear; // created if version is sufficient
