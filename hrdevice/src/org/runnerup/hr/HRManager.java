@@ -111,9 +111,9 @@ public class HRManager {
                 .getBoolean(res.getString(R.string.pref_bt_experimental), false);
         boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
 
-        if (experimental) {
-            /* dummy if to remove warning on experimental */
-        }
+        //if (experimental) {
+        //    /* dummy if to remove warning on experimental */
+        //}
 
         List<HRProvider> providers = new ArrayList<>();
         if (SamsungBLEHRProvider.checkLibrary()) {

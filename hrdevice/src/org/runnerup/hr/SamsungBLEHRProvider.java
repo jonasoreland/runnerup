@@ -247,8 +247,8 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         public void onCharacteristicRead(BluetoothGattCharacteristic arg0, int arg1) {
             // triggered from DummyReadForSecLevelCheck
             UUID charUuid = arg0.getUuid();
-            if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
-            } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
+            if (!charUuid.equals(FIRMWARE_REVISON_UUID) &&
+                    charUuid.equals(BATTERY_LEVEL_CHARAC)) {
                 batteryLevel = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                 log("Battery level: " + batteryLevel);
             }
@@ -289,9 +289,9 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         @Override
         public void onConnectionStateChange(BluetoothDevice arg0, int status, int newState) {
 
-            if (btDevice != null && arg0 != null
-                    && btDevice.getAddress().contentEquals(arg0.getAddress())) {
-            }
+            //if (btDevice != null && arg0 != null
+            //        && btDevice.getAddress().contentEquals(arg0.getAddress())) {
+            //}
 
             if (btGatt == null) {
                 log("onConnectionStateChange: btGatt == null");
