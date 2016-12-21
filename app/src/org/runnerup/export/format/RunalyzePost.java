@@ -293,7 +293,7 @@ public class RunalyzePost {
      * @param dbValue The sport as used in runnerup
      * @return The id of the sport in a string
      */
-    public String runnerupSport2RunalyzeSport(int dbValue) {
+    private String runnerupSport2RunalyzeSport(int dbValue) {
         Sport sport = Sport.valueOf(dbValue);
         if (sport.IsRunning()) {
             return "1";
@@ -345,7 +345,7 @@ public class RunalyzePost {
      * @param seconds The time of the activity for the calculation
      * @return The kCal used in string
      */
-    public String calculateKCal(int dbValue, long seconds) {
+    private String calculateKCal(int dbValue, long seconds) {
         Sport sport = Sport.valueOf(dbValue);
         if (sport.IsRunning()) {
             return Integer.toString(Math.round((880.0F / 3600.0F) * seconds));

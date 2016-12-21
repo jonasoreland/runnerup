@@ -87,7 +87,7 @@ public class Tracker extends android.app.Service implements
 
     private final TrackerComponentCollection components = new TrackerComponentCollection();
     //Some trackers may select separate sensors depending on sport, handled in onBind()
-    TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
+    private TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
     private final TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
     TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
     private TrackerCadence trackerCadence = (TrackerCadence) components.addComponent(new TrackerCadence());

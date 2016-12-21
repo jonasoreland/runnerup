@@ -374,7 +374,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param val
      * @return
      */
-    public String formatCadence(int target, double val) {
+    private String formatCadence(int target, double val) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
