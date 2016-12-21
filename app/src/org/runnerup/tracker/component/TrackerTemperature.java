@@ -137,7 +137,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
     public void onConnected() {
     }
 
-    /**
+    /*
      * Called by Tracker before start
      *   Component shall populate bindValues
      *   with objects that will then be passed

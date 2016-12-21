@@ -125,7 +125,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    /**
+    /*
      * Sensor is available
      */
     //@SuppressWarnings("unused")
@@ -173,7 +173,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     public void onConnected() {
     }
 
-    /**
+    /*
      * Called by Tracker before start
      *   Component shall populate bindValues
      *   with objects that will then be passed

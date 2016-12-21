@@ -135,7 +135,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
     public void onConnected() {
     }
 
-    /**
+    /*
      * Called by Tracker before start
      *   Component shall populate bindValues
      *   with objects that will then be passed
