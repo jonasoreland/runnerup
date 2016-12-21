@@ -78,6 +78,7 @@ public abstract class AbstractEntity implements DBEntity {
         }
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     void toContentValues(Cursor c) {
         if (c.isClosed() || c.isAfterLast() || c.isBeforeFirst()) {
             throw new CursorIndexOutOfBoundsException("Cursor not readable");

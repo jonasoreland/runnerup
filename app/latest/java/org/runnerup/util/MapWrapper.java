@@ -17,6 +17,7 @@
 
 package org.runnerup.util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -216,6 +217,7 @@ public class MapWrapper implements Constants {
             return route;
         }
 
+        @SuppressLint("ObsoleteSdkInt")
         @Override
         protected void onPostExecute(Route route) {
 

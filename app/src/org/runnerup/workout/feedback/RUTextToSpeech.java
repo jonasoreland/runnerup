@@ -17,6 +17,7 @@
 
 package org.runnerup.workout.feedback;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
@@ -205,6 +206,7 @@ public class RUTextToSpeech {
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 class UtteranceCompletion {
 
+    @SuppressLint("ObsoleteSdkInt")
     @SuppressWarnings("deprecation")
     public static void setUtteranceCompletedListener(
             TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {

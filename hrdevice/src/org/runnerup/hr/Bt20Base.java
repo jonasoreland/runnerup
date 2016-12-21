@@ -17,6 +17,7 @@
 
 package org.runnerup.hr;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -65,15 +66,13 @@ public abstract class Bt20Base extends BtHRBase {
         return true;
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     public static boolean checkLibrary(@SuppressWarnings("UnusedParameters") Context ctx) {
 
         // Don't bother if createInsecureRfcommSocketToServiceRecord isn't
         // available
-        //noinspection RedundantIfStatement
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1)
-            return false;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
 
-        return true;
     }
 
     // UUID

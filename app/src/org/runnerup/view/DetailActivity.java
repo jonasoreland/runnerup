@@ -113,6 +113,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     /**
      * Called when the activity is first created.
      */
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -17,6 +17,7 @@
 
 package org.runnerup.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -59,6 +60,7 @@ public class GraphWrapper implements Constants {
     /**
      * Called when the activity is first created.
      */
+    @SuppressLint("ObsoleteSdkInt")
     public GraphWrapper(Context context, LinearLayout graphTab, LinearLayout hrzonesBarLayout, final Formatter formatter, SQLiteDatabase mDB, long mID) {
         this.graphTab = graphTab;
         this.hrzonesBarLayout = hrzonesBarLayout;
@@ -562,6 +564,7 @@ public class GraphWrapper implements Constants {
             return graphData;
         }
 
+        @SuppressLint("ObsoleteSdkInt")
         @Override
         protected void onPostExecute(GraphProducer graphData) {
 

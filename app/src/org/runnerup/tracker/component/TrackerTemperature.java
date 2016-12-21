@@ -17,6 +17,7 @@
 
 package org.runnerup.tracker.component;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.*;
@@ -76,6 +77,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
         return ((new TrackerTemperature()).getSensor(context) != null) || testMode;
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private Sensor getSensor(final Context context) {
         Sensor sensor = null;
         if (sensorManager == null) {
