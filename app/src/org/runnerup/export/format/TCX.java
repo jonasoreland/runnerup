@@ -24,10 +24,8 @@ import android.location.Location;
 import android.os.Build;
 import android.util.Pair;
 
-import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.KXmlSerializer;
-import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.IOException;

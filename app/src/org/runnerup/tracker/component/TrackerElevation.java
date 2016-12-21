@@ -24,7 +24,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -33,7 +32,6 @@ import org.runnerup.R;
 import org.runnerup.tracker.Tracker;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.matthiaszimmermann.location.egm96.Geoid;
 

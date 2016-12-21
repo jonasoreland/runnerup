@@ -24,7 +24,6 @@ import android.preference.PreferenceManager;
 
 import org.runnerup.BuildConfig;
 
-import java.util.HashMap;
 import java.util.Random;
 
 public class TrackerPressure extends DefaultTrackerComponent implements SensorEventListener {

@@ -37,7 +37,6 @@ import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Bitfield;
-import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
