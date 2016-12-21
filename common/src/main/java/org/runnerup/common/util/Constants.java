@@ -54,12 +54,12 @@ public interface Constants {
             String LAP = "lap";
             String TYPE = "type";
             String TIME = "time"; // in milliseconds since epoch
+            String ELAPSED = "elapsed";
+            String DISTANCE = "distance";
             String LATITUDE = "latitude";
             String LONGITUDE = "longitude";
             String ACCURANCY = "accurancy";
             String ALTITUDE = "altitude";
-            String SPEED = "speed";
-            String BEARING = "bearing";
             String GPS_ALTITUDE = "gps_altitude";
             String SPEED = "speed";
             String BEARING = "bearing";
@@ -108,9 +108,9 @@ public interface Constants {
             int PACE = 4;
             int HR = 5;
             int HRZ = 6;
-            public static final int CAD = 7;
-            public static final int TEMPERATURE = 8;
-            public static final int PRESSURE = 9;
+            int CAD = 7;
+            int TEMPERATURE = 8;
+            int PRESSURE = 9;
         }
 
         interface ACCOUNT {
@@ -171,10 +171,8 @@ public interface Constants {
             String URL = "url";
             String FLAGS = "flags";
 
-            int FEED_TYPE_ACTIVITY = 0; // FEED_SUBTYPE
-                                                            // contains
-                                                            // activity.type
-                                                            int FEED_TYPE_EVENT = 1;
+            int FEED_TYPE_ACTIVITY = 0; // FEED_SUBTYPE contains activity.type
+            int FEED_TYPE_EVENT = 1;
 
             int FEED_TYPE_EVENT_DATE_HEADER = 0;
         }

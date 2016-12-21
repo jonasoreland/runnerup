@@ -44,7 +44,8 @@
 		android:allowBackup="true"
 		android:extractNativeLibs="true"
 		android:theme="@style/AppTheme"
-		android:fullBackupContent="@xml/backup_descriptor">
+		android:fullBackupContent="@xml/backup_descriptor"
+		tools:ignore="UnusedAttribute">
 
 		<activity
 			android:name=".view.MainLayout"

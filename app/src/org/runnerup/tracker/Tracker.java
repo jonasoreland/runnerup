@@ -195,7 +195,7 @@ public class Tracker extends android.app.Service implements
                 if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 return;
             case CLEANUP:
-                /**
+                /*
                  * if CLEANUP is in progress, setup will continue once complete
                  */
                 nextState = TrackerState.INITIALIZING;
@@ -325,7 +325,7 @@ public class Tracker extends android.app.Service implements
         Resources res = getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean logGpxAccuracy = prefs.getBoolean(res.getString(R.string.pref_log_gpx_accuracy), false);
-        /**
+        /*
          * Create an Activity instance
          */
         ContentValues tmp = new ContentValues();
@@ -350,14 +350,14 @@ public class Tracker extends android.app.Service implements
         // connect workout and tracker
         workout.setTracker(this);
 
-        /** Add Wear to live loggers if it's active */
+        /* Add Wear to live loggers if it's active */
         if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK)
             liveLoggers.add(trackerWear);
 
         if (components.getResultCode(TrackerPebble.NAME) == TrackerComponent.ResultCode.RESULT_OK)
             liveLoggers.add(trackerPebble);
 
-        /**
+        /*
          * create the DB activity
          */
         createActivity(workout.getSport());
@@ -386,14 +386,14 @@ public class Tracker extends android.app.Service implements
 
         activityOngoingState = new OngoingState(new Formatter(this), workout, this);
 
-        /**
+        /*
          * And finally let workout know that we started
          */
         workout.onStart(Scope.ACTIVITY, this.workout);
     }
 
     private void doBind() {
-        /**
+        /*
          * Let components populate bindValues
          */
         HashMap<String, Object> bindValues = new HashMap<>();
@@ -406,7 +406,7 @@ public class Tracker extends android.app.Service implements
 
         components.onBind(bindValues);
 
-        /**
+        /*
          * and then give them to workout
          */
         workout.onBind(workout, bindValues);
@@ -446,7 +446,7 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.PAUSED);
         setNextLocationType(DB.LOCATION.TYPE_PAUSE);
         if (mActivityLastLocation != null) {
-            /**
+            /*
              * This saves mLastLocation as a PAUSE location
              */
             internalOnLocationChanged(mActivityLastLocation);
@@ -474,7 +474,7 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.STOPPED);
         setNextLocationType(DB.LOCATION.TYPE_PAUSE);
         if (mActivityLastLocation != null) {
-            /**
+            /*
              * This saves mLastLocation as a PAUSE location
              */
             internalOnLocationChanged(mActivityLastLocation);
@@ -514,7 +514,7 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.STARTED);
         setNextLocationType(DB.LOCATION.TYPE_RESUME);
         if (mActivityLastLocation != null) {
-            /**
+            /*
              * save last know location as resume location
              */
             internalOnLocationChanged(mActivityLastLocation);
