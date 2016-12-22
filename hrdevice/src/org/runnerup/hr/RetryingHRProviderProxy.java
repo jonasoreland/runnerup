@@ -133,11 +133,10 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
         if (ok) {
             state = State.OPENED;
-            client.onOpenResult(ok);
         } else {
             state = State.CLOSED;
-            client.onOpenResult(ok);
         }
+        client.onOpenResult(ok);
     }
 
     @Override

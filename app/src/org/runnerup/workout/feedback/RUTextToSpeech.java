@@ -92,7 +92,7 @@ public class RUTextToSpeech {
 
     int speak(String text, int queueMode, HashMap<String, String> params) {
 
-        boolean trace = true;
+        final boolean trace = true;
         if (queueMode == TextToSpeech.QUEUE_FLUSH) {
             if (trace) {
                 Log.e(getClass().getName(), "speak (mute: " + mute + "): " + text);

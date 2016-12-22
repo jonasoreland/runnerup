@@ -486,15 +486,15 @@ public class DBHelper extends SQLiteOpenHelper implements
         values.put(DB.ACCOUNT.URL, "http://www.facebook.com");
         insertAccount(arg0, values);
 
-        if (notyet) {
-            values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
-            values.put(DB.ACCOUNT.URL, "https://plus.google.com");
-            insertAccount(arg0, values);
-        }
+//        if (notyet) {
+//            values = new ContentValues();
+//            values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
+//            values.put(DB.ACCOUNT.FORMAT, "");
+//            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+//            values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
+//            values.put(DB.ACCOUNT.URL, "https://plus.google.com");
+//            insertAccount(arg0, values);
+//        }
 
         if (DBVERSION >= 26) {
             values = new ContentValues();

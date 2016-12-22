@@ -52,7 +52,7 @@ public class IntervalTrigger extends Trigger {
                 next += interval;
             }
             int count = 0; //endless
-            if (count != 0 && (next > (first + interval * (count - 1)))) {
+            if (/*count != 0 &&*/ (next > (first + interval * (count - 1)))) {
                 // no more occurrences
                 next = 0;
             }

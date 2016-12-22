@@ -34,13 +34,11 @@ import org.runnerup.R;
 public class WidgetUtil {
 
     public static void setEditable(EditText editText, boolean onoff) {
+        editText.setClickable(onoff);
+        editText.setFocusable(onoff);
         if (onoff) {
-            editText.setClickable(onoff);
-            editText.setFocusable(onoff);
+            //noinspection ConstantConditions
             editText.setFocusableInTouchMode(onoff);
-        } else {
-            editText.setClickable(onoff);
-            editText.setFocusable(onoff);
         }
     }
 

@@ -48,7 +48,7 @@ public class HRManager {
         if (provider != null) {
             return new RetryingHRProviderProxy(provider);
         }
-        return provider;
+        return null;
     }
 
     

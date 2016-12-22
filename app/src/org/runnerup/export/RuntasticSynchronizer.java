@@ -220,7 +220,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                             else
                                 url2 = tmp;
 
-                            if (url2 != null)
+                            //if (url2 != null)
                                 break;
                         }
                     }

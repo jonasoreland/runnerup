@@ -331,10 +331,10 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 new StringWritable(SyncHelper.URLEncode(access_token))));
         list.add(new Part<>("course",
                 new StringWritable(id)));
-        boolean explicitly_shared = false; // Doesn't work now...don't know why...
-        if (explicitly_shared)
-            list.add(new Part<>(
-                    "fb:explicitly_shared", new StringWritable("true")));
+        //boolean explicitly_shared = false; // Doesn't work now...don't know why...
+        //if (explicitly_shared)
+        //    list.add(new Part<>(
+        //            "fb:explicitly_shared", new StringWritable("true")));
 
         list.add(new Part<>(
                 "start_time", new StringWritable(formatTime(runObj.getLong("startTime")))));

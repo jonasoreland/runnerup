@@ -274,9 +274,9 @@ public class FeedList extends Observable implements Constants {
         for (String k : keys) {
             if (c0.containsKey(k) && c1.containsKey(k))
                 if (!c0.getAsString(k).equalsIgnoreCase(c1.getAsString(k))) {
-                    if (print)
-                        Log.i("FeedList", "fail at " + k + " c0: " + c0.getAsString(k) + ", c1: "
-                                + c1.getAsString(k));
+                    //if (print)
+                    //    Log.i("FeedList", "fail at " + k + " c0: " + c0.getAsString(k) + ", c1: "
+                    //            + c1.getAsString(k));
                     return false;
                 }
         }

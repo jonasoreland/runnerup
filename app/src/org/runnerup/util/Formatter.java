@@ -629,7 +629,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             return first + " " + last;
         else if (first == null && last != null)
             return last;
-        else if (first != null && last == null)
+        else if (first != null /*&& last == null*/)
             return first;
         return "";
     }

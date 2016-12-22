@@ -178,8 +178,7 @@ public class WorkoutBuilder {
             }
             repeat.steps.add(step);
 
-            //noinspection ConstantIfStatement
-            if (true) {
+            //if (true) {
                 Step rest = null;
                 switch (intervalRestType) {
                     case 0: // Time
@@ -197,7 +196,7 @@ public class WorkoutBuilder {
                         break;
                 }
                 repeat.steps.add(rest);
-            }
+            //}
         }
         w.steps.add(repeat);
 
