@@ -44,6 +44,7 @@ import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 
+import java.util.Locale;
 import java.util.Vector;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -64,7 +65,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         EditText lo = (EditText) row.findViewById(R.id.zonelo);
         EditText hi = (EditText) row.findViewById(R.id.zonehi);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
-        tv.setText(getString(R.string.Zone) + " " + zone + " " + lim.first + "% - " + lim.second + "%");
+        tv.setText(String.format(Locale.getDefault(), "%s %d %d%% - %d%%", getString(R.string.Zone), zone, lim.first, lim.second));
         lo.setTag("zone" + zone + "lo");
         hi.setTag("zone" + zone + "hi");
         zones.add(lo);
@@ -157,8 +158,8 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
             if (values != null) {
                 EditText lo = zones.get(2 * zone /*+ 0*/);
                 EditText hi = zones.get(2 * zone + 1);
-                lo.setText(Integer.toString(values.first));
-                hi.setText(Integer.toString(values.second));
+                lo.setText(String.format(Locale.getDefault(), "%d", values.first));
+                hi.setText(String.format(Locale.getDefault(), "%d", values.second));
                 Log.e(getClass().getName(), "loaded " + (zone + 1) + " " + values.first + "-"
                         + values.second);
             }
@@ -193,8 +194,8 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
                     for (int i = 0; i < zoneCount; i++) {
                         Pair<Integer, Integer> val = hrZoneCalculator.computeHRZone(i + 1, maxHR);
-                        zones.get(2 * i /*+ 0*/).setText(Integer.toString(val.first));
-                        zones.get(2 * i + 1).setText(Integer.toString(val.second));
+                        zones.get(2 * i /*+ 0*/).setText(String.format(Locale.getDefault(), "%d", val.first));
+                        zones.get(2 * i + 1).setText(String.format(Locale.getDefault(), "%d", val.second));
                     }
                 } catch (NumberFormatException ex) {
                 }

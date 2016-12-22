@@ -44,6 +44,8 @@ import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Range;
 import org.runnerup.workout.Step;
 
+import java.util.Locale;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StepButton extends TableLayout {
 
@@ -103,7 +105,7 @@ public class StepButton extends TableLayout {
         mIntensity.setText(res.getText(step.getIntensity().getTextId()));
         if (step.getIntensity() == Intensity.REPEAT) {
             mDurationType.setText("");
-            mDurationValue.setText("" + step.getRepeatCount());
+            mDurationValue.setText(String.format(Locale.getDefault(), "%d", step.getRepeatCount()));
             mGoalRow.setVisibility(View.GONE);
             if (editRepeatCount)
                 mLayout.setOnClickListener(onRepeatClickListener);
@@ -125,10 +127,9 @@ public class StepButton extends TableLayout {
         } else {
             mGoalRow.setVisibility(View.VISIBLE);
             mGoalType.setText(res.getString(goalType.getTextId()));
-            mGoalValue.setText(formatter.format(Formatter.TXT_SHORT, goalType,
-                    step.getTargetValue().minValue)
-                    + "-" +
-                    formatter.format(Formatter.TXT_LONG, goalType, step.getTargetValue().maxValue));
+            mGoalValue.setText(String.format(Locale.getDefault(), "%s-%s",
+                    formatter.format(Formatter.TXT_SHORT, goalType, step.getTargetValue().minValue),
+                    formatter.format(Formatter.TXT_LONG, goalType, step.getTargetValue().maxValue)));
         }
         if (editStepButton) {
             mLayout.setOnClickListener(onStepClickListener);

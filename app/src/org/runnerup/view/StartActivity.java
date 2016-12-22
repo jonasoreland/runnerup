@@ -623,7 +623,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             int cnt0 = mGpsStatus.getSatellitesFixed();
             int cnt1 = mGpsStatus.getSatellitesAvailable();
             gpsInfoText.setVisibility(View.VISIBLE);
-            gpsInfoView1.setText(": " + cnt0 + "/" + cnt1);
+            gpsInfoView1.setText(String.format(Locale.getDefault(), ": %d/%d", cnt0, cnt1));
             gpsInfoView2.setText(getGpsAccuracy());
         }
 
@@ -684,7 +684,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 }
                 if (hrVal != null) {
                     hrButton.setEnabled(false);
-                    hrValueText.setText(Integer.toString(hrVal));
+                    hrValueText.setText(String.format(Locale.getDefault(), "%d", hrVal));
 
                     if (!batteryLevelMessageShowed) {
                         batteryLevelMessageShowed = true;

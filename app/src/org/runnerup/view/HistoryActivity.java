@@ -45,6 +45,8 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.workout.Sport;
 
+import java.util.Locale;
+
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
@@ -146,7 +148,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
             {
                 TextView tv = (TextView) view.findViewById(to[0]);
-                tv.setText(Long.toString(id));
+                tv.setText(String.format(Locale.getDefault(), "%d", id));
             }
 
             {

@@ -51,6 +51,7 @@ import org.runnerup.util.Formatter;
 
 import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -230,7 +231,7 @@ public class FeedActivity extends Activity implements Constants {
                 String name = formatter.formatName(tmp.getAsString(DB.FEED.USER_FIRST_NAME),
                         tmp.getAsString(DB.FEED.USER_LAST_NAME));
                 String sport = FeedActivity.GetSportActivity(tmp);
-                tv1.setText(name + " trained " + sport);
+                tv1.setText(String.format("%s trained %s", name, sport));//TODO string to translate
                 if (tmp.containsKey(DB.FEED.DISTANCE) || tmp.containsKey(DB.FEED.DURATION)) {
                     double distance = 0;
                     long duration = 0;
@@ -325,7 +326,7 @@ public class FeedActivity extends Activity implements Constants {
                 feedAdapter.notifyDataSetChanged();
             } else {
                 String synchronizerName = (String) data;
-                feedStatus.setText(getString(R.string.Synchronizing) + " " + synchronizerName);
+                feedStatus.setText(String.format(Locale.getDefault(), "%s %s", getString(R.string.Synchronizing), synchronizerName)); //TODO parameter
             }
         }
     }

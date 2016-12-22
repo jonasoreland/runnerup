@@ -51,6 +51,7 @@ import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class UploadActivity extends ListActivity implements Constants {
@@ -238,7 +239,7 @@ public class UploadActivity extends ListActivity implements Constants {
     private void requery() {
         ((BaseAdapter) this.getListAdapter()).notifyDataSetChanged();
         if (syncCount > 0) {
-            actionButton.setText(actionButtonText + " (" + syncCount + ")");
+            actionButton.setText(String.format(Locale.getDefault(), "%s (%d)", actionButtonText, syncCount));
             actionButton.setEnabled(true);
         } else {
             actionButton.setText(actionButtonText);

@@ -118,7 +118,7 @@ public class NumberPicker extends LinearLayout {
 
     private void createButton(Context context, char c) {
         Button b = new Button(context);
-        b.setText("" + c);
+        b.setText(Character.toString(c));
         b.setTextSize(textSize);
         b.setOnClickListener(buttonClick);
         b.setOnLongClickListener(buttonLongClick);

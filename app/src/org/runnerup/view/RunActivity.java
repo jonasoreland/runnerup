@@ -57,6 +57,7 @@ import org.runnerup.workout.Workout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -524,9 +525,9 @@ public class RunActivity extends Activity implements TickListener {
                     targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(),
                             minValue));
                 } else {
-                    targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(),
-                            minValue) + "-" +
-                            formatter.format(Formatter.TXT_SHORT, step.getTargetType(), maxValue));
+                    targetPace.setText(String.format(Locale.getDefault(), "%s-%s",
+                            formatter.format(Formatter.TXT_SHORT, step.getTargetType(), minValue),
+                            formatter.format(Formatter.TXT_SHORT, step.getTargetType(), maxValue)));
                 }
             }
 
@@ -534,8 +535,8 @@ public class RunActivity extends Activity implements TickListener {
                 if (step.getCurrentRepeat() == step.getRepeatCount()) {
                     durationValue.setText(getString(R.string.Finished));
                 } else {
-                    durationValue.setText("" + (step.getCurrentRepeat() + 1) + "/"
-                            + step.getRepeatCount());
+                    durationValue.setText(String.format(Locale.getDefault(), "%d/%d",
+                            (step.getCurrentRepeat() + 1), step.getRepeatCount()));
                 }
             }
             return view;

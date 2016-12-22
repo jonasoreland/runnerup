@@ -484,7 +484,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 case RECOVERY:
                 case WARMUP:
                 case REPEAT:
-                    viewHolder.tv0.setText("(" + getResources().getString(intensity.getTextId()) + ")");
+                    viewHolder.tv0.setText(String.format(Locale.getDefault(), "(%s)",
+                            getResources().getString(intensity.getTextId())));
                 default:
                     break;
 
@@ -505,7 +506,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     .getAsInteger(DB.LAP.AVG_HR) : 0;
             if (hr > 0) {
                 viewHolder.tvHr.setVisibility(View.VISIBLE);
-                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.TXT_LONG, hr) + " bpm");
+                // Use CUE_LONG instead of TXT_LONG to include unit
+                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.CUE_LONG, hr));
             } else if (lapHrPresent) {
                 viewHolder.tvHr.setVisibility(View.INVISIBLE);
             } else {
