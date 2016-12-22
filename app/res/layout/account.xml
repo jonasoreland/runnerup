@@ -18,8 +18,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/name"
@@ -39,7 +40,8 @@
             android:id="@+id/account_list_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="center" />
+            android:scaleType="center"
+            tools:ignore="ContentDescription"/>
     </LinearLayout>
 
    	<TableLayout

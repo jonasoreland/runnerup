@@ -16,9 +16,10 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:orientation="vertical">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
 
   <LinearLayout
     android:id="@+id/name"
@@ -31,14 +32,15 @@
       android:id="@+id/account_upload_list_name"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-        android:layout_marginStart="200dp"
+      android:layout_marginStart="200dp"
       android:layout_marginLeft="200dp"/>
 
     <ImageView
       android:id="@+id/account_upload_list_icon"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-        android:scaleType="center"/>
+      android:scaleType="center"
+      tools:ignore="ContentDescription"/>
   </LinearLayout>
 
   <ListView

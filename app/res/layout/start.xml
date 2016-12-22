@@ -120,7 +120,8 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/heart" />
+                android:src="@drawable/heart"
+                tools:ignore="ContentDescription"/>
 
             <TextView
                 android:id="@+id/hr_value_text"
@@ -143,7 +144,8 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_wear"/>
+                android:src="@drawable/ic_wear"
+                tools:ignore="ContentDescription"/>
 
             <TextView
                 android:id="@+id/wear_value_text"
