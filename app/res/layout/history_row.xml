@@ -41,6 +41,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_toEndOf="@+id/history_list_start_time"
+            android:layout_toRightOf="@+id/history_list_start_time"
             android:textSize="20sp"
             android:textStyle="bold" />
 
