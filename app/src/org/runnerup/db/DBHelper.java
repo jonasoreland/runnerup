@@ -40,7 +40,6 @@ import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.FunBeatSynchronizer;
 import org.runnerup.export.GarminSynchronizer;
 import org.runnerup.export.GoogleFitSynchronizer;
-import org.runnerup.export.GooglePlusSynchronizer;
 import org.runnerup.export.JoggSESynchronizer;
 import org.runnerup.export.MapMyRunSynchronizer;
 import org.runnerup.export.NikePlusSynchronizer;
