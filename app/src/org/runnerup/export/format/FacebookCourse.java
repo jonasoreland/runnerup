@@ -72,7 +72,7 @@ public class FacebookCourse {
     }
 
     public JSONObject export(long activityId, boolean showTrail, JSONObject runObj)
-            throws IOException, JSONException {
+            throws JSONException {
 
         final String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,

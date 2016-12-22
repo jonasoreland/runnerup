@@ -69,7 +69,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Digifit";
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) {
         if (args.length < 2) {
             Log.e("DigifitSynchronizer", "usage: DigifitSynchronizer username password");
             System.exit(1);
@@ -226,7 +226,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    public void downloadActivity(File dst, String key) throws Exception {
+    public void downloadActivity(File dst, String key) {
         Map<String, String> exportParameters = new HashMap<>();
         exportParameters.put("id", key);
         exportParameters.put("format", "tcx");
