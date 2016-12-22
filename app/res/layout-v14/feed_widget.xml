@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
     android:id="@+id/widget_layout"
-    tools:showIn="@xml/feed_widget_provider_info"
-    android:background="@android:color/background_dark">
+    tools:showIn="@xml/feed_widget_provider_info">
 
     <ImageButton
         android:layout_width="30dp"
