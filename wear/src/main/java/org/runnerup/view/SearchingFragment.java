@@ -48,9 +48,9 @@ public class SearchingFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        //MainActivity activity1 = (MainActivity) activity;
-    }
+    //@Override
+    //public void onAttach(Activity activity) {
+    //    super.onAttach(activity);
+    //    //MainActivity activity1 = (MainActivity) activity;
+    //}
 }
