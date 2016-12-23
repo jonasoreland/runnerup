@@ -51,8 +51,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -101,8 +99,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     }
 
     private JSONObject callDigifitEndpoint(String url, JSONObject request) throws IOException,
-            MalformedURLException,
-            ProtocolException, JSONException {
+            JSONException {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod(RequestMethod.POST.name());
@@ -310,7 +307,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         return NAME;
     }
 
-    private String getUploadUrl() throws IOException, MalformedURLException, ProtocolException,
+    private String getUploadUrl() throws IOException,
             JSONException {
         String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";
         JSONObject response = callDigifitEndpoint(getUploadUrl, new JSONObject());
@@ -319,8 +316,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                 .getString("URL");
     }
 
-    private JSONObject getWorkoutFileId(String key) throws IOException, MalformedURLException,
-            ProtocolException,
+    private JSONObject getWorkoutFileId(String key) throws IOException,
             JSONException {
         JSONObject exportListResponse = callDigifitEndpoint(DIGIFIT_URL
                 + "/rpc/json/workout/export_workouts_list",

@@ -47,7 +47,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -339,7 +338,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    private JSONObject makeGetRequest(String url) throws MalformedURLException, IOException, JSONException {
+    private JSONObject makeGetRequest(String url) throws IOException, JSONException {
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();

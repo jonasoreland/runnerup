@@ -187,7 +187,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return s;
     }
 
-    private Status connectOld() throws MalformedURLException, IOException, JSONException {
+    private Status connectOld() throws IOException, JSONException {
         Status s = Status.NEED_AUTH;
         s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
@@ -242,7 +242,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return checkLogin();
     }
 
-    private Status checkLogin() throws MalformedURLException, IOException, JSONException {
+    private Status checkLogin() throws IOException, JSONException {
         HttpURLConnection conn = (HttpURLConnection) new URL(CHECK_URL).openConnection();
         addCookies(conn);
         {
@@ -339,7 +339,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return Status.OK; // return checkLogin();
     }
 
-    private HttpURLConnection open(String base, FormValues fv) throws MalformedURLException,
+    private HttpURLConnection open(String base, FormValues fv) throws
             IOException {
         HttpURLConnection conn;
         if (fv != null) {
@@ -351,7 +351,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return conn;
     }
 
-    private HttpURLConnection get(String base, FormValues fv) throws MalformedURLException,
+    private HttpURLConnection get(String base, FormValues fv) throws
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(false);
@@ -359,7 +359,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return conn;
     }
 
-    private HttpURLConnection post(String base, FormValues fv) throws MalformedURLException,
+    private HttpURLConnection post(String base, FormValues fv) throws
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(true);

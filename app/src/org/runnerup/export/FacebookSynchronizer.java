@@ -40,7 +40,6 @@ import org.runnerup.util.Bitfield;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -289,8 +288,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
             return runRef;
         }
     }
-    private JSONObject createCourse(JSONObject course) throws JSONException,
-            IOException, Exception {
+    private JSONObject createCourse(JSONObject course) throws Exception {
         JSONObject obj = new JSONObject();
         /* create a facebook course instance */
         obj.put("fb:app_id", FacebookSynchronizer.CLIENT_ID);
