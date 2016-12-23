@@ -651,7 +651,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             View row;
             if (convertView == null) {
                 row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
-                        null);
+                        parent);
             } else {
                 row = convertView;
             }

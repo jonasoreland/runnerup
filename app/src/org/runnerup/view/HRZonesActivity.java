@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -60,7 +61,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
     private boolean skipSave = false;
 
     private View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
-        TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
+        @SuppressLint("InflateParams") TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
         TextView tv = (TextView) row.findViewById(R.id.zonetext);
         EditText lo = (EditText) row.findViewById(R.id.zonelo);
         EditText hi = (EditText) row.findViewById(R.id.zonehi);

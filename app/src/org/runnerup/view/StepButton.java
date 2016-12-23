@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -182,7 +183,7 @@ public class StepButton extends TableLayout {
             alert.setTitle(getResources().getString(R.string.Edit_step));
 
             final LayoutInflater inflater = LayoutInflater.from(mContext);
-            final View layout = inflater.inflate(
+            @SuppressLint("InflateParams") final View layout = inflater.inflate(
                     R.layout.step_dialog, null);
 
             final Runnable save = setupEditStep(inflater, layout);

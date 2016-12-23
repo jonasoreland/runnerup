@@ -18,6 +18,7 @@
 package org.runnerup.view;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,6 +52,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TabHost;
 import android.widget.Toast;
@@ -288,7 +290,7 @@ public class MainLayout extends TabActivity
     private void whatsNew() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.whatsnew, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = (WebView) view.findViewById(R.id.web_view1);
         builder.setTitle(getString(R.string.Whats_new));
         builder.setView(view);
