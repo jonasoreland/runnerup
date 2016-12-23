@@ -69,14 +69,16 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
-      android:text="@string/Select_all"/>
+      android:text="@string/Select_all"
+        tools:ignore="ButtonStyle" />
 
     <Button
       android:id="@+id/account_upload_clear_all"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
-      android:text="@string/Clear_all"/>
+      android:text="@string/Clear_all"
+        tools:ignore="ButtonStyle" />
   </LinearLayout>
 
   <LinearLayout
