@@ -46,7 +46,6 @@ import org.runnerup.BuildConfig;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
