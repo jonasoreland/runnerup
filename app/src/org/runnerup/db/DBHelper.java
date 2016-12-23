@@ -382,6 +382,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void insertAccounts(SQLiteDatabase arg0) {
         final boolean notyet = false;
 

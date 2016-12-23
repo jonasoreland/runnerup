@@ -261,7 +261,7 @@ public class FeedList extends Observable implements Constants {
         if (!filterDuplicates)
             return false;
 
-        boolean print = false; // enable printout of match failure
+        final boolean print = false; // enable printout of match failure
 
         String keys[] = {
                 DB.FEED.FEED_TYPE,

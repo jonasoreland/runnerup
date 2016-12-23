@@ -175,7 +175,7 @@ public class GPX {
         boolean pok = cLocation.moveToFirst();
 
         while (lok) {
-            boolean export_rest_laps = false;
+            final boolean export_rest_laps = false;
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
                 long lap = cLap.getLong(0);
                 while (pok && cLocation.getLong(0) != lap) {

@@ -343,11 +343,11 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                     "end_time", new StringWritable(formatTime(runObj.getLong("endTime")))));
         }
 
-        boolean uploadComment = false;
-        if (uploadComment && runObj.has("comment")) {
-            list.add(new Part<>(
-                    "message", new StringWritable(runObj.getString("comment"))));
-        }
+        //boolean uploadComment = false;
+        //if (uploadComment && runObj.has("comment")) {
+        //    list.add(new Part<>(
+        //            "message", new StringWritable(runObj.getString("comment"))));
+        //}
 
         Part<?> parts[] = new Part<?>[list.size()];
         list.toArray(parts);

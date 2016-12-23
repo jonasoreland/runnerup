@@ -167,6 +167,7 @@ public class WorkoutSerializer {
                 val = "recovery";
                 break;
         }
+        //noinspection ConstantConditions
         if (val != null) {
             obj.put("stepTypeKey", val);
         }
