@@ -30,7 +30,6 @@ import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
