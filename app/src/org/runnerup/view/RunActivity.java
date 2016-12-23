@@ -68,7 +68,6 @@ public class RunActivity extends Activity implements TickListener {
     private final Handler handler = new Handler();
 
     private Button pauseButton = null;
-    private Button stopButton = null;
     private Button newLapButton = null;
     private TextView activityTime = null;
     private TextView activityDistance = null;
@@ -109,7 +108,7 @@ public class RunActivity extends Activity implements TickListener {
         formatter = new Formatter(this);
         //HRZones hrZones = new HRZones(this);
 
-        stopButton = (Button) findViewById(R.id.stop_button);
+        Button stopButton = (Button) findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);
         pauseButton = (Button) findViewById(R.id.pause_button);
         pauseButton.setOnClickListener(pauseButtonClick);
