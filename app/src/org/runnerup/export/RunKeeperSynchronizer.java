@@ -478,7 +478,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return null;
         }
 
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try {
             URL activityUrl = new URL(item.getURI());
             conn = (HttpURLConnection) activityUrl.openConnection();
@@ -527,7 +527,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     private Status getFeedAccessToken() {
         Synchronizer.Status s = Status.OK;
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try {
             URL newurl = new URL(FEED_TOKEN_URL);
             conn = (HttpURLConnection) newurl.openConnection();

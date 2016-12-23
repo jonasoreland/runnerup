@@ -169,7 +169,7 @@ public class MainLayout extends TabActivity
         final Uri data = getIntent().getData();
         if (data != null) {
             if (SettingsActivity.requestReadStoragePermissions(MainLayout.this)) {
-                String filePath = null;
+                String filePath;
                 if ("content".equals(data.getScheme())) {
                     Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
                     cursor.moveToFirst();

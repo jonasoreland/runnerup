@@ -384,8 +384,6 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     @SuppressWarnings("ConstantConditions")
     private void insertAccounts(SQLiteDatabase arg0) {
-        final boolean notyet = false;
-
         ContentValues values;
 
         values = new ContentValues();
@@ -564,7 +562,6 @@ public class DBHelper extends SQLiteOpenHelper implements
             Log.e(getClass().getName(), "update: " + arg1);
         }
         c.close();
-        c = null;
     }
 
     public static ContentValues get(Cursor c) {

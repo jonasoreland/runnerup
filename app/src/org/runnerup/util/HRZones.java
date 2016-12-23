@@ -76,7 +76,7 @@ public class HRZones {
 
     public double getZone(double value) {
         if (zones != null) {
-            int z = 0;
+            int z;
             for (z = 0; z < zones.length; z++) {
                 if (zones[z] >= value)
                     break;
@@ -100,7 +100,7 @@ public class HRZones {
             return 0;
         }
 
-        int z = 0;
+        int z;
         for (z = 0; z < zones.length; z++) {
             if (zones[z] >= value)
                 return z;

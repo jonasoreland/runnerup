@@ -170,7 +170,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         try {
             String pass = md5pass;
@@ -241,8 +241,8 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         }
 
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             Pair<String, Sport> res = tcx.exportWithSport(mID, writer);

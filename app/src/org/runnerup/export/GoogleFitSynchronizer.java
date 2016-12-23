@@ -106,7 +106,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
         //export DataSource if not yet existing
         GoogleFitData gfd = new GoogleFitData(db, getProjectId(), getContext());
-        List<String> presentDataSources = null;
+        List<String> presentDataSources;
         try {
             presentDataSources = listExistingDataSources();
         } catch (Exception e) {
@@ -235,7 +235,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     }
 
     private List<String> listExistingDataSources() throws Exception {
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         List<String> dataStreamIds = new ArrayList<>();
         try {
             conn = getHttpURLConnection(REST_DATASOURCE, RequestMethod.GET);

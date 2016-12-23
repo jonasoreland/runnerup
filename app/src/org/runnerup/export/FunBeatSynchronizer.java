@@ -164,7 +164,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     @Override
     public Status connect() {
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         cookies.clear();
         formValues.clear();
@@ -219,7 +219,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     "application/x-www-form-urlencoded");
             addCookies(conn);
 
-            boolean ok = false;
+            boolean ok;
             {
                 OutputStream wr = new BufferedOutputStream(
                         conn.getOutputStream());
@@ -237,8 +237,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     conn.setInstanceFollowRedirects(false);
                     conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
-                    responseCode = conn.getResponseCode();
-                    amsg = conn.getResponseMessage();
+                    //responseCode = conn.getResponseCode();
+                    //amsg = conn.getResponseMessage();
                     getCookies(conn);
                 } else if (responseCode != HttpURLConnection.HTTP_OK) {
                     Log.e(getName(), "FunBeatSynchronizer::connect() - got " + responseCode
@@ -342,8 +342,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         }
 
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             String id = tcx.export(mID, writer);
@@ -393,8 +393,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 conn.setInstanceFollowRedirects(false);
                 conn.setRequestMethod(RequestMethod.GET.name());
                 addCookies(conn);
-                responseCode = conn.getResponseCode();
-                amsg = conn.getResponseMessage();
+                //responseCode = conn.getResponseCode();
+                //amsg = conn.getResponseMessage();
                 getCookies(conn);
             } else if (responseCode != HttpURLConnection.HTTP_OK) {
                 Log.e(getName(), "FunBeatSynchronizer::upload() - got " + responseCode + ", msg: "
@@ -429,7 +429,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 wr.flush();
                 wr.close();
                 responseCode = conn.getResponseCode();
-                amsg = conn.getResponseMessage();
+                //amsg = conn.getResponseMessage();
                 getCookies(conn);
                 if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                     redirect = conn.getHeaderField("Location");
@@ -439,8 +439,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     conn.setInstanceFollowRedirects(false);
                     conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
-                    responseCode = conn.getResponseCode();
-                    amsg = conn.getResponseMessage();
+                    //responseCode = conn.getResponseCode();
+                    //amsg = conn.getResponseMessage();
                     getCookies(conn);
                 }
                 String html = getFormValues(conn);

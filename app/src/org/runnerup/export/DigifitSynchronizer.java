@@ -263,7 +263,8 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
             InputStream in = new BufferedInputStream(conn.getInputStream());
             OutputStream out = new FileOutputStream(dst);
-            int cnt = 0, readLen = 0;
+            int cnt = 0;
+            int readLen;
             byte buf[] = new byte[1024];
             while ((readLen = in.read(buf)) != -1) {
                 out.write(buf, 0, readLen);

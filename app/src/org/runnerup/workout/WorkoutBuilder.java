@@ -520,7 +520,7 @@ public class WorkoutBuilder {
             return;
         }
 
-        double first = 0;
+        double first;
         ArrayList<Double> list = new ArrayList<>();
         switch (step.getDurationType()) {
             case TIME:

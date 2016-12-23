@@ -237,7 +237,7 @@ public class NikeXML {
 
     private void emitHRPosition(long mID, String string, int hrVal)
             throws IllegalArgumentException, IllegalStateException, IOException {
-        long _id = 0;
+        long _id;
         { // 1 find a point with specified value
             String args[] = {
                     Long.toString(mID), Integer.toString(hrVal)
@@ -493,9 +493,9 @@ public class NikeXML {
                     while ((d == Dim.DISTANCE && p.sumDistance + deltaDist >= first)
                             || (d == Dim.TIME && p.sumTime + deltaTime >= first)) {
 
-                        double diffTime = 0;
-                        double diffDist = 0;
-                        double pct = 0;
+                        double diffTime;
+                        double diffDist;
+                        double pct;
                         if (d == Dim.DISTANCE) {
                             diffDist = first - p.sumDistance;
                             pct = diffDist / deltaDist;

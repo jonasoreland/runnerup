@@ -177,10 +177,9 @@ public class FeedWidgetService extends RemoteViewsService {
                 };
                 Cursor c = mDB.query(Constants.DB.ACCOUNT.TABLE, from, "_id = ?",
                         args, null, null, null, null);
-                String name = "?";
                 c.moveToFirst();
                 ContentValues config = DBHelper.get(c);
-                name = config.getAsString("name");
+                String name = config.getAsString("name");
                 c.close();
                 return name;
             }

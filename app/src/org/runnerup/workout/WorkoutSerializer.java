@@ -80,7 +80,7 @@ public class WorkoutSerializer {
         Workout w = new Workout();
         JSONArray steps = obj.getJSONArray("workoutSteps");
         int stepNo = 0;
-        JSONObject step = null;
+        JSONObject step;
         ArrayList<jsonstep> list = new ArrayList<>(4);
         while ((step = steps.optJSONObject(stepNo)) != null)
         {

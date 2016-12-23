@@ -191,7 +191,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         Status s = Status.NEED_AUTH;
         s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
 
         /*
          * connect to START_URL to get cookies
@@ -402,9 +402,9 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         int responseCode = conn.getResponseCode();
         String amsg = conn.getResponseMessage();
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            JSONObject reply = SyncHelper.parse(new BufferedReader(new InputStreamReader(
+            //JSONObject reply = SyncHelper.parse(new BufferedReader(new InputStreamReader(
+            //    conn.getInputStream())));
             // if "activityType" not in res or res["activityType"]["key"] != acttype:
-            conn.getInputStream())));
             conn.disconnect();
         } else {
             throw new Exception("Impossible to connect" + responseCode + amsg);
@@ -419,8 +419,8 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
 
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer);
@@ -518,7 +518,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             return s;
         }
         // s = Status.OK
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
 
         try {
 
@@ -606,7 +606,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     @Override
     public void downloadWorkout(File dst, String key) throws Exception {
         HttpURLConnection conn = null;
-        Exception ex = null;
+        Exception ex;
         FileOutputStream out = null;
         try {
             conn = (HttpURLConnection) new URL(GET_WORKOUT_URL + key).openConnection();

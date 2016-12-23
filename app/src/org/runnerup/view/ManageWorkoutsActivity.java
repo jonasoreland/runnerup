@@ -332,7 +332,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     }
 
     private void requery() {
-        ContentValues allSynchronizers[] = null;
+        ContentValues allSynchronizers[];
         {
             /*
              * Accounts/reports
@@ -663,7 +663,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded,
                 View convertView, ViewGroup parent) {
-            TextView view = null;
+            TextView view;
             if (convertView != null && convertView instanceof TextView)
                 view = (TextView) convertView;
             else

@@ -397,7 +397,7 @@ public class Step implements TickComponent {
     }
 
     public static Step createPauseStep(Dimension dim, double duration) {
-        Step step = null;
+        Step step;
         if (dim == null || dim == Dimension.TIME)
             step = new PauseStep();
         else

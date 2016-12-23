@@ -163,7 +163,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
          */
         deviceId = UUID.randomUUID().toString();
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         logout();
         try {
@@ -247,8 +247,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         }
 
         EndomondoTrack tcx = new EndomondoTrack(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             EndomondoTrack.Summary summary = new EndomondoTrack.Summary();
             StringWriter writer = new StringWriter();
@@ -334,8 +334,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         url.append(FEED_URL).append("?authToken=").append(authToken);
         url.append("&maxResults=25");
 
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());

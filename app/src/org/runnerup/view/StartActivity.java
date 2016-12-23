@@ -184,7 +184,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         hrValueText = (TextView) findViewById(R.id.hr_value_text);
         hrLayout = (FrameLayout) findViewById(R.id.hr_layout);
 
-        ImageButton wearButton = (ImageButton) findViewById(R.id.wear_button);
+        //ImageButton wearButton = (ImageButton) findViewById(R.id.wear_button);
         wearValueText = (TextView) findViewById(R.id.wear_value_text);
         wearLayout = (FrameLayout) findViewById(R.id.wear_layout);
 
@@ -928,7 +928,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             StepListEntry entry = steps.get(position);
-            StepButton button = null;
+            StepButton button;
             if (convertView != null && convertView instanceof StepButton) {
                 button = (StepButton) convertView;
             } else {

@@ -233,8 +233,8 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
         NikeXML nikeXML = new NikeXML(db);
         GPX nikeGPX = new GPX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter xml = new StringWriter();
             nikeXML.export(mID, xml);

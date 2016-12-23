@@ -264,7 +264,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
 
     public Status refreshToken() {
         Status s = Status.OK;
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
 
         final FormValues fv = new FormValues();
         fv.put("client_id", getClientId());

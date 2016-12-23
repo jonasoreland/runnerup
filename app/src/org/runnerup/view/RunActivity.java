@@ -107,7 +107,7 @@ public class RunActivity extends Activity implements TickListener {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.run);
         formatter = new Formatter(this);
-        HRZones hrZones = new HRZones(this);
+        //HRZones hrZones = new HRZones(this);
 
         stopButton = (Button) findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);

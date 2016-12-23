@@ -196,8 +196,8 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
         String URL = IMPORT_URL + "?access_token=" + access_token;
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer);

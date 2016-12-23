@@ -387,7 +387,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
             @Override
             public void onInit(int arg0) {
-                SharedPreferences prefs = null;
+                SharedPreferences prefs;
                 if (settingsName == null || settingsName.contentEquals(DEFAULT))
                     prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 else
@@ -418,7 +418,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             Resources res = getResources();
 
             feedback.clear();
-            SharedPreferences prefs = null;
+            SharedPreferences prefs;
             if (settingsName == null || settingsName.contentEquals(DEFAULT))
                 prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
             else

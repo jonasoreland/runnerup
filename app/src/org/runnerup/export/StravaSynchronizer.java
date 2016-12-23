@@ -193,8 +193,8 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         }
 
         GPX gpx = new GPX(db, true, false);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             gpx.export(mID, writer);

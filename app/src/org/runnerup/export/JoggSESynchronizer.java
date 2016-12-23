@@ -139,7 +139,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         try {
             /*
@@ -260,7 +260,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         final GPX gpx = new GPX(db);
         try {

@@ -223,7 +223,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     String getFormValues(HttpURLConnection conn) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         StringBuilder buf = new StringBuilder();
-        String s = null;
+        String s;
         while ((s = in.readLine()) != null) {
             buf.append(s);
         }

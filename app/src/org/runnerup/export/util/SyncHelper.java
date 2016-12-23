@@ -153,7 +153,7 @@ public final class SyncHelper {
     public static String readInputStream(InputStream in) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder buf = new StringBuilder();
-        String s = null;
+        String s;
         while ((s = reader.readLine()) != null) {
             buf.append(s);
         }

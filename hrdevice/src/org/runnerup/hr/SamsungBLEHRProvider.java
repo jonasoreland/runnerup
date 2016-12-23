@@ -401,7 +401,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                             // Since this data will be in Little endian format,
                             // we
                             // are interested in first 2 bits of first byte
-                            byte flag = scanRecord[offset++];
+                            @SuppressWarnings("UnusedAssignment") byte flag = scanRecord[offset++];
                             /*
                              * 00000011(0x03) - LE Limited Discoverable Mode and
                              * LE General Discoverable Mode

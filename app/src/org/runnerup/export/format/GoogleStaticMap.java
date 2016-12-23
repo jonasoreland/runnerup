@@ -95,7 +95,7 @@ public class GoogleStaticMap {
 
         long count = countLocations(activityId);
         int avgLen = 6; // in this encoding 1 location "normally" takes 9 chars
-        StringBuffer dst = null;
+        StringBuffer dst;
         do {
             dst = new StringBuffer();
             /*
