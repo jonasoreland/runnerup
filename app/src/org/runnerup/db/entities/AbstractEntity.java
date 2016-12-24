@@ -86,6 +86,7 @@ public abstract class AbstractEntity implements DBEntity {
 
         if (getValidColumns().containsAll(Arrays.asList(c.getColumnNames()))) {
             if (Build.VERSION.SDK_INT > 10) {
+                //noinspection AccessStaticViaInstance
                 this.cursorRowToContentValues(c, values());
             } else {
                 DatabaseUtils.cursorRowToContentValues(c, values());
