@@ -310,7 +310,8 @@ public class GPX {
                     }
                 }
                 mXML.endTag("", "trkseg");
-            } else if (export_rest_laps && (cLap.getFloat(1) != 0 || cLap.getLong(2) != 0)) {
+            } else //noinspection PointlessBooleanExpression
+                if (export_rest_laps && (cLap.getFloat(1) != 0 || cLap.getLong(2) != 0)) {
                 long lap = cLap.getLong(0);
                 if (restLapMode == RestLapMode.START_STOP_TRKSEG) {
                     if (lap > 0 && !cLap.isLast()) {
