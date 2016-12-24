@@ -321,6 +321,7 @@ public class Tracker extends android.app.Service implements
         return mBug23937Delta;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private long createActivity(int sport) {
         Resources res = getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

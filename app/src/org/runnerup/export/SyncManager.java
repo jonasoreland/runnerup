@@ -141,6 +141,7 @@ public class SyncManager {
         synchronizersById.clear();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public long load(String synchronizerName) {
         String from[] = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS

@@ -72,7 +72,7 @@ public class GPX {
      * @param writer
      * @throws IOException
      */
-    public String export(long activityId, Writer writer) throws IOException {
+    public void export(long activityId, Writer writer) throws IOException {
 
         String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
@@ -143,7 +143,6 @@ public class GPX {
             mXML.endDocument();
             mXML = null;
             cursor.close();
-            return time;
         } catch (IOException e) {
             cursor.close();
             mXML = null;

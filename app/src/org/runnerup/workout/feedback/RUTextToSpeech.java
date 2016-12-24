@@ -90,6 +90,7 @@ public class RUTextToSpeech {
         return UTTERANCE_ID + Long.toString(val);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     int speak(String text, int queueMode, HashMap<String, String> params) {
 
         final boolean trace = true;

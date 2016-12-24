@@ -76,6 +76,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             }
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         boolean end() {
             --depth;
             if (depth == 0) {
