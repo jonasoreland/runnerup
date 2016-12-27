@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">HR</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
-  <string name="Target_pace_HHMMSS">Target pace (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Target pace</string>
   <string name="Interval_time_HHMMSS">Interval time (HH:MM:SS)</string>
   <string name="Interval_distance_m">Interval distance (m)</string>
   <string name="Rest_time_HHMMSS">Rest time (HH:MM:SS)</string>

@@ -26,6 +26,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -48,6 +49,7 @@ import org.runnerup.util.SafeParse;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class TitleSpinner extends LinearLayout {
@@ -63,7 +65,6 @@ public class TitleSpinner extends LinearLayout {
         TS_NUMBERPICKER
     }
 
-    private int mValueInt = -1;
     private String mKey = null;
     private TextView mTitle = null;
     private TextView mValue = null;
@@ -75,6 +76,7 @@ public class TitleSpinner extends LinearLayout {
     private Type mType = null;
     private boolean mFirstSetValue = true;
     private int values[] = null;
+    private long mCurrValue = -1;
 
     public interface OnSetValueListener {
         /**
@@ -158,7 +160,7 @@ public class TitleSpinner extends LinearLayout {
     private void setupEditText(final Context context, final AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
         mInputType = arr.getInt(R.styleable.TitleSpinner_android_inputType,
                 EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-        mValue.setText(defaultValue);
+        setValue(defaultValue, false);
 
         final EditText edit = new EditText(context, attrs);
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
@@ -261,11 +263,7 @@ public class TitleSpinner extends LinearLayout {
             DateFormat df = android.text.format.DateFormat.getDateFormat(context);
             defaultValue = df.format(new Date());
         }
-        if (defaultValue != null) {
-            mValue.setText(defaultValue);
-        } else {
-            mValue.setText("");
-        }
+        setValue(defaultValue, false);
 
         final DatePicker datePicker = new DatePicker(context, attrs);
 
@@ -313,11 +311,7 @@ public class TitleSpinner extends LinearLayout {
             DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
             defaultValue = df.format(new Date());
         }
-        if (defaultValue != null) {
-            mValue.setText(defaultValue);
-        } else {
-            mValue.setText("");
-        }
+        setValue(defaultValue, false);
 
         final TimePicker timePicker = new TimePicker(context, attrs);
 
@@ -364,12 +358,7 @@ public class TitleSpinner extends LinearLayout {
 
     private void setupDurationPicker(final Context context, final AttributeSet attrs, TypedArray arr,
                                      CharSequence defaultValue) {
-        if (defaultValue != null) {
-            mValue.setText(defaultValue);
-        } else {
-            mValue.setText("");
-        }
-
+        setValue(defaultValue, false);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
         layout.setOnClickListener(new OnClickListener() {
@@ -380,7 +369,7 @@ public class TitleSpinner extends LinearLayout {
                 alert.setTitle(mTitle.getText());
 
                 final DurationPicker picker = new DurationPicker(context, attrs);
-                picker.setEpochTime(SafeParse.parseSeconds(mValue.getText().toString(), 0));
+                picker.setEpochTime(mCurrValue);
                 final LinearLayout layout = createLayout(context);
                 layout.addView(picker);
                 alert.setView(layout);
@@ -411,11 +400,7 @@ public class TitleSpinner extends LinearLayout {
 
     private void setupDistancePicker(final Context context, AttributeSet attrs, TypedArray arr,
                                      CharSequence defaultValue) {
-        if (defaultValue != null) {
-            mValue.setText(defaultValue);
-        } else {
-            mValue.setText("");
-        }
+        setValue(defaultValue, false);
 
         final DistancePicker distancePicker = new DistancePicker(context, attrs);
 
@@ -427,8 +412,7 @@ public class TitleSpinner extends LinearLayout {
 
                 alert.setTitle(mTitle.getText());
 
-                distancePicker.setDistance((long) SafeParse.parseDouble(
-                        mValue.getText().toString(), 0));
+                distancePicker.setDistance(mCurrValue);
 
                 final LinearLayout layout = createLayout(context);
                 layout.addView(distancePicker);
@@ -459,11 +443,7 @@ public class TitleSpinner extends LinearLayout {
     }
 
     private void setupNumberPicker(final Context context, AttributeSet attrs, final TypedArray arr, CharSequence defaultValue) {
-        if (defaultValue != null) {
-            mValue.setText(defaultValue);
-        } else {
-            mValue.setText("");
-        }
+        setValue(defaultValue, false);
 
         final NumberPicker numberPicker = new NumberPicker(context, attrs);
         numberPicker.setOrientation(VERTICAL);
@@ -476,7 +456,7 @@ public class TitleSpinner extends LinearLayout {
 
                 alert.setTitle(mTitle.getText());
 
-                numberPicker.setValue(SafeParse.parseInt(mValue.getText().toString(), 0));
+                numberPicker.setValue((int)mCurrValue);
 
                 final LinearLayout layout = createLayout(context);
                 layout.addView(numberPicker);
@@ -554,6 +534,15 @@ public class TitleSpinner extends LinearLayout {
     }
 
     public void setValue(String value) {
+        setValue (value, false);
+    }
+
+    public void setValue(CharSequence value, Boolean savePreferences) {
+        String str = value == null ? "" : value.toString();
+        setValue(str, savePreferences);
+    }
+
+    public void setValue(String value, Boolean savePreferences) {
         if (mSetValueListener != null) {
             try {
                 value = mSetValueListener.preSetValue(value);
@@ -562,7 +551,19 @@ public class TitleSpinner extends LinearLayout {
             }
         }
 
-        mValue.setText(value);
+        //Store the value - could be separate for distance vs time
+        if (value == null) {
+            mCurrValue = 0;
+        } else if (mType == Type.TS_DURATIONPICKER) {
+            mCurrValue = SafeParse.parseSeconds(value, 0);
+        } else {
+            mCurrValue = (long) SafeParse.parseDouble(value.toString(), 0);
+        }
+        if (mType == Type.TS_DISTANCEPICKER && !TextUtils.isEmpty(value)) {
+            mValue.setText(String.format("%s %s", value, getResources().getString(R.string.metrics_distance_m)));
+        } else {
+            mValue.setText(value);
+        }
         if (mType == Type.TS_SPINNER_TXT) {
             if (mSpinner.getAdapter() != null) {
                 int intVal = find(mSpinner.getAdapter(), value);
@@ -570,7 +571,7 @@ public class TitleSpinner extends LinearLayout {
             }
         }
 
-        if (mKey == null)
+        if (mKey == null || !savePreferences)
             return;
         Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
         pref.putString(mKey, value);
@@ -615,13 +616,13 @@ public class TitleSpinner extends LinearLayout {
             try {
                 value = mSetValueListener.preSetValue(value);
             } catch (java.lang.IllegalArgumentException ex) {
-                if (mValueInt != -1) {
-                    mSpinner.setSelection(mValueInt);
+                if ((int)mCurrValue != -1) {
+                    mSpinner.setSelection((int)mCurrValue);
                 }
                 return;
             }
         }
-        mValueInt = value;
+        mCurrValue = value;
         int selectionValue = getSelectionValue(value);
         mSpinner.setSelection(selectionValue);
         if (mSpinner.getAdapter() != null) {
@@ -656,11 +657,11 @@ public class TitleSpinner extends LinearLayout {
     }
 
     public CharSequence getValue() {
-        return mValue.getText();
+        return String.format(Locale.getDefault(), "%d", mCurrValue);
     }
 
     public int getValueInt() {
-        return mValueInt;
+        return (int)mCurrValue;
     }
 
     public void clear() {
