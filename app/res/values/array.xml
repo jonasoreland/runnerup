@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2012 - 2016 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--same order as above, same values as Intensity-->
+  <integer-array name="step_intensity_values" translatable="false">
+    <item>2</item>
+    <item>0</item>
+    <item>1</item>
+    <item>5</item>
+    <item>3</item>
+  </integer-array>
+  <!--same order as above, same values as Dimension-->
+  <integer-array name="step_duration_values" translatable="false">
+    <item>-1</item>
+    <item>1</item>
+    <item>2</item>
+  </integer-array>
+  <!--Note: same order as above, same values as Dimension-->
+  <integer-array name="target_values" translatable="false">
+    <item>-1</item>
+    <item>4</item>
+    <item>6</item>
+  </integer-array>
+  <!--Audio cue languages-->
+  <string-array name="cueLanguageNames" translatable="false">
+    <item>English</item>
+    <item>العَرَبِيَّة‎‎</item>
+    <item>Bahasa Indonesia</item>
+    <item>Català</item>
+    <item>Deutsch</item>
+    <item>Español</item>
+    <item>Français</item>
+    <item>Italiano</item>
+    <item>日本語</item>
+    <item>Lietuvių</item>
+    <item>Magyar</item>
+    <item>Nederlands</item>
+    <item>Norska</item>
+    <item>Polski</item>
+    <item>Português</item>
+    <item>Русский</item>
+    <item>Svenska</item>
+    <item>Türkçe</item>
+  </string-array>
+  <!--Note: keep in same order as languagesNames-->
+  <string-array name="cueLanguageCodes" translatable="false">
+    <item>en</item>
+    <item>ar</item>
+    <item>id</item>
+    <item>ca</item>
+    <item>de</item>
+    <item>es</item>
+    <item>fr</item>
+    <item>it</item>
+    <item>ja</item>
+    <item>lt</item>
+    <item>hu</item>
+    <item>nl</item>
+    <item>nb</item>
+    <item>pl</item>
+    <item>pt</item>
+    <item>ru</item>
+    <item>sv</item>
+    <item>tr</item>
+   </string-array>
+</resources>
