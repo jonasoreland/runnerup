@@ -50,7 +50,6 @@
   <string name="Delete">Apagar</string>
   <string name="Total">Total</string>
   <string name="Interval">Intervalo</string>
-  <string name="Remaining">Restante</string>
   <string name="Lap">Volta</string>
   <string name="New_lap">Nova volta</string>
   <string name="Next_lap">Próxima volta</string>
@@ -67,8 +66,6 @@
   <string name="GPS_satellites">Satélites GPS</string>
   <string name="Start_GPS">Ativar GPS</string>
   <string name="Duration">Duração</string>
-  <string name="Duration_type">Tipo de duração</string>
-  <string name="Target_type">Tipo de objetivo</string>
   <string name="Cancel">Abortar</string>
   <string name="Select_all">Escolher tudo</string>
   <string name="Username">Nome do usador</string>

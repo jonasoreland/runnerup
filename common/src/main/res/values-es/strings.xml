@@ -27,12 +27,6 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Frecuencia cardíaca máxima (MHR) </string>
   <string name="Target_pace_HHMMSS">Ritmo objetivo (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Intervalo de tiempo (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Intervalo de distancia (m)</string>
-  <string name="Rest_time_HHMMSS">Tiempo de descanso (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Distancia de descanso (m)</string>
-  <string name="Duration_time_HHMMSS">Tiempo en movimiento (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Distancia recorrida (m)</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -65,7 +59,6 @@
   <string name="Delete">Borrar</string>
   <string name="Total">Total</string>
   <string name="Interval">Intervalo</string>
-  <string name="Remaining">Restante</string>
   <string name="Lap">Vuelta</string>
   <string name="New_lap">Nueva vuelta</string>
   <string name="Next_lap">Siguiente vuelta</string>
@@ -84,8 +77,6 @@
   <string name="GPS_satellites">Satélites GPS</string>
   <string name="Start_GPS">Iniciar GPS</string>
   <string name="Duration">Duración</string>
-  <string name="Duration_type">Tipo de duración</string>
-  <string name="Target_type">Tipo de objetivo</string>
   <string name="Cancel">Cancelar</string>
   <string name="value">valor</string>
   <string name="Select_all">Seleccionar todos</string>
@@ -275,7 +266,6 @@
   <string name="Automatic_upload">Subida automática</string>
   <string name="Live">En línea</string>
   <string name="Include_map_in_post">Incluir mapa en la entrada</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Las actividades no serán eliminadas de %1$s, sólo de la lista de actvidades de RunnerUp subidas a %1$s</string>
   <string name="Clear_uploads_from_phone">Eliminar subidas (del teléfono)</string>
   <string name="my_phone">Mi teléfono</string>
   <string name="Failed_to_import">Fallo al importar:</string>

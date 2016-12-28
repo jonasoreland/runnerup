@@ -27,12 +27,6 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Frequência cardíaca máxima (FCM)</string>
   <string name="Target_pace_HHMMSS">Meta de ritmo (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Tempo de intervalo (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Distância do intervalo (m)</string>
-  <string name="Rest_time_HHMMSS">Tempo de descanso (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Distância do descanso (m)</string>
-  <string name="Duration_time_HHMMSS">Tempo de duração (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Distância da duração (m)</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s às %2$s</string>
@@ -69,7 +63,6 @@
   <string name="Delete">Excluir</string>
   <string name="Total">Total</string>
   <string name="Interval">Intervalo</string>
-  <string name="Remaining">Restante</string>
   <string name="Lap">Volta</string>
   <string name="New_lap">Nova volta</string>
   <string name="Next_lap">Próxima volta</string>
@@ -88,8 +81,6 @@
   <string name="GPS_satellites">Satélites GPS</string>
   <string name="Start_GPS">Iniciar GPS</string>
   <string name="Duration">Duração</string>
-  <string name="Duration_type">Tipo de duração</string>
-  <string name="Target_type">Tipo de meta</string>
   <string name="Cancel">Cancelar</string>
   <string name="value">valor</string>
   <string name="Select_all">Selecionar tudo</string>
@@ -281,7 +272,6 @@
   <string name="Automatic_upload">Envio automático</string>
   <string name="Live">Ao vivo</string>
   <string name="Include_map_in_post">Incluir mapa na postagem</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Observe que os exercícios não são removidos do %1$s, apenas da lista do RunnerUp de exercícios enviados para %1$s</string>
   <string name="Clear_uploads_from_phone">Apagar envios (do telefone)</string>
   <string name="my_phone">Meu telefone</string>
   <string name="Failed_to_import">Falha ao importar</string>
@@ -302,13 +292,10 @@
   <string name="Uploading_to_1s">Enviando para %1$s</string>
   <string name="Loading_activities">Carregando atividades</string>
   <string name="Fetching_activities_from_1s">Obtendo atividades de %1$s</string>
-  <string name="Map_not_available_on_Froyo">Mapa não disponível no Froyo</string>
-  <string name="Distance_marker">Marcador de distância</string>
   <string name="No_feed_to_show">Nenhum feed para motrar</string>
   <string name="Unused_currently">Atualmente não utilizado.</string>
   <string name="Unknown">Desconhecido</string>
   <string name="RunningFreeOnlinePasswordNotice">Nota: Use a \"chave secreta\" como senha definida no site web em Adicionar &gt; Sincronizar treino &gt; Trajetos de esporte.</string>
-  <string name="GoToWebsite">Ir ao site web</string>
   <string name="Recording">Gravando</string>
   <string name="Sensors">Sensores</string>
   <string name="Maintenance">Manutenção</string>
