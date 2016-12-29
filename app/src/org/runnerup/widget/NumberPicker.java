@@ -17,6 +17,7 @@
 
 package org.runnerup.widget;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -226,11 +227,13 @@ public class NumberPicker extends LinearLayout {
 
     private final OnTouchListener buttonLongTouchListener = new OnTouchListener() {
         @Override
+        @SuppressLint("ClickableViewAccessibility")
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_UP &&
                     ((longInc && v == incButton) ||
                     (longDec && v == decButton))) {
                 buttonLongClick(0);
+                return true;
             }
             return false;
         }
