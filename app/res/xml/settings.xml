@@ -218,7 +218,6 @@
             android:key="@string/pref_pace_graph_smoothing_filters"
             android:persistent="true"
             android:inputType="none"
-            android:summary="@string/mm31kz513sg5"
             android:title="@string/Smooth_pace_filters" />
     </PreferenceScreen>
 

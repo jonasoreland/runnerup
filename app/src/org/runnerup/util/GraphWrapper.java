@@ -391,7 +391,7 @@ public class GraphWrapper implements Constants {
                     .getBoolean(graphView.getContext().getResources().getString(R.string.pref_pace_graph_smoothing), true);
             if (paceList.size() > 0 && smoothData) {
                 GraphFilter f = new GraphFilter(paceList);
-                final String defaultFilterList = "mm(31);kz(5,13);sg(5)";
+                final String defaultFilterList = graphView.getContext().getResources().getString(R.string.mm31kz513sg5);
                 final String filterList = PreferenceManager.getDefaultSharedPreferences(
                         graphView.getContext()).getString(
                         graphView.getContext().getResources().getString(R.string.pref_pace_graph_smoothing_filters),
