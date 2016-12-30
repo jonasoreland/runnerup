@@ -537,12 +537,12 @@ public class TitleSpinner extends LinearLayout {
         setValue (value, false);
     }
 
-    public void setValue(CharSequence value, Boolean savePreferences) {
+    private void setValue(CharSequence value, Boolean savePreferences) {
         String str = value == null ? "" : value.toString();
         setValue(str, savePreferences);
     }
 
-    public void setValue(String value, Boolean savePreferences) {
+    private void setValue(String value, Boolean savePreferences) {
         if (mSetValueListener != null) {
             try {
                 value = mSetValueListener.preSetValue(value);
@@ -557,7 +557,7 @@ public class TitleSpinner extends LinearLayout {
         } else if (mType == Type.TS_DURATIONPICKER) {
             mCurrValue = SafeParse.parseSeconds(value, 0);
         } else {
-            mCurrValue = (long) SafeParse.parseDouble(value.toString(), 0);
+            mCurrValue = (long) SafeParse.parseDouble(value, 0);
         }
         if (mType == Type.TS_DISTANCEPICKER && !TextUtils.isEmpty(value)) {
             mValue.setText(String.format("%s %s", value, getResources().getString(R.string.metrics_distance_m)));
