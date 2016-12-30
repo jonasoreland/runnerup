@@ -113,6 +113,7 @@ repositories {
 
 dependencies {
     latestCompile "com.android.support:design:${rootProject.ext.supportLibrary}"
+    //noinspection GradleDependency
     froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
     latestCompile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     latestCompile 'com.getpebble:pebblekit:4.0.1'
