@@ -31,6 +31,25 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    lintOptions {
+        //disable specific checks for specific paths
+        lintConfig file("lint.xml")
+        checkReleaseBuilds true
+        //promote to error
+        fatal 'InlinedApi', 'InconsistentArrays'
+        //Should be handled, see app
+        warning 'GradleCompatible'
+        // Ignore some specific checks completely
+        ignore 'MissingTranslation'
+        //icon with all densities are not included - dont bother
+        ignore 'IconMissingDensityFolder'
+
+        showAll true
+        //debug issues in Travis
+        textReport true
+        textOutput 'stdout'
+    }
 }
 
 dependencies {
