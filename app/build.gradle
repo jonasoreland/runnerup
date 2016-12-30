@@ -112,8 +112,9 @@ dependencies {
     compile project(':common')
     compile project(':hrdevice')
     latestWearApp project(':wear')
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.3.7'
+
+    testCompile "junit:junit:${rootProject.ext.junitVersion}"
+    testCompile "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 }
 
 allprojects {
