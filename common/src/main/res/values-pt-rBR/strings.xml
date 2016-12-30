@@ -53,6 +53,9 @@
   <string name="speed">velocidade</string>
   <string name="pace">ritmo</string>
   <string name="heart_rate_zone">zona de frequência cardíaca</string>
+  <string name="cadence">cadência</string>
+  <string name="temperature">temperatura</string>
+  <string name="pressure">pressão</string>
   <string name="Zone">Zona</string>
   <string name="Device">Dispositivo</string>
   <string name="Start_hour">Iniciar hora</string>
@@ -309,5 +312,18 @@
   <string name="Recording">Gravando</string>
   <string name="Sensors">Sensores</string>
   <string name="Maintenance">Manutenção</string>
+  <string name="cue_hrm_connection_restored">Conexão restaurada com o monitor de batimento cardíaco</string>
+  <string name="cue_hrm_connection_lost">Conexão perdida com o monitor de batimento</string>
+  <string name="HRM_connection_audio_cue">A conexão com o HRM ativou o aviso de áudio</string>
   <string name="latest_feed_click_to_refresh">Últimos feeds (clique para atualizar)</string>
+  <string name="log_extended_gps_summary">Exportar apenas em GPX</string>
+  <string name="log_extended_gps_title">Registrar dados de precisão estendidos do GPS</string>
+  <string name="use_step_sensor_title">Sensor de passo</string>
+  <string name="use_step_sensor_summary">Usar para cadência</string>
+  <string name="use_temperature_sensor">Sensor de temperatura</string>
+  <string name="use_pressure_sensor_title">Sensor de pressão</string>
+  <string name="use_pressure_sensor_summary">Usar o barômetro para calcular a elevação</string>
+  <string name="adjust_barometer_altitude_from_gps">Ajustar a altitude do barômetro para a elevação do GPS</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Usar a elevação inicial do GPS para a elevação barométrica média</string>
+  <string name="google_play_not_installed">Google Play Services não está instalado</string>
 </resources>

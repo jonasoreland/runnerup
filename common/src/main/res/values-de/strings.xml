@@ -53,6 +53,9 @@
   <string name="speed">Geschwindigkeit</string>
   <string name="pace">Tempo</string>
   <string name="heart_rate_zone">Herzfrequenzzone</string>
+  <string name="cadence">Trittfrequenz</string>
+  <string name="temperature">Temperatur</string>
+  <string name="pressure">Druck</string>
   <string name="Zone">Zone</string>
   <string name="Device">Gerät</string>
   <string name="Start_hour">Startstunde</string>
@@ -281,7 +284,7 @@
   <string name="Overwrite_existing">Vorhandene überschreiben</string>
   <string name="Create_new_workout">Neue Trainingseinheit erstellen</string>
   <string name="Set_workout_name">Trainingsname festlegen</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Der Download von %1$s wird das Training %2$s mit dem selben Namen überschreiben</string>
+  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Der Download von %1$s wird das Training %2$s mit demselben Namen überschreiben</string>
   <string name="Delete_workout">Trainingseinheit löschen </string>
   <string name="RunnerUp_workout">RunnerUp-Trainingseinheit: </string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hallo\nHier ist ein Training, dass dir vielleicht gefallen könnte.</string>
@@ -301,4 +304,16 @@
   <string name="Recording">Aufnahmevorgang</string>
   <string name="Sensors">Sensoren</string>
   <string name="Maintenance">Wartung</string>
+  <string name="cue_hrm_connection_restored">Verbindung zum Pulsmessgerät wiederhergestellt</string>
+  <string name="cue_hrm_connection_lost">Verbindung zum Pulsmessgerät verloren</string>
+  <string name="log_extended_gps_summary">Nur in GPX exportieren</string>
+  <string name="log_extended_gps_title">Erweiterte GPS-Genauigkeitsdaten protokollieren</string>
+  <string name="use_step_sensor_title">Schrittsensor</string>
+  <string name="use_step_sensor_summary">Für Trittfrequenz verwenden</string>
+  <string name="use_temperature_sensor">Temperatursensor</string>
+  <string name="use_pressure_sensor_title">Drucksensor</string>
+  <string name="use_pressure_sensor_summary">Barometer zum Berechnen der Höhe verwenden</string>
+  <string name="adjust_barometer_altitude_from_gps">Barometerhöhe an GPS-Höhe anpassen</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Anfängliche GPS-Höhe zum Ausmitteln der barometrischen Höhe verwenden</string>
+  <string name="google_play_not_installed">Google Play-Dienste ist nicht installiert</string>
 </resources>

@@ -37,8 +37,14 @@
     <item>オリエンテーリング</item>
     <item>ウォーキング</item>
   </string-array>
+  <string-array name="types">
+    <item>時間</item>
+    <item>距離</item>
+  </string-array>
   <string-array name="sexes">
     <item>男性</item>
     <item>女性</item>
   </string-array>
+  <!--Audio cue languages-->
+  <!--Note: keep in same order as languagesNames-->
 </resources>

@@ -20,8 +20,7 @@
   <string name="cue_warmup">uppvärmning</string>
   <string name="cue_cooldown">nedvarvning</string>
   <string name="cue_current">aktuell</string>
-  <string name="cue_recovery">återhämtning</string>
-  <string name="cue_perkilometer">per kilometer</string>
+    <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>
   <string name="cue_started">startad</string>
   <string name="cue_paused">pausad</string>
@@ -66,8 +65,7 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_started">aktivitet startad</string>
-  <string name="cue_activity_paused">aktivitet pausad</string>
+    <string name="cue_activity_paused">aktivitet pausad</string>
   <string name="cue_activity_resumed">aktivitet återupptagen</string>
   <string name="cue_activity_stopped">aktivitet stoppad</string>
   <string name="cue_lap_started">varv startat</string>

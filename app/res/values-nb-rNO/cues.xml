@@ -20,8 +20,7 @@
   <string name="cue_warmup">oppvarming</string>
   <string name="cue_cooldown">nedkjøling</string>
   <string name="cue_current">nåværende</string>
-  <string name="cue_recovery">restitusjon</string>
-  <string name="cue_perkilometer">per kilometer</string>
+    <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mil</string>
   <string name="cue_started">startet</string>
   <string name="cue_paused">satt på pause</string>
@@ -58,8 +57,7 @@
     <item quantity="one">%d spm</item>
     <item quantity="other">%d spm</item>
   </plurals>
-  <string name="cue_activity_started">aktivitet startet</string>
-  <string name="cue_activity_paused">aktivitet satt på pause</string>
+    <string name="cue_activity_paused">aktivitet satt på pause</string>
   <string name="cue_activity_resumed">aktivitet gjenopptatt</string>
   <string name="cue_activity_stopped">aktivitet stoppet</string>
   <string name="cue_lap_started">runde startet</string>

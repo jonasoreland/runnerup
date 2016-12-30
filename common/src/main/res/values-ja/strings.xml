@@ -53,6 +53,9 @@
   <string name="speed">スピード</string>
   <string name="pace">ペース</string>
   <string name="heart_rate_zone">心拍数ゾーン</string>
+  <string name="cadence">ケイデンス</string>
+  <string name="temperature">気温</string>
+  <string name="pressure">気圧</string>
   <string name="Zone">ゾーン</string>
   <string name="Device">デバイス</string>
   <string name="Start_hour">開始時間</string>
@@ -309,5 +312,18 @@
   <string name="Recording">記録中</string>
   <string name="Sensors">センサー</string>
   <string name="Maintenance">メンテナンス</string>
+  <string name="cue_hrm_connection_restored">心拍数モニターへの接続を回復しました</string>
+  <string name="cue_hrm_connection_lost">心拍数モニターへの接続がなくなりました</string>
+  <string name="HRM_connection_audio_cue">心拍数モニター接続でトリガーされる音声合図</string>
   <string name="latest_feed_click_to_refresh">最新フィード (クリックするとリフレッシュ)</string>
+  <string name="log_extended_gps_summary">GPX でのみエクスポート</string>
+  <string name="log_extended_gps_title">拡張 GPS 精度データを記録する</string>
+  <string name="use_step_sensor_title">ステップセンサー</string>
+  <string name="use_step_sensor_summary">ケイデンスの使用</string>
+  <string name="use_temperature_sensor">気温センサー</string>
+  <string name="use_pressure_sensor_title">気圧センサー</string>
+  <string name="use_pressure_sensor_summary">気圧計を使用して標高を計算する</string>
+  <string name="adjust_barometer_altitude_from_gps">気圧計の高度をGPS高度に合わせる</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">最初の GPS 高度を使用して気圧計の高度を平均化する</string>
+  <string name="google_play_not_installed">Google Play サービスがインストールされていません</string>
 </resources>
