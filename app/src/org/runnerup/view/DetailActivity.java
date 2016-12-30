@@ -427,14 +427,15 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    static class ViewHolderLapList {
-        TextView tv0;
-        TextView tv1;
-        TextView tv2;
-        TextView tv3;
-        TextView tv4;
-        TextView tvHr;
+    private class ViewHolderLapList {
+        private TextView tv0;
+        private TextView tv1;
+        private TextView tv2;
+        private TextView tv3;
+        private TextView tv4;
+        private TextView tvHr;
     }
+
     private class LapListAdapter extends BaseAdapter {
 
         @Override
@@ -537,6 +538,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             return 0;
         }
 
+        private class ViewHolderDetailActivity {
+            private TextView tv0;
+            private CheckBox cb;
+            private TextView tv1;
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (position == reports.size()) {
@@ -561,38 +568,49 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 return b;
             }
 
-            LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
+            View view = convertView;
+            ViewHolderDetailActivity viewHolder;
 
-            //ViewHolder pattern fails (?), should not be important anyway
-            @SuppressLint("ViewHolder") View view = inflater.inflate(R.layout.reportlist_row, parent, false);
+            //Note: Special ViewHolder support as the Configure button is not in the view
+            if (view == null || view.getTag() == null) {
+                viewHolder = new ViewHolderDetailActivity();
 
-            TextView tv0 = (TextView) view.findViewById(R.id.account_id);
-            CheckBox cb = (CheckBox) view.findViewById(R.id.report_sent);
-            TextView tv1 = (TextView) view.findViewById(R.id.account_name);
+                LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
+                view = inflater.inflate(R.layout.reportlist_row, parent, false);
+
+                viewHolder.tv0 = (TextView) view.findViewById(R.id.account_id);
+                viewHolder.cb = (CheckBox) view.findViewById(R.id.report_sent);
+                viewHolder.tv1 = (TextView) view.findViewById(R.id.account_name);
+
+                view.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolderDetailActivity) view.getTag();
+            }
 
             ContentValues tmp = reports.get(position);
             String name = tmp.getAsString("name");
-            cb.setChecked(false);
-            cb.setEnabled(false);
-            cb.setTag(name);
+            viewHolder.cb.setChecked(false);
+            viewHolder.cb.setEnabled(false);
+            viewHolder.cb.setTag(name);
             if (alreadySynched.contains(name)) {
-                cb.setChecked(true);
-                cb.setText(getString(R.string.Uploaded));
-                cb.setOnLongClickListener(clearUploadClick);
+                viewHolder.cb.setChecked(true);
+                viewHolder.cb.setText(getString(R.string.Uploaded));
+                viewHolder.cb.setOnLongClickListener(clearUploadClick);
             } else if (pendingSynchronizers.contains(name)) {
-                cb.setChecked(true);
+                viewHolder.cb.setChecked(true);
             } else {
-                cb.setChecked(false);
+                viewHolder.cb.setChecked(false);
             }
             if (mode == MODE_DETAILS) {
-                cb.setEnabled(edit);
+                viewHolder.cb.setEnabled(edit);
             } else if (mode == MODE_SAVE) {
-                cb.setEnabled(true);
+                viewHolder.cb.setEnabled(true);
             }
-            cb.setOnCheckedChangeListener(onSendChecked);
+            viewHolder.cb.setOnCheckedChangeListener(onSendChecked);
 
-            tv0.setText(tmp.getAsString("_id"));
-            tv1.setText(name);
+            viewHolder.tv0.setText(tmp.getAsString("_id"));
+            viewHolder.tv1.setText(name);
+
             return view;
         }
     }
