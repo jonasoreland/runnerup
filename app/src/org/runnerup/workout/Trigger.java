@@ -17,14 +17,12 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public abstract class Trigger implements TickComponent {
 
     ArrayList<Feedback> triggerAction = new ArrayList<>();

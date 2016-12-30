@@ -17,9 +17,7 @@
 
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Handler;
 
 /**
@@ -30,7 +28,7 @@ import android.os.Handler;
  *
  * @author jonas
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public interface HRProvider {
 
     /**

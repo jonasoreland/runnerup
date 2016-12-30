@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
@@ -47,7 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";

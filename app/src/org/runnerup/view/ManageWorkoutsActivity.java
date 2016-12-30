@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -30,7 +29,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -77,7 +75,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
     private SQLiteDatabase mDB = null;

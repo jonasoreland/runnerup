@@ -43,7 +43,10 @@ import java.util.UUID;
  *
  * @author jonas
  */
-@TargetApi(18)
+
+//This class must only be used with 4.3 or later, calling checkLibrary()
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+
 public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     public static boolean checkLibrary(Context ctx) {

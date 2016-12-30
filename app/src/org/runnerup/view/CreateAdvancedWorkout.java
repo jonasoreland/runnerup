@@ -1,12 +1,10 @@
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class CreateAdvancedWorkout extends Activity {
 
     private Workout advancedWorkout = null;
@@ -83,7 +81,7 @@ public class CreateAdvancedWorkout extends Activity {
         advancedWorkoutStepsAdapter.notifyDataSetChanged();
     }
 
-    @TargetApi(Build.VERSION_CODES.FROYO)
+    
     final class WorkoutStepsAdapter extends BaseAdapter {
 
         List<Workout.StepListEntry> steps = new ArrayList<>();

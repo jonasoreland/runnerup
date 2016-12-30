@@ -16,9 +16,7 @@
  */
 package org.runnerup.widget;
 
-import android.annotation.TargetApi;
 import android.graphics.Point;
-import android.os.Build;
 import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
 import android.util.TypedValue;
@@ -28,7 +26,7 @@ import android.widget.LinearLayout;
 
 import org.runnerup.R;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class MyDotsPageIndicator implements GridViewPager.OnPageChangeListener, GridViewPager.OnAdapterChangeListener {
 
     // margin, size

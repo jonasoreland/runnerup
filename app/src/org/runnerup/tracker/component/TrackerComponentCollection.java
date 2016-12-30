@@ -16,9 +16,7 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
@@ -31,7 +29,7 @@ import java.util.HashMap;
  *
  * Class for managing a set of TrackerComponents as if they were one
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TrackerComponentCollection implements TrackerComponent {
 
     private final Handler handler = new Handler();

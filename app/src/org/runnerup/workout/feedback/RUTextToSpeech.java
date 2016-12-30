@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RUTextToSpeech {
 
     private static final String UTTERANCE_ID = "RUTextTospeech";
@@ -203,8 +203,8 @@ public class RUTextToSpeech {
     }
 }
 
-// separate class to handle FROYO/deprecation
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+//Explicit check for Android 4.3
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class UtteranceCompletion {
 
     @SuppressLint("ObsoleteSdkInt")
@@ -212,8 +212,7 @@ class UtteranceCompletion {
     public static void setUtteranceCompletedListener(
             TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {
         if (Build.VERSION.SDK_INT < 15) {
-            tts
-                    .setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
+            tts.setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
                         @Override
                         public void onUtteranceCompleted(String utteranceId) {
                             ruTextToSpeech.utteranceCompleted(utteranceId);

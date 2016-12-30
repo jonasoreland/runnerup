@@ -17,12 +17,10 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
@@ -45,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public abstract class DefaultSynchronizer implements Synchronizer {
 
     final Set<String> cookies = new HashSet<>();

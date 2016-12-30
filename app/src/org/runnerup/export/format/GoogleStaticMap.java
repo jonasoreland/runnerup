@@ -17,10 +17,8 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants.DB;
@@ -28,7 +26,7 @@ import org.runnerup.common.util.Constants.DB;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class GoogleStaticMap {
 
     long mID = 0;

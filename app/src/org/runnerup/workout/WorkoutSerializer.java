@@ -17,10 +17,8 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -44,7 +42,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class WorkoutSerializer {
 
     public static final String WORKOUTS_DIR = "workouts";

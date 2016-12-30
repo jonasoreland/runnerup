@@ -17,11 +17,9 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.os.Build;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
@@ -43,7 +41,7 @@ import java.util.List;
  * RunActivity, and by the Workout components
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Workout implements WorkoutComponent, WorkoutInfo {
 
     private long lap = 0;

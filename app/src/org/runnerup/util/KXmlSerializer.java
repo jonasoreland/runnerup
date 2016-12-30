@@ -21,15 +21,13 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.text.TextUtils;
 
 import java.io.*;
 import java.util.Locale;
 import org.xmlpull.v1.*;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class KXmlSerializer implements XmlSerializer {
 
     //    static final String UNDEFINED = ":";

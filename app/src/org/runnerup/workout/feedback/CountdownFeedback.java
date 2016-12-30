@@ -17,9 +17,7 @@
 
 package org.runnerup.workout.feedback;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,7 +29,7 @@ import org.runnerup.workout.Workout;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class CountdownFeedback extends Feedback {
 
     private Scope scope = Scope.STEP;

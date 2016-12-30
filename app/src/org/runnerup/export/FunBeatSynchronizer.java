@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -57,7 +55,7 @@ import java.util.Map;
  * 1.0.0.api.funbeat.se that I found...
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "FunBeat";

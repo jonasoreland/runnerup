@@ -17,19 +17,17 @@
 
 package org.runnerup.db;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class ActivityCleaner implements Constants {
     private long _totalSumHr = 0;
     private int _totalCount = 0;

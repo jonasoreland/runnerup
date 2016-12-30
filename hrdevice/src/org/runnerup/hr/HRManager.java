@@ -17,11 +17,9 @@
 
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ import java.util.List;
  *
  * @author jonas
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRManager {
 
     /**

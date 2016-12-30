@@ -17,10 +17,8 @@
 
 package org.runnerup.tracker;
 
-import android.annotation.TargetApi;
 import android.location.Location;
 import android.location.LocationListener;
-import android.os.Build;
 import android.os.Bundle;
 /**
  * Base class for writing chained LocationListener(s)
@@ -29,7 +27,7 @@ import android.os.Bundle;
  * 
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class LocationListenerBase implements LocationListener {
 
     private final java.util.LinkedList<LocationListener> mClients = new java.util.LinkedList<>();

@@ -17,12 +17,9 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import org.runnerup.BuildConfig;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class PauseStep extends Step {
 
     private long elapsedTime = 0;

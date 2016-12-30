@@ -17,7 +17,6 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -35,7 +34,7 @@ import org.runnerup.workout.Dimension;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Formatter implements OnSharedPreferenceChangeListener {
 
     private Context context = null;

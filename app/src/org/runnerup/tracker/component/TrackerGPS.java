@@ -17,13 +17,11 @@
 package org.runnerup.tracker.component;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -37,7 +35,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TrackerGPS extends DefaultTrackerComponent implements TickListener {
 
     private boolean mWithoutGps = false;

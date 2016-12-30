@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -55,7 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Nike+";

@@ -1,14 +1,12 @@
 
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class MockHRProvider implements HRProvider {
 
     private HRClient hrClient = null;

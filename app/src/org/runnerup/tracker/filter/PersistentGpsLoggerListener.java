@@ -17,16 +17,14 @@
 
 package org.runnerup.tracker.filter;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.LocationListenerBase;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class PersistentGpsLoggerListener extends LocationListenerBase implements
         Constants {
     private final java.lang.Object mLock;

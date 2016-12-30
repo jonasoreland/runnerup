@@ -17,13 +17,11 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.BuildConfig;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TargetTrigger extends Trigger {
 
     private boolean inited = false;

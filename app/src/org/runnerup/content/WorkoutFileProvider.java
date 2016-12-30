@@ -17,13 +17,11 @@
 
 package org.runnerup.content;
 
-import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 
@@ -32,7 +30,7 @@ import org.runnerup.workout.WorkoutSerializer;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class WorkoutFileProvider extends ContentProvider {
 
     // The authority is the symbolic name for the provider class

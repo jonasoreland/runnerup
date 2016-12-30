@@ -16,11 +16,9 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
@@ -30,7 +28,7 @@ import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TrackerHRM extends DefaultTrackerComponent {
 
     private final Handler handler = new Handler();

@@ -17,14 +17,11 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RepeatStep extends Step {
 
     int repeatCount = 1;

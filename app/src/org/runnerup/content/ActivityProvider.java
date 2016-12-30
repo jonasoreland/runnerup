@@ -17,7 +17,6 @@
 
 package org.runnerup.content;
 
-import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,7 +25,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -51,7 +49,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class ActivityProvider extends ContentProvider {
 
     // The authority is the symbolic name for the provider class

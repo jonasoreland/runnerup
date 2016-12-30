@@ -17,12 +17,10 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +36,7 @@ import java.util.Locale;
  * @author jonas.oreland@gmail.com
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FacebookCourse {
 
     long mID = 0;

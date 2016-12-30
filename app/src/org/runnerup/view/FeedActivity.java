@@ -17,14 +17,12 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +54,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FeedActivity extends Activity implements Constants {
 
     private SQLiteDatabase mDB = null;

@@ -17,11 +17,9 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -43,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class WorkoutBuilder {
 
     /**

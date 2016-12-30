@@ -17,9 +17,7 @@
 
 package org.runnerup.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.LinearLayout;
@@ -27,7 +25,7 @@ import android.widget.TextView;
 
 import org.runnerup.util.Formatter;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class DistancePicker extends LinearLayout {
 
     private long baseUnitMeters;

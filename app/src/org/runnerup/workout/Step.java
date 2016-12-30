@@ -17,9 +17,7 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
-import android.os.Build;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
@@ -28,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Step implements TickComponent {
 
     private String name = null;

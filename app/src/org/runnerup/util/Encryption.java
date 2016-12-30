@@ -18,8 +18,6 @@
 package org.runnerup.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Base64;
 
 import java.io.FileInputStream;
@@ -40,7 +38,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Encryption {
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 

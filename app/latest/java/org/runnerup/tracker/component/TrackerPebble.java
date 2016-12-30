@@ -16,12 +16,10 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
@@ -45,7 +43,7 @@ import org.runnerup.workout.WorkoutStepListener;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+
 public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObserver, WorkoutStepListener, ValueModel.ChangeListener<TrackerState> {
     public static final String NAME = "PEBBLE";
     private Context context;

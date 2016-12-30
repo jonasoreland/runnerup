@@ -17,11 +17,9 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -30,7 +28,7 @@ import org.runnerup.R;
 
 import java.util.Vector;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRZones {
 
     private int[] zones = null;

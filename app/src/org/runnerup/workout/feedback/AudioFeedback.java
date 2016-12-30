@@ -17,9 +17,7 @@
 
 package org.runnerup.workout.feedback;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import org.runnerup.util.Formatter;
@@ -32,7 +30,7 @@ import org.runnerup.workout.Workout;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AudioFeedback extends Feedback {
 
     private int msgId = 0;

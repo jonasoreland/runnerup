@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.text.TextUtils;
 
 import org.runnerup.common.util.Constants.DB;
@@ -35,7 +33,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FileSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "File";

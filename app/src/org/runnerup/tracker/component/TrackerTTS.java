@@ -16,10 +16,8 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import org.runnerup.R;
@@ -28,7 +26,7 @@ import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TrackerTTS extends DefaultTrackerComponent {
 
     private TextToSpeech tts;

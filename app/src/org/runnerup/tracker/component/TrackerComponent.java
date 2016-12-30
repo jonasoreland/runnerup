@@ -16,9 +16,7 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 
 import java.util.HashMap;
 
@@ -29,7 +27,7 @@ import java.util.HashMap;
  * typically a sensor but could also be a system service that
  * needs blocking initialization (with callback)
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public interface TrackerComponent {
 
     String KEY_CONTEXT = "KEY_CONTEXT";

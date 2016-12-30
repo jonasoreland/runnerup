@@ -17,10 +17,8 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +30,7 @@ import org.runnerup.common.util.Constants.DB;
 
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 class AudioSchemeListAdapter extends BaseAdapter {
 
     /**

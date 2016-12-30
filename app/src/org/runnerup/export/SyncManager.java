@@ -18,7 +18,6 @@
 package org.runnerup.export;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -80,7 +79,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class SyncManager {
     public static final int CONFIGURE_REQUEST = 1;
     public static final long ERROR_ACTIVITY_ID = -1L;

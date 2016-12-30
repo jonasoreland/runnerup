@@ -18,11 +18,9 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +46,7 @@ import org.runnerup.widget.WidgetUtil;
 import java.util.Locale;
 import java.util.Vector;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRZonesActivity extends AppCompatActivity implements Constants {
 
     private TitleSpinner ageSpinner;

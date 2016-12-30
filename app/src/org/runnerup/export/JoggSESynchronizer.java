@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
@@ -51,7 +49,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class JoggSESynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "jogg.se";

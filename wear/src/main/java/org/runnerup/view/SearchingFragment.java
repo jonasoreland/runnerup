@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 
 import org.runnerup.R;
 
-//@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+//
 public class SearchingFragment extends Fragment {
 
     public SearchingFragment() {

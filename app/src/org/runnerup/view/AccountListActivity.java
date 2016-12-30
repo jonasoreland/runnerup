@@ -17,13 +17,11 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -52,7 +50,7 @@ import org.runnerup.util.Bitfield;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.widget.WidgetUtil;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AccountListActivity extends AppCompatActivity implements Constants,
         LoaderCallbacks<Cursor> {
 

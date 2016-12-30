@@ -18,10 +18,8 @@
 package org.runnerup.widget;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.os.Handler;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -34,7 +32,7 @@ import android.widget.LinearLayout;
 
 import org.runnerup.R;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class NumberPicker extends LinearLayout {
 
     public interface OnChangedListener {

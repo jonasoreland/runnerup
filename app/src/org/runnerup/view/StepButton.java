@@ -18,12 +18,10 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.Gravity;
@@ -47,7 +45,7 @@ import org.runnerup.workout.Step;
 
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class StepButton extends TableLayout {
 
     private final Context mContext;

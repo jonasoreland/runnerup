@@ -16,7 +16,6 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -25,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.wearable.view.DotsPageIndicator;
@@ -40,7 +38,7 @@ import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class MainActivity extends Activity implements Constants, ValueModel.ChangeListener<TrackerState> {
 
     private GridViewPager pager;

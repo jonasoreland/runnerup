@@ -18,7 +18,6 @@
 package org.runnerup.tracker;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -78,7 +77,7 @@ import java.util.List;
  * @author jonas.oreland@gmail.com
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Tracker extends android.app.Service implements
         LocationListener, Constants {
     private static final int MAX_HR_AGE = 3000; // 3s

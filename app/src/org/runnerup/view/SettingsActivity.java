@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -52,7 +51,7 @@ import org.runnerup.widget.AboutPreference;
 
 import java.io.IOException;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class SettingsActivity extends PreferenceActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback{
 

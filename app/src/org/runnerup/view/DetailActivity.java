@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -74,7 +73,7 @@ import java.util.Locale;
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class DetailActivity extends AppCompatActivity implements Constants {
 
     private long mID = 0;

@@ -16,10 +16,8 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.wearable.view.DelayedConfirmationView;
 import android.view.LayoutInflater;
@@ -33,7 +31,7 @@ import org.runnerup.common.util.ValueModel;
 /**
  * @todo make this fragment contact phone and start app
  */
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class ConnectToPhoneFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private DelayedConfirmationView mButton;

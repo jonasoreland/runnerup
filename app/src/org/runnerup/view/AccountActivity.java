@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -58,7 +57,7 @@ import org.runnerup.widget.WidgetUtil;
 
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AccountActivity extends AppCompatActivity implements Constants {
     private long synchronizerID = -1;
     private String synchronizer = null;

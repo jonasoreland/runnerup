@@ -16,12 +16,10 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -66,7 +64,7 @@ import java.util.List;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+
 public class TrackerWear extends DefaultTrackerComponent
         implements Constants, TrackerComponent, WorkoutObserver, NodeApi.NodeListener,
         MessageApi.MessageListener, DataApi.DataListener, WorkoutStepListener, ValueModel.ChangeListener<TrackerState> {

@@ -17,11 +17,9 @@
 
 package org.runnerup.feed;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
@@ -36,7 +34,7 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.TimeZone;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FeedList extends Observable implements Constants {
 
     private static final int MAX_ITEMS = 50;

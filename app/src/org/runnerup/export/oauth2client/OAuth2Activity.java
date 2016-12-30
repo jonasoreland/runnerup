@@ -18,14 +18,12 @@
 package org.runnerup.export.oauth2client;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,7 +47,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 @SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Activity extends AppCompatActivity {
 

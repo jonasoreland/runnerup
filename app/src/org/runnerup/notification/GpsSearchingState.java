@@ -1,11 +1,9 @@
 package org.runnerup.notification;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
@@ -15,7 +13,7 @@ import org.runnerup.view.MainLayout;
 
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class GpsSearchingState implements NotificationState {
     private final Context context;
     private final GpsInformation gpsInformation;

@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -59,7 +57,7 @@ import java.util.zip.GZIPOutputStream;
  * @author jonas Based on https://github.com/cpfair/tapiriik
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";

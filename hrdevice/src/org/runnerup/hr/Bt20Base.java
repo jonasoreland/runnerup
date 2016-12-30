@@ -18,7 +18,6 @@
 package org.runnerup.hr;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -41,7 +40,7 @@ import java.util.UUID;
  * bluetooth device and a thread for performing data transmission when
  * connected.
  */
-@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
+
 public abstract class Bt20Base extends BtHRBase {
 
     public boolean isEnabled() {

@@ -16,10 +16,8 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
@@ -39,7 +37,7 @@ import org.runnerup.service.StateService;
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class RunInfoFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private final List<Pair<String, TextView>> textViews = new ArrayList<>(3);

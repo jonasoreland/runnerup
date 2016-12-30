@@ -17,10 +17,8 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -56,7 +54,7 @@ import java.util.concurrent.TimeUnit;
  * 
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RunKeeper {
 
     long mID = 0;

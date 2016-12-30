@@ -18,7 +18,6 @@
 package org.runnerup.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -56,7 +55,7 @@ import java.util.List;
 
 import static org.runnerup.util.Formatter.TXT_SHORT;
 
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+
 public class MapWrapper implements Constants {
 
     private MapView mapView = null;

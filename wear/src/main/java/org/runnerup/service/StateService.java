@@ -16,11 +16,9 @@
  */
 package org.runnerup.service;
 
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -51,7 +49,7 @@ import java.util.HashSet;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class StateService extends Service implements NodeApi.NodeListener, MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Boolean> {
 
     public static final String UPDATE_TIME = "UPDATE_TIME";
