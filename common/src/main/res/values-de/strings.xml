@@ -27,13 +27,7 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximale Herzschlagfrequenz (MHR)</string>
   <string name="Target_pace_HHMMSS">Angestrebtes Tempo (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Dauer des Invervalls (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Länge des Invervalls (m)</string>
-  <string name="Rest_time_HHMMSS">Ruhezeit (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Ruhedistanz (m)</string>
-  <string name="Duration_time_HHMMSS">Gesamtdauer (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Gesamtdistanz (m)</string>
-  <!--strings with argument to provide-->
+    <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s um %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -69,7 +63,6 @@
   <string name="Delete">Löschen</string>
   <string name="Total">Gesamt</string>
   <string name="Interval">Intervall</string>
-  <string name="Remaining">Verbleibend</string>
   <string name="Lap">Runde</string>
   <string name="New_lap">Neue Runde</string>
   <string name="Next_lap">Nächste Runde</string>
@@ -88,8 +81,6 @@
   <string name="GPS_satellites">GPS Satelliten</string>
   <string name="Start_GPS">GPS starten</string>
   <string name="Duration">Dauer</string>
-  <string name="Duration_type">Dauertyp</string>
-  <string name="Target_type">Zieltyp</string>
   <string name="Cancel">Abbrechen</string>
   <string name="value">Wert</string>
   <string name="Select_all">Alles auswählen</string>
@@ -275,7 +266,6 @@
   <string name="Automatic_upload">Automatisch hochladen</string>
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Karte in Beitrag miteinbeziehen</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Trainingseinheiten werden nicht von %1$s entfernt, sondern nur aus der RunnerUp-Liste, die zu %1$s hochgeladen wird.</string>
   <string name="Clear_uploads_from_phone">Alle Uploads (vom Telefon) löschen</string>
   <string name="my_phone">Mein Telefon</string>
   <string name="Failed_to_import">Fehler beim Importieren: </string>
@@ -296,11 +286,8 @@
   <string name="Uploading_to_1s">Auf %1$s wird hochgeladen</string>
   <string name="Loading_activities">Aktivitäten werden geladen</string>
   <string name="Fetching_activities_from_1s">Aktivitäten werden von %1$s abgerufen</string>
-  <string name="Map_not_available_on_Froyo">Karte auf Froyo nicht verfügbar</string>
-  <string name="Distance_marker">Abstandsmarkierung</string>
   <string name="Unused_currently">Momentan unbenutzt.</string>
   <string name="Unknown">Unbekannt</string>
-  <string name="GoToWebsite">Zur Webseite gehen</string>
   <string name="Recording">Aufnahmevorgang</string>
   <string name="Sensors">Sensoren</string>
   <string name="Maintenance">Wartung</string>

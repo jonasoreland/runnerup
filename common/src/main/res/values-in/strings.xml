@@ -27,12 +27,6 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Denyut jantung maksimum (DJM)</string>
   <string name="Target_pace_HHMMSS">Target ritme (JJ:MM:DD)</string>
-  <string name="Interval_time_HHMMSS">Waktu jeda (JJ:MM:DD)</string>
-  <string name="Interval_distance_m">Jarak jeda (m)</string>
-  <string name="Rest_time_HHMMSS">Waktu istirahat (JJ:MM:DD)</string>
-  <string name="Rest_distance_m">Jarak istirahat (m)</string>
-  <string name="Duration_time_HHMMSS">Durasi waktu (JJ:MM:SS)</string>
-  <string name="Duration_distance_m">Durasi jarak (m)</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -65,7 +59,6 @@
   <string name="Delete">Hapus</string>
   <string name="Total">Total</string>
   <string name="Interval">Interval</string>
-  <string name="Remaining">sisa</string>
   <string name="Lap">putaran</string>
   <string name="New_lap">Putaran baru</string>
   <string name="Next_lap">Putaran berikutnya</string>
@@ -84,8 +77,6 @@
   <string name="GPS_satellites">Satelit GPS</string>
   <string name="Start_GPS">Nyalakan GPS</string>
   <string name="Duration">Durasi</string>
-  <string name="Duration_type">Tipe durasi</string>
-  <string name="Target_type">Tipe target</string>
   <string name="Cancel">Batal</string>
   <string name="value">nilai</string>
   <string name="Select_all">Pilih semua</string>
@@ -275,7 +266,6 @@
   <string name="Automatic_upload">Unggah otomatis</string>
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Sertakan peta juga</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Perhatikan bahwa latihan tidak dihapus dari %1$s, yang dihapus hanya daftar %1$s yang diunduh ke RunnerUp</string>
   <string name="Clear_uploads_from_phone">Kosongkan unggahan (dari telepon)</string>
   <string name="my_phone">teleponku</string>
   <string name="Failed_to_import">Gagal mengimpor:</string>

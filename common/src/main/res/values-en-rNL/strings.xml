@@ -27,12 +27,6 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximale hartslag (HFmax)</string>
   <string name="Target_pace_HHMMSS">Doel tempo (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Interval tijd (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Interval afstand (m)</string>
-  <string name="Rest_time_HHMMSS">Rust tijd (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Rust afstand (m)</string>
-  <string name="Duration_time_HHMMSS">Duur tijd (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Duur afstand (m)</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -82,8 +76,6 @@
   <string name="GPS_satellites">GPS satellieten</string>
   <string name="Start_GPS">Start GPS</string>
   <string name="Duration">Duur</string>
-  <string name="Duration_type">Duur soort</string>
-  <string name="Target_type">Doel type</string>
   <string name="Cancel">Afbreken</string>
   <string name="value">waarde</string>
   <string name="Select_all">Alles selecteren</string>
