@@ -99,6 +99,9 @@ android {
         //Suppress before Android Studio 2.3
         ignore 'ApplySharedPref'
         showAll true
+        //debug issues in Travis
+        textReport true
+        textOutput 'stdout'
     }
 }
 
