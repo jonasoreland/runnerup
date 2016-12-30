@@ -14,7 +14,7 @@ project.ext {
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '25.0.2' //Update Travis manually
-    compileSdkVersion = 25
+    compileSdkVersion = 25 //Update Travis manually
     targetSdkVersion = 25
 
     supportLibrary = '25.1.0'
@@ -24,7 +24,7 @@ project.ext {
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
-    versionName = "1.56"
+    versionName = '1.56'
     versionCode = 14000056
     froyoVersionCode = 8000056
 
