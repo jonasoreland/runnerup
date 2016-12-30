@@ -84,7 +84,8 @@ android {
         checkReleaseBuilds true
         //promote to error, must be handled
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Lint check cannot handle that there are different support lib versions in different apk
+        //Lint check cannot handle that there are different versions
+        //TODO: Find how this should be handled
         //check manually with ./gradlew app:dependencies
         warning 'GradleCompatible'
         //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
@@ -116,7 +117,11 @@ dependencies {
     latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0@aar'){
         transitive=true
     }
-    compile 'com.jjoe64:graphview:4.2.1'
+    //Adding GraphView twice is done to force two inclusions and 'upgrade' the version of
+    //Android support library that GraphView was compiled with twice
+    //(GraphView is not used in 2.2 (but 2.3 "Froyo" builds). A wrapper will maybe suppress for Froyo.)
+    latestCompile 'com.jjoe64:graphview:4.2.1'
+    froyoCompile 'com.jjoe64:graphview:4.2.1'
     compile project(':common')
     compile project(':hrdevice')
     latestWearApp project(':wear')
