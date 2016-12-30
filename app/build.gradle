@@ -84,7 +84,9 @@ android {
         checkReleaseBuilds true
         //promote to error
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Required as Froyo support dropped in com.android.support:design:24.1.0
+        //Lint check cannot handle that there are different versions
+        //TODO: Find how this should be handled
+        //check manually with ./gradlew app:dependencies
         warning 'GradleCompatible'
         // Ignore some specific checks, also some specific with path in lint.xml
         ignore 'MissingTranslation'
@@ -100,7 +102,6 @@ repositories {
 }
 
 dependencies {
-    //design uses com.android.support:appcompat, not explicitly required
     latestCompile 'com.android.support:design:25.1.0'
     froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
     latestCompile 'com.google.android.gms:play-services-wearable:10.0.1'
@@ -108,7 +109,11 @@ dependencies {
     latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0@aar'){
         transitive=true
     }
-    compile 'com.jjoe64:graphview:4.2.1'
+    //Adding GraphView twice is done to force two inclusions and 'upgrade' the version of
+    //Android support library that GraphView was compiled with twice
+    //(GraphView is not used in 2.2 (but 2.3 "Froyo" builds). A wrapper will maybe suppress for Froyo.)
+    latestCompile 'com.jjoe64:graphview:4.2.1'
+    froyoCompile 'com.jjoe64:graphview:4.2.1'
     compile project(':common')
     compile project(':hrdevice')
     latestWearApp project(':wear')
