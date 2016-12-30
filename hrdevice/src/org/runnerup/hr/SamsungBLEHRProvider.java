@@ -17,6 +17,7 @@
 
 package org.runnerup.hr;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -43,7 +44,7 @@ import java.util.UUID;
  *
  * The Samsung BLE SDK for Bluetooth Low Energy connectivity. On later versions, Android supports BLE natively
  */
-
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
 
     /**
