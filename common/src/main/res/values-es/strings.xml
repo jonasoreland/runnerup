@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Batería del dispositivo HRM baja</string>
   <string name="High_HRM_battery_level">Batería del dispositivo HRM alta</string>
   <string name="Warning">Advertencia</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">El nivel de batería de tu monitor de ritmo cardiaco está bajo</string>
   <string name="Do_not_show_again">No mostrar de nuevo</string>
   <string name="Waiting_for_phone">Esperando al teléfono</string>
   <string name="Saving_on_phone">Guardar en el teléfono</string>

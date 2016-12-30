@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Niski poziom baterii HRM</string>
   <string name="High_HRM_battery_level">Wysoki poziom baterii HRM</string>
   <string name="Warning">Uwaga</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Poziom baterii twojego pulsometru jest niski</string>
   <string name="Do_not_show_again">Nie pokazuj ponownie</string>
   <string name="Waiting_for_phone">Oczekuję na telefon</string>
   <string name="Saving_on_phone">Zapisuję w telefonie</string>
