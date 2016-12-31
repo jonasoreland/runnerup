@@ -9,11 +9,12 @@
         <ignore path="**/com.vividsolutions/**" />
     </issue>
     <issue id="ResourceType">
-        <warning path="src/org/runnerup/view/MainLayout.java" />
+        <ignore path="src/org/runnerup/view/MainLayout.java" />
     </issue>
     <issue id="MissingQuantity">
         <!-- Transifex refuses quantity="one" for tr, (gradle) lint requires it, Inspect allows both-->
-        <warning path="res/values-tr/cues.xml" />
+        <ignore path="res/values-tr/cues.xml" />
+        <ignore path="res/values-pl/cues.xml" />
     </issue>
     <issue id="InvalidPackage">
         <ignore regexp=".*okio.*" />
