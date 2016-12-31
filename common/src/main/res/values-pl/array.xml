@@ -16,19 +16,16 @@
     <item>Regeneracja</item>
     <item>Uspokojenie</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Do przyciśnięcia</item>
     <item>Czas</item>
     <item>Dystans</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Brak</item>
     <item>Tempo</item>
     <item>Strefa tentna</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Bieganie</item>

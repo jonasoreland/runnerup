@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">HR</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maksimal hjerterytme (MHR)</string>
-  <string name="Target_pace_HHMMSS">Målhastighet (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Målhastighet</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->

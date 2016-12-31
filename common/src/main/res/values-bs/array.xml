@@ -16,38 +16,18 @@
     <item>Oporavak</item>
     <item>Hlađenje</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
-  <integer-array name="step_intensity_values" translatable="false">
-    <item>2</item>
-    <item>0</item>
-    <item>1</item>
-    <item>5</item>
-    <item>3</item>
-  </integer-array>
   <string-array name="duration_types">
     <item>Do pritiska</item>
     <item>Vrijeme</item>
     <item>Razdaljina</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
-  <integer-array name="step_duration_values" translatable="false">
-    <item>-1</item>
-    <item>1</item>
-    <item>2</item>
-  </integer-array>
   <string-array name="target_types">
     <item>Ništa</item>
     <item>Tempo</item>
     <item>Zona pulsa</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
-  <integer-array name="target_values" translatable="false">
-    <item>-1</item>
-    <item>4</item>
-    <item>6</item>
-  </integer-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
-  <string-array name="sportEntries" tools:ignore="InconsistentArrays">
+  <string-array name="sportEntries">
     <item>Trčanje</item>
     <item>Bicikl</item>
     <item>Ostalo</item>
@@ -62,6 +42,4 @@
     <item>Muško</item>
     <item>Žensko</item>
   </string-array>
-  <!--Audio cue languages-->
-  <!--Note: keep in same order as languagesNames-->
 </resources>

@@ -26,8 +26,8 @@
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximale Herzschlagfrequenz (MHR)</string>
-  <string name="Target_pace_HHMMSS">Angestrebtes Tempo (HH:MM:SS)</string>
-    <!--strings with argument to provide-->
+  <string name="Target_pace_HHMMSS">Angestrebtes Tempo</string>
+  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s um %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
