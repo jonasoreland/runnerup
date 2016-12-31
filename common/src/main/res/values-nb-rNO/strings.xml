@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Lavt batterinivå på HRM</string>
   <string name="High_HRM_battery_level">Høyt batterinivå på HRM</string>
   <string name="Warning">Advarsel</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Lavt batterinivå på din hjerterytmemonitor</string>
   <string name="Do_not_show_again">Ikke vis igjen</string>
   <string name="Waiting_for_phone">Venter på telefon</string>
   <string name="Saving_on_phone">Lagrer på telefon</string>

@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Alacsony pulzusmérő akkumulátor töltöttség</string>
   <string name="High_HRM_battery_level">Magas pulzusmérő akkumulátor töltöttség</string>
   <string name="Warning">Figyelem</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">A pulzusmérő akkumulátor töltöttsége alacsony.</string>
   <string name="Do_not_show_again">Ne mutassa többet</string>
   <string name="Waiting_for_phone">Várakozás telefonra</string>
   <string name="Saving_on_phone">Mentés a telefonon</string>

@@ -82,12 +82,21 @@ android {
         //disable specific checks for specific paths
         lintConfig file("lint.xml")
         checkReleaseBuilds true
-        //promote to error
+        //promote to error, must be handled
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Required as Froyo support dropped in com.android.support:design:24.1.0
+        //Lint check cannot handle that there are different support lib versions in different apk
+        //check manually with ./gradlew app:dependencies
         warning 'GradleCompatible'
-        // Ignore some specific checks, also some specific with path in lint.xml
+        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
+        //Suppress before Android Studio 2.3
+        //warning 'RestrictedApi'
+        //All translations will not be complete
         ignore 'MissingTranslation'
+        //icon with all densities are not included - dont bother
+        ignore 'IconMissingDensityFolder'
+        //apply() is supported from SDK 9, but min version is 8
+        //Suppress before Android Studio 2.3
+        //ignore 'ApplySharedPref'
         showAll true
     }
 }

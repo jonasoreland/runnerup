@@ -243,7 +243,6 @@
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Het batterijniveau van uw hartslagmeter is laag.</string>
   <string name="Do_not_show_again">Niet meer laten zien</string>
   <string name="Waiting_for_phone">Wachten op smartphone</string>
   <string name="Saving_on_phone">Opslaan op smartphone</string>
