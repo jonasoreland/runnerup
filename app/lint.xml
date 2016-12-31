@@ -14,6 +14,7 @@
     <issue id="MissingQuantity">
         <!-- Transifex refuses quantity="one" for tr, (gradle) lint requires it, Inspect allows both-->
         <warning path="res/values-tr/cues.xml" />
+        <warning path="res/values-pl/cues.xml" />
     </issue>
     <issue id="InvalidPackage">
         <ignore regexp=".*okio.*" />
