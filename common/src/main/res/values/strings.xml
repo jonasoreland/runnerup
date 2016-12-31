@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -258,10 +258,9 @@
   <string name="Low_HRM_battery_level">Low HRM battery level</string>
   <string name="High_HRM_battery_level">High HRM battery level</string>
   <string name="Warning">Warning</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">The battery level of your heart-rate monitor is low.</string>
   <string name="Do_not_show_again">Do not show again</string>
-  <string name="Waiting_for_phone">Waiting for phone</string>
-  <string name="Saving_on_phone">Saving on phone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Waiting for phone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Saving on phone</string>
   <string name="Save">Save</string>
   <string name="Add_step">Add step</string>
   <string name="Add_repeat">Add repeat</string>

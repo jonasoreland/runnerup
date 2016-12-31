@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Niedrige Akkukapazität</string>
   <string name="High_HRM_battery_level">Hohe Akkukapazität</string>
   <string name="Warning">Warnung</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Batteriespannung des Herzfrequenzmonitors ist niedrig!</string>
   <string name="Do_not_show_again">Nicht mehr anzeigen</string>
   <string name="Waiting_for_phone">Warte auf Telefon</string>
   <string name="Saving_on_phone">Speichere auf Telefon</string>
