@@ -34,9 +34,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android.support:wearable:1.4.0'
-    compile 'com.google.android.gms:play-services-wearable:10.0.1'
+    compile "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
+    compile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     compile project(':common')
 }
 
