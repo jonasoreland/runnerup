@@ -302,14 +302,14 @@
   <string name="cue_hrm_connection_lost">Tappat koppling till pulsmätare</string>
   <string name="HRM_connection_audio_cue">Meddelande triggat av koppling till pulsmätare</string>
   <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
+  <string name="log_extended_gps_summary">Exportera enbart i GPX</string>
+  <string name="log_extended_gps_title">Logga utökad GPS noggrannhetsdata</string>
+  <string name="use_step_sensor_title">Steg sensor</string>
+  <string name="use_step_sensor_summary">Använd till kadens</string>
+  <string name="use_temperature_sensor">Temperatur sensor</string>
+  <string name="use_pressure_sensor_title">Tryck sensor</string>
+  <string name="use_pressure_sensor_summary">Använd barometer för höjd</string>
   <string name="adjust_barometer_altitude_from_gps">Justera barometerhöjd till GPS höjd</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
   <string name="google_play_not_installed">Google Play Services är inte installerade</string>
-  <string name="log_extended_gps_summary">Exportera enbart i GPX</string>
-  <string name="log_extended_gps_title">Logga utökad GPS noggrannhetsdata</string>
-  <string name="use_pressure_sensor_summary">Använd barometer för höjd</string>
-  <string name="use_pressure_sensor_title">Tryck sensor</string>
-  <string name="use_step_sensor_summary">Använd till kadens</string>
-  <string name="use_step_sensor_title">Steg sensor</string>
-  <string name="use_temperature_sensor">Temperatur sensor</string>
 </resources>
