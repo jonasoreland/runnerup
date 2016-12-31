@@ -20,7 +20,7 @@
   <string name="cue_warmup">aquecer</string>
   <string name="cue_cooldown">descansar</string>
   <string name="cue_current">atual</string>
-  <string name="cue_perkilometer">por quilómetro</string>
+  <string name="cue_perkilometer">por quilômetro</string>
   <string name="cue_permile">por milha</string>
   <string name="cue_started">iniciado</string>
   <string name="cue_resumed">reatado</string>
