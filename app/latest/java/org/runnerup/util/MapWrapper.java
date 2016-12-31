@@ -167,19 +167,19 @@ public class MapWrapper implements Constants {
                 }
                 switch (type) {
                     case DB.LOCATION.TYPE_START:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.start_map_marker);
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_start);
                         title = context.getResources().getString(R.string.Start);
                         break;
                     case DB.LOCATION.TYPE_END:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.end_map_marker);
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_end);
                         title = context.getResources().getString(R.string.Stop);
                         break;
                     case DB.LOCATION.TYPE_PAUSE:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.pause_map_marker);
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_pause);
                         title = context.getResources().getString(R.string.Pause);
                         break;
                     case DB.LOCATION.TYPE_RESUME:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.resume_map_marker);
+                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_resume);
                         title = context.getResources().getString(R.string.Resume);
                         break;
                     case DB.LOCATION.TYPE_GPS:
@@ -190,7 +190,7 @@ public class MapWrapper implements Constants {
                     if (lastLap >= 0) {
                         title = context.getString(R.string.cue_lap) + " " + loc.getLap();
                     }
-                    iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.lap_map_marker);
+                    iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_lap);
                     lastLap = loc.getLap();
                 }
                 if (title != null) {
@@ -209,7 +209,7 @@ public class MapWrapper implements Constants {
             //Track is ended with a pause, replace with end
             if (!route.markers.isEmpty()) {
                 MarkerViewOptions m = route.markers.get(route.markers.size() - 1);
-                Drawable iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.end_map_marker);
+                Drawable iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_end);
                 Icon icon = iconFactory.fromDrawable(iconDrawable);
                 m.title(context.getResources().getString(R.string.Stop)).icon(icon);
             }
