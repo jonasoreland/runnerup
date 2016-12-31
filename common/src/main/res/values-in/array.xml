@@ -16,19 +16,16 @@
     <item>Pemulihan</item>
     <item>Pendinginan</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Sampai dihentikan</item>
     <item>Waktu</item>
     <item>Jarak</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Tiada</item>
     <item>Laju</item>
     <item>Zona denyut jantung</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Lari</item>
