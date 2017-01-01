@@ -95,6 +95,7 @@ android {
         //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
         warning 'RestrictedApi'
 
+
         showAll true
         //debug issues in Travis
         textReport true
