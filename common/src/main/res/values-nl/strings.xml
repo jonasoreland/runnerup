@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximale hartslag (HFmax)</string>
-  <string name="Target_pace_HHMMSS">Doel tempo (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Doel tempo</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Het batterijniveau van uw hartslagmeter is laag.</string>
   <string name="Do_not_show_again">Niet meer laten zien</string>
   <string name="Waiting_for_phone">Wachten op smartphone</string>
   <string name="Saving_on_phone">Opslaan op smartphone</string>

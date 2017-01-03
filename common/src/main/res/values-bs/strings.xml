@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">Puls</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Max puls (MP)</string>
-  <string name="Target_pace_HHMMSS">Ciljani tempo (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Ciljani tempo</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s u %2$s</string>
@@ -255,7 +255,6 @@
   <string name="Low_HRM_battery_level">Nizak nivo baterije monitora pulsa</string>
   <string name="High_HRM_battery_level">Visok nivo baterije monitora pulsa</string>
   <string name="Warning">Upozorenje</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Nivo baterije vašeg monitora pulsa je nizak.</string>
   <string name="Do_not_show_again">Ne prikazuj ponovo</string>
   <string name="Waiting_for_phone">Čekanje na telefon</string>
   <string name="Saving_on_phone">Snimanje na telefon</string>

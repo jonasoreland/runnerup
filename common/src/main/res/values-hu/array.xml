@@ -16,19 +16,16 @@
     <item>Felépülés</item>
     <item>Levezetés</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Megnyomásig</item>
     <item>Idő</item>
     <item>Távolság</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Nincs</item>
     <item>Tempó</item>
     <item>Pulzus zóna</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Futás</item>

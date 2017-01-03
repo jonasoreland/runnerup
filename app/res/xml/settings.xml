@@ -206,19 +206,24 @@
         android:key="graph_preferencescreen"
         android:title="@string/Graph">
 
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:persistent="true"
-            android:key="@string/pref_pace_graph_smoothing"
-            android:title="@string/Smooth_pace_graph" />
+        <PreferenceCategory
+            android:key="@string/Advanced_options"
+            android:title="@string/Advanced_options">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:persistent="true"
+                android:key="@string/pref_pace_graph_smoothing"
+                android:title="@string/Smooth_pace_graph" />
 
-        <org.runnerup.widget.TextPreference
-            android:defaultValue="mm(31);kz(5,13);sg(5)"
-            android:dependency="@string/pref_pace_graph_smoothing"
-            android:key="@string/pref_pace_graph_smoothing_filters"
-            android:persistent="true"
-            android:inputType="none"
-            android:title="@string/Smooth_pace_filters" />
+            <!--suppress AndroidDomInspection -->
+            <org.runnerup.widget.TextPreference
+                android:defaultValue="mm(31);kz(5,13);sg(5)"
+                android:dependency="@string/pref_pace_graph_smoothing"
+                android:key="@string/pref_pace_graph_smoothing_filters"
+                android:persistent="true"
+                android:inputType="none"
+                android:title="@string/Smooth_pace_filters" />
+        </PreferenceCategory>
     </PreferenceScreen>
 
     <Preference

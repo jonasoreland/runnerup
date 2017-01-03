@@ -16,19 +16,16 @@
     <item>Restitusjon</item>
     <item>Avkjøling</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Fårestående trykk</item>
     <item>Tid</item>
     <item>Distanse</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Ingen</item>
     <item>Fart</item>
     <item>Hjerterytmesone</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Springing</item>

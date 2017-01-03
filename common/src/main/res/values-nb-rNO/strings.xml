@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">HR</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maksimal hjerterytme (MHR)</string>
-  <string name="Target_pace_HHMMSS">Målhastighet (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Målhastighet</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Lavt batterinivå på HRM</string>
   <string name="High_HRM_battery_level">Høyt batterinivå på HRM</string>
   <string name="Warning">Advarsel</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Lavt batterinivå på din hjerterytmemonitor</string>
   <string name="Do_not_show_again">Ikke vis igjen</string>
   <string name="Waiting_for_phone">Venter på telefon</string>
   <string name="Saving_on_phone">Lagrer på telefon</string>

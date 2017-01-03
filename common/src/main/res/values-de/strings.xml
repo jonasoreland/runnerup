@@ -26,8 +26,8 @@
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximale Herzschlagfrequenz (MHR)</string>
-  <string name="Target_pace_HHMMSS">Angestrebtes Tempo (HH:MM:SS)</string>
-    <!--strings with argument to provide-->
+  <string name="Target_pace_HHMMSS">Angestrebtes Tempo</string>
+  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s um %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Niedrige Akkukapazität</string>
   <string name="High_HRM_battery_level">Hohe Akkukapazität</string>
   <string name="Warning">Warnung</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Batteriespannung des Herzfrequenzmonitors ist niedrig!</string>
   <string name="Do_not_show_again">Nicht mehr anzeigen</string>
   <string name="Waiting_for_phone">Warte auf Telefon</string>
   <string name="Saving_on_phone">Speichere auf Telefon</string>

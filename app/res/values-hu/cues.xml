@@ -20,7 +20,7 @@
   <string name="cue_warmup">bemelegítés</string>
   <string name="cue_cooldown">levezetés</string>
   <string name="cue_current">jelenlegi</string>
-    <string name="cue_perkilometer">per kilométer</string>
+  <string name="cue_perkilometer">per kilométer</string>
   <string name="cue_permile">per mérföld</string>
   <string name="cue_started">elkezdve</string>
   <string name="cue_paused">szüneteltetve</string>
@@ -57,7 +57,7 @@
     <item quantity="one">%d ütés per perc</item>
     <item quantity="other">%d ütés per perc</item>
   </plurals>
-    <string name="cue_activity_paused">tevékenység szüneteltetve</string>
+  <string name="cue_activity_paused">tevékenység szüneteltetve</string>
   <string name="cue_activity_resumed">tevékenység folytatva</string>
   <string name="cue_activity_stopped">tevékenység megállítva</string>
   <string name="cue_lap_started">kör elkezdve</string>

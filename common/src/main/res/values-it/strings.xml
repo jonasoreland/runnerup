@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">BPM</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Massima frequenza cardiaca (HR max)</string>
-  <string name="Target_pace_HHMMSS">Ritmo obiettivo (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Ritmo obiettivo</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s a %2$s</string>
@@ -254,7 +254,6 @@
   <string name="Low_HRM_battery_level">Livello batteria HRM basso</string>
   <string name="High_HRM_battery_level">Livello batteria HRM alto</string>
   <string name="Warning">Attenzione</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Il livello batteria del tuo monitor BPM è basso.</string>
   <string name="Do_not_show_again">Non mostrare più.</string>
   <string name="Waiting_for_phone">Attesa telefono</string>
   <string name="Saving_on_phone">Salvataggio su telefono</string>

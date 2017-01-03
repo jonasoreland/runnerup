@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">Fc</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Fréquence Cardiaque Maximum (FCM)</string>
-  <string name="Target_pace_HHMMSS">Rythme cible (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Rythme cible</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Batterie du cardiofréquencemètre faible</string>
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">La batterie de votre cardiofréquencemètre est faible.</string>
   <string name="Do_not_show_again">Ne pas afficher à nouveau</string>
   <string name="Waiting_for_phone">En attente du téléphone</string>
   <string name="Saving_on_phone">Sauvegarde sur téléphone</string>

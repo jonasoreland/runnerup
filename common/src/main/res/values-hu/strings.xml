@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">Pul</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Legmagasabb pulzus</string>
-  <string name="Target_pace_HHMMSS">Kitűzött tempó (ÓÓ:PP:MM)</string>
+  <string name="Target_pace_HHMMSS">Kitűzött tempó</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -252,7 +252,6 @@
   <string name="Low_HRM_battery_level">Alacsony pulzusmérő akkumulátor töltöttség</string>
   <string name="High_HRM_battery_level">Magas pulzusmérő akkumulátor töltöttség</string>
   <string name="Warning">Figyelem</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">A pulzusmérő akkumulátor töltöttsége alacsony.</string>
   <string name="Do_not_show_again">Ne mutassa többet</string>
   <string name="Waiting_for_phone">Várakozás telefonra</string>
   <string name="Saving_on_phone">Mentés a telefonon</string>
