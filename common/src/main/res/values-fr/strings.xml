@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -253,8 +253,8 @@
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>
   <string name="Do_not_show_again">Ne pas afficher à nouveau</string>
-  <string name="Waiting_for_phone">En attente du téléphone</string>
-  <string name="Saving_on_phone">Sauvegarde sur téléphone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">En attente du téléphone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Sauvegarde sur téléphone</string>
   <string name="Save">Sauvegarder</string>
   <string name="Add_step">Ajouter une étape</string>
   <string name="Add_repeat">Ajout une répétition</string>

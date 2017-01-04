@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -244,7 +244,7 @@
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
   <string name="Do_not_show_again">Niet meer laten zien</string>
-  <string name="Waiting_for_phone">Wachten op smartphone</string>
-  <string name="Saving_on_phone">Opslaan op smartphone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Wachten op smartphone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Opslaan op smartphone</string>
   <string name="Unknown">Onbekend</string>
 </resources>

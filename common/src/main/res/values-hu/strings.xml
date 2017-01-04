@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -253,8 +253,8 @@
   <string name="High_HRM_battery_level">Magas pulzusmérő akkumulátor töltöttség</string>
   <string name="Warning">Figyelem</string>
   <string name="Do_not_show_again">Ne mutassa többet</string>
-  <string name="Waiting_for_phone">Várakozás telefonra</string>
-  <string name="Saving_on_phone">Mentés a telefonon</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Várakozás telefonra</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Mentés a telefonon</string>
   <string name="Save">Mentés</string>
   <string name="Add_step">Lépés hozzáadása</string>
   <string name="Add_repeat">Ismétlés hozzáadása</string>
