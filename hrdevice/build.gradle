@@ -16,6 +16,9 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
+            if (project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
+                java.excludes = ['org/runnerup/hr/SamsungBLEHRProvider.java']
+            }
             resources.srcDirs = ['src']
             aidl.srcDirs = ['src']
             renderscript.srcDirs = ['src']
@@ -33,7 +36,9 @@ android {
 }
 
 dependencies {
-    provided files('libs/samsung_ble_sdk_200.jar')
+    if (!project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
+        provided files('libs/samsung_ble_sdk_200.jar')
+    }
     compile files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar')
 }
 
@@ -41,7 +46,9 @@ task downloadSamsungBleSdk(type: DownloadTask) {
     sourceUrl = 'https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar'
     target = file('libs/samsung_ble_sdk_200.jar')
 }
-preBuild.dependsOn downloadSamsungBleSdk
+if (!project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
+    preBuild.dependsOn downloadSamsungBleSdk
+}
 
 class DownloadTask extends DefaultTask {
     @Input
