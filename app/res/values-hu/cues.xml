@@ -53,6 +53,14 @@
     <item quantity="one">%d mérföld</item>
     <item quantity="other">%d mérföld</item>
   </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s kilométer per óra</item>
+    <item quantity="other">%s kilométer per óra</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s mérföld per óra</item>
+    <item quantity="other">%s mérföld per óra</item>
+  </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d ütés per perc</item>
     <item quantity="other">%d ütés per perc</item>
