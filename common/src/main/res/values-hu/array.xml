@@ -13,7 +13,7 @@
     <item>Bemelegítés</item>
     <item>Aktív</item>
     <item>Pihenés</item>
-    <item>Felépülés</item>
+    <item>Regeneráció</item>
     <item>Levezetés</item>
   </string-array>
   <string-array name="duration_types">
