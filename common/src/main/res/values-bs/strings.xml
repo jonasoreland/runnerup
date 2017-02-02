@@ -47,6 +47,9 @@
   <string name="speed">brzina</string>
   <string name="pace">tempo</string>
   <string name="heart_rate_zone">zona pulsa</string>
+  <string name="cadence">ritam</string>
+  <string name="temperature">temperatura</string>
+  <string name="pressure">pritisak</string>
   <string name="Zone">Zona</string>
   <string name="Device">Uređaj</string>
   <string name="Start_hour">Sat početka</string>
@@ -295,5 +298,18 @@
   <string name="Recording">Snimanje</string>
   <string name="Sensors">Senzori</string>
   <string name="Maintenance">Održavanje</string>
+  <string name="cue_hrm_connection_restored">Uspostavljena konekcija sa monitorom pulsa</string>
+  <string name="cue_hrm_connection_lost">Izgubljena konekcija sa monitorom pulsa</string>
+  <string name="HRM_connection_audio_cue">Audio napomena na promjenu konekcije sa monitorom pulsa</string>
   <string name="latest_feed_click_to_refresh">Zadnja vijest (klikni za osvježavanje)</string>
+  <string name="log_extended_gps_summary">Export u GPX</string>
+  <string name="log_extended_gps_title">Snimanje dodatnih podataka o tačnosti GPS</string>
+  <string name="use_step_sensor_title">Step senzor</string>
+  <string name="use_step_sensor_summary">Koristi za ritam</string>
+  <string name="use_temperature_sensor">Temperaturni senzor</string>
+  <string name="use_pressure_sensor_title">Senzor pritiska</string>
+  <string name="use_pressure_sensor_summary">Koristi barometar za računanje nadmorske visine</string>
+  <string name="adjust_barometer_altitude_from_gps">Prilagodi nadmorsku visinu barometra prema GPS</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Koristi početnu GPS visinu za usrednjavanje barometarske visine</string>
+  <string name="google_play_not_installed">Google Play Servisi nisu instalirani</string>
 </resources>
