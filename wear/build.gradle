@@ -41,7 +41,7 @@ android {
         //Must be suppressed for com.google.android.support:wearable
         warning 'GradleCompatible'
         // Ignore some specific checks completely
-        ignore 'MissingTranslation'
+        ignore 'MissingTranslation', 'UnusedResources'
         //icon with all densities are not included - don't bother
         ignore 'IconMissingDensityFolder'
 
