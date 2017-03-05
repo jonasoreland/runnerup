@@ -19,9 +19,6 @@
 	package="org.runnerup"
 	xmlns:tools="http://schemas.android.com/tools">
 
-        <uses-sdk
-            android:minSdkVersion="15" />
-
 		<uses-feature
   			android:glEsVersion="0x00020000"
   			android:required="true"/>

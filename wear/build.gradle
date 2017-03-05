@@ -38,8 +38,10 @@ android {
         checkReleaseBuilds true
         //promote to error
         fatal 'InlinedApi', 'InconsistentArrays'
+        //https://code.google.com/p/android/issues/detail?id=231325
+        warning 'GradleCompatible'
         // Ignore some specific checks completely
-        ignore 'MissingTranslation'
+        ignore 'MissingTranslation', 'UnusedResources'
         showAll true
         //debug issues in Travis
         textReport true

@@ -15,4 +15,7 @@
         <ignore regexp=".*okio.*" />
         <ignore regexp=".*retrofit.*" />
     </issue>
+    <issue id="WrongRegion"  severity="ignore">
+        <ignore path="**/res/values-en-rNL/**" />
+    </issue>
 </lint>
