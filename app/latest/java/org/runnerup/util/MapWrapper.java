@@ -22,18 +22,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
-import com.mapbox.mapboxsdk.MapboxAccountManager;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
@@ -75,8 +74,7 @@ public class MapWrapper implements Constants {
     }
 
     public static void start(Context context) {
-        //Must be called before setContentView() in 4.1.1
-        MapboxAccountManager.start(context, context.getString(R.string.mapboxAccessToken));
+        Mapbox.getInstance(context, context.getString(R.string.mapboxAccessToken));
     }
 
     private void setStyle() {
@@ -110,6 +108,14 @@ public class MapWrapper implements Constants {
     public void onResume() {
         setStyle();
         mapView.onResume();
+    }
+
+    public void onStart() {
+        mapView.onStart();
+    }
+
+    public void onStop() {
+        mapView.onStop();
     }
 
     public void onPause() {
@@ -159,27 +165,27 @@ public class MapWrapper implements Constants {
                 route.path.add(point);
                 int type = loc.getType();
                 MarkerViewOptions m;
-                String title = null;
-                Drawable iconDrawable = null;
+                String title = "";
+                Integer iconId = null;
                 //Start/end markers are not set in db, special handling
                 if (route.markers.isEmpty()) {
                     type = DB.LOCATION.TYPE_START;
                 }
                 switch (type) {
                     case DB.LOCATION.TYPE_START:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_start);
+                        iconId = R.drawable.ic_map_marker_start;
                         title = context.getResources().getString(R.string.Start);
                         break;
                     case DB.LOCATION.TYPE_END:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_end);
+                        iconId = R.drawable.ic_map_marker_end;
                         title = context.getResources().getString(R.string.Stop);
                         break;
                     case DB.LOCATION.TYPE_PAUSE:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_pause);
+                        iconId = R.drawable.ic_map_marker_pause;
                         title = context.getResources().getString(R.string.Pause);
                         break;
                     case DB.LOCATION.TYPE_RESUME:
-                        iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_resume);
+                        iconId = R.drawable.ic_map_marker_resume;
                         title = context.getResources().getString(R.string.Resume);
                         break;
                     case DB.LOCATION.TYPE_GPS:
@@ -190,13 +196,13 @@ public class MapWrapper implements Constants {
                     if (lastLap >= 0) {
                         title = context.getString(R.string.cue_lap) + " " + loc.getLap();
                     }
-                    iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_lap);
+                    iconId = R.drawable.ic_map_marker_lap;
                     lastLap = loc.getLap();
                 }
-                if (title != null) {
+                if (iconId != null) {
                     String snippet = formatter.formatDistance(TXT_SHORT, loc.getDistance().longValue()) + " " +
                             formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed() / 1000.0));
-                    Icon icon = iconFactory.fromDrawable(iconDrawable);
+                    Icon icon = iconFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),iconId));
                     m = new MarkerViewOptions().title(title).position(point).snippet(snippet).icon(icon).anchor(0.5f, 86f / 96f);
 
                     if (type == DB.LOCATION.TYPE_START) {
@@ -209,8 +215,7 @@ public class MapWrapper implements Constants {
             //Track is ended with a pause, replace with end
             if (!route.markers.isEmpty()) {
                 MarkerViewOptions m = route.markers.get(route.markers.size() - 1);
-                Drawable iconDrawable = ContextCompat.getDrawable(params[0].context, R.drawable.ic_map_marker_end);
-                Icon icon = iconFactory.fromDrawable(iconDrawable);
+                Icon icon = iconFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_end));
                 m.title(context.getResources().getString(R.string.Stop)).icon(icon);
             }
             return route;
@@ -238,8 +243,8 @@ public class MapWrapper implements Constants {
                     map.moveCamera(initialCameraPosition);
 
                     //Since MapBox 4.2.0-beta.3 moving the camera in onMapReady is not working if map is not visible
-                    //The workaround (so far) is to try move the camera at view updates as long as position is 0,0
-                    //https://github.com/mapbox/mapbox-gl-native/issues/6855#event-841575956 (and related issues)
+                    //The proper solution is a redesign using fragments, see https://github.com/mapbox/mapbox-gl-native/issues/6855#event-841575956
+                    //A workaround is to try move the camera at view updates as long as position is 0,0
                     mapView.getViewTreeObserver().addOnGlobalLayoutListener(
                             new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @SuppressWarnings("deprecation")
@@ -255,12 +260,12 @@ public class MapWrapper implements Constants {
                                             mapView.getViewTreeObserver()
                                                     .removeOnGlobalLayoutListener(this);
                                         }
-
                                     } else {
                                         map.moveCamera(initialCameraPosition);
                                     }
                                 }
-                            });
+                            }
+                    );
                 }
 
                 if (route.markers.size() > 0) {
