@@ -29,6 +29,7 @@
   <string name="Target_pace_HHMMSS">Målhastighet</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s klokka %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, fillern</string>
   <!--other-->
@@ -46,6 +47,9 @@
   <string name="speed">hastighet</string>
   <string name="pace">fart</string>
   <string name="heart_rate_zone">hjerterytmesone</string>
+  <string name="cadence">takt</string>
+  <string name="temperature">temperatur</string>
+  <string name="pressure">trykk</string>
   <string name="Zone">Sone</string>
   <string name="Device">Enhet</string>
   <string name="Start_hour">Starttime</string>
@@ -178,6 +182,7 @@
   <string name="Unit_preference">Enhetspreferanse</string>
   <string name="Auto_start_GPS">Automatisk start av GPS</string>
   <string name="Advanced_options">Avanserte valg</string>
+  <string name="Mapbox_default_style">Mapbox-stil</string>
   <string name="RunnerUp_live_address">RunnerUp live-adresse</string>
   <string name="Autopause_after_s">Autopause etter (s)</string>
   <string name="Autopause_min_pace_minkm">Autopause min fart (min/km)</string>
@@ -192,6 +197,7 @@
   <string name="Smooth_pace_filters">Glatte hastighetsfilter</string>
   <string name="Poll_interval_ms">Samplingsintervall (ms)</string>
   <string name="Poll_distance_m">Samplingsdistanse (m)</string>
+  <string name="Adjust_altitude">Juster GPS-høyde til geoide (EGM96)</string>
   <string name="Export">Eksporter</string>
   <string name="Import">Importer</string>
   <string name="Experimental_HRM_devices">Eksperimentelle HRM-enheter</string>
@@ -285,5 +291,25 @@
   <string name="Uploading_to_1s">Laster opp til %1$s</string>
   <string name="Loading_activities">Laster aktiviteter</string>
   <string name="Fetching_activities_from_1s">Henter inn aktiviteter fra %1$s</string>
+  <string name="No_feed_to_show">Ingen strøm å vise</string>
+  <string name="Unused_currently">For tiden ikke i bruk.</string>
   <string name="Unknown">Ukjent</string>
+  <string name="RunningFreeOnlinePasswordNotice">Merk: Bruk \"Hemmelig nøkkel\" som passord satt på nettsider under Legg til &gt; synkroniser trening &gt; SportTracks.</string>
+  <string name="Recording">Opptak</string>
+  <string name="Sensors">Sensorer</string>
+  <string name="Maintenance">Vedlikehold</string>
+  <string name="cue_hrm_connection_restored">Gjenopprettet tilkobling til pulsmåler</string>
+  <string name="cue_hrm_connection_lost">Mistet tilkobling til pulsmåler</string>
+  <string name="HRM_connection_audio_cue">Pulsmålertilkobling utløste lydinstruks</string>
+  <string name="latest_feed_click_to_refresh">Siste strøm (klikk for gjenoppfriskning)</string>
+  <string name="log_extended_gps_summary">Bare eksporter i GPX-format</string>
+  <string name="log_extended_gps_title">Loggfør utvidet GPS-nøyaktighetsdata</string>
+  <string name="use_step_sensor_title">Pedometer</string>
+  <string name="use_step_sensor_summary">Bruk for takt</string>
+  <string name="use_temperature_sensor">Temperatursensor</string>
+  <string name="use_pressure_sensor_title">Trykksensor</string>
+  <string name="use_pressure_sensor_summary">Bruk barometer til å regne ut høyde</string>
+  <string name="adjust_barometer_altitude_from_gps">Juster barometerhøyde til GPS-høyde</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Bruk opprinnelig GPS-høyde til gjennomsnitt for barometrisk høyde</string>
+  <string name="google_play_not_installed">Google Play-tjenester er ikke installerte</string>
 </resources>
