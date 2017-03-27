@@ -20,6 +20,7 @@ package org.runnerup.export;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.util.SparseArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,18 +72,18 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     private String deviceId = null;
     private String authToken = null;
 
-    private static final Map<Integer, Sport> endomondo2sportMap = new HashMap<>();
+    private static final SparseArray<Sport> endomondo2sportMap = new SparseArray<>();
     public static final Map<Sport, Integer> sport2endomondoMap = new HashMap<>();
     static {
         //list of sports ID can be found at
         // https://github.com/isoteemu/sports-tracker-liberator/blob/master/endomondo/workout.py
-        endomondo2sportMap.put(0, Sport.RUNNING);
-        endomondo2sportMap.put(2, Sport.BIKING);
-        endomondo2sportMap.put(22, Sport.OTHER);
-        endomondo2sportMap.put(17, Sport.ORIENTEERING);
-        endomondo2sportMap.put(18, Sport.WALKING);
-        for (Integer i : endomondo2sportMap.keySet()) {
-            sport2endomondoMap.put(endomondo2sportMap.get(i), i);
+        sport2endomondoMap.put(Sport.RUNNING, 0);
+        sport2endomondoMap.put(Sport.BIKING, 2);
+        sport2endomondoMap.put(Sport.OTHER, 22);
+        sport2endomondoMap.put(Sport.ORIENTEERING, 17);
+        sport2endomondoMap.put(Sport.WALKING, 18);
+        for (Sport s : sport2endomondoMap.keySet()) {
+            endomondo2sportMap.put(sport2endomondoMap.get(s), s);
         }
     }
 

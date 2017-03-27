@@ -343,7 +343,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             case LAP:
                 if (currentStep != null)
                     return currentStep.getSpeed(this, scope);
-                if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 break;
             case CURRENT:
                 Double s = tracker.getCurrentSpeed();

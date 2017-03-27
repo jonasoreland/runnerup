@@ -20,6 +20,7 @@ package org.runnerup.export;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.util.SparseArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +78,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     private String loginID = null;
     private String loginSecretHashed = null;
 
-    private static final Map<Integer, Sport> funbeat2sportMap = new HashMap<>();
+    private static final SparseArray<Sport> funbeat2sportMap = new SparseArray<>();
     //private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<>();
     static {
         // the best (known) way to get ID for a given sport is:

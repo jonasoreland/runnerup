@@ -9,6 +9,7 @@
     <issue id="MissingQuantity">
         <!-- Transifex refuses quantity="one" for tr, (gradle) lint requires it, Inspect allows both-->
         <ignore path="res/values-tr/cues.xml" />
+        <ignore path="res/values-pl/cues.xml" />
     </issue>
     <issue id="UnusedResources">
         <ignore path="res/drawable-mdpi/a12_googleplus.png" />
@@ -28,5 +29,8 @@
     </issue>
     <issue id="WrongRegion" severity="ignore">
         <ignore regexp="^.*?\Q\res\values-en-rNL\\E.*?$" />
+    </issue>
+    <issue id="ObsoleteSdkInt" severity="ignore">
+        <ignore regexp=".*-r14$" />
     </issue>
 </lint>

@@ -89,7 +89,7 @@
 		<activity android:name=".view.AudioCueSettingsActivity"/>
 
 		<activity android:name=".view.DetailActivity"
-			android:configChanges="orientation|screenSize|uiMode" />
+			android:configChanges="orientation|screenSize|uiMode"/>
 
 		<activity android:name=".view.HistoryActivity"/>
 

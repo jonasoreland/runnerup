@@ -21,6 +21,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
+import android.util.SparseArray;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,16 +62,16 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     private String user_id = null;
     private String user_key = null;
 
-    private static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<>();
+    private static final SparseArray<Sport> mapmyrun2sportMap = new SparseArray<>();
     private static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<>();
     static {
         // V3 API (what we use): 16 is Walking (specifically a long walk)
         // V7 API is different: 11: Biking, 16: Running, 9: Walk
         // documentation can be found at http://www.mapmyrun.com/api/3.1/?doc
-        mapmyrun2sportMap.put(1, Sport.RUNNING);
-        mapmyrun2sportMap.put(3, Sport.BIKING);
-        for (Integer i : mapmyrun2sportMap.keySet()) {
-            sport2mapmyrunMap.put(mapmyrun2sportMap.get(i), i);
+        sport2mapmyrunMap.put(Sport.RUNNING, 1);
+        sport2mapmyrunMap.put(Sport.BIKING, 3);
+        for (Sport s : sport2mapmyrunMap.keySet()) {
+            mapmyrun2sportMap.put(sport2mapmyrunMap.get(s), s);
         }
     }
 

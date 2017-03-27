@@ -160,9 +160,12 @@ public class GpsStatus implements LocationListener,
         if (locationManager == null)
             return;
 
-        //noinspection MissingPermission
-        android.location.GpsStatus gpsStatus = locationManager
-                .getGpsStatus(null);
+        android.location.GpsStatus gpsStatus;
+        try {
+            gpsStatus = locationManager.getGpsStatus(null);
+        } catch (SecurityException ex) {
+            gpsStatus = null;
+        }
 
         if (gpsStatus == null)
             return;

@@ -79,6 +79,7 @@ public class NumberPicker extends LinearLayout {
         addViews();
         updateView();
 
+        //noinspection CustomViewStyleable
         if (attrs != null) {
             TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
             processAttributes(arr);
