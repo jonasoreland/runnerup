@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,13 +26,9 @@
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maksymalne tętno (MHR)</string>
-  <string name="Target_pace_HHMMSS">Tempo (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Czas (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Dystans (m)</string>
-  <string name="Rest_time_HHMMSS">Czas (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Dystans (m)</string>
-  <string name="Duration_time_HHMMSS">Czas trwania (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Dystans (m)</string>
+  <string name="Target_pace_HHMMSS">Tempo</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, rats</string>
   <!--other-->
@@ -46,7 +42,6 @@
   <string name="repeat">powtórzenia</string>
   <string name="time">czas</string>
   <string name="distance">dystans</string>
-  <string name="Unknown">Nieznane</string>
   <string name="Distance">Dystans</string>
   <string name="speed">prędkość</string>
   <string name="pace">tempo</string>
@@ -64,7 +59,6 @@
   <string name="Delete">Usuń</string>
   <string name="Total">Całkowity</string>
   <string name="Interval">Interwałowy</string>
-  <string name="Remaining">Pozostało</string>
   <string name="Lap">Okrążenie</string>
   <string name="New_lap">Nowe okrążenie</string>
   <string name="Next_lap">Następne okrążenie</string>
@@ -83,8 +77,6 @@
   <string name="GPS_satellites">Satelity GPS</string>
   <string name="Start_GPS">Uruchom GPS</string>
   <string name="Duration">Czas trwania</string>
-  <string name="Duration_type">Duration type</string>
-  <string name="Target_type">Target type</string>
   <string name="Cancel">Anuluj</string>
   <string name="value">wartość</string>
   <string name="Select_all">Wybierz wszystkie</string>
@@ -260,10 +252,9 @@
   <string name="Low_HRM_battery_level">Niski poziom baterii HRM</string>
   <string name="High_HRM_battery_level">Wysoki poziom baterii HRM</string>
   <string name="Warning">Uwaga</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Poziom baterii twojego pulsometru jest niski</string>
   <string name="Do_not_show_again">Nie pokazuj ponownie</string>
-  <string name="Waiting_for_phone">Oczekuję na telefon</string>
-  <string name="Saving_on_phone">Zapisuję w telefonie</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Oczekuję na telefon</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Zapisuję w telefonie</string>
   <string name="Save">Zapisz</string>
   <string name="Add_step">Dodaj krok</string>
   <string name="Add_repeat">Dodaj powtórzenie</string>
@@ -274,7 +265,6 @@
   <string name="Automatic_upload">Autosynchronizacja</string>
   <string name="Live">Na żywo</string>
   <string name="Include_map_in_post">Załącz mapę</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Treningi nie są usuwane z %1$s, a jedynie z listy zsynchronizowanych z %1$s w RunnerUp.</string>
   <string name="Clear_uploads_from_phone">Usuń treningi (z telefonu)</string>
   <string name="my_phone">mój telefon</string>
   <string name="Failed_to_import">Błąd przy imporcie</string>
@@ -295,4 +285,5 @@
   <string name="Uploading_to_1s">Wysyłam do %1$s</string>
   <string name="Loading_activities">Ładuje treningi</string>
   <string name="Fetching_activities_from_1s">Pobieram treningi z %1$s</string>
+  <string name="Unknown">Nieznane</string>
 </resources>

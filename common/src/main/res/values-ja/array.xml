@@ -16,19 +16,16 @@
     <item>リカバリー</item>
     <item>クールダウン</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>押すまで</item>
     <item>時間</item>
     <item>距離</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>なし</item>
     <item>ペース</item>
     <item>心拍数ゾーン</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>ランニング</item>
@@ -36,6 +33,10 @@
     <item>その他</item>
     <item>オリエンテーリング</item>
     <item>ウォーキング</item>
+  </string-array>
+  <string-array name="types">
+    <item>時間</item>
+    <item>距離</item>
   </string-array>
   <string-array name="sexes">
     <item>男性</item>

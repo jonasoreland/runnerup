@@ -9,9 +9,6 @@
     <item>km</item>
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
-  <!--same order as above, same values as Intensity-->
-  <!--same order as above, same values as Dimension-->
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Běh</item>

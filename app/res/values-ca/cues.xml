@@ -20,7 +20,6 @@
   <string name="cue_warmup">escalfament</string>
   <string name="cue_cooldown">refredament</string>
   <string name="cue_current">actual</string>
-  <string name="cue_recovery">recuperació</string>
   <string name="cue_perkilometer">per kilòmetre</string>
   <string name="cue_permile">per milla</string>
   <string name="cue_started">iniciat</string>
@@ -58,7 +57,6 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_started">activitat iniciada</string>
   <string name="cue_activity_paused">activitat pausada</string>
   <string name="cue_activity_resumed">activitat continuada</string>
   <string name="cue_activity_stopped">activitat aturada</string>

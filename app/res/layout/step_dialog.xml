@@ -42,7 +42,7 @@
             android:entries="@array/duration_types"
             runnerup:values="@array/step_duration_values"
             android:prompt="@string/Type"
-            android:text="@string/Duration" />
+            android:text="@string/Type" />
 
         <org.runnerup.widget.TitleSpinner
             android:id="@+id/step_duration_distance"
@@ -51,7 +51,7 @@
             android:defaultValue="1000"
             android:inputType="numberDecimal"
             android:prompt="@string/Type"
-            android:text="@string/Duration_distance_m"
+            android:text=""
             runnerup:type="distancepicker" />
 
         <org.runnerup.widget.TitleSpinner
@@ -61,7 +61,7 @@
             android:defaultValue="00:01:00"
             android:inputType="time"
             android:prompt="@string/Type"
-            android:text="@string/Duration_time_HHMMSS"
+            android:text=""
             android:visibility="gone"
             runnerup:type="durationpicker" />
 

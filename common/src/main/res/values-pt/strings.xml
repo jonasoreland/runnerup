@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <!--format hint stuff-->
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <!--other-->
   <string name="Type">tipo</string>
@@ -35,7 +37,6 @@
   <string name="repeat">repetir</string>
   <string name="time">tempo</string>
   <string name="distance">distância</string>
-  <string name="Unknown">desconhecido</string>
   <string name="Distance">Distância</string>
   <string name="speed">velocidade</string>
   <string name="pace">passo</string>
@@ -49,10 +50,9 @@
   <string name="Delete">Apagar</string>
   <string name="Total">Total</string>
   <string name="Interval">Intervalo</string>
-  <string name="Remaining">Restante</string>
   <string name="Lap">Volta</string>
   <string name="New_lap">Nova volta</string>
-  <string name="Next_lap">Proxima volta</string>
+  <string name="Next_lap">Próxima volta</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Parar</string>
   <string name="Workout">Exercício</string>
@@ -66,8 +66,6 @@
   <string name="GPS_satellites">Satélites GPS</string>
   <string name="Start_GPS">Ativar GPS</string>
   <string name="Duration">Duração</string>
-  <string name="Duration_type">Tipo de duração</string>
-  <string name="Target_type">Tipo de objetivo</string>
   <string name="Cancel">Abortar</string>
   <string name="Select_all">Escolher tudo</string>
   <string name="Username">Nome do usador</string>
@@ -99,7 +97,7 @@
   <string name="Waiting_for_GPS">Esperando pelo GPS</string>
   <string name="Start_activity">Iniciar atividade</string>
   <string name="Problem">Problema</string>
-  <string name="Great">Otimo!</string>
+  <string name="Great">Ótimo!</string>
   <string name="Yes">Sim</string>
   <string name="Create">Criar</string>
   <string name="Darn">Raios!</string>
@@ -124,8 +122,8 @@
   <string name="Battery_level">Nível da bateria</string>
   <string name="Searching_for_GPS">Procurando GPS</string>
   <string name="Do_not_show_again">Não mostrar outra vez</string>
-  <string name="Waiting_for_phone">Esperando pelo telefone</string>
-  <string name="Saving_on_phone">Gravando no telefone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Esperando pelo telefone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Gravando no telefone</string>
   <string name="Save">Gravar</string>
   <string name="Add_step">Adicionar passo</string>
   <string name="Add_repeat">Adicionar repetição</string>
@@ -134,4 +132,5 @@
   <string name="Live">Ao vivo</string>
   <string name="my_phone">meu telefone</string>
   <string name="Delete_workout">Apagar exercício</string>
+  <string name="Unknown">desconhecido</string>
 </resources>

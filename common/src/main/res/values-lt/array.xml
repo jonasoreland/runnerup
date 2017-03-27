@@ -16,19 +16,16 @@
     <item>Atsistatymas</item>
     <item>Atvėsimas</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Iki paspaudimo</item>
     <item>Laikas</item>
     <item>Atstumas</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Nieko</item>
     <item>Tempas</item>
     <item>Širdies ritmo zona</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Bėgimas</item>

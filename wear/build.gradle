@@ -42,6 +42,9 @@ android {
         warning 'GradleCompatible'
         // Ignore some specific checks completely
         ignore 'MissingTranslation', 'UnusedResources'
+        //icon with all densities are not included - don't bother
+        ignore 'IconMissingDensityFolder'
+
         showAll true
         //debug issues in Travis
         textReport true
@@ -50,10 +53,16 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.google.android.support:wearable:1.4.0'
-    compile 'com.google.android.gms:play-services-wearable:9.4.0'
     compile project(':common')
+
+    //recyclerview-v7, support-v4 is not used by wear app source but wearable
+    //force same version as in the app
+    compile "com.android.support:support-v4:${rootProject.ext.supportLibrary}"
+    compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibrary}"
+
+    //TODO: Suppress warning for GradleCompatible
+    compile "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
+    compile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
 }
 
 def props = new Properties()

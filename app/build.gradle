@@ -82,14 +82,22 @@ android {
         //disable specific checks for specific paths
         lintConfig file("lint.xml")
         checkReleaseBuilds true
-        //promote to error
+        //promote to error, must be handled
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Required as Froyo support dropped in com.android.support:design:24.1.0
+        //TODO: See GradleCompatible comments, check manually with ./gradlew app:dependencies
         warning 'GradleCompatible'
         //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
         warning 'RestrictedApi'
         // Ignore some specific checks completely
         ignore 'MissingTranslation'
+
+        //All translations will not be complete
+        ignore 'MissingTranslation'
+        //icon with all densities are not included - don't bother
+        ignore 'IconMissingDensityFolder'
+        //apply() is supported from SDK 9, but min version is 8
+        ignore 'ApplySharedPref'
+
         showAll true
         //debug issues in Travis
         textReport true
@@ -105,20 +113,30 @@ repositories {
 }
 
 dependencies {
-    //design uses com.android.support:appcompat, not explicitly required
-    latestCompile 'com.android.support:design:25.1.0'
+    compile project(':common')
+    compile project(':hrdevice')
+    latestWearApp project(':wear')
+
+    //Lint bug: To avoid the issue GradleDependency in Froyo, both Latest/Froyo must be suppressed
+    //(Latest dependency check on the other libraries)
+    //noinspection GradleDependency
+    latestCompile "com.android.support:design:${rootProject.ext.supportLibrary}"
+    //GradleCompatible: support-v4 is not used by app source but mapbox, graphview, play-services-wearable
+    //force same version as in the app
+    latestCompile "com.android.support:support-v4:${rootProject.ext.supportLibrary}"
+
+    //noinspection GradleDependency
     froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
-    latestCompile 'com.google.android.gms:play-services-wearable:9.8.0'
-    latestCompile 'com.getpebble:pebblekit:3.1.0'
+
+    latestCompile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    latestCompile 'com.getpebble:pebblekit:4.0.1'
     latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0@aar'){
         transitive=true
     }
     compile 'com.jjoe64:graphview:4.2.1'
-    compile project(':common')
-    compile project(':hrdevice')
-    latestWearApp project(':wear')
+
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.mockito:mockito-core:2.3.7'
 }
 
 allprojects {

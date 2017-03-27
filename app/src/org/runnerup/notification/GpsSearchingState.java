@@ -31,7 +31,7 @@ public class GpsSearchingState implements NotificationState {
 
         builder.setContentIntent(pi);
         builder.setContentTitle(context.getString(R.string.Searching_for_GPS));
-        builder.setSmallIcon(R.drawable.icon_notification);
+        builder.setSmallIcon(R.drawable.ic_stat_notify);
         builder.setOnlyAlertOnce(true);
         org.runnerup.util.NotificationCompat.setLocalOnly(builder);
         org.runnerup.util.NotificationCompat.setVisibility(builder);

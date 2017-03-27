@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Miles</item>
     <item>Kilometers</item>
@@ -32,36 +32,16 @@
     <item>Recovery</item>
     <item>Cooldown</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
-  <integer-array name="step_intensity_values" translatable="false">
-    <item>2</item>
-    <item>0</item>
-    <item>1</item>
-    <item>5</item>
-    <item>3</item>
-  </integer-array>
   <string-array name="duration_types">
     <item>Until pressed</item>
     <item>Time</item>
     <item>Distance</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
-  <integer-array name="step_duration_values" translatable="false">
-    <item>-1</item>
-    <item>1</item>
-    <item>2</item>
-  </integer-array>
   <string-array name="target_types">
     <item>None</item>
     <item>Pace</item>
     <item>Heartrate zone</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
-  <integer-array name="target_values" translatable="false">
-    <item>-1</item>
-    <item>4</item>
-    <item>6</item>
-  </integer-array>
   <!-- Note: keep in same order as DB.ACCOUNT.SPORT_ -->
   <string-array name="sportEntries">
     <item>Running</item>
@@ -78,46 +58,4 @@
     <item>Male</item>
     <item>Female</item>
   </string-array>
-  <!--Audio cue languages-->
-  <string-array name="cueLanguageNames" translatable="false">
-    <item>English</item>
-    <item>العَرَبِيَّة‎‎</item>
-    <item>Bahasa Indonesia</item>
-    <item>Català</item>
-    <item>Deutsch</item>
-    <item>Español</item>
-    <item>Français</item>
-    <item>Italiano</item>
-    <item>日本語</item>
-    <item>Lietuvių</item>
-    <item>Magyar</item>
-    <item>Nederlands</item>
-    <item>Norska</item>
-    <item>Polski</item>
-    <item>Português</item>
-    <item>Русский</item>
-    <item>Svenska</item>
-    <item>Türkçe</item>
-  </string-array>
-  <!--Note: keep in same order as languagesNames-->
-  <string-array name="cueLanguageCodes" translatable="false">
-    <item>en</item>
-    <item>ar</item>
-    <item>id</item>
-    <item>ca</item>
-    <item>de</item>
-    <item>es</item>
-    <item>fr</item>
-    <item>it</item>
-    <item>ja</item>
-    <item>lt</item>
-    <item>hu</item>
-    <item>nl</item>
-    <item>nb</item>
-    <item>pl</item>
-    <item>pt</item>
-    <item>ru</item>
-    <item>sv</item>
-    <item>tr</item>
-   </string-array>
 </resources>

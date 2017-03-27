@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,13 +26,9 @@
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximale hartslag (HFmax)</string>
-  <string name="Target_pace_HHMMSS">Doel tempo (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Interval tijd (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Interval afstand (m)</string>
-  <string name="Rest_time_HHMMSS">Rust tijd (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Rust afstand (m)</string>
-  <string name="Duration_time_HHMMSS">Duur tijd (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Duur afstand (m)</string>
+  <string name="Target_pace_HHMMSS">Doel tempo</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, rats</string>
   <!--other-->
@@ -46,7 +42,6 @@
   <string name="repeat">herhalen</string>
   <string name="time">tijd</string>
   <string name="distance">afstand</string>
-  <string name="Unknown">Onbekend</string>
   <string name="Distance">Afstand</string>
   <string name="speed">snelheid</string>
   <string name="pace">tempo</string>
@@ -64,7 +59,6 @@
   <string name="Delete">Verwijderen</string>
   <string name="Total">Totaal</string>
   <string name="Interval">Interval</string>
-  <string name="Remaining">Overblijvend</string>
   <string name="Lap">Ronde</string>
   <string name="New_lap">Nieuwe ronde</string>
   <string name="Next_lap">Volgende ronde</string>
@@ -83,8 +77,6 @@
   <string name="GPS_satellites">GPS satellieten</string>
   <string name="Start_GPS">Start GPS</string>
   <string name="Duration">Duur</string>
-  <string name="Duration_type">Duur soort</string>
-  <string name="Target_type">Doel type</string>
   <string name="Cancel">Afbreken</string>
   <string name="value">waarde</string>
   <string name="Select_all">Alles selecteren</string>
@@ -260,10 +252,9 @@
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Het batterijniveau van uw hartslagmeter is laag.</string>
   <string name="Do_not_show_again">Niet meer laten zien</string>
-  <string name="Waiting_for_phone">Wachten op smartphone</string>
-  <string name="Saving_on_phone">Opslaan op smartphone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Wachten op smartphone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Opslaan op smartphone</string>
   <string name="Save">Opslaan</string>
   <string name="Add_step">Stap toevoegen</string>
   <string name="Add_repeat">Herhaling toevoegen</string>
@@ -274,7 +265,6 @@
   <string name="Automatic_upload">Automatische upload</string>
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Voeg kaart toe aan post</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Trainingen worden niet verwijderd van %1$s, enkel van de RunnerUp training lijst geupload naar %1$s</string>
   <string name="Clear_uploads_from_phone">Verwijder uploads (van telefoon)</string>
   <string name="my_phone">mijn telefoon</string>
   <string name="Failed_to_import">Importeren mislukt:</string>
@@ -295,4 +285,5 @@
   <string name="Uploading_to_1s">Uploaden naar %1$s</string>
   <string name="Loading_activities">Activiteiten laden</string>
   <string name="Fetching_activities_from_1s">Ophalen activiteiten van %1$s</string>
+  <string name="Unknown">Onbekend</string>
 </resources>

@@ -14,6 +14,7 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="cue_warmup">разминка</string>
-  <string name="cue_cooldown">заминка</string>
+  <string name="mm31kz513sg5" translatable="false">mm(31);kz(5,13);sg(5)</string>
+  <string name="_sign_plus" translatable="false">+</string>
+  <string name="_sign_minus" translatable="false">-</string>
 </resources>

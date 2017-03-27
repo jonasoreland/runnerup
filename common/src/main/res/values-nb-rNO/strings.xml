@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,13 +26,9 @@
   <string name="metrics_heartrate">HR</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maksimal hjerterytme (MHR)</string>
-  <string name="Target_pace_HHMMSS">Målhastighet (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Intervalltid (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Intervalldistanse (m)</string>
-  <string name="Rest_time_HHMMSS">Hviletid (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Hviledistanse (m)</string>
-  <string name="Duration_time_HHMMSS">Varighet (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Varighetsdistanse</string>
+  <string name="Target_pace_HHMMSS">Målhastighet</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, fillern</string>
   <!--other-->
@@ -46,7 +42,6 @@
   <string name="repeat">gjenta</string>
   <string name="time">tid</string>
   <string name="distance">distanse</string>
-  <string name="Unknown">Ukjent</string>
   <string name="Distance">Distanse</string>
   <string name="speed">hastighet</string>
   <string name="pace">fart</string>
@@ -64,7 +59,6 @@
   <string name="Delete">Slett</string>
   <string name="Total">Total</string>
   <string name="Interval">Intervall</string>
-  <string name="Remaining">Gjenstående</string>
   <string name="Lap">Runde</string>
   <string name="New_lap">Ny runde</string>
   <string name="Next_lap">Neste runde</string>
@@ -83,8 +77,6 @@
   <string name="GPS_satellites">GPS-satelitter</string>
   <string name="Start_GPS">Start GPS</string>
   <string name="Duration">Varighet</string>
-  <string name="Duration_type">Varighetstype</string>
-  <string name="Target_type">Måltype</string>
   <string name="Cancel">Avbryt</string>
   <string name="value">verdi</string>
   <string name="Select_all">Velg alle</string>
@@ -260,10 +252,9 @@
   <string name="Low_HRM_battery_level">Lavt batterinivå på HRM</string>
   <string name="High_HRM_battery_level">Høyt batterinivå på HRM</string>
   <string name="Warning">Advarsel</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Lavt batterinivå på din hjerterytmemonitor</string>
   <string name="Do_not_show_again">Ikke vis igjen</string>
-  <string name="Waiting_for_phone">Venter på telefon</string>
-  <string name="Saving_on_phone">Lagrer på telefon</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Venter på telefon</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Lagrer på telefon</string>
   <string name="Save">Lagre</string>
   <string name="Add_step">Legg til steg</string>
   <string name="Add_repeat">Legg til gjentagelse</string>
@@ -274,7 +265,6 @@
   <string name="Automatic_upload">Automatisk opplasting</string>
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Inkluder kart i post</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Mer at treningsøkter ikke fjernes fra %1$s, bare fra RunnerUp-listen over treningsøkter opplastet til %1$s</string>
   <string name="Clear_uploads_from_phone">Tøm opplastinger (fra telefon)</string>
   <string name="my_phone">min telefon</string>
   <string name="Failed_to_import">Klarte ikke å importere:</string>
@@ -295,4 +285,5 @@
   <string name="Uploading_to_1s">Laster opp til %1$s</string>
   <string name="Loading_activities">Laster aktiviteter</string>
   <string name="Fetching_activities_from_1s">Henter inn aktiviteter fra %1$s</string>
+  <string name="Unknown">Ukjent</string>
 </resources>

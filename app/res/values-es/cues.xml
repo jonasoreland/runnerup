@@ -20,7 +20,6 @@
   <string name="cue_warmup">calentamiento</string>
   <string name="cue_cooldown">enfriamiento</string>
   <string name="cue_current">actual</string>
-  <string name="cue_recovery">recuperación</string>
   <string name="cue_perkilometer">por kilómetro</string>
   <string name="cue_permile">por milla</string>
   <string name="cue_started">empezado</string>
@@ -58,7 +57,6 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d pulsaciones por minuto</item>
   </plurals>
-  <string name="cue_activity_started">actividad iniciada</string>
   <string name="cue_activity_paused">actividad pausada</string>
   <string name="cue_activity_resumed">actividad reanudada</string>
   <string name="cue_activity_stopped">actividad parada</string>

@@ -20,7 +20,6 @@
   <string name="cue_warmup">Разминка</string>
   <string name="cue_cooldown">Заминка</string>
   <string name="cue_current">Текущий</string>
-  <string name="cue_recovery">Восстановление</string>
   <string name="cue_perkilometer">за километр</string>
   <string name="cue_permile">за милю</string>
   <string name="cue_started">начато</string>
@@ -72,7 +71,6 @@
     <item quantity="many">%d ударов в минуту</item>
     <item quantity="other">%d ударов в минуту</item>
   </plurals>
-  <string name="cue_activity_started">Начало движения</string>
   <string name="cue_activity_paused">Пауза</string>
   <string name="cue_activity_resumed">Продолжил движение</string>
   <string name="cue_activity_stopped">Остановился</string>

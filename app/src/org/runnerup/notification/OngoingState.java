@@ -36,7 +36,7 @@ public class OngoingState implements NotificationState {
         builder.setTicker(context.getString(R.string.RunnerUp_activity_started));
         builder.setContentIntent(pi);
         builder.setContentTitle(context.getString(R.string.Activity_ongoing));
-        builder.setSmallIcon(R.drawable.icon_notification);
+        builder.setSmallIcon(R.drawable.ic_stat_notify);
         builder.setOngoing(true);
         builder.setOnlyAlertOnce(true);
         org.runnerup.util.NotificationCompat.setLocalOnly(builder);

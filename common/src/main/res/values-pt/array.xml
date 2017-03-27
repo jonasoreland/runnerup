@@ -16,9 +16,6 @@
     <item>Recuperação</item>
     <item>Arrefecimento</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
-  <!--same order as above, same values as Dimension-->
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Corrida</item>
@@ -27,6 +24,4 @@
     <item>Orienteering</item>
     <item>Walking</item>
   </string-array>
-  <!--Audio cue languages-->
-  <!--Note: keep in same order as languagesNames-->
 </resources>

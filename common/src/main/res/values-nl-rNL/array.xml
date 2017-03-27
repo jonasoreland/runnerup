@@ -16,19 +16,16 @@
     <item>Herstel</item>
     <item>Cooling-down</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Totdat gedrukt</item>
     <item>Tijd</item>
     <item>Afstand</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Geen</item>
     <item>Tempo</item>
     <item>Hartslagzone</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Hardlopen</item>

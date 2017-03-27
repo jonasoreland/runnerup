@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,13 +26,10 @@
   <string name="metrics_heartrate">Fc</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Fréquence Cardiaque Maximum (FCM)</string>
-  <string name="Target_pace_HHMMSS">Rythme cible (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Durée de l\'intervalle (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Longueur de l\'intervalle (m)</string>
-  <string name="Rest_time_HHMMSS">Temps de repos (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Distance de repos (m)</string>
-  <string name="Duration_time_HHMMSS">Durée (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Distance (m)</string>
+  <string name="Target_pace_HHMMSS">Rythme cible</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s à %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK</string>
   <!--other-->
@@ -46,7 +43,6 @@
   <string name="repeat">répétition</string>
   <string name="time">temps</string>
   <string name="distance">distance</string>
-  <string name="Unknown">Inconnu</string>
   <string name="Distance">Distance</string>
   <string name="speed">vitesse</string>
   <string name="pace">rythme</string>
@@ -64,7 +60,6 @@
   <string name="Delete">Supprimer</string>
   <string name="Total">Total</string>
   <string name="Interval">Intervalle</string>
-  <string name="Remaining">Restant</string>
   <string name="Lap">Tour</string>
   <string name="New_lap">Nouveau tour</string>
   <string name="Next_lap">Tour suivant</string>
@@ -83,8 +78,6 @@
   <string name="GPS_satellites">Satellites GPS</string>
   <string name="Start_GPS">Démarrer GPS</string>
   <string name="Duration">Durée</string>
-  <string name="Duration_type">Type de durée</string>
-  <string name="Target_type">Type de cible</string>
   <string name="Cancel">Annuler</string>
   <string name="value">valeur</string>
   <string name="Select_all">Tout séléctionner</string>
@@ -260,10 +253,9 @@
   <string name="Low_HRM_battery_level">Batterie du cardiofréquencemètre faible</string>
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">La batterie de votre cardiofréquencemètre est faible.</string>
   <string name="Do_not_show_again">Ne pas afficher à nouveau</string>
-  <string name="Waiting_for_phone">En attente du téléphone</string>
-  <string name="Saving_on_phone">Sauvegarde sur téléphone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">En attente du téléphone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Sauvegarde sur téléphone</string>
   <string name="Save">Sauvegarder</string>
   <string name="Add_step">Ajouter une étape</string>
   <string name="Add_repeat">Ajout une répétition</string>
@@ -274,7 +266,6 @@
   <string name="Automatic_upload">Télécharger automatiquement</string>
   <string name="Live">Actualités</string>
   <string name="Include_map_in_post">Inclure la carte dans le poste</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Note : les entraînements ne sont pas supprimés de %1$s mais seulement de la liste des entainements RunnerUp envoyés à %1$s</string>
   <string name="Clear_uploads_from_phone">Supprimer les uploads (du téléphone)</string>
   <string name="my_phone">mon téléphone</string>
   <string name="Failed_to_import">Impossible d\'importer :</string>
@@ -295,4 +286,5 @@
   <string name="Uploading_to_1s">Envoi à %1$s</string>
   <string name="Loading_activities">Chargement des séances</string>
   <string name="Fetching_activities_from_1s">Récupération des séances depuis %1$s</string>
+  <string name="Unknown">Inconnu</string>
 </resources>

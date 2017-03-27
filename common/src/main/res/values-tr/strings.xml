@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,14 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">dk</string>
   <!--format hint stuff-->
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">Tamam</string>
   <!--other-->
   <string name="Google_Play_Services_Legal_Notices">Google Play Servisi Yasal Notlar</string>
   <string name="Type">Tip</string>
+  <string name="recovery">toparlanma</string>
   <string name="warm_up">ısınma</string>
   <string name="cool_down">soğuma</string>
   <string name="Device">Cihaz</string>

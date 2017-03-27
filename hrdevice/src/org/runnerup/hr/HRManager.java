@@ -24,6 +24,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,41 @@ import java.util.List;
  */
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class HRManager {
+
+    /**
+     * @return true if device is 4.2, 4.2.1 and 4.2.2 AND the samsung ble sdk is available,
+     *          false otherwise
+     */
+    public static boolean checkSamsungBLELibrary() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
+            return false;
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+            return false;
+
+        try {
+            Class.forName("org.runnerup.hr.SamsungBLEHRProvider");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGatt");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattAdapter");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCallback");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCharacteristic");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor");
+            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattService");
+            return true;
+        } catch (Exception e) {
+        }
+        return false;
+    }
+
+    public static HRProvider createProviderByReflection(String clazz, Context ctx) {
+        try {
+            Class<?> classDefinition = Class.forName(clazz);
+            Constructor<?> cons = classDefinition.getConstructor(Context.class);
+            return (HRProvider) cons.newInstance(ctx);
+        } catch(Exception e) {
+            return null;
+        }
+    }
 
     /**
      * Creates an {@link HRProvider}. This will be wrapped in a {@link RetryingHRProviderProxy}.
@@ -54,11 +90,6 @@ public class HRManager {
     
     private static HRProvider getHRProviderImpl(Context ctx, String src) {
         System.err.println("getHRProvider(" + src + ")");
-        if (src.contentEquals(SamsungBLEHRProvider.NAME)) {
-            if (!SamsungBLEHRProvider.checkLibrary())
-                return null;
-            return new SamsungBLEHRProvider(ctx);
-        }
         if (src.contentEquals(AndroidBLEHRProvider.NAME)) {
             if (!AndroidBLEHRProvider.checkLibrary(ctx))
                 return null;
@@ -93,6 +124,13 @@ public class HRManager {
             return new MockHRProvider(ctx);
         }
 
+        if (checkSamsungBLELibrary()) {
+            HRProvider hrprov = createProviderByReflection("org.runnerup.hr.SamsungBLEHRProvider", ctx);
+            if (src.contentEquals(hrprov.getName())) {
+                return hrprov;
+            }
+        }
+
         return null;
     }
 
@@ -116,8 +154,8 @@ public class HRManager {
         }
 
         List<HRProvider> providers = new ArrayList<HRProvider>();
-        if (SamsungBLEHRProvider.checkLibrary()) {
-            providers.add(new SamsungBLEHRProvider(ctx));
+        if (checkSamsungBLELibrary()) {
+            providers.add(createProviderByReflection("org.runnerup.hr.SamsungBLEHRProvider", ctx));
         }
 
         if (AndroidBLEHRProvider.checkLibrary(ctx)) {

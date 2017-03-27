@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,13 +26,7 @@
   <string name="metrics_heartrate">HR</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
-  <string name="Target_pace_HHMMSS">Target pace (HH:MM:SS)</string>
-  <string name="Interval_time_HHMMSS">Interval time (HH:MM:SS)</string>
-  <string name="Interval_distance_m">Interval distance (m)</string>
-  <string name="Rest_time_HHMMSS">Rest time (HH:MM:SS)</string>
-  <string name="Rest_distance_m">Rest distance (m)</string>
-  <string name="Duration_time_HHMMSS">Duration time (HH:MM:SS)</string>
-  <string name="Duration_distance_m">Duration distance (m)</string>
+  <string name="Target_pace_HHMMSS">Target pace</string>
   <!-- strings with argument to provide -->
   <!-- first argument is a date, second a time, for instance: "Yesterday at 13:32" -->
   <string name="formatting_date_at_time">%1$s at %2$s</string>
@@ -69,7 +63,6 @@
   <string name="Delete">Delete</string>
   <string name="Total">Total</string>
   <string name="Interval">Interval</string>
-  <string name="Remaining">Remaining</string>
   <string name="Lap">Lap</string>
   <string name="New_lap">New lap</string>
   <string name="Next_lap">Next lap</string>
@@ -88,8 +81,6 @@
   <string name="GPS_satellites">GPS satellites</string>
   <string name="Start_GPS">Start GPS</string>
   <string name="Duration">Duration</string>
-  <string name="Duration_type">Duration type</string>
-  <string name="Target_type">Target type</string>
   <string name="Cancel">Cancel</string>
   <string name="value">value</string>
   <string name="Select_all">Select all</string>
@@ -172,7 +163,6 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Use your headset to start/pause/resume RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Convert rest-step with type distance to recovery-step for Interval-tab</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Convert rest-step with type distance to recovery-step for Advanced-tab</string>
-  <string name="mm31kz513sg5" translatable="false">mm(31);kz(5,13);sg(5)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to SD-card (e.g for upgrade)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from SD-card (e.g after upgrade)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if having set target)</string>
@@ -268,23 +258,19 @@
   <string name="Low_HRM_battery_level">Low HRM battery level</string>
   <string name="High_HRM_battery_level">High HRM battery level</string>
   <string name="Warning">Warning</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">The battery level of your heart-rate monitor is low.</string>
   <string name="Do_not_show_again">Do not show again</string>
-  <string name="Waiting_for_phone">Waiting for phone</string>
-  <string name="Saving_on_phone">Saving on phone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Waiting for phone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Saving on phone</string>
   <string name="Save">Save</string>
   <string name="Add_step">Add step</string>
   <string name="Add_repeat">Add repeat</string>
   <string name="Discard">Discard</string>
   <string name="Failed_to_create_workout">Failed to create workout</string>
-  <string name="_sign_plus" translatable="false">+</string>
-  <string name="_sign_minus" translatable="false">-</string>
   <string name="Audio_cue_language">Audio cue language</string>
   <string name="Website">Website</string>
   <string name="Automatic_upload">Automatic upload</string>
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Include map in post</string>
-  <string name="Note_that_workouts_are_not_removed_from_1s_only_from_RunnerUp_list_of_workouts_uploaded_to_1s">Note that workouts are not removed from %1$s, only from RunnerUp list of workouts uploaded to %1$s</string>
   <string name="Clear_uploads_from_phone">Clear uploads (from phone)</string>
   <string name="my_phone">my phone</string>
   <string name="Failed_to_import">Failed to import: </string>
@@ -305,13 +291,10 @@
   <string name="Uploading_to_1s">Uploading to %1$s</string>
   <string name="Loading_activities">Loading activities</string>
   <string name="Fetching_activities_from_1s">Fetching activities from %1$s</string>
-  <string name="Map_not_available_on_Froyo">Map not available on Froyo</string>
-  <string name="Distance_marker">Distance marker</string>
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
   <string name="Unknown">Unknown</string>
   <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add > Sync Training > SportTracks.</string>
-  <string name="GoToWebsite">Go to website</string>
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Maintenance</string>
@@ -321,10 +304,10 @@
   <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
   <string name="log_extended_gps_summary">Export in GPX only</string>
   <string name="log_extended_gps_title">Log extended GPS accuracy data</string>
-  <string name="use_step_sensor_title">Step Sensor</string>
-  <string name="use_step_sensor_summary">Use for Cadence</string>
-  <string name="use_temperature_sensor">Temperature Sensor</string>
-  <string name="use_pressure_sensor_title">Pressure Sensor</string>
+  <string name="use_step_sensor_title">Step sensor</string>
+  <string name="use_step_sensor_summary">Use for cadence</string>
+  <string name="use_temperature_sensor">Temperature sensor</string>
+  <string name="use_pressure_sensor_title">Pressure sensor</string>
   <string name="use_pressure_sensor_summary">Use barometer to calculate elevation</string>
   <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to GPS Elevation</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Use initial GPS elevation to average barometric elevation</string>

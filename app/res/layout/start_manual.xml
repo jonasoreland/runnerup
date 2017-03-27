@@ -59,7 +59,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/manual_time"
         android:prompt="@string/Type"
-        android:text="@string/Duration_time_HHMMSS"
+        android:text="@string/Duration"
         android:defaultValue="00:00:00"
         runnerup:type="durationpicker" />
 

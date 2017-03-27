@@ -11,11 +11,22 @@
     <issue id="ResourceType">
         <warning path="src/org/runnerup/view/MainLayout.java" />
     </issue>
+    <issue id="MissingQuantity">
+        <!-- Transifex refuses quantity="one" for tr, (gradle) lint requires it, Inspect allows both-->
+        <warning path="res/values-tr/cues.xml" />
+    </issue>
     <issue id="InvalidPackage">
         <ignore regexp=".*okio.*" />
         <ignore regexp=".*retrofit.*" />
     </issue>
-    <issue id="WrongRegion"  severity="ignore">
-        <ignore path="**/res/values-en-rNL/**" />
+    <issue id="IconDensities">
+        <ignore path="res/**" />
+        <ignore path="**/common/src/main/res/**" />
+    </issue>
+    <issue id="IconColors">
+        <ignore path="**/ic_stat_notify.png" />
+    </issue>
+    <issue id="WrongRegion" severity="ignore">
+        <ignore regexp="^.*?\Q\res\values-en-rNL\\E.*?$" />
     </issue>
 </lint>
