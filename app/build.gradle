@@ -96,6 +96,7 @@ android {
         warning 'RestrictedApi'
 
 
+
         showAll true
         //debug issues in Travis
         textReport true
