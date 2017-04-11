@@ -117,14 +117,10 @@ dependencies {
     compile project(':hrdevice')
     latestWearApp project(':wear')
 
-    //Lint bug: To avoid the issue GradleDependency in Froyo, both Latest/Froyo must be suppressed
-    //(Latest dependency check on the other libraries)
-    //noinspection GradleDependency
+    //Lint bug: https://code.google.com/p/android/issues/detail?id=231323
     latestCompile "com.android.support:design:${rootProject.ext.supportLibrary}"
-    //GradleCompatible: support-v4 is not used by app source but mapbox, graphview, play-services-wearable
-    //force same version as in the app
-    latestCompile "com.android.support:support-v4:${rootProject.ext.supportLibrary}"
 
+    //Lint bug: https://code.google.com/p/android/issues/detail?id=231321
     //noinspection GradleDependency
     froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
 
