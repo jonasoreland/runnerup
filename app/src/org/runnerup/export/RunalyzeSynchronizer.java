@@ -347,7 +347,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      */
     protected String obtainSelect(String page, String selectName) {
         // find the start of the
-        Pattern selectStart = Pattern.compile("<[Ss][Ee][Ll][Ee][Cc][Tt] [^>]*[Nn][Aa][Mm][Ee]=[\"']" + selectName + "[\"'][^>]*>");
+        Pattern selectStart = Pattern.compile("<[Ss][Ee][Ll][Ee][Cc][Tt] [^>]*[Nn][Aa][Mm][Ee]\\s*=\\s*[\"']" + selectName + "[\"'][^>]*>");
         Pattern selectEnd = Pattern.compile("</[Ss][Ee][Ll][Ee][Cc][Tt]>");
         Matcher selectStartMatcher = selectStart.matcher(page);
         if (selectStartMatcher.find()) {
@@ -369,7 +369,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      */
     protected Map<String,String> parseOption(String option) {
         Map<String,String> options = new HashMap<>();
-        Pattern pattern = Pattern.compile("([\\w-_]+\\s*)=\\s*(\"[^\"]*\"|\'[^\']*\')");
+        Pattern pattern = Pattern.compile("([\\w-_]+)\\s*=\\s*(\"[^\"]*\"|\'[^\']*\')");
         Matcher matcher = pattern.matcher(option);
         while (matcher.find()) {
             String name = matcher.group(1);
