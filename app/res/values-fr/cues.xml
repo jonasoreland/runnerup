@@ -53,6 +53,14 @@
     <item quantity="one">%d mile</item>
     <item quantity="other">%d milles</item>
   </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s kilomètre par heure</item>
+    <item quantity="other">%s kilomètres par heure</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s mile par heure</item>
+    <item quantity="other">%s miles par heure</item>
+  </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
