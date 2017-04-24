@@ -38,10 +38,10 @@ android {
         checkReleaseBuilds true
         //promote to error
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Must be suppressed for com.google.android.support:wearable
+        //https://code.google.com/p/android/issues/detail?id=231325
         warning 'GradleCompatible'
         // Ignore some specific checks completely
-        ignore 'MissingTranslation'
+        ignore 'MissingTranslation', 'UnusedResources'
         //icon with all densities are not included - don't bother
         ignore 'IconMissingDensityFolder'
 
@@ -55,12 +55,7 @@ android {
 dependencies {
     compile project(':common')
 
-    //recyclerview-v7, support-v4 is not used by wear app source but wearable
-    //force same version as in the app
-    compile "com.android.support:support-v4:${rootProject.ext.supportLibrary}"
-    compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibrary}"
-
-    //TODO: Suppress warning for GradleCompatible
+    //Lint bug: https://code.google.com/p/android/issues/detail?id=231325
     compile "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
     compile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
 }

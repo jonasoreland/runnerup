@@ -32,7 +32,6 @@ android {
         versionCode 1
         versionName = version
     }
-
 }
 
 dependencies {
