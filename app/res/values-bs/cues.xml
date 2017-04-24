@@ -59,6 +59,16 @@
     <item quantity="few">%d milja</item>
     <item quantity="other">%d milja</item>
   </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s kilometar po satu</item>
+    <item quantity="few">%s kilometara po satu</item>
+    <item quantity="other">%s kilometara po satu</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s milja po satu</item>
+    <item quantity="few">%s milja po satu</item>
+    <item quantity="other">%s milja po satu</item>
+  </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
     <item quantity="few">%d bpm</item>

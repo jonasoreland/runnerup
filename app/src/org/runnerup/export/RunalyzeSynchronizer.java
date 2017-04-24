@@ -65,12 +65,16 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     private String _url;
     private boolean _version3;
     private String _csrf_token;
+    private Map<String,Map<String,String>> _sports;
+    private Map<String,Map<String,String>> _types;
 
     /**
      * Empty constructor.
      */
     public RunalyzeSynchronizer() {
         _url = PUBLIC_URL;
+        _sports = new HashMap<>();
+        _types = new HashMap<>();
     }
 
     /**
@@ -336,6 +340,123 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     }
 
     /**
+     * Obtains the select with the name specified as argument.
+     * @param page The html page
+     * @param selectName The select name to search for
+     * @return The string of the select or null
+     */
+    protected String obtainSelect(String page, String selectName) {
+        // find the start of the
+        Pattern selectStart = Pattern.compile("<[Ss][Ee][Ll][Ee][Cc][Tt] [^>]*[Nn][Aa][Mm][Ee]\\s*=\\s*[\"']" + selectName + "[\"'][^>]*>");
+        Pattern selectEnd = Pattern.compile("</[Ss][Ee][Ll][Ee][Cc][Tt]>");
+        Matcher selectStartMatcher = selectStart.matcher(page);
+        if (selectStartMatcher.find()) {
+            int start = selectStartMatcher.start();
+            Matcher selectEndMatcher = selectEnd.matcher(page);
+            if (selectEndMatcher.find(start)) {
+                int end = selectEndMatcher.end();
+                return page.substring(start, end);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Method that parses an option html tag and maps all the properties <em>name="value"</em>
+     * into a map.
+     * @param option The html option to parse
+     * @return The map of attributes in the option tag
+     */
+    protected Map<String,String> parseOption(String option) {
+        Map<String,String> options = new HashMap<>();
+        Pattern pattern = Pattern.compile("([\\w-_]+)\\s*=\\s*(\"[^\"]*\"|\'[^\']*\')");
+        Matcher matcher = pattern.matcher(option);
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            String value =  matcher.group(2).substring(1, matcher.group(2).length() - 1);
+            options.put(name, value);
+        }
+        return options;
+    }
+
+    /**
+     * Obtains the name of an html option (the value in between).
+     * @param option The html option tag
+     * @return The name in the option
+     */
+    protected String obtainName(String option) {
+        Pattern pattern = Pattern.compile(">([^<]+)<");
+        Matcher matcher = pattern.matcher(option);
+        if (matcher.find()) {
+            return matcher.group(1).trim();
+        }
+        return null;
+    }
+
+    /**
+     * Method that parses a page and searches for a select with a specified name. The select
+     * is parsed and a map is returned. The map has all the options keyed by the name and the
+     * values are another map with the attributes inside the option.
+     * @param page The html page
+     * @param selectName The name of the select to search for
+     * @return A map with all the values in the options
+     */
+    protected Map<String,Map<String,String>> parseSelect(String page, String selectName) {
+        Map<String,Map<String,String>> map = new HashMap<>();
+        String select = obtainSelect(page, selectName);
+        if (select != null) {
+            Pattern optionStart = Pattern.compile("<[Oo][Pp][Tt][Ii][Oo][Nn] ");
+            Pattern optionEnd = Pattern.compile("</[Oo][Pp][Tt][Ii][Oo][Nn]>");
+            Matcher optionstartMatcher = optionStart.matcher(select);
+            while (optionstartMatcher.find()) {
+                int start = optionstartMatcher.start();
+                Matcher optionEndMatcher = optionEnd.matcher(select);
+                if (optionEndMatcher.find(start)) {
+                    int end = optionEndMatcher.end();
+                    String option = select.substring(start, end);
+                    String name = obtainName(option);
+                    Map<String, String> values = parseOption(option);
+                    if (name != null && values != null && values.containsKey("value")) {
+                        map.put(name, values);
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Method that requests the <em>/activity/add</em> page and search for the selects of
+     * <em>sportid</em> and <em>typeid</em>. This way the synchronizer is aware of the sports
+     * and types defined in runalyze by the user. If no one is defined a default sportid will
+     * be sent.
+     */
+    protected void doAdd() {
+        try {
+            URL add = new URL(_url + "/activity/add");
+            HttpURLConnection conn = (HttpURLConnection) add.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setInstanceFollowRedirects(false);
+            conn.setDoOutput(true);
+            addCookies(conn);
+            conn.connect();
+            if (conn.getResponseCode() == 200) {
+                String response = getResponse(conn.getInputStream());
+                _sports = parseSelect(response, "sportid");
+                _types = parseSelect(response, "typeid");
+            }
+            Log.d(getName(), "sports=" + _sports);
+            Log.d(getName(), "types=" + _types);
+        } catch(MalformedURLException e) {
+            Log.e(getName(), "Could not parse sportid and typeid. Malformed URL", e);
+        } catch (ProtocolException e) {
+            Log.e(getName(), "Could not parse sportid and typeid. Protocol Exception", e);
+        } catch (IOException e) {
+            Log.e(getName(), "Could not parse sportid and typeid. IO Exception", e);
+        }
+    }
+
+    /**
      * Connects to the runalyze server.
      * @return The status
      */
@@ -367,6 +488,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
                 return Status.ERROR;
             }
             s = login();
+            if (Status.OK.equals(s)) {
+                doAdd();
+            }
             return s;
         }
     }
@@ -385,7 +509,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         }
         OutputStreamWriter writer = null;
         try {
-            RunalyzePost post = new RunalyzePost(db);
+            RunalyzePost post = new RunalyzePost(db, _sports, _types);
             URL url = new URL(_url + (_version3? "/activity/add" : "/call/call.Training.create.php"));
             Log.d(getName(), "URL=" + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

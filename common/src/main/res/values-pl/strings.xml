@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -253,8 +253,8 @@
   <string name="High_HRM_battery_level">Wysoki poziom baterii HRM</string>
   <string name="Warning">Uwaga</string>
   <string name="Do_not_show_again">Nie pokazuj ponownie</string>
-  <string name="Waiting_for_phone">Oczekuję na telefon</string>
-  <string name="Saving_on_phone">Zapisuję w telefonie</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Oczekuję na telefon</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Zapisuję w telefonie</string>
   <string name="Save">Zapisz</string>
   <string name="Add_step">Dodaj krok</string>
   <string name="Add_repeat">Dodaj powtórzenie</string>

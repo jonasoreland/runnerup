@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -253,8 +253,8 @@
   <string name="High_HRM_battery_level">Высокий уровень заряда датчика HRM</string>
   <string name="Warning">Предупреждение</string>
   <string name="Do_not_show_again">Не показывать снова</string>
-  <string name="Waiting_for_phone">Ожидание телефона</string>
-  <string name="Saving_on_phone">Сохранить в память телефона</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Ожидание телефона</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Сохранить в память телефона</string>
   <string name="Save">Сохранить</string>
   <string name="Add_step">+ Интервал</string>
   <string name="Add_repeat">+ Повторить</string>

@@ -265,6 +265,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mapWrapper.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapWrapper.onStop();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mapWrapper.onPause();

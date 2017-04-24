@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">míle</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
+  <string name="metrics_heartrate">Tep</string>
+  <!--format hint stuff-->
+  <string name="Maximum_heart_rate_MHR">Maximální rychlost tepu (MHR)</string>
+  <string name="Target_pace_HHMMSS">Cílové tempo</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <!--other-->
+  <string name="Type">Typ</string>
+  <string name="active">aktivní</string>
+  <string name="rest">odpočinek</string>
+  <string name="recovery">zotavení</string>
+  <string name="warm_up">rozehřátí</string>
+  <string name="cool_down">zklidnění</string>
+  <string name="repeat">opakování</string>
+  <string name="time">čas</string>
+  <string name="distance">vzdálenost</string>
+  <string name="Distance">Vzdálenost</string>
+  <string name="speed">rychlost</string>
+  <string name="pace">tempo</string>
+  <string name="cadence">kadence</string>
+  <string name="temperature">teplota</string>
+  <string name="pressure">tlak</string>
+  <string name="Zone">Oblast</string>
+  <string name="Device">Zařízení</string>
+  <string name="Pace">Tempo</string>
+  <string name="Connect">Připojit</string>
+  <string name="Connecting">Připojuji se</string>
+  <string name="Download">Stáhnout</string>
+  <string name="Share">Sdílet</string>
+  <string name="Delete">Smazat</string>
+  <string name="Total">Celkem</string>
+  <string name="Interval">Interval</string>
+  <string name="Lap">Kolo</string>
+  <string name="New_lap">Nové kolo</string>
+  <string name="Next_lap">Další kolo</string>
+  <string name="Pause">Pauza</string>
+  <string name="Stop">Zastavit</string>
+  <string name="Sport">Sport</string>
+  <string name="Target">Cíl</string>
+  <string name="Rest_type">Typ odpočinku</string>
+  <string name="Repetitions">Opakování</string>
+  <string name="Date">Datum</string>
+  <string name="GPS_satellites">GPS satelity</string>
+  <string name="Start_GPS">Spustit GPS</string>
+  <string name="Duration">Trvání</string>
+  <string name="Cancel">Zrušit</string>
+  <string name="value">hodnota</string>
+  <string name="Select_all">Vybrat vše</string>
+  <string name="Clear_all">Vymazat vše</string>
+  <string name="Username">Uživatelské jméno</string>
+  <string name="Password">Heslo</string>
+  <string name="Show_password">Zobrazit heslo</string>
+  <string name="intensity">intenzita</string>
+  <string name="Sex">Pohlaví</string>
+  <string name="Laps">Kola</string>
+  <string name="Map">Mapa</string>
+  <string name="Graph">Graf</string>
+  <string name="Upload">Nahrát</string>
+  <string name="Configure">Nastavit</string>
+  <string name="Disconnect">Odpojit</string>
+  <string name="Resume">Obnovit</string>
+  <string name="Save_activity">Uložit aktivitu</string>
+  <string name="Upload_activity">Nahrát aktivitu</string>
+  <string name="Uploaded">Nahráno</string>
+  <string name="Finished">Dokončeno</string>
+  <string name="Until_press">Do stisknutí</string>
+  <string name="Discard_activity">Zrušit aktivitu</string>
+  <string name="Configure_accounts">Nastavit účty</string>
+  <string name="OK">OK</string>
+  <string name="Edit_activity">Upravit aktivitu</string>
+  <string name="Share_activity">Sdílet aktivitu</string>
+  <string name="Delete_activity">Smazat aktivitu</string>
+  <string name="Recompute_activity">Přepočítat aktivitu</string>
+  <string name="Settings">Nastavení</string>
+  <string name="Great">Skvěle!</string>
+  <string name="Yes">Ano</string>
+  <string name="Create">Vytvořit</string>
+  <string name="No">Ne</string>
+  <string name="Downloading_from_1s">Stahuji z %1$s</string>
+  <string name="Uploading_to_1s">Nahrávám na %1$s</string>
+  <string name="Recording">Nahrávám</string>
+  <string name="Sensors">Senzory</string>
+  <string name="Maintenance">Údržba</string>
+  <string name="use_step_sensor_title">Senzor kroků</string>
+  <string name="use_pressure_sensor_title">Tlakový senzor</string>
+</resources>
