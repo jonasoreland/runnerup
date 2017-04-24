@@ -243,8 +243,8 @@ public class FeedList extends Observable implements Constants {
             }
             // Same account must be identical to match
             // (this is a theoretical problem with upgrade...)
-            Set<Entry<String, Object>> v1 = c0.valueSet();
-            for (Entry<String, Object> val : v1) {
+            Set<Entry<String, Object>> v0 = c0.valueSet();
+            for (Entry<String, Object> val : v0) {
                 if ("_id".contentEquals(val.getKey()))
                     continue;
                 if (!c1.containsKey(val.getKey())) {
@@ -253,13 +253,10 @@ public class FeedList extends Observable implements Constants {
                 if (!val.getValue().toString().contentEquals(c1.getAsString(val.getKey())))
                     return false;
             }
-            int i1 = v1.contains("_id") ? 1 : 0;
-            int i2 = c1.valueSet().contains("_id") ? 1 : 0;
-            if ((v1.size() - i1) != (c1.valueSet().size() - i2)) {
-                return false;
-            }
+            int i0 = c0.containsKey("_id") ? 1 : 0;
+            int i1 = c1.containsKey("_id") ? 1 : 0;
 
-            return true;
+            return (v0.size() - i0) == (c1.valueSet().size() - i1);
         }
 
         if (!filterDuplicates)
