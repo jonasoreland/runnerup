@@ -19,6 +19,7 @@ package org.runnerup.export.format;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Sport;
@@ -30,6 +31,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -40,13 +42,19 @@ import java.util.TimeZone;
 public class RunalyzePost {
 
     private SQLiteDatabase mDB = null;
+    private Map<String,Map<String,String>> sports;
+    private Map<String,Map<String,String>> types;
 
     /**
      * Constructor using the database.
      * @param mDB The database to read the activity information
+     * @param sports The map of sports read in runalyze.
+     * @param types The map of types in runalyze.
      */
-    public RunalyzePost(SQLiteDatabase mDB) {
+    public RunalyzePost(SQLiteDatabase mDB, Map<String,Map<String,String>> sports, Map<String,Map<String,String>> types) {
         this.mDB = mDB;
+        this.sports = sports;
+        this.types = types;
     }
 
     //
@@ -280,57 +288,6 @@ public class RunalyzePost {
     }
 
     /**
-     * Runalyze sports are stored in the table <em>runalyze_sport</em>. For the moment
-     * they are:
-     * <pre>
-     * |  1 | Running
-     * |  2 | Swimming
-     * |  3 | Biking
-     * |  4 | Gymnastics
-     * |  5 | Other
-     * </pre>
-     *
-     * @param dbValue The sport as used in runnerup
-     * @return The id of the sport in a string
-     */
-    public String runnerupSport2RunalyzeSport(int dbValue) {
-        Sport sport = Sport.valueOf(dbValue);
-        if (sport.IsRunning()) {
-            return "1";
-        }
-        if (sport.IsCycling()) {
-            return "3";
-        }
-
-        return "5";
-    }
-
-    /**
-     * Runalyze types are stored in the table <em>runalyze_type</em>. For the moment
-     * they are:
-     * <pre>
-     * | id | name               | abbr | sportid |
-     * |  1 | Jogging            | JOG  |       1 |
-     * |  2 | Fartlek            | FL   |       1 |
-     * |  3 | Interval training  | IT   |       1 |
-     * |  4 | Tempo Run          | TR   |       1 |
-     * |  5 | Race               | RC   |       1 |
-     * |  6 | Regeneration Run   | RG   |       1 |
-     * |  7 | Long Slow Distance | LSD  |       1 |
-     * |  8 | Warm-up            | WU   |       1 |
-     * </pre>
-     *
-     * @param dbValue The sport id used in runnerup
-     * @return The sport id for runalyze in a string
-     */
-    public String runnerupSport2RunalyzeType(int dbValue) {
-        Sport sport = Sport.valueOf(dbValue);
-        if (sport.IsRunning()) {
-            return "1";
-        }
-        return "";
-    }
-    /**
      * <em>Runalyze</em> calculates the calories using the table of sports. By default they
      * are using this:
      * <pre>
@@ -356,6 +313,71 @@ public class RunalyzePost {
         //Constants.DB.ACTIVITY.SPORT_OTHER:
         return Integer.toString(Math.round((500.0F / 3600.0F) * seconds));
     }
+
+    /**
+     * Method that calculates sportid, typeid and kcal.
+     * Runalyze sport is read in the sports map. The exporter looks for a sport that contains the
+     * <em>runnerup</em> sport name ignoring case. If no sport is found a default "1" is returned.
+     * The <em>typeid</em> is just the lowest type if found.
+     * The <em>kcal</em> is calculated using the sport data if found, if not the calculateKCal default
+     * values is used.
+     *
+     * @param dbValue The value in the ddbb
+     * @param seconds The time of the activity for the calculation
+     * @throws IOException Some error
+     */
+    public void calculateSportTypeAndKCal(int dbValue, long seconds, Writer writer) throws IOException {
+        //
+        // calculate sportid
+        Sport sport = Sport.valueOf(dbValue);
+        String sportName = sport.name().toLowerCase();
+        String sportId = "1"; // default values is 1 (just something)
+        String sportFound = null;
+        for (String runalyzeSport: sports.keySet()) {
+            if (runalyzeSport.toLowerCase().contains(sportName) &&
+                    sports.get(runalyzeSport).containsKey("value")) {
+                sportId = sports.get(runalyzeSport).get("value");
+                sportFound = runalyzeSport;
+
+            }
+        }
+        Log.d(getClass().getName(), "Using runalyze sport=" + sportFound + "(" + sportId + ")");
+        writeNomalField("sportid", sportId, null, writer);
+        //
+        // calculate typeid
+        String typeFound = null;
+        String typeId = "";
+        if (sportFound != null) {
+            // the typeid will be the min value of that type
+            int typeIdInt = Integer.MAX_VALUE;
+            for (Map.Entry<String,Map<String,String>> e: types.entrySet()) {
+                if (sportId.equals(e.getValue().get("data-sport")) &&
+                        e.getValue().containsKey("value") &&
+                        typeIdInt > Integer.parseInt(e.getValue().get("value"))) {
+                    typeIdInt = Integer.parseInt(e.getValue().get("value"));
+                    typeFound = e.getKey();
+                }
+            }
+            if (typeIdInt != Integer.MAX_VALUE) {
+                typeId = Integer.toString(typeIdInt);
+            }
+        }
+        Log.d(getClass().getName(), "Using runalyze type=" + typeFound + "(" + typeId + ")");
+        writeNomalField("typeid", typeId, null, writer);
+        //
+        // calculate kcal
+        String kcal = null;
+        if (sportFound != null && sports.get(sportFound).containsKey("data-kcal")) {
+            kcal = Integer.toString(Math.round((Float.parseFloat(sports.get(sportFound).get("data-kcal")) / 3600.0F) * seconds));
+            Log.d(getClass().getName(), "Kcal using sports value: " + sports.get(sportFound).get("data-kcal"));
+        } else {
+            // calculate in default numbers
+            Log.d(getClass().getName(), "Kcal using defaults value");
+            kcal = calculateKCal(dbValue, seconds);
+        }
+        writeNomalField("kcal", kcal, null, writer);
+    }
+
     /**
      * Method that writes all the fields that are related to the activity information.
      * @param activityId The activity id to export
@@ -376,14 +398,11 @@ public class RunalyzePost {
                 writeNomalField("pulse_max", c.getString(4), "0", writer);
                 writeNomalField("comment", c.getString(5), "", writer);
                 writeNomalField("pace", seconds2MinuteAndSeconds(Math.round(c.getFloat(1)*1000.0F/c.getFloat(2))), "", writer);
-                writeNomalField("sportid", runnerupSport2RunalyzeSport(c.getInt(6)), null, writer);
-                // the type is finally blank, it was decided better not to provide anything
-                // previously it was called with runnerupSport2RunalyzeType(c.getInt(6))
-                writeNomalField("typeid", "", null, writer);
+                // write sportid, typeid and kcal depending the sports and types read from runalyze
+                calculateSportTypeAndKCal(c.getInt(6), c.getLong(1), writer);
                 // it seems that the activity_id in runalyze is set in "class.ParserAbstractSingle.php"
                 // and it is just the timestamp in seconds of the activity
                 writeNomalField("activity_id", Long.toString(c.getLong(0)), null, writer);
-                writeNomalField("kcal", calculateKCal(c.getInt(6), c.getLong(1)), null, writer);
             }
         } finally {
             if (c != null) {
