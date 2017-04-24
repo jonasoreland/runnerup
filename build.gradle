@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.0'
     }
 
 }
@@ -17,9 +17,9 @@ project.ext {
     compileSdkVersion = 25 //Update Travis manually
     targetSdkVersion = 25
 
-    supportLibrary = '25.1.0'
-    googlePlayServicesVersion = '10.0.1'
-    googleWearVersion = '1.4.0'
+    supportLibrary = '25.2.0'
+    googlePlayServicesVersion = '10.2.0'
+    googleWearVersion = '2.0.0'
 
     versionName = '1.56'
     versionCode = 14000056
