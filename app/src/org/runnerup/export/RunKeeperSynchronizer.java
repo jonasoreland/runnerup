@@ -570,6 +570,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return s;
     }
 
+    //TODO This is not according to RunKeeper documentation, probably not working
     @Override
     public Status getFeed(FeedUpdater feedUpdater) {
         Status s = Status.NEED_AUTH;
@@ -597,11 +598,11 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                         c.put(FEED.EXTERNAL_ID, e.getString("id"));
                         c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
                         JSONObject d = e.getJSONObject("data");
-                        Sport sport = runkeeper2sportMap.get(d.getInt("activityType"));
+                        Sport sport = runkeeper2sportMap.get(d.getString("activityType"));
                         if (sport != null) {
                             c.put(FEED.FEED_SUBTYPE, sport.getDbValue());
                         } else {
-                            Log.w(getName(), "Unknown sport with id " + d.getInt("activityType"));
+                            Log.w(getName(), "Unknown sport with id " + d.getString("activityType"));
                             c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
                             break;
                         }

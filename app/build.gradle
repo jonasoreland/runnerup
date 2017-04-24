@@ -97,6 +97,8 @@ android {
         ignore 'IconMissingDensityFolder'
         //apply() is supported from SDK 9, but min version is 8
         ignore 'ApplySharedPref'
+        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
+        warning 'RestrictedApi'
 
         showAll true
         //debug issues in Travis
@@ -126,7 +128,7 @@ dependencies {
 
     latestCompile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     latestCompile 'com.getpebble:pebblekit:4.0.1'
-    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.0@aar'){
+    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.0.1@aar'){
         transitive=true
     }
     compile 'com.jjoe64:graphview:4.2.1'
