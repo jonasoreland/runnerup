@@ -20,7 +20,14 @@
         <ignore regexp=".*okio.*" />
         <ignore regexp=".*retrofit.*" />
     </issue>
-    <issue id="WrongRegion"  severity="ignore">
-        <ignore path="**/res/values-en-rNL/**" />
+    <issue id="IconDensities">
+        <ignore path="res/**" />
+        <ignore path="**/common/src/main/res/**" />
+    </issue>
+    <issue id="IconColors">
+        <ignore path="**/ic_stat_notify.png" />
+    </issue>
+    <issue id="WrongRegion" severity="ignore">
+        <ignore regexp="^.*?\Q\res\values-en-rNL\\E.*?$" />
     </issue>
 </lint>

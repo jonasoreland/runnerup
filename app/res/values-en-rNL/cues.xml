@@ -18,7 +18,7 @@
   <string name="cue_warmup">warming-up</string>
   <string name="cue_cooldown">cooling-down</string>
   <string name="cue_current">huidige</string>
-    <string name="cue_perkilometer">per kilometer</string>
+  <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mijl</string>
   <string name="cue_started">gestart</string>
   <string name="cue_paused">gepauzeerd</string>
@@ -27,32 +27,4 @@
   <string name="cue_completed">afgerond</string>
   <string name="cue_speedup">versnellen</string>
   <string name="cue_slowdown">vertragen</string>
-  <plurals name="cue_hour">
-    <item quantity="one">%d uur</item>
-    <item quantity="other">%d uren</item>
-  </plurals>
-  <plurals name="cue_minute">
-    <item quantity="one">%d minuut</item>
-    <item quantity="other">%d minuten</item>
-  </plurals>
-  <plurals name="cue_second">
-    <item quantity="one">%d seconde</item>
-    <item quantity="other">%d seconden</item>
-  </plurals>
-  <plurals name="cue_meter">
-    <item quantity="one">%d meter</item>
-    <item quantity="other">%d meters</item>
-  </plurals>
-  <plurals name="cue_kilometer">
-    <item quantity="one">%d kilometer</item>
-    <item quantity="other">%d kilometers</item>
-  </plurals>
-  <plurals name="cue_mile">
-    <item quantity="one">%d mijl</item>
-    <item quantity="other">%d mijlen</item>
-  </plurals>
-  <plurals name="cue_bpm">
-    <item quantity="one">%d bpm</item>
-    <item quantity="other">%d bpm</item>
-  </plurals>
 </resources>

@@ -108,26 +108,42 @@ public class CreateAdvancedWorkout extends Activity {
             return 0;
         }
 
+        private class ViewHolderWorkoutStepsAdapter {
+            private StepButton button;
+            private Button add;
+            private Button del;
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            ViewHolderWorkoutStepsAdapter viewHolder;
 
-            LayoutInflater inflater = getLayoutInflater();
-            convertView = inflater.inflate(R.layout.advanced_workout_row, parent, false);
+            if (view == null) {
+                viewHolder = new ViewHolderWorkoutStepsAdapter();
+
+                LayoutInflater inflater = getLayoutInflater();
+                view = inflater.inflate(R.layout.advanced_workout_row, parent, false);
+
+                viewHolder.button = (StepButton) view.findViewById(R.id.workout_step_button);
+                viewHolder.button.setOnChangedListener(onWorkoutChanged);
+
+                viewHolder.add = (Button) view.findViewById(R.id.add_button);
+                viewHolder.add.setOnClickListener(onAddButtonClick);
+
+                viewHolder.del = (Button) view.findViewById(R.id.del_button);
+                viewHolder.del.setOnClickListener(onDeleteButtonClick);
+
+                view.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolderWorkoutStepsAdapter) view.getTag();
+            }
 
             Workout.StepListEntry entry = steps.get(position);
-            StepButton button = (StepButton) convertView.findViewById(R.id.workout_step_button);
+            viewHolder.button.setStep(entry.step);
+            viewHolder.button.setPadding(entry.level * 12, 0, 0, 0);
 
-            button.setStep(entry.step);
-            button.setPadding(entry.level * 12, 0, 0, 0);
-            button.setOnChangedListener(onWorkoutChanged);
-
-            Button add = (Button) convertView.findViewById(R.id.add_button);
-            add.setOnClickListener(onAddButtonClick);
-
-            Button del = (Button) convertView.findViewById(R.id.del_button);
-            del.setOnClickListener(onDeleteButtonClick);
-
-            return convertView;
+            return view;
         }
     }
 

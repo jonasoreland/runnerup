@@ -52,6 +52,12 @@ public class MapWrapper implements Constants {
     public void onCreate(Bundle savedInstanceState) {
     }
 
+    public void onStart() {
+    }
+
+    public void onStop() {
+    }
+
     public void onResume() {
     }
 

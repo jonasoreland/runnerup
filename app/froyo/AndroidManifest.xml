@@ -22,9 +22,7 @@
         tools:overrideLibrary="com.mapbox.mapboxsdk, com.jjoe64.graphview"/>
 
     <application
-        android:icon="@drawable/icon"
         android:label="@string/app_name">
-        android:configChanges="orientation"
     </application>
 
 </manifest> 
