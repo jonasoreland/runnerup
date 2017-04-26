@@ -21,6 +21,9 @@ project.ext {
     googlePlayServicesVersion = '10.2.0'
     googleWearVersion = '2.0.0'
 
+    junitVersion = '4.12'
+    mockitoVersion = '2.3.7'
+
     versionName = '1.56'
     versionCode = 14000056
     froyoVersionCode = 8000056
