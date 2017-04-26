@@ -33,4 +33,6 @@
     <issue id="ObsoleteSdkInt" severity="ignore">
         <ignore regexp=".*-r14$" />
     </issue>
+    <!-- used by library? -->
+    <issue id="LogNotTimber" severity="ignore"/>
 </lint>
