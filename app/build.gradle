@@ -86,13 +86,17 @@ android {
         fatal 'InlinedApi', 'InconsistentArrays'
         //TODO: See GradleCompatible comments, check manually with ./gradlew app:dependencies
         warning 'GradleCompatible'
+        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
+        warning 'RestrictedApi'
+        // Ignore some specific checks completely
+        ignore 'MissingTranslation'
+
         //All translations will not be complete
         ignore 'MissingTranslation'
         //icon with all densities are not included - don't bother
         ignore 'IconMissingDensityFolder'
         //apply() is supported from SDK 9, but min version is 8
-        //Suppress before Android Studio 2.3
-        //ignore 'ApplySharedPref'
+        ignore 'ApplySharedPref'
         //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
         warning 'RestrictedApi'
 
@@ -115,14 +119,10 @@ dependencies {
     compile project(':hrdevice')
     latestWearApp project(':wear')
 
-    //Lint bug: To avoid the issue GradleDependency in Froyo, both Latest/Froyo must be suppressed
-    //(Latest dependency check on the other libraries)
-    //noinspection GradleDependency
+    //Lint bug: https://code.google.com/p/android/issues/detail?id=231323
     latestCompile "com.android.support:design:${rootProject.ext.supportLibrary}"
-    //GradleCompatible: support-v4 is not used by app source but mapbox, graphview, play-services-wearable
-    //force same version as in the app
-    latestCompile "com.android.support:support-v4:${rootProject.ext.supportLibrary}"
 
+    //Lint bug: https://code.google.com/p/android/issues/detail?id=231321
     //noinspection GradleDependency
     froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
 
