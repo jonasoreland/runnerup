@@ -329,11 +329,11 @@ public class RunalyzePost {
         //
         // calculate sportid
         Sport sport = Sport.valueOf(dbValue);
-        String sportName = sport.name().toLowerCase();
+        String sportName = sport.name().toLowerCase(Locale.US);
         String sportId = "1"; // default values is 1 (just something)
         String sportFound = null;
         for (String runalyzeSport: sports.keySet()) {
-            if (runalyzeSport.toLowerCase().contains(sportName) &&
+            if (runalyzeSport.toLowerCase(Locale.US).contains(sportName) &&
                     sports.get(runalyzeSport).containsKey("value")) {
                 sportId = sports.get(runalyzeSport).get("value");
                 sportFound = runalyzeSport;
