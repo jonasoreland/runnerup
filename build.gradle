@@ -17,9 +17,9 @@ project.ext {
     compileSdkVersion = 25 //Update Travis manually
     targetSdkVersion = 25
 
-    supportLibrary = '25.1.0'
-    googlePlayServicesVersion = '10.2.0'
-    googleWearVersion = '2.0.0'
+    supportLibrary = '25.3.1'
+    googlePlayServicesVersion = '10.2.1'
+    googleWearVersion = '2.0.1'
 
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
