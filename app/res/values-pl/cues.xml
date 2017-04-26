@@ -32,43 +32,36 @@
   <plurals name="cue_hour">
     <item quantity="one">%d godzina</item>
     <item quantity="few">%d godziny</item>
-    <item quantity="many">%d godzin</item>
     <item quantity="other">%d godzin</item>
   </plurals>
   <plurals name="cue_minute">
     <item quantity="one">%d minuta</item>
     <item quantity="few">%d minuty</item>
-    <item quantity="many">%d minut</item>
     <item quantity="other">%d minut</item>
   </plurals>
   <plurals name="cue_second">
     <item quantity="one">%d sekunda</item>
     <item quantity="few">%d sekundy</item>
-    <item quantity="many">%d sekund</item>
     <item quantity="other">%d sekund</item>
   </plurals>
   <plurals name="cue_meter">
     <item quantity="one">%d metr</item>
     <item quantity="few">%d metry</item>
-    <item quantity="many">%d metrów</item>
     <item quantity="other">%d metrów</item>
   </plurals>
   <plurals name="cue_kilometer">
     <item quantity="one">%d kilometr</item>
     <item quantity="few">%d kilometry</item>
-    <item quantity="many">%d kilometrów</item>
     <item quantity="other">%d kilometrów</item>
   </plurals>
   <plurals name="cue_mile">
     <item quantity="one">%d mila</item>
     <item quantity="few">%d mile</item>
-    <item quantity="many">%d mil</item>
     <item quantity="other">%d mil</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d uderzenie na minutę</item>
     <item quantity="few">%d uderzenia na minutę</item>
-    <item quantity="many">%d uderzeń na minutę</item>
     <item quantity="other">%d uderzeń na minutę</item>
   </plurals>
   <string name="cue_activity_paused">Trening wstrzymany</string>

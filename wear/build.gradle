@@ -38,7 +38,7 @@ android {
         checkReleaseBuilds true
         //promote to error
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Must be suppressed for com.google.android.support:wearable
+        //https://code.google.com/p/android/issues/detail?id=231325
         warning 'GradleCompatible'
         // Ignore some specific checks completely
         ignore 'MissingTranslation', 'UnusedResources'

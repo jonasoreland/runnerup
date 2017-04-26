@@ -7,7 +7,7 @@
         <ignore path="src/org/runnerup/view/MainLayout.java" />
     </issue>
     <issue id="MissingQuantity">
-        <!-- Transifex refuses quantity="one" for tr, (gradle) lint requires it, Inspect allows both-->
+        <!-- Transifex refuses quantity="one" for tr,pl (gradle) lint requires it, Inspect allows both-->
         <ignore path="res/values-tr/cues.xml" />
         <ignore path="res/values-pl/cues.xml" />
     </issue>

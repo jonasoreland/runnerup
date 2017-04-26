@@ -86,6 +86,9 @@ android {
         fatal 'InlinedApi', 'InconsistentArrays'
         //TODO: See GradleCompatible comments, check manually with ./gradlew app:dependencies
         warning 'GradleCompatible'
+        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
+        warning 'RestrictedApi'
+        // Ignore some specific checks completely
         //All translations will not be complete
         ignore 'MissingTranslation'
         //icon with all densities are not included - don't bother
@@ -94,8 +97,6 @@ android {
         ignore 'ApplySharedPref'
         //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
         warning 'RestrictedApi'
-
-
 
         showAll true
         //debug issues in Travis
@@ -125,10 +126,11 @@ dependencies {
 
     latestCompile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     latestCompile 'com.getpebble:pebblekit:4.0.1'
-    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:4.2.2@aar'){
+    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.0.1@aar'){
         transitive=true
     }
     compile 'com.jjoe64:graphview:4.2.1'
+
 
     testCompile "junit:junit:${rootProject.ext.junitVersion}"
     testCompile "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
