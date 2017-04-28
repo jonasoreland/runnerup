@@ -53,6 +53,14 @@
     <item quantity="one">%d mil</item>
     <item quantity="other">%d mil</item>
   </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s kilometer i timen</item>
+    <item quantity="other">%s kilometer i timen</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s Engelsk mil i timen</item>
+    <item quantity="other">%s Engelske mil i timen</item>
+  </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d spm</item>
     <item quantity="other">%d spm</item>
