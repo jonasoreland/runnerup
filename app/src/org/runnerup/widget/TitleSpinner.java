@@ -534,7 +534,7 @@ public class TitleSpinner extends LinearLayout {
     }
 
     public void setValue(String value) {
-        setValue (value, false);
+        setValue (value, true);
     }
 
     public void setValue(CharSequence value, Boolean savePreferences) {
