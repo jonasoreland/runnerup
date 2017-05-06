@@ -51,7 +51,7 @@ import java.util.HashSet;
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-public class StateService extends Service implements NodeApi.NodeListener, MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Boolean> {
+public class StateService extends Service implements NodeApi.NodeListener, MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
 
     public static final String UPDATE_TIME = "UPDATE_TIME";
 
@@ -63,10 +63,9 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     private String phoneNode;
 
     private Bundle data;
-    private Bundle headers;
     private final ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
-    private final ValueModel<Boolean> pauseStep = new ValueModel<Boolean>();
-    private MainActivity pauseStepListener;
+    private final ValueModel<Bundle> headers = new ValueModel<>();
+    private MainActivity headersListener;
 
     @Override
     public void onCreate() {
@@ -112,7 +111,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
-        this.pauseStep.registerChangeListener(this);
+        this.headers.registerChangeListener(this);
 
         System.err.println("StateService.onCreate()");
     }
@@ -145,6 +144,20 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                                     TrackerState newState = getTrackerStateFromDataItem(dataItem);
                                     if (newState != null)
                                         setTrackerState(newState);
+                                }
+                                dataItems.release();
+                            }
+                        });
+        Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
+                .scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.HEADERS).build())
+                .setResultCallback(
+                        new ResultCallback<DataItemBuffer>() {
+                            @Override
+                            public void onResult(DataItemBuffer dataItems) {
+                                for (DataItem dataItem : dataItems) {
+                                    Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
+                                    b.putLong(UPDATE_TIME, System.currentTimeMillis());
+                                    headers.set(b);
                                 }
                                 dataItems.release();
                             }
@@ -190,9 +203,9 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     }
 
     @Override
-    public void onValueChanged(ValueModel<Boolean> instance, Boolean oldValue, Boolean newValue) {
-        if (pauseStepListener != null)
-            pauseStepListener.onPauseStepChanged(oldValue, newValue);
+    public void onValueChanged(ValueModel<Bundle> instance, Bundle oldValue, Bundle newValue) {
+        if (headersListener != null)
+            headersListener.onValueChanged(oldValue, newValue);
     }
 
     public class LocalBinder extends android.os.Binder {
@@ -215,7 +228,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     }
 
     public Bundle getHeaders(long lastUpdateTime) {
-        return getBundle(headers, lastUpdateTime);
+        return getBundle(headers.get(), lastUpdateTime);
     }
 
     public Bundle getData(long lastUpdateTime) {
@@ -271,16 +284,15 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
     }
 
     private void setHeaders(DataEvent ev) {
-        boolean pause = false;
         if (ev.getType() == DataEvent.TYPE_CHANGED) {
-            headers = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
-            headers.putLong(UPDATE_TIME, System.currentTimeMillis());
-            pause = headers.getBoolean(Constants.Wear.RunInfo.PAUSE_STEP, false);
+            Bundle b = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
+            b.putLong(UPDATE_TIME, System.currentTimeMillis());
+            System.err.println("setHeaders(): b=" + b);
+            headers.set(b);
         } else {
-            headers = null;
+            headers.set(null);
             resetState();
         }
-        pauseStep.set(pause);
     }
 
     static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
@@ -312,7 +324,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     private void resetState() {
         data = null;
-        headers = null;
+        headers.set(null);
     }
 
     private void setTrackerState(TrackerState newVal) {
@@ -331,16 +343,12 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         trackerState.unregisterChangeListener(listener);
     }
 
-    public Boolean getPauseStep() {
-        return pauseStep.get();
+    public void registerHeadersListener(MainActivity listener) {
+        this.headersListener = listener;
     }
 
-    public void registerPauseStepListener(MainActivity listener) {
-        this.pauseStepListener = listener;
-    }
-
-    public void unregisterPauseStepListener(MainActivity listener) {
-        this.pauseStepListener = null;
+    public void unregisterHeadersListener(MainActivity listener) {
+        this.headersListener = null;
     }
 
     public void sendStart() {

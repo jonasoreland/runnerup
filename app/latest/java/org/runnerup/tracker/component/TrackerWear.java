@@ -86,15 +86,33 @@ public class TrackerWear extends DefaultTrackerComponent
     private long tickFrequencyPause = 500; // so that seconds does show "slowly"
     private boolean mWorkoutSenderRunning = false;
 
-    private List<Pair<Scope, Dimension>> items = new ArrayList<Pair<Scope, Dimension>>(3);
+    private ArrayList<Integer> screenSizes = new ArrayList<>();
+    private List<List<Pair<Scope, Dimension>>> screens = new ArrayList<>(3);
     private Step currentStep;
     private boolean pauseStep;
 
     public TrackerWear(Tracker tracker) {
         this.tracker = tracker;
-        items.add(new Pair<Scope, Dimension>(Scope.ACTIVITY, Dimension.TIME));
-        items.add(new Pair<Scope, Dimension>(Scope.ACTIVITY, Dimension.DISTANCE));
-        items.add(new Pair<Scope, Dimension>(Scope.LAP, Dimension.PACE));
+
+        // TODO read this from settings!!
+        // Wear now supports arbitrary no of screens with 1-3 items per screen
+        // and automatically scrolls between them
+        {
+            ArrayList<Pair<Scope, Dimension>> screen = new ArrayList<>();
+            screen.add(new Pair<>(Scope.ACTIVITY, Dimension.TIME));
+            screen.add(new Pair<>(Scope.ACTIVITY, Dimension.DISTANCE));
+            screen.add(new Pair<>(Scope.LAP, Dimension.PACE));
+            screens.add(screen);
+        }
+        if (false)
+        {
+            ArrayList<Pair<Scope, Dimension>> screen = new ArrayList<>();
+            screen.add(new Pair<>(Scope.CURRENT, Dimension.TIME)); // I.e time of day
+            screens.add(screen);
+        }
+        for (List<Pair<Scope, Dimension>> screen : screens) {
+            screenSizes.add(screen.size());
+        }
     }
 
     @Override
@@ -246,11 +264,16 @@ public class TrackerWear extends DefaultTrackerComponent
 
         Bundle b = new Bundle();
         {
-            int i = 0;
-            for (Pair<Scope, Dimension> item : items) {
-                b.putString(Wear.RunInfo.DATA + i, formatter.format(Formatter.TXT_SHORT,
-                        item.second, workoutInfo.get(item.first, item.second)));
-                i++;
+            int screenNo = 0;
+            for (List<Pair<Scope, Dimension>> screen : screens) {
+                int itemNo = 0;
+                String itemPrefix = Integer.toString(screenNo) + ".";
+                for (Pair<Scope, Dimension> item : screen) {
+                    b.putString(Wear.RunInfo.DATA + itemPrefix + itemNo, formatter.format(Formatter.TXT_SHORT,
+                            item.second, workoutInfo.get(item.first, item.second)));
+                    itemNo++;
+                }
+                screenNo++;
             }
         }
 
@@ -325,10 +348,17 @@ public class TrackerWear extends DefaultTrackerComponent
 
     private void updateHeaders() {
         Bundle b = new Bundle();
-        int i = 0;
-        for (Pair<Scope, Dimension> item : items) {
-            b.putString(Wear.RunInfo.HEADER + i, context.getString(item.second.getTextId()));
-            i++;
+
+        int screenNo = 0;
+        for (List<Pair<Scope, Dimension>> screen : screens) {
+            int itemNo = 0;
+            String itemPrefix = Integer.toString(screenNo) + ".";
+            for (Pair<Scope, Dimension> item : screen) {
+                b.putString(Wear.RunInfo.HEADER + itemPrefix + itemNo,
+                        context.getString(item.second.getTextId()));
+                itemNo++;
+            }
+            screenNo++;
         }
 
         pauseStep = false;
@@ -337,6 +367,8 @@ public class TrackerWear extends DefaultTrackerComponent
             b.putBoolean(Wear.RunInfo.PAUSE_STEP, true);
         }
 
+        b.putIntegerArrayList(Wear.RunInfo.SCREENS, screenSizes);
+        b.putInt(Wear.RunInfo.SCROLL, 5); // 5 seconds
         setData(Wear.Path.HEADERS, b);
     }
 
