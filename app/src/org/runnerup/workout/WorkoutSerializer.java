@@ -434,10 +434,8 @@ public class WorkoutSerializer {
                 break;
             }
             case RESTING:
-                if (convertRestToRecovery && duration.first == Dimension.DISTANCE &&
+                if ((!convertRestToRecovery || duration.first != Dimension.DISTANCE) &&
                         duration.second != null) {
-                    // fall through
-                } else {
                     js.step = Step.createPauseStep(duration.first, duration.second);
                     break;
                 }
