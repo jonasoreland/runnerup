@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,9 +26,10 @@
   <string name="metrics_heartrate">Fc</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Fréquence Cardiaque Maximum (FCM)</string>
-  <string name="Target_pace_HHMMSS">Rythme cible (HH:MM:SS)</string>
+  <string name="Target_pace_HHMMSS">Rythme cible</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s à %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK</string>
   <!--other-->
@@ -46,6 +47,9 @@
   <string name="speed">vitesse</string>
   <string name="pace">rythme</string>
   <string name="heart_rate_zone">zone de fréq. cardiaque</string>
+  <string name="cadence">cadence</string>
+  <string name="temperature">température</string>
+  <string name="pressure">pression</string>
   <string name="Zone">Zone</string>
   <string name="Device">Appareil</string>
   <string name="Start_hour">Heure de démarrage</string>
@@ -178,6 +182,7 @@
   <string name="Unit_preference">Unité de mesure</string>
   <string name="Auto_start_GPS">Démarrage auto. GPS</string>
   <string name="Advanced_options">Paramètres avancés</string>
+  <string name="Mapbox_default_style">Style MapBox</string>
   <string name="RunnerUp_live_address">Adresse RunnerUp live</string>
   <string name="Autopause_after_s">Pause auto. après (s)</string>
   <string name="Autopause_min_pace_minkm">Pause auto. rythme min. (min/km)</string>
@@ -192,6 +197,7 @@
   <string name="Smooth_pace_filters">Filtre(s) de lissage du rythme</string>
   <string name="Poll_interval_ms">Fréquence de raffraichissement du GPS (en millisecondes)</string>
   <string name="Poll_distance_m">Fréquence de raffraichissement du GPS (en mètres)</string>
+  <string name="Adjust_altitude">Ajuster l\'altitude GPS à geoid (EGM96)</string>
   <string name="Export">Exporter</string>
   <string name="Import">Importer</string>
   <string name="Experimental_HRM_devices">Cardiofréquencemètres expérimentaux</string>
@@ -252,10 +258,9 @@
   <string name="Low_HRM_battery_level">Batterie du cardiofréquencemètre faible</string>
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">La batterie de votre cardiofréquencemètre est faible.</string>
   <string name="Do_not_show_again">Ne pas afficher à nouveau</string>
-  <string name="Waiting_for_phone">En attente du téléphone</string>
-  <string name="Saving_on_phone">Sauvegarde sur téléphone</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">En attente du téléphone</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Sauvegarde sur téléphone</string>
   <string name="Save">Sauvegarder</string>
   <string name="Add_step">Ajouter une étape</string>
   <string name="Add_repeat">Ajout une répétition</string>
@@ -286,5 +291,21 @@
   <string name="Uploading_to_1s">Envoi à %1$s</string>
   <string name="Loading_activities">Chargement des séances</string>
   <string name="Fetching_activities_from_1s">Récupération des séances depuis %1$s</string>
+  <string name="No_feed_to_show">Aucun flux à afficher</string>
+  <string name="Unused_currently">Inutilisé actuellement.</string>
   <string name="Unknown">Inconnu</string>
+  <string name="Recording">Enregistrement</string>
+  <string name="Sensors">Capteurs</string>
+  <string name="Maintenance">Maintenance</string>
+  <string name="cue_hrm_connection_restored">Connexion au moniteur de fréquence cardiaque rétablie</string>
+  <string name="cue_hrm_connection_lost">Connexion au moniteur de fréquence cardiaque perdue</string>
+  <string name="latest_feed_click_to_refresh">Dernier flux (cliquez pour rafraîchir)</string>
+  <string name="log_extended_gps_summary">Exporter en GPX uniquement</string>
+  <string name="use_step_sensor_summary">Utiliser pour la cadence</string>
+  <string name="use_temperature_sensor">Capteur de température</string>
+  <string name="use_pressure_sensor_title">Capteur de pression</string>
+  <string name="use_pressure_sensor_summary">Utiliser le baromètre pour calculer l\'élévation</string>
+  <string name="adjust_barometer_altitude_from_gps">Ajuster l\'altitude du baromètre à l\'élévation GPS</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Utiliser l\'altitude initiale du signal GPS pour obtenir une élévation barométrique moyenne</string>
+  <string name="google_play_not_installed">Google Play Services n\'est pas installé</string>
 </resources>

@@ -230,7 +230,9 @@ public interface Constants {
         public interface RunInfo {
             static final String HEADER = "HEADER/";
             static final String DATA = "DATA/";
+            static final String SCREENS = "SCREENS"; // Array of screen sizes, stored in HEADERS
             static final String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
+            static final String SCROLL = "SCROLL"; // Stored in HEADERS
             static final String COUNTDOWN = "COUNTDOWN";   // Stored in DATA
         }
 

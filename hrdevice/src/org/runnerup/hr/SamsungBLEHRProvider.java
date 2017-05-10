@@ -47,30 +47,6 @@ import java.util.UUID;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
 
-    /**
-     * @return true if device is 4.2, 4.2.1 and 4.2.2 AND the samsung ble sdk is available,
-     *          false otherwise
-     */
-    public static boolean checkLibrary() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
-            return false;
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
-            return false;
-
-        try {
-            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGatt");
-            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattAdapter");
-            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCallback");
-            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattCharacteristic");
-            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattDescriptor");
-            Class.forName("com.samsung.android.sdk.bt.gatt.BluetoothGattService");
-            return true;
-        } catch (Exception e) {
-        }
-        return false;
-    }
-
     static final String NAME = "SamsungBLE";
     static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
 

@@ -20,7 +20,7 @@
   <string name="cue_warmup">aquecer</string>
   <string name="cue_cooldown">descansar</string>
   <string name="cue_current">atual</string>
-    <string name="cue_perkilometer">por quilômetro</string>
+  <string name="cue_perkilometer">por quilômetro</string>
   <string name="cue_permile">por milha</string>
   <string name="cue_started">iniciado</string>
   <string name="cue_resumed">reatado</string>
@@ -56,7 +56,7 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-    <string name="cue_activity_resumed">atividate reatada</string>
+  <string name="cue_activity_resumed">atividate reatada</string>
   <string name="cue_activity_stopped">atividade parada</string>
   <string name="cue_lap_started">volta iniciada</string>
   <string name="cue_lap_completed">volta completada</string>

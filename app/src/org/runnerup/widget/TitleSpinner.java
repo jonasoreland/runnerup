@@ -534,7 +534,7 @@ public class TitleSpinner extends LinearLayout {
     }
 
     public void setValue(String value) {
-        setValue (value, false);
+        setValue (value, true);
     }
 
     public void setValue(CharSequence value, Boolean savePreferences) {
@@ -657,6 +657,18 @@ public class TitleSpinner extends LinearLayout {
     }
 
     public CharSequence getValue() {
+        switch(mType) {
+            case TS_SPINNER_TXT:
+            case TS_EDITTEXT:
+                return mValue.getText();
+            case TS_DATEPICKER:
+            case TS_TIMEPICKER:
+            case TS_DURATIONPICKER:
+            case TS_DISTANCEPICKER:
+            case TS_NUMBERPICKER:
+            case TS_SPINNER:
+                break;
+        }
         return String.format(Locale.getDefault(), "%d", mCurrValue);
     }
 

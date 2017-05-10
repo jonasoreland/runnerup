@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string-array name="unitEntries">
     <item>Milhas</item>
     <item>Quilômetros</item>
@@ -16,38 +16,18 @@
     <item>Recuperação</item>
     <item>Desaquecimento</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
-  <integer-array name="step_intensity_values" translatable="false">
-    <item>2</item>
-    <item>0</item>
-    <item>1</item>
-    <item>5</item>
-    <item>3</item>
-  </integer-array>
   <string-array name="duration_types">
     <item>Até ser pressionado</item>
     <item>Tempo</item>
     <item>Distância</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
-  <integer-array name="step_duration_values" translatable="false">
-    <item>-1</item>
-    <item>1</item>
-    <item>2</item>
-  </integer-array>
   <string-array name="target_types">
     <item>Nenhuma</item>
     <item>Ritmo</item>
     <item>Zona de freq. cardíaca</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
-  <integer-array name="target_values" translatable="false">
-    <item>-1</item>
-    <item>4</item>
-    <item>6</item>
-  </integer-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
-  <string-array name="sportEntries" tools:ignore="InconsistentArrays">
+  <string-array name="sportEntries">
     <item>Corrida</item>
     <item>Ciclismo</item>
     <item>Outros</item>
@@ -62,6 +42,4 @@
     <item>Masculino</item>
     <item>Feminino</item>
   </string-array>
-  <!--Audio cue languages-->
-  <!--Note: keep in same order as languagesNames-->
 </resources>

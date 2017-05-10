@@ -16,19 +16,16 @@
     <item>Recupero</item>
     <item>Defaticamento</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Dall\'ultima pressione</item>
     <item>Tempo</item>
     <item>Distanza</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Nessuno</item>
     <item>Ritmo</item>
     <item>Zona BPM</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Corsa</item>

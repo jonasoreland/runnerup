@@ -17,6 +17,10 @@ android {
     }
     productFlavors {
     }
+    lintOptions {
+        warning 'MissingTranslation'
+        showAll true
+    }
 }
 
 repositories {
@@ -25,6 +29,7 @@ repositories {
 
 dependencies {
     testCompile 'org.hamcrest:hamcrest-library:1.3'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.3.7'
+
+    testCompile "junit:junit:${rootProject.ext.junitVersion}"
+    testCompile "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 }

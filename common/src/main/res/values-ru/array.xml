@@ -16,19 +16,16 @@
     <item>Восстановление</item>
     <item>Заминка</item>
   </string-array>
-  <!--same order as above, same values as Intensity-->
   <string-array name="duration_types">
     <item>Until pressed</item>
     <item>Время</item>
     <item>Дистанция</item>
   </string-array>
-  <!--same order as above, same values as Dimension-->
   <string-array name="target_types">
     <item>Нет</item>
     <item>Темп</item>
     <item>Зона ЧСС</item>
   </string-array>
-  <!--Note: same order as above, same values as Dimension-->
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Бег</item>

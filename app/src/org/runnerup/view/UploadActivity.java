@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ListActivity;
 import android.content.Context;
@@ -280,76 +281,87 @@ public class UploadActivity extends ListActivity implements Constants {
             return allSyncActivities.get(arg0).getId();
         }
 
+        private class ViewHolderUploadActivity {
+            private TextView tvStartTime;
+            private TextView tvDistance;
+            private TextView tvTime;
+            private TextView tvPace;
+            private TextView tvSport;
+            private CheckBox cb;
+        }
+
+        @SuppressLint("ObsoleteSdkInt")
         @Override
-        public View getView(int arg0, View arg1, ViewGroup parent) {
-            View view = inflater.inflate(R.layout.upload_row, parent, false);
+        public View getView(int arg0, View convertView, ViewGroup parent) {
+            View view = convertView;
+            ViewHolderUploadActivity viewHolder;
+
+            if (view == null) {
+                viewHolder = new ViewHolderUploadActivity();
+
+                view = inflater.inflate(R.layout.upload_row, parent, false);
+                viewHolder.tvStartTime = (TextView) view.findViewById(R.id.upload_list_start_time);
+                viewHolder.tvDistance = (TextView) view.findViewById(R.id.upload_list_distance);
+                viewHolder.tvTime = (TextView) view.findViewById(R.id.upload_list_time);
+                viewHolder.tvPace = (TextView) view.findViewById(R.id.upload_list_pace);
+                viewHolder.tvSport = (TextView) view.findViewById(R.id.upload_list_sport);
+                viewHolder.cb = (CheckBox) view.findViewById(R.id.upload_list_check);
+
+                view.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolderUploadActivity) view.getTag();
+            }
             SyncActivityItem ai = allSyncActivities.get(arg0);
 
             Float d = ai.getDistance();
             Long t = ai.getDuration();
 
-            {
-                TextView tv = (TextView) view.findViewById(R.id.upload_list_start_time);
-                if (ai.getStartTime() != null) {
-                    tv.setText(formatter.formatDateTime(Formatter.TXT_LONG,
-                           ai.getStartTime()));
-                } else {
-                    tv.setText("");
-                }
+            if (ai.getStartTime() != null) {
+                viewHolder.tvStartTime.setText(formatter.formatDateTime(Formatter.TXT_LONG,
+                        ai.getStartTime()));
+            } else {
+                viewHolder.tvStartTime.setText("");
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(R.id.upload_list_distance);
-                if (d != null) {
-                    tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, d.longValue()));
-                } else {
-                    tv.setText("");
-                }
+            if (d != null) {
+                viewHolder.tvDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, d.longValue()));
+            } else {
+                viewHolder.tvDistance.setText("");
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(R.id.upload_list_time);
-                if (t != null) {
-                    tv.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
-                } else {
-                    tv.setText("");
-                }
+            if (t != null) {
+                viewHolder.tvTime.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
+            } else {
+                viewHolder.tvTime.setText("");
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(R.id.upload_list_pace);
-                if (d != null && t != null && d != 0 && t != 0) {
-                    tv.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
-                } else {
-                    tv.setText("");
-                }
+            if (d != null && t != null && d != 0 && t != 0) {
+                viewHolder.tvPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+            } else {
+                viewHolder.tvPace.setText("");
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(R.id.upload_list_sport);
-                if (ai.getSport() == null) {
-                    tv.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
-                } else {
-                    int sport = Sport.valueOf(ai.getSport()).getDbValue();
-                    tv.setText(Sport.textOf(getResources(), sport));
-                }
+            if (ai.getSport() == null) {
+                viewHolder.tvSport.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
+            } else {
+                int sport = Sport.valueOf(ai.getSport()).getDbValue();
+                viewHolder.tvSport.setText(Sport.textOf(getResources(), sport));
             }
 
-            {
-                CheckBox cb = (CheckBox) view.findViewById(R.id.upload_list_check);
-                cb.setTag(arg0);
-                cb.setOnCheckedChangeListener(checkedChangeClick);
-                cb.setChecked(!ai.skipActivity());
+            viewHolder.cb.setTag(arg0);
+            viewHolder.cb.setOnCheckedChangeListener(checkedChangeClick);
+            viewHolder.cb.setChecked(!ai.skipActivity());
 
-                if (!ai.isRelevantForSynch(syncMode)) {
-                    cb.setEnabled(Boolean.FALSE);
-                }
+            if (ai.isRelevantForSynch(syncMode)) {
+                viewHolder.cb.setEnabled(Boolean.TRUE);
+            } else {
+                viewHolder.cb.setEnabled(Boolean.FALSE);
             }
 
-            Long id = ai.getId();
-            view.setTag(id);
             if (syncMode.equals(SyncManager.SyncMode.UPLOAD)) {
                 view.setOnClickListener(onActivityClick);
+            } else if (Build.VERSION.SDK_INT < 15 || view.hasOnClickListeners()) {
+                view.setOnClickListener(null);
             }
 
             return view;

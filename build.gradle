@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:2.3.1'
     }
 
 }
@@ -14,9 +14,17 @@ project.ext {
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '25.0.2' //Update Travis manually
-    compileSdkVersion = 25
+    compileSdkVersion = 25 //Update Travis manually
     targetSdkVersion = 25
-    versionName = "1.56"
+
+    supportLibrary = '25.2.0'
+    googlePlayServicesVersion = '10.2.0'
+    googleWearVersion = '2.0.0'
+
+    junitVersion = '4.12'
+    mockitoVersion = '2.3.7'
+
+    versionName = '1.56'
     versionCode = 14000056
     froyoVersionCode = 8000056
 

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
   <string name="metrics_heartrate">Уд. в мин.</string>
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Максимальная ЧСС (МЧСС)</string>
-  <string name="Target_pace_HHMMSS">Целевой темп (чч:мм:сс)</string>
+  <string name="Target_pace_HHMMSS">Целевой темп</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <!--weird stuff: should it be placeholders or even removed?-->
@@ -252,10 +252,9 @@
   <string name="Low_HRM_battery_level">Низкий уровень заряда датчика HRM</string>
   <string name="High_HRM_battery_level">Высокий уровень заряда датчика HRM</string>
   <string name="Warning">Предупреждение</string>
-  <string name="The_battery_level_of_your_heartrate_monitor_is_low">Датчик HRM требует замены батарейки</string>
   <string name="Do_not_show_again">Не показывать снова</string>
-  <string name="Waiting_for_phone">Ожидание телефона</string>
-  <string name="Saving_on_phone">Сохранить в память телефона</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Ожидание телефона</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Сохранить в память телефона</string>
   <string name="Save">Сохранить</string>
   <string name="Add_step">+ Интервал</string>
   <string name="Add_repeat">+ Повторить</string>
