@@ -86,7 +86,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private boolean mWorkoutSenderRunning = false;
 
     private ArrayList<Integer> screenSizes = new ArrayList<>();
-    private List<List<Pair<Scope, Dimension>>> screens = new ArrayList<>(3);
+    private List<List<Pair<Pair<Scope, Dimension>, Formatter.Format>>> screens = new ArrayList<>(3);
     private Step currentStep;
     private boolean pauseStep;
 
@@ -97,20 +97,19 @@ public class TrackerWear extends DefaultTrackerComponent
         // Wear now supports arbitrary no of screens with 1-3 items per screen
         // and automatically scrolls between them
         {
-            ArrayList<Pair<Scope, Dimension>> screen = new ArrayList<>();
-            screen.add(new Pair<>(Scope.ACTIVITY, Dimension.TIME));
-            screen.add(new Pair<>(Scope.ACTIVITY, Dimension.DISTANCE));
-            screen.add(new Pair<>(Scope.LAP, Dimension.PACE));
+            ArrayList<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen = new ArrayList<>();
+            screen.add(new Pair<>(new Pair<>(Scope.ACTIVITY, Dimension.TIME), Formatter.Format.TXT_SHORT));
+            screen.add(new Pair<>(new Pair<>(Scope.ACTIVITY, Dimension.DISTANCE), Formatter.Format.TXT_SHORT));
+            screen.add(new Pair<>(new Pair<>(Scope.LAP, Dimension.PACE), Formatter.Format.TXT_SHORT));
             screens.add(screen);
         }
         if (false)
         {
-            //TODO: Need datetime dimension to get correct formatting of NOW()
-            ArrayList<Pair<Scope, Dimension>> screen = new ArrayList<>();
-            screen.add(new Pair<>(Scope.CURRENT, Dimension.TIME)); // I.e time of day
+            ArrayList<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen = new ArrayList<>();
+            screen.add(new Pair<>(new Pair<>(Scope.CURRENT, Dimension.TIME), Formatter.Format.TXT_TIMESTAMP)); // I.e time of day
             screens.add(screen);
         }
-        for (List<Pair<Scope, Dimension>> screen : screens) {
+        for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
             screenSizes.add(screen.size());
         }
     }
@@ -265,12 +264,12 @@ public class TrackerWear extends DefaultTrackerComponent
         Bundle b = new Bundle();
         {
             int screenNo = 0;
-            for (List<Pair<Scope, Dimension>> screen : screens) {
+            for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
                 int itemNo = 0;
                 String itemPrefix = Integer.toString(screenNo) + ".";
-                for (Pair<Scope, Dimension> item : screen) {
-                    b.putString(Wear.RunInfo.DATA + itemPrefix + itemNo, formatter.format(Formatter.Format.TXT_SHORT,
-                            item.second, workoutInfo.get(item.first, item.second)));
+                for (Pair<Pair<Scope, Dimension>, Formatter.Format> item : screen) {
+                    b.putString(Wear.RunInfo.DATA + itemPrefix + itemNo, formatter.format(item.second,
+                            item.first.second, workoutInfo.get(item.first.first, item.first.second)));
                     itemNo++;
                 }
                 screenNo++;
@@ -350,12 +349,12 @@ public class TrackerWear extends DefaultTrackerComponent
         Bundle b = new Bundle();
 
         int screenNo = 0;
-        for (List<Pair<Scope, Dimension>> screen : screens) {
+        for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
             int itemNo = 0;
             String itemPrefix = Integer.toString(screenNo) + ".";
-            for (Pair<Scope, Dimension> item : screen) {
+            for (Pair<Pair<Scope, Dimension>, Formatter.Format> item : screen) {
                 b.putString(Wear.RunInfo.HEADER + itemPrefix + itemNo,
-                        context.getString(item.second.getTextId()));
+                        context.getString(item.first.second.getTextId()));
                 itemNo++;
             }
             screenNo++;
