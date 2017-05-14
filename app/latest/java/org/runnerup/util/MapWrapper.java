@@ -52,7 +52,7 @@ import org.runnerup.db.entities.LocationEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.runnerup.util.Formatter.TXT_SHORT;
+import static org.runnerup.util.Formatter.Format.TXT_SHORT;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 public class MapWrapper implements Constants {

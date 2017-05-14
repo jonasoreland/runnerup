@@ -361,17 +361,17 @@ public class RunActivity extends Activity implements TickListener {
         double ad = workout.getDistance(Scope.ACTIVITY);
         double at = workout.getTime(Scope.ACTIVITY);
         double ap = workout.getPace(Scope.ACTIVITY);
-        activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(at)));
-        activityDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, Math.round(ad)));
-        activityPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ap));
+        activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(at)));
+        activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(ad)));
+        activityPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, ap));
 
         double ahr = workout.getHeartRate(Scope.ACTIVITY);
         double ld = workout.getDistance(Scope.LAP);
         double lt = workout.getTime(Scope.LAP);
         double lp = workout.getPace(Scope.LAP);
-        lapTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(lt)));
-        lapDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, Math.round(ld)));
-        lapPace.setText(formatter.formatPace(Formatter.TXT_SHORT, lp));
+        lapTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(lt)));
+        lapDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(ld)));
+        lapPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, lp));
         double lhr = workout.getHeartRate(Scope.LAP);
         double id = workout.getDistance(Scope.STEP);
         double it = workout.getTime(Scope.STEP);
@@ -381,14 +381,14 @@ public class RunActivity extends Activity implements TickListener {
             tableRowInterval.setVisibility(View.VISIBLE);
         else
             tableRowInterval.setVisibility(View.GONE);
-        intervalTime.setText(formatter.formatElapsedTime(Formatter.TXT_LONG, Math.round(it)));
-        intervalDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, Math.round(id)));
-        intervalPace.setText(formatter.formatPace(Formatter.TXT_SHORT, ip));
+        intervalTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(it)));
+        intervalDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(id)));
+        intervalPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, ip));
         double ihr = workout.getHeartRate(Scope.STEP);
         if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
-            lapHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, lhr));
-            intervalHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, ihr));
-            activityHr.setText(formatter.formatHeartRate(Formatter.TXT_SHORT, ahr));
+            lapHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, lhr));
+            intervalHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, ihr));
+            activityHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, ahr));
             activityHr.setVisibility(View.VISIBLE);
             lapHr.setVisibility(View.VISIBLE);
             intervalHr.setVisibility(View.VISIBLE);
@@ -512,7 +512,7 @@ public class RunActivity extends Activity implements TickListener {
             intensity.setText(getResources().getText(step.getIntensity().getTextId()));
             if (step.getDurationType() != null) {
                 durationType.setText(getResources().getText(step.getDurationType().getTextId()));
-                durationValue.setText(formatter.format(Formatter.TXT_LONG, step.getDurationType(),
+                durationValue.setText(formatter.format(Formatter.Format.TXT_LONG, step.getDurationType(),
                         step.getDurationValue()));
             } else {
                 durationType.setText("");
@@ -530,12 +530,12 @@ public class RunActivity extends Activity implements TickListener {
                 double minValue = step.getTargetValue().minValue;
                 double maxValue = step.getTargetValue().maxValue;
                 if (minValue == maxValue) {
-                    targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(),
+                    targetPace.setText(formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(),
                             minValue));
                 } else {
-                    targetPace.setText(formatter.format(Formatter.TXT_SHORT, step.getTargetType(),
+                    targetPace.setText(formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(),
                             minValue) + "-" +
-                            formatter.format(Formatter.TXT_SHORT, step.getTargetType(), maxValue));
+                            formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), maxValue));
                 }
             }
 

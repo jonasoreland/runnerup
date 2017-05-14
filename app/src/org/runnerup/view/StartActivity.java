@@ -1021,7 +1021,7 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             return;
         }
         double pace = seconds / dist;
-        manualPace.setValue(formatter.formatPace(Formatter.TXT_SHORT, pace));
+        manualPace.setValue(formatter.formatPace(Formatter.Format.TXT_SHORT, pace));
         manualPace.setVisibility(View.VISIBLE);
         return;
     }

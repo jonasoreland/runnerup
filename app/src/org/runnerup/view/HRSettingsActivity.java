@@ -151,9 +151,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 @Override
                 public String formatLabel(double value, boolean isValueX) {
                     if (isValueX) {
-                        return formatter.formatElapsedTime(Formatter.TXT_SHORT, (long) value);
+                        return formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, (long) value);
                     } else {
-                        return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
+                        return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
                     }
                 }
             });
@@ -552,9 +552,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                             @Override
                             public String formatLabel(double value, boolean isValueX) {
                                 if (isValueX) {
-                                    return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+                                    return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
                                 } else {
-                                    return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
+                                    return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
                                 }
                             }
                         });

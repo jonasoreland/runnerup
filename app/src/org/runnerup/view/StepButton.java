@@ -115,7 +115,7 @@ public class StepButton extends TableLayout {
             mDurationValue.setText(res.getString(R.string.Until_press));
         } else {
             mDurationType.setText(res.getString(durationType.getTextId()));
-            mDurationValue.setText(formatter.format(Formatter.TXT_LONG, durationType,
+            mDurationValue.setText(formatter.format(Formatter.Format.TXT_LONG, durationType,
                     step.getDurationValue()));
         }
 
@@ -125,10 +125,10 @@ public class StepButton extends TableLayout {
         } else {
             mGoalRow.setVisibility(View.VISIBLE);
             mGoalType.setText(res.getString(goalType.getTextId()));
-            mGoalValue.setText(formatter.format(Formatter.TXT_SHORT, goalType,
+            mGoalValue.setText(formatter.format(Formatter.Format.TXT_SHORT, goalType,
                     step.getTargetValue().minValue)
                     + "-" +
-                    formatter.format(Formatter.TXT_LONG, goalType, step.getTargetValue().maxValue));
+                    formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue));
         }
         if (editStepButton) {
             mLayout.setOnClickListener(onStepClickListener);
@@ -226,7 +226,7 @@ public class StepButton extends TableLayout {
                     case DIMENSION.TIME:
                         durationTime.setEnabled(true);
                         durationTime.setVisibility(View.VISIBLE);
-                        durationTime.setValue(formatter.formatElapsedTime(Formatter.TXT,
+                        durationTime.setValue(formatter.formatElapsedTime(Formatter.Format.TXT,
                                 (long) step.getDurationValue()));
                         durationDistance.setVisibility(View.GONE);
                         break;
@@ -277,9 +277,9 @@ public class StepButton extends TableLayout {
                         targetPaceLo.setVisibility(View.VISIBLE);
                         targetPaceHi.setVisibility(View.VISIBLE);
                         if (target != null) {
-                            targetPaceLo.setValue(formatter.formatPace(Formatter.TXT_SHORT,
+                            targetPaceLo.setValue(formatter.formatPace(Formatter.Format.TXT_SHORT,
                                     target.minValue));
-                            targetPaceHi.setValue(formatter.formatPace(Formatter.TXT_SHORT,
+                            targetPaceHi.setValue(formatter.formatPace(Formatter.Format.TXT_SHORT,
                                     target.maxValue));
                         }
                         targetHrz.setVisibility(View.GONE);

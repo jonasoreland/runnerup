@@ -153,7 +153,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             {
                 TextView tv = (TextView) view.findViewById(to[1]);
                 if (st != null) {
-                    tv.setText(formatter.formatDateTime(Formatter.TXT_LONG, st));
+                    tv.setText(formatter.formatDateTime(Formatter.Format.TXT_LONG, st));
                 } else {
                     tv.setText("");
                 }
@@ -162,7 +162,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             {
                 TextView tv = (TextView) view.findViewById(to[2]);
                 if (d != null) {
-                    tv.setText(formatter.formatDistance(Formatter.TXT_SHORT, d.longValue()));
+                    tv.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
                 } else {
                     tv.setText("");
                 }
@@ -171,7 +171,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             {
                 TextView tv = (TextView) view.findViewById(to[3]);
                 if (t != null) {
-                    tv.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
+                    tv.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
                 } else {
                     tv.setText("");
                 }
@@ -180,7 +180,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             {
                 TextView tv = (TextView) view.findViewById(to[4]);
                 if (d != null && t != null && d != 0 && t != 0) {
-                    tv.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                    tv.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
                 } else {
                     tv.setText("");
                 }

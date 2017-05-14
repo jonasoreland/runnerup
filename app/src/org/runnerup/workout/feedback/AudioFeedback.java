@@ -112,7 +112,7 @@ public class AudioFeedback extends Feedback {
         } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
             double val = w.get(scope, dimension); // SI
             msg = formatter.getCueString(scope.getCueId()) + " "
-                    + formatter.format(Formatter.CUE_LONG, dimension, val);
+                    + formatter.format(Formatter.Format.CUE_LONG, dimension, val);
         }
         return msg;
     }

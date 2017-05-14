@@ -247,19 +247,19 @@ public class FeedActivity extends Activity implements Constants {
 
                     StringBuilder p = new StringBuilder();
                     if (duration != 0) {
-                        p.append(formatter.formatElapsedTime(Formatter.TXT_LONG, duration));
+                        p.append(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, duration));
                     }
 
                     if (distance != 0) {
                         if (p.length() > 0)
                             p.append(", ");
-                        p.append(formatter.formatDistance(Formatter.TXT_SHORT, Math.round(distance)));
+                        p.append(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(distance)));
                     }
 
                     if (distance != 0 && duration != 0) {
                         double pace = duration / distance;
                         p.append(", ");
-                        p.append(formatter.formatPace(Formatter.TXT_LONG, pace));
+                        p.append(formatter.formatPace(Formatter.Format.TXT_LONG, pace));
                     }
                     if (p.length() > 0)
                         tv2.setText(p.toString());

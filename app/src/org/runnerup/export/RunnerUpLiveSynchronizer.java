@@ -175,14 +175,14 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         msgIntent.putExtra(LiveService.PARAM_IN_ALTITUDE, location.getAltitude());
         msgIntent.putExtra(LiveService.PARAM_IN_TYPE, externalType);
         msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, formatter
-                .formatDistance(Formatter.TXT_LONG, elapsedDistanceMeter));
+                .formatDistance(Formatter.Format.TXT_LONG, elapsedDistanceMeter));
         msgIntent.putExtra(
                 LiveService.PARAM_IN_ELAPSED_TIME,
-                formatter.formatElapsedTime(Formatter.TXT_LONG,
+                formatter.formatElapsedTime(Formatter.Format.TXT_LONG,
                         Math.round(elapsedTimeMillis / 1000)));
         msgIntent.putExtra(
                 LiveService.PARAM_IN_PACE,
-                formatter.formatPace(Formatter.TXT_SHORT, elapsedDistanceMeter > 0 ? elapsedTimeMillis
+                formatter.formatPace(Formatter.Format.TXT_SHORT, elapsedDistanceMeter > 0 ? elapsedTimeMillis
                         / (1000 * elapsedDistanceMeter) : 0));
         msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
         msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);

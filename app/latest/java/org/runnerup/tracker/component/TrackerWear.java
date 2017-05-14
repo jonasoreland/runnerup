@@ -269,7 +269,7 @@ public class TrackerWear extends DefaultTrackerComponent
                 int itemNo = 0;
                 String itemPrefix = Integer.toString(screenNo) + ".";
                 for (Pair<Scope, Dimension> item : screen) {
-                    b.putString(Wear.RunInfo.DATA + itemPrefix + itemNo, formatter.format(Formatter.TXT_SHORT,
+                    b.putString(Wear.RunInfo.DATA + itemPrefix + itemNo, formatter.format(Formatter.Format.TXT_SHORT,
                             item.second, workoutInfo.get(item.first, item.second)));
                     itemNo++;
                 }
@@ -300,7 +300,7 @@ public class TrackerWear extends DefaultTrackerComponent
                     remaining = 0;
                 }
                 lastCreatedWorkoutEvent.putString(Wear.RunInfo.COUNTDOWN,
-                        formatter.formatRemaining(Formatter.TXT_SHORT, dim, remaining));
+                        formatter.formatRemaining(Formatter.Format.TXT_SHORT, dim, remaining));
             }
         }
 
