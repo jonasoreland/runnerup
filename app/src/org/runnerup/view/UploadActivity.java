@@ -317,8 +317,7 @@ public class UploadActivity extends ListActivity implements Constants {
             Long t = ai.getDuration();
 
             if (ai.getStartTime() != null) {
-                viewHolder.tvStartTime.setText(formatter.formatDateTime(Formatter.Format.TXT_LONG,
-                        ai.getStartTime()));
+                viewHolder.tvStartTime.setText(formatter.formatDateTime(ai.getStartTime()));
             } else {
                 viewHolder.tvStartTime.setText("");
             }

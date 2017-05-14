@@ -62,6 +62,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         TXT,       // same as TXT_SHORT but without unit
         TXT_SHORT, // brief for printing
         TXT_LONG,  // long for printing
+        TXT_TIMESTAMP, // For current time e.g 13:41:24
     }
 
     public Formatter(Context ctx) {
@@ -277,6 +278,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 return DateUtils.formatElapsedTime(seconds);
             case TXT_LONG:
                 return txtElapsedTime(seconds);
+            case TXT_TIMESTAMP:
+                return formatTime(seconds);
         }
         return "";
     }
@@ -534,11 +537,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param target
      * @param seconds_since_epoch
      * @return
      */
-    public String formatDateTime(Format target, long seconds_since_epoch) {
+    public String formatDateTime(long seconds_since_epoch) {
         // ignore target
         // milliseconds
                                                                  // as argument
@@ -636,7 +638,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    public String formatTime(int target, long seconds_since_epoch) {
+    public String formatTime(long seconds_since_epoch) {
         return timeFormat.format(seconds_since_epoch * 1000);
     }
 

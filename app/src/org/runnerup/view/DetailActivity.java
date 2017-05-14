@@ -406,7 +406,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
             long st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
-            setTitle("RunnerUp - " + formatter.formatDateTime(Formatter.Format.TXT_LONG, st));
+            setTitle("RunnerUp - " + formatter.formatDateTime(st));
         }
         float d = 0;
         if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {

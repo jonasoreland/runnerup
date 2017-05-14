@@ -153,7 +153,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             {
                 TextView tv = (TextView) view.findViewById(to[1]);
                 if (st != null) {
-                    tv.setText(formatter.formatDateTime(Formatter.Format.TXT_LONG, st));
+                    tv.setText(formatter.formatDateTime(st));
                 } else {
                     tv.setText("");
                 }
