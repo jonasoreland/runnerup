@@ -75,8 +75,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private Context context;
     private GoogleApiClient mGoogleApiClient;
     private Formatter formatter;
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private HashSet<Node> connectedNodes = new HashSet<Node>();
+    private HashSet<Node> connectedNodes = new HashSet<>();
     private String wearNode;
 
     private final Handler handler = new Handler();
@@ -106,6 +105,7 @@ public class TrackerWear extends DefaultTrackerComponent
         }
         if (false)
         {
+            //TODO: Need datetime dimension to get correct formatting of NOW()
             ArrayList<Pair<Scope, Dimension>> screen = new ArrayList<>();
             screen.add(new Pair<>(Scope.CURRENT, Dimension.TIME)); // I.e time of day
             screens.add(screen);
