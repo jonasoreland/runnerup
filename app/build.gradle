@@ -50,7 +50,7 @@ android {
             versionCode rootProject.ext.versionCode
         }
         froyo {
-            minSdkVersion 8
+            minSdkVersion 10
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
             versionCode rootProject.ext.froyoVersionCode
