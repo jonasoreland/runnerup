@@ -500,6 +500,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     @Override
+    public Intensity getIntensity() {
+        if (currentStep == null)
+            return Intensity.ACTIVE; // needed ??
+
+        return currentStep.getCurrentStep().getIntensity();
+    }
+
+    @Override
     public boolean isEnabled(Dimension dim, Scope scope) {
         if (dim == Dimension.HR) {
             return tracker.isComponentConnected(TrackerHRM.NAME);

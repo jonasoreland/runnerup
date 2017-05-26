@@ -43,6 +43,7 @@ public interface WorkoutInfo {
     double getPressure(Scope scope);
 
     int getSport();
+    Intensity getIntensity();
 
     /* TODO make better/more elaborate state visible... */
     boolean isPaused();
