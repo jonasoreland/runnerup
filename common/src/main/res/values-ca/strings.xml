@@ -27,6 +27,7 @@
   <!--format hint stuff-->
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s a %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <!--other-->
   <string name="Google_Play_Services_Legal_Notices">Termes legals dels serveis de Google</string>
@@ -40,6 +41,8 @@
   <string name="distance">distància</string>
   <string name="Distance">Distància</string>
   <string name="speed">velocitat</string>
+  <string name="temperature">temperatura</string>
+  <string name="pressure">pressió</string>
   <string name="Zone">Zona</string>
   <string name="Device">Dispositiu</string>
   <string name="Start_hour">Hora d\'inici</string>
