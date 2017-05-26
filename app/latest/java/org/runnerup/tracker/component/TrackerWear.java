@@ -52,6 +52,7 @@ import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
@@ -89,13 +90,21 @@ public class TrackerWear extends DefaultTrackerComponent
     private List<List<Pair<Pair<Scope, Dimension>, Formatter.Format>>> screens = new ArrayList<>(3);
     private Step currentStep;
     private boolean pauseStep;
+    private int workoutType;
+    private Intensity intensity;
 
     public TrackerWear(Tracker tracker) {
         this.tracker = tracker;
 
-        // TODO read this from settings!!
         // Wear now supports arbitrary no of screens with 1-3 items per screen
         // and automatically scrolls between them
+        initBasicScreens();
+    }
+
+    void initBasicScreens() {
+        // TODO read this from settings!!
+        screens.clear();
+        screenSizes.clear();
         {
             ArrayList<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen = new ArrayList<>();
             screen.add(new Pair<>(new Pair<>(Scope.ACTIVITY, Dimension.TIME), Formatter.Format.TXT_SHORT));
@@ -103,9 +112,40 @@ public class TrackerWear extends DefaultTrackerComponent
             screen.add(new Pair<>(new Pair<>(Scope.LAP, Dimension.PACE), Formatter.Format.TXT_SHORT));
             screens.add(screen);
         }
-        if (false)
         {
             ArrayList<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen = new ArrayList<>();
+            screen.add(new Pair<>(new Pair<>(Scope.CURRENT, Dimension.TIME), Formatter.Format.TXT_TIMESTAMP)); // I.e time of day
+            screens.add(screen);
+        }
+        for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
+            screenSizes.add(screen.size());
+        }
+    }
+
+    void initIntervalScreens() {
+        // TODO read this from settings!!
+        screens.clear();
+        screenSizes.clear();
+        {
+            ArrayList<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen = new ArrayList<>();
+            screen.add(new Pair<>(new Pair<>(Scope.STEP, Dimension.TIME), Formatter.Format.TXT_SHORT));
+            screen.add(new Pair<>(new Pair<>(Scope.STEP, Dimension.DISTANCE), Formatter.Format.TXT_SHORT));
+            screen.add(new Pair<>(new Pair<>(Scope.LAP, Dimension.PACE), Formatter.Format.TXT_SHORT));
+            screens.add(screen);
+        }
+        for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
+            screenSizes.add(screen.size());
+        }
+    }
+
+    void initWarmupCooldownScreens() {
+        // TODO read this from settings!!
+        screens.clear();
+        screenSizes.clear();
+        {
+            ArrayList<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen = new ArrayList<>();
+            screen.add(new Pair<>(new Pair<>(Scope.ACTIVITY, Dimension.TIME), Formatter.Format.TXT_SHORT));
+            screen.add(new Pair<>(new Pair<>(Scope.ACTIVITY, Dimension.DISTANCE), Formatter.Format.TXT_SHORT));
             screen.add(new Pair<>(new Pair<>(Scope.CURRENT, Dimension.TIME), Formatter.Format.TXT_TIMESTAMP)); // I.e time of day
             screens.add(screen);
         }
@@ -218,6 +258,19 @@ public class TrackerWear extends DefaultTrackerComponent
     @Override
     public void onBind(HashMap<String, Object> bindValues) {
         formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
+        workoutType = ((Integer)bindValues.get(Workout.KEY_WORKOUT_TYPE)).intValue();
+        switch (workoutType) {
+            case WORKOUT_TYPE.INTERVAL:
+            case WORKOUT_TYPE.ADVANCED:
+                initIntervalScreens();
+                Log.e("TrackerWear::onBind()", "initIntervalScreens()");
+                break;
+            default:
+            case WORKOUT_TYPE.BASIC:
+                initBasicScreens();
+                Log.e("TrackerWear::onBind()", "initBasicScreens()");
+                break;
+        }
     }
 
     @Override
@@ -250,6 +303,14 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void workoutEvent(WorkoutInfo workoutInfo, int type) {
+        switch (workoutType) {
+            case WORKOUT_TYPE.BASIC:
+                break;
+            case WORKOUT_TYPE.ADVANCED:
+            case WORKOUT_TYPE.INTERVAL:
+                setScreensBasedOnIntensity(workoutInfo.getIntensity());
+                break;
+        }
         switch (type) {
             case DB.LOCATION.TYPE_START:
             case DB.LOCATION.TYPE_RESUME:
@@ -277,6 +338,24 @@ public class TrackerWear extends DefaultTrackerComponent
         }
 
         lastCreatedWorkoutEvent = b;
+    }
+
+    private void setScreensBasedOnIntensity(Intensity intensity) {
+        if (this.intensity == intensity)
+            return;
+        this.intensity = intensity;
+        switch (intensity) {
+            case ACTIVE:
+            case RESTING:
+            case RECOVERY:
+            case REPEAT:
+                initIntervalScreens();
+                break;
+            case WARMUP:
+            case COOLDOWN:
+                initWarmupCooldownScreens();
+                break;
+        }
     }
 
     private void sendWorkoutEvent() {
