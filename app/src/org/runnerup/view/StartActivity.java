@@ -566,14 +566,17 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                     getString(R.string.pref_basic_audio));
             Dimension target = Dimension.valueOf(simpleTargetType.getValueInt());
             w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
+            w.setWorkoutType(Constants.WORKOUT_TYPE.BASIC);
         } else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
             audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
                     getString(R.string.pref_interval_audio));
             w = WorkoutBuilder.createDefaultIntervalWorkout(getResources(), pref);
+            w.setWorkoutType(Constants.WORKOUT_TYPE.INTERVAL);
         } else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
             audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
                     getString(R.string.pref_advanced_audio));
             w = advancedWorkout;
+            w.setWorkoutType(Constants.WORKOUT_TYPE.ADVANCED);
         }
         WorkoutBuilder.prepareWorkout(getResources(), pref, w,
                 TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));

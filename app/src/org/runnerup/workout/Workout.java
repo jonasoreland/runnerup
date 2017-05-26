@@ -24,6 +24,7 @@ import android.location.Location;
 import android.os.Build;
 
 import org.runnerup.BuildConfig;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
@@ -48,6 +49,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     long lap = 0;
     int currentStepNo = -1;
+    int workoutType = Constants.WORKOUT_TYPE.BASIC;
     Step currentStep = null;
     boolean paused = false;
     final ArrayList<Step> steps = new ArrayList<Step>();
@@ -104,6 +106,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public static final String KEY_FORMATTER = "Formatter";
     public static final String KEY_HRZONES = "HrZones";
     public static final String KEY_MUTE = "mute";
+    public static final String KEY_WORKOUT_TYPE = "type";
 
     public Workout() {
     }
@@ -670,4 +673,13 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public boolean getMute() {
         return mute;
     }
+
+    public void setWorkoutType(int workoutType) {
+        this.workoutType = workoutType;
+    }
+
+    public int getWorkoutType() {
+        return this.workoutType;
+    }
+
 }

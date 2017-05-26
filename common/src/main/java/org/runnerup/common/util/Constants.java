@@ -201,6 +201,12 @@ public interface Constants {
         public static final int STOPPED = 9;
     }
 
+    public interface WORKOUT_TYPE {
+        public static final int BASIC = 0;
+        public static final int INTERVAL = 1;
+        public static final int ADVANCED = 2;
+    }
+
     public interface Wear {
 
         public interface Path {
