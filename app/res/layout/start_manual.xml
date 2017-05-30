@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tab_manual"
     android:layout_width="match_parent"
@@ -26,8 +26,6 @@
         android:id="@+id/manual_sport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:entries="@array/sportEntries"
         android:prompt="@string/Type"
         android:text="@string/Sport" />
@@ -36,7 +34,6 @@
         android:id="@+id/manual_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/manual_sport"
         android:prompt="@string/Type"
         android:defaultValue="today"
         android:text="@string/Date"
@@ -46,8 +43,6 @@
         android:id="@+id/manual_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_date"
         android:prompt="@string/Type"
         android:text="@string/Start_hour"
         runnerup:type="timepicker" />
@@ -56,8 +51,6 @@
         android:id="@+id/manual_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_time"
         android:prompt="@string/Type"
         android:text="@string/Duration"
         android:defaultValue="00:00:00"
@@ -67,8 +60,6 @@
         android:id="@+id/manual_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_duration"
         android:prompt="@string/Type"
         android:inputType="numberDecimal"
         android:text="@string/Distance"
@@ -78,8 +69,6 @@
         android:id="@+id/manual_pace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_distance"
         android:prompt="@string/Type"
         android:inputType="numberDecimal"
         android:text="@string/pace"
@@ -89,14 +78,12 @@
         android:id="@+id/manual_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/manual_pace"
-        android:layout_alignParentBottom="true"
         android:ems="10"
         android:gravity="top|left"
         android:inputType="textMultiLine"
         android:singleLine="false"
-        android:hint="@string/Add_workout_notes" />
+        android:hint="@string/Add_workout_notes"
+        android:layout_margin="16dp"/>
 
-</RelativeLayout>
+</LinearLayout>
 
