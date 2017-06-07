@@ -20,6 +20,7 @@ package org.runnerup.tracker;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.GpsSatellite;
 import android.location.Location;
@@ -28,8 +29,10 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 
+import org.runnerup.R;
 import org.runnerup.util.TickListener;
 
 /**
@@ -81,9 +84,17 @@ public class GpsStatus implements LocationListener,
         if (ContextCompat.checkSelfPermission(this.context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            int frequency_ms = Integer.valueOf(preferences.getString(context.getString(
+                    R.string.pref_pollInterval), "500"));
+            String frequency_meters = preferences.getString(context.getString(
+                    R.string.pref_pollDistance), "5");
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             try {
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                                          frequency_ms,
+                                          Integer.valueOf(frequency_meters),
+                                          this);
             } catch (Exception ex) {
                 lm = null;
             }
