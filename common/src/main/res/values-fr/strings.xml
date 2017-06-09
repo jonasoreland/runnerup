@@ -301,7 +301,8 @@
   <string name="cue_hrm_connection_lost">Connexion au moniteur de fréquence cardiaque perdue</string>
   <string name="latest_feed_click_to_refresh">Dernier flux (cliquez pour rafraîchir)</string>
   <string name="log_extended_gps_summary">Exporter en GPX uniquement</string>
-  <string name="use_step_sensor_title">Le senseur d\'arrête</string>
+  <string name="log_extended_gps_title">Enregistrer les données GPS complètes</string>
+  <string name="use_step_sensor_title">Capteur de mouvement</string>
   <string name="use_step_sensor_summary">Utiliser pour la cadence</string>
   <string name="use_temperature_sensor">Capteur de température</string>
   <string name="use_pressure_sensor_title">Capteur de pression</string>
