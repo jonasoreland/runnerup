@@ -98,7 +98,7 @@
   <string name="Notes">Notes</string>
   <string name="Laps">Tours</string>
   <string name="Map">Carte</string>
-  <string name="Graph">Graph</string>
+  <string name="Graph">Graphe</string>
   <string name="Upload">Envoyer</string>
   <string name="Configure">Configurer</string>
   <string name="Disconnect">Déconnecter</string>
@@ -165,7 +165,7 @@
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Convertir les étapes de repos de type distance en étapes de récupération dans l\'onglet Avancé </string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporter les données sur carte SD (ex : pour mise à jour)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importer les données depuis la carte SD (ex : après mise à jour)</string>
-  <string name="Coach_to_help_you_reach_target_if_having_set_target">Le suivi audio vous aide à atteindre votre objectif (si défini)</string>
+  <string name="Coach_to_help_you_reach_target_if_having_set_target">Le coach / suivi audio vous aide à atteindre votre objectif (si défini)</string>
   <string name="Keep_silent_when_workout_startpauseresumestop">Rester silencieux lorsque l\'entraînement démarre / est pausé / reprend / se termine</string>
   <string name="Test_audio_cue">Tester le suivi audio</string>
   <string name="Accounts">Comptes</string>
@@ -177,7 +177,7 @@
   <string name="Autopause">Pause automatique</string>
   <string name="Enable_RunnerUpLive">Activer Live</string>
   <string name="Headset_key_startstop">Touche de casque début/fin</string>
-  <string name="Activity_countdown">Compte à rebours avant démarrage séance</string>
+  <string name="Activity_countdown">Compte à rebours avant démarrage</string>
   <string name="Countdown_time_s">Compte à rebours (s)</string>
   <string name="Unit_preference">Unité de mesure</string>
   <string name="Auto_start_GPS">Démarrage auto. GPS</string>
@@ -193,7 +193,7 @@
   <string name="Autolap_during_intervals">Tour auto. pendant les intervalles</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Ajouter un compte à rebours après les étapes se terminant par une interaction utilisateur</string>
   <string name="Step_countdown_time_s">Compte à rebours d\'étape (s)</string>
-  <string name="Smooth_pace_graph">Lisser graphique de rythme</string>
+  <string name="Smooth_pace_graph">Lisser le graphique de rythme</string>
   <string name="Smooth_pace_filters">Filtre(s) de lissage du rythme</string>
   <string name="Poll_interval_ms">Fréquence de raffraichissement du GPS (en millisecondes)</string>
   <string name="Poll_distance_m">Fréquence de raffraichissement du GPS (en mètres)</string>
@@ -270,7 +270,7 @@
   <string name="Website">Site web</string>
   <string name="Automatic_upload">Télécharger automatiquement</string>
   <string name="Live">Actualités</string>
-  <string name="Include_map_in_post">Inclure la carte dans le poste</string>
+  <string name="Include_map_in_post">Inclure la carte dans la publication</string>
   <string name="Clear_uploads_from_phone">Supprimer les uploads (du téléphone)</string>
   <string name="my_phone">mon téléphone</string>
   <string name="Failed_to_import">Impossible d\'importer :</string>
