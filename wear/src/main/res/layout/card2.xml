@@ -17,6 +17,7 @@
   -->
 
 <android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp">
@@ -40,12 +41,13 @@
 
                 <TextView
                     android:id="@+id/textViewHeader21"
-                    android:text="time"
+                    android:text="@string/time"
                     style="@style/Card2TextSmall" />
 
                 <TextView
                     android:id="@+id/textView21"
                     android:text="--:--"
+                    tools:ignore="HardcodedText"
                     style="@style/Card2TextLarge" />
 
         </LinearLayout>
@@ -61,12 +63,13 @@
 
             <TextView
                 android:id="@+id/textViewHeader22"
-                android:text="lap pace"
+                android:text="@string/Lap_pace"
                 style="@style/Card2TextSmall" />
 
             <TextView
                 android:id="@+id/textView22"
                 android:text="-:--"
+                tools:ignore="HardcodedText"
                 style="@style/Card2TextMedium" />
 
         </LinearLayout>
