@@ -317,26 +317,25 @@ public class UploadActivity extends ListActivity implements Constants {
             Long t = ai.getDuration();
 
             if (ai.getStartTime() != null) {
-                viewHolder.tvStartTime.setText(formatter.formatDateTime(Formatter.TXT_LONG,
-                        ai.getStartTime()));
+                viewHolder.tvStartTime.setText(formatter.formatDateTime(ai.getStartTime()));
             } else {
                 viewHolder.tvStartTime.setText("");
             }
 
             if (d != null) {
-                viewHolder.tvDistance.setText(formatter.formatDistance(Formatter.TXT_SHORT, d.longValue()));
+                viewHolder.tvDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
             } else {
                 viewHolder.tvDistance.setText("");
             }
 
             if (t != null) {
-                viewHolder.tvTime.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
+                viewHolder.tvTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
             } else {
                 viewHolder.tvTime.setText("");
             }
 
             if (d != null && t != null && d != 0 && t != 0) {
-                viewHolder.tvPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                viewHolder.tvPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
             } else {
                 viewHolder.tvPace.setText("");
             }

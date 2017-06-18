@@ -75,14 +75,14 @@ public class GraphWrapper implements Constants {
                 @Override
                 public String formatLabel(double value, boolean isValueX) {
                     if (isValueX) {
-                        return formatter.formatDistance(Formatter.TXT, (long) value);
+                        return formatter.formatDistance(Formatter.Format.TXT, (long) value);
                     } else {
-                        return formatter.formatPace(Formatter.TXT_SHORT, value);
+                        return formatter.formatPace(Formatter.Format.TXT_SHORT, value);
                     }
                 }
             });
             graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getPaceUnit());
-            graphView.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.TXT));
+            graphView.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
             //enable zoom
             graphView.getViewport().setScalable(true);
             graphView.getViewport().setScrollable(true);
@@ -90,14 +90,14 @@ public class GraphWrapper implements Constants {
             graphView2 = new GraphView(context);
             graphView2.setTitle(context.getString(R.string.Heart_rate));
             graphView2.getGridLabelRenderer().setVerticalAxisTitle("bpm");
-            graphView2.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.TXT));
+            graphView2.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
             graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
                 @Override
                 public String formatLabel(double value, boolean isValueX) {
                     if (isValueX) {
-                        return formatter.formatDistance(Formatter.TXT_SHORT, (long) value);
+                        return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
                     } else {
-                        return formatter.formatHeartRate(Formatter.TXT_SHORT, value);
+                        return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
                     }
                 }
             });
@@ -438,8 +438,8 @@ public class GraphWrapper implements Constants {
             graphViewData.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
                 public void onTap(Series series, DataPointInterface dataPoint) {
-                    String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
-                            graphView.getContext().getString(R.string.Pace) + ": " + formatter.formatPace(Formatter.TXT_SHORT, dataPoint.getY());
+                    String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
+                            graphView.getContext().getString(R.string.Pace) + ": " + formatter.formatPace(Formatter.Format.TXT_SHORT, dataPoint.getY());
                     Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -452,8 +452,8 @@ public class GraphWrapper implements Constants {
                 graphViewData2.setOnDataPointTapListener(new OnDataPointTapListener() {
                     @Override
                     public void onTap(Series series, DataPointInterface dataPoint) {
-                        String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
-                                graphView.getContext().getString(R.string.Heart_rate) + ": " + formatter.formatHeartRate(Formatter.TXT_SHORT, dataPoint.getY());
+                        String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
+                                graphView.getContext().getString(R.string.Heart_rate) + ": " + formatter.formatHeartRate(Formatter.Format.TXT_SHORT, dataPoint.getY());
                         Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 });

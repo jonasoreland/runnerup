@@ -24,9 +24,9 @@ project.ext {
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
-    versionName = '1.56'
-    versionCode = 14000056
-    froyoVersionCode = 8000056
+    versionName = '1.57'
+    versionCode = 14000057
+    froyoVersionCode = 8000057
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set

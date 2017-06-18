@@ -405,12 +405,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
             long st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
-            setTitle("RunnerUp - " + formatter.formatDateTime(Formatter.TXT_LONG, st));
+            setTitle("RunnerUp - " + formatter.formatDateTime(st));
         }
         float d = 0;
         if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
             d = tmp.getAsFloat(DB.ACTIVITY.DISTANCE);
-            activityDistance.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) d));
+            activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, (long) d));
         } else {
             activityDistance.setText("");
         }
@@ -418,13 +418,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         float t = 0;
         if (tmp.containsKey(DB.ACTIVITY.TIME)) {
             t = tmp.getAsFloat(DB.ACTIVITY.TIME);
-            activityTime.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, (long) t));
+            activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, (long) t));
         } else {
             activityTime.setText("");
         }
 
         if (d != 0 && t != 0) {
-            activityPace.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+            activityPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
         } else {
             activityPace.setText("");
         }
@@ -504,12 +504,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             viewHolder.tv1.setText(laps[position].getAsString("_id"));
             float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position]
                     .getAsFloat(DB.LAP.DISTANCE) : 0;
-            viewHolder.tv2.setText(formatter.formatDistance(Formatter.TXT_LONG, (long) d));
+            viewHolder.tv2.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, (long) d));
             long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position]
                     .getAsLong(DB.LAP.TIME) : 0;
-            viewHolder.tv3.setText(formatter.formatElapsedTime(Formatter.TXT_SHORT, t));
+            viewHolder.tv3.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
             if (t != 0 && d != 0) {
-                viewHolder.tv4.setText(formatter.formatPace(Formatter.TXT_LONG, t / d));
+                viewHolder.tv4.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
             } else {
                 viewHolder.tv4.setText("");
             }
@@ -518,7 +518,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             if (hr > 0) {
                 viewHolder.tvHr.setVisibility(View.VISIBLE);
                 // Use CUE_LONG instead of TXT_LONG to include unit
-                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.CUE_LONG, hr));
+                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.CUE_LONG, hr));
             } else if (lapHrPresent) {
                 viewHolder.tvHr.setVisibility(View.INVISIBLE);
             } else {

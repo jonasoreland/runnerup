@@ -78,7 +78,7 @@ public class CountdownFeedback extends Feedback {
         double remaining = w.getRemaining(scope, dimension);
         if (remaining > 0) {
             textView.setVisibility(View.VISIBLE);
-            textView.setText(formatter.formatRemaining(Formatter.TXT_SHORT, dimension, remaining));
+            textView.setText(formatter.formatRemaining(Formatter.Format.TXT_SHORT, dimension, remaining));
         }
         else {
             textView.setVisibility(View.INVISIBLE);

@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 
 import org.runnerup.BuildConfig;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
@@ -46,6 +47,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     private long lap = 0;
     private int currentStepNo = -1;
+    private int workoutType = Constants.WORKOUT_TYPE.BASIC;
     private Step currentStep = null;
     private boolean paused = false;
     final ArrayList<Step> steps = new ArrayList<>();
@@ -103,6 +105,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public static final String KEY_FORMATTER = "Formatter";
     public static final String KEY_HRZONES = "HrZones";
     public static final String KEY_MUTE = "mute";
+    public static final String KEY_WORKOUT_TYPE = "type";
 
     public Workout() {
     }
@@ -496,6 +499,14 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     @Override
+    public Intensity getIntensity() {
+        if (currentStep == null)
+            return Intensity.ACTIVE; // needed ??
+
+        return currentStep.getCurrentStep().getIntensity();
+    }
+
+    @Override
     public boolean isEnabled(Dimension dim, Scope scope) {
         if (dim == Dimension.HR) {
             return tracker.isComponentConnected(TrackerHRM.NAME);
@@ -668,4 +679,13 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public boolean getMute() {
         return mute;
     }
+
+    public void setWorkoutType(int workoutType) {
+        this.workoutType = workoutType;
+    }
+
+    public int getWorkoutType() {
+        return this.workoutType;
+    }
+
 }

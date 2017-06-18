@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.FragmentGridPagerAdapter;
@@ -37,14 +38,17 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
-
+import java.util.ArrayList;
 
 public class MainActivity extends Activity implements Constants, ValueModel.ChangeListener<TrackerState> {
-
+    private Handler handler = new Handler();
     private GridViewPager pager;
     private StateService mStateService;
     final private ValueModel<TrackerState> trackerState = new ValueModel<>();
+    final private ValueModel<Bundle> headers = new ValueModel<>();
     private boolean pauseStep = false;
+    private int scroll = 0;
+    private boolean postScrollRightRunning = false;
 
     private static final int RUN_INFO_ROW = 0;
     private static final int PAUSE_RESUME_ROW = 1;
@@ -81,7 +85,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         super.onPause();
         if (mStateService != null) {
             mStateService.unregisterTrackerStateListener(this);
-            mStateService.unregisterPauseStepListener();
+            mStateService.unregisterHeadersListener(this);
         }
         getApplicationContext().unbindService(mStateServiceConnection);
         mStateService = null;
@@ -89,12 +93,12 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
 
     private class PagerAdapter extends FragmentGridPagerAdapter
             implements ValueModel.ChangeListener<TrackerState> {
+        int currentRow = 0;
+        int currentCol = 0;
         int rows = 1;
         int cols = 1;
 
-        PauseResumeFragment pauseResumeFragment;
-
-        public PagerAdapter(FragmentManager fm) {
+        PagerAdapter(FragmentManager fm) {
             super(fm);
             update(trackerState.get());
             trackerState.registerChangeListener(this);
@@ -104,7 +108,11 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         public Fragment getFragment(int row, int col) {
             if (trackerState.get() == null)
                 return new ConnectToPhoneFragment();
+            else if (mStateService == null)
+                return new ConnectToPhoneFragment();
 
+            currentRow = row;
+            currentCol = col;
             switch (trackerState.get()) {
                 case INIT:
                 case INITIALIZING:
@@ -121,18 +129,17 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
                 case PAUSED:
                 case STOPPED:
                     if (row == RUN_INFO_ROW) {
-                        if (pauseStep && col == 0)
-                            return new CountdownFragment();
-                        else
-                            return new RunInfoFragment();
+                        if (pauseStep) {
+                            if (col == 0)
+                                return new CountdownFragment();
+                            col--; // during pause step col=0 is CountDown
+                        }
+                        return RunInfoFragment.createForScreen(col, getRowsForScreen(col));
                     } else if (row == PAUSE_RESUME_ROW) {
                         if (trackerState.get() == TrackerState.STOPPED)
                             return new StoppedFragment();
                         else {
                             return new PauseResumeFragment();
-//                            if (pauseResumeFragment == null)
-//                                pauseResumeFragment = new PauseResumeFragment();
-//                            return pauseResumeFragment;
                         }
                     }
             }
@@ -154,19 +161,17 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         @Override
         public void onValueChanged(ValueModel<TrackerState> obj,
                                    TrackerState oldValue, TrackerState newValue) {
-            update(newValue);
             notifyDataSetChanged();
         }
 
         @Override
         public void notifyDataSetChanged() {
-
-            pauseResumeFragment = null;
+            update(trackerState.get());
             super.notifyDataSetChanged();
         }
 
         private void update(TrackerState newValue) {
-            if (newValue == null) {
+            if (newValue == null || mStateService == null) {
                 cols = rows = 1;
                 return;
             }
@@ -183,11 +188,41 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
                 case STARTED:
                 case PAUSED:
                 case STOPPED:
-                    cols = 1;
+                    cols = getScreensCount();
                     rows = 2;
                     break;
             }
         }
+    }
+
+    private int getRowsForScreen(int col) {
+        Bundle b = headers.get();
+        if (b == null) {
+            System.err.println("getRowsForScreen(): headers == null");
+            return 1;
+        }
+        ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
+        if (screens == null) {
+            System.err.println("getRowsForScreen(): screens == null");
+            return 1;
+        }
+        if (col > screens.size())
+            return 1;
+        return screens.get(col);
+    }
+
+    private int getScreensCount() {
+        Bundle b = headers.get();
+        if (b == null) {
+            System.err.println("getScreensCount(): headers == null");
+            return 1;
+        }
+        ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
+        if (screens == null) {
+            System.err.println("getScreensCount(): screens == null");
+            return 1;
+        }
+        return screens.size();
     }
 
     Bundle getData(long lastUpdateTime) {
@@ -213,13 +248,23 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         pager.setCurrentItem(RUN_INFO_ROW, curr.x, true);
     }
 
+    public void scrollRight() {
+        Point curr = pager.getCurrentItem();
+        if (curr.y != RUN_INFO_ROW)
+            return;
+        if (getScreensCount() <= 1)
+            return;
+        int newx = (curr.x + 1) % getScreensCount();
+        pager.setCurrentItem(curr.y, newx, true);
+    }
+
     private final ServiceConnection mStateServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             if (mStateService == null) {
                 mStateService = ((StateService.LocalBinder) service).getService();
                 mStateService.registerTrackerStateListener(MainActivity.this);
-                mStateService.registerPauseStepListener(MainActivity.this);
+                mStateService.registerHeadersListener(MainActivity.this);
             }
         }
 
@@ -264,17 +309,41 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         }
     }
 
-    public void onPauseStepChanged(final Boolean newValue) {
+    private void postScrollRight() {
+        if (postScrollRightRunning)
+            return;
+        if (scroll > 0 && getScreensCount() > 1) {
+            postScrollRightRunning = true;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            postScrollRightRunning = false;
+                            postScrollRight();
+                            scrollRight();
+                        }
+                    });
+                }
+            }, scroll * 1000);
+        }
+    }
+
+    public void onValueChanged(final Bundle newValue) {
         synchronized (trackerState) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     synchronized (trackerState) {
-                        if (newValue == null)
-                            pauseStep = false;
-                        else
-                            pauseStep = newValue;
+                        pauseStep = false;
+                        if (newValue != null) {
+                            pauseStep = newValue.getBoolean(Wear.RunInfo.PAUSE_STEP);
+                            scroll = newValue.getInt(Wear.RunInfo.SCROLL);
+                        }
+                        headers.set(newValue);
                         pager.getAdapter().notifyDataSetChanged();
+                        postScrollRight();
                     }
                 }
             });

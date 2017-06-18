@@ -87,7 +87,7 @@ public class FeedWidgetService extends RemoteViewsService {
                     String dateString = dateFormat.format(startTime);
                     rv.setTextViewText(R.id.feed_widget_item_start_time, String.format(getResources().getString(R.string.formatting_date_at_time), dateString, timeString));
 
-                    // String time = formatter.formatTime(Formatter.TXT,
+                    // String time = formatter.formatTime(Formatter.Format.TXT,
                     // tmp.getAsLong(DB.FEED.START_TIME) / 1000);
                     rv.setTextViewText(R.id.feed_widget_item_source, src); // + " (" + time + ")");
 
@@ -105,19 +105,19 @@ public class FeedWidgetService extends RemoteViewsService {
 
                         StringBuilder p = new StringBuilder();
                         if (duration != 0) {
-                            p.append(formatter.formatElapsedTime(Formatter.TXT_LONG, duration));
+                            p.append(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, duration));
                         }
 
                         if (distance != 0) {
                             if (p.length() > 0)
                                 p.append(", ");
-                            p.append(formatter.formatDistance(Formatter.TXT_SHORT, Math.round(distance)));
+                            p.append(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(distance)));
                         }
 
                         if (distance != 0 && duration != 0) {
                             double pace = duration / distance;
                             p.append(", ");
-                            p.append(formatter.formatPace(Formatter.TXT_LONG, pace));
+                            p.append(formatter.formatPace(Formatter.Format.TXT_LONG, pace));
                         }
                         if (p.length() > 0)
                             rv.setTextViewText(R.id.feed_widget_item_summary, p.toString());

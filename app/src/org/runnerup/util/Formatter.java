@@ -54,12 +54,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public final static double mi_meters = 1609.34;
     //public final static double FEET_PER_METER = 3.2808;
 
-    private static final int CUE = 1; // for text to speech
-    public static final int CUE_SHORT = 2; // brief for tts
-    public static final int CUE_LONG = 3; // long for tts
-    public static final int TXT = 4; // same as TXT_SHORT but without unit
-    public static final int TXT_SHORT = 5; // brief for printing
-    public static final int TXT_LONG = 6; // long for printing
+    public enum Format {
+        CUE,       // for text to speech
+        CUE_SHORT, // brief for tts
+        CUE_LONG,  // long for tts
+        TXT,       // same as TXT_SHORT but without unit
+        TXT_SHORT, // brief for printing
+        TXT_LONG,  // long for printing
+        TXT_TIMESTAMP, // For current time e.g 13:41:24
+    }
 
     public Formatter(Context ctx) {
         context = ctx;
@@ -174,7 +177,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
     }
 
-    public String getDistanceUnit(int target) {
+    public String getDistanceUnit(Format target) {
         switch (target) {
             case CUE:
             case CUE_LONG:
@@ -238,7 +241,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return this.base_unit;
     }
 
-    public String format(int target, Dimension dimension, double value) {
+    public String format(Format target, Dimension dimension, double value) {
         switch (dimension) {
             case DISTANCE:
                 return formatDistance(target, Math.round(value));
@@ -262,7 +265,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    public String formatElapsedTime(int target, long seconds) {
+    public String formatElapsedTime(Format target, long seconds) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
@@ -274,6 +277,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 return DateUtils.formatElapsedTime(seconds);
             case TXT_LONG:
                 return txtElapsedTime(seconds);
+            case TXT_TIMESTAMP:
+                return formatTime(seconds);
         }
         return "";
     }
@@ -351,7 +356,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param heart_rate
      * @return
      */
-    public String formatHeartRate(int target, double heart_rate) {
+    public String formatHeartRate(Format target, double heart_rate) {
         int bpm = (int) Math.round(heart_rate);
         switch (target) {
             case CUE:
@@ -373,7 +378,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param val
      * @return
      */
-    private String formatCadence(int target, double val) {
+    private String formatCadence(Format target, double val) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
@@ -388,7 +393,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    private String formatHeartRateZone(int target, double hrZone) {
+    private String formatHeartRateZone(Format target, double hrZone) {
         switch (target) {
             case TXT:
             case TXT_SHORT:
@@ -413,7 +418,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param seconds_per_meter
      * @return
      */
-    public String formatPace(int target, double seconds_per_meter) {
+    public String formatPace(Format target, double seconds_per_meter) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
@@ -488,7 +493,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param seconds_per_meter
      * @return
      */
-    private String formatSpeed(int target, double seconds_per_meter) {
+    private String formatSpeed(Format target, double seconds_per_meter) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
@@ -531,11 +536,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param target
      * @param seconds_since_epoch
      * @return
      */
-    public String formatDateTime(int target, long seconds_since_epoch) {
+    public String formatDateTime(long seconds_since_epoch) {
         // ignore target
         // milliseconds
                                                                  // as argument
@@ -549,7 +553,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param meters
      * @return
      */
-    public String formatDistance(int target, long meters) {
+    public String formatDistance(Format target, long meters) {
         switch (target) {
             case CUE:
             case CUE_LONG:
@@ -586,7 +590,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                         .append(resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
                 s.append(val).append(" ")
-                        .append(cueResources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, val));
+                        .append(cueResources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val));
             }
         } else {
             if (txt)
@@ -597,7 +601,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return s.toString();
     }
 
-    public String formatRemaining(int target, Dimension dimension, double value) {
+    public String formatRemaining(Format target, Dimension dimension, double value) {
         switch (dimension) {
             case DISTANCE:
                 return formatRemainingDistance(target, value);
@@ -615,11 +619,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    private String formatRemainingTime(int target, double value) {
+    private String formatRemainingTime(Format target, double value) {
         return formatElapsedTime(target, Math.round(value));
     }
 
-    private String formatRemainingDistance(int target, double value) {
+    private String formatRemainingDistance(Format target, double value) {
         return formatDistance(target, Math.round(value));
     }
 
@@ -633,7 +637,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    public String formatTime(int target, long seconds_since_epoch) {
+    public String formatTime(long seconds_since_epoch) {
         return timeFormat.format(seconds_since_epoch * 1000);
     }
 

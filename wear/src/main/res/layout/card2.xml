@@ -17,7 +17,6 @@
   -->
 
 <android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp">
@@ -31,26 +30,7 @@
         >
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/textViewHeader32"
-                android:text="@string/distance"
-                style="@style/Card3TextSmall" />
-
-            <TextView
-                android:id="@+id/textView32"
-                android:text="-.--"
-                style="@style/Card3TextMedium"
-                tools:ignore="HardcodedText" />
-
-        </LinearLayout>
-
-        <LinearLayout
+            android:id="@+id/layout1"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -59,19 +39,19 @@
             android:background="@drawable/border" >
 
                 <TextView
-                    android:id="@+id/textViewHeader31"
-                    android:text="@string/time"
-                    style="@style/Card3TextSmall" />
+                    android:id="@+id/textViewHeader21"
+                    android:text="time"
+                    style="@style/Card2TextSmall" />
 
                 <TextView
-                    android:id="@+id/textView31"
+                    android:id="@+id/textView21"
                     android:text="--:--"
-                    style="@style/Card3TextLarge"
-                    tools:ignore="HardcodedText" />
+                    style="@style/Card2TextLarge" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layout3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -80,36 +60,17 @@
             android:background="@drawable/border" >
 
             <TextView
-                android:id="@+id/textViewHeader33"
-                android:text="@string/Lap_pace"
-                style="@style/Card3TextSmall" />
+                android:id="@+id/textViewHeader22"
+                android:text="lap pace"
+                style="@style/Card2TextSmall" />
 
             <TextView
-                android:id="@+id/textView33"
+                android:id="@+id/textView22"
                 android:text="-:--"
-                style="@style/Card3TextMedium"
-                tools:ignore="HardcodedText" />
+                style="@style/Card2TextMedium" />
 
         </LinearLayout>
 
-<!--
-        <LinearLayout
-            android:id="@+id/layoutIcons"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:paddingLeft="40sp"
-            android:paddingRight="40sp">
-
-            <ImageView
-                android:layout_width="12sp"
-                android:layout_height="12sp"
-                android:id="@+id/imageView2"
-                android:src="@drawable/heart16" />
-
-        </LinearLayout>
--->
 
     </LinearLayout>
 

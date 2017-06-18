@@ -200,6 +200,12 @@ public interface Constants {
         int STOPPED = 9;
     }
 
+    interface WORKOUT_TYPE {
+        public static final int BASIC = 0;
+        public static final int INTERVAL = 1;
+        public static final int ADVANCED = 2;
+    }
+
     interface Wear {
 
         interface Path {
@@ -226,10 +232,12 @@ public interface Constants {
             String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
         }
 
-        interface RunInfo {
+        public interface RunInfo {
             String HEADER = "HEADER/";
             String DATA = "DATA/";
+            String SCREENS = "SCREENS"; // Array of screen sizes, stored in HEADERS
             String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
+            String SCROLL = "SCROLL"; // Stored in HEADERS
             String COUNTDOWN = "COUNTDOWN";   // Stored in DATA
         }
 
