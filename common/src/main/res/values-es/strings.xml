@@ -29,6 +29,7 @@
   <string name="Target_pace_HHMMSS">Ritmo objetivo</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s a las %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, bueno, vale</string>
   <!--other-->
@@ -46,6 +47,9 @@
   <string name="speed">velocidad</string>
   <string name="pace">ritmo</string>
   <string name="heart_rate_zone">Zona de ritmo cardiaco</string>
+  <string name="cadence">cadencia</string>
+  <string name="temperature">temperatura</string>
+  <string name="pressure">presión</string>
   <string name="Zone">Zona</string>
   <string name="Device">Dispositivo</string>
   <string name="Start_hour">Hora de inicio</string>
@@ -178,6 +182,7 @@
   <string name="Unit_preference">Preferencia de unidad</string>
   <string name="Auto_start_GPS">Iniciar GPS automáticamente</string>
   <string name="Advanced_options">Opciones avanzadas</string>
+  <string name="Mapbox_default_style">Estilo de MapBox</string>
   <string name="RunnerUp_live_address">Dirección en línea de RunnerUp</string>
   <string name="Autopause_after_s">Parar automáticamente después de (s)</string>
   <string name="Autopause_min_pace_minkm">Ritmo de parada automático (min/km)</string>
@@ -192,6 +197,7 @@
   <string name="Smooth_pace_filters">Filtro(s) de suavizado del ritmo</string>
   <string name="Poll_interval_ms">Intervalo de sondeo (ms)</string>
   <string name="Poll_distance_m">Distancia de sondeo (m)</string>
+  <string name="Adjust_altitude">Ajustar la altitud del GPS a geoid (EGM96)</string>
   <string name="Export">Exportar</string>
   <string name="Import">Importar</string>
   <string name="Experimental_HRM_devices">Dispositivos HRM experimentales</string>
@@ -285,5 +291,25 @@
   <string name="Uploading_to_1s">Subiendo a %1$s</string>
   <string name="Loading_activities">Cargando actividades</string>
   <string name="Fetching_activities_from_1s">Cargando actividades desde %1$s</string>
+  <string name="No_feed_to_show">No hay datos para mostrar</string>
+  <string name="Unused_currently">No utilizado actualmente</string>
   <string name="Unknown">Desconocido</string>
+  <string name="RunningFreeOnlinePasswordNotice">Nota: Utilizar la \"palabra secreta\" como el password establecido en la página web en Agregar &gt; Sincronizar entrenamiento &gt; SportTracks</string>
+  <string name="Recording">Grabando</string>
+  <string name="Sensors">Sensores</string>
+  <string name="Maintenance">Mantenimiento</string>
+  <string name="cue_hrm_connection_restored">Se ha restaurado la conexión al monitor de ritmo cardíaco</string>
+  <string name="cue_hrm_connection_lost">Se ha perdido la conexión al monitor de ritmo cardíaco</string>
+  <string name="HRM_connection_audio_cue">Pista de audio para la conexión del HRM</string>
+  <string name="latest_feed_click_to_refresh">Últimas noticias (click para refrescar)</string>
+  <string name="log_extended_gps_summary">Exportar sólo en GPX</string>
+  <string name="log_extended_gps_title">Registrar datos con exactitud GPS ampliada</string>
+  <string name="use_step_sensor_title">Sensor de pasos</string>
+  <string name="use_step_sensor_summary">Uso para cadencia</string>
+  <string name="use_temperature_sensor">Sensor de temperatura</string>
+  <string name="use_pressure_sensor_title">Sensor de presión</string>
+  <string name="use_pressure_sensor_summary">Utilizar el barómetro para calcular la elevación</string>
+  <string name="adjust_barometer_altitude_from_gps">Ajustar la altitud del barómetro a la elevación de GPS</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Utilizar la elevación inicial de GPS para la elevación barométrica</string>
+  <string name="google_play_not_installed">Google Play Services no está instalado</string>
 </resources>
