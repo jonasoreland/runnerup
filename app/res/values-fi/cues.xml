@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">aktiviteetti</string>
+  <string name="cue_interval">intervalli</string>
+  <string name="cue_lap">kierros</string>
+  <string name="cue_warmup">lämmittely</string>
+  <string name="cue_cooldown">Jäähtyminen</string>
+  <string name="cue_current">nykyinen</string>
+  <string name="cue_perkilometer">per kilometri</string>
+  <string name="cue_permile">per maili</string>
+  <string name="cue_started">aloitettu</string>
+  <string name="cue_paused">Pysäytetty</string>
+  <string name="cue_resumed">jatkettu</string>
+  <string name="cue_stopped">pysäytetty</string>
+  <string name="cue_completed">suoritettu</string>
+  <string name="cue_speedup">nopeuta</string>
+  <string name="cue_slowdown">hidasta</string>
+  <string name="cue_activity_paused">Aktiviteetti pysäytetty</string>
+  <string name="cue_activity_resumed">Aktiviteetti jatkettu</string>
+  <string name="cue_activity_stopped">Aktiviteetti pysäytetty</string>
+  <string name="cue_lap_started">Kierros aloitettu</string>
+  <string name="cue_lap_completed">kierros suoritettu</string>
+  <string name="cue_warmup_started">lämmittely aloitettu</string>
+  <string name="cue_cooldown_started">jäähdytys aloitettu</string>
+</resources>
