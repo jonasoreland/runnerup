@@ -6,7 +6,7 @@
 | Endomondo    | OK     |          | OK     | Running/Walking/Biking/Orienteering/Other |
 | Facebook     | OK     |          |        | Running/Walking/Biking/Orienteering       |
 | FunBeat      | OK     |          | OK     | Running                                   |
-| Garmin       | OK     |          |        | Running/Walking/Biking/Other              |
+| Garmin       | No     |          |        | Running/Walking/Biking/Other              |
 | GoogleFit    | ??     | ??       | ??     | Running/Walking/Biking/Orienteering/Other |
 | jogg.se      | OK     |          |        | Running                                   |
 | MapMyRun     | OK     |          |        | Running/Biking                            |
