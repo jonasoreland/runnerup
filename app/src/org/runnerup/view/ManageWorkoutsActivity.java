@@ -540,7 +540,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     };
 
     private void deleteWorkout(WorkoutRef selected) {
-        File f = WorkoutSerializer.getFile(this, selected.workoutName);
+        File f = WorkoutSerializer.getFile(this, selected.workoutName + ".json");
         //noinspection ResultOfMethodCallIgnored
         f.delete();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
