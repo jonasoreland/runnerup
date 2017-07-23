@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Locale;
 
 
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
@@ -206,7 +207,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
                     new StringWritable("gpx"));
             Part<StringWritable> part2 = new Part<>("file",
                     new StringWritable(writer.toString()));
-            part2.setFilename("RunnerUp.gpx");
+            part2.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.gpx", mID));
             part2.setContentType("application/octet-stream");
             Part<?> parts[] = {
                     part0, part1, part2
