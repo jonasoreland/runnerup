@@ -20,7 +20,9 @@ package org.runnerup.export;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -32,6 +34,7 @@ import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.workout.Sport;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -184,6 +187,21 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return Synchronizer.Status.OK;
     }
 
+    private String stravaActivityType(int sportId) {
+        String stravaType;
+        Sport sport = Sport.valueOf(sportId);
+        if (sport.IsCycling()) {
+            stravaType = "ride";
+        } else if (sport.IsRunning()) {
+            stravaType = "run";
+        } else if (sport.IsWalking()) {
+            stravaType = "walk";
+        } else {
+            stravaType = "workout";
+        }
+        return stravaType;
+    }
+
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
@@ -201,17 +219,32 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
 
-            Part<StringWritable> part0 = new Part<>("access_token",
+            final String[] aColumns = { DB.ACTIVITY.COMMENT, DB.ACTIVITY.SPORT };
+            Cursor cursor = db.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
+                    + mID, null, null, null, null);
+            cursor.moveToFirst();
+            String desc = cursor.getString(0);
+            String stravaType = stravaActivityType(cursor.getInt(1));
+            cursor.close();
+
+            Part<StringWritable> accessPart = new Part<>("access_token",
                     new StringWritable(access_token));
-            Part<StringWritable> part1 = new Part<>("data_type",
+            Part<StringWritable> dataTypePart = new Part<>("data_type",
                     new StringWritable("gpx"));
-            Part<StringWritable> part2 = new Part<>("file",
+            Part<StringWritable> filePart = new Part<>("file",
                     new StringWritable(writer.toString()));
-            part2.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.gpx", mID));
-            part2.setContentType("application/octet-stream");
+            filePart.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.gpx", mID));
+            filePart.setContentType("application/octet-stream");
+            Part<StringWritable> activityTypePart = new Part<>("activity_type",
+                    new StringWritable(stravaType));
             Part<?> parts[] = {
-                    part0, part1, part2
+                    accessPart, dataTypePart, filePart, activityTypePart, null
             };
+            if (!TextUtils.isEmpty(desc)) {
+                Part<StringWritable> descPart = new Part<>("description",
+                        new StringWritable(desc));
+                parts[4] = descPart;
+            }
             SyncHelper.postMulti(conn, parts);
 
             int responseCode = conn.getResponseCode();
