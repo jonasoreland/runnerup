@@ -17,19 +17,16 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
-import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.Part;
@@ -43,7 +40,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Strava";
@@ -51,14 +48,14 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
-    public static final String TOKEN_URL = "https://www.strava.com/oauth/token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
+    private static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
+    private static final String TOKEN_URL = "https://www.strava.com/oauth/token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
 
-    public static final String REST_URL = "https://www.strava.com/api/v3/uploads";
+    private static final String REST_URL = "https://www.strava.com/api/v3/uploads";
 
     private long id = 0;
     private String access_token = null;
@@ -168,9 +165,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-        return true;
+        return access_token != null;
     }
 
     @Override
@@ -195,14 +190,13 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             return s;
         }
 
-        String URL = REST_URL;
         GPX gpx = new GPX(db, true, false);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             gpx.export(mID, writer);
-            conn = (HttpURLConnection) new URL(URL).openConnection();
+            conn = (HttpURLConnection) new URL(REST_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
 

@@ -17,9 +17,7 @@
 
 package org.runnerup.export.util;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
-import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,13 +41,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public final class SyncHelper {
 
     /**
      * The regex pattern to find a form input parameter in HTML.
      */
-    public static final Pattern inputPattern =
+    private static final Pattern inputPattern =
             Pattern.compile("<input(.*?)>", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
     private static final Pattern attributePattern =
             Pattern.compile("(\\w+)=\"(.*?)\"");
@@ -100,8 +98,8 @@ public final class SyncHelper {
         outputStream.close();
     }
 
-    public static Map<String, String> parseAttributes(String attributesStr) {
-        Map<String, String> attributes = new HashMap<String, String>();
+    private static Map<String, String> parseAttributes(String attributesStr) {
+        Map<String, String> attributes = new HashMap<>();
         Matcher matcher = attributePattern.matcher(attributesStr);
         while (matcher.find()) {
             String key = matcher.group(1);
@@ -153,7 +151,7 @@ public final class SyncHelper {
     public static String readInputStream(InputStream in) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder buf = new StringBuilder();
-        String s = null;
+        String s;
         while ((s = reader.readLine()) != null) {
             buf.append(s);
         }
@@ -172,7 +170,7 @@ public final class SyncHelper {
 
     public static Map<String, String> parseHtml(String html) {
         Matcher matcher = inputPattern.matcher(html);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
 
         while (matcher.find()) {
             Map<String, String> attributes = parseAttributes(matcher.group(1));
