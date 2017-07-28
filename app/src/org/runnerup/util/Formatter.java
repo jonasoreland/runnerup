@@ -33,6 +33,7 @@ import org.runnerup.R;
 import org.runnerup.workout.Dimension;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -167,6 +168,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             setUnit();
     }
 
+    public char getDecimalSeparator() {
+        return (new DecimalFormatSymbols(defaultLocale)).getDecimalSeparator();
+    }
     private void setUnit() {
         km = getUseKilometers(context.getResources(), sharedPreferences, null);
 
