@@ -385,8 +385,6 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public void insertAccounts(SQLiteDatabase arg0) {
-        final boolean notyet = false;
-
         ContentValues values;
 
         values = new ContentValues();
@@ -486,66 +484,59 @@ public class DBHelper extends SQLiteOpenHelper implements
         values.put(DB.ACCOUNT.URL, "http://www.facebook.com");
         insertAccount(arg0, values);
 
-        if (notyet) {
-            values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
-            values.put(DB.ACCOUNT.URL, "https://plus.google.com");
-            insertAccount(arg0, values);
-        }
+//      values = new ContentValues();
+//      values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
+//      values.put(DB.ACCOUNT.FORMAT, "");
+//      values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+//      values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
+//      values.put(DB.ACCOUNT.URL, "https://plus.google.com");
+//      insertAccount(arg0, values);
 
-        if (DBVERSION >= 26) {
-            values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RuntasticSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
-            values.put(DB.ACCOUNT.URL, "http://www.runtastic.com");
-            insertAccount(arg0, values);
-        }
+        //DBVERSION 26
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, RuntasticSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
+        values.put(DB.ACCOUNT.URL, "http://www.runtastic.com");
+        insertAccount(arg0, values);
 
-        if (DBVERSION >= 27) {
-            values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, GoogleFitSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
-            values.put(DB.ACCOUNT.URL, "https://fit.google.com");
-            insertAccount(arg0, values);
-        }
+        //DBVERSION 27
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, GoogleFitSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
+        values.put(DB.ACCOUNT.URL, "https://fit.google.com");
+        insertAccount(arg0, values);
 
-        if (DBVERSION >= 28) {
-            values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunningFreeOnlineSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
-            values.put(DB.ACCOUNT.URL, "http://www.runningfreeonline.com");
-            values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
-            insertAccount(arg0, values);
-        }
+        //DBVERSION 28
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, RunningFreeOnlineSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
+        values.put(DB.ACCOUNT.URL, "http://www.runningfreeonline.com");
+        values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
+        insertAccount(arg0, values);
 
-        if (DBVERSION >= 29) {
-            values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, FileSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "filepermission");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a16_localfile);
-            values.put(DB.ACCOUNT.URL, "");
-            insertAccount(arg0, values);
-        }
+        //DBVERSION 29
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, FileSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "filepermission");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a16_localfile);
+        values.put(DB.ACCOUNT.URL, "");
+        insertAccount(arg0, values);
 
-        if (DBVERSION >= 30) {
-            values = new ContentValues();
-            values.put(DB.ACCOUNT.NAME, RunalyzeSynchronizer.NAME);
-            values.put(DB.ACCOUNT.FORMAT, "tcx");
-            values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-            values.put(DB.ACCOUNT.ICON, R.drawable.a17_runalyze);
-            values.put(DB.ACCOUNT.URL, RunalyzeSynchronizer.PUBLIC_URL);
-            insertAccount(arg0, values);
-        }
+        //DBVERSION 30
+        values = new ContentValues();
+        values.put(DB.ACCOUNT.NAME, RunalyzeSynchronizer.NAME);
+        values.put(DB.ACCOUNT.FORMAT, "tcx");
+        values.put(DB.ACCOUNT.AUTH_METHOD, "post");
+        values.put(DB.ACCOUNT.ICON, R.drawable.a17_runalyze);
+        values.put(DB.ACCOUNT.URL, RunalyzeSynchronizer.PUBLIC_URL);
+        insertAccount(arg0, values);
     }
 
     void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
