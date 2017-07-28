@@ -44,6 +44,7 @@ import java.net.URL;
 public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "Google+";
+    public static final String PUBLIC_URL = "https://plus.google.com";
 
     /**
      * @todo register OAuth2Server

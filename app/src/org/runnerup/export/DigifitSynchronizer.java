@@ -68,6 +68,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     public static final String DIGIFIT_URL = "http://my.digifit.com";
 
     public static final String NAME = "Digifit";
+    public static final String PUBLIC_URL = "http://www.digifit.com";
 
     public static void main(String args[]) throws Exception {
         if (args.length < 2) {

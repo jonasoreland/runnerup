@@ -55,6 +55,7 @@ import javax.xml.parsers.ParserConfigurationException;
 public class JoggSESynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "jogg.se";
+    public static final String PUBLIC_URL = "http://jogg.se";
     private static String MASTER_USER = null;
     private static String MASTER_KEY = null;
 

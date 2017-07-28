@@ -48,6 +48,7 @@ import java.util.Locale;
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Strava";
+    public static final String PUBLIC_URL = "http://www.strava.com";
 
     /**
      * @todo register OAuth2Server

@@ -42,7 +42,8 @@ import java.util.zip.GZIPOutputStream;
 public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     public static final String NAME = "GoogleFit";
-    public static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
+    public static final String PUBLIC_URL = "https://fit.google.com";
+    private static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
     public static final String REST_DATASOURCE = "dataSources";
     public static final String REST_DATASETS = "datasets";
     public static final String REST_SESSIONS = "sessions";

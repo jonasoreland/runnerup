@@ -63,9 +63,10 @@ import java.util.zip.GZIPOutputStream;
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
-    public static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
-    public static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
-    public static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
+    public static final String PUBLIC_URL = "http://www.endomondo.com";
+    private static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
+    private static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
+    private static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
 
     long id = 0;
     private String username = null;

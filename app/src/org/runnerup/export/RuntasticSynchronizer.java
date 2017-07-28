@@ -50,11 +50,12 @@ import java.util.regex.Matcher;
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
-    public static final String BASE_URL = "https://www.runtastic.com";
-    public static final String START_URL = BASE_URL + "/en/login";
-    public static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";
-    public static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
-    public static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
+    public static final String PUBLIC_URL = "http://www.runtastic.com";
+    private static final String BASE_URL = "https://www.runtastic.com";
+    private static final String START_URL = BASE_URL + "/en/login";
+    private static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";
+    private static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
+    private static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
 
     long id = 0;
     private String username = null;

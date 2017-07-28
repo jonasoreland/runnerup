@@ -47,6 +47,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     private boolean isConnected = false;
 
     public static final String NAME = "RunningFreeOnline";
+    public static final String PUBLIC_URL = "http://www.runningfreeonline.com";
     private static final String BASE_URL = "http://www.runsaturday.com/runsaturday/SportTrackSync.asmx";
     private static final String LOG_TAG = RunningFreeOnlineSynchronizer.class.getName();
 

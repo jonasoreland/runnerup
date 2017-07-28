@@ -54,6 +54,7 @@ import java.util.Locale;
 public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Facebook";
+    public static final String PUBLIC_URL = "http://www.facebook.com";
 
     /**
      * @todo register OAuth2Server

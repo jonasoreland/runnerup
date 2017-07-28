@@ -47,6 +47,7 @@ import java.util.zip.GZIPOutputStream;
 public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "RunningAHEAD";
+    public static final String PUBLIC_URL = "http://www.runningahead.com";
 
     /**
      * @todo register OAuth2Server

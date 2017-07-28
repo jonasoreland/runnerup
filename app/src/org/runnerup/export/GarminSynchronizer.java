@@ -57,8 +57,9 @@ import java.util.Map;
 public class GarminSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Garmin";
+    public static final String PUBLIC_URL = "http://connect.garmin.com";
 
-    public static final String CHOOSE_URL = "http://connect.garmin.com/";
+    private static final String CHOOSE_URL = PUBLIC_URL + "/";
 
     public static final String START_URL = "https://connect.garmin.com/signin";
     public static final String LOGIN_URL = "https://connect.garmin.com/signin";
