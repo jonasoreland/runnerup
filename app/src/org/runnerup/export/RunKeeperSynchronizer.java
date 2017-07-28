@@ -190,6 +190,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
+    public int getIconId() {return R.drawable.a1_rklogo;}
+
+    @Override
     public void init(ContentValues config) {
         String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
         id = config.getAsLong("_id");

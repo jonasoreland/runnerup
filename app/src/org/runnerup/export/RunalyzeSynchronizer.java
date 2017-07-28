@@ -24,6 +24,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.export.format.RunalyzePost;
 
@@ -76,6 +77,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         _sports = new HashMap<>();
         _types = new HashMap<>();
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a17_runalyze;}
 
     /**
      * Initialzes the synchronizer with the information stored in the DB and passed.

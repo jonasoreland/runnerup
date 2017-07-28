@@ -26,6 +26,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
 import org.runnerup.util.KXmlSerializer;
@@ -87,6 +88,9 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a5_jogg;}
 
     @Override
     public void init(final ContentValues config) {

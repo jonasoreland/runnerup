@@ -80,6 +80,9 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     }
 
     @Override
+    public int getIconId() {return R.drawable.a8_runneruplive;}
+
+    @Override
     public void init(ContentValues config) {
         id = config.getAsLong("_id");
         String auth = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);

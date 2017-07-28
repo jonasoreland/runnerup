@@ -67,6 +67,11 @@ public interface Synchronizer {
     String getName();
 
     /**
+     * @return The icon resource id
+     */
+    int getIconId();
+
+    /**
      * Init synchronizer
      *
      * @param config

@@ -137,7 +137,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 DB.ACCOUNT.DESCRIPTION,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.FLAGS,
-                DB.ACCOUNT.ICON,
                 DB.ACCOUNT.AUTH_CONFIG,
                 DB.ACCOUNT.AUTH_METHOD
         };
@@ -158,14 +157,14 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 ImageView im = (ImageView) findViewById(R.id.account_list_icon);
                 TextView tv = (TextView) findViewById(R.id.account_list_name);
                 tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-                if (c.isNull(c.getColumnIndex(DB.ACCOUNT.ICON))) {
+                if (synchronizer.getIconId() == 0) {
                     im.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                 } else {
                     im.setVisibility(View.VISIBLE);
                     tv.setVisibility(View.GONE);
-                    im.setBackgroundResource(tmp.getAsInteger(DB.ACCOUNT.ICON));
-                    synchronizerIcon = tmp.getAsInteger(DB.ACCOUNT.ICON);
+                    im.setBackgroundResource(synchronizer.getIconId());
+                    synchronizerIcon = synchronizer.getIconId();
                 }
             }
 

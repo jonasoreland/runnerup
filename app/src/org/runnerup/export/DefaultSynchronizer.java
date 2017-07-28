@@ -71,6 +71,12 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     }
 
     @Override
+    public int getIconId() {
+        //0 is used if the resource id cannot be found
+        return 0;
+    }
+
+    @Override
     public void init(ContentValues config) {
         //Note that only auth_config can be expected here
         //Other config can be retrieved from db in Upload()

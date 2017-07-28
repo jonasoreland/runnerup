@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.KXmlSerializer;
@@ -59,6 +60,9 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     public long getId() {
         return id;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a15_runningfreeonline;}
 
     @Override
     public void init(ContentValues config) {
