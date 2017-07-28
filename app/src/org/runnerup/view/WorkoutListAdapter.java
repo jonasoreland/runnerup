@@ -83,7 +83,11 @@ class WorkoutListAdapter extends BaseAdapter {
         if (list == null) {
             workoutList = new String[0];
         } else {
-            workoutList = list;
+            workoutList = new String[list.length];
+            int index = 0;
+            for (String s : list) {
+                workoutList[index++] = s.substring(0, s.lastIndexOf('.'));
+            }
         }
         this.notifyDataSetChanged();
     }

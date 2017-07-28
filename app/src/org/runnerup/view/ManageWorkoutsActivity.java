@@ -313,7 +313,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         String[] list = org.runnerup.view.WorkoutListAdapter.load(this);
         if (list != null) {
             for (String s : list) {
-                newlist.add(new SyncManager.WorkoutRef(PHONE_STRING, null, s));
+                newlist.add(new SyncManager.WorkoutRef(PHONE_STRING, null,
+                                            s.substring(0, s.lastIndexOf('.')))
+                );
             }
         }
 
@@ -525,7 +527,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     };
 
     private void deleteWorkout(WorkoutRef selected) {
-        File f = WorkoutSerializer.getFile(this, selected.workoutName);
+        File f = WorkoutSerializer.getFile(this, selected.workoutName + ".json");
         //noinspection ResultOfMethodCallIgnored
         f.delete();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);

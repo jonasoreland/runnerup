@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class CreateAdvancedWorkout extends Activity {
 
     private Workout advancedWorkout = null;
@@ -46,7 +45,7 @@ public class CreateAdvancedWorkout extends Activity {
         String advWorkoutName = intent.getStringExtra(ManageWorkoutsActivity.WORKOUT_NAME);
 
         advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.new_workout_spinner);
-        advancedWorkoutSpinner.setValue(advWorkoutName + ".json");
+        advancedWorkoutSpinner.setValue(advWorkoutName);
         advancedWorkoutSpinner.setEnabled(false);
 
         dontAskAgain = false;
@@ -241,7 +240,7 @@ public class CreateAdvancedWorkout extends Activity {
             if (advancedWorkout != null) {
                 Context ctx = getApplicationContext();
                 try {
-                    WorkoutSerializer.writeFile(ctx, advWorkoutName, advancedWorkout);
+                    WorkoutSerializer.writeFile(ctx, advWorkoutName + ".json", advancedWorkout);
                 } catch (Exception ex) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this);
                     builder.setTitle(getString(R.string.Failed_to_load_workout));
@@ -281,7 +280,7 @@ public class CreateAdvancedWorkout extends Activity {
         public void onClick(View v) {
             try {
                 String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
-                WorkoutSerializer.writeFile(getApplicationContext(), advWorkoutName, advancedWorkout);
+                WorkoutSerializer.writeFile(getApplicationContext(), advWorkoutName + ".json", advancedWorkout);
                 finish();
             } catch (Exception e) {
                 handleWorkoutFileException(e);
@@ -312,7 +311,8 @@ public class CreateAdvancedWorkout extends Activity {
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            File f = WorkoutSerializer.getFile(getApplicationContext(), advancedWorkoutSpinner.getValue().toString());
+                            String name = advancedWorkoutSpinner.getValue().toString() + ".json";
+                            File f = WorkoutSerializer.getFile(getApplicationContext(), name);
                             //noinspection ResultOfMethodCallIgnored
                             f.delete();
                             finish();

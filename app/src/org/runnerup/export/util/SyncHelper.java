@@ -75,6 +75,9 @@ public final class SyncHelper {
         DataOutputStream outputStream = new DataOutputStream(
                 conn.getOutputStream());
         for (Part<?> part : parts) {
+            if (part == null) {
+                continue;
+            }
             outputStream.writeBytes(twoHyphens + boundary + lineEnd);
             outputStream.writeBytes("Content-Disposition: form-data; name=\""
                     + part.getName() + "\"");
