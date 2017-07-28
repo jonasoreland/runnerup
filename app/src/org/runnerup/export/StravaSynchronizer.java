@@ -17,24 +17,24 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
-import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.workout.Sport;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,8 +42,9 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Strava";
@@ -51,14 +52,14 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
-    public static final String TOKEN_URL = "https://www.strava.com/oauth/token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
+    private static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
+    private static final String TOKEN_URL = "https://www.strava.com/oauth/token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
 
-    public static final String REST_URL = "https://www.strava.com/api/v3/uploads";
+    private static final String REST_URL = "https://www.strava.com/api/v3/uploads";
 
     private long id = 0;
     private String access_token = null;
@@ -168,9 +169,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-        return true;
+        return access_token != null;
     }
 
     @Override
@@ -188,6 +187,21 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return Synchronizer.Status.OK;
     }
 
+    private String stravaActivityType(int sportId) {
+        String stravaType;
+        Sport sport = Sport.valueOf(sportId);
+        if (sport.IsCycling()) {
+            stravaType = "ride";
+        } else if (sport.IsRunning()) {
+            stravaType = "run";
+        } else if (sport.IsWalking()) {
+            stravaType = "walk";
+        } else {
+            stravaType = "workout";
+        }
+        return stravaType;
+    }
+
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s;
@@ -195,28 +209,42 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             return s;
         }
 
-        String URL = REST_URL;
         GPX gpx = new GPX(db, true, false);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             gpx.export(mID, writer);
-            conn = (HttpURLConnection) new URL(URL).openConnection();
+            conn = (HttpURLConnection) new URL(REST_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
 
-            Part<StringWritable> part0 = new Part<>("access_token",
+            final String[] aColumns = { DB.ACTIVITY.COMMENT, DB.ACTIVITY.SPORT };
+            Cursor cursor = db.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
+                    + mID, null, null, null, null);
+            cursor.moveToFirst();
+            String desc = cursor.getString(0);
+            String stravaType = stravaActivityType(cursor.getInt(1));
+            cursor.close();
+
+            Part<StringWritable> accessPart = new Part<>("access_token",
                     new StringWritable(access_token));
-            Part<StringWritable> part1 = new Part<>("data_type",
+            Part<StringWritable> dataTypePart = new Part<>("data_type",
                     new StringWritable("gpx"));
-            Part<StringWritable> part2 = new Part<>("file",
+            Part<StringWritable> filePart = new Part<>("file",
                     new StringWritable(writer.toString()));
-            part2.setFilename("RunnerUp.gpx");
-            part2.setContentType("application/octet-stream");
+            filePart.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.gpx", mID));
+            filePart.setContentType("application/octet-stream");
+            Part<StringWritable> activityTypePart = new Part<>("activity_type",
+                    new StringWritable(stravaType));
             Part<?> parts[] = {
-                    part0, part1, part2
+                    accessPart, dataTypePart, filePart, activityTypePart, null
             };
+            if (!TextUtils.isEmpty(desc)) {
+                Part<StringWritable> descPart = new Part<>("description",
+                        new StringWritable(desc));
+                parts[4] = descPart;
+            }
             SyncHelper.postMulti(conn, parts);
 
             int responseCode = conn.getResponseCode();
