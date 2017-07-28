@@ -600,7 +600,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             }
 
             ContentValues tmp = reports.get(position);
-            String name = tmp.getAsString("name");
+            String name = tmp.getAsString(DB.ACCOUNT.NAME);
             viewHolder.cb.setChecked(false);
             viewHolder.cb.setEnabled(false);
             viewHolder.cb.setTag(name);
