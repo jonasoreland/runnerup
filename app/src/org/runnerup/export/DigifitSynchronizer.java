@@ -314,7 +314,6 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     @Override
     public int getIconId() {return R.drawable.a9_digifit;}
 
-    private String getUploadUrl() throws IOException,
     private String getUploadUrl() throws IOException, MalformedURLException, ProtocolException,
             JSONException {
         String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";
