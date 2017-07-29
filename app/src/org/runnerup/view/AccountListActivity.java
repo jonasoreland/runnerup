@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -77,6 +78,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         mListView.setDividerHeight(10);
         mCursorAdapter = new AccountListAdapter(this, null);
         mListView.setAdapter(mCursorAdapter);
+        mListView.setOnItemLongClickListener(itemLongClickListener);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -244,6 +246,21 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             } else {
                 mSyncManager.connect(callback, synchronizerName, false);
             }
+        }
+    };
+
+    final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        public boolean onItemLongClick(AdapterView<?> arg0, View v,
+                                    int pos, long id) {
+            ContentValues tmp = DBHelper.get((Cursor)arg0.getItemAtPosition(pos));
+            final String synchronizerName = tmp.getAsString(DB.ACCOUNT.NAME);
+
+            //Toggle value for ENABLED
+            mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.ENABLED + " = 1 - " + DB.ACCOUNT.ENABLED +
+                    " where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName + "\'");
+            getSupportLoaderManager().restartLoader(0, null, (AccountListActivity)v.getContext());
+
+            return true;
         }
     };
 
