@@ -133,7 +133,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,")
             + (DB.ACCOUNT.AUTH_METHOD + " text not null, ") //no longer used
             + (DB.ACCOUNT.AUTH_CONFIG + " text, ")
-            + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ")
+            + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ") //no longer used
             + (DB.ACCOUNT.ICON + " integer null, ") //no longer used
             + "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
 
@@ -517,7 +517,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
         values.put(DB.ACCOUNT.URL, RunningFreeOnlineSynchronizer.PUBLIC_URL);
-        values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
+        //values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
         insertAccount(arg0, values);
 
         //DBVERSION 29

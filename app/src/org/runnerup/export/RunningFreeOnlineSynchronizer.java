@@ -65,6 +65,9 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     public int getIconId() {return R.drawable.a15_runningfreeonline;}
 
     @Override
+    public Integer getAuthNotice() { return R.string.RunningFreeOnlinePasswordNotice; }
+
+    @Override
     public void init(ContentValues config) {
         id = config.getAsLong("_id");
         final String authToken = config.getAsString(Constants.DB.ACCOUNT.AUTH_CONFIG);

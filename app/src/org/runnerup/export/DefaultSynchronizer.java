@@ -53,8 +53,6 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     protected final Set<String> cookies = new HashSet<String>();
     protected final FormValues formValues = new FormValues();
 
-    private Integer authNotice;
-
     public DefaultSynchronizer() {
         super();
         logout();
@@ -243,11 +241,6 @@ public abstract class DefaultSynchronizer implements Synchronizer {
 
     @Override
     public Integer getAuthNotice() {
-        return authNotice;
-    }
-
-    @Override
-    public void setAuthNotice(Integer authNotice) {
-        this.authNotice = authNotice;
+        return 0;
     }
 }
