@@ -59,6 +59,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     SQLiteDatabase mDB = null;
     SyncManager mSyncManager = null;
     boolean mTabFormat = false;
+    private boolean mShowDisabled = false;
     ListView mListView;
     CursorAdapter mCursorAdapter;
 
@@ -100,6 +101,11 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 item.setTitle(getString(R.string.Icon_list));
                 getSupportLoaderManager().restartLoader(0, null, this);
                 break;
+            case R.id.menu_show_disabled:
+                mShowDisabled = !mShowDisabled;
+                item.setChecked(mShowDisabled);
+                getSupportLoaderManager().restartLoader(0, null, this);
+                break;
         }
         return true;
     }
@@ -115,9 +121,13 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 DB.ACCOUNT.AUTH_CONFIG,
                 DB.ACCOUNT.FLAGS
         };
+        String showDisabled = null;
+        if (!mShowDisabled) {
+            showDisabled = DB.ACCOUNT.ENABLED + "==1";
+        }
 
-        return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, null, null,
-                DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.NAME);
+        return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, showDisabled, null,
+                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
     }
 
     @Override
