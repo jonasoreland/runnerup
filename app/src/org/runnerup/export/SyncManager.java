@@ -353,9 +353,6 @@ public class SyncManager {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
-                if (!TextUtils.isEmpty(url)) {
-                    tmp.put(DB.ACCOUNT.URL, url);
-                }
                 if (!TextUtils.isEmpty(format)) {
                     tmp.put(DB.ACCOUNT.FORMAT, format);
                 }
@@ -546,15 +543,7 @@ public class SyncManager {
                 }
                 sync.init(config);
 
-                //Set URL used for displaying
-                String url;
-                try {
-                    url = (new File(sync.getAuthConfig())).toURI().toURL().toString();
-                } catch (MalformedURLException e) {
-                    url = "";
-                }
-
-                handleAuthComplete(sync, sync.connect(), url, format);
+                handleAuthComplete(sync, sync.connect(), null, format);
             }
         });
         builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {

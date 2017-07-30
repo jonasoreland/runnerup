@@ -243,4 +243,9 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     public Integer getAuthNotice() {
         return 0;
     }
+
+    @Override
+    public String getUrl() {
+        return PUBLIC_URL;
+    }
 }

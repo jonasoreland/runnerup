@@ -117,7 +117,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         String[] from = new String[] {
                 "_id",
                 DB.ACCOUNT.NAME,
-                DB.ACCOUNT.URL,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.AUTH_CONFIG,
                 DB.ACCOUNT.FLAGS

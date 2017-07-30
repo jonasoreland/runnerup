@@ -61,6 +61,11 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public int getIconId() {return R.drawable.a16_localfile;}
 
     @Override
+    public String getUrl() {
+        return mPath;
+    }
+
+    @Override
     public void init(ContentValues config) {
         //Note: config contains a subset of account, primarily AUTH_CONFIG
         //Reuse AUTH_CONFIG to communicate with SyncManager to not change structure too much

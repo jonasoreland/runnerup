@@ -81,6 +81,11 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     @Override
     public int getIconId() {return R.drawable.a17_runalyze;}
 
+    @Override
+    public String getUrl() {
+        return _url;
+    }
+
     /**
      * Initialzes the synchronizer with the information stored in the DB and passed.
      * @param config The auth config stored in the ddbb

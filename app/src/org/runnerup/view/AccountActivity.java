@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -134,8 +135,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         String[] from = new String[]{
                 "_id",
                 DB.ACCOUNT.NAME,
-                DB.ACCOUNT.URL,
-                DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.FLAGS,
                 DB.ACCOUNT.AUTH_CONFIG
         };
@@ -169,15 +168,15 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
             addRow("", null);
 
-            if (tmp.containsKey(DB.ACCOUNT.URL)) {
+            if (!TextUtils.isEmpty(synchronizer.getUrl())) {
                 Button btn = new Button(this);
-                btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
+                btn.setText(synchronizer.getUrl());
                 //TODO SDK 24 requires the file URI to be handled as FileProvider
                 //Something like OI File Manager is needed too
                 if (Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.NAME).equals(FileSynchronizer.NAME)) {
                     btn.setOnClickListener(urlButtonClick);
                 }
-                btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));
+                btn.setTag(synchronizer.getUrl());
                 addRow(getResources().getString(R.string.Website) + ":", btn);
             }
 

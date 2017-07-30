@@ -57,6 +57,11 @@ public interface Synchronizer {
     }
 
     /**
+     * The default URL, most synchronizers returns this with getUrl()
+     */
+    String PUBLIC_URL = "";
+
+    /**
      * @return
      */
     long getId();
@@ -173,4 +178,9 @@ public interface Synchronizer {
      * @return A string resource id or null.
      */
     Integer getAuthNotice();
+
+    /**
+     * Get the public URL
+     */
+    String getUrl();
 }
