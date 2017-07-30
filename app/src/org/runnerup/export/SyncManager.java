@@ -143,7 +143,7 @@ public class SyncManager {
 
     public long load(String synchronizerName) {
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
         };
         String args[] = {
                 synchronizerName
@@ -159,23 +159,6 @@ public class SyncManager {
         }
         c.close();
         return id;
-    }
-
-    public static ContentValues loadConfig(SQLiteDatabase db, String synchronizerName) {
-        ContentValues config = null;
-                String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
-        };
-        String args[] = {
-                synchronizerName
-        };
-        Cursor c = db.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
-                args, null, null, null, null);
-        if (c.moveToFirst()) {
-            config = DBHelper.get(c);
-        }
-        c.close();
-        return config;
     }
 
     @SuppressWarnings("null")
@@ -329,15 +312,13 @@ public class SyncManager {
                 askUsernamePassword(l, authMethod);
                 return;
             case FILEPERMISSION:
+                checkStoragePermissions(mActivity);
                 askFileUrl(l);
                 return;
         }
     }
 
     private void handleAuthComplete(Synchronizer synchronizer, Status s) {
-        handleAuthComplete(synchronizer, s, null, null);
-    }
-    private void handleAuthComplete(Synchronizer synchronizer, Status s, String url, String format) {
         Callback cb = authCallback;
         authCallback = null;
         authSynchronizer = null;
@@ -353,9 +334,7 @@ public class SyncManager {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
-                if (!TextUtils.isEmpty(format)) {
-                    tmp.put(DB.ACCOUNT.FORMAT, format);
-                }
+
                 String args[] = {
                     Long.toString(synchronizer.getId())
                 };
@@ -512,12 +491,7 @@ public class SyncManager {
         path += File.separator + "RunnerUp";
         tv1.setText(path);
 
-        if(!checkStoragePermissions(mActivity)) {
-            String s = "Note: Storage permission must be granted in Android settings";
-            tvAuthNotice.setVisibility(View.VISIBLE);
-            tvAuthNotice.setText(s);
-        }
-        else if (sync.getAuthNotice() != 0) {
+        if (sync.getAuthNotice() != 0) {
             tvAuthNotice.setVisibility(View.VISIBLE);
             tvAuthNotice.setText(sync.getAuthNotice());
         } else {
@@ -531,9 +505,6 @@ public class SyncManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Set default values
-                ContentValues config = new ContentValues();
-                config.put(DB.ACCOUNT.AUTH_CONFIG, tv1.getText().toString());
-                config.put("_id", sync.getId());
                 String format = "";
                 if (cbtcx.isChecked()) {
                     format = "tcx,";
@@ -541,9 +512,24 @@ public class SyncManager {
                 if (cbgpx.isChecked()) {
                     format += "gpx,";
                 }
+
+                ContentValues tmp = new ContentValues();
+                tmp.put(DB.ACCOUNT.FORMAT, format);
+                tmp.put(DB.ACCOUNT.URL, tv1.getText().toString());
+
+                ContentValues config = new ContentValues();
+                config.put("_id", sync.getId());
+                config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
+                config.put(DB.ACCOUNT.FORMAT, format);
                 sync.init(config);
 
-                handleAuthComplete(sync, sync.connect(), null, format);
+                //temporary, until FORMAT moved to AUTH_CONFIG
+                String args[] = {
+                    Long.toString(sync.getId())
+                };
+                mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
+
+                handleAuthComplete(sync, sync.connect());
             }
         });
         builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
@@ -590,6 +576,7 @@ public class SyncManager {
             ActivityCompat.requestPermissions(activity, perms, 0);
             result = false;
         }
+        //TODO A popup in the AccountActivity, to prompt for storage permissions
         return result;
     }
 
@@ -1256,7 +1243,7 @@ public class SyncManager {
         }
 
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
         };
 
         Cursor c = null;
@@ -1282,11 +1269,8 @@ public class SyncManager {
 
     public Set<String> feedSynchronizersSet(Context ctx) {
         Set<String> set = new HashSet<>();
-        String[] from = new String[] {
-                "_id",
-                DB.ACCOUNT.NAME,
-                DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.FLAGS
+        String from[] = new String[] {
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
         };
 
         SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
