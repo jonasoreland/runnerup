@@ -140,7 +140,7 @@ public class SyncManager {
 
     public long load(String synchronizerName) {
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
         String args[] = {
                 synchronizerName
@@ -509,22 +509,14 @@ public class SyncManager {
                 if (cbgpx.isChecked()) {
                     format += "gpx,";
                 }
-
+                
                 ContentValues tmp = new ContentValues();
                 tmp.put(DB.ACCOUNT.FORMAT, format);
                 tmp.put(DB.ACCOUNT.URL, tv1.getText().toString());
-
                 ContentValues config = new ContentValues();
                 config.put("_id", sync.getId());
                 config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
-                config.put(DB.ACCOUNT.FORMAT, format);
                 sync.init(config);
-
-                //temporary, until FORMAT moved to AUTH_CONFIG
-                String args[] = {
-                    Long.toString(sync.getId())
-                };
-                mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
 
                 handleAuthComplete(sync, sync.connect());
             }
@@ -1282,7 +1274,7 @@ public class SyncManager {
         }
 
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
 
         Cursor c = null;
@@ -1309,7 +1301,7 @@ public class SyncManager {
     public Set<String> feedSynchronizersSet(Context ctx) {
         Set<String> set = new HashSet<>();
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
 
         SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
