@@ -334,7 +334,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             String sql = "SELECT DISTINCT "
                     + "  acc._id, " // 0
                     + ("  acc." + DB.ACCOUNT.NAME + ", ")
-                    + ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
                     + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
                     + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
                     + ("  acc." + DB.ACCOUNT.ENABLED + ", ")

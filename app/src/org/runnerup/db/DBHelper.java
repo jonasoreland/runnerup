@@ -126,7 +126,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + DB.ACCOUNT.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
             + (DB.ACCOUNT.NAME + " text not null, ")
-            + (DB.ACCOUNT.DESCRIPTION + " text, ")
+            + (DB.ACCOUNT.DESCRIPTION + " text, ") //no longer used
             + (DB.ACCOUNT.URL + " text, ")
             + (DB.ACCOUNT.FORMAT + " text not null, ") //Remove not null
             + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ")

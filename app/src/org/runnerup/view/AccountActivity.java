@@ -135,7 +135,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 "_id",
                 DB.ACCOUNT.NAME,
                 DB.ACCOUNT.URL,
-                DB.ACCOUNT.DESCRIPTION,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.FLAGS,
                 DB.ACCOUNT.AUTH_CONFIG
