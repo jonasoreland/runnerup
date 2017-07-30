@@ -147,6 +147,7 @@ public class OAuth2Activity extends AppCompatActivity {
                     mSpinner.show();
             }
 
+            @SuppressLint("StaticFieldLeak")
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);

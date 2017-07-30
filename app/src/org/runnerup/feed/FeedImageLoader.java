@@ -17,6 +17,7 @@
 
 package org.runnerup.feed;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -56,6 +57,7 @@ public class FeedImageLoader {
         return null;
     }
 
+    @SuppressLint("StaticFieldLeak")
     static public void LoadImageAsync(final String url, final Callback onLoadingDone) {
         final String fixedUrl = FixUrl(url);
         Bitmap b = imageCache.get(url);

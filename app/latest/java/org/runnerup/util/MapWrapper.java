@@ -151,6 +151,7 @@ public class MapWrapper implements Constants {
         final long mID;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class LoadRoute extends AsyncTask<LoadParam, Void, Route> {
         @Override
         protected Route doInBackground(LoadParam... params) {

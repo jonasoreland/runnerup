@@ -504,13 +504,13 @@ public class GraphWrapper implements Constants {
         int no = 0;
 
         for (int aData : data) {
-            if (aData> 0) {
-            sum = sum + aData;
+            if (aData > 0) {
+                sum = sum + aData;
                 no++;
+            }
         }
-    }
         //TODO Average of pointe, not over time
-        if(no==0){
+        if (no == 0) {
             return 0;
         } else {
             return (double) sum / no;
@@ -528,6 +528,7 @@ public class GraphWrapper implements Constants {
         final long mID;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class LoadGraph extends AsyncTask<LoadParam, Void, GraphProducer> {
         @Override
         protected GraphProducer doInBackground(LoadParam... params) {

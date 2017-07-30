@@ -17,6 +17,7 @@
 
 package org.runnerup.db;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -596,6 +597,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         db.delete(DB.ACTIVITY.TABLE, "_id = ?", args);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public static void purgeDeletedActivities(Context ctx, final ProgressDialog dialog,
                                               final Runnable onComplete) {
 
