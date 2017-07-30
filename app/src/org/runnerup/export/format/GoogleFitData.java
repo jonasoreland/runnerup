@@ -17,6 +17,7 @@
 
 package org.runnerup.export.format;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -375,6 +376,7 @@ public class GoogleFitData {
         return getDataSetURLSuffix(source, startTime, endTime);
     }
 
+    @SuppressLint("PrivateResource")
     private void addApplicationObject(JsonWriter w) throws IOException {
         w.beginObject();
         w.name("name").value(mContext.getString(R.string.app_name));
@@ -403,6 +405,7 @@ public class GoogleFitData {
         }
     }
 
+    @SuppressLint("PrivateResource")
     public final String exportSession(long activityId, Writer writer) {
         String[] pColumns = {
                 DB.ACTIVITY.START_TIME, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT, DB.ACTIVITY.SPORT
@@ -444,6 +447,7 @@ public class GoogleFitData {
         return GoogleFitSynchronizer.REST_DATASOURCE + "/" + SyncHelper.URLEncode(source.getDataStreamId(this)) + "/" + GoogleFitSynchronizer.REST_DATASETS + "/" + startTime + "-" + endTime;
     }
 
+    @SuppressLint("PrivateResource")
     private String getSessionURLSuffix(long startTime, long endTime) {
         return GoogleFitSynchronizer.REST_SESSIONS + "/" + mContext.getString(R.string.app_name) + "-" + startTime + "-" + endTime;
     }
