@@ -79,9 +79,8 @@ public class NumberPicker extends LinearLayout {
         addViews();
         updateView();
 
-        //noinspection CustomViewStyleable
         if (attrs != null) {
-            TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
+            TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.NumberPicker);
             processAttributes(arr);
             arr.recycle();
         }
@@ -91,14 +90,14 @@ public class NumberPicker extends LinearLayout {
         if (arr == null)
             return;
 
-        if (arr.hasValue(R.styleable.TitleSpinner_digits)) {
-            setDigits(arr.getInt(R.styleable.TitleSpinner_digits, digits));
+        if (arr.hasValue(R.styleable.NumberPicker_digits)) {
+            setDigits(arr.getInt(R.styleable.NumberPicker_digits, digits));
         }
-        if (arr.hasValue(R.styleable.TitleSpinner_min_val)) {
-            minValue = arr.getInt(R.styleable.TitleSpinner_min_val, minValue);
+        if (arr.hasValue(R.styleable.NumberPicker_min_val)) {
+            minValue = arr.getInt(R.styleable.NumberPicker_min_val, minValue);
         }
-        if (arr.hasValue(R.styleable.TitleSpinner_max_val)) {
-            maxValue = arr.getInt(R.styleable.TitleSpinner_max_val, maxValue);
+        if (arr.hasValue(R.styleable.NumberPicker_max_val)) {
+            maxValue = arr.getInt(R.styleable.NumberPicker_max_val, maxValue);
         }
     }
 

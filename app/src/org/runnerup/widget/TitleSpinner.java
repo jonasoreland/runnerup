@@ -113,7 +113,6 @@ public class TitleSpinner extends LinearLayout {
         if (title != null) {
             mTitle.setText(title);
         }
-        //Note: R.styleable.TitleSpinner_android_prompt is not used
 
         CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
         CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
