@@ -354,22 +354,18 @@ public class DBHelper extends SQLiteOpenHelper implements
                         DB.ACCOUNT.URL + ", " +
                         DB.ACCOUNT.DESCRIPTION + ", " +
                         DB.ACCOUNT.FORMAT + ", " +
-                        DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
-                        DB.ACCOUNT.AUTH_CONFIG + ", " +
-                        DB.ACCOUNT.AUTH_NOTICE + ") " +
+                        DB.ACCOUNT.AUTH_CONFIG + ") " +
                         "select " +
                         "_id, " +
                         DB.ACCOUNT.NAME + ", " +
                         DB.ACCOUNT.URL + ", " +
                         DB.ACCOUNT.DESCRIPTION + ", " +
                         DB.ACCOUNT.FORMAT + ", " +
-                        DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
                         DB.ACCOUNT.AUTH_CONFIG + " " +
-                        DB.ACCOUNT.AUTH_NOTICE + " " +
                         "FROM " + DB.ACCOUNT.TABLE;
         try {
             echoDo(arg0, newtab.toString());
