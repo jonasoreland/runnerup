@@ -134,7 +134,7 @@ dependencies {
 
     latestCompile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     latestCompile 'com.getpebble:pebblekit:4.0.1'
-    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.0.1@aar'){
+    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.1@aar'){
         transitive=true
     }
     compile 'com.jjoe64:graphview:4.2.1'
