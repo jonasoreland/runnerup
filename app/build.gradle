@@ -49,14 +49,23 @@ android {
             minSdkVersion 15
             targetSdkVersion rootProject.ext.compileSdkVersion
             versionName rootProject.ext.versionName
-            versionCode rootProject.ext.versionCode
+            versionCode 14000000 + rootProject.ext.versionCode
         }
         froyo {
             dimension "all"
             minSdkVersion 8
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
-            versionCode rootProject.ext.froyoVersionCode
+            versionCode 8000000 + rootProject.ext.versionCode
+        }
+    }
+
+    splits {
+        abi {
+            //We would have preferred to not create split for Froyo, so explicitly enabling split
+            //.\gradlew --project-prop splitApk assembleLatestRelease
+            enable project.hasProperty('splitApk')
+            universalApk true
         }
     }
 
@@ -173,6 +182,28 @@ android.applicationVariants.all { variant ->
             content = content.replaceAll(/mapboxMapID.*/, "mapboxMapID\">" + props.mapboxid + "</string>")
             content = content.replaceAll(/mapboxAccessToken.*/, "mapboxAccessToken\">" + props.mapboxAccessToken + "</string>")
             valuesFile.write(content, 'UTF-8')
+        }
+    }
+}
+
+//Based on an example from https://developer.android.com/studio/build/configure-apk-splits.html
+//Most comments from there removed
+
+// Map for the version code that gives each ABI a value.
+ext.abiCodes = ['arm64-v8a': 1, 'armeabi':2, 'armeabi-v7a':3, 'mips':4, 'mips64':5, 'x86':6, 'x86_64':7]
+
+import com.android.build.OutputFile
+
+// For each APK output variant, override versionCode with a combination of
+// ext.abiCodes * 10000 + variant.versionCode. (universal gets no offset)
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def baseAbiVersionCode =
+                project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+
+        if (baseAbiVersionCode != null) {
+            output.versionCodeOverride =
+                    baseAbiVersionCode * 10000 + variant.versionCode
         }
     }
 }
