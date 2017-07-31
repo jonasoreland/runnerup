@@ -35,4 +35,8 @@
     </issue>
     <!-- used by library? -->
     <issue id="LogNotTimber" severity="ignore"/>
+    <!-- SuppressLint has no effect in gradle plugin 3.0.0, bug? -->
+    <issue id="ClickableViewAccessibility" severity="ignore">
+        <ignore path="**/NumberPicker.java" />
+    </issue>
 </lint>
