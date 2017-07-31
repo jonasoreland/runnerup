@@ -111,6 +111,9 @@ android {
 }
 
 repositories {
+    maven {
+        url "https://maven.google.com"
+    }
     //jcenter and mavenCentral normally have the same packages but there may be a delay after updating the primary
     jcenter()
     mavenCentral() //MapBox GraphView
