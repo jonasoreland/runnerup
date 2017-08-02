@@ -319,7 +319,6 @@ public class DBHelper extends SQLiteOpenHelper implements
 
             if (c.moveToFirst()) {
                 ContentValues tmp = DBHelper.get(c);
-                c.close();
                 //URL was stored in AUTH_CONFIG previously, FORMAT migrated too
                 tmp.put(DB.ACCOUNT.URL, tmp.getAsString(DB.ACCOUNT.AUTH_CONFIG));
                 String authConfig = FileSynchronizer.contentValuesToAuthConfig(tmp);
@@ -327,6 +326,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, authConfig);
                 arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
             }
+            c.close();
             recreateAccount(arg0);
         }
 
@@ -339,22 +339,6 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     private void recreateAccount(SQLiteDatabase arg0) {
-        Cursor c = null;
-        try {
-            String cols[] = {
-                "method"
-            };
-            c = arg0.query(DB.ACCOUNT.TABLE, cols, null, null, null, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-        finally {
-            if (c != null) {
-                c.close();
-            }
-        }
-
         StringBuilder newtab = new StringBuilder();
         newtab.append(CREATE_TABLE_ACCOUNT);
         newtab.replace(0,
