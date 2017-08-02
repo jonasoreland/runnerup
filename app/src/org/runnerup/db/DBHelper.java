@@ -411,28 +411,23 @@ public class DBHelper extends SQLiteOpenHelper implements
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled, int flags) {
         ContentValues arg1 = new ContentValues();
         arg1.put(DB.ACCOUNT.NAME, name);
-        if(enabled>=0) {
+        if (enabled >= 0) {
             arg1.put(DB.ACCOUNT.ENABLED, enabled);
         }
-        if(flags>=0) {
+        if (flags >= 0) {
             arg1.put(DB.ACCOUNT.ENABLED, flags);
         }
 
-        String cols[] = {
-            "_id"
-        };
-        String arr[] = {
-            arg1.getAsString(DB.ACCOUNT.NAME)
-        };
-        Cursor c = arg0.query(DB.ACCOUNT.TABLE, cols, DB.ACCOUNT.NAME + " = ?",
-                arr, null, null, null);
-        if (!c.moveToFirst())
-            arg0.insert(DB.ACCOUNT.TABLE, null, arg1);
-        else {
+        //SQLite has no UPSERT command. Optimize for no change.
+        long newId = arg0.insertWithOnConflict(DB.ACCOUNT.TABLE, null, arg1, SQLiteDatabase.CONFLICT_IGNORE);
+        if (newId == -1 && arg1.size() > 1) {
+            //values could be updated
+            String arr[] = {
+                    arg1.getAsString(DB.ACCOUNT.NAME)
+            };
             arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-            Log.e("DBhelper", "update: " + arg1);
+            Log.v("DBhelper", "update: " + arg1);
         }
-        c.close();
     }
 
     public static ContentValues get(Cursor c) {
