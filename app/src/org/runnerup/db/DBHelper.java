@@ -68,6 +68,12 @@ public class DBHelper extends SQLiteOpenHelper implements
     private static final int DBVERSION = 32;
     private static final String DBNAME = "runnerup.db";
 
+    private static final String CREATE_TABLE_DBINFO = "create table "
+            + DB.DBINFO.TABLE + " ( "
+            + ("_id integer primary key CHECK (_id = 0), ")
+            + (DB.DBINFO.ACCOUNT_VERSION + " integer not null default 0")
+            + ");";
+
     private static final String CREATE_TABLE_ACTIVITY = "create table "
             + DB.ACTIVITY.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
@@ -82,7 +88,8 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACTIVITY.AVG_CADENCE + " real, ")
             + (DB.ACTIVITY.META_DATA + " text, ")
             + ("deleted integer not null default 0, ")
-            + "nullColumnHack text null" + ");";
+            + "nullColumnHack text null"
+            + ");";
 
     private static final String CREATE_TABLE_LOCATION = "create table "
             + DB.LOCATION.TABLE + " ( "
@@ -100,7 +107,6 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.LOCATION.PRESSURE + " real, ")
             + (DB.LOCATION.ELAPSED + " real, ")
             + (DB.LOCATION.DISTANCE + " real, ")
-            //Additional data, uses one byte for null data
             + (DB.LOCATION.GPS_ALTITUDE + " real, ")
             + (DB.LOCATION.ACCURANCY + " real, ")
             + (DB.LOCATION.SPEED + " real, ")
@@ -130,7 +136,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACCOUNT.NAME + " text not null, ")
             + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ")
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,") //Account is not hidden/disabled
-            + (DB.ACCOUNT.AUTH_CONFIG + " text, ")
+            + (DB.ACCOUNT.AUTH_CONFIG + " text, ") //Stored configuration data
             + "UNIQUE (" + DB.ACCOUNT.NAME + ")"
             + ");";
 
@@ -222,6 +228,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     @Override
     public void onCreate(SQLiteDatabase arg0) {
+        arg0.execSQL(CREATE_TABLE_DBINFO);
         arg0.execSQL(CREATE_TABLE_ACTIVITY);
         arg0.execSQL(CREATE_TABLE_LAP);
         arg0.execSQL(CREATE_TABLE_LOCATION);
@@ -336,7 +343,38 @@ public class DBHelper extends SQLiteOpenHelper implements
             recreateAccount(arg0);
         }
 
-        insertAccounts(arg0);
+        if (oldVersion < 32 && newVersion >= 32) {
+            if (oldVersion > 0) {
+                arg0.execSQL(CREATE_TABLE_DBINFO);
+            }
+            ContentValues tmp = new ContentValues();
+            tmp.put(DB.DBINFO.ACCOUNT_VERSION, 0);
+            tmp.put("_id", 0);
+            arg0.insert(DB.DBINFO.TABLE, null, tmp);
+        }
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase arg0) {
+        //Update "database contents"
+        //Only changes that can be safely applied backward/forward compatible
+        //(other still need to update DBVERSION)
+
+        //Version for ACCOUNT info
+        String from[] = { "_id" };
+        String args[] = { "1" }; //ACCOUNT VERSION
+        Cursor c = arg0.query(DB.DBINFO.TABLE, from,
+                DB.DBINFO.ACCOUNT_VERSION + " = ?", args,
+                null, null, null);
+
+        if (c.getCount() == 0) {
+            insertAccounts(arg0);
+            ContentValues tmp = new ContentValues();
+            //One row only in the table, so no selection
+            tmp.put(DB.DBINFO.ACCOUNT_VERSION, args[0]);
+            arg0.update(DB.DBINFO.TABLE, tmp, null, null);
+        }
+        c.close();
     }
 
     private static void echoDo(SQLiteDatabase arg0, String str) {
@@ -377,9 +415,10 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
-    public static void insertAccounts(SQLiteDatabase arg0) {
+    private static void insertAccounts(SQLiteDatabase arg0) {
         //The accounts must exist in the database, but normally the default values are sufficient
         //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
+        //"Minor changes" like adding a new syncher can be handled with updating DB.DBINFO.ACCOUNT_VERSION
         insertAccount(arg0, GarminSynchronizer.NAME, 0, -1);
         insertAccount(arg0, RunKeeperSynchronizer.NAME);
         insertAccount(arg0, JoggSESynchronizer.NAME);
@@ -408,6 +447,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     private static void insertAccount(SQLiteDatabase arg0, String name) {
         insertAccount(arg0, name, -1, -1);
     }
+    
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled, int flags) {
         ContentValues arg1 = new ContentValues();
         arg1.put(DB.ACCOUNT.NAME, name);
