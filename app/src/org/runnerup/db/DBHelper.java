@@ -131,14 +131,18 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ")
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,") //Account is not hidden/disabled
             + (DB.ACCOUNT.AUTH_CONFIG + " text, ")
-            + "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
+            + "UNIQUE (" + DB.ACCOUNT.NAME + ")"
+            + ");";
 
     private static final String CREATE_TABLE_REPORT = "create table "
             + DB.EXPORT.TABLE + " ( "
-            + "_id integer primary key autoincrement, " + DB.EXPORT.ACTIVITY
-            + " integer not null, " + DB.EXPORT.ACCOUNT + " integer not null, "
-            + DB.EXPORT.STATUS + " text, " + DB.EXPORT.EXTERNAL_ID + " text, "
-            + DB.EXPORT.EXTRA + " integer not null default 1" + ");";
+            + "_id integer primary key autoincrement, "
+            + DB.EXPORT.ACTIVITY + " integer not null, "
+            + DB.EXPORT.ACCOUNT + " integer not null, "
+            + DB.EXPORT.STATUS + " text, "
+            + DB.EXPORT.EXTERNAL_ID + " text, "
+            + DB.EXPORT.EXTRA + " integer not null default 1"
+            + ");";
 
     private static final String CREATE_TABLE_AUDIO_SCHEMES = "create table "
             + DB.AUDIO_SCHEMES.TABLE + " ( "
@@ -169,8 +173,10 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.FEED.FLAGS + " text ")
             + ");";
 
-    private static final String CREATE_INDEX_FEED = "create index if not exists FEED_START_TIME " +
-            (" on " + DB.FEED.TABLE + " (" + DB.FEED.START_TIME + ")");
+    private static final String CREATE_INDEX_FEED = "create index "
+            + "if not exists FEED_START_TIME "
+            + (" on " + DB.FEED.TABLE + " (" + DB.FEED.START_TIME
+            + ")");
 
     private static DBHelper sInstance = null;
 
@@ -371,94 +377,47 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
-    public void insertAccounts(SQLiteDatabase arg0) {
-        ContentValues values;
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, GarminSynchronizer.NAME);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunKeeperSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, JoggSESynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, FunBeatSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, MapMyRunSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, NikePlusSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, EndomondoSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunningAHEADSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, DigifitSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, StravaSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunnerUpLiveSynchronizer.NAME);
-        values.put(DB.ACCOUNT.FLAGS, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, FacebookSynchronizer.NAME);
-        insertAccount(arg0, values);
-
-//      values = new ContentValues();
-//      values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
-//      insertAccount(arg0, values);
-
+    public static void insertAccounts(SQLiteDatabase arg0) {
+        //The accounts must exist in the database, but normally the default values are sufficient
+        //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
+        insertAccount(arg0, GarminSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RunKeeperSynchronizer.NAME);
+        insertAccount(arg0, JoggSESynchronizer.NAME);
+        insertAccount(arg0, FunBeatSynchronizer.NAME);
+        insertAccount(arg0, MapMyRunSynchronizer.NAME);
+        insertAccount(arg0, NikePlusSynchronizer.NAME);
+        insertAccount(arg0, EndomondoSynchronizer.NAME);
+        insertAccount(arg0, RunningAHEADSynchronizer.NAME);
+        insertAccount(arg0, DigifitSynchronizer.NAME);
+        insertAccount(arg0, StravaSynchronizer.NAME);
+        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
+        insertAccount(arg0, FacebookSynchronizer.NAME);
+        //insertAccount(arg0, GooglePlusSynchronizer.NAME);
         //DBVERSION 26
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RuntasticSynchronizer.NAME);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, RuntasticSynchronizer.NAME, 0, -1);
         //DBVERSION 27
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, GoogleFitSynchronizer.NAME);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, GoogleFitSynchronizer.NAME, 0, -1);
         //DBVERSION 28
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunningFreeOnlineSynchronizer.NAME);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0, -1);
         //DBVERSION 29
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, FileSynchronizer.NAME);
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, FileSynchronizer.NAME);
         //DBVERSION 30
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunalyzeSynchronizer.NAME);
-        insertAccount(arg0, values);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME);
     }
 
-    void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
+    private static void insertAccount(SQLiteDatabase arg0, String name) {
+        insertAccount(arg0, name, -1, -1);
+    }
+    private static void insertAccount(SQLiteDatabase arg0, String name, int enabled, int flags) {
+        ContentValues arg1 = new ContentValues();
+        arg1.put(DB.ACCOUNT.NAME, name);
+        if(enabled>=0) {
+            arg1.put(DB.ACCOUNT.ENABLED, enabled);
+        }
+        if(flags>=0) {
+            arg1.put(DB.ACCOUNT.ENABLED, flags);
+        }
+
         String cols[] = {
             "_id"
         };
@@ -471,10 +430,9 @@ public class DBHelper extends SQLiteOpenHelper implements
             arg0.insert(DB.ACCOUNT.TABLE, null, arg1);
         else {
             arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-            Log.e(getClass().getName(), "update: " + arg1);
+            Log.e("DBhelper", "update: " + arg1);
         }
         c.close();
-        c = null;
     }
 
     public static ContentValues get(Cursor c) {
