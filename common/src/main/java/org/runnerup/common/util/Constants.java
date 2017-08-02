@@ -25,6 +25,11 @@ public interface Constants {
 
         public static final String PRIMARY_KEY = "_id";
 
+        interface DBINFO {
+            String TABLE = "dbinfo";
+            String ACCOUNT_VERSION = "account_version";
+        }
+
         public interface ACTIVITY {
             public static final String TABLE = "activity";
             public static final String START_TIME = "start_time";
