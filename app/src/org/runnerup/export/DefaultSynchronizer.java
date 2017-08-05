@@ -115,6 +115,10 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return s;
     }
 
+    public Status getExternalId(SQLiteDatabase db, Status uploadStatus) {
+        return Status.ERROR;
+    }
+
     public boolean checkSupport(Synchronizer.Feature f) {
         return false;
     }
@@ -248,4 +252,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     public String getUrl() {
         return PUBLIC_URL;
     }
+
+    @Override
+    public String getActivityUrl(String extId) { return null; }
 }
