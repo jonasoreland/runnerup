@@ -22,6 +22,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -37,13 +38,16 @@ import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.workout.Sport;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
@@ -207,33 +211,46 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return stravaType;
     }
 
+    //JSON getString() interprets null as the string "null"
+    private static String noNullStr(String s) { return ("null".equals(s)) ? null : s; }
+
+    private class ActivityDbInfo {
+        String desc;
+        String stravaType;
+    }
+    private ActivityDbInfo getStravaType(SQLiteDatabase db, final long mID) {
+        final String[] aColumns = {DB.ACTIVITY.COMMENT, DB.ACTIVITY.SPORT};
+        Cursor cursor = db.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
+                + mID, null, null, null, null);
+        cursor.moveToFirst();
+        ActivityDbInfo dbInfo = new ActivityDbInfo();
+        dbInfo.desc = cursor.getString(0);
+        dbInfo.stravaType = stravaActivityType(cursor.getInt(1));
+        cursor.close();
+
+        return dbInfo;
+    }
+
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
-        Status s;
+        Status s = Status.ERROR;
+        s.activityId = mID;
         if ((s = connect()) != Status.OK) {
             return s;
         }
 
         GPX gpx = new GPX(db, true, false);
-        HttpURLConnection conn;
         Exception ex;
         try {
             StringWriter writer = new StringWriter();
             gpx.export(mID, writer);
-            conn = (HttpURLConnection) new URL(REST_URL).openConnection();
+            ActivityDbInfo dbInfo = getStravaType(db, mID);
+
+            HttpURLConnection conn = (HttpURLConnection) new URL(REST_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
+            conn.setRequestProperty("Authorization", "Bearer " + access_token);
 
-            final String[] aColumns = { DB.ACTIVITY.COMMENT, DB.ACTIVITY.SPORT };
-            Cursor cursor = db.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
-                    + mID, null, null, null, null);
-            cursor.moveToFirst();
-            String desc = cursor.getString(0);
-            String stravaType = stravaActivityType(cursor.getInt(1));
-            cursor.close();
-
-            Part<StringWritable> accessPart = new Part<>("access_token",
-                    new StringWritable(access_token));
             Part<StringWritable> dataTypePart = new Part<>("data_type",
                     new StringWritable("gpx"));
             Part<StringWritable> filePart = new Part<>("file",
@@ -241,31 +258,43 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             filePart.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.gpx", mID));
             filePart.setContentType("application/octet-stream");
             Part<StringWritable> activityTypePart = new Part<>("activity_type",
-                    new StringWritable(stravaType));
+                    new StringWritable(dbInfo.stravaType));
             Part<?> parts[] = {
-                    accessPart, dataTypePart, filePart, activityTypePart, null
+                    dataTypePart, filePart, activityTypePart, null
             };
-            if (!TextUtils.isEmpty(desc)) {
+            if (!TextUtils.isEmpty(dbInfo.desc)) {
                 Part<StringWritable> descPart = new Part<>("description",
-                        new StringWritable(desc));
-                parts[4] = descPart;
+                        new StringWritable(dbInfo.desc));
+                parts[3] = descPart;
             }
             SyncHelper.postMulti(conn, parts);
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            Log.e(getName(), "code: " + responseCode + ", amsg: " + amsg);
+            Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             JSONObject obj = SyncHelper.parse(in);
+            conn.disconnect();
+            String stravaError = noNullStr(obj.getString("error"));
 
-            if (responseCode == HttpURLConnection.HTTP_CREATED && obj.getLong("id") > 0) {
-                conn.disconnect();
+            if (responseCode == HttpURLConnection.HTTP_CREATED && obj.getLong("id") > 0 &&
+                    stravaError == null) {
                 s = Status.OK;
-                s.activityId = mID;
+                s.externalId = noNullStr(obj.getString("activity_id"));
+                if (s.externalId == null) {
+                    //The Strava ID is not yet found, request it
+                    s.externalIdStatus = ExternalIdStatus.PENDING;
+                    s.externalId = noNullStr(obj.getString("id"));
+                } else {
+                    //Only for very small activities
+                    s.externalIdStatus = ExternalIdStatus.OK;
+                }
                 return s;
             }
-            ex = new Exception(amsg);
+            Log.e(getName(), "Error uploading to Strava. code: " + responseCode + ", amsg: " + amsg +
+            ", json: " + obj);
+            ex = new Exception(amsg+stravaError);
         } catch (IOException e) {
             ex = e;
         } catch (JSONException e) {
@@ -274,11 +303,66 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        s.activityId = mID;
+        ex.printStackTrace();
+        return s;
+    }
+
+    /**
+     * Strava processing
+     */
+    @Override
+    public Status getExternalId(final SQLiteDatabase db, Status uploadStatus) {
+        Status result = Status.ERROR;
+        result.activityId = uploadStatus.activityId;
+        String stravaError = null;
+        int remainingAttempts = 60;
+        Exception ex = null;
+        try {
+            while (result != Status.OK && stravaError == null && remainingAttempts-- > 0) {
+                try {
+                    //Wait about a second between attempts
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                }
+                HttpURLConnection conn = (HttpURLConnection) new URL(REST_URL + "/" + uploadStatus.externalId).openConnection();
+                conn.setRequestMethod(RequestMethod.GET.name());
+                conn.setRequestProperty("Authorization", "Bearer " + access_token);
+
+                int responseCode = conn.getResponseCode();
+                String amsg = conn.getResponseMessage();
+
+                final InputStream in = new BufferedInputStream(conn.getInputStream());
+                //Log.v(getName(), "code: " + responseCode + " " + conn.getURL() + ", amsg: " + amsg + in.toString());
+                JSONObject json = SyncHelper.parse(in);
+                conn.disconnect();
+
+                result.externalId = noNullStr(json.getString("activity_id"));
+                stravaError = noNullStr(json.getString("error"));
+                if (result.externalId != null && stravaError == null) {
+                    result = Status.OK;
+                    result.externalIdStatus = ExternalIdStatus.OK;
+                }
+            }
+        } catch (IOException e) {
+            ex = e;
+        } catch (JSONException e) {
+            ex = e;
+        }
+
         if (ex != null) {
             ex.printStackTrace();
         }
-        return s;
+
+        if (result.externalId == null || stravaError != null) {
+            Log.i(getName(), "Failed to get Strava Id:" + result.externalId + " error: " +
+                    stravaError + " (" + remainingAttempts + ")");
+        }
+        return result;
+    }
+
+    @Override
+    public String getActivityUrl(String extId) {
+        return PUBLIC_URL + "/activities/" + extId;
     }
 
     @Override
