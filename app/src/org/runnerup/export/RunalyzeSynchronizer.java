@@ -299,9 +299,8 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     protected Status login() {
         OutputStreamWriter writer = null;
         try {
-            Log.v(getName(), "Login enter");
             URL url = new URL(_url + (_version3? "/en/login_check" : "/login.php"));
-            //Log.v(getName(), "URL=" + url);
+            Log.v(getName(), "Login enter:" + url.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setInstanceFollowRedirects(false);
@@ -319,14 +318,14 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             conn.connect();
             String response = getResponse(conn.getInputStream());
             // v3 just redirects you again to /en/login so check it
-            if (conn.getResponseCode() == 302 && !response.contains("/en/login")) {
+            if (conn.getResponseCode() == 302 || !response.contains("/en/login")) {
                 clearCookies();
                 getCookies(conn);
                 Log.v(getName(), "Login exit OK");
                 return Status.OK;
             } else {
-                Log.e(getName(), "Invalid response code " + conn.getResponseCode());
-                Log.d(getName(), "Login exit ERROR");
+                Log.e(getName(), "Invalid login response code: " + conn.getResponseCode());
+                //Log.d(getName(), "Login exit ERROR");
                 return Status.ERROR;
             }
         } catch(MalformedURLException e) {
@@ -523,7 +522,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             //Log.v(getName(), "URL=" + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setInstanceFollowRedirects(false);
+            conn.setInstanceFollowRedirects(true);
             conn.setDoOutput(true);
             addCookies(conn);
             writer = new OutputStreamWriter(conn.getOutputStream());
@@ -531,7 +530,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             writer.flush();
             conn.connect();
             String response = getResponse(conn.getInputStream());
-            if (conn.getResponseCode() != 200 || !response.contains("The activity has been successfully created.")) {
+            if (conn.getResponseCode() != 200 /*|| !response.contains("The activity has been successfully created.")*/) {
                 Log.e(getName(), "Error code: " + conn.getResponseCode());
                 cookies.clear();
                 return Status.ERROR;
