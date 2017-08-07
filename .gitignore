@@ -1,9 +1,6 @@
 # Local configuration file (sdk path, etc)
 local.properties
 
-# imported code
-libs/
-
 # Gedit temp files
 *~
 
