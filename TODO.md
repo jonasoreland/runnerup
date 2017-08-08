@@ -1,12 +1,14 @@
 # Todo list
 
+This list is not maintained, see the issue list and GitHub projects.
+
 * [X] make GUI translatable
 <img border="0" src="https://www.transifex.com/projects/p/runner-up-android/resource/stringsxml/chart/image_png"/><br/><a target="_blank" href="https://www.transifex.com/projects/p/runner-up-android/resource/stringsxml/"><img border="0" src="https://ds0k0en9abmn1.cloudfront.net/static/charts/images/tx-logo-micro.646b0065fce6.png"/></a>
 * [X] audio translations
 <img border="0" src="https://www.transifex.com/projects/p/runner-up-android/resource/cuesxml/chart/image_png"/><br/><a target="_blank" href="https://www.transifex.com/projects/p/runner-up-android/resource/cuesxml/"><img border="0" src="https://ds0k0en9abmn1.cloudfront.net/static/charts/images/tx-logo-micro.646b0065fce6.png"/></a>
 * [X] auto pause
 * [ ] lock screen widget
-* [ ] GUI/colors rework (GUI is everything when publishing on Market). I think RunKeeper's GUI/colors is great!
+* [ ] GUI/colors rework (GUI is everything when publishing on Play). I think RunKeeper's GUI/colors is great!
 * [X] map view
 * [X] pace graph
 * [X] workout wizard ala Garmin 410
@@ -45,6 +47,6 @@
 * [X] audio cues settings: step time/distance/pace
 * [X] audio cues settings: activity/step/lap summaries
 * [ ] add more downloaders (see web-services.txt for docs)
-* [ ] fix so that external ID is populated on upload (and checked on download)
+* [ ] fix so that external ID is populated on upload (and checked on download) (partially done)
 * [ ] unify code for unique-ing activities between feed and download
 * [ ] preview/edit mode for wear
