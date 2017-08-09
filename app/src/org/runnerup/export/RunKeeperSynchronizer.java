@@ -86,6 +86,8 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     private static String REST_URL = "https://api.runkeeper.com";
 
+    //TODO Feed was implemented with an unsupported API and is not working
+    private final Boolean enableFeed = false;
     private static final String FEED_TOKEN_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/login";
     private static final String FEED_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/getFeedItems";
     private static final String FEED_ITEM_TYPES = "[ 0 ]"; // JSON array
@@ -273,7 +275,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return s;
         }
 
-        if (feed_access_token == null && (feed_username != null && feed_password != null)) {
+        if (enableFeed && feed_access_token == null && (feed_username != null && feed_password != null)) {
             return getFeedAccessToken();
         }
 
@@ -461,6 +463,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
             case FEED:
+                return enableFeed;
             case UPLOAD:
             case ACTIVITY_LIST:
             case GET_ACTIVITY:
@@ -574,7 +577,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return s;
     }
 
-    //TODO This is not according to RunKeeper documentation, probably not working
     @Override
     public Status getFeed(FeedUpdater feedUpdater) {
         Status s = Status.NEED_AUTH;
