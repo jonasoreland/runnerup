@@ -2,7 +2,7 @@
 local.properties
 
 # imported code
-libs/
+hrdevice/libs/samsung_ble_sdk_200.jar
 
 # Gedit temp files
 *~
@@ -11,6 +11,7 @@ libs/
 .gradle/
 .idea/
 build/
+gen/
 
 # Intellij files (Android Studio)
 *.iml
