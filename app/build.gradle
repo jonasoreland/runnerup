@@ -88,10 +88,8 @@ android {
         checkReleaseBuilds true
         //promote to error, must be handled
         fatal 'InlinedApi', 'InconsistentArrays'
-        //TODO: See GradleCompatible comments, check manually with ./gradlew app:dependencies
+        //Remove with AS3: https://issuetracker.google.com/issues/37131435
         warning 'GradleCompatible'
-        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
-        warning 'RestrictedApi'
         // Ignore some specific checks completely
         //All translations will not be complete
         ignore 'MissingTranslation'
@@ -124,10 +122,9 @@ dependencies {
     compile project(':hrdevice')
     latestWearApp project(':wear')
 
-    //Lint bug: https://code.google.com/p/android/issues/detail?id=231323
     latestCompile "com.android.support:design:${rootProject.ext.supportLibrary}"
 
-    //Lint bug: https://code.google.com/p/android/issues/detail?id=231321
+    //Lint bug: https://issuetracker.google.com/issues/37131433
     //noinspection GradleDependency
     froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
 

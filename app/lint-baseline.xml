@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="4" by="lint 3.0.0-alpha8">
+<issues format="4" by="lint 2.3.3">
+
+    <issue
+        id="GradleCompatible"
+        message="All com.android.support libraries must use the exact same version specification (mixing versions can lead to runtime crashes). Found versions 25.3.1, 24.1.0. Examples include `com.android.support:animated-vector-drawable:25.3.1` and `com.android.support:support-v4:24.1.0`">
+        <location
+            file="build.gradle"/>
+    </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.android.support:design than 25.3.1 is available: 26.0.0"
-        errorLine1="    latestCompile &quot;com.android.support:design:${rootProject.ext.supportLibrary}&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="A newer version of com.google.android.gms:play-services-wearable than 10.2.1 is available: 11.0.4"
+        errorLine1="    latestCompile &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="128"
+            line="131"
             column="5"/>
     </issue>
 
