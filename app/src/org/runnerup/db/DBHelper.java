@@ -130,7 +130,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACCOUNT.URL + " text, ")
             + (DB.ACCOUNT.FORMAT + " text not null, ") //Remove not null
             + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ")
-            + (DB.ACCOUNT.ENABLED + " integer not null default 1,")
+            + (DB.ACCOUNT.ENABLED + " integer not null default 1,") //Account is not hidden/disabled
             + (DB.ACCOUNT.AUTH_METHOD + " text not null, ") //no longer used
             + (DB.ACCOUNT.AUTH_CONFIG + " text, ")
             + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ") //no longer used
@@ -393,6 +393,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
         values.put(DB.ACCOUNT.URL, GarminSynchronizer.PUBLIC_URL);
+        values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -474,6 +475,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.ICON, R.drawable.a8_runneruplive);
         values.put(DB.ACCOUNT.URL, RunnerUpLiveSynchronizer.PUBLIC_URL);
         values.put(DB.ACCOUNT.FLAGS, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
+        values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -499,6 +501,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
         values.put(DB.ACCOUNT.URL, RuntasticSynchronizer.PUBLIC_URL);
+        values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
         //DBVERSION 27
@@ -508,6 +511,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
         values.put(DB.ACCOUNT.URL, GoogleFitSynchronizer.PUBLIC_URL);
+        values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
         //DBVERSION 28
@@ -518,6 +522,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
         values.put(DB.ACCOUNT.URL, RunningFreeOnlineSynchronizer.PUBLIC_URL);
         //values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
+        values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
         //DBVERSION 29

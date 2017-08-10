@@ -20,4 +20,8 @@
         android:id="@+id/menu_tab_format"
         android:orderInCategory="100"
         android:title="@string/Table_format" />
+    <item
+        android:id="@+id/menu_show_disabled"
+        android:title="@string/Show_disabled_accounts"
+        android:checkable="true" />
 </menu>

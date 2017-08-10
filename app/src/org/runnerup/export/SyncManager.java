@@ -242,6 +242,8 @@ public class SyncManager {
             synchronizer.init(config);
             synchronizers.put(synchronizerName, synchronizer);
             synchronizersById.put(synchronizer.getId(), synchronizer);
+        } else {
+            Log.e(getClass().getName(), "Synchronizer not found for " + synchronizerName);
         }
         return synchronizer;
     }

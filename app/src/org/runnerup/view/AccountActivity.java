@@ -102,7 +102,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
         {
             Button btn = (Button) findViewById(R.id.account_download_button);
-            if (upd.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) && upd.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
+            if (upd != null && upd.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) && upd.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
                 btn.setOnClickListener(downloadButtonClick);
             } else {
                 btn.setVisibility(View.GONE);
@@ -131,7 +131,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     void fillData() {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
-        String[] from = new String[] {
+        String[] from = new String[]{
                 "_id",
                 DB.ACCOUNT.NAME,
                 DB.ACCOUNT.URL,
@@ -175,7 +175,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
                 //TODO SDK 24 requires the file URI to be handled as FileProvider
                 //Something like OI File Manager is needed too
-                if(Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.NAME).equals(FileSynchronizer.NAME)) {
+                if (Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.NAME).equals(FileSynchronizer.NAME)) {
                     btn.setOnClickListener(urlButtonClick);
                 }
                 btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));

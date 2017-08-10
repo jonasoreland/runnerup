@@ -347,8 +347,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     + (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
                     + ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
                     + mID + " )")
-                    + (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
-                    + ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null");
+                    //Note: Show also accounts that are not enabled
+                    + (" WHERE acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null");
 
             Cursor c = mDB.rawQuery(sql, null);
             alreadySynched.clear();
