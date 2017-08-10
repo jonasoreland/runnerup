@@ -1,3 +1,6 @@
+NetBeans IDE is not officially supported, this guide is not maintained.
+See the Android Studio for more details.
+
 Building with NetBeans IDE is quite easy. Just follow these steps:
 
     1. Run the following command to get all submodules:

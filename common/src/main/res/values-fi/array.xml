@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string-array name="unitEntries">
+    <item>Mailit</item>
+    <item>Kilometrit</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>mi</item>
+    <item>km</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Lämmittely</item>
+    <item>Aktiivinen</item>
+    <item>Lepo</item>
+    <item>Palautuminen</item>
+    <item>Viilentyminen</item>
+  </string-array>
+  <string-array name="duration_types">
+    <item>Kunnes painettu</item>
+    <item>Aika</item>
+    <item>Matka</item>
+  </string-array>
+  <string-array name="target_types">
+    <item>Ei mitään</item>
+    <item>Vauhti</item>
+    <item>Sykealue</item>
+  </string-array>
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Juokseminen</item>
+    <item>Pyöräily</item>
+    <item>Muu</item>
+    <item>Suunnistus</item>
+    <item>Kävely</item>
+  </string-array>
+  <string-array name="types">
+    <item>Aika</item>
+    <item>Matka</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Mies</item>
+    <item>Nainen</item>
+  </string-array>
+</resources>

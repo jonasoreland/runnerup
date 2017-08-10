@@ -25,13 +25,17 @@
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Hr</string>
   <!--format hint stuff-->
+  <string name="Maximum_heart_rate_MHR">Ritme cardíac màxim (MHR)</string>
+  <string name="Target_pace_HHMMSS">Ritme objectiu</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s a %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <!--other-->
   <string name="Google_Play_Services_Legal_Notices">Termes legals dels serveis de Google</string>
   <string name="Type">Tipus</string>
   <string name="active">actiu</string>
+  <string name="rest">descans</string>
   <string name="recovery">recuperació</string>
   <string name="warm_up">escalfament</string>
   <string name="cool_down">refredament</string>
@@ -40,10 +44,16 @@
   <string name="distance">distància</string>
   <string name="Distance">Distància</string>
   <string name="speed">velocitat</string>
+  <string name="pace">ritme</string>
+  <string name="heart_rate_zone">zona de freqüència cardíaca</string>
+  <string name="cadence">cadència</string>
+  <string name="temperature">temperatura</string>
+  <string name="pressure">pressió</string>
   <string name="Zone">Zona</string>
   <string name="Device">Dispositiu</string>
   <string name="Start_hour">Hora d\'inici</string>
   <string name="Heart_rate">Ritme cardíac</string>
+  <string name="Pace">Ritme</string>
   <string name="Connect">Connecta</string>
   <string name="Connecting">Connectant</string>
   <string name="Download">Baixa</string>
@@ -63,6 +73,7 @@
   <string name="Target">Objectiu</string>
   <string name="Target_heart_rate_zone">Zona de freqüència cardíaca</string>
   <string name="Interval_type">Tipus d\'interval</string>
+  <string name="Rest_type">Tipus de descans</string>
   <string name="Repetitions">Repeticions</string>
   <string name="Date">Data</string>
   <string name="GPS_satellites">Satèl·lits GPS</string>
@@ -76,6 +87,9 @@
   <string name="Password">Contrasenya</string>
   <string name="Show_password">Mostra la contrasenya</string>
   <string name="intensity">intensitat</string>
+  <string name="Step_intensity">Intensitat de petjada</string>
+  <string name="Low_pace">Ritme baix</string>
+  <string name="High_pace">Ritme alt</string>
   <string name="Sex">Sexe</string>
   <string name="upload">penja</string>
   <string name="Notes">Comentaris</string>
@@ -117,7 +131,9 @@
   <string name="Waiting_for_GPS">S\'està esperant el GPS</string>
   <string name="Start_activity">Inicia l\'activitat</string>
   <string name="Scanning">S\'està analitzant</string>
+  <string name="Icon_list">Llista d\'icones</string>
   <string name="Problem">Error</string>
+  <string name="Edit_step">Editar pas</string>
   <string name="Great">Enhorabona!</string>
   <string name="Yes">Sí</string>
   <string name="Create">Crea</string>
@@ -154,7 +170,9 @@
   <string name="Lap_distance">Distància per volta</string>
   <string name="Lap_time">Temps per volta</string>
   <string name="Lap_speed">Velocitat per volta</string>
+  <string name="Current_pace">Ritme actual</string>
   <string name="Current_speed">Velocitat actual</string>
+  <string name="Current_heart_rate">Freqüència cardíaca actual</string>
   <string name="Android_text_to_speech_settings">Opcions de veu d\'Android</string>
   <string name="Start">Inicia</string>
   <string name="History">Historial</string>
@@ -162,9 +180,13 @@
   <string name="Advanced">Avançat</string>
   <string name="Manual">Manual</string>
   <string name="Battery_level">Nivell de la bateria</string>
+  <string name="Activity_ready">Activitat disponible</string>
+  <string name="Ready_to_start_running">Preparat per començar a córrer!</string>
   <string name="Searching_for_GPS">S\'està cercant el GPS…</string>
   <string name="Warning">Atenció</string>
   <string name="Do_not_show_again">No tornis a mostrar</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Esperant al telèfon</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Desant al telèfon</string>
   <string name="Save">Desa</string>
   <string name="Add_step">Afegeix un pas</string>
   <string name="Add_repeat">Afegeix una repetició</string>
@@ -172,6 +194,7 @@
   <string name="Failed_to_create_workout">Ha fallat en crear l\'entrenament</string>
   <string name="Website">Web</string>
   <string name="Automatic_upload">Penja automàticament</string>
+  <string name="Live">En viu</string>
   <string name="Include_map_in_post">Inclou el mapa a la publicació</string>
   <string name="Clear_uploads_from_phone">Neteja els enviaments (del telèfon)</string>
   <string name="my_phone">El meu telèfon</string>
@@ -192,5 +215,17 @@
   <string name="Uploading_to_1s">S\'està penjant a %1$s</string>
   <string name="Loading_activities">S\'estan carregant les activitats</string>
   <string name="Fetching_activities_from_1s">S\'estan baixant els entrenaments des de %1$s</string>
+  <string name="Unused_currently">Actualment no s\'utilitza</string>
   <string name="Unknown">Desconegut</string>
+  <string name="Recording">Gravant</string>
+  <string name="Sensors">Sensors</string>
+  <string name="Maintenance">Manteniment</string>
+  <string name="cue_hrm_connection_restored">S\'ha restaurat la connexió al monitor de freqüència cardíaca</string>
+  <string name="cue_hrm_connection_lost">S\'ha perdut la connexió al monitor de freqüència cardíaca</string>
+  <string name="log_extended_gps_summary">Exportar només en GPX</string>
+  <string name="use_step_sensor_summary">Utilitzar per cadència</string>
+  <string name="use_temperature_sensor">Sensor de temperatura</string>
+  <string name="use_pressure_sensor_title">Sensor de pressió</string>
+  <string name="use_pressure_sensor_summary">Utilitzar baròmetre per calcular elevació</string>
+  <string name="google_play_not_installed">Google Play Services no està instal·lat</string>
 </resources>

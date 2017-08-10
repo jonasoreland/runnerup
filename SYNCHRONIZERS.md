@@ -6,11 +6,12 @@
 | Endomondo    | OK     |          | OK     | Running/Walking/Biking/Orienteering/Other |
 | Facebook     | OK     |          |        | Running/Walking/Biking/Orienteering       |
 | FunBeat      | OK     |          | OK     | Running                                   |
-| Garmin       | OK     |          |        | Running/Walking/Biking/Other              |
-| GoogleFit    | ??     | ??       | ??     | Running/Walking/Biking/Orienteering/Other |
+| Garmin       | No     |          |        | Running/Walking/Biking/Other              |
+| GoogleFit    | No     |          |        | Running/Walking/Biking/Orienteering/Other |
 | jogg.se      | OK     |          |        | Running                                   |
 | MapMyRun     | OK     |          |        | Running/Biking                            |
 | Nike+        | OK     |          | OK     | Running                                   |
+| Runalyze     | No     |          |        | Running/Walking/Biking/Other              |
 | RunKeeper    | OK     | OK       | BROKEN | Running/Walking/Biking/Other              |
 | RunningAHEAD | OK     |          |        | Running/Biking/Other                      |
 | Runtastic    | BROKEN |          |        | Running/Biking/Other                      |

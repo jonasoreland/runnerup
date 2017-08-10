@@ -9,37 +9,30 @@ An open source run tracker for Android.
 
 Inspiration Garmin 410, RunKeeper and Everywhere Run.
 
-
-### Chat
-
-https://gitter.im/jonasoreland/runnerup
-
 ## Features
 
 * GPL.
-* Mediocre GUI.
+* Support Heart Rate sensors for Bluetooth LE, ANT+ and a few other protocols as well as phone internal sensors like step sensor and barometer.
 * Highly configurable audio cues.
-* Messy code (my first android project even and first Java project in +10 years).
 * Automatic upload, download and feed updates from various providers including Digifit, Endomondo, Facebook, FunBeat, Garmin, GoogleFit, jogg.se, MapMyRun, Nike, RunKeeper, RunningAHEAD, Runtastic, Strava ([see here for details](SYNCHRONIZERS.md)).
 * Interval wizard (ala Garmin 410).
-* Download workouts from Garmin Connect.
+* Mediocre GUI.
+* Messy code (my first android project even and first Java project in +10 years).
 * Great ideas for future features.
+* Support Android 2.2 and later but versions earlier than Android 4.0.3 do not include graphs, maps and elevation GeoId correction.
 
 ## Release
 Releases can be downloaded either:
 
-* on the [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
-* on [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup).
-* directly on [GitHub](https://github.com/jonasoreland/runnerup/releases).
+* [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
+* [Play beta](https://plus.google.com/communities/112040124647770742805).
+* [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup). (Only the 4.0.3 and later versions)
+* [GitHub](https://github.com/jonasoreland/runnerup/releases). (Not all versions.)
 
 [![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup)
 
 ## Build
-Depending on your IDE, see according documentation:
-
-* for Android Studio, please see [how to build with Android Studio](Documentation/howto-build-with-android-studio.txt).
-* for NetBeans IDE, please see [how to build with NetBeans IDE](Documentation/howto-build-with-netbeans-ide.txt).
-* for Eclipse, please see [how to build with Eclipse](Documentation/howto-build-with-eclipse.txt). __UPDATE: Eclipse is currently broken__.
+See [CONTRIBUTING](CONTRIBUTING.md)
 
 ## Dependencies
 * [Ant Plugin](http://www.thisisant.com): Used to retrieve heart rate monitor data.
@@ -63,7 +56,7 @@ Thanks for asking! You can check [TODO list](TODO.md) and [open issues](https://
 Interested in helping to translate RunnerUp? Contribute [on Transifex](https://www.transifex.com/projects/p/runner-up-android).
 
 ## License
-This project is under GNU GPL v3. See [LICENSE](LICENSE.md) for more information.
+This project is under GNU GPL v3. See [LICENSE](LICENSE) for more information.
 
 ## Donations
 If your already donate to <a href="http://www.unhcr.org">UNHCR</a>, <a href="http://www.unicef.org/">UNICEF</a> and/or other important things, you might donate using paypal <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=runnerup%2eandroid%40gmail%2ecom&lc=US&item_name=RunnerUp&button_subtype=services&currency_code=EUR&tax_rate=25%2e000&bn=PP%2dBuyNowBF%3abtn_buynow_LG%2egif%3aNonHosted"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="[paypal]" /></a>.

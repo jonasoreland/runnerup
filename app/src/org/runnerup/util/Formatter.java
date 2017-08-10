@@ -122,7 +122,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             return result;
         }
 
-        public String getQuantityString(int id, int quantity, Object ... formatArgs) throws Resources.NotFoundException {
+        //General getQuantityString accepts "Object ...", limit to exactly one argument (current use) to avoid runtime crashes
+        public String getQuantityString(int id, int quantity, Object formatArgs) throws Resources.NotFoundException {
             setLang(audioLocale);
             String result = resources.getQuantityString(id, quantity, formatArgs);
             setLang(defaultLocale);
@@ -385,7 +386,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE_SHORT:
             case CUE_LONG:
                 return Integer.toString((int) Math.round(val)) + " "
-                        + cueResources.getQuantityString(R.plurals.cue_bpm, (int)val);
+                        + cueResources.getQuantityString(R.plurals.cue_bpm, (int)val, (int)val);
             case TXT:
             case TXT_SHORT:
             case TXT_LONG:
@@ -591,7 +592,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                         .append(resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
                 s.append(val).append(" ")
-                        .append(cueResources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val));
+                        .append(cueResources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, (int)val));
             }
         } else {
             if (txt)
