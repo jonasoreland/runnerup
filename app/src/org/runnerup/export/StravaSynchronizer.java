@@ -211,9 +211,6 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return stravaType;
     }
 
-    //JSON getString() interprets null as the string "null"
-    private static String noNullStr(String s) { return ("null".equals(s)) ? null : s; }
-
     private class ActivityDbInfo {
         String desc;
         String stravaType;

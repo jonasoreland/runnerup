@@ -685,8 +685,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         final String name = (String) arg0.getTag();
         if (synchedExternalId.containsKey(name)) {
             String url = syncManager.getSynchronizerByName(name).getActivityUrl(synchedExternalId.get(name));
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(browserIntent);
+            if (url != null) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+            }
         }
     }
 
