@@ -340,7 +340,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     + ("  acc." + DB.ACCOUNT.NAME + ", ")
                     + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
                     + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
-                    + ("  acc." + DB.ACCOUNT.FORMAT + ", ")
                     + ("  rep._id as repid, ")
                     + ("  rep." + DB.EXPORT.ACCOUNT + ", ")
                     + ("  rep." + DB.EXPORT.ACTIVITY + ", ")

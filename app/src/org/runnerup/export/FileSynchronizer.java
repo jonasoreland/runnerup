@@ -24,6 +24,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
@@ -45,7 +47,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
     private long id = 0;
     private String mPath;
     private String mFormat;
-    
+
     FileSynchronizer() {
     }
 
@@ -77,15 +79,31 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     @Override
     public void init(ContentValues config) {
-        //Temporary format until database is updated, URL is in AUTH_CONFIG
-        mPath = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-        mFormat = config.getAsString(DB.ACCOUNT.FORMAT);
+        String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        if (authConfig != null) {
+            try {
+                JSONObject tmp = new JSONObject(authConfig);
+                mPath = tmp.optString(DB.ACCOUNT.URL, null);
+                mFormat = tmp.optString(DB.ACCOUNT.FORMAT);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         id = config.getAsLong("_id");
     }
 
     @Override
     public String getAuthConfig() {
-        return mPath;
+        JSONObject tmp = new JSONObject();
+        if (isConfigured()) {
+            try {
+                tmp.put(DB.ACCOUNT.URL, mPath);
+                tmp.put(DB.ACCOUNT.FORMAT, mFormat);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return tmp.toString();
     }
 
     @Override
