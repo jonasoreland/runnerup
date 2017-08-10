@@ -93,6 +93,7 @@ android {
     lintOptions {
         //disable specific checks for specific paths
         lintConfig file("lint.xml")
+        baseline file("lint-baseline.xml")
         checkReleaseBuilds true
         //promote to error, must be handled
         fatal 'InlinedApi', 'InconsistentArrays'
