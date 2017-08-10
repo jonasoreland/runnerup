@@ -25,6 +25,11 @@ public interface Constants {
 
         public static final String PRIMARY_KEY = "_id";
 
+        interface DBINFO {
+            String TABLE = "dbinfo";
+            String ACCOUNT_VERSION = "account_version";
+        }
+
         public interface ACTIVITY {
             public static final String TABLE = "activity";
             public static final String START_TIME = "start_time";
@@ -116,15 +121,12 @@ public interface Constants {
         public interface ACCOUNT {
             public static final String TABLE = "account";
             public static final String NAME = "name";
-            public static final String URL = "url";
-            public static final String DESCRIPTION = "description";
-            public static final String FORMAT = "format";
             public static final String FLAGS = "default_send";
             public static final String ENABLED = "enabled";
-            public static final String AUTH_METHOD = "auth_method";
             public static final String AUTH_CONFIG = "auth_config";
-            public static final String ICON = "icon";
-            public static final String AUTH_NOTICE = "auth_notice";
+
+            public static final String URL = "url";
+            public static final String FORMAT = "format";
 
             public static final int FLAG_UPLOAD = 0;
             public static final int FLAG_FEED = 1;
