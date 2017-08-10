@@ -112,9 +112,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 DB.ACCOUNT.URL,
                 DB.ACCOUNT.DESCRIPTION,
                 DB.ACCOUNT.ENABLED,
-                DB.ACCOUNT.ICON,
                 DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.AUTH_NOTICE,
                 DB.ACCOUNT.FLAGS
         };
 
@@ -175,15 +173,14 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
             boolean configured = mSyncManager.isConfigured(id);
             if (!mTabFormat) {
-                if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
+                if (synchronizer.getIconId() == 0) {
                     accountIcon.setVisibility(View.GONE);
                     accountNameText.setVisibility(View.VISIBLE);
                     accountNameText.setText(tmp.getAsString(DB.ACCOUNT.NAME));
                 } else {
                     accountIcon.setVisibility(View.VISIBLE);
                     accountNameText.setVisibility(View.GONE);
-                    accountIcon.setBackgroundResource(tmp
-                            .getAsInteger(DB.ACCOUNT.ICON));
+                    accountIcon.setBackgroundResource(synchronizer.getIconId());
                 }
                 accountUploadBox.setVisibility(View.GONE);
                 accountFeedBox.setVisibility(View.GONE);

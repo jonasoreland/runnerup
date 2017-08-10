@@ -49,6 +49,7 @@ import android.widget.TextView;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
+import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
@@ -137,9 +138,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 DB.ACCOUNT.DESCRIPTION,
                 DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.FLAGS,
-                DB.ACCOUNT.ICON,
-                DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.AUTH_METHOD
+                DB.ACCOUNT.AUTH_CONFIG
         };
 
         String args[] = {
@@ -158,14 +157,14 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 ImageView im = (ImageView) findViewById(R.id.account_list_icon);
                 TextView tv = (TextView) findViewById(R.id.account_list_name);
                 tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-                if (c.isNull(c.getColumnIndex(DB.ACCOUNT.ICON))) {
+                if (synchronizer.getIconId() == 0) {
                     im.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                 } else {
                     im.setVisibility(View.VISIBLE);
                     tv.setVisibility(View.GONE);
-                    im.setBackgroundResource(tmp.getAsInteger(DB.ACCOUNT.ICON));
-                    synchronizerIcon = tmp.getAsInteger(DB.ACCOUNT.ICON);
+                    im.setBackgroundResource(synchronizer.getIconId());
+                    synchronizerIcon = synchronizer.getIconId();
                 }
             }
 
@@ -174,9 +173,9 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             if (tmp.containsKey(DB.ACCOUNT.URL)) {
                 Button btn = new Button(this);
                 btn.setText(tmp.getAsString(DB.ACCOUNT.URL));
-                //TODO SDK 24 requires the file URI to be handled as FileProvider, don't care yet
-                //For <= 24, something like OI File Manager is needed too
-                if(Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.AUTH_METHOD).contains("filepermission")) {
+                //TODO SDK 24 requires the file URI to be handled as FileProvider
+                //Something like OI File Manager is needed too
+                if(Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.NAME).equals(FileSynchronizer.NAME)) {
                     btn.setOnClickListener(urlButtonClick);
                 }
                 btn.setTag(tmp.getAsString(DB.ACCOUNT.URL));

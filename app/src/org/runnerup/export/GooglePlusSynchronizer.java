@@ -26,6 +26,7 @@ import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -44,6 +45,7 @@ import java.net.URL;
 public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "Google+";
+    public static final String PUBLIC_URL = "https://plus.google.com";
 
     /**
      * @todo register OAuth2Server
@@ -160,6 +162,9 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a12_googleplus;}
 
     @Override
     public void init(ContentValues config) {

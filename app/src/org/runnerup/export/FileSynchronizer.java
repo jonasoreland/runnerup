@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.text.TextUtils;
 
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
@@ -55,6 +56,9 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a16_localfile;}
 
     @Override
     public void init(ContentValues config) {

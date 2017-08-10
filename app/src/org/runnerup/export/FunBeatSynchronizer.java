@@ -26,6 +26,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.TCX;
@@ -61,10 +62,11 @@ import java.util.Map;
 public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "FunBeat";
-    public static final String BASE_URL = "http://www.funbeat.se";
-    public static final String START_URL = BASE_URL + "/index.aspx";
-    public static final String LOGIN_URL = BASE_URL + "/index.aspx";
-    public static final String UPLOAD_URL = BASE_URL
+    public static final String PUBLIC_URL = "http://www.funbeat.se";
+    private static final String BASE_URL = PUBLIC_URL;
+    private static final String START_URL = BASE_URL + "/index.aspx";
+    private static final String LOGIN_URL = BASE_URL + "/index.aspx";
+    private static final String UPLOAD_URL = BASE_URL
             + "/importexport/upload.aspx";
 
     public static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
@@ -117,6 +119,9 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a2_funbeatlogo;}
 
     @Override
     public void init(ContentValues config) {

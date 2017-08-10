@@ -27,6 +27,7 @@ import android.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.FormValues;
@@ -57,8 +58,9 @@ import java.util.Map;
 public class GarminSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Garmin";
+    public static final String PUBLIC_URL = "http://connect.garmin.com";
 
-    public static final String CHOOSE_URL = "http://connect.garmin.com/";
+    private static final String CHOOSE_URL = PUBLIC_URL + "/";
 
     public static final String START_URL = "https://connect.garmin.com/signin";
     public static final String LOGIN_URL = "https://connect.garmin.com/signin";
@@ -95,6 +97,9 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a0_garminlogo;}
 
     @Override
     public void init(ContentValues config) {

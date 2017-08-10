@@ -336,7 +336,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     + ("  acc." + DB.ACCOUNT.NAME + ", ")
                     + ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
                     + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
-                    + ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
                     + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
                     + ("  acc." + DB.ACCOUNT.ENABLED + ", ")
                     + ("  rep._id as repid, ")
@@ -600,7 +599,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             }
 
             ContentValues tmp = reports.get(position);
-            String name = tmp.getAsString("name");
+            String name = tmp.getAsString(DB.ACCOUNT.NAME);
             viewHolder.cb.setChecked(false);
             viewHolder.cb.setEnabled(false);
             viewHolder.cb.setTag(name);

@@ -27,6 +27,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
@@ -48,6 +49,7 @@ import java.util.Locale;
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Strava";
+    public static final String PUBLIC_URL = "http://www.strava.com";
 
     /**
      * @todo register OAuth2Server
@@ -120,6 +122,9 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a10_strava;}
 
     @Override
     public void init(ContentValues config) {

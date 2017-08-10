@@ -67,6 +67,11 @@ public interface Synchronizer {
     String getName();
 
     /**
+     * @return The icon resource id
+     */
+    int getIconId();
+
+    /**
      * Init synchronizer
      *
      * @param config
@@ -168,10 +173,4 @@ public interface Synchronizer {
      * @return A string resource id or null.
      */
     Integer getAuthNotice();
-
-    /**
-     * Set any authorization user notice to be shown when user enters username/password.
-     * @param authNotice String resource id or null.
-     */
-    void setAuthNotice(Integer authNotice);
 }

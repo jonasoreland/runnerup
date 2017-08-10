@@ -26,6 +26,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.GPX;
@@ -60,6 +61,7 @@ import java.util.TimeZone;
 public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Nike+";
+    public static final String PUBLIC_URL = "http://nikeplus.nike.com";
     private static String CLIENT_ID = null;
     private static String CLIENT_SECRET = null;
     private static String APP_ID = null;
@@ -106,6 +108,9 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a4_nikeplus;}
 
     @Override
     public void init(ContentValues config) {

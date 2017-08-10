@@ -27,6 +27,7 @@ import android.util.Patterns;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.FormValues;
@@ -50,11 +51,12 @@ import java.util.regex.Matcher;
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
-    public static final String BASE_URL = "https://www.runtastic.com";
-    public static final String START_URL = BASE_URL + "/en/login";
-    public static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";
-    public static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
-    public static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
+    public static final String PUBLIC_URL = "http://www.runtastic.com";
+    private static final String BASE_URL = "https://www.runtastic.com";
+    private static final String START_URL = BASE_URL + "/en/login";
+    private static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";
+    private static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
+    private static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
 
     long id = 0;
     private String username = null;
@@ -86,6 +88,9 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a13_runtastic;}
 
     @Override
     public void init(ContentValues config) {

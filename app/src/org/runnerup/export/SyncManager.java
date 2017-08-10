@@ -240,7 +240,6 @@ public class SyncManager {
                 }
             }
             synchronizer.init(config);
-            synchronizer.setAuthNotice(config.getAsInteger(Constants.DB.ACCOUNT.AUTH_NOTICE));
             synchronizers.put(synchronizerName, synchronizer);
             synchronizersById.put(synchronizer.getId(), synchronizer);
         }
@@ -406,7 +405,7 @@ public class SyncManager {
                         : InputType.TYPE_TEXT_VARIATION_PASSWORD));
             }
         });
-        if (sync.getAuthNotice() != null) {
+        if (sync.getAuthNotice() != 0) {
             tvAuthNotice.setVisibility(View.VISIBLE);
             tvAuthNotice.setText(sync.getAuthNotice());
         } else {
@@ -514,16 +513,14 @@ public class SyncManager {
         path += File.separator + "RunnerUp";
         tv1.setText(path);
 
-        String s = "";
         if(!checkStoragePermissions(mActivity)) {
-            s = "Note: Storage permission must be granted in Android settings";
-        }
-        if (sync.getAuthNotice() != null) {
-            s += sync.getAuthNotice();
-        }
-        if ("".equals(s)) {
+            String s = "Note: Storage permission must be granted in Android settings";
             tvAuthNotice.setVisibility(View.VISIBLE);
             tvAuthNotice.setText(s);
+        }
+        else if (sync.getAuthNotice() != 0) {
+            tvAuthNotice.setVisibility(View.VISIBLE);
+            tvAuthNotice.setText(sync.getAuthNotice());
         } else {
             tvAuthNotice.setVisibility(View.GONE);
         }
@@ -1297,7 +1294,6 @@ public class SyncManager {
         String[] from = new String[] {
                 "_id",
                 DB.ACCOUNT.NAME,
-                DB.ACCOUNT.ENABLED,
                 DB.ACCOUNT.AUTH_CONFIG,
                 DB.ACCOUNT.FLAGS
         };
