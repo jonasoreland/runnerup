@@ -255,4 +255,8 @@ public abstract class DefaultSynchronizer implements Synchronizer {
 
     @Override
     public String getActivityUrl(String extId) { return null; }
+
+    //Common helper
+    //JSON getString() interprets null as the string "null"
+    public static String noNullStr(String s) { return ("null".equals(s)) ? null : s; }
 }
