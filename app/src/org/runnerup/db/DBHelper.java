@@ -537,6 +537,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a17_runalyze);
         //values.put(DB.ACCOUNT.URL, RunalyzeSynchronizer.PUBLIC_URL);
+        values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
     }
 
