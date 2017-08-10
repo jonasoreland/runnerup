@@ -149,12 +149,8 @@ public class HRManager {
                 .getBoolean(res.getString(R.string.pref_bt_experimental), false);
         boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
 
-        if (experimental) {
-            /* dummy if to remove warning on experimental */
-        }
-
         List<HRProvider> providers = new ArrayList<HRProvider>();
-        if (checkSamsungBLELibrary()) {
+        if (experimental && checkSamsungBLELibrary()) {
             providers.add(createProviderByReflection("org.runnerup.hr.SamsungBLEHRProvider", ctx));
         }
 
@@ -162,11 +158,11 @@ public class HRManager {
             providers.add(new AndroidBLEHRProvider(ctx));
         }
 
-        if (Bt20Base.checkLibrary(ctx)) {
+        if (experimental && Bt20Base.checkLibrary(ctx)) {
             providers.add(new Bt20Base.ZephyrHRM(ctx));
         }
 
-        if (Bt20Base.checkLibrary(ctx)) {
+        if (experimental && Bt20Base.checkLibrary(ctx)) {
             providers.add(new Bt20Base.PolarHRM(ctx));
         }
 
