@@ -38,7 +38,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -54,7 +53,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
-import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Synchronizer.AuthMethod;
@@ -72,7 +70,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -629,15 +626,20 @@ public class SyncManager {
                     case CANCEL:
                         disableSynchronizer(disableSynchronizerCallback, synchronizer, false);
                         return;
+
                     case SKIP:
                     case ERROR:
                     case INCORRECT_USAGE:
                         nextSynchronizer();
                         return;
+
                     case OK:
-                        syncOK(synchronizer, copySpinner, copyDB, mID);
+                        result.activityId = mID; //Not always set
+                        syncOK(synchronizer, copySpinner, copyDB, result);
+                        getExternalId(synchronizer, copyDB, result);
                         nextSynchronizer();
                         return;
+
                     case NEED_AUTH: // should be handled inside connect "loop"
                         handleAuth(new Callback() {
                             @Override
@@ -666,6 +668,31 @@ public class SyncManager {
         }.execute(synchronizer);
     }
 
+    /**
+     * Fetch external identifiers for the services. This is done after normal upload has finished by polling
+     * The result is seen in activity upload only (clickable link).
+     * @param synchronizer
+     * @param copyDB
+     * @param status
+     */
+    private static void getExternalId(final Synchronizer synchronizer, final SQLiteDatabase copyDB, final Synchronizer.Status status){
+        if(status.externalIdStatus == Synchronizer.ExternalIdStatus.PENDING) {
+            new AsyncTask<Void, Void, Synchronizer.Status>() {
+
+                @Override
+                protected Synchronizer.Status doInBackground(Void... args) {
+                    return synchronizer.getExternalId(copyDB, status);
+                }
+
+                @Override
+                protected void onPostExecute(Synchronizer.Status result) {
+                    //the external status is updated, check
+                    externalIdOK(synchronizer, copyDB, result);
+                }
+            }.execute();
+        }
+    }
+
     private final Callback disableSynchronizerCallback = new Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
@@ -674,13 +701,23 @@ public class SyncManager {
     };
 
     private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
-                        long id) {
+                        Synchronizer.Status status) {
         copySpinner.setMessage(getResources().getString(R.string.Saving));
         ContentValues tmp = new ContentValues();
         tmp.put(DB.EXPORT.ACCOUNT, synchronizer.getId());
-        tmp.put(DB.EXPORT.ACTIVITY, id);
-        tmp.put(DB.EXPORT.STATUS, 0);
+        tmp.put(DB.EXPORT.ACTIVITY, status.activityId);
+        tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
+        tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
         copyDB.insert(DB.EXPORT.TABLE, null, tmp);
+    }
+
+    private static void externalIdOK(Synchronizer synchronizer, SQLiteDatabase copyDB,
+                               Synchronizer.Status status) {
+        ContentValues tmp = new ContentValues();
+        tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
+        tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
+        String[] args = { Long.toString(synchronizer.getId()), Long.toString(status.activityId) };
+        copyDB.update(DB.EXPORT.TABLE, tmp, DB.EXPORT.ACCOUNT + "= ? AND " + DB.EXPORT.ACTIVITY + " = ?", args);
     }
 
     private void doneUploading() {
@@ -1121,7 +1158,9 @@ public class SyncManager {
                     case SKIP:
                         break;
                     case OK:
-                        syncOK(synchronizer, copySpinner, copyDB, result.activityId);
+                        result.activityId = mID; //Not always set
+                        syncOK(synchronizer, copySpinner, copyDB, result);
+                        getExternalId(synchronizer, copyDB, result);
                         break;
                     case NEED_AUTH:
                         handleAuth(new Callback() {

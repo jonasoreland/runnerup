@@ -20,6 +20,7 @@ package org.runnerup.export;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
@@ -132,6 +133,8 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 File file = new File(fileBase + "tcx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 tcx.export(mID, new OutputStreamWriter(out));
+                s.externalId = Uri.fromFile(file).toString();
+                s.externalIdStatus = ExternalIdStatus.NONE; //Not working yet
             }
             if (mFormat.contains("gpx")) {
                 GPX gpx = new GPX(db, true, true);

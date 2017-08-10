@@ -31,7 +31,10 @@
         android:id="@+id/account_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:onClick="onClickAccountName"
+        android:clickable="true"
+        android:focusable="true"/>
 
     <CheckBox
         android:id="@+id/report_sent"
