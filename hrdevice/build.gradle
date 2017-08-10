@@ -40,24 +40,3 @@ dependencies {
     }
     compile files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar')
 }
-
-task downloadSamsungBleSdk(type: DownloadTask) {
-    sourceUrl = 'https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar'
-    target = file('libs/samsung_ble_sdk_200.jar')
-}
-if (!project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
-    preBuild.dependsOn downloadSamsungBleSdk
-}
-
-class DownloadTask extends DefaultTask {
-    @Input
-    String sourceUrl
-
-    @OutputFile
-    File target
-
-    @TaskAction
-    void download() {
-        ant.get(src: sourceUrl, dest: target)
-    }
-}
