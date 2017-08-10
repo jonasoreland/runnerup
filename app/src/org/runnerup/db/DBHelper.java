@@ -246,56 +246,51 @@ public class DBHelper extends SQLiteOpenHelper implements
         arg0.execSQL(CREATE_TABLE_FEED);
         arg0.execSQL(CREATE_INDEX_FEED);
 
-        onUpgrade(arg0, 0, DBVERSION);
+        onCreateUpgrade(arg0, 0, DBVERSION);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
         Log.e(getClass().getName(), "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 
-        if (newVersion < oldVersion) {
-            throw new java.lang.UnsupportedOperationException(
-                    "Downgrade not supported");
-        }
-
-        if (oldVersion > 0 && oldVersion < 5 && newVersion >= 5) {
+        if (oldVersion < 5) {
             arg0.execSQL("alter table account add column icon integer");
         }
 
-        if (oldVersion > 0 && oldVersion < 7 && newVersion >= 7) {
+        if (oldVersion < 7) {
             arg0.execSQL(CREATE_TABLE_AUDIO_SCHEMES);
         }
 
-        if (oldVersion > 0 && oldVersion < 16 && newVersion >= 16) {
+        if (oldVersion < 16) {
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.HR
                     + " int");
         }
 
         //Recreated DBVERSION 31->32
         //DBVERSION update comment out below
-        if (oldVersion > 0 && oldVersion < 10 && newVersion >= 10) {
+        if (oldVersion < 10) {
             recreateAccount(arg0);
         }
 
-        if (oldVersion > 0 && oldVersion < 17 && newVersion >= 17) {
+        if (oldVersion < 17) {
             arg0.execSQL(CREATE_TABLE_FEED);
             arg0.execSQL(CREATE_INDEX_FEED);
             echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS
                     + " + " + (1 << DB.ACCOUNT.FLAG_FEED));
         }
 
-        if (oldVersion > 0 && oldVersion < 18 && newVersion >= 18) {
+        if (oldVersion < 18) {
             echoDo(arg0,
                 "update account set " + DB.ACCOUNT.AUTH_CONFIG + " = '{ \"access_token\":\"' || " + DB.ACCOUNT.AUTH_CONFIG
                 + " || '\" }' where " + DB.ACCOUNT.AUTH_CONFIG + " is not null and " + "auth_method" +"='oauth2';");
         }
 
-        if (oldVersion > 0 && oldVersion < 19 && newVersion >= 19) {
+        if (oldVersion < 19) {
             echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS
                     + " + " + (1 << DB.ACCOUNT.FLAG_LIVE));
         }
 
-        if (oldVersion > 0 && oldVersion < 24 && newVersion >= 24) {
+        if (oldVersion < 24) {
             echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_HR
                     + " integer");
             echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.MAX_HR
@@ -306,7 +301,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + " integer");
         }
 
-        if (oldVersion > 0 && oldVersion < 25 && newVersion >= 25) {
+        if (oldVersion < 25) {
             echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_CADENCE
                     + " real");
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.CADENCE
@@ -316,12 +311,12 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
 
         //DBVERSION update: remove
-        if (oldVersion > 0 && oldVersion < 28 && newVersion >= 28) {
+        if (oldVersion < 28) {
             echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + " add column " + DB.ACCOUNT.AUTH_NOTICE
                     + " integer");
         }
 
-        if (oldVersion > 0 && oldVersion < 31 && newVersion >= 31) {
+        if (oldVersion < 31) {
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.TEMPERATURE
                     + " real");
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.PRESSURE
@@ -339,21 +334,12 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
 
         //DBVERSION update
-        //if (oldVersion > 0 && oldVersion < 32 && newVersion >= 32) {
+        //if (oldVersion < 32) {
         //    migrateFileSyncronizerInfo(arg0);
         //    recreateAccount(arg0);
         //}
 
-        //if (oldVersion < 32 && newVersion >= 32) {
-        //    if (oldVersion > 0) {
-        //        arg0.execSQL(CREATE_TABLE_DBINFO);
-        //    }
-        //    ContentValues tmp = new ContentValues();
-        //    tmp.put(DB.DBINFO.ACCOUNT_VERSION, 0);
-        //    tmp.put("_id", 0);
-        //    arg0.insert(DB.DBINFO.TABLE, null, tmp);
-        //}
-        onCreateUpgrade(arg0);
+        onCreateUpgrade(arg0, oldVersion, newVersion);
     }
 
     @Override
@@ -389,9 +375,18 @@ public class DBHelper extends SQLiteOpenHelper implements
      * Populate the database with data at creation and updates
      * @param arg0
      */
-    private void onCreateUpgrade(SQLiteDatabase arg0) {
+    private void onCreateUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
         //DBVERSION update
         //insertAccounts(arg0);
+
+        //Populate the table with data (will always be updated in onOpen())
+        //if (oldVersion < 32) {
+        //    arg0.execSQL(CREATE_TABLE_DBINFO);
+        //    ContentValues tmp = new ContentValues();
+        //    tmp.put(DB.DBINFO.ACCOUNT_VERSION, 0);
+        //    tmp.put("_id", 0);
+        //    arg0.insert(DB.DBINFO.TABLE, null, tmp);
+        //}
     }
 
     private static void echoDo(SQLiteDatabase arg0, String str) {
