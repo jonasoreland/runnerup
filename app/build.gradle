@@ -42,14 +42,17 @@ android {
         test.setRoot('test')
     }
 
+    flavorDimensions "all"
     productFlavors {
         latest {
+            dimension "all"
             minSdkVersion 15
             targetSdkVersion rootProject.ext.compileSdkVersion
             versionName rootProject.ext.versionName
             versionCode rootProject.ext.versionCode
         }
         froyo {
+            dimension "all"
             minSdkVersion 8
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
@@ -108,8 +111,11 @@ android {
 }
 
 repositories {
+    maven {
+        url "https://maven.google.com"
+    }
     //jcenter and mavenCentral normally have the same packages but there may be a delay after updating the primary
-    jcenter() //Google
+    jcenter()
     mavenCentral() //MapBox GraphView
     maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
 }
