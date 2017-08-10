@@ -350,10 +350,10 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             String sql = "SELECT DISTINCT "
                     + "  acc._id, " // 0
                     + ("  acc." + DB.ACCOUNT.NAME + ", ")
-                    + ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
                     + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
                     + ("  acc." + DB.ACCOUNT.ENABLED + ", ")
-                    + ("  acc." + DB.ACCOUNT.FLAGS + " ")
+                    + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
+                    + ("  acc." + DB.ACCOUNT.FORMAT + " ")
                     + (" FROM " + DB.ACCOUNT.TABLE + " acc ");
 
             Cursor c = mDB.rawQuery(sql, null);

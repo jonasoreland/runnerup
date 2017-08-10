@@ -126,8 +126,8 @@ public class DBHelper extends SQLiteOpenHelper implements
             + DB.ACCOUNT.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
             + (DB.ACCOUNT.NAME + " text not null, ")
-            + (DB.ACCOUNT.DESCRIPTION + " text, ")
-            + (DB.ACCOUNT.URL + " text, ")
+            + (DB.ACCOUNT.DESCRIPTION + " text, ") //no longer used
+            + (DB.ACCOUNT.URL + " text, ") //no longer used
             + (DB.ACCOUNT.FORMAT + " text not null, ") //Remove not null
             + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ")
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,") //Account is not hidden/disabled
@@ -354,22 +354,18 @@ public class DBHelper extends SQLiteOpenHelper implements
                         DB.ACCOUNT.URL + ", " +
                         DB.ACCOUNT.DESCRIPTION + ", " +
                         DB.ACCOUNT.FORMAT + ", " +
-                        DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
-                        DB.ACCOUNT.AUTH_CONFIG + ", " +
-                        DB.ACCOUNT.AUTH_NOTICE + ") " +
+                        DB.ACCOUNT.AUTH_CONFIG + ") " +
                         "select " +
                         "_id, " +
                         DB.ACCOUNT.NAME + ", " +
                         DB.ACCOUNT.URL + ", " +
                         DB.ACCOUNT.DESCRIPTION + ", " +
                         DB.ACCOUNT.FORMAT + ", " +
-                        DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
                         DB.ACCOUNT.AUTH_METHOD + ", " +
                         DB.ACCOUNT.AUTH_CONFIG + " " +
-                        DB.ACCOUNT.AUTH_NOTICE + " " +
                         "FROM " + DB.ACCOUNT.TABLE;
         try {
             echoDo(arg0, newtab.toString());
@@ -392,7 +388,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
-        values.put(DB.ACCOUNT.URL, GarminSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, GarminSynchronizer.PUBLIC_URL);
         values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
@@ -401,7 +397,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "runkeeper");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
-        values.put(DB.ACCOUNT.URL, RunKeeperSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, RunKeeperSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -409,7 +405,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "gpx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a5_jogg);
-        values.put(DB.ACCOUNT.URL, JoggSESynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, JoggSESynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -417,7 +413,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
-        values.put(DB.ACCOUNT.URL, FunBeatSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, FunBeatSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -425,7 +421,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a3_mapmyrun_logo);
-        values.put(DB.ACCOUNT.URL, MapMyRunSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, MapMyRunSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -433,7 +429,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "nikeplus,gpx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a4_nikeplus);
-        values.put(DB.ACCOUNT.URL, NikePlusSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, NikePlusSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -441,7 +437,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "endomondotrack");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a6_endomondo);
-        values.put(DB.ACCOUNT.URL, EndomondoSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, EndomondoSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -449,7 +445,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
-        values.put(DB.ACCOUNT.URL, RunningAHEADSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, RunningAHEADSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -457,7 +453,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a9_digifit);
-        values.put(DB.ACCOUNT.URL, DigifitSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, DigifitSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -465,7 +461,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a10_strava);
-        values.put(DB.ACCOUNT.URL, StravaSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, StravaSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
         values = new ContentValues();
@@ -473,7 +469,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "none");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a8_runneruplive);
-        values.put(DB.ACCOUNT.URL, RunnerUpLiveSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, RunnerUpLiveSynchronizer.PUBLIC_URL);
         values.put(DB.ACCOUNT.FLAGS, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
         values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
@@ -483,7 +479,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a11_facebook);
-        values.put(DB.ACCOUNT.URL, FacebookSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, FacebookSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
 
 //      values = new ContentValues();
@@ -491,7 +487,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 //      //values.put(DB.ACCOUNT.FORMAT, "");
 //      //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
 //      //values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
-//      values.put(DB.ACCOUNT.URL, GooglePlusSynchronizer.PUBLIC_URL);
+//      //values.put(DB.ACCOUNT.URL, GooglePlusSynchronizer.PUBLIC_URL);
 //      insertAccount(arg0, values);
 
         //DBVERSION 26
@@ -500,7 +496,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
-        values.put(DB.ACCOUNT.URL, RuntasticSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, RuntasticSynchronizer.PUBLIC_URL);
         values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
@@ -510,7 +506,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
-        values.put(DB.ACCOUNT.URL, GoogleFitSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, GoogleFitSynchronizer.PUBLIC_URL);
         values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
 
@@ -520,7 +516,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
-        values.put(DB.ACCOUNT.URL, RunningFreeOnlineSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, RunningFreeOnlineSynchronizer.PUBLIC_URL);
         //values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
         values.put(DB.ACCOUNT.ENABLED, 0);
         insertAccount(arg0, values);
@@ -531,7 +527,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "filepermission");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a16_localfile);
-        values.put(DB.ACCOUNT.URL, "");
+        //values.put(DB.ACCOUNT.URL, "");
         insertAccount(arg0, values);
 
         //DBVERSION 30
@@ -540,7 +536,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //values.put(DB.ACCOUNT.FORMAT, "tcx");
         //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
         //values.put(DB.ACCOUNT.ICON, R.drawable.a17_runalyze);
-        values.put(DB.ACCOUNT.URL, RunalyzeSynchronizer.PUBLIC_URL);
+        //values.put(DB.ACCOUNT.URL, RunalyzeSynchronizer.PUBLIC_URL);
         insertAccount(arg0, values);
     }
 

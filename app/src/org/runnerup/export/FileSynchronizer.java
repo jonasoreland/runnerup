@@ -42,7 +42,8 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public static final String NAME = "File";
 
     private long id = 0;
-    private String mPath = null;
+    private String mPath;
+    private String mFormat;
     
     FileSynchronizer() {
     }
@@ -61,11 +62,23 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public int getIconId() {return R.drawable.a16_localfile;}
 
     @Override
+    public String getUrl() {
+        return mPath;
+    }
+
+    static public String contentValuesToAuthConfig(ContentValues config) {
+        FileSynchronizer f = new FileSynchronizer();
+        f.mPath = config.getAsString(DB.ACCOUNT.URL);
+        f.mFormat = config.getAsString(DB.ACCOUNT.FORMAT);
+        
+        return f.getAuthConfig();
+    }
+
+    @Override
     public void init(ContentValues config) {
-        //Note: config contains a subset of account, primarily AUTH_CONFIG
-        //Reuse AUTH_CONFIG to communicate with SyncManager to not change structure too much
-        //path is also in URL (used for display), path is needed in connect()
+        //Temporary format until database is updated, URL is in AUTH_CONFIG
         mPath = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        mFormat = config.getAsString(DB.ACCOUNT.FORMAT);
         id = config.getAsLong("_id");
     }
 
@@ -76,7 +89,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        return !TextUtils.isEmpty(mPath);
+        return !TextUtils.isEmpty(mPath) && !TextUtils.isEmpty(mFormat);
     }
 
     @Override
@@ -110,19 +123,17 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if ((s = connect()) != Status.OK) {
             return s;
         }
-        ContentValues config = SyncManager.loadConfig(db, this.getName());
-        String format = config.getAsString(DB.ACCOUNT.FORMAT);
 
         try {
             String fileBase = new File(mPath).getAbsolutePath() + File.separator +
             String.format(Locale.getDefault(), "RunnerUp_%04d.", mID);
-            if (format.contains("tcx")) {
+            if (mFormat.contains("tcx")) {
                 TCX tcx = new TCX(db);
                 File file = new File(fileBase + "tcx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 tcx.export(mID, new OutputStreamWriter(out));
             }
-            if (format.contains("gpx")) {
+            if (mFormat.contains("gpx")) {
                 GPX gpx = new GPX(db, true, true);
                 File file = new File(fileBase + "gpx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
