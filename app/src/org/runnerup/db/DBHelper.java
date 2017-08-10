@@ -65,14 +65,15 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
-    private static final int DBVERSION = 32;
+    private static final int DBVERSION = 31;
     private static final String DBNAME = "runnerup.db";
 
-    private static final String CREATE_TABLE_DBINFO = "create table "
-            + DB.DBINFO.TABLE + " ( "
-            + ("_id integer primary key CHECK (_id = 0), ")
-            + (DB.DBINFO.ACCOUNT_VERSION + " integer not null default 0")
-            + ");";
+    //DBVERSION update
+    //private static final String CREATE_TABLE_DBINFO = "create table "
+    //        + DB.DBINFO.TABLE + " ( "
+    //        + ("_id integer primary key CHECK (_id = 0), ")
+    //        + (DB.DBINFO.ACCOUNT_VERSION + " integer not null default 0")
+    //        + ");";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
             + DB.ACTIVITY.TABLE + " ( "
@@ -134,9 +135,15 @@ public class DBHelper extends SQLiteOpenHelper implements
             + DB.ACCOUNT.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
             + (DB.ACCOUNT.NAME + " text not null, ")
-            + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ")
+            + (DB.ACCOUNT.DESCRIPTION + " text, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.URL + " text, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.FORMAT + " text not null, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ") //Mostly not used but dynamic changes could be stored here
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,") //Account is not hidden/disabled
+            + (DB.ACCOUNT.AUTH_METHOD + " text not null, ") //DBVERSION update: remove
             + (DB.ACCOUNT.AUTH_CONFIG + " text, ") //Stored configuration data
+            + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.ICON + " integer null, ") //DBVERSION update: remove
             + "UNIQUE (" + DB.ACCOUNT.NAME + ")"
             + ");";
 
@@ -228,7 +235,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     @Override
     public void onCreate(SQLiteDatabase arg0) {
-        arg0.execSQL(CREATE_TABLE_DBINFO);
+        //DBVERSION update
+        //arg0.execSQL(CREATE_TABLE_DBINFO);
         arg0.execSQL(CREATE_TABLE_ACTIVITY);
         arg0.execSQL(CREATE_TABLE_LAP);
         arg0.execSQL(CREATE_TABLE_LOCATION);
@@ -264,9 +272,10 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
 
         //Recreated DBVERSION 31->32
-        //if (oldVersion > 0 && oldVersion < 10 && newVersion >= 10) {
-        //    recreateAccount(arg0);
-        //}
+        //DBVERSION update comment out below
+        if (oldVersion > 0 && oldVersion < 10 && newVersion >= 10) {
+            recreateAccount(arg0);
+        }
 
         if (oldVersion > 0 && oldVersion < 17 && newVersion >= 17) {
             arg0.execSQL(CREATE_TABLE_FEED);
@@ -277,7 +286,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         if (oldVersion > 0 && oldVersion < 18 && newVersion >= 18) {
             echoDo(arg0,
-                    "update account set " + DB.ACCOUNT.AUTH_CONFIG + " = '{ \"access_token\":\"' || " + DB.ACCOUNT.AUTH_CONFIG + " || '\" }' where " + DB.ACCOUNT.AUTH_CONFIG + " is not null and " + "auth_method" +"='oauth2';");
+                "update account set " + DB.ACCOUNT.AUTH_CONFIG + " = '{ \"access_token\":\"' || " + DB.ACCOUNT.AUTH_CONFIG
+                + " || '\" }' where " + DB.ACCOUNT.AUTH_CONFIG + " is not null and " + "auth_method" +"='oauth2';");
         }
 
         if (oldVersion > 0 && oldVersion < 19 && newVersion >= 19) {
@@ -305,6 +315,12 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + DB.ACTIVITY.AVG_CADENCE + " real");
         }
 
+        //DBVERSION update: remove
+        if (oldVersion > 0 && oldVersion < 28 && newVersion >= 28) {
+            echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + " add column " + DB.ACCOUNT.AUTH_NOTICE
+                    + " integer");
+        }
+
         if (oldVersion > 0 && oldVersion < 31 && newVersion >= 31) {
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.TEMPERATURE
                     + " real");
@@ -322,64 +338,90 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + " text");
         }
 
-        if (oldVersion > 0 && oldVersion < 32 && newVersion >= 32) {
-            //Migrate storage of parameters, FORMAT is removed
-            String from[] = { "_id", DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG };
-            String args[] = { FileSynchronizer.NAME };
-            Cursor c = arg0.query(DB.ACCOUNT.TABLE, from,
-                    DB.ACCOUNT.NAME + " = ? and " + DB.ACCOUNT.AUTH_CONFIG + " is not null", args,
-                    null, null, null);
+        //DBVERSION update
+        //if (oldVersion > 0 && oldVersion < 32 && newVersion >= 32) {
+        //    migrateFileSyncronizerInfo(arg0);
+        //    recreateAccount(arg0);
+        //}
 
-            if (c.moveToFirst()) {
-                ContentValues tmp = DBHelper.get(c);
-                //URL was stored in AUTH_CONFIG previously, FORMAT migrated too
-                tmp.put(DB.ACCOUNT.URL, tmp.getAsString(DB.ACCOUNT.AUTH_CONFIG));
-                String authConfig = FileSynchronizer.contentValuesToAuthConfig(tmp);
-                tmp = new ContentValues();
-                tmp.put(DB.ACCOUNT.AUTH_CONFIG, authConfig);
-                arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
-            }
-            c.close();
-            recreateAccount(arg0);
-        }
-
-        if (oldVersion < 32 && newVersion >= 32) {
-            if (oldVersion > 0) {
-                arg0.execSQL(CREATE_TABLE_DBINFO);
-            }
-            ContentValues tmp = new ContentValues();
-            tmp.put(DB.DBINFO.ACCOUNT_VERSION, 0);
-            tmp.put("_id", 0);
-            arg0.insert(DB.DBINFO.TABLE, null, tmp);
-        }
+        //if (oldVersion < 32 && newVersion >= 32) {
+        //    if (oldVersion > 0) {
+        //        arg0.execSQL(CREATE_TABLE_DBINFO);
+        //    }
+        //    ContentValues tmp = new ContentValues();
+        //    tmp.put(DB.DBINFO.ACCOUNT_VERSION, 0);
+        //    tmp.put("_id", 0);
+        //    arg0.insert(DB.DBINFO.TABLE, null, tmp);
+        //}
+        onCreateUpgrade(arg0);
     }
 
     @Override
     public void onOpen(SQLiteDatabase arg0) {
-        //Update "database contents"
-        //Only changes that can be safely applied backward/forward compatible
-        //(other still need to update DBVERSION)
+        //DBVERSION update
+        ////Update "database contents"
+        ////Only changes that can be safely applied backward/forward compatible
+        ////(other still need to update DBVERSION)
 
-        //Version for ACCOUNT info
-        String from[] = { "_id" };
-        String args[] = { "1" }; //ACCOUNT VERSION
-        Cursor c = arg0.query(DB.DBINFO.TABLE, from,
-                DB.DBINFO.ACCOUNT_VERSION + " = ?", args,
-                null, null, null);
+        ////Version for ACCOUNT info
+        //String from[] = { "_id" };
+        //String args[] = { "1" }; //ACCOUNT VERSION
+        //Cursor c = arg0.query(DB.DBINFO.TABLE, from,
+        //        DB.DBINFO.ACCOUNT_VERSION + " = ?", args,
+        //        null, null, null);
 
-        if (c.getCount() == 0) {
-            insertAccounts(arg0);
-            ContentValues tmp = new ContentValues();
-            //One row only in the table, so no selection
-            tmp.put(DB.DBINFO.ACCOUNT_VERSION, args[0]);
-            arg0.update(DB.DBINFO.TABLE, tmp, null, null);
-        }
-        c.close();
+        //if (c.getCount() == 0) {
+        //    insertAccounts(arg0);
+        //    ContentValues tmp = new ContentValues();
+        //    //One row only in the table, so no selection
+        //    tmp.put(DB.DBINFO.ACCOUNT_VERSION, args[0]);
+        //    arg0.update(DB.DBINFO.TABLE, tmp, null, null);
+        //}
+        //c.close();
+
+        //DBVERSION update
+        //Temporary workaround: Always run at startup
+        migrateFileSynchronizerInfo(arg0);
+        insertAccounts(arg0);
+    }
+
+    /**
+     * Populate the database with data at creation and updates
+     * @param arg0
+     */
+    private void onCreateUpgrade(SQLiteDatabase arg0) {
+        //DBVERSION update
+        //insertAccounts(arg0);
     }
 
     private static void echoDo(SQLiteDatabase arg0, String str) {
         Log.e("DBHelper", "execSQL(" + str + ")");
         arg0.execSQL(str);
+    }
+
+    private void migrateFileSynchronizerInfo(SQLiteDatabase arg0) {
+            //Migrate storage of parameters, FORMAT is removed
+        String from[] = { "_id", DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG };
+        String args[] = { FileSynchronizer.NAME };
+        Cursor c = arg0.query(DB.ACCOUNT.TABLE, from,
+                DB.ACCOUNT.NAME + " = ? and "
+                        + DB.ACCOUNT.AUTH_CONFIG + " is not null",
+                args, null, null, null);
+
+        if (c.moveToFirst()) {
+            ContentValues tmp = DBHelper.get(c);
+            //URL was stored in AUTH_CONFIG previously, FORMAT migrated too
+            String oldUrl = tmp.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+            //DBVERSION update, not needed in onUpgrade()
+            if (oldUrl.startsWith("file")) {
+                tmp.put(DB.ACCOUNT.URL, oldUrl);
+                String authConfig = FileSynchronizer.contentValuesToAuthConfig(tmp);
+                tmp = new ContentValues();
+                tmp.put(DB.ACCOUNT.AUTH_CONFIG, authConfig);
+                arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
+            }
+        }
+        c.close();
     }
 
     private void recreateAccount(SQLiteDatabase arg0) {
@@ -455,8 +497,11 @@ public class DBHelper extends SQLiteOpenHelper implements
             arg1.put(DB.ACCOUNT.ENABLED, enabled);
         }
         if (flags >= 0) {
-            arg1.put(DB.ACCOUNT.ENABLED, flags);
+            arg1.put(DB.ACCOUNT.FLAGS, flags);
         }
+        //DBVERSION update, must provide dummy data
+        arg1.put(DB.ACCOUNT.FORMAT, "tcx");
+        arg1.put(DB.ACCOUNT.AUTH_METHOD, "dummy");
 
         //SQLite has no UPSERT command. Optimize for no change.
         long newId = arg0.insertWithOnConflict(DB.ACCOUNT.TABLE, null, arg1, SQLiteDatabase.CONFLICT_IGNORE);
@@ -465,6 +510,9 @@ public class DBHelper extends SQLiteOpenHelper implements
             String arr[] = {
                     arg1.getAsString(DB.ACCOUNT.NAME)
             };
+            //DBVERSION update
+            arg1.remove(DB.ACCOUNT.FORMAT);
+            arg1.remove(DB.ACCOUNT.AUTH_METHOD);
             arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
             Log.v("DBhelper", "update: " + arg1);
         }

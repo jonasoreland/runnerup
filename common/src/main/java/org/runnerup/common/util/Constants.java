@@ -25,10 +25,11 @@ public interface Constants {
 
         public static final String PRIMARY_KEY = "_id";
 
-        interface DBINFO {
-            String TABLE = "dbinfo";
-            String ACCOUNT_VERSION = "account_version";
-        }
+        //DBVERSION update
+        //interface DBINFO {
+        //    String TABLE = "dbinfo";
+        //    String ACCOUNT_VERSION = "account_version";
+        //}
 
         public interface ACTIVITY {
             public static final String TABLE = "activity";
@@ -125,8 +126,8 @@ public interface Constants {
             public static final String ENABLED = "enabled";
             public static final String AUTH_CONFIG = "auth_config";
 
-            public static final String URL = "url";
-            public static final String FORMAT = "format";
+            String URL = "url";
+            String FORMAT = "format";
 
             public static final int FLAG_UPLOAD = 0;
             public static final int FLAG_FEED = 1;
@@ -136,6 +137,11 @@ public interface Constants {
                     (1 << FLAG_UPLOAD) +
                             (1 << FLAG_FEED) +
                             (1 << FLAG_LIVE);
+            //DBVERSION update
+            String DESCRIPTION = "description";
+            String AUTH_METHOD = "auth_method";
+            String ICON = "icon";
+            String AUTH_NOTICE = "auth_notice";
         }
 
         public interface EXPORT {
