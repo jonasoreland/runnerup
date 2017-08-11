@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,8 +86,8 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 JSONObject tmp = new JSONObject(authConfig);
                 mPath = tmp.optString(DB.ACCOUNT.URL, null);
                 mFormat = tmp.optString(DB.ACCOUNT.FORMAT);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (JSONException e) {
+                Log.w(getName(), "init: Dropping config due to failure to parse json from " + authConfig + ", " + e);
             }
         }
         id = config.getAsLong("_id");
@@ -100,7 +101,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 tmp.put(DB.ACCOUNT.URL, mPath);
                 tmp.put(DB.ACCOUNT.FORMAT, mFormat);
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.w(getName(), "getAuthConfig: Failure to create json for " + mPath + ", " + mFormat + ", " + e);
             }
         }
         return tmp.toString();
