@@ -67,7 +67,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     @Override
     public String getUrl() {
-        return mPath;
+        return "file://" + mPath;
     }
 
     static public String contentValuesToAuthConfig(ContentValues config) {
