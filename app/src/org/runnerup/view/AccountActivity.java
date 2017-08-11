@@ -133,7 +133,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
         String[] from = new String[]{
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.FLAGS, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.FLAGS, DB.ACCOUNT.AUTH_CONFIG
         };
 
         String args[] = {

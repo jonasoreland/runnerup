@@ -52,6 +52,8 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.Synchronizer;
 import org.runnerup.util.FileUtil;
 
 import java.io.File;
@@ -65,6 +67,13 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     private static final int DBVERSION = 31;
     private static final String DBNAME = "runnerup.db";
+
+    //DBVERSION update
+    //private static final String CREATE_TABLE_DBINFO = "create table "
+    //        + DB.DBINFO.TABLE + " ( "
+    //        + ("_id integer primary key CHECK (_id = 0), ")
+    //        + (DB.DBINFO.ACCOUNT_VERSION + " integer not null default 0")
+    //        + ");";
 
     private static final String CREATE_TABLE_ACTIVITY = "create table "
             + DB.ACTIVITY.TABLE + " ( "
@@ -80,7 +89,8 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.ACTIVITY.AVG_CADENCE + " real, ")
             + (DB.ACTIVITY.META_DATA + " text, ")
             + ("deleted integer not null default 0, ")
-            + "nullColumnHack text null" + ");";
+            + "nullColumnHack text null"
+            + ");";
 
     private static final String CREATE_TABLE_LOCATION = "create table "
             + DB.LOCATION.TABLE + " ( "
@@ -98,7 +108,6 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.LOCATION.PRESSURE + " real, ")
             + (DB.LOCATION.ELAPSED + " real, ")
             + (DB.LOCATION.DISTANCE + " real, ")
-            //Additional data, uses one byte for null data
             + (DB.LOCATION.GPS_ALTITUDE + " real, ")
             + (DB.LOCATION.ACCURANCY + " real, ")
             + (DB.LOCATION.SPEED + " real, ")
@@ -126,23 +135,27 @@ public class DBHelper extends SQLiteOpenHelper implements
             + DB.ACCOUNT.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
             + (DB.ACCOUNT.NAME + " text not null, ")
-            + (DB.ACCOUNT.DESCRIPTION + " text, ") //no longer used
-            + (DB.ACCOUNT.URL + " text, ") //no longer used
-            + (DB.ACCOUNT.FORMAT + " text not null, ") //Remove not null
-            + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ")
+            + (DB.ACCOUNT.DESCRIPTION + " text, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.URL + " text, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.FORMAT + " text not null, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.FLAGS + " integer not null default " + DB.ACCOUNT.DEFAULT_FLAGS + ", ") //Mostly not used but dynamic changes could be stored here
             + (DB.ACCOUNT.ENABLED + " integer not null default 1,") //Account is not hidden/disabled
-            + (DB.ACCOUNT.AUTH_METHOD + " text not null, ") //no longer used
-            + (DB.ACCOUNT.AUTH_CONFIG + " text, ")
-            + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ") //no longer used
-            + (DB.ACCOUNT.ICON + " integer null, ") //no longer used
-            + "UNIQUE (" + DB.ACCOUNT.NAME + ")" + ");";
+            + (DB.ACCOUNT.AUTH_METHOD + " text not null, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.AUTH_CONFIG + " text, ") //Stored configuration data
+            + (DB.ACCOUNT.AUTH_NOTICE + " integer null, ") //DBVERSION update: remove
+            + (DB.ACCOUNT.ICON + " integer null, ") //DBVERSION update: remove
+            + "UNIQUE (" + DB.ACCOUNT.NAME + ")"
+            + ");";
 
     private static final String CREATE_TABLE_REPORT = "create table "
             + DB.EXPORT.TABLE + " ( "
-            + "_id integer primary key autoincrement, " + DB.EXPORT.ACTIVITY
-            + " integer not null, " + DB.EXPORT.ACCOUNT + " integer not null, "
-            + DB.EXPORT.STATUS + " text, " + DB.EXPORT.EXTERNAL_ID + " text, "
-            + DB.EXPORT.EXTRA + " integer not null default 1" + ");";
+            + "_id integer primary key autoincrement, "
+            + DB.EXPORT.ACTIVITY + " integer not null, "
+            + DB.EXPORT.ACCOUNT + " integer not null, "
+            + DB.EXPORT.STATUS + " text, "
+            + DB.EXPORT.EXTERNAL_ID + " text, "
+            + DB.EXPORT.EXTRA + " integer not null default 1"
+            + ");";
 
     private static final String CREATE_TABLE_AUDIO_SCHEMES = "create table "
             + DB.AUDIO_SCHEMES.TABLE + " ( "
@@ -173,8 +186,10 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.FEED.FLAGS + " text ")
             + ");";
 
-    private static final String CREATE_INDEX_FEED = "create index if not exists FEED_START_TIME " +
-            (" on " + DB.FEED.TABLE + " (" + DB.FEED.START_TIME + ")");
+    private static final String CREATE_INDEX_FEED = "create index "
+            + "if not exists FEED_START_TIME "
+            + (" on " + DB.FEED.TABLE + " (" + DB.FEED.START_TIME
+            + ")");
 
     private static DBHelper sInstance = null;
 
@@ -220,6 +235,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     @Override
     public void onCreate(SQLiteDatabase arg0) {
+        //DBVERSION update
+        //arg0.execSQL(CREATE_TABLE_DBINFO);
         arg0.execSQL(CREATE_TABLE_ACTIVITY);
         arg0.execSQL(CREATE_TABLE_LAP);
         arg0.execSQL(CREATE_TABLE_LOCATION);
@@ -229,53 +246,51 @@ public class DBHelper extends SQLiteOpenHelper implements
         arg0.execSQL(CREATE_TABLE_FEED);
         arg0.execSQL(CREATE_INDEX_FEED);
 
-        onUpgrade(arg0, 0, DBVERSION);
+        onCreateUpgrade(arg0, 0, DBVERSION);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
         Log.e(getClass().getName(), "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 
-        if (newVersion < oldVersion) {
-            throw new java.lang.UnsupportedOperationException(
-                    "Downgrade not supported");
-        }
-
-        if (oldVersion > 0 && oldVersion < 5 && newVersion >= 5) {
+        if (oldVersion < 5) {
             arg0.execSQL("alter table account add column icon integer");
         }
 
-        if (oldVersion > 0 && oldVersion < 7 && newVersion >= 7) {
+        if (oldVersion < 7) {
             arg0.execSQL(CREATE_TABLE_AUDIO_SCHEMES);
         }
 
-        if (oldVersion > 0 && oldVersion < 16 && newVersion >= 16) {
+        if (oldVersion < 16) {
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.HR
                     + " int");
         }
 
-        if (oldVersion > 0 && oldVersion < 10 && newVersion >= 10) {
+        //Recreated DBVERSION 31->32
+        //DBVERSION update comment out below
+        if (oldVersion < 10) {
             recreateAccount(arg0);
         }
 
-        if (oldVersion > 0 && oldVersion < 17 && newVersion >= 17) {
+        if (oldVersion < 17) {
             arg0.execSQL(CREATE_TABLE_FEED);
             arg0.execSQL(CREATE_INDEX_FEED);
             echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS
                     + " + " + (1 << DB.ACCOUNT.FLAG_FEED));
         }
 
-        if (oldVersion > 0 && oldVersion < 18 && newVersion >= 18) {
+        if (oldVersion < 18) {
             echoDo(arg0,
-                    "update account set " + DB.ACCOUNT.AUTH_CONFIG + " = '{ \"access_token\":\"' || " + DB.ACCOUNT.AUTH_CONFIG + " || '\" }' where " + DB.ACCOUNT.AUTH_CONFIG + " is not null and " + DB.ACCOUNT.AUTH_METHOD +"='oauth2';");
+                "update account set " + DB.ACCOUNT.AUTH_CONFIG + " = '{ \"access_token\":\"' || " + DB.ACCOUNT.AUTH_CONFIG
+                + " || '\" }' where " + DB.ACCOUNT.AUTH_CONFIG + " is not null and " + "auth_method" +"='oauth2';");
         }
 
-        if (oldVersion > 0 && oldVersion < 19 && newVersion >= 19) {
+        if (oldVersion < 19) {
             echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS
                     + " + " + (1 << DB.ACCOUNT.FLAG_LIVE));
         }
 
-        if (oldVersion > 0 && oldVersion < 24 && newVersion >= 24) {
+        if (oldVersion < 24) {
             echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_HR
                     + " integer");
             echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.MAX_HR
@@ -286,7 +301,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + " integer");
         }
 
-        if (oldVersion > 0 && oldVersion < 25 && newVersion >= 25) {
+        if (oldVersion < 25) {
             echoDo(arg0, "alter table " + DB.LAP.TABLE + " add column " + DB.LAP.AVG_CADENCE
                     + " real");
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.CADENCE
@@ -295,12 +310,13 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + DB.ACTIVITY.AVG_CADENCE + " real");
         }
 
-        if (oldVersion > 0 && oldVersion < 28 && newVersion >= 28) {
+        //DBVERSION update: remove
+        if (oldVersion < 28) {
             echoDo(arg0, "alter table " + DB.ACCOUNT.TABLE + " add column " + DB.ACCOUNT.AUTH_NOTICE
                     + " integer");
         }
 
-        if (oldVersion > 0 && oldVersion < 31 && newVersion >= 31) {
+        if (oldVersion < 31) {
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.TEMPERATURE
                     + " real");
             echoDo(arg0, "alter table " + DB.LOCATION.TABLE + " add column " + DB.LOCATION.PRESSURE
@@ -317,7 +333,60 @@ public class DBHelper extends SQLiteOpenHelper implements
                     + " text");
         }
 
+        //DBVERSION update
+        //if (oldVersion < 32) {
+        //    migrateFileSyncronizerInfo(arg0);
+        //    recreateAccount(arg0);
+        //}
+
+        onCreateUpgrade(arg0, oldVersion, newVersion);
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase arg0) {
+        //DBVERSION update
+        ////Update "database contents"
+        ////Only changes that can be safely applied backward/forward compatible
+        ////(other still need to update DBVERSION)
+
+        ////Version for ACCOUNT info
+        //String from[] = { "_id" };
+        //String args[] = { "1" }; //ACCOUNT VERSION
+        //Cursor c = arg0.query(DB.DBINFO.TABLE, from,
+        //        DB.DBINFO.ACCOUNT_VERSION + " = ?", args,
+        //        null, null, null);
+
+        //if (c.getCount() == 0) {
+        //    insertAccounts(arg0);
+        //    ContentValues tmp = new ContentValues();
+        //    //One row only in the table, so no selection
+        //    tmp.put(DB.DBINFO.ACCOUNT_VERSION, args[0]);
+        //    arg0.update(DB.DBINFO.TABLE, tmp, null, null);
+        //}
+        //c.close();
+
+        //DBVERSION update
+        //Temporary workaround: Always run at startup
+        migrateFileSynchronizerInfo(arg0);
         insertAccounts(arg0);
+    }
+
+    /**
+     * Populate the database with data at creation and updates
+     * @param arg0
+     */
+    private void onCreateUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
+        //DBVERSION update
+        //insertAccounts(arg0);
+
+        //Populate the table with data (will always be updated in onOpen())
+        //if (oldVersion < 32) {
+        //    arg0.execSQL(CREATE_TABLE_DBINFO);
+        //    ContentValues tmp = new ContentValues();
+        //    tmp.put(DB.DBINFO.ACCOUNT_VERSION, 0);
+        //    tmp.put("_id", 0);
+        //    arg0.insert(DB.DBINFO.TABLE, null, tmp);
+        //}
     }
 
     private static void echoDo(SQLiteDatabase arg0, String str) {
@@ -325,23 +394,32 @@ public class DBHelper extends SQLiteOpenHelper implements
         arg0.execSQL(str);
     }
 
-    private void recreateAccount(SQLiteDatabase arg0) {
-        Cursor c = null;
-        try {
-            String cols[] = {
-                "method"
-            };
-            c = arg0.query(DB.ACCOUNT.TABLE, cols, null, null, null, null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-        finally {
-            if (c != null) {
-                c.close();
+    private void migrateFileSynchronizerInfo(SQLiteDatabase arg0) {
+            //Migrate storage of parameters, FORMAT is removed
+        String from[] = { "_id", DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG };
+        String args[] = { FileSynchronizer.NAME };
+        Cursor c = arg0.query(DB.ACCOUNT.TABLE, from,
+                DB.ACCOUNT.NAME + " = ? and "
+                        + DB.ACCOUNT.AUTH_CONFIG + " is not null",
+                args, null, null, null);
+
+        if (c.moveToFirst()) {
+            ContentValues tmp = DBHelper.get(c);
+            //URL was stored in AUTH_CONFIG previously, FORMAT migrated too
+            String oldUrl = tmp.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+            //DBVERSION update, not needed in onUpgrade()
+            if (oldUrl.startsWith("/")) {
+                tmp.put(DB.ACCOUNT.URL, oldUrl);
+                String authConfig = FileSynchronizer.contentValuesToAuthConfig(tmp);
+                tmp = new ContentValues();
+                tmp.put(DB.ACCOUNT.AUTH_CONFIG, authConfig);
+                arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
             }
         }
+        c.close();
+    }
 
+    private void recreateAccount(SQLiteDatabase arg0) {
         StringBuilder newtab = new StringBuilder();
         newtab.append(CREATE_TABLE_ACCOUNT);
         newtab.replace(0,
@@ -351,20 +429,14 @@ public class DBHelper extends SQLiteOpenHelper implements
                 "insert into " + DB.ACCOUNT.TABLE + "_new" +
                         "(_id, " +
                         DB.ACCOUNT.NAME + ", " +
-                        DB.ACCOUNT.URL + ", " +
-                        DB.ACCOUNT.DESCRIPTION + ", " +
-                        DB.ACCOUNT.FORMAT + ", " +
+                        DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
-                        DB.ACCOUNT.AUTH_METHOD + ", " +
                         DB.ACCOUNT.AUTH_CONFIG + ") " +
                         "select " +
                         "_id, " +
                         DB.ACCOUNT.NAME + ", " +
-                        DB.ACCOUNT.URL + ", " +
-                        DB.ACCOUNT.DESCRIPTION + ", " +
-                        DB.ACCOUNT.FORMAT + ", " +
+                        DB.ACCOUNT.FLAGS + ", " +
                         DB.ACCOUNT.ENABLED + ", " +
-                        DB.ACCOUNT.AUTH_METHOD + ", " +
                         DB.ACCOUNT.AUTH_CONFIG + " " +
                         "FROM " + DB.ACCOUNT.TABLE;
         try {
@@ -380,190 +452,65 @@ public class DBHelper extends SQLiteOpenHelper implements
         }
     }
 
-    public void insertAccounts(SQLiteDatabase arg0) {
-        ContentValues values;
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, GarminSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a0_garminlogo);
-        //values.put(DB.ACCOUNT.URL, GarminSynchronizer.PUBLIC_URL);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunKeeperSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "runkeeper");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a1_rklogo);
-        //values.put(DB.ACCOUNT.URL, RunKeeperSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, JoggSESynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "gpx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a5_jogg);
-        //values.put(DB.ACCOUNT.URL, JoggSESynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, FunBeatSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a2_funbeatlogo);
-        //values.put(DB.ACCOUNT.URL, FunBeatSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, MapMyRunSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a3_mapmyrun_logo);
-        //values.put(DB.ACCOUNT.URL, MapMyRunSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, NikePlusSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "nikeplus,gpx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a4_nikeplus);
-        //values.put(DB.ACCOUNT.URL, NikePlusSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, EndomondoSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "endomondotrack");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a6_endomondo);
-        //values.put(DB.ACCOUNT.URL, EndomondoSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunningAHEADSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a7_runningahead);
-        //values.put(DB.ACCOUNT.URL, RunningAHEADSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, DigifitSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a9_digifit);
-        //values.put(DB.ACCOUNT.URL, DigifitSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, StravaSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a10_strava);
-        //values.put(DB.ACCOUNT.URL, StravaSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunnerUpLiveSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "none");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a8_runneruplive);
-        //values.put(DB.ACCOUNT.URL, RunnerUpLiveSynchronizer.PUBLIC_URL);
-        values.put(DB.ACCOUNT.FLAGS, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, FacebookSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a11_facebook);
-        //values.put(DB.ACCOUNT.URL, FacebookSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
-
-//      values = new ContentValues();
-//      values.put(DB.ACCOUNT.NAME, GooglePlusSynchronizer.NAME);
-//      //values.put(DB.ACCOUNT.FORMAT, "");
-//      //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-//      //values.put(DB.ACCOUNT.ICON, R.drawable.a12_googleplus);
-//      //values.put(DB.ACCOUNT.URL, GooglePlusSynchronizer.PUBLIC_URL);
-//      insertAccount(arg0, values);
-
+    private static void insertAccounts(SQLiteDatabase arg0) {
+        //The accounts must exist in the database, but normally the default values are sufficient
+        //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
+        //"Minor changes" like adding a new syncher can be handled with updating DB.DBINFO.ACCOUNT_VERSION
+        insertAccount(arg0, GarminSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RunKeeperSynchronizer.NAME);
+        insertAccount(arg0, JoggSESynchronizer.NAME);
+        insertAccount(arg0, FunBeatSynchronizer.NAME);
+        insertAccount(arg0, MapMyRunSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, NikePlusSynchronizer.NAME);
+        insertAccount(arg0, EndomondoSynchronizer.NAME);
+        insertAccount(arg0, RunningAHEADSynchronizer.NAME);
+        insertAccount(arg0, DigifitSynchronizer.NAME);
+        insertAccount(arg0, StravaSynchronizer.NAME);
+        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
+        insertAccount(arg0, FacebookSynchronizer.NAME, 0, -1);
+        //insertAccount(arg0, GooglePlusSynchronizer.NAME);
         //DBVERSION 26
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RuntasticSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a13_runtastic);
-        //values.put(DB.ACCOUNT.URL, RuntasticSynchronizer.PUBLIC_URL);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, RuntasticSynchronizer.NAME, 0, -1);
         //DBVERSION 27
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, GoogleFitSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "oauth2");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a14_googlefit);
-        //values.put(DB.ACCOUNT.URL, GoogleFitSynchronizer.PUBLIC_URL);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, GoogleFitSynchronizer.NAME, 0, -1);
         //DBVERSION 28
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunningFreeOnlineSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a15_runningfreeonline);
-        //values.put(DB.ACCOUNT.URL, RunningFreeOnlineSynchronizer.PUBLIC_URL);
-        //values.put(DB.ACCOUNT.AUTH_NOTICE, R.string.RunningFreeOnlinePasswordNotice);
-        values.put(DB.ACCOUNT.ENABLED, 0);
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0, -1);
         //DBVERSION 29
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, FileSynchronizer.NAME);
-        values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "filepermission");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a16_localfile);
-        //values.put(DB.ACCOUNT.URL, "");
-        insertAccount(arg0, values);
-
+        insertAccount(arg0, FileSynchronizer.NAME);
         //DBVERSION 30
-        values = new ContentValues();
-        values.put(DB.ACCOUNT.NAME, RunalyzeSynchronizer.NAME);
-        //values.put(DB.ACCOUNT.FORMAT, "tcx");
-        //values.put(DB.ACCOUNT.AUTH_METHOD, "post");
-        //values.put(DB.ACCOUNT.ICON, R.drawable.a17_runalyze);
-        //values.put(DB.ACCOUNT.URL, RunalyzeSynchronizer.PUBLIC_URL);
-        insertAccount(arg0, values);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME);
     }
 
-    void insertAccount(SQLiteDatabase arg0, ContentValues arg1) {
-        String cols[] = {
-            "_id"
-        };
-        String arr[] = {
-            arg1.getAsString(DB.ACCOUNT.NAME)
-        };
-        //non null in db, used in few synchronizers
-        if (arg1.getAsString(DB.ACCOUNT.FORMAT) == null) {
-            arg1.put(DB.ACCOUNT.FORMAT, "");
+    private static void insertAccount(SQLiteDatabase arg0, String name) {
+        insertAccount(arg0, name, -1, -1);
+    }
+    
+    private static void insertAccount(SQLiteDatabase arg0, String name, int enabled, int flags) {
+        ContentValues arg1 = new ContentValues();
+        arg1.put(DB.ACCOUNT.NAME, name);
+        if (enabled >= 0) {
+            arg1.put(DB.ACCOUNT.ENABLED, enabled);
         }
-        if (arg1.getAsString(DB.ACCOUNT.AUTH_METHOD) == null) {
-            arg1.put(DB.ACCOUNT.AUTH_METHOD, "");
+        if (flags >= 0) {
+            arg1.put(DB.ACCOUNT.FLAGS, flags);
         }
-        Cursor c = arg0.query(DB.ACCOUNT.TABLE, cols, DB.ACCOUNT.NAME + " = ?",
-                arr, null, null, null);
-        if (!c.moveToFirst())
-            arg0.insert(DB.ACCOUNT.TABLE, null, arg1);
-        else {
+        //DBVERSION update, must provide dummy data
+        arg1.put(DB.ACCOUNT.FORMAT, "tcx");
+        arg1.put(DB.ACCOUNT.AUTH_METHOD, "dummy");
+
+        //SQLite has no UPSERT command. Optimize for no change.
+        long newId = arg0.insertWithOnConflict(DB.ACCOUNT.TABLE, null, arg1, SQLiteDatabase.CONFLICT_IGNORE);
+        if (newId == -1 && arg1.size() > 1) {
+            //values could be updated
+            String arr[] = {
+                    arg1.getAsString(DB.ACCOUNT.NAME)
+            };
+            //DBVERSION update
+            arg1.remove(DB.ACCOUNT.FORMAT);
+            arg1.remove(DB.ACCOUNT.AUTH_METHOD);
             arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-            Log.e(getClass().getName(), "update: " + arg1);
+            Log.v("DBhelper", "update: " + arg1);
         }
-        c.close();
-        c = null;
     }
 
     public static ContentValues get(Cursor c) {

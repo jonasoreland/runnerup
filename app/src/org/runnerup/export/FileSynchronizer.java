@@ -23,7 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
@@ -45,7 +48,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
     private long id = 0;
     private String mPath;
     private String mFormat;
-    
+
     FileSynchronizer() {
     }
 
@@ -64,7 +67,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     @Override
     public String getUrl() {
-        return mPath;
+        return "file://" + mPath;
     }
 
     static public String contentValuesToAuthConfig(ContentValues config) {
@@ -77,15 +80,31 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     @Override
     public void init(ContentValues config) {
-        //Temporary format until database is updated, URL is in AUTH_CONFIG
-        mPath = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-        mFormat = config.getAsString(DB.ACCOUNT.FORMAT);
+        String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        if (authConfig != null) {
+            try {
+                JSONObject tmp = new JSONObject(authConfig);
+                mPath = tmp.optString(DB.ACCOUNT.URL, null);
+                mFormat = tmp.optString(DB.ACCOUNT.FORMAT);
+            } catch (JSONException e) {
+                Log.w(getName(), "init: Dropping config due to failure to parse json from " + authConfig + ", " + e);
+            }
+        }
         id = config.getAsLong("_id");
     }
 
     @Override
     public String getAuthConfig() {
-        return mPath;
+        JSONObject tmp = new JSONObject();
+        if (isConfigured()) {
+            try {
+                tmp.put(DB.ACCOUNT.URL, mPath);
+                tmp.put(DB.ACCOUNT.FORMAT, mFormat);
+            } catch (JSONException e) {
+                Log.w(getName(), "getAuthConfig: Failure to create json for " + mPath + ", " + mFormat + ", " + e);
+            }
+        }
+        return tmp.toString();
     }
 
     @Override

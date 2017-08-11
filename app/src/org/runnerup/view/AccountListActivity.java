@@ -115,7 +115,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         String[] from = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
         String showDisabled = null;
         if (!mShowDisabled) {
