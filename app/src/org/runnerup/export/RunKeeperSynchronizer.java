@@ -388,7 +388,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         Exception ex;
         try {
             URL newurl = new URL(REST_URL + fitnessActivitiesUrl);
-            Log.e(Constants.LOG, "url: " + newurl.toString());
+            //Log.e(Constants.LOG, "url: " + newurl.toString());
             conn = (HttpURLConnection) newurl.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
@@ -400,17 +400,20 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                     conn.getOutputStream()));
             rk.export(mID, w);
             w.flush();
+
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             s.externalId = noNullStr(conn.getHeaderField("Location"));
             conn.disconnect();
             conn = null;
+
             if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
                 s.activityId = mID;
                 s.externalIdStatus = ExternalIdStatus.OK;
                 return s;
             }
+            Log.e(getName(), "Error code: " + responseCode + ", amsg: " + amsg);
             ex = new Exception(amsg);
         } catch (Exception e) {
             ex = e;
