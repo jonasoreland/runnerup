@@ -120,7 +120,9 @@ public abstract class Bt20Base extends BtHRBase {
 
     public void disconnect() {
         reset();
-        hrClient.onDisconnectResult(true);
+        if (hrClient != null) {
+            hrClient.onDisconnectResult(true);
+        }
     }
 
     private void reset() {
