@@ -41,7 +41,7 @@ import org.runnerup.widget.MyDotsPageIndicator;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity implements Constants, ValueModel.ChangeListener<TrackerState> {
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private GridViewPager pager;
     private StateService mStateService;
     final private ValueModel<TrackerState> trackerState = new ValueModel<>();
@@ -93,8 +93,6 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
 
     private class PagerAdapter extends FragmentGridPagerAdapter
             implements ValueModel.ChangeListener<TrackerState> {
-        int currentRow = 0;
-        int currentCol = 0;
         int rows = 1;
         int cols = 1;
 
@@ -111,8 +109,6 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
             else if (mStateService == null)
                 return new ConnectToPhoneFragment();
 
-            currentRow = row;
-            currentCol = col;
             switch (trackerState.get()) {
                 case INIT:
                 case INITIALIZING:
@@ -248,7 +244,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         pager.setCurrentItem(RUN_INFO_ROW, curr.x, true);
     }
 
-    public void scrollRight() {
+    private void scrollRight() {
         Point curr = pager.getCurrentItem();
         if (curr.y != RUN_INFO_ROW)
             return;

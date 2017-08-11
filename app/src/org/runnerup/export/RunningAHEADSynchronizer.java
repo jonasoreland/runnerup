@@ -250,9 +250,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 

@@ -298,9 +298,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -321,8 +319,8 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     @Override
     public Status getFeed(FeedUpdater feedUpdater) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
 
@@ -337,7 +335,6 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             feedUpdater.addAll(result);
             return Status.OK;
         } finally {
-
         }
     }
 

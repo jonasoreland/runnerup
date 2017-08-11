@@ -56,25 +56,16 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     /**
      * Public https url for runalyze.
      */
-    public static final String PUBLIC_URL = "https://runalyze.com";
+    private static final String PUBLIC_URL = "https://runalyze.com";
 
     private long _id;
     private String _password;
     private String _username;
-    private String _url;
+    private String _url = PUBLIC_URL;
     private boolean _version3;
     private String _csrf_token;
-    private Map<String,Map<String,String>> _sports;
-    private Map<String,Map<String,String>> _types;
-
-    /**
-     * Empty constructor.
-     */
-    public RunalyzeSynchronizer() {
-        _url = PUBLIC_URL;
-        _sports = new HashMap<>();
-        _types = new HashMap<>();
-    }
+    private Map<String,Map<String,String>> _sports = new HashMap<>();
+    private Map<String,Map<String,String>> _types = new HashMap<>();
 
     @Override
     public int getIconId() {return R.drawable.a17_runalyze;}
@@ -352,7 +343,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * @param selectName The select name to search for
      * @return The string of the select or null
      */
-    protected String obtainSelect(String page, String selectName) {
+    private String obtainSelect(String page, String selectName) {
         // find the start of the
         Pattern selectStart = Pattern.compile("<[Ss][Ee][Ll][Ee][Cc][Tt] [^>]*[Nn][Aa][Mm][Ee]\\s*=\\s*[\"']" + selectName + "[\"'][^>]*>");
         Pattern selectEnd = Pattern.compile("</[Ss][Ee][Ll][Ee][Cc][Tt]>");
@@ -374,7 +365,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * @param option The html option to parse
      * @return The map of attributes in the option tag
      */
-    protected Map<String,String> parseOption(String option) {
+    private Map<String,String> parseOption(String option) {
         Map<String,String> options = new HashMap<>();
         Pattern pattern = Pattern.compile("([\\w-_]+)\\s*=\\s*(\"[^\"]*\"|\'[^\']*\')");
         Matcher matcher = pattern.matcher(option);
@@ -391,7 +382,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * @param option The html option tag
      * @return The name in the option
      */
-    protected String obtainName(String option) {
+    private String obtainName(String option) {
         Pattern pattern = Pattern.compile(">([^<]+)<");
         Matcher matcher = pattern.matcher(option);
         if (matcher.find()) {
@@ -408,7 +399,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * @param selectName The name of the select to search for
      * @return A map with all the values in the options
      */
-    protected Map<String,Map<String,String>> parseSelect(String page, String selectName) {
+    private Map<String,Map<String,String>> parseSelect(String page, String selectName) {
         Map<String,Map<String,String>> map = new HashMap<>();
         String select = obtainSelect(page, selectName);
         if (select != null) {
@@ -438,7 +429,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
      * and types defined in runalyze by the user. If no one is defined a default sportid will
      * be sent.
      */
-    protected void doAdd() {
+    private void doAdd() {
         try {
             URL add = new URL(_url + "/activity/add");
             HttpURLConnection conn = (HttpURLConnection) add.openConnection();

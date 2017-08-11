@@ -95,6 +95,7 @@ public class RUTextToSpeech {
 
         final boolean trace = true;
         if (queueMode == TextToSpeech.QUEUE_FLUSH) {
+            //noinspection ConstantConditions
             if (trace) {
                 Log.e(getClass().getName(), "speak (mute: " + mute + "): " + text);
             }
@@ -106,12 +107,14 @@ public class RUTextToSpeech {
             }
         } else {
             if (!cueSet.contains(text)) {
+                //noinspection ConstantConditions
                 if (trace) {
                     Log.e(getClass().getName(), "buffer speak: " + text);
                 }
                 cueSet.add(text);
                 cueList.add(new Entry(text, params));
             } else {
+                //noinspection ConstantConditions
                 if (trace) {
                     Log.e(getClass().getName(), "skip buffer (duplicate) speak: " + text);
                 }

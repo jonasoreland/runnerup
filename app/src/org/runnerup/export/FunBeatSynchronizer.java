@@ -49,8 +49,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * TODO: 1) serious cleanup needed 2) maybe reverse engineer
@@ -61,7 +59,7 @@ import java.util.Map;
 public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "FunBeat";
-    public static final String PUBLIC_URL = "http://www.funbeat.se";
+    private static final String PUBLIC_URL = "http://www.funbeat.se";
     private static final String BASE_URL = PUBLIC_URL;
     private static final String START_URL = BASE_URL + "/index.aspx";
     private static final String LOGIN_URL = BASE_URL + "/index.aspx";
@@ -269,9 +267,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn.disconnect();
 
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -466,9 +462,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 

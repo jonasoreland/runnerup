@@ -179,7 +179,7 @@ public class SyncManager {
         if (synchronizerName.contentEquals(RunKeeperSynchronizer.NAME)) {
             synchronizer = new RunKeeperSynchronizer(this);
         } else if (synchronizerName.contentEquals(GarminSynchronizer.NAME)) {
-            synchronizer = new GarminSynchronizer(this);
+            synchronizer = new GarminSynchronizer();
         } else if (synchronizerName.contentEquals(FunBeatSynchronizer.NAME)) {
             synchronizer = new FunBeatSynchronizer(this);
         } else if (synchronizerName.contentEquals(MapMyRunSynchronizer.NAME)) {
@@ -189,13 +189,13 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(JoggSESynchronizer.NAME)) {
             synchronizer = new JoggSESynchronizer(this);
         } else if (synchronizerName.contentEquals(EndomondoSynchronizer.NAME)) {
-            synchronizer = new EndomondoSynchronizer(this);
+            synchronizer = new EndomondoSynchronizer();
         } else if (synchronizerName.contentEquals(RunningAHEADSynchronizer.NAME)) {
             synchronizer = new RunningAHEADSynchronizer(this);
         } else if (synchronizerName.contentEquals(RunnerUpLiveSynchronizer.NAME)) {
             synchronizer = new RunnerUpLiveSynchronizer(mContext);
         } else if (synchronizerName.contentEquals(DigifitSynchronizer.NAME)) {
-            synchronizer = new DigifitSynchronizer(this);
+            synchronizer = new DigifitSynchronizer();
         } else if (synchronizerName.contentEquals(StravaSynchronizer.NAME)) {
             synchronizer = new StravaSynchronizer(this);
         } else if (synchronizerName.contentEquals(FacebookSynchronizer.NAME)) {
@@ -203,7 +203,7 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(GooglePlusSynchronizer.NAME)) {
             synchronizer = new GooglePlusSynchronizer(this);
         } else if (synchronizerName.contentEquals(RuntasticSynchronizer.NAME)) {
-            synchronizer = new RuntasticSynchronizer(this);
+            synchronizer = new RuntasticSynchronizer();
         } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
         } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
@@ -540,6 +540,7 @@ public class SyncManager {
         dialog.show();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean checkStoragePermissions(final Activity activity) {
         boolean result = true;
         String[] requiredPerms;

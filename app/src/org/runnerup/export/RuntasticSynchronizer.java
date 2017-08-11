@@ -76,9 +76,6 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     }
 
 
-    RuntasticSynchronizer(SyncManager syncManager) {
-    }
-
     @Override
     public long getId() {
         return id;
@@ -359,8 +356,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             s.ex = e;
         }
 
-        if (s.ex != null)
-            Log.e(getName(), "ex: " + s.ex);
+        Log.e(getName(), "ex: " + s.ex);
 
         if (conn != null)
             conn.disconnect();

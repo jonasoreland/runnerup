@@ -501,9 +501,11 @@ public class TitleSpinner extends LinearLayout {
             mCloseDialogListener.onClose(this, b);
     }
 
-    public void setTitle(String title) {
-        mTitle.setText(title);
-    }
+// --Commented out by Inspection START (2017-08-11 13:10):
+//    public void setTitle(String title) {
+//        mTitle.setText(title);
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:10)
 
     private void loadValue(String defaultValue) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);

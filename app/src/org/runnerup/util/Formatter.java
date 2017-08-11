@@ -638,7 +638,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    public String formatTime(long seconds_since_epoch) {
+    private String formatTime(long seconds_since_epoch) {
         return timeFormat.format(seconds_since_epoch * 1000);
     }
 

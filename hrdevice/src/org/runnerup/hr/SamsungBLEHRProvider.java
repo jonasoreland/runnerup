@@ -47,7 +47,7 @@ import java.util.UUID;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
 
-    static final String NAME = "SamsungBLE";
+    private static final String NAME = "SamsungBLE";
     private static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
 
     private final Context context;

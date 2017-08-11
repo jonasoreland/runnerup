@@ -57,7 +57,6 @@ import java.util.concurrent.TimeUnit;
 
 public class RunKeeper {
 
-    long mID = 0;
     private SQLiteDatabase mDB = null;
 
     public RunKeeper(SQLiteDatabase db) {

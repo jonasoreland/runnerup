@@ -67,6 +67,7 @@ public class FileUtil {
             }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static int copy(InputStream input, String dst) throws IOException {
         FileOutputStream output = null;
 

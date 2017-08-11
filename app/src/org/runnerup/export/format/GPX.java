@@ -41,10 +41,8 @@ public class GPX {
 
     private final RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
 
-    long mID = 0;
     private SQLiteDatabase mDB = null;
     private KXmlSerializer mXML = null;
-    private String notes = null;
     private SimpleDateFormat simpleDateFormat = null;
     final private boolean mGarminExt; //Also Cluetrust
     private final boolean mAccuracyExtensions;
@@ -128,7 +126,7 @@ public class GPX {
             mXML.text("RunnerUp-"+sportName+"-"+time);
             mXML.endTag("", "name");
             if (!cursor.isNull(1)) {
-                notes = cursor.getString(1);
+                String notes = cursor.getString(1);
                 mXML.startTag("", "desc");
                 mXML.text(notes);
                 mXML.endTag("", "desc");
@@ -308,7 +306,7 @@ public class GPX {
                     }
                 }
                 mXML.endTag("", "trkseg");
-            } else //noinspection PointlessBooleanExpression
+            } else //noinspection PointlessBooleanExpression,ConstantConditions
                 if (export_rest_laps && (cLap.getFloat(1) != 0 || cLap.getLong(2) != 0)) {
                 long lap = cLap.getLong(0);
                 if (restLapMode == RestLapMode.START_STOP_TRKSEG) {
@@ -377,7 +375,9 @@ public class GPX {
         cLocation.close();
     }
 
-    public String getNotes() {
-        return notes;
-    }
+// --Commented out by Inspection START (2017-08-11 13:06):
+//    public String getNotes() {
+//        return notes;
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:06)
 }

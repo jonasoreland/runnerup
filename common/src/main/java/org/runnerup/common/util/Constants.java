@@ -209,9 +209,9 @@ public interface Constants {
     }
 
     interface WORKOUT_TYPE {
-        public static final int BASIC = 0;
-        public static final int INTERVAL = 1;
-        public static final int ADVANCED = 2;
+        int BASIC = 0;
+        int INTERVAL = 1;
+        int ADVANCED = 2;
     }
 
     interface Wear {
@@ -240,7 +240,7 @@ public interface Constants {
             String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
         }
 
-        public interface RunInfo {
+        interface RunInfo {
             String HEADER = "HEADER/";
             String DATA = "DATA/";
             String SCREENS = "SCREENS"; // Array of screen sizes, stored in HEADERS

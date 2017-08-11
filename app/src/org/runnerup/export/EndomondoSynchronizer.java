@@ -89,9 +89,6 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    EndomondoSynchronizer(SyncManager syncManager) {
-    }
-
     @Override
     public long getId() {
         return id;
@@ -221,9 +218,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -305,9 +300,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -363,9 +356,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 

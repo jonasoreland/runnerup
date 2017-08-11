@@ -138,6 +138,7 @@ public class WorkoutBuilder {
         final boolean convertRestToRecovery = prefs.getBoolean(res.getString(
                 R.string.pref_convert_interval_distance_rest_to_recovery), true);
 
+        //noinspection ConstantConditions
         if (warmup) {
             Step step = new Step();
             step.intensity = Intensity.WARMUP;
@@ -198,6 +199,7 @@ public class WorkoutBuilder {
         }
         w.steps.add(repeat);
 
+        //noinspection ConstantConditions
         if (cooldown) {
             Step step = new Step();
             step.intensity = Intensity.COOLDOWN;

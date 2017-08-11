@@ -306,8 +306,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
             s.ex = e;
         }
 
-        if (s.ex != null)
-            s.ex.printStackTrace();
+        s.ex.printStackTrace();
 
         return s;
     }

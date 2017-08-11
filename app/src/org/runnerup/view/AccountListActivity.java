@@ -240,7 +240,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     };
 
-    final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
+    private final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
         public boolean onItemLongClick(AdapterView<?> arg0, View v,
                                     int pos, long id) {
             ContentValues tmp = DBHelper.get((Cursor)arg0.getItemAtPosition(pos));

@@ -45,7 +45,6 @@ import java.util.TimeZone;
 
 public class TCX {
 
-    long mID = 0;
     private SQLiteDatabase mDB = null;
     private KXmlSerializer mXML = null;
     private String notes = null;

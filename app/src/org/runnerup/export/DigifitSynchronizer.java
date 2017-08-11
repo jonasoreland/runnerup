@@ -28,7 +28,6 @@ package org.runnerup.export;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,24 +39,13 @@ import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 
@@ -76,7 +64,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         String username = args[0];
         String password = args[1];
 
-        DigifitSynchronizer du = new DigifitSynchronizer(null);
+        DigifitSynchronizer du = new DigifitSynchronizer();
         du.init(username, password);
 
         Log.e("DigifitSynchronizer", du.connect().toString());
@@ -87,16 +75,15 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     private String _password;
     private String _username;
 
-    DigifitSynchronizer(SyncManager unused) {
-    }
-
-    private JSONObject buildRequest(String root, Map<String, String> requestParameters)
-            throws JSONException {
-        JSONObject json = new JSONObject();
-        JSONObject request = new JSONObject(requestParameters);
-        json.put(root, request);
-        return json;
-    }
+// --Commented out by Inspection START (2017-08-11 13:14):
+//    private JSONObject buildRequest(String root, Map<String, String> requestParameters)
+//            throws JSONException {
+//        JSONObject json = new JSONObject();
+//        JSONObject request = new JSONObject(requestParameters);
+//        json.put(root, request);
+//        return json;
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:14)
 
     private JSONObject callDigifitEndpoint(String url, JSONObject request) throws IOException,
             JSONException {
@@ -223,65 +210,67 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    public void downloadActivity(File dst, String key) {
-        Map<String, String> exportParameters = new HashMap<>();
-        exportParameters.put("id", key);
-        exportParameters.put("format", "tcx");
-
-        long fileId = 0;
-        int fileSize = 0;
-
-        try {
-            JSONObject exportRequest = buildRequest("workout", exportParameters);
-            callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/export_web", exportRequest);
-
-            // I have observed Digifit taking >15 seconds to generate a file.
-            for (int i = 0; i < 60; i++) {
-                JSONObject workoutFile = getWorkoutFileId(key);
-                if (workoutFile != null) {
-                    fileId = workoutFile.getLong("file_id");
-                    fileSize = workoutFile.getInt("file_size");
-                    break;
-                }
-
-                Thread.sleep(500);
-            }
-
-            if (fileId == 0) {
-                Log.e(getName(), "export file not ready on Digifit within deadline");
-                return;
-            }
-
-            String downloadUrl = DIGIFIT_URL + "/workout/download/" + fileId;
-
-            HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
-            conn.setRequestMethod(RequestMethod.GET.name());
-            addCookies(conn);
-
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            OutputStream out = new FileOutputStream(dst);
-            int cnt = 0;
-            int readLen;
-            byte buf[] = new byte[1024];
-            while ((readLen = in.read(buf)) != -1) {
-                out.write(buf, 0, readLen);
-                cnt += readLen;
-            }
-            Log.e(getName(), "Expected " + fileSize + " bytes, got " + cnt + " bytes: "
-                    + (fileSize == cnt ? "OK" : "ERROR"));
-
-            in.close();
-            out.close();
-            conn.disconnect();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            // If we error out above, try to ensure we clean up our mess.
-            if (fileId == 0) {
-                deleteFile(fileId, "export");
-            }
-        }
-    }
+// --Commented out by Inspection START (2017-08-11 13:04):
+//    public void downloadActivity(File dst, String key) {
+//        Map<String, String> exportParameters = new HashMap<>();
+//        exportParameters.put("id", key);
+//        exportParameters.put("format", "tcx");
+//
+//        long fileId = 0;
+//        int fileSize = 0;
+//
+//        try {
+//            JSONObject exportRequest = buildRequest("workout", exportParameters);
+//            callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/export_web", exportRequest);
+//
+//            // I have observed Digifit taking >15 seconds to generate a file.
+//            for (int i = 0; i < 60; i++) {
+//                JSONObject workoutFile = getWorkoutFileId(key);
+//                if (workoutFile != null) {
+//                    fileId = workoutFile.getLong("file_id");
+//                    fileSize = workoutFile.getInt("file_size");
+//                    break;
+//                }
+//
+//                Thread.sleep(500);
+//            }
+//
+//            if (fileId == 0) {
+//                Log.e(getName(), "export file not ready on Digifit within deadline");
+//                return;
+//            }
+//
+//            String downloadUrl = DIGIFIT_URL + "/workout/download/" + fileId;
+//
+//            HttpURLConnection conn = (HttpURLConnection) new URL(downloadUrl).openConnection();
+//            conn.setRequestMethod(RequestMethod.GET.name());
+//            addCookies(conn);
+//
+//            InputStream in = new BufferedInputStream(conn.getInputStream());
+//            OutputStream out = new FileOutputStream(dst);
+//            int cnt = 0;
+//            int readLen;
+//            byte buf[] = new byte[1024];
+//            while ((readLen = in.read(buf)) != -1) {
+//                out.write(buf, 0, readLen);
+//                cnt += readLen;
+//            }
+//            Log.e(getName(), "Expected " + fileSize + " bytes, got " + cnt + " bytes: "
+//                    + (fileSize == cnt ? "OK" : "ERROR"));
+//
+//            in.close();
+//            out.close();
+//            conn.disconnect();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        } finally {
+//            // If we error out above, try to ensure we clean up our mess.
+//            if (fileId == 0) {
+//                deleteFile(fileId, "export");
+//            }
+//        }
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:04)
 
     @Override
     public String getAuthConfig() {
@@ -318,28 +307,30 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
                 .getString("URL");
     }
 
-    private JSONObject getWorkoutFileId(String key) throws IOException,
-            JSONException {
-        JSONObject exportListResponse = callDigifitEndpoint(DIGIFIT_URL
-                + "/rpc/json/workout/export_workouts_list",
-                new JSONObject());
-        Log.e(getName(), exportListResponse.toString());
-
-        JSONArray exportList = exportListResponse.getJSONObject("response").getJSONArray(
-                "export_list");
-
-        for (int idx = 0;; idx++) {
-            JSONObject export = exportList.optJSONObject(idx);
-            if (export == null) {
-                break;
-            }
-            long workoutId = export.getLong("workoutid");
-            if (("" + workoutId).equals(key)) {
-                return export;
-            }
-        }
-        return null;
-    }
+// --Commented out by Inspection START (2017-08-11 13:14):
+//    private JSONObject getWorkoutFileId(String key) throws IOException,
+//            JSONException {
+//        JSONObject exportListResponse = callDigifitEndpoint(DIGIFIT_URL
+//                + "/rpc/json/workout/export_workouts_list",
+//                new JSONObject());
+//        Log.e(getName(), exportListResponse.toString());
+//
+//        JSONArray exportList = exportListResponse.getJSONObject("response").getJSONArray(
+//                "export_list");
+//
+//        for (int idx = 0;; idx++) {
+//            JSONObject export = exportList.optJSONObject(idx);
+//            if (export == null) {
+//                break;
+//            }
+//            long workoutId = export.getLong("workoutid");
+//            if (("" + workoutId).equals(key)) {
+//                return export;
+//            }
+//        }
+//        return null;
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:14)
 
     @Override
     public void init(ContentValues config) {
@@ -369,63 +360,65 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         return _username != null && _password != null;
     }
 
-    public Status activityList(List<Pair<String, String>> list) {
-        Status errorStatus = Status.ERROR;
-        Map<String, String> requestParameters = new HashMap<>();
-        DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US);
-        Date now = new Date();
-
-        /*
-         * For speed of loading (Digifit can be pokey), this month and last
-         * month.
-         */
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(now);
-        cal.add(Calendar.DATE, -30);
-        cal.set(Calendar.DAY_OF_MONTH, 1);
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        Date from = cal.getTime();
-
-        requestParameters.put("sortOrder", "1"); // Reverse chronological.
-        requestParameters.put("dateTo", rfc3339fmt.format(now));
-        requestParameters.put("dateFrom", rfc3339fmt.format(from));
-
-        try {
-            JSONObject request = buildRequest("workout", requestParameters);
-            JSONObject response = callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/list",
-                    request);
-
-            if (response == null)
-                return errorStatus;
-
-            JSONArray workouts = response.getJSONObject("response").getJSONArray("workouts");
-            for (int idx = 0;; idx++) {
-                JSONObject workout = workouts.optJSONObject(idx);
-                if (workout == null) {
-                    break;
-                }
-                StringBuilder title = new StringBuilder(workout.getJSONObject("description")
-                        .getString("title"));
-                String id = "" + workout.getLong("id");
-                String startTime = workout.getJSONObject("summary").getString("startTime");
-
-                // startTime is rfc3339, instead of parsing it, just strip
-                // everything but the date.
-                title.append(" (").append(startTime.substring(0, startTime.indexOf("T")))
-                        .append(")");
-
-                list.add(new Pair<>(id, title.toString()));
-            }
-
-            return Status.OK;
-        } catch (Exception ex) {
-            Log.e(getName(), ex.toString());
-            errorStatus.ex = ex;
-        }
-        return errorStatus;
-    }
+// --Commented out by Inspection START (2017-08-11 13:04):
+//    public Status activityList(List<Pair<String, String>> list) {
+//        Status errorStatus = Status.ERROR;
+//        Map<String, String> requestParameters = new HashMap<>();
+//        DateFormat rfc3339fmt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US);
+//        Date now = new Date();
+//
+//        /*
+//         * For speed of loading (Digifit can be pokey), this month and last
+//         * month.
+//         */
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(now);
+//        cal.add(Calendar.DATE, -30);
+//        cal.set(Calendar.DAY_OF_MONTH, 1);
+//        cal.set(Calendar.HOUR, 0);
+//        cal.set(Calendar.MINUTE, 0);
+//        cal.set(Calendar.SECOND, 0);
+//        Date from = cal.getTime();
+//
+//        requestParameters.put("sortOrder", "1"); // Reverse chronological.
+//        requestParameters.put("dateTo", rfc3339fmt.format(now));
+//        requestParameters.put("dateFrom", rfc3339fmt.format(from));
+//
+//        try {
+//            JSONObject request = buildRequest("workout", requestParameters);
+//            JSONObject response = callDigifitEndpoint(DIGIFIT_URL + "/rpc/json/workout/list",
+//                    request);
+//
+//            if (response == null)
+//                return errorStatus;
+//
+//            JSONArray workouts = response.getJSONObject("response").getJSONArray("workouts");
+//            for (int idx = 0;; idx++) {
+//                JSONObject workout = workouts.optJSONObject(idx);
+//                if (workout == null) {
+//                    break;
+//                }
+//                StringBuilder title = new StringBuilder(workout.getJSONObject("description")
+//                        .getString("title"));
+//                String id = "" + workout.getLong("id");
+//                String startTime = workout.getJSONObject("summary").getString("startTime");
+//
+//                // startTime is rfc3339, instead of parsing it, just strip
+//                // everything but the date.
+//                title.append(" (").append(startTime.substring(0, startTime.indexOf("T")))
+//                        .append(")");
+//
+//                list.add(new Pair<>(id, title.toString()));
+//            }
+//
+//            return Status.OK;
+//        } catch (Exception ex) {
+//            Log.e(getName(), ex.toString());
+//            errorStatus.ex = ex;
+//        }
+//        return errorStatus;
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:04)
 
     @Override
     public void reset() {

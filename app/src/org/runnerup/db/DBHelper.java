@@ -49,8 +49,6 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
-import org.runnerup.export.SyncManager;
-import org.runnerup.export.Synchronizer;
 import org.runnerup.util.FileUtil;
 
 import java.io.IOException;
@@ -191,7 +189,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     private static synchronized DBHelper getHelper(Context context) {
         if (sInstance == null) {
-            sInstance = new DBHelper(context.getApplicationContext(), 1);
+            sInstance = new DBHelper(context.getApplicationContext());
         }
         return sInstance;
     }
@@ -226,7 +224,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     public static synchronized void closeDB(SQLiteDatabase db) {
     }
 
-    private DBHelper(Context context, int a) {
+    private DBHelper(Context context) {
         super(context, DBNAME, null, DBVERSION);
     }
 
@@ -463,7 +461,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, RunningAHEADSynchronizer.NAME);
         insertAccount(arg0, DigifitSynchronizer.NAME);
         insertAccount(arg0, StravaSynchronizer.NAME);
-        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
+        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, 1 << DB.ACCOUNT.FLAG_LIVE);
         insertAccount(arg0, FacebookSynchronizer.NAME, 0, -1);
         //insertAccount(arg0, GooglePlusSynchronizer.NAME);
         //DBVERSION 26

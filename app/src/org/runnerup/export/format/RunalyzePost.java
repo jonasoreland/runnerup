@@ -42,8 +42,8 @@ import java.util.TimeZone;
 public class RunalyzePost {
 
     private SQLiteDatabase mDB = null;
-    private Map<String,Map<String,String>> sports;
-    private Map<String,Map<String,String>> types;
+    private final Map<String,Map<String,String>> sports;
+    private final Map<String,Map<String,String>> types;
 
     /**
      * Constructor using the database.
@@ -365,7 +365,7 @@ public class RunalyzePost {
         writeNomalField("typeid", typeId, null, writer);
         //
         // calculate kcal
-        String kcal = null;
+        String kcal;
         if (sportFound != null && sports.get(sportFound).containsKey("data-kcal")) {
             kcal = Integer.toString(Math.round((Float.parseFloat(sports.get(sportFound).get("data-kcal")) / 3600.0F) * seconds));
             Log.d(getClass().getName(), "Kcal using sports value: " + sports.get(sportFound).get("data-kcal"));

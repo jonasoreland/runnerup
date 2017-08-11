@@ -29,7 +29,6 @@ import java.net.URLEncoder;
 
 public class GoogleStaticMap {
 
-    long mID = 0;
     private SQLiteDatabase mDB = null;
 
     public GoogleStaticMap(SQLiteDatabase mDB) {

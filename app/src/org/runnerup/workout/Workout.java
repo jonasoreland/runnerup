@@ -565,7 +565,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     /**
-     * @return flattened list of all steps in workout
+     * flattened list of all steps in workout
      */
     static public class StepListEntry {
         public StepListEntry(int index, Step step, int level, Step parent) {

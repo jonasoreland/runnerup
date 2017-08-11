@@ -64,7 +64,7 @@ import java.util.concurrent.TimeUnit;
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
-    public static final String PUBLIC_URL = "http://runkeeper.com";
+    private static final String PUBLIC_URL = "http://runkeeper.com";
     private Context context = null;
     /**
      * @todo register OAuth2Server
@@ -116,7 +116,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         POINT_TYPE.put("manual", DB.LOCATION.TYPE_GPS);
     }
 
-    public RunKeeperSynchronizer(SyncManager syncManager) {
+    RunKeeperSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
                 JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -415,9 +415,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             ex = e;
         }
 
-        if (ex != null) {
-            Log.e(getName(), "Failed to upload: " + ex.getMessage());
-        }
+        Log.e(getName(), "Failed to upload: " + ex.getMessage());
 
         if (conn != null) {
             conn.disconnect();
@@ -451,8 +449,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                             conn.disconnect();
 
                             String uri = obj.getString("profile");
-                            String user = uri.substring(uri.lastIndexOf("/") + 1);
-                            return user;
+                            return uri.substring(uri.lastIndexOf("/") + 1);
                         } catch (Exception e) {
                         }
                         return null;

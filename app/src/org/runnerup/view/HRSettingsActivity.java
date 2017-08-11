@@ -622,11 +622,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
         final ArrayList<HRDeviceRef> deviceList = new ArrayList<>();
         LayoutInflater inflater = null;
-        Resources resources = null;
+        // --Commented out by Inspection (2017-08-11 13:06):Resources resources = null;
 
         DeviceAdapter(Context ctx) {
             inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            resources = ctx.getResources();
+            //resources = ctx.getResources();
         }
 
         @Override

@@ -39,7 +39,6 @@ import java.util.Locale;
 
 public class FacebookCourse {
 
-    long mID = 0;
     private SQLiteDatabase mDB = null;
     private Formatter formatter = null;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(

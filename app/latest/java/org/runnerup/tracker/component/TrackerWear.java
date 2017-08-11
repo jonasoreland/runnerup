@@ -60,7 +60,6 @@ import org.runnerup.workout.WorkoutStepListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
@@ -76,7 +75,7 @@ public class TrackerWear extends DefaultTrackerComponent
     private GoogleApiClient mGoogleApiClient;
     private Formatter formatter;
     //@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private final HashSet<Node> connectedNodes = new HashSet<>();
+    //private final HashSet<Node> connectedNodes = new HashSet<>();
     private String wearNode;
 
     private final Handler handler = new Handler();
@@ -99,7 +98,7 @@ public class TrackerWear extends DefaultTrackerComponent
         initBasicScreens();
     }
 
-    void initBasicScreens() {
+    private void initBasicScreens() {
         // TODO read this from settings!!
         screens.clear();
         screenSizes.clear();
@@ -120,7 +119,7 @@ public class TrackerWear extends DefaultTrackerComponent
         }
     }
 
-    void initIntervalScreens() {
+    private void initIntervalScreens() {
         // TODO read this from settings!!
         screens.clear();
         screenSizes.clear();
@@ -136,7 +135,7 @@ public class TrackerWear extends DefaultTrackerComponent
         }
     }
 
-    void initWarmupCooldownScreens() {
+    private void initWarmupCooldownScreens() {
         // TODO read this from settings!!
         screens.clear();
         screenSizes.clear();
@@ -256,7 +255,7 @@ public class TrackerWear extends DefaultTrackerComponent
     @Override
     public void onBind(HashMap<String, Object> bindValues) {
         formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
-        workoutType = ((Integer)bindValues.get(Workout.KEY_WORKOUT_TYPE)).intValue();
+        workoutType = (Integer) bindValues.get(Workout.KEY_WORKOUT_TYPE);
         switch (workoutType) {
             case WORKOUT_TYPE.INTERVAL:
             case WORKOUT_TYPE.ADVANCED:
@@ -471,12 +470,12 @@ public class TrackerWear extends DefaultTrackerComponent
 
     @Override
     public void onPeerConnected(Node node) {
-        connectedNodes.add(node);
+        //connectedNodes.add(node);
     }
 
     @Override
     public void onPeerDisconnected(Node node) {
-        connectedNodes.remove(node);
+        //connectedNodes.remove(node);
         if (wearNode != null && node.getId().contentEquals(wearNode))
             wearNode = null;
     }
@@ -515,7 +514,7 @@ public class TrackerWear extends DefaultTrackerComponent
                 Wearable.MessageApi.removeListener(mGoogleApiClient, this);
                 Wearable.NodeApi.removeListener(mGoogleApiClient, this);
                 Wearable.DataApi.removeListener(mGoogleApiClient, this);
-                connectedNodes.clear();
+                //connectedNodes.clear();
             }
             mGoogleApiClient.disconnect();
             mGoogleApiClient = null;

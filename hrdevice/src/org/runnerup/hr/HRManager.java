@@ -39,7 +39,7 @@ public class HRManager {
      * @return true if device is 4.2, 4.2.1 and 4.2.2 AND the samsung ble sdk is available,
      *          false otherwise
      */
-    public static boolean checkSamsungBLELibrary() {
+    private static boolean checkSamsungBLELibrary() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
             return false;
 
@@ -60,7 +60,7 @@ public class HRManager {
         return false;
     }
 
-    public static HRProvider createProviderByReflection(String clazz, Context ctx) {
+    private static HRProvider createProviderByReflection(String clazz, Context ctx) {
         try {
             Class<?> classDefinition = Class.forName(clazz);
             Constructor<?> cons = classDefinition.getConstructor(Context.class);
@@ -73,7 +73,7 @@ public class HRManager {
     /**
      * Creates an {@link HRProvider}. This will be wrapped in a {@link RetryingHRProviderProxy}.
      * *
-     * @param src The type of {@link HRProvider} to create. See {@link #getHRProvider(android.content.Context, String)}
+     * @param src The type of {@link HRProvider} to create.
      * @return A new instance of an {@link HRProvider} or null if
      *   A) 'src' is not a valid {@link HRProvider} type
      *   B) the device does not support an {@link HRProvider} of type 'src'

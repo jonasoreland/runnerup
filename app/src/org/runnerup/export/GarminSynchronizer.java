@@ -57,7 +57,7 @@ import java.util.Map;
 public class GarminSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Garmin";
-    public static final String PUBLIC_URL = "http://connect.garmin.com";
+    private static final String PUBLIC_URL = "http://connect.garmin.com";
 
     private static final String CHOOSE_URL = PUBLIC_URL + "/";
 
@@ -83,9 +83,6 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     private String username = null;
     private String password = null;
     private boolean isConnected = false;
-
-    GarminSynchronizer(SyncManager syncManager) {
-    }
 
     @Override
     public long getId() {
@@ -469,9 +466,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 

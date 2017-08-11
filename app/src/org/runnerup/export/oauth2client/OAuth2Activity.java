@@ -60,8 +60,6 @@ public class OAuth2Activity extends AppCompatActivity {
 
         /**
          * Used as title when opening authorization dialog
-         * 
-         * @return
          */
         String NAME = "name";
         String CLIENT_ID = "client_id";

@@ -153,7 +153,7 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                 .setResultCallback(
                         new ResultCallback<DataItemBuffer>() {
                             @Override
-                            public void onResult(DataItemBuffer dataItems) {
+                            public void onResult(@NonNull DataItemBuffer dataItems) {
                                 for (DataItem dataItem : dataItems) {
                                     Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
                                     b.putLong(UPDATE_TIME, System.currentTimeMillis());

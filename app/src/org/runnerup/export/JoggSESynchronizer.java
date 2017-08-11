@@ -200,9 +200,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -326,9 +324,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
 
     }
