@@ -17,17 +17,13 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 import android.util.Pair;
 
-import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.KXmlSerializer;
-import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.IOException;
@@ -46,15 +42,14 @@ import java.util.TimeZone;
  *
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TCX {
 
-    long mID = 0;
-    SQLiteDatabase mDB = null;
-    KXmlSerializer mXML = null;
-    String notes = null;
-    SimpleDateFormat simpleDateFormat = null;
-    Sport sport = null;
+    private SQLiteDatabase mDB = null;
+    private KXmlSerializer mXML = null;
+    private String notes = null;
+    private SimpleDateFormat simpleDateFormat = null;
+    private Sport sport = null;
 
     private boolean addGratuitousTrack = false;
 
@@ -64,7 +59,7 @@ public class TCX {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    String formatTime(long time) {
+    private String formatTime(long time) {
         return simpleDateFormat.format(new Date(time));
     }
 
@@ -151,7 +146,7 @@ public class TCX {
             mXML.endDocument();
             mXML = null;
             cursor.close();
-            return new Pair<String, Sport>(id, sport);
+            return new Pair<>(id, sport);
         } catch (IOException e) {
             cursor.close();
             mXML = null;

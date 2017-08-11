@@ -16,29 +16,24 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.workout.Workout;
 
-/**
- * Created by jonas on 12/11/14.
- */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TrackerReceiver extends DefaultTrackerComponent {
 
-    private Tracker tracker;
+    private final Tracker tracker;
     private Context context;
     private boolean headsetRegistered = false;
 
-    public static final String NAME = "Receiver";
+    private static final String NAME = "Receiver";
 
     public TrackerReceiver(Tracker tracker) {
         this.tracker = tracker;
@@ -113,19 +108,15 @@ public class TrackerReceiver extends DefaultTrackerComponent {
                 workout.onResume(workout);
             else
                 workout.onPause(workout);
-            return;
         } else if (Constants.Intents.NEW_LAP.contentEquals(action)) {
             workout.onNewLapOrNextStep();
-            return;
         } else if (Constants.Intents.PAUSE_WORKOUT.contentEquals(action)) {
             if (workout.isPaused())
                 return;
             workout.onPause(workout);
-            return;
         } else if (Constants.Intents.RESUME_WORKOUT.contentEquals(action)) {
             if (workout.isPaused())
                 workout.onResume(workout);
-            return;
         }
     }
 

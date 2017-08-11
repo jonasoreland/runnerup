@@ -17,7 +17,7 @@
 
 package org.runnerup.db;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -27,8 +27,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import org.runnerup.R;
@@ -41,7 +39,6 @@ import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.FunBeatSynchronizer;
 import org.runnerup.export.GarminSynchronizer;
 import org.runnerup.export.GoogleFitSynchronizer;
-import org.runnerup.export.GooglePlusSynchronizer;
 import org.runnerup.export.JoggSESynchronizer;
 import org.runnerup.export.MapMyRunSynchronizer;
 import org.runnerup.export.NikePlusSynchronizer;
@@ -52,16 +49,13 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
-import org.runnerup.export.SyncManager;
-import org.runnerup.export.Synchronizer;
 import org.runnerup.util.FileUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
@@ -195,7 +189,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     private static synchronized DBHelper getHelper(Context context) {
         if (sInstance == null) {
-            sInstance = new DBHelper(context.getApplicationContext(), 1);
+            sInstance = new DBHelper(context.getApplicationContext());
         }
         return sInstance;
     }
@@ -226,10 +220,11 @@ public class DBHelper extends SQLiteOpenHelper implements
         return sWritableDB;
     }
 
+    @SuppressWarnings("EmptyMethod")
     public static synchronized void closeDB(SQLiteDatabase db) {
     }
 
-    private DBHelper(Context context, int a) {
+    private DBHelper(Context context) {
         super(context, DBNAME, null, DBVERSION);
     }
 
@@ -414,10 +409,10 @@ public class DBHelper extends SQLiteOpenHelper implements
                 tmp = new ContentValues();
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, authConfig);
                 arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
-            }
         }
-        c.close();
-    }
+        }
+                c.close();
+            }
 
     private void recreateAccount(SQLiteDatabase arg0) {
         StringBuilder newtab = new StringBuilder();
@@ -466,7 +461,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, RunningAHEADSynchronizer.NAME);
         insertAccount(arg0, DigifitSynchronizer.NAME);
         insertAccount(arg0, StravaSynchronizer.NAME);
-        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
+        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, 1 << DB.ACCOUNT.FLAG_LIVE);
         insertAccount(arg0, FacebookSynchronizer.NAME, 0, -1);
         //insertAccount(arg0, GooglePlusSynchronizer.NAME);
         //DBVERSION 26
@@ -502,9 +497,9 @@ public class DBHelper extends SQLiteOpenHelper implements
         long newId = arg0.insertWithOnConflict(DB.ACCOUNT.TABLE, null, arg1, SQLiteDatabase.CONFLICT_IGNORE);
         if (newId == -1 && arg1.size() > 1) {
             //values could be updated
-            String arr[] = {
-                    arg1.getAsString(DB.ACCOUNT.NAME)
-            };
+        String arr[] = {
+            arg1.getAsString(DB.ACCOUNT.NAME)
+        };
             //DBVERSION update
             arg1.remove(DB.ACCOUNT.FORMAT);
             arg1.remove(DB.ACCOUNT.AUTH_METHOD);
@@ -527,7 +522,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static ContentValues[] toArray(Cursor c) {
-        ArrayList<ContentValues> list = new ArrayList<ContentValues>();
+        ArrayList<ContentValues> list = new ArrayList<>();
         if (c.moveToFirst()) {
             do {
                 list.add(get(c));
@@ -547,6 +542,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         db.delete(DB.ACTIVITY.TABLE, "_id = ?", args);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public static void purgeDeletedActivities(Context ctx, final ProgressDialog dialog,
                                               final Runnable onComplete) {
 
@@ -555,7 +551,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         String from[] = { "_id" };
         Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0",
                 null, null, null, null, null);
-        final ArrayList<Long> list = new ArrayList<Long>(10);
+        final ArrayList<Long> list = new ArrayList<>(10);
         if (c.moveToFirst()) {
             do {
                 list.add(c.getLong(0));

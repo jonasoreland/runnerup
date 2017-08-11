@@ -17,19 +17,16 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FileUtil {
 
-    public static int copy(InputStream src, OutputStream dst) throws IOException {
+    private static int copy(InputStream src, OutputStream dst) throws IOException {
         int cnt = 0;
         byte buf[] = new byte[1024];
         while (src.read(buf) > 0) {
@@ -62,7 +59,7 @@ public class FileUtil {
             }
     }
 
-    public static void close(OutputStream input) {
+    private static void close(OutputStream input) {
         if (input != null)
             try {
                 input.close();
@@ -70,6 +67,7 @@ public class FileUtil {
             }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static int copy(InputStream input, String dst) throws IOException {
         FileOutputStream output = null;
 

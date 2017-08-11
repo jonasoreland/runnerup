@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -48,7 +46,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -57,7 +54,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Nike+";
@@ -80,7 +77,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             + "/v1.0/me/home/feed?access_token=%s&start=%d&count=%d";
     private static final String FRIEND_FEED_URL = BASE_URL
             + "/v1.0/me/friends/feed?access_token=%s&startIndex=%d&count=%d";
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String access_token = null;
@@ -129,10 +126,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null) {
-            return true;
-        }
-        return false;
+        return username != null && password != null;
     }
 
     @Override
@@ -177,7 +171,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
         HttpURLConnection conn = null;
         try {
-            /**
+            /*
              * get user id/key
              */
             String url = String.format(LOGIN_URL, CLIENT_ID, CLIENT_SECRET, APP_ID);
@@ -241,8 +235,8 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
         NikeXML nikeXML = new NikeXML(db);
         GPX nikeGPX = new GPX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter xml = new StringWriter();
             nikeXML.export(mID, xml);
@@ -256,13 +250,13 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("user-agent", USER_AGENT);
             conn.addRequestProperty("appid", APP_ID);
-            Part<StringWritable> part1 = new Part<StringWritable>("runXML",
+            Part<StringWritable> part1 = new Part<>("runXML",
                     new StringWritable(xml.toString()));
             part1.setFilename("runXML.xml");
             part1.setContentType("text/plain; charset=US-ASCII");
             part1.setContentTransferEncoding("8bit");
 
-            Part<StringWritable> part2 = new Part<StringWritable>("gpxXML",
+            Part<StringWritable> part2 = new Part<>("gpxXML",
                     new StringWritable(gpx.toString()));
             part2.setFilename("gpxXML.xml");
             part2.setContentType("text/plain; charset=US-ASCII");
@@ -304,9 +298,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -327,8 +319,8 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     @Override
     public Status getFeed(FeedUpdater feedUpdater) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
 
@@ -336,18 +328,17 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",
                     Locale.getDefault());
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
-            List<ContentValues> result = new ArrayList<ContentValues>();
+            List<ContentValues> result = new ArrayList<>();
             getOwnFeed(df, result);
             getFriendsFeed(df, result);
             FeedList.sort(result);
             feedUpdater.addAll(result);
             return Status.OK;
         } finally {
-
         }
     }
 
-    JSONObject makeGetRequest(String url) throws MalformedURLException, IOException, JSONException {
+    private JSONObject makeGetRequest(String url) throws IOException, JSONException {
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();
@@ -368,6 +359,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
         return new JSONObject();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean parsePayload(ContentValues c, JSONObject p) throws NumberFormatException,
             JSONException {
         long duration = Long.parseLong(p.getString("duration")) / 1000;
@@ -391,7 +383,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             String first = profile.getString("firstName");
             String last = profile.getString("lastName");
             String userUrl = profile.has("avatarFullUrl") ? profile.getString("avatarFullUrl") : null;
-            JSONObject feed = makeGetRequest(String.format(MY_FEED_URL, access_token, 1, 25));
+            JSONObject feed = makeGetRequest(String.format(Locale.ENGLISH, MY_FEED_URL, access_token, 1, 25));
             JSONArray arr = feed.getJSONArray("events");
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject e = arr.getJSONObject(i);
@@ -432,7 +424,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     private void getFriendsFeed(SimpleDateFormat df, List<ContentValues> result) {
         try {
-            JSONObject feed = makeGetRequest(String.format(FRIEND_FEED_URL, access_token, 1, 25));
+            JSONObject feed = makeGetRequest(String.format(Locale.ENGLISH, FRIEND_FEED_URL, access_token, 1, 25));
 
             if (!feed.has("friends")) {
                 Log.i(getClass().getSimpleName(), "No friends found, skipping their feed...");

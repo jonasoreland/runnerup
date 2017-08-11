@@ -17,15 +17,12 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class EventTrigger extends Trigger {
 
     Scope scope = Scope.STEP;
     Event event = Event.STARTED;
-    int counter = 0;
+    private int counter = 0;
     int skipCounter = 0;
     int maxCounter = Integer.MAX_VALUE;
 
@@ -40,7 +37,7 @@ public class EventTrigger extends Trigger {
     }
 
     @Override
-    public void fire(Workout s) {
+    void fire(Workout s) {
         if (counter >= skipCounter && (counter < maxCounter)) {
             super.fire(s);
         }

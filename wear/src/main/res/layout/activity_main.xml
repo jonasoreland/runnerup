@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -29,7 +29,7 @@
         android:id="@+id/vert_page_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|right"
+        android:layout_gravity="center_vertical|end"
         android:orientation="vertical">
 
         <Button
@@ -76,4 +76,4 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom" />
 
-</FrameLayout>
+</merge>

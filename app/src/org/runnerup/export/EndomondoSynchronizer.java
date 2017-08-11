@@ -17,11 +17,10 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
+import android.util.SparseArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +59,7 @@ import java.util.zip.GZIPOutputStream;
  * @author jonas Based on https://github.com/cpfair/tapiriik
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
@@ -69,28 +68,25 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     private static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
     private static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String deviceId = null;
     private String authToken = null;
 
-    public static final Map<Integer, Sport> endomondo2sportMap = new HashMap<Integer, Sport>();
-    public static final Map<Sport, Integer> sport2endomondoMap = new HashMap<Sport, Integer>();
+    private static final SparseArray<Sport> endomondo2sportMap = new SparseArray<>();
+    public static final Map<Sport, Integer> sport2endomondoMap = new HashMap<>();
     static {
         //list of sports ID can be found at
         // https://github.com/isoteemu/sports-tracker-liberator/blob/master/endomondo/workout.py
-        endomondo2sportMap.put(0, Sport.RUNNING);
-        endomondo2sportMap.put(2, Sport.BIKING);
-        endomondo2sportMap.put(22, Sport.OTHER);
-        endomondo2sportMap.put(17, Sport.ORIENTEERING);
-        endomondo2sportMap.put(18, Sport.WALKING);
-        for (Integer i : endomondo2sportMap.keySet()) {
-            sport2endomondoMap.put(endomondo2sportMap.get(i), i);
+        sport2endomondoMap.put(Sport.RUNNING, 0);
+        sport2endomondoMap.put(Sport.BIKING, 2);
+        sport2endomondoMap.put(Sport.OTHER, 22);
+        sport2endomondoMap.put(Sport.ORIENTEERING, 17);
+        sport2endomondoMap.put(Sport.WALKING, 18);
+        for (Sport s : sport2endomondoMap.keySet()) {
+            endomondo2sportMap.put(sport2endomondoMap.get(s), s);
         }
-    }
-
-    EndomondoSynchronizer(SyncManager syncManager) {
     }
 
     @Override
@@ -125,10 +121,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null && deviceId != null && authToken != null) {
-            return true;
-        }
-        return false;
+        return username != null && password != null && deviceId != null && authToken != null;
     }
 
     @Override
@@ -166,20 +159,19 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        /**
+        /*
          * Generate deviceId
          */
         deviceId = UUID.randomUUID().toString();
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         logout();
         try {
 
-            /**
+            /*
 			 *
 			 */
-            String login = AUTH_URL;
             FormValues kv = new FormValues();
             kv.put("email", username);
             kv.put("password", password);
@@ -188,7 +180,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             kv.put("deviceId", deviceId);
             kv.put("country", "N/A");
 
-            conn = (HttpURLConnection) new URL(login).openConnection();
+            conn = (HttpURLConnection) new URL(AUTH_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -226,9 +218,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -256,8 +246,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         }
 
         EndomondoTrack tcx = new EndomondoTrack(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             EndomondoTrack.Summary summary = new EndomondoTrack.Summary();
             StringWriter writer = new StringWriter();
@@ -310,9 +300,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -343,8 +331,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         url.append(FEED_URL).append("?authToken=").append(authToken);
         url.append("&maxResults=25");
 
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());
@@ -368,9 +356,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -410,7 +396,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         SyncHelper.setName(c, o.getJSONObject("from").getString("name"));
         final String IMAGE_URL = "http://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
         c.put(FEED.USER_IMAGE_URL,
-                String.format(IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+                String.format(Locale.ENGLISH, IMAGE_URL, o.getJSONObject("from").getLong("picture")));
         c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
 
         final JSONObject m = o.getJSONObject("message");
@@ -418,7 +404,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         setDistanceDuration(c, m.getString("text.win"));
 
         final String WORKOUT_URL = "http://www.endomondo.com/workouts/%d/%d";
-        c.put(DB.FEED.URL, String.format(WORKOUT_URL,
+        c.put(DB.FEED.URL, String.format(Locale.ENGLISH, WORKOUT_URL,
                 m.getJSONArray("actions").getJSONObject(0).getLong("id"),
                 o.getJSONObject("from").getLong("id")));
         return c;

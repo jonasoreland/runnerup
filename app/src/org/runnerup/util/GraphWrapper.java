@@ -17,6 +17,7 @@
 
 package org.runnerup.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -59,6 +60,7 @@ public class GraphWrapper implements Constants {
     /**
      * Called when the activity is first created.
      */
+    @SuppressLint("ObsoleteSdkInt")
     public GraphWrapper(Context context, LinearLayout graphTab, LinearLayout hrzonesBarLayout, final Formatter formatter, SQLiteDatabase mDB, long mID) {
         this.graphTab = graphTab;
         this.hrzonesBarLayout = hrzonesBarLayout;
@@ -502,13 +504,13 @@ public class GraphWrapper implements Constants {
         int no = 0;
 
         for (int aData : data) {
-            if (aData> 0) {
-            sum = sum + aData;
+            if (aData > 0) {
+                sum = sum + aData;
                 no++;
+            }
         }
-    }
         //TODO Average of pointe, not over time
-        if(no==0){
+        if (no == 0) {
             return 0;
         } else {
             return (double) sum / no;
@@ -526,6 +528,7 @@ public class GraphWrapper implements Constants {
         final long mID;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class LoadGraph extends AsyncTask<LoadParam, Void, GraphProducer> {
         @Override
         protected GraphProducer doInBackground(LoadParam... params) {
@@ -562,6 +565,7 @@ public class GraphWrapper implements Constants {
             return graphData;
         }
 
+        @SuppressLint("ObsoleteSdkInt")
         @Override
         protected void onPostExecute(GraphProducer graphData) {
 

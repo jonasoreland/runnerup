@@ -17,11 +17,10 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
+import android.util.SparseArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,39 +49,37 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * TODO: 1) serious cleanup needed 2) maybe reverse engineer
  * 1.0.0.api.funbeat.se that I found...
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "FunBeat";
-    public static final String PUBLIC_URL = "http://www.funbeat.se";
+    private static final String PUBLIC_URL = "http://www.funbeat.se";
     private static final String BASE_URL = PUBLIC_URL;
     private static final String START_URL = BASE_URL + "/index.aspx";
     private static final String LOGIN_URL = BASE_URL + "/index.aspx";
     private static final String UPLOAD_URL = BASE_URL
             + "/importexport/upload.aspx";
 
-    public static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
-    public static final String FEED_URL = API_URL + "GetMyNewsFeed";
+    private static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
+    private static final String FEED_URL = API_URL + "GetMyNewsFeed";
 
     private static String APP_ID = null;
     private static String APP_SECRET = null;
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String loginID = null;
     private String loginSecretHashed = null;
 
-    static final Map<Integer, Sport> funbeat2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2funbeatMap = new HashMap<Sport, Integer>();
+    private static final SparseArray<Sport> funbeat2sportMap = new SparseArray<>();
+    //private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<>();
     static {
         // the best (known) way to get ID for a given sport is:
         // 1) create a workout on the website funbeat.se with the desired sport type
@@ -93,9 +90,9 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         funbeat2sportMap.put(51, Sport.OTHER);
         funbeat2sportMap.put(26, Sport.ORIENTEERING);
         funbeat2sportMap.put(417, Sport.WALKING);
-        for (Integer i : funbeat2sportMap.keySet()) {
-            sport2funbeatMap.put(funbeat2sportMap.get(i), i);
-        }
+        //for (Integer i : funbeat2sportMap.keySet()) {
+        //    sport2funbeatMap.put(funbeat2sportMap.get(i), i);
+        //}
     }
 
     FunBeatSynchronizer(SyncManager syncManager) {
@@ -142,9 +139,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null)
-            return true;
-        return false;
+        return username != null && password != null;
     }
 
     @Override
@@ -171,7 +166,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     @Override
     public Status connect() {
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         cookies.clear();
         formValues.clear();
@@ -188,7 +183,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         }
 
         try {
-            /**
+            /*
              * connect to START_URL to get cookies/formValues
              */
             conn = (HttpURLConnection) new URL(START_URL).openConnection();
@@ -203,7 +198,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             }
             conn.disconnect();
 
-            /**
+            /*
              * Then login using a post
              */
             FormValues kv = new FormValues();
@@ -226,7 +221,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     "application/x-www-form-urlencoded");
             addCookies(conn);
 
-            boolean ok = false;
+            boolean ok;
             {
                 OutputStream wr = new BufferedOutputStream(
                         conn.getOutputStream());
@@ -244,8 +239,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     conn.setInstanceFollowRedirects(false);
                     conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
-                    responseCode = conn.getResponseCode();
-                    amsg = conn.getResponseMessage();
+                    //responseCode = conn.getResponseCode();
+                    //amsg = conn.getResponseMessage();
                     getCookies(conn);
                 } else if (responseCode != HttpURLConnection.HTTP_OK) {
                     Log.e(getName(), "FunBeatSynchronizer::connect() - got " + responseCode
@@ -272,9 +267,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             conn.disconnect();
 
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -349,8 +342,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         }
 
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             String id = tcx.export(mID, writer);
@@ -365,18 +358,18 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             String fileKey = SyncHelper.findName(formValues.keySet(), "FileUpload");
             String uploadKey = SyncHelper.findName(formValues.keySet(), "UploadButton");
 
-            Part<StringWritable> part1 = new Part<StringWritable>(viewKey,
+            Part<StringWritable> part1 = new Part<>(viewKey,
                     new StringWritable(formValues.get(viewKey)));
 
-            Part<StringWritable> part2 = new Part<StringWritable>(eventKey,
+            Part<StringWritable> part2 = new Part<>(eventKey,
                     new StringWritable(formValues.get(eventKey)));
 
-            Part<StringWritable> part3 = new Part<StringWritable>(fileKey,
+            Part<StringWritable> part3 = new Part<>(fileKey,
                     new StringWritable(writer.toString()));
             part3.setContentType("application/octet-stream");
             part3.setFilename("jonas.tcx");
 
-            Part<StringWritable> part4 = new Part<StringWritable>(uploadKey,
+            Part<StringWritable> part4 = new Part<>(uploadKey,
                     new StringWritable(formValues.get(uploadKey)));
             Part<?> parts[] = {
                     part1, part2, part3, part4
@@ -400,8 +393,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 conn.setInstanceFollowRedirects(false);
                 conn.setRequestMethod(RequestMethod.GET.name());
                 addCookies(conn);
-                responseCode = conn.getResponseCode();
-                amsg = conn.getResponseMessage();
+                //responseCode = conn.getResponseCode();
+                //amsg = conn.getResponseMessage();
                 getCookies(conn);
             } else if (responseCode != HttpURLConnection.HTTP_OK) {
                 Log.e(getName(), "FunBeatSynchronizer::upload() - got " + responseCode + ", msg: "
@@ -436,7 +429,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 wr.flush();
                 wr.close();
                 responseCode = conn.getResponseCode();
-                amsg = conn.getResponseMessage();
+                //amsg = conn.getResponseMessage();
                 getCookies(conn);
                 if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                     redirect = conn.getHeaderField("Location");
@@ -446,8 +439,8 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     conn.setInstanceFollowRedirects(false);
                     conn.setRequestMethod(RequestMethod.GET.name());
                     addCookies(conn);
-                    responseCode = conn.getResponseCode();
-                    amsg = conn.getResponseMessage();
+                    //responseCode = conn.getResponseCode();
+                    //amsg = conn.getResponseMessage();
                     getCookies(conn);
                 }
                 String html = getFormValues(conn);
@@ -469,9 +462,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 

@@ -16,10 +16,8 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
@@ -31,19 +29,13 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class StartFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
     private TextView mTxt;
-    private CircledImageView mButton;
     private MainActivity activity;
 
     public StartFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -51,8 +43,8 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
         View view = inflater.inflate(R.layout.start, container, false);
         super.onViewCreated(view, savedInstanceState);
 
-        mButton = (CircledImageView) view.findViewById(R.id.icon_start);
-        mButton.setOnClickListener(startButtonClick);
+        CircledImageView button = (CircledImageView) view.findViewById(R.id.icon_start);
+        button.setOnClickListener(startButtonClick);
         mTxt = (TextView) view.findViewById(R.id.txt_start);
 
         return view;
@@ -83,7 +75,7 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
         }
     }
 
-    private View.OnClickListener startButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener startButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             activity.getStateService().sendStart();

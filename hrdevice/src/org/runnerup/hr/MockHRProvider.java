@@ -1,14 +1,12 @@
 
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class MockHRProvider implements HRProvider {
 
     private HRClient hrClient = null;
@@ -39,14 +37,14 @@ public class MockHRProvider implements HRProvider {
     public void close() {
     }
 
-    boolean mIsScanning = false;
+    private boolean mIsScanning = false;
 
     @Override
     public boolean isScanning() {
         return mIsScanning;
     }
 
-    final Runnable fakeScanResult = new Runnable() {
+    private final Runnable fakeScanResult = new Runnable() {
         int count = 0;
 
         @Override
@@ -76,8 +74,8 @@ public class MockHRProvider implements HRProvider {
         mIsScanning = false;
     }
 
-    boolean mIsConnecting = false;
-    boolean mIsConnected = false;
+    private boolean mIsConnecting = false;
+    private boolean mIsConnected = false;
 
     @Override
     public boolean isConnected() {
@@ -111,12 +109,12 @@ public class MockHRProvider implements HRProvider {
         }, 3000);
     }
 
-    final Runnable hrUpdate = new Runnable() {
+    private final Runnable hrUpdate = new Runnable() {
         @Override
         public void run() {
             hrValue = (int) (150 + 40 * Math.random());
             hrTimestamp = System.currentTimeMillis();
-            if (mIsConnected == true) {
+            if (mIsConnected) {
                 hrClientHandler.postDelayed(hrUpdate, 750);
             }
         }
@@ -128,8 +126,8 @@ public class MockHRProvider implements HRProvider {
         mIsConnected = false;
     }
 
-    int hrValue = 0;
-    long hrTimestamp = 0;
+    private int hrValue = 0;
+    private long hrTimestamp = 0;
 
     @Override
     public int getHRValue() {

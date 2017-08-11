@@ -17,9 +17,7 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
-import android.os.Build;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
@@ -28,10 +26,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Step implements TickComponent {
 
-    String name = null;
+    private String name = null;
 
     /**
      * Intensity
@@ -53,12 +51,12 @@ public class Step implements TickComponent {
     /**
      * Autolap (m)
      */
-    double autolap = 0;
+    private double autolap = 0;
 
     /**
      * Triggers
      */
-    final ArrayList<Trigger> triggers = new ArrayList<Trigger>();
+    final ArrayList<Trigger> triggers = new ArrayList<>();
 
     /**
      * @return the name
@@ -182,12 +180,12 @@ public class Step implements TickComponent {
         }
     }
 
-    double stepStartTime = 0;
-    double stepStartDistance = 0;
-    double stepStartHeartbeats = 0;
-    double lapStartTime = 0;
-    double lapStartDistance = 0;
-    double lapStartHeartbeats = 0;
+    private double stepStartTime = 0;
+    private double stepStartDistance = 0;
+    private double stepStartHeartbeats = 0;
+    private double lapStartTime = 0;
+    private double lapStartDistance = 0;
+    private double lapStartHeartbeats = 0;
 
     @Override
     public void onStart(Scope what, Workout s) {
@@ -262,7 +260,7 @@ public class Step implements TickComponent {
             t.onStop(s);
         }
 
-        /**
+        /*
          * Save current lap so that it shows in DetailActivity
          */
         long distance = Math.round(s.getDistance(Scope.LAP));
@@ -273,7 +271,7 @@ public class Step implements TickComponent {
             tmp.put(DB.LAP.DISTANCE, distance);
             tmp.put(DB.LAP.TIME, time);
             tmp.put(DB.LAP.AVG_HR, Math.round(hr));
-            s.saveLap(tmp, /** next lap */
+            s.saveLap(tmp, /* next lap */
             false);
         }
     }
@@ -334,7 +332,7 @@ public class Step implements TickComponent {
                 tmp.put(DB.LAP.DISTANCE, distance);
                 tmp.put(DB.LAP.TIME, time);
                 tmp.put(DB.LAP.AVG_HR, Math.round(hr));
-                s.saveLap(tmp, /** next lap */
+                s.saveLap(tmp, /* next lap */
                 true);
             }
         }
@@ -397,7 +395,7 @@ public class Step implements TickComponent {
     }
 
     public static Step createPauseStep(Dimension dim, double duration) {
-        Step step = null;
+        Step step;
         if (dim == null || dim == Dimension.TIME)
             step = new PauseStep();
         else

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedAttribute"
     android:initialLayout="@layout/feed_widget"
     android:minWidth="120dp"
     android:minHeight="40dp"

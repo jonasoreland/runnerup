@@ -18,7 +18,7 @@
 package org.runnerup.export;
 
 import android.Manifest;
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -77,7 +77,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class SyncManager {
     public static final int CONFIGURE_REQUEST = 1;
     public static final long ERROR_ACTIVITY_ID = -1L;
@@ -138,6 +138,7 @@ public class SyncManager {
         synchronizersById.clear();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public long load(String synchronizerName) {
         String from[] = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
@@ -178,7 +179,7 @@ public class SyncManager {
         if (synchronizerName.contentEquals(RunKeeperSynchronizer.NAME)) {
             synchronizer = new RunKeeperSynchronizer(this);
         } else if (synchronizerName.contentEquals(GarminSynchronizer.NAME)) {
-            synchronizer = new GarminSynchronizer(this);
+            synchronizer = new GarminSynchronizer();
         } else if (synchronizerName.contentEquals(FunBeatSynchronizer.NAME)) {
             synchronizer = new FunBeatSynchronizer(this);
         } else if (synchronizerName.contentEquals(MapMyRunSynchronizer.NAME)) {
@@ -188,13 +189,13 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(JoggSESynchronizer.NAME)) {
             synchronizer = new JoggSESynchronizer(this);
         } else if (synchronizerName.contentEquals(EndomondoSynchronizer.NAME)) {
-            synchronizer = new EndomondoSynchronizer(this);
+            synchronizer = new EndomondoSynchronizer();
         } else if (synchronizerName.contentEquals(RunningAHEADSynchronizer.NAME)) {
             synchronizer = new RunningAHEADSynchronizer(this);
         } else if (synchronizerName.contentEquals(RunnerUpLiveSynchronizer.NAME)) {
             synchronizer = new RunnerUpLiveSynchronizer(mContext);
         } else if (synchronizerName.contentEquals(DigifitSynchronizer.NAME)) {
-            synchronizer = new DigifitSynchronizer(this);
+            synchronizer = new DigifitSynchronizer();
         } else if (synchronizerName.contentEquals(StravaSynchronizer.NAME)) {
             synchronizer = new StravaSynchronizer(this);
         } else if (synchronizerName.contentEquals(FacebookSynchronizer.NAME)) {
@@ -202,7 +203,7 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(GooglePlusSynchronizer.NAME)) {
             synchronizer = new GooglePlusSynchronizer(this);
         } else if (synchronizerName.contentEquals(RuntasticSynchronizer.NAME)) {
-            synchronizer = new RuntasticSynchronizer(this);
+            synchronizer = new RuntasticSynchronizer();
         } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
         } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
@@ -271,7 +272,6 @@ public class SyncManager {
                         callback.run(synchronizerName, status);
                     }
                 }, l, s.authMethod);
-                return;
         }
     }
 
@@ -311,7 +311,6 @@ public class SyncManager {
             case FILEPERMISSION:
                 checkStoragePermissions(mActivity);
                 askFileUrl(l);
-                return;
         }
     }
 
@@ -341,7 +340,6 @@ public class SyncManager {
             }
             case NEED_AUTH:
                 handleAuth(cb, synchronizer, s.authMethod);
-                return;
         }
     }
 
@@ -438,6 +436,7 @@ public class SyncManager {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     private void testUserPass(final Synchronizer l, final JSONObject authConfig) {
         mSpinner.setTitle("Testing login " + l.getName());
 
@@ -541,6 +540,7 @@ public class SyncManager {
         dialog.show();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private boolean checkStoragePermissions(final Activity activity) {
         boolean result = true;
         String[] requiredPerms;
@@ -594,6 +594,7 @@ public class SyncManager {
         doUpload(synchronizer);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void doUpload(final Synchronizer synchronizer) {
         final ProgressDialog copySpinner = mSpinner;
         final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
@@ -650,11 +651,9 @@ public class SyncManager {
                                         return;
                                     case OK:
                                         doUpload(synchronizer);
-                                        return;
                                 }
                             }
                         }, synchronizer, result.authMethod);
-                        return;
                 }
             }
         }.execute(synchronizer);
@@ -772,6 +771,7 @@ public class SyncManager {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void loadActivityList(final List<SyncActivityItem> items, final String synchronizerName, final Callback callback) {
         mSpinner.setTitle(getResources().getString(R.string.Loading_activities));
         mSpinner.setMessage(getResources().getString(R.string.Fetching_activities_from_1s, synchronizerName));
@@ -837,6 +837,7 @@ public class SyncManager {
         doListWorkout(synchronizer);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void doListWorkout(final Synchronizer synchronizer) {
         final ProgressDialog copySpinner = mSpinner;
 
@@ -903,6 +904,7 @@ public class SyncManager {
             cb.run(null, Status.OK);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void loadWorkouts(final HashSet<WorkoutRef> pendingWorkouts, final Callback callback) {
         int cnt = pendingWorkouts.size();
         mSpinner.setTitle("Downloading workouts (" + cnt + ")");
@@ -961,6 +963,7 @@ public class SyncManager {
         }.execute("string");
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean compareFiles(File w, File f) {
         if (w.length() != f.length())
             return false;
@@ -1118,6 +1121,7 @@ public class SyncManager {
         doSyncMulti(synchronizer, mode, ai);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void doSyncMulti(final Synchronizer synchronizer, final SyncMode mode, final SyncActivityItem activityItem) {
         final ProgressDialog copySpinner = mSpinner;
         final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
@@ -1220,6 +1224,7 @@ public class SyncManager {
         syncFeed(synchronizer);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void syncFeed(final Synchronizer synchronizer) {
         if (synchronizer == null) {
             nextSyncFeed();

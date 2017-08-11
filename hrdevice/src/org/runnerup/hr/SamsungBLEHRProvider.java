@@ -47,8 +47,8 @@ import java.util.UUID;
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
 
-    static final String NAME = "SamsungBLE";
-    static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
+    private static final String NAME = "SamsungBLE";
+    private static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
 
     private final Context context;
     private BluetoothAdapter btAdapter = null;
@@ -216,17 +216,15 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         private boolean isHeartRateInUINT16(byte b) {
-            if ((b & 1) != 0)
-                return true;
-            return false;
+            return (b & 1) != 0;
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGattCharacteristic arg0, int arg1) {
             // triggered from DummyReadForSecLevelCheck
             UUID charUuid = arg0.getUuid();
-            if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
-            } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
+            if (!charUuid.equals(FIRMWARE_REVISON_UUID) &&
+                    charUuid.equals(BATTERY_LEVEL_CHARAC)) {
                 batteryLevel = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                 log("Battery level: " + batteryLevel);
             }
@@ -234,7 +232,6 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
             log(" => startHR()");
             // triggered from DummyReadForSecLevelCheck
             startHR();
-            return;
         }
 
         private void startHR() {
@@ -255,9 +252,8 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                 reportConnectFailed("CCC for HEART RATE MEASUREMENT charateristic not found!");
                 return;
             }
-            if (btGatt.readDescriptor(mHRMccc) == false) {
+            if (!btGatt.readDescriptor(mHRMccc)) {
                 reportConnectFailed("readDescriptor() is failed");
-                return;
             }
             // Continue in onDescriptorRead
         }
@@ -269,9 +265,9 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         @Override
         public void onConnectionStateChange(BluetoothDevice arg0, int status, int newState) {
 
-            if (btDevice != null && arg0 != null
-                    && btDevice.getAddress().contentEquals(arg0.getAddress())) {
-            }
+            //if (btDevice != null && arg0 != null
+            //        && btDevice.getAddress().contentEquals(arg0.getAddress())) {
+            //}
 
             if (btGatt == null) {
                 log("onConnectionStateChange: btGatt == null");
@@ -315,7 +311,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                     ", mIsConnecting: " + mIsConnecting + ", mIsScanning: " + mIsScanning);
 
             if (!broadcast) {
-                /**
+                /*
                  * If connect was called and btDevice was unknown, we scan for
                  * it before btGatt.connect()
                  */
@@ -381,15 +377,12 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                             // Since this data will be in Little endian format,
                             // we
                             // are interested in first 2 bits of first byte
-                            byte flag = scanRecord[offset++];
+                            @SuppressWarnings("UnusedAssignment") byte flag = scanRecord[offset++];
                             /*
                              * 00000011(0x03) - LE Limited Discoverable Mode and
                              * LE General Discoverable Mode
                              */
-                            if ((flag & LIMITED_AND_GENERAL_DISC_MASK) > 0)
-                                return false;
-                            else
-                                return true;
+                            return (flag & LIMITED_AND_GENERAL_DISC_MASK) <= 0;
                         } else if (len == 1) {
                             continue;// ignore that packet and continue with the
                                      // rest
@@ -432,7 +425,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
                 return;
             }
 
-            if (btGatt.readCharacteristic(firmwareIdCharc) == false) {
+            if (!btGatt.readCharacteristic(firmwareIdCharc)) {
                 reportConnectFailed("firmware revison reading is failed!");
             }
             // continue in onCharacteristicRead
@@ -460,6 +453,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         // continue in onCharacteristicRead
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean enableNotification(boolean onoff, BluetoothGattCharacteristic charac) {
         if (btGatt == null) {
             log("enableNotfication("+onoff+ ", " + charac + "): btGatt == null");
@@ -542,7 +536,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
         btDevice = dev;
         if (ref.deviceName == null || dev.getName() == null ||
                 !ref.deviceName.contentEquals(dev.getName())) {
-            /**
+            /*
              * If device doesn't match name, scan for before connecting
              */
             log("Scan before connect");
@@ -583,7 +577,7 @@ public class SamsungBLEHRProvider extends BtHRBase implements HRProvider {
             return;
         }
 
-        if (mIsConnecting == false && mIsConnected == false)
+        if (!mIsConnecting && !mIsConnected)
             return;
 
         mIsConnected = false;

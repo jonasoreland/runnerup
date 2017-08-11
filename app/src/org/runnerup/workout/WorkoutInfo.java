@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2014 niklas.weidemann
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,9 +18,6 @@ package org.runnerup.workout;
 
 import android.location.Location;
 
-/**
- * Created by niklas.weidemann on 2014-11-14.
- */
 public interface WorkoutInfo {
     double get(Scope scope, Dimension d);
 

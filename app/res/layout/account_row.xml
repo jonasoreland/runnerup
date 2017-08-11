@@ -15,12 +15,10 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
 
     <TableRow
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/table_row1"
         android:longClickable="true"
         android:layout_width="fill_parent"
@@ -39,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            />
+            tools:ignore="ContentDescription" />
         
         <CheckBox
             android:id="@+id/account_list_upload"
@@ -67,5 +65,3 @@
             android:text="@string/Configure" />
 
     </TableRow>
-
-</LinearLayout>

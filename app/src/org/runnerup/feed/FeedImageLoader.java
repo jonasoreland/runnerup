@@ -17,11 +17,10 @@
 
 package org.runnerup.feed;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 
 import java.io.InputStream;
@@ -30,7 +29,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FeedImageLoader {
     static private final Map<String, Bitmap> imageCache = Collections
             .synchronizedMap(new WeakHashMap<String, Bitmap>());
@@ -58,6 +57,7 @@ public class FeedImageLoader {
         return null;
     }
 
+    @SuppressLint("StaticFieldLeak")
     static public void LoadImageAsync(final String url, final Callback onLoadingDone) {
         final String fixedUrl = FixUrl(url);
         Bitmap b = imageCache.get(url);

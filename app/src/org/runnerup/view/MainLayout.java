@@ -18,7 +18,7 @@
 package org.runnerup.view;
 
 import android.Manifest;
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
@@ -36,10 +36,8 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -69,13 +67,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class MainLayout extends TabActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Drawable myGetDrawable(int resId) {
-        Drawable d = getResources().getDrawable(resId);
-        return d;
+        return getResources().getDrawable(resId);
     }
 
     private enum UpgradeState {
@@ -171,7 +168,7 @@ public class MainLayout extends TabActivity
         final Uri data = getIntent().getData();
         if (data != null) {
             if (SettingsActivity.requestReadStoragePermissions(MainLayout.this)) {
-                String filePath = null;
+                String filePath;
                 if ("content".equals(data.getScheme())) {
                     Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
                     cursor.moveToFirst();
@@ -189,7 +186,7 @@ public class MainLayout extends TabActivity
         }
     }
 
-    void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
+    private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
         String list[] = null;
 
         try {
@@ -216,6 +213,7 @@ public class MainLayout extends TabActivity
                 if (!isFile) {
                     //The request is hierarchical, source is still on a directory level
                     File dstDir = new File(dstBase);
+                    //noinspection ResultOfMethodCallIgnored
                     dstDir.mkdir();
                     if (!dstDir.isDirectory()) {
                         Log.w(getClass().getName(), "Failed to copy " + src + " as \"" + dstBase
@@ -274,7 +272,7 @@ public class MainLayout extends TabActivity
         }
     }
 
-    public final OnClickListener onRateClick = new OnClickListener() {
+    private final OnClickListener onRateClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
             try {
@@ -286,10 +284,10 @@ public class MainLayout extends TabActivity
         }
     };
 
-    public void whatsNew() {
+    private void whatsNew() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.whatsnew, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = (WebView) view.findViewById(R.id.web_view1);
         builder.setTitle(getString(R.string.Whats_new));
         builder.setView(view);
@@ -310,7 +308,7 @@ public class MainLayout extends TabActivity
         wv.loadUrl("file:///android_asset/changes.html");
     }
 
-    public static void requestGpsPermissions(final Activity activity, final View view) {
+    private static void requestGpsPermissions(final Activity activity, final View view) {
         String[] requiredPerms = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         List<String> defaultPerms = new ArrayList<>();
         List<String> shouldPerms = new ArrayList<>();

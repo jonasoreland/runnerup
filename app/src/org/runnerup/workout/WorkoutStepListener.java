@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2014 niklas.weidemann
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -14,9 +16,6 @@
  */
 package org.runnerup.workout;
 
-/**
- * Created by jonas on 12/28/14.
- */
 public interface WorkoutStepListener {
-    public void onStepChanged(Step oldStep, Step newStep);
+    void onStepChanged(Step oldStep, Step newStep);
 }

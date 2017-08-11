@@ -17,11 +17,9 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.EndomondoSynchronizer;
@@ -38,12 +36,11 @@ import java.util.TimeZone;
  *
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class EndomondoTrack {
 
-    long mID = 0;
-    SQLiteDatabase mDB = null;
-    SimpleDateFormat simpleDateFormat = null;
+    private SQLiteDatabase mDB = null;
+    private SimpleDateFormat simpleDateFormat = null;
 
     public EndomondoTrack(final SQLiteDatabase db) {
         mDB = db;

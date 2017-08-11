@@ -1,15 +1,12 @@
 buildscript {
     repositories {
+        maven {
+            url "https://maven.google.com"
+        }
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
-    }
-}
-
-repositories {
-    maven {
-        url "https://maven.google.com"
     }
 }
 
@@ -19,10 +16,10 @@ project.ext {
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '26.0.1' //Update Travis manually
-    compileSdkVersion = 25 //Update Travis manually
-    targetSdkVersion = 25
+    compileSdkVersion = 26 //Update Travis manually
+    targetSdkVersion = 26
 
-    supportLibrary = '25.3.1'
+    supportLibrary = '26.0.1'
     googlePlayServicesVersion = '11.0.4'
     googleWearVersion = '2.0.4'
 
@@ -34,5 +31,5 @@ project.ext {
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set
-    preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+    preDexEnabled = "true" == System.getProperty("pre-dex", "true")
 }

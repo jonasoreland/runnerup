@@ -22,7 +22,8 @@
         tools:overrideLibrary="com.mapbox.mapboxsdk, com.jjoe64.graphview"/>
 
     <application
-        android:label="@string/app_name">
+        android:label="@string/app_name"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
     </application>
 
 </manifest> 

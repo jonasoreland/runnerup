@@ -16,8 +16,6 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
@@ -29,18 +27,10 @@ import android.view.ViewGroup;
 
 import org.runnerup.R;
 
-//@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+//
 public class SearchingFragment extends Fragment {
 
-    private CircledImageView mButton;
-    private MainActivity activity;
-
     public SearchingFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -49,27 +39,17 @@ public class SearchingFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= 23) {
-            mButton = (CircledImageView) view.findViewById(R.id.icon_searching);
-            AnimationDrawable frameAnimation = (AnimationDrawable) mButton.getForeground();
+            CircledImageView button = (CircledImageView) view.findViewById(R.id.icon_searching);
+            AnimationDrawable frameAnimation = (AnimationDrawable) button.getForeground();
             frameAnimation.start();
         }
 
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.activity = (MainActivity) activity;
-    }
+    //@Override
+    //public void onAttach(Activity activity) {
+    //    super.onAttach(activity);
+    //    //MainActivity activity1 = (MainActivity) activity;
+    //}
 }

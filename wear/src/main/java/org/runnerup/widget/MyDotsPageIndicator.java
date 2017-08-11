@@ -16,9 +16,7 @@
  */
 package org.runnerup.widget;
 
-import android.annotation.TargetApi;
 import android.graphics.Point;
-import android.os.Build;
 import android.support.wearable.view.GridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
 import android.util.TypedValue;
@@ -28,17 +26,14 @@ import android.widget.LinearLayout;
 
 import org.runnerup.R;
 
-/**
- * Created by jonas on 12/27/14.
- */
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class MyDotsPageIndicator implements GridViewPager.OnPageChangeListener, GridViewPager.OnAdapterChangeListener {
 
     // margin, size
-    private Point unselected = new Point(4,2);
-    private Point selected = new Point(6,1);
+    private final Point unselected = new Point(4,2);
+    private final Point selected = new Point(6,1);
 
-    private LinearLayout layout;
+    private final LinearLayout layout;
     private GridViewPager pager;
 
     public MyDotsPageIndicator(LinearLayout layout) {

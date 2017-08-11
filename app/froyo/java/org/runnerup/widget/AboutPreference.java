@@ -26,7 +26,7 @@ import android.os.Build;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AboutPreference extends DialogPreference {
 
     public AboutPreference(Context context, AttributeSet attrs) {

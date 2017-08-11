@@ -17,10 +17,7 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class Bitfield {
 
     public static boolean test(long flags, int bit) {
@@ -35,12 +32,12 @@ public class Bitfield {
             return clear(flags, bit);
     }
 
-    public static long set(long flags, int bit) {
+    private static long set(long flags, int bit) {
         long val = (1 << bit);
         return flags | val;
     }
 
-    public static long clear(long flags, int bit) {
+    private static long clear(long flags, int bit) {
         long val = (1 << bit);
         return flags & (~val);
     }

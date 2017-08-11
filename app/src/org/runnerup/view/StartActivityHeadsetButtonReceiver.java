@@ -16,16 +16,14 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.view.KeyEvent;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.component.HeadsetButtonReceiver;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class StartActivityHeadsetButtonReceiver extends HeadsetButtonReceiver {
 
     public static void registerHeadsetListener(Context context) {

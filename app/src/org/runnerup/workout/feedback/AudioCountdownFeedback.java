@@ -17,9 +17,7 @@
 
 package org.runnerup.workout.feedback;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import org.runnerup.util.Formatter;
@@ -30,14 +28,14 @@ import org.runnerup.workout.Workout;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AudioCountdownFeedback extends Feedback {
 
     boolean emitScope = false;
-    Scope scope = Scope.STEP;
-    Dimension dimension = Dimension.TIME;
-    RUTextToSpeech textToSpeech;
-    Formatter formatter;
+    private Scope scope = Scope.STEP;
+    private Dimension dimension = Dimension.TIME;
+    private RUTextToSpeech textToSpeech;
+    private Formatter formatter;
 
     public AudioCountdownFeedback(Scope s, Dimension d) {
         this.scope = s;
@@ -63,10 +61,7 @@ public class AudioCountdownFeedback extends Feedback {
         if (scope != other.scope)
             return false;
 
-        if (dimension != other.dimension)
-            return false;
-
-        return true;
+        return dimension == other.dimension;
     }
 
     @Override

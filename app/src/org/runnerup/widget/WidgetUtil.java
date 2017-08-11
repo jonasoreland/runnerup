@@ -17,13 +17,10 @@
 
 package org.runnerup.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -32,17 +29,15 @@ import android.widget.TextView;
 
 import org.runnerup.R;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class WidgetUtil {
 
     public static void setEditable(EditText editText, boolean onoff) {
-        if (onoff == true) {
-            editText.setClickable(onoff);
-            editText.setFocusable(onoff);
+        editText.setClickable(onoff);
+        editText.setFocusable(onoff);
+        if (onoff) {
+            //noinspection ConstantConditions
             editText.setFocusableInTouchMode(onoff);
-        } else {
-            editText.setClickable(onoff);
-            editText.setFocusable(onoff);
         }
     }
 
@@ -63,7 +58,7 @@ public class WidgetUtil {
     }
 
     @SuppressWarnings("deprecation")
-    @TargetApi(16)
+    
     public static void setBackground(View v, Drawable d) {
         if (Build.VERSION.SDK_INT < 16) {
             v.setBackgroundDrawable(d);

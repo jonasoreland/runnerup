@@ -19,4 +19,6 @@
     <issue id="WrongRegion" severity="ignore">
         <ignore regexp="^.*?\Q\res\values-en-rNL\\E.*?$" />
     </issue>
+    <issue id="AllowBackup" severity="ignore"/>
+    <issue id="GradleCompatible" severity="ignore"/>
 </lint>

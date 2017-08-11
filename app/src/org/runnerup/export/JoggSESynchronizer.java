@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 
@@ -52,7 +50,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class JoggSESynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "jogg.se";
@@ -60,9 +58,9 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     private static String MASTER_USER = null;
     private static String MASTER_KEY = null;
 
-    public static final String BASE_URL = "http://jogg.se/iphoneservice/iphoneservice.asmx";
+    private static final String BASE_URL = "http://jogg.se/iphoneservice/iphoneservice.asmx";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private boolean isConnected = false;
@@ -109,9 +107,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null)
-            return true;
-        return false;
+        return username != null && password != null;
     }
 
     @Override
@@ -146,10 +142,10 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         try {
-            /**
+            /*
              * Login by making an empty save-gpx call and see what error message
              * you get Invalid/"Invalid Userdetails" => wrong user/pass
              * NOK/"Root element is missing" => OK
@@ -204,9 +200,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -267,7 +261,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         final GPX gpx = new GPX(db);
         try {
@@ -330,9 +324,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
 
     }
