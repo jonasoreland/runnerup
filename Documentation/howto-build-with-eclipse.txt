@@ -1,3 +1,0 @@
-UPDATE: currently developing with Eclipse is broken,
-du to changes made for android wear. Patches that restores
-eclipse but keeps android wear structure is welcome.
