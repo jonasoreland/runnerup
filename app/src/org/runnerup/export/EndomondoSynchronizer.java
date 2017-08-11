@@ -25,6 +25,7 @@ import android.util.SparseArray;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.EndomondoTrack;
@@ -62,6 +63,7 @@ import java.util.zip.GZIPOutputStream;
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
+    public static final String PUBLIC_URL = "http://www.endomondo.com";
     private static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
     private static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
     private static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
@@ -99,6 +101,9 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a6_endomondo;}
 
     @Override
     public void init(ContentValues config) {

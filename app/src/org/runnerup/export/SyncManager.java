@@ -38,7 +38,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -54,7 +53,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
-import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.Synchronizer.AuthMethod;
@@ -72,7 +70,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,23 +159,6 @@ public class SyncManager {
         return id;
     }
 
-    public static ContentValues loadConfig(SQLiteDatabase db, String synchronizerName) {
-        ContentValues config = null;
-                String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT
-        };
-        String args[] = {
-                synchronizerName
-        };
-        Cursor c = db.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
-                args, null, null, null, null);
-        if (c.moveToFirst()) {
-            config = DBHelper.get(c);
-        }
-        c.close();
-        return config;
-    }
-
     @SuppressWarnings("null")
     public Synchronizer add(ContentValues config) {
         if (config == null) {
@@ -241,9 +221,10 @@ public class SyncManager {
                 }
             }
             synchronizer.init(config);
-            synchronizer.setAuthNotice(config.getAsInteger(Constants.DB.ACCOUNT.AUTH_NOTICE));
             synchronizers.put(synchronizerName, synchronizer);
             synchronizersById.put(synchronizer.getId(), synchronizer);
+        } else {
+            Log.e(getClass().getName(), "Synchronizer not found for " + synchronizerName);
         }
         return synchronizer;
     }
@@ -328,14 +309,12 @@ public class SyncManager {
                 askUsernamePassword(l, authMethod);
                 return;
             case FILEPERMISSION:
+                checkStoragePermissions(mActivity);
                 askFileUrl(l);
         }
     }
 
     private void handleAuthComplete(Synchronizer synchronizer, Status s) {
-        handleAuthComplete(synchronizer, s, null, null);
-    }
-    private void handleAuthComplete(Synchronizer synchronizer, Status s, String url, String format) {
         Callback cb = authCallback;
         authCallback = null;
         authSynchronizer = null;
@@ -351,12 +330,7 @@ public class SyncManager {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
-                if (!TextUtils.isEmpty(url)) {
-                    tmp.put(DB.ACCOUNT.URL, url);
-                }
-                if (!TextUtils.isEmpty(format)) {
-                    tmp.put(DB.ACCOUNT.FORMAT, format);
-                }
+
                 String args[] = {
                     Long.toString(synchronizer.getId())
                 };
@@ -404,7 +378,7 @@ public class SyncManager {
                         : InputType.TYPE_TEXT_VARIATION_PASSWORD));
             }
         });
-        if (sync.getAuthNotice() != null) {
+        if (sync.getAuthNotice() != 0) {
             tvAuthNotice.setVisibility(View.VISIBLE);
             tvAuthNotice.setText(sync.getAuthNotice());
         } else {
@@ -513,16 +487,9 @@ public class SyncManager {
         path += File.separator + "RunnerUp";
         tv1.setText(path);
 
-        String s = "";
-        if(!checkStoragePermissions(mActivity)) {
-            s = "Note: Storage permission must be granted in Android settings";
-        }
-        if (sync.getAuthNotice() != null) {
-            s += sync.getAuthNotice();
-        }
-        if ("".equals(s)) {
+        if (sync.getAuthNotice() != 0) {
             tvAuthNotice.setVisibility(View.VISIBLE);
-            tvAuthNotice.setText(s);
+            tvAuthNotice.setText(sync.getAuthNotice());
         } else {
             tvAuthNotice.setVisibility(View.GONE);
         }
@@ -534,9 +501,6 @@ public class SyncManager {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Set default values
-                ContentValues config = new ContentValues();
-                config.put(DB.ACCOUNT.AUTH_CONFIG, tv1.getText().toString());
-                config.put("_id", sync.getId());
                 String format = "";
                 if (cbtcx.isChecked()) {
                     format = "tcx,";
@@ -544,17 +508,16 @@ public class SyncManager {
                 if (cbgpx.isChecked()) {
                     format += "gpx,";
                 }
+                
+                ContentValues tmp = new ContentValues();
+                tmp.put(DB.ACCOUNT.FORMAT, format);
+                tmp.put(DB.ACCOUNT.URL, tv1.getText().toString());
+                ContentValues config = new ContentValues();
+                config.put("_id", sync.getId());
+                config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
                 sync.init(config);
 
-                //Set URL used for displaying
-                String url;
-                try {
-                    url = (new File(sync.getAuthConfig())).toURI().toURL().toString();
-                } catch (MalformedURLException e) {
-                    url = "";
-                }
-
-                handleAuthComplete(sync, sync.connect(), url, format);
+                handleAuthComplete(sync, sync.connect());
             }
         });
         builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
@@ -601,6 +564,7 @@ public class SyncManager {
             ActivityCompat.requestPermissions(activity, perms, 0);
             result = false;
         }
+        //TODO A popup in the AccountActivity, to prompt for storage permissions
         return result;
     }
 
@@ -654,15 +618,20 @@ public class SyncManager {
                     case CANCEL:
                         disableSynchronizer(disableSynchronizerCallback, synchronizer, false);
                         return;
+
                     case SKIP:
                     case ERROR:
                     case INCORRECT_USAGE:
                         nextSynchronizer();
                         return;
+
                     case OK:
-                        syncOK(synchronizer, copySpinner, copyDB, mID);
+                        result.activityId = mID; //Not always set
+                        syncOK(synchronizer, copySpinner, copyDB, result);
+                        getExternalId(synchronizer, copyDB, result);
                         nextSynchronizer();
                         return;
+
                     case NEED_AUTH: // should be handled inside connect "loop"
                         handleAuth(new Callback() {
                             @Override
@@ -689,6 +658,31 @@ public class SyncManager {
         }.execute(synchronizer);
     }
 
+    /**
+     * Fetch external identifiers for the services. This is done after normal upload has finished by polling
+     * The result is seen in activity upload only (clickable link).
+     * @param synchronizer
+     * @param copyDB
+     * @param status
+     */
+    private static void getExternalId(final Synchronizer synchronizer, final SQLiteDatabase copyDB, final Synchronizer.Status status){
+        if(status.externalIdStatus == Synchronizer.ExternalIdStatus.PENDING) {
+            new AsyncTask<Void, Void, Synchronizer.Status>() {
+
+                @Override
+                protected Synchronizer.Status doInBackground(Void... args) {
+                    return synchronizer.getExternalId(copyDB, status);
+                }
+
+                @Override
+                protected void onPostExecute(Synchronizer.Status result) {
+                    //the external status is updated, check
+                    externalIdOK(synchronizer, copyDB, result);
+                }
+            }.execute();
+        }
+    }
+
     private final Callback disableSynchronizerCallback = new Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
@@ -697,13 +691,23 @@ public class SyncManager {
     };
 
     private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
-                        long id) {
+                        Synchronizer.Status status) {
         copySpinner.setMessage(getResources().getString(R.string.Saving));
         ContentValues tmp = new ContentValues();
         tmp.put(DB.EXPORT.ACCOUNT, synchronizer.getId());
-        tmp.put(DB.EXPORT.ACTIVITY, id);
-        tmp.put(DB.EXPORT.STATUS, 0);
+        tmp.put(DB.EXPORT.ACTIVITY, status.activityId);
+        tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
+        tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
         copyDB.insert(DB.EXPORT.TABLE, null, tmp);
+    }
+
+    private static void externalIdOK(Synchronizer synchronizer, SQLiteDatabase copyDB,
+                               Synchronizer.Status status) {
+        ContentValues tmp = new ContentValues();
+        tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
+        tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
+        String[] args = { Long.toString(synchronizer.getId()), Long.toString(status.activityId) };
+        copyDB.update(DB.EXPORT.TABLE, tmp, DB.EXPORT.ACCOUNT + "= ? AND " + DB.EXPORT.ACTIVITY + " = ?", args);
     }
 
     private void doneUploading() {
@@ -1149,7 +1153,9 @@ public class SyncManager {
                     case SKIP:
                         break;
                     case OK:
-                        syncOK(synchronizer, copySpinner, copyDB, result.activityId);
+                        result.activityId = mID; //Not always set
+                        syncOK(synchronizer, copySpinner, copyDB, result);
+                        getExternalId(synchronizer, copyDB, result);
                         break;
                     case NEED_AUTH:
                         handleAuth(new Callback() {
@@ -1298,12 +1304,8 @@ public class SyncManager {
 
     public Set<String> feedSynchronizersSet(Context ctx) {
         Set<String> set = new HashSet<>();
-        String[] from = new String[] {
-                "_id",
-                DB.ACCOUNT.NAME,
-                DB.ACCOUNT.ENABLED,
-                DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.FLAGS
+        String from[] = new String[] {
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
 
         SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);

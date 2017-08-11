@@ -22,6 +22,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.export.format.RunalyzePost;
 
@@ -73,6 +74,14 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         _url = PUBLIC_URL;
         _sports = new HashMap<>();
         _types = new HashMap<>();
+    }
+
+    @Override
+    public int getIconId() {return R.drawable.a17_runalyze;}
+
+    @Override
+    public String getUrl() {
+        return _url;
     }
 
     /**
@@ -186,7 +195,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             while ((bytesRead = input.read(buffer)) != -1) {
                 output.write(buffer, 0, bytesRead);
             }
-            result =new String(output.toByteArray());
+            result = new String(output.toByteArray());
         } finally {
             try {
                 if (input != null) {
@@ -203,7 +212,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
                 Log.e(getName(), "Error closing output", e);
             }
         }
-        Log.d(getName(), result);
+        //Log.v(getName(), "getResponse: " + result);
         return result;
     }
 
@@ -218,7 +227,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         for (Map.Entry<String, List<String>> e : headers.entrySet()) {
             if ("Set-Cookie".equalsIgnoreCase(e.getKey())) {
                 for (String v : e.getValue()) {
-                    Log.d(getName(), "cookie found = " + e);
+                    Log.d(getName(), "cookie found = " + v);
                     if (v.indexOf(";") > 0) {
                         v = v.substring(0, v.indexOf(";"));
                     }
@@ -233,7 +242,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             this.cookies.add(e.getKey() + "=" + e.getValue() + "; ");
         }
         // cookies
-        Log.d(getName(), "cookies=" + cookies);
+        Log.v(getName(), "cookies=" + cookies);
     }
 
     private void getCSRFToken(String response) {
@@ -241,7 +250,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         Matcher matcher = pattern.matcher(response);
         if (matcher.find()) {
             _csrf_token = matcher.group(1);
-            Log.d(getName(), "CSRF token = " + _csrf_token);
+            Log.v(getName(), "CSRF token = " + _csrf_token);
         } else {
             Log.e(getName(), "Failed to get CSRF token");
         }
@@ -256,7 +265,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         private int prepareLogin() {
         try {
             URL url = new URL(_url + "/en/login");
-            Log.d(getName(), "URL=" + url);
+            //Log.v(getName(), "URL=" + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setInstanceFollowRedirects(false);
@@ -265,7 +274,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             clearCookies();
             String response = getResponse(conn.getInputStream());
             if (conn.getResponseCode() == 200) {
-                Log.d(getName(), response);
+                //Log.d(getName(), response);
                 getCookies(conn);
                 getCSRFToken(response);
             }
@@ -288,9 +297,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     private Status login() {
         OutputStreamWriter writer = null;
         try {
-            Log.d(getName(), "Login enter");
+            Log.v(getName(), "Login enter");
             URL url = new URL(_url + (_version3? "/en/login_check" : "/login.php"));
-            Log.d(getName(), "URL=" + url);
+            //Log.v(getName(), "URL=" + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setInstanceFollowRedirects(false);
@@ -311,7 +320,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             if (conn.getResponseCode() == 302 && !response.contains("/en/login")) {
                 clearCookies();
                 getCookies(conn);
-                Log.d(getName(), "Login exit OK");
+                Log.v(getName(), "Login exit OK");
                 return Status.OK;
             } else {
                 Log.e(getName(), "Invalid response code " + conn.getResponseCode());
@@ -443,8 +452,8 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
                 _sports = parseSelect(response, "sportid");
                 _types = parseSelect(response, "typeid");
             }
-            Log.d(getName(), "sports=" + _sports);
-            Log.d(getName(), "types=" + _types);
+            Log.v(getName(), "sports=" + _sports);
+            Log.v(getName(), "types=" + _types);
         } catch(MalformedURLException e) {
             Log.e(getName(), "Could not parse sportid and typeid. Malformed URL", e);
         } catch (ProtocolException e) {
@@ -475,11 +484,11 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
             int rc = prepareLogin();
             if (rc == 404) {
                 // it's a v2 version
-                Log.d(getName(), "Detected version 2.x");
+                Log.v(getName(), "Detected version 2.x");
                 _version3 = false;
             } else if (rc == 200) {
                 // it's v3 version
-                Log.d(getName(), "Detected version 3.x");
+                Log.v(getName(), "Detected version 3.x");
                 _version3 = true;
             } else {
                 // strange error
@@ -509,7 +518,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
         try {
             RunalyzePost post = new RunalyzePost(db, _sports, _types);
             URL url = new URL(_url + (_version3? "/activity/add" : "/call/call.Training.create.php"));
-            Log.d(getName(), "URL=" + url);
+            //Log.v(getName(), "URL=" + url);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setInstanceFollowRedirects(false);

@@ -1,34 +1,3 @@
 UPDATE: currently developing with Eclipse is broken,
 du to changes made for android wear. Patches that restores
 eclipse but keeps android wear structure is welcome.
-
-If you want to use Eclipse instead of Android Studio, follow these steps:
-
-	1. Set $ANDROID_HOME env variable to your Android SDK folder path.
-
-	2. Run the following command to get all submodules:
-
-		git submodule init && git submodule update
-
-	3. Download required .jar libraries in libs/ subfolder:
-
-	* Copy $ANDROID_HOME/extras/android/support/v4/android-support-v4.jar
-
-	* Download https://github.com/fishkingsin/BLEDialogTool/raw/master/lib/samsung_ble_sdk_200.jar to external/
-
-	* Download https://github.com/ant-wireless/Android_API_ANTPlus/raw/master/antpluginlib_2.0.0.jar to external/
-
-	If any other .jar is missing, search the associated sourceUrl the build.gradle file which is used in Android Studio to download dependencies.
-
-	4. Open the android SDK and download Extras -> Google Play services
-
-	5. Copy $ANDROID_HOME/extras/google/google_play_services/libproject/google-play-services_lib in the same folder than RunnerUp, or update project.properties.
-	Change line:
-
-		android.library.reference.1=../../google-play-services_lib
-
-	By the relative path of the google-play-services_lib.
-
-	Do NOT use absolute path since this is not supported on Unix like OS (see http://stackoverflow.com/questions/18209041/how-to-define-v7-appcompat-dependency-correctly)
-
-	6. Press on the play button and the project should compile and deploy to your device!

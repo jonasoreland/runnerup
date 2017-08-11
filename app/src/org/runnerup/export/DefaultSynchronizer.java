@@ -49,8 +49,6 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     final Set<String> cookies = new HashSet<>();
     final FormValues formValues = new FormValues();
 
-    private Integer authNotice;
-
     DefaultSynchronizer() {
         super();
         logout();
@@ -64,6 +62,12 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     @Override
     public String getName() {
         return null;
+    }
+
+    @Override
+    public int getIconId() {
+        //0 is used if the resource id cannot be found
+        return 0;
     }
 
     @Override
@@ -105,6 +109,10 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         Status s = Status.ERROR;
         s.activityId = mID;
         return s;
+    }
+
+    public Status getExternalId(SQLiteDatabase db, Status uploadStatus) {
+        return Status.ERROR;
     }
 
     public boolean checkSupport(Synchronizer.Feature f) {
@@ -233,11 +241,18 @@ public abstract class DefaultSynchronizer implements Synchronizer {
 
     @Override
     public Integer getAuthNotice() {
-        return authNotice;
+        return 0;
     }
 
     @Override
-    public void setAuthNotice(Integer authNotice) {
-        this.authNotice = authNotice;
+    public String getUrl() {
+        return PUBLIC_URL;
     }
+
+    @Override
+    public String getActivityUrl(String extId) { return null; }
+
+    //Common helper
+    //JSON getString() interprets null as the string "null"
+    public static String noNullStr(String s) { return ("null".equals(s)) ? null : s; }
 }

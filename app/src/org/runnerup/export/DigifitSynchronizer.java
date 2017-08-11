@@ -33,6 +33,7 @@ import android.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.Part;
@@ -64,6 +65,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     private static final String DIGIFIT_URL = "http://my.digifit.com";
 
     public static final String NAME = "Digifit";
+    public static final String PUBLIC_URL = "http://www.digifit.com";
 
     public static void main(String args[]) {
         if (args.length < 2) {
@@ -305,8 +307,10 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         return NAME;
     }
 
-    private String getUploadUrl() throws IOException,
-            JSONException {
+    @Override
+    public int getIconId() {return R.drawable.a9_digifit;}
+
+    private String getUploadUrl() throws IOException, JSONException {
         String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";
         JSONObject response = callDigifitEndpoint(getUploadUrl, new JSONObject());
 

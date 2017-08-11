@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.KXmlSerializer;
@@ -47,6 +48,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     private boolean isConnected = false;
 
     public static final String NAME = "RunningFreeOnline";
+    public static final String PUBLIC_URL = "http://www.runningfreeonline.com";
     private static final String BASE_URL = "http://www.runsaturday.com/runsaturday/SportTrackSync.asmx";
     private static final String LOG_TAG = RunningFreeOnlineSynchronizer.class.getName();
 
@@ -58,6 +60,12 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     public long getId() {
         return id;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a15_runningfreeonline;}
+
+    @Override
+    public Integer getAuthNotice() { return R.string.RunningFreeOnlinePasswordNotice; }
 
     @Override
     public void init(ContentValues config) {

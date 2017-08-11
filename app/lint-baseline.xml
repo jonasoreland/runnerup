@@ -8,15 +8,4 @@
             file="build.gradle"/>
     </issue>
 
-    <issue
-        id="GradleDependency"
-        message="A newer version of com.google.android.gms:play-services-wearable than 10.2.1 is available: 11.0.4"
-        errorLine1="    latestCompile &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle"
-            line="131"
-            column="5"/>
-    </issue>
-
 </issues>

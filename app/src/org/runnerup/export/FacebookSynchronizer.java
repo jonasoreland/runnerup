@@ -27,6 +27,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
@@ -50,6 +51,7 @@ import java.util.Locale;
 public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Facebook";
+    public static final String PUBLIC_URL = "http://www.facebook.com";
 
     /**
      * @todo register OAuth2Server
@@ -133,6 +135,9 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a11_facebook;}
 
     @Override
     public void init(ContentValues config) {

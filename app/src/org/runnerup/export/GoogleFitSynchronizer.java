@@ -24,6 +24,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.export.format.GoogleFitData;
 import org.runnerup.export.util.SyncHelper;
 
@@ -40,6 +41,7 @@ import java.util.zip.GZIPOutputStream;
 public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     public static final String NAME = "GoogleFit";
+    public static final String PUBLIC_URL = "https://fit.google.com";
     private static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
     public static final String REST_DATASOURCE = "dataSources";
     public static final String REST_DATASETS = "datasets";
@@ -69,6 +71,9 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a14_googlefit;}
 
     private Context getContext() {
         return context;

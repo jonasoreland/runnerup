@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -57,6 +58,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     private SQLiteDatabase mDB = null;
     private SyncManager mSyncManager = null;
     private boolean mTabFormat = false;
+    private boolean mShowDisabled = false;
     private CursorAdapter mCursorAdapter;
 
     /** Called when the activity is first created. */
@@ -73,6 +75,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         listView.setDividerHeight(10);
         mCursorAdapter = new AccountListAdapter(this, null);
         listView.setAdapter(mCursorAdapter);
+        listView.setOnItemLongClickListener(itemLongClickListener);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -97,6 +100,11 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 item.setTitle(getString(R.string.Icon_list));
                 getSupportLoaderManager().restartLoader(0, null, this);
                 break;
+            case R.id.menu_show_disabled:
+                mShowDisabled = !mShowDisabled;
+                item.setChecked(mShowDisabled);
+                getSupportLoaderManager().restartLoader(0, null, this);
+                break;
         }
         return true;
     }
@@ -104,19 +112,15 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         String[] from = new String[] {
-                "_id",
-                DB.ACCOUNT.NAME,
-                DB.ACCOUNT.URL,
-                DB.ACCOUNT.DESCRIPTION,
-                DB.ACCOUNT.ENABLED,
-                DB.ACCOUNT.ICON,
-                DB.ACCOUNT.AUTH_CONFIG,
-                DB.ACCOUNT.AUTH_NOTICE,
-                DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
+        String showDisabled = null;
+        if (!mShowDisabled) {
+            showDisabled = DB.ACCOUNT.ENABLED + "==1";
+        }
 
-        return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, null, null,
-                DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.NAME);
+        return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, showDisabled, null,
+                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
     }
 
     @Override
@@ -172,15 +176,14 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
             boolean configured = mSyncManager.isConfigured(id);
             if (!mTabFormat) {
-                if (cursor.isNull(cursor.getColumnIndex(DB.ACCOUNT.ICON))) {
+                if (synchronizer.getIconId() == 0) {
                     accountIcon.setVisibility(View.GONE);
                     accountNameText.setVisibility(View.VISIBLE);
                     accountNameText.setText(tmp.getAsString(DB.ACCOUNT.NAME));
                 } else {
                     accountIcon.setVisibility(View.VISIBLE);
                     accountNameText.setVisibility(View.GONE);
-                    accountIcon.setBackgroundResource(tmp
-                            .getAsInteger(DB.ACCOUNT.ICON));
+                    accountIcon.setBackgroundResource(synchronizer.getIconId());
                 }
                 accountUploadBox.setVisibility(View.GONE);
                 accountFeedBox.setVisibility(View.GONE);
@@ -234,6 +237,21 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             } else {
                 mSyncManager.connect(callback, synchronizerName, false);
             }
+        }
+    };
+
+    final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        public boolean onItemLongClick(AdapterView<?> arg0, View v,
+                                    int pos, long id) {
+            ContentValues tmp = DBHelper.get((Cursor)arg0.getItemAtPosition(pos));
+            final String synchronizerName = tmp.getAsString(DB.ACCOUNT.NAME);
+
+            //Toggle value for ENABLED
+            mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.ENABLED + " = 1 - " + DB.ACCOUNT.ENABLED +
+                    " where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName + "\'");
+            getSupportLoaderManager().restartLoader(0, null, (AccountListActivity)v.getContext());
+
+            return true;
         }
     };
 

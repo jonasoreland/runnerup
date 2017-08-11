@@ -132,35 +132,6 @@ public class FeedWidgetService extends RemoteViewsService {
                     } else {
                         rv.setViewVisibility(R.id.feed_widget_item_notes, View.GONE);
                     }
-
-                    // c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-                    // c.put(FEED.FEED_SUBTYPE,
-                    // getTrainingType(o.getInt("TrainingTypeID"),
-                    // o.getString("TrainingTypeName")));
-                    // c.put(FEED.FEED_TYPE_STRING,
-                    // o.getString("TrainingTypeName"));
-                    // c.put(FEED.START_TIME,
-                    // parseDateTime(o.getString("DateTime")));
-                    // if (!o.isNull("Distance"))
-                    // c.put(FEED.DISTANCE, 1000 * o.getDouble("Distance"));
-                    // if (!o.isNull("Duration"))
-                    // c.put(FEED.DURATION,
-                    // getDuration(o.getJSONObject("Duration")));
-                    // if (!o.isNull("PersonID"))
-                    // c.put(FEED.USER_ID, o.getInt("PersonID"));
-                    // if (!o.isNull("Firstname"))
-                    // c.put(FEED.USER_FIRST_NAME, o.getString("Firstname"));
-                    // if (!o.isNull("Lastname"))
-                    // c.put(FEED.USER_LAST_NAME, o.getString("Lastname"));
-                    // if (!o.isNull("PictureURL"))
-                    // c.put(FEED.USER_IMAGE_URL,
-                    // o.getString("PictureURL").replace("~/",
-                    // "http://www.funbeat.se/"));
-                    // if (!o.isNull("Description"))
-                    // c.put(FEED.NOTES, o.getString("Description"));
-                    // c.put(FEED.URL,
-                    // "http://www.funbeat.se/training/show.aspx?TrainingID="
-                    // + Long.toString(o.getLong("ID")));
                 } else {
                     Log.e(getClass().getSimpleName(), "Unexpected feed type");
                 }
@@ -177,7 +148,7 @@ public class FeedWidgetService extends RemoteViewsService {
                         args, null, null, null, null);
                 c.moveToFirst();
                 ContentValues config = DBHelper.get(c);
-                String name = config.getAsString("name");
+                String name = config.getAsString(Constants.DB.ACCOUNT.NAME);
                 c.close();
                 return name;
             }

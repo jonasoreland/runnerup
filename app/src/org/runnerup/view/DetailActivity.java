@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -67,8 +68,10 @@ import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
@@ -80,6 +83,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private SQLiteDatabase mDB = null;
     private final HashSet<String> pendingSynchronizers = new HashSet<>();
     private final HashSet<String> alreadySynched = new HashSet<>();
+    private final Map<String,String> synchedExternalId = new HashMap<>();
 
     private boolean lapHrPresent = false;
     private ContentValues[] laps = null;
@@ -331,27 +335,27 @@ public class DetailActivity extends AppCompatActivity implements Constants {
              * Accounts/reports
              */
             String sql = "SELECT DISTINCT "
-                    + "  acc._id, " // 0
+                    + "  acc._id, "
                     + ("  acc." + DB.ACCOUNT.NAME + ", ")
-                    + ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
                     + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
-                    + ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
                     + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
-                    + ("  acc." + DB.ACCOUNT.ENABLED + ", ")
                     + ("  rep._id as repid, ")
                     + ("  rep." + DB.EXPORT.ACCOUNT + ", ")
                     + ("  rep." + DB.EXPORT.ACTIVITY + ", ")
+                    + ("  rep." + DB.EXPORT.EXTERNAL_ID + ", ")
                     + ("  rep." + DB.EXPORT.STATUS)
                     + (" FROM " + DB.ACCOUNT.TABLE + " acc ")
                     + (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
                     + (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
                     + ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
                     + mID + " )")
-                    + (" WHERE acc." + DB.ACCOUNT.ENABLED + " != 0 ")
-                    + ("   AND acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null");
+                    //Note: Show all configured accounts (also those are not currently enabled)
+                    //Uploaded but removed accounts are not displayed
+                    + (" WHERE acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null");
 
             Cursor c = mDB.rawQuery(sql, null);
             alreadySynched.clear();
+            synchedExternalId.clear();
             pendingSynchronizers.clear();
             reports.clear();
             if (c.moveToFirst()) {
@@ -365,6 +369,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     reports.add(tmp);
                     if (tmp.containsKey("repid")) {
                         alreadySynched.add(tmp.getAsString(DB.ACCOUNT.NAME));
+                        if (tmp.containsKey(DB.EXPORT.STATUS) && tmp.getAsInteger(DB.EXPORT.STATUS) == Synchronizer.ExternalIdStatus.getInt(Synchronizer.ExternalIdStatus.OK)) {
+                            synchedExternalId.put(tmp.getAsString(DB.ACCOUNT.NAME), tmp.getAsString(DB.EXPORT.EXTERNAL_ID));
+                        }
                     } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
                             && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS),
                             DB.ACCOUNT.FLAG_UPLOAD)) {
@@ -601,12 +608,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             }
 
             ContentValues tmp = reports.get(position);
-            String name = tmp.getAsString("name");
+            String name = tmp.getAsString(DB.ACCOUNT.NAME);
             viewHolder.cb.setChecked(false);
             viewHolder.cb.setEnabled(false);
             viewHolder.cb.setTag(name);
+            viewHolder.tv1.setTag(name);
             if (alreadySynched.contains(name)) {
                 viewHolder.cb.setChecked(true);
+                if (synchedExternalId.containsKey(name)) {
+                    //Clickable label
+                    viewHolder.tv1.setTextColor(Color.BLUE);
+                }
                 viewHolder.cb.setText(getString(R.string.Uploaded));
                 viewHolder.cb.setOnLongClickListener(clearUploadClick);
             } else if (pendingSynchronizers.contains(name)) {
@@ -667,6 +679,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
 
     };
+
+    //Note: onClick set in reportlist_row.xml
+    public void onClickAccountName(View arg0) {
+        final String name = (String) arg0.getTag();
+        if (synchedExternalId.containsKey(name)) {
+            String url = syncManager.getSynchronizerByName(name).getActivityUrl(synchedExternalId.get(name));
+            if (url != null) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+            }
+        }
+    }
 
     private final OnClickListener saveButtonClick = new OnClickListener() {
         public void onClick(View v) {

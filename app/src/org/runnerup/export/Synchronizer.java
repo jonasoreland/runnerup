@@ -42,6 +42,24 @@ public interface Synchronizer {
         public Exception ex = null;
         public AuthMethod authMethod = null;
         public Long activityId = SyncManager.ERROR_ACTIVITY_ID;
+        public ExternalIdStatus externalIdStatus = ExternalIdStatus.NONE;
+        public String externalId = null ;
+    }
+
+    enum ExternalIdStatus {
+        NONE, PENDING, OK;
+
+        int getInt() {
+            return getInt(this);
+        }
+        public static int getInt(ExternalIdStatus s) {
+            if (s == PENDING) {
+                return 1;
+            } else if (s == OK) {
+                return 2;
+            }
+            return 0;
+        }
     }
 
     enum Feature {
@@ -57,6 +75,11 @@ public interface Synchronizer {
     }
 
     /**
+     * The default URL, most synchronizers returns this with getUrl()
+     */
+    String PUBLIC_URL = "";
+
+    /**
      * @return
      */
     long getId();
@@ -65,6 +88,11 @@ public interface Synchronizer {
      * @return name of this synchronizer
      */
     String getName();
+
+    /**
+     * @return The icon resource id
+     */
+    int getIconId();
 
     /**
      * Init synchronizer
@@ -110,6 +138,15 @@ public interface Synchronizer {
      * @param mID
      */
     Status upload(SQLiteDatabase db, long mID);
+
+    /**
+     * Get the external identifier for the service
+     * Done in the background, can take substantial time for some services
+     * @param db
+     * @param uploadStatus The status with the (temporary) identifier for the upload
+     * @return the external ID
+     */
+    public Status getExternalId(SQLiteDatabase db, Status uploadStatus);
 
     /**
      * Check if an synchronizer supports a feature
@@ -170,8 +207,14 @@ public interface Synchronizer {
     Integer getAuthNotice();
 
     /**
-     * Set any authorization user notice to be shown when user enters username/password.
-     * @param authNotice String resource id or null.
+     * Get the public URL
      */
-    void setAuthNotice(Integer authNotice);
+    String getUrl();
+
+    /**
+     * Get the external URL for the activity, to open in app or on the web
+     * @param externalId
+     * @return
+     */
+    public String getActivityUrl(String externalId);
 }

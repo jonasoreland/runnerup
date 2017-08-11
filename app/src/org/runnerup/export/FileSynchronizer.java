@@ -19,8 +19,13 @@ package org.runnerup.export;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
@@ -39,8 +44,9 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public static final String NAME = "File";
 
     private long id = 0;
-    private String mPath = null;
-    
+    private String mPath;
+    private String mFormat;
+
     FileSynchronizer() {
     }
 
@@ -55,22 +61,53 @@ public class FileSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
+    public int getIconId() {return R.drawable.a16_localfile;}
+
+    @Override
+    public String getUrl() {
+        return "file://" + mPath;
+    }
+
+    static public String contentValuesToAuthConfig(ContentValues config) {
+        FileSynchronizer f = new FileSynchronizer();
+        f.mPath = config.getAsString(DB.ACCOUNT.URL);
+        f.mFormat = config.getAsString(DB.ACCOUNT.FORMAT);
+        
+        return f.getAuthConfig();
+    }
+
+    @Override
     public void init(ContentValues config) {
-        //Note: config contains a subset of account, primarily AUTH_CONFIG
-        //Reuse AUTH_CONFIG to communicate with SyncManager to not change structure too much
-        //path is also in URL (used for display), path is needed in connect()
-        mPath = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+        if (authConfig != null) {
+            try {
+                JSONObject tmp = new JSONObject(authConfig);
+                mPath = tmp.optString(DB.ACCOUNT.URL, null);
+                mFormat = tmp.optString(DB.ACCOUNT.FORMAT);
+            } catch (JSONException e) {
+                Log.w(getName(), "init: Dropping config due to failure to parse json from " + authConfig + ", " + e);
+            }
+        }
         id = config.getAsLong("_id");
     }
 
     @Override
     public String getAuthConfig() {
-        return mPath;
+        JSONObject tmp = new JSONObject();
+        if (isConfigured()) {
+            try {
+                tmp.put(DB.ACCOUNT.URL, mPath);
+                tmp.put(DB.ACCOUNT.FORMAT, mFormat);
+            } catch (JSONException e) {
+                Log.w(getName(), "getAuthConfig: Failure to create json for " + mPath + ", " + mFormat + ", " + e);
+    }
+        }
+        return tmp.toString();
     }
 
     @Override
     public boolean isConfigured() {
-        return !TextUtils.isEmpty(mPath);
+        return !TextUtils.isEmpty(mPath) && !TextUtils.isEmpty(mFormat);
     }
 
     @Override
@@ -104,19 +141,19 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if ((s = connect()) != Status.OK) {
             return s;
         }
-        ContentValues config = SyncManager.loadConfig(db, this.getName());
-        String format = config.getAsString(DB.ACCOUNT.FORMAT);
 
         try {
             String fileBase = new File(mPath).getAbsolutePath() + File.separator +
             String.format(Locale.getDefault(), "RunnerUp_%04d.", mID);
-            if (format.contains("tcx")) {
+            if (mFormat.contains("tcx")) {
                 TCX tcx = new TCX(db);
                 File file = new File(fileBase + "tcx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 tcx.export(mID, new OutputStreamWriter(out));
+                s.externalId = Uri.fromFile(file).toString();
+                s.externalIdStatus = ExternalIdStatus.NONE; //Not working yet
             }
-            if (format.contains("gpx")) {
+            if (mFormat.contains("gpx")) {
                 GPX gpx = new GPX(db, true, true);
                 File file = new File(fileBase + "gpx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));

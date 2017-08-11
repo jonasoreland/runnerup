@@ -23,15 +23,14 @@ project.ext {
     targetSdkVersion = 25
 
     supportLibrary = '25.3.1'
-    googlePlayServicesVersion = '10.2.1'
-    googleWearVersion = '2.0.1'
+    googlePlayServicesVersion = '11.0.4'
+    googleWearVersion = '2.0.4'
 
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
-    versionName = '1.57'
-    versionCode = 14000057
-    froyoVersionCode = 8000057
+    versionName = '1.58'
+    versionCode = 58
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set

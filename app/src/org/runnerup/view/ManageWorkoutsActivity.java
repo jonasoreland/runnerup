@@ -340,8 +340,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             String sql = "SELECT DISTINCT "
                     + "  acc._id, " // 0
                     + ("  acc." + DB.ACCOUNT.NAME + ", ")
-                    + ("  acc." + DB.ACCOUNT.DESCRIPTION + ", ")
-                    + ("  acc." + DB.ACCOUNT.AUTH_METHOD + ", ")
                     + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
                     + ("  acc." + DB.ACCOUNT.ENABLED + ", ")
                     + ("  acc." + DB.ACCOUNT.FLAGS + " ")
@@ -360,7 +358,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         for (ContentValues tmp : allSynchronizers) {
             Synchronizer synchronizer = syncManager.add(tmp);
-            if (synchronizer != null && synchronizer.checkSupport(Synchronizer.Feature.WORKOUT_LIST)) {
+            //There is no option to show disabled providers, so check for enable or configured
+            if (synchronizer != null && synchronizer.checkSupport(Synchronizer.Feature.WORKOUT_LIST) &&
+                    (tmp.getAsInteger(DB.ACCOUNT.ENABLED) == 1 || tmp.getAsString(DB.ACCOUNT.AUTH_CONFIG) != null) ) {
                 providers.add(tmp);
 
                 workouts.remove(synchronizer.getName());

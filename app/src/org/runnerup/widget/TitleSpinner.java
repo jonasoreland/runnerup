@@ -657,9 +657,9 @@ public class TitleSpinner extends LinearLayout {
         switch(mType) {
             case TS_SPINNER_TXT:
             case TS_EDITTEXT:
-                return mValue.getText();
             case TS_DATEPICKER:
             case TS_TIMEPICKER:
+                return mValue.getText();
             case TS_DURATIONPICKER:
             case TS_DISTANCEPICKER:
             case TS_NUMBERPICKER:

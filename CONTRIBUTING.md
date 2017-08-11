@@ -10,7 +10,7 @@ Code should follow the [Android Code Style Guidelines](https://source.android.co
 
 ### Tests
 
-Unfortunately there are no tests in this project currently.
+Unfortunately there are few tests in this project currently.
 
 ### Previewing changes
 
@@ -18,9 +18,9 @@ Changes can be previewed using an emulator.
 
 ### IDE
 
-You may wish to consider [Eclipse](http://www.eclipse.org/), [Android Studio](https://developer.android.com/sdk/installing/studio.html) or [NetBeans IDE](https://netbeans.org/).
+To build the app using [Android Studio](https://developer.android.com/sdk/installing/studio.html), see [this guide](Documentation/howto-build-with-android-studio.txt).
 
-To build the app using Android Studio, see [this guide](Documentation/howto-build-with-android-studio.txt).
+It may be possible to use [Eclipse](http://www.eclipse.org/)  or [NetBeans IDE](https://netbeans.org/) too (there may be hints in the Documentation/ folder).
 
 ## Making changes
 
@@ -32,6 +32,7 @@ To build the app using Android Studio, see [this guide](Documentation/howto-buil
 
 ## Where to start
 
+- Look at issues
 - Look at the [TODO](TODO) list
 - Write some tests
 - Help translating at https://www.transifex.com/organization/runner-up/dashboard

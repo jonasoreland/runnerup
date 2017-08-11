@@ -47,6 +47,7 @@ import org.runnerup.workout.WorkoutInfo;
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
+    public static final String PUBLIC_URL = "http://weide.devsparkles.se/Demo/Map";
     private static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
     private final Context context;
 
@@ -75,6 +76,9 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     public String getName() {
         return NAME;
     }
+
+    @Override
+    public int getIconId() {return R.drawable.a8_runneruplive;}
 
     @Override
     public void init(ContentValues config) {

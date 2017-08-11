@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -33,33 +34,26 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
-import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -70,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
+    public static final String PUBLIC_URL = "http://runkeeper.com";
     private Context context = null;
     /**
      * @todo register OAuth2Server
@@ -83,17 +78,10 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     private static String REST_URL = "https://api.runkeeper.com";
 
-    private static final String FEED_TOKEN_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/login";
-    private static final String FEED_URL = "https://fitnesskeeperapi.com/RunKeeper/deviceApi/getFeedItems";
-    private static final String FEED_ITEM_TYPES = "[ 0 ]"; // JSON array
-
     private long id = 0;
     private String access_token = null;
     private String fitnessActivitiesUrl = null;
-
-    private String feed_username = null;
-    private String feed_password = null;
-    private String feed_access_token = null;
+    private String userName = null;
 
     public static final Map<String, Sport> runkeeper2sportMap = new HashMap<>();
     public static final Map<Sport, String> sport2runkeeperMap = new HashMap<>();
@@ -187,6 +175,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
+    public int getIconId() {return R.drawable.a1_rklogo;}
+
+    @Override
     public void init(ContentValues config) {
         String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
         id = config.getAsLong("_id");
@@ -194,14 +185,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             try {
                 JSONObject tmp = new JSONObject(authConfig);
                 access_token = tmp.optString("access_token", null);
-                feed_access_token = tmp.optString("feed_access_token", null);
-                if (feed_access_token == null) {
-                    feed_username = tmp.optString("username", null);
-                    feed_password = tmp.optString("password", null);
-                } else {
-                    feed_username = null;
-                    feed_password = null;
-                }
             } catch (Exception e) {
                 Log.e(Constants.LOG, e.getMessage());
             }
@@ -218,14 +201,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         JSONObject tmp = new JSONObject();
         try {
             tmp.put("access_token", access_token);
-            tmp.put("feed_access_token", feed_access_token);
-            if (feed_access_token == null) {
-                tmp.put("username", feed_username);
-                tmp.put("password", feed_password);
-            } else {
-                tmp.put("username", null);
-                tmp.put("password", null);
-            }
         } catch (JSONException e) {
             Log.e(Constants.LOG, e.getMessage());
         }
@@ -243,7 +218,8 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         if (resultCode == Activity.RESULT_OK) {
             String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
             try {
-                access_token = new JSONObject(authConfig).getString("access_token");
+                JSONObject obj = new JSONObject(authConfig);
+                access_token = obj.getString("access_token");
                 return Status.OK;
             } catch (JSONException e) {
                 Log.e(Constants.LOG, e.getMessage());
@@ -256,7 +232,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     @Override
     public void reset() {
         access_token = null;
-        feed_access_token = null;
     }
 
     @Override
@@ -265,10 +240,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         s.authMethod = AuthMethod.OAUTH2;
         if (access_token == null) {
             return s;
-        }
-
-        if (feed_access_token == null && (feed_username != null && feed_password != null)) {
-            return getFeedAccessToken();
         }
 
         if (fitnessActivitiesUrl != null) {
@@ -287,8 +258,12 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 conn = (HttpURLConnection) newurl.openConnection();
                 conn.setRequestProperty("Authorization", "Bearer "
                         + access_token);
+                conn.addRequestProperty("Content-Type", "application/vnd.com.runkeeper.User+json");
                 InputStream in = new BufferedInputStream(conn.getInputStream());
-                uri = SyncHelper.parse(in).getString("fitness_activities");
+                JSONObject obj = SyncHelper.parse(in);
+                conn.disconnect();
+                conn = null;
+                uri = obj.getString("fitness_activities");
             } catch (MalformedURLException e) {
                 ex = e;
             } catch (IOException e) {
@@ -426,11 +401,13 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             w.flush();
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
+            s.externalId = noNullStr(conn.getHeaderField("Location"));
             conn.disconnect();
             conn = null;
             if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
                 s.activityId = mID;
+                s.externalIdStatus = ExternalIdStatus.OK;
                 return s;
             }
             ex = new Exception(amsg);
@@ -452,17 +429,56 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
+    public String getActivityUrl(String extId) {
+        //username is part of the "web" URL but is not directly accessible in the API
+        //the numeric userID is in the "User" info (see connect()), but that is not accepted in URLs
+        //The userName could be retrieved from getAuthResult() too and saved in auth_config (but retries will not be handled)
+        if (userName == null) {
+            //try to get the information (cannot run in UI thread, use timeout)
+            try {
+                userName = new AsyncTask<Void, Void, String>() {
+
+                    @Override
+                    protected String doInBackground(Void... args) {
+                        try {
+                            URL newurl = new URL(REST_URL + "/profile");
+                            HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
+                            conn.setRequestProperty("Authorization", "Bearer " + access_token);
+                            conn.addRequestProperty("Content-Type", "application/vnd.com.runkeeper.Profile+json");
+
+                            InputStream in = new BufferedInputStream(conn.getInputStream());
+                            JSONObject obj = SyncHelper.parse(in);
+                            conn.disconnect();
+
+                            String uri = obj.getString("profile");
+                            String user = uri.substring(uri.lastIndexOf("/") + 1);
+                            return user;
+                        } catch (Exception e) {
+                        }
+                        return null;
+                    }
+                }.execute().get(5, TimeUnit.SECONDS);
+            } catch (Exception e) {
+            }
+        }
+        String url;
+        if (userName == null) {
+            url = null;
+        } else {
+            //Do not bother with fitnessActivitiesUrl
+            url = PUBLIC_URL + "/user/" + userName + extId.replace("/fitnessActivities/", "/activity/");
+        }
+        return url;
+    }
+
+    @Override
     public boolean checkSupport(Synchronizer.Feature f) {
         switch (f) {
-            case FEED:
             case UPLOAD:
             case ACTIVITY_LIST:
             case GET_ACTIVITY:
                 return true;
-            case GET_WORKOUT:
-            case WORKOUT_LIST:
-            case LIVE:
-            case SKIP_MAP:
+            default:
                 break;
         }
         return false;
@@ -521,158 +537,5 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     @Override
     public void logout() {
         this.fitnessActivitiesUrl = null;
-    }
-
-    private Status getFeedAccessToken() {
-        Synchronizer.Status s = Status.OK;
-        HttpURLConnection conn;
-        try {
-            URL newurl = new URL(FEED_TOKEN_URL);
-            conn = (HttpURLConnection) newurl.openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod(RequestMethod.POST.name());
-
-            FormValues kv = new FormValues();
-            kv.put("email", feed_username);
-            kv.put("password", feed_password);
-
-            {
-                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
-            }
-
-            InputStream in = new BufferedInputStream(conn.getInputStream());
-            JSONObject obj = SyncHelper.parse(in);
-            conn.disconnect();
-            feed_access_token = obj.getString("accessToken");
-            return s;
-        } catch (MalformedURLException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (ProtocolException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (IOException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (JSONException e) {
-            s = Status.NEED_AUTH;
-            s.authMethod = AuthMethod.USER_PASS;
-            s.ex = e;
-        }
-
-        Log.e(Constants.LOG, s.ex.getMessage());
-
-        return s;
-    }
-
-    //TODO This is not according to RunKeeper documentation, probably not working
-    @Override
-    public Status getFeed(FeedUpdater feedUpdater) {
-        Status s = Status.NEED_AUTH;
-        s.authMethod = AuthMethod.USER_PASS;
-        if (feed_access_token == null) {
-            return s;
-        }
-
-        List<ContentValues> reply = new ArrayList<>();
-        long from = System.currentTimeMillis();
-        final int MAX_ITER = 5;
-        for (int iter = 0; iter < MAX_ITER && reply.size() < 25; iter++) {
-            try {
-                JSONObject feed = requestFeed(from);
-                JSONArray arr = feed.getJSONArray("feedItems");
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONObject e = arr.getJSONObject(i);
-                    try {
-                        if (e.getInt("type") != 0) {
-                            continue;
-                        }
-
-                        ContentValues c = new ContentValues();
-                        c.put(FEED.ACCOUNT_ID, getId());
-                        c.put(FEED.EXTERNAL_ID, e.getString("id"));
-                        c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
-                        JSONObject d = e.getJSONObject("data");
-                        Sport sport = runkeeper2sportMap.get(d.getString("activityType"));
-                        if (sport != null) {
-                            c.put(FEED.FEED_SUBTYPE, sport.getDbValue());
-                        } else {
-                            Log.w(getName(), "Unknown sport with id " + d.getString("activityType"));
-                            c.put(FEED.FEED_SUBTYPE, DB.ACTIVITY.SPORT_OTHER);
-                            break;
-                        }
-                        c.put(FEED.START_TIME, e.getLong("posttime"));
-                        c.put(FEED.FLAGS, "brokenStartTime"); // BUH!!
-                        if (e.has("data")) {
-                            JSONObject p = e.getJSONObject("data");
-                            if (p.has("duration")) {
-                                c.put(FEED.DURATION, p.getLong("duration"));
-                            }
-                            if (p.has("distance")) {
-                                c.put(FEED.DISTANCE, p.getDouble("distance"));
-                            }
-                            if (p.has("notes") && p.getString("notes") != null
-                                    && !p.getString("notes").equals("null")) {
-                                c.put(FEED.NOTES, p.getString("notes"));
-                            }
-                        }
-
-                        SyncHelper.setName(c, e.getString("sourceUserDisplayName"));
-                        if (e.has("sourceUserAvatarUrl")
-                                && e.getString("sourceUserAvatarUrl").length() > 0) {
-                            c.put(FEED.USER_IMAGE_URL, e.getString("sourceUserAvatarUrl"));
-                        }
-
-                        reply.add(c);
-                        from = e.getLong("posttime");
-                    } catch (Exception ex) {
-                        Log.e(Constants.LOG, ex.getMessage());
-                        iter = MAX_ITER;
-                    }
-                }
-            } catch (IOException e) {
-                Log.e(Constants.LOG, e.getMessage());
-                break;
-            } catch (JSONException e) {
-                Log.e(Constants.LOG, e.getMessage());
-                break;
-            }
-        }
-        feedUpdater.addAll(reply);
-
-        return Status.OK;
-    }
-
-    private JSONObject requestFeed(long from) throws IOException, JSONException {
-        URL newurl = new URL(FEED_URL);
-        HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod(RequestMethod.POST.name());
-        conn.addRequestProperty("Authorization", "Bearer " + feed_access_token);
-
-        FormValues kv = new FormValues();
-        kv.put("lastPostTime", Long.toString(from));
-        kv.put("feedItemTypes", FEED_ITEM_TYPES);
-
-        {
-            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-            kv.write(wr);
-            wr.flush();
-            wr.close();
-        }
-
-        int responseCode = conn.getResponseCode();
-        String amsg = conn.getResponseMessage();
-        InputStream in = new BufferedInputStream(conn.getInputStream());
-        JSONObject obj = SyncHelper.parse(in);
-
-        conn.disconnect();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            return obj;
-        }
-        throw new IOException(amsg);
     }
 }

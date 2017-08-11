@@ -117,6 +117,7 @@
   <string name="synchronizing_feed">synkroniserar flöde…</string>
   <string name="OK">Ok</string>
   <string name="Table_format">Tabellformat</string>
+  <string name="Show_disabled_accounts">Visa inaktiverade konton</string>
   <string name="Clear_uploads">Rensa uppladdningar</string>
   <string name="Upload_missing_workouts">Ladda upp (saknade) träningspass</string>
   <string name="Disconnect_account">Koppla ifrån konto</string>
