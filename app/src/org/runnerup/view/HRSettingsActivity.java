@@ -123,7 +123,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
         if (providers.isEmpty()) {
             notSupported();
-            return;
         }
 
         tvLog = (TextView) findViewById(R.id.hr_log);
@@ -308,12 +307,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     public void notSupported() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device));
-        builder.setMessage(getString(R.string.try_again_later));
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                finish();
             }
         };
         builder.setNegativeButton(getString(R.string.ok_rats), listener);
