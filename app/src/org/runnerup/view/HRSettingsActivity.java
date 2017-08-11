@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -618,6 +619,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         log(src.getProviderName() + ": " + msg);
     }
 
+    @SuppressLint("InflateParams")
     class DeviceAdapter extends BaseAdapter {
 
         final ArrayList<HRDeviceRef> deviceList = new ArrayList<>();
@@ -648,8 +650,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         public View getView(int position, View convertView, ViewGroup parent) {
             View row;
             if (convertView == null) {
-                row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
-                        parent);
+                //Note: Parent is AlertDialog so parent in inflate must be null
+                row = inflater.inflate(android.R.layout.simple_list_item_single_choice, null);
             } else {
                 row = convertView;
             }
