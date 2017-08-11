@@ -17,6 +17,7 @@
 
 package org.runnerup.export;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -426,6 +427,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return s;
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public String getActivityUrl(String extId) {
         //username is part of the "web" URL but is not directly accessible in the API
