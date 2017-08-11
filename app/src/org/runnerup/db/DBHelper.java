@@ -408,7 +408,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             //URL was stored in AUTH_CONFIG previously, FORMAT migrated too
             String oldUrl = tmp.getAsString(DB.ACCOUNT.AUTH_CONFIG);
             //DBVERSION update, not needed in onUpgrade()
-            if (oldUrl.startsWith("file")) {
+            if (oldUrl.startsWith("/")) {
                 tmp.put(DB.ACCOUNT.URL, oldUrl);
                 String authConfig = FileSynchronizer.contentValuesToAuthConfig(tmp);
                 tmp = new ContentValues();
