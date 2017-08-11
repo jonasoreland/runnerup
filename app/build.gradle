@@ -46,14 +46,15 @@ android {
     productFlavors {
         latest {
             dimension "all"
-            minSdkVersion 15
+            minSdkVersion 21
             targetSdkVersion rootProject.ext.compileSdkVersion
             versionName rootProject.ext.versionName
-            versionCode 14000000 + rootProject.ext.versionCode
+            versionCode 21000000 + rootProject.ext.versionCode
         }
         froyo {
+            //Used to be targeted to 8 (froyo), minimal version without graphs/maps
             dimension "all"
-            minSdkVersion 8
+            minSdkVersion 21
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
             versionCode 8000000 + rootProject.ext.versionCode
