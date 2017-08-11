@@ -65,6 +65,7 @@ android {
             //We would have preferred to not create split for Froyo, so explicitly enabling split
             //.\gradlew --project-prop splitApk assembleLatestRelease
             enable project.hasProperty('splitApk')
+            exclude 'mips64'
             universalApk true
         }
     }
