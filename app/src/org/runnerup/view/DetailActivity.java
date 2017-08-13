@@ -166,10 +166,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             discardButton.setVisibility(View.GONE);
             setEdit(false);
         }
-        uploadButton.setVisibility(View.GONE);
 
         fillHeaderData();
         requery();
+        uploadButton.setVisibility(View.GONE);
 
         TabHost th = (TabHost) findViewById(R.id.tabhost);
         th.setup();
@@ -221,13 +221,20 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private void setEdit(boolean value) {
         edit = value;
         saveButton.setEnabled(value);
-        uploadButton.setEnabled(value);
         WidgetUtil.setEditable(notes, value);
         sport.setEnabled(value);
         if (recomputeMenuItem != null)
             recomputeMenuItem.setEnabled(value);
     }
 
+    private void setUploadVisibility() {
+        Boolean enabled = !pendingSynchronizers.isEmpty();
+        if (enabled) {
+            uploadButton.setVisibility(View.VISIBLE);
+        } else {
+            uploadButton.setVisibility(View.GONE);
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mode == MODE_DETAILS) {
@@ -383,11 +390,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
 
         if (mode == MODE_DETAILS) {
-            if (pendingSynchronizers.isEmpty()) {
-                uploadButton.setVisibility(View.GONE);
-            } else {
-                uploadButton.setVisibility(View.VISIBLE);
-            }
+            setUploadVisibility();
         }
 
         for (BaseAdapter a : adapters) {
@@ -609,25 +612,31 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
             ContentValues tmp = reports.get(position);
             String name = tmp.getAsString(DB.ACCOUNT.NAME);
+            viewHolder.cb.setOnCheckedChangeListener(null);
             viewHolder.cb.setChecked(false);
             viewHolder.cb.setEnabled(false);
             viewHolder.cb.setTag(name);
             viewHolder.tv1.setTag(name);
+            viewHolder.tv1.setTextColor(viewHolder.cb.getTextColors());
             if (alreadySynched.contains(name)) {
                 viewHolder.cb.setChecked(true);
                 if (synchedExternalId.containsKey(name)) {
-                    //Clickable label
+                    //Indicate Clickable label
                     viewHolder.tv1.setTextColor(Color.BLUE);
                 }
                 viewHolder.cb.setText(getString(R.string.Uploaded));
                 viewHolder.cb.setOnLongClickListener(clearUploadClick);
-            } else if (pendingSynchronizers.contains(name)) {
-                viewHolder.cb.setChecked(true);
             } else {
-                viewHolder.cb.setChecked(false);
+                if (pendingSynchronizers.contains(name)) {
+                    viewHolder.cb.setChecked(true);
+                } else {
+                    viewHolder.cb.setChecked(false);
+                }
+                viewHolder.cb.setText(getString(R.string.upload));
+                viewHolder.cb.setOnLongClickListener(null);
             }
             if (mode == MODE_DETAILS) {
-                viewHolder.cb.setEnabled(edit);
+                viewHolder.cb.setEnabled(true);
             } else if (mode == MODE_SAVE) {
                 viewHolder.cb.setEnabled(true);
             }
@@ -786,12 +795,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 } else {
                     pendingSynchronizers.remove(arg0.getTag());
                 }
-
                 if (mode == MODE_DETAILS) {
-                    if (pendingSynchronizers.isEmpty())
-                        uploadButton.setVisibility(View.GONE);
-                    else
-                        uploadButton.setVisibility(View.VISIBLE);
+                    setUploadVisibility();
                 }
             }
         }
