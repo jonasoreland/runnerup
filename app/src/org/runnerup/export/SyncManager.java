@@ -1118,6 +1118,7 @@ public class SyncManager {
         mSpinner.setProgress(syncActivitiesList.size());
         SyncActivityItem ai = syncActivitiesList.get(0);
         syncActivitiesList.remove(0);
+        mID = ai.getId();
         doSyncMulti(synchronizer, mode, ai);
     }
 

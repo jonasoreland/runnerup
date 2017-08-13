@@ -31,25 +31,18 @@ Releases can be downloaded either:
 
 [![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup)
 
-## Build
-See [CONTRIBUTING](CONTRIBUTING.md)
+Join the [G+ beta release group](https://plus.google.com/communities/112040124647770742805?cfem=1) for release candidates.
 
-## Dependencies
-* [Ant Plugin](http://www.thisisant.com): Used to retrieve heart rate monitor data.
-* [Google Play Services API](http://developer.android.com/google/play-services/index.html): Used to communicate with wear device.
-* [GraphView](https://github.com/jjoe64/GraphView.git): Used to plot data in a nicely way.
-* [MapBox](https://mapbox.com): Used to display map to the user.
+## User information
+
+Please read the [wiki](/jonasoreland/runnerup/wiki), especially the [Manual](/jonasoreland/runnerup/wiki/Overview.md)
 
 ## Contributing
 
 Patches, forks, pull requests, suggestions or harsh flame is welcome!
-Please read the [contributing guidelines](CONTRIBUTING.md).
+Please read the [wiki](/jonasoreland/runnerup/wiki).
 
-### How can I contribute?
-
-Thanks for asking! You can check [TODO list](TODO.md) and [open issues](https://github.com/jonasoreland/runnerup/issues). You can also work on your own wishes :-).
-
-### Translations
+## Translations
 
 <img border="0" src="https://www.transifex.com/projects/p/runner-up-android/resource/stringsxml/chart/image_png"/><br/><a target="_blank" href="https://www.transifex.com/projects/p/runner-up-android/resource/stringsxml/"><img border="0" src="https://ds0k0en9abmn1.cloudfront.net/static/charts/images/tx-logo-micro.646b0065fce6.png"/></a>
 

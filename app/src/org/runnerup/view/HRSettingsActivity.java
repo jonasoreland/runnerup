@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -121,7 +122,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
         if (providers.isEmpty()) {
             notSupported();
-            return;
         }
 
         tvLog = (TextView) findViewById(R.id.hr_log);
@@ -305,12 +305,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private void notSupported() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device));
-        builder.setMessage(getString(R.string.try_again_later));
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                finish();
             }
         };
         builder.setNegativeButton(getString(R.string.ok_rats), listener);
@@ -618,6 +616,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         log(src.getProviderName() + ": " + msg);
     }
 
+    @SuppressLint("InflateParams")
     class DeviceAdapter extends BaseAdapter {
 
         final ArrayList<HRDeviceRef> deviceList = new ArrayList<>();
@@ -648,8 +647,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         public View getView(int position, View convertView, ViewGroup parent) {
             View row;
             if (convertView == null) {
-                row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
-                        parent);
+                //Note: Parent is AlertDialog so parent in inflate must be null
+                row = inflater.inflate(android.R.layout.simple_list_item_single_choice, null);
             } else {
                 row = convertView;
             }
