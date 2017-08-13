@@ -2,7 +2,6 @@
 package org.runnerup.hr;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.os.Handler;
 
@@ -49,11 +48,10 @@ public class MockHRProvider implements HRProvider {
 
         @Override
         public void run() {
-            if (mIsScanning &&  BluetoothAdapter.getDefaultAdapter() != null) {
+            if (mIsScanning) {
                 String dev = "00:43:A8:23:10:"
                         + String.format("%02X", System.currentTimeMillis() % 256);
-                hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, BluetoothAdapter
-                        .getDefaultAdapter().getRemoteDevice(dev)));
+                hrClient.onScanResult(HRDeviceRef.create(NAME, getName(), dev));
                 if (++count < 3) {
                     hrClientHandler.postDelayed(fakeScanResult, 3000);
                     return;
