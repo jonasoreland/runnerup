@@ -20,6 +20,7 @@ package org.runnerup.widget;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Handler;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
@@ -155,10 +156,12 @@ public class NumberPicker extends LinearLayout {
         });
         if (floatInput) {
             valueText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            //"other" separators in for instance Arabic/Persian
-            //Android (before 8.0) only parses '.' (bug)
-            char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
-            valueText.setKeyListener(DigitsKeyListener.getInstance("0123456789.," + separator));
+            if (Build.VERSION.SDK_INT >= 9) {
+                //"other" separators in for instance Arabic/Persian
+                //Android (before 8.0) only parses '.' (bug)
+                char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+                valueText.setKeyListener(DigitsKeyListener.getInstance("0123456789.," + separator));
+            }
             fmtString = "%." + digits + "f";
         } else {
             valueText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -266,8 +269,12 @@ public class NumberPicker extends LinearLayout {
         } else {
             try {
                 if (floatInput) {
-                    char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
-                    str = str.replace('.', separator).replace(',', separator);
+                    if (Build.VERSION.SDK_INT >= 9) {
+                        char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+                        str = str.replace('.', separator).replace(',', separator);
+                    } else {
+                        str = str.replace(',', '.');
+                    }
                     Double l = Double.parseDouble(str);
                     setValueImpl(l);
                 } else {
