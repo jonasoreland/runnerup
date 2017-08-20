@@ -49,9 +49,9 @@ public class DurationPicker extends LinearLayout {
 
     public long getEpochTime() {
         long ret = 0;
-        ret += seconds.getValue();
-        ret += (long) minutes.getValue() * 60;
-        ret += (long) hours.getValue() * 60 * 60;
+        ret += seconds.getValueInt();
+        ret += (long) minutes.getValueInt() * 60;
+        ret += (long) hours.getValueInt() * 60 * 60;
         return ret;
     }
 

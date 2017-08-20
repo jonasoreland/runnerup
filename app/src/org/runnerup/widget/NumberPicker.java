@@ -22,7 +22,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,19 +34,23 @@ import android.widget.LinearLayout;
 
 import org.runnerup.R;
 
+import java.text.DecimalFormatSymbols;
+
 
 public class NumberPicker extends LinearLayout {
 
     public interface OnChangedListener {
-        void onChanged(NumberPicker picker, int oldVal, int newVal);
+        void onChanged(NumberPicker picker, double oldVal, double newVal);
     }
 
     public interface Formatter {
-        String toString(int value);
+        String toString(double value);
     }
 
-    private int prevValue;
-    private int currValue;
+    //The NumberPicker is used for both integer values like steps and float values like distance
+    //Integer representation is about 16 digits
+    private double prevValue;
+    private double currValue;
     private int minValue = MIN_VAL;
     private int maxValue = MAX_VAL;
     private boolean wrapValue = true;
@@ -63,12 +69,18 @@ public class NumberPicker extends LinearLayout {
     private boolean longDec = false;
     private final Handler longHandler = new Handler();
     private final int textSize = 25;
-    private int digits = DIGITS;
-    private String fmtString = "%0" + digits + "d";
+    private int digits;// DIGITS
+    private String fmtString;// "%0" + digits + "d"
+    private Boolean floatInput;// false
 
     public NumberPicker(Context context, AttributeSet attrs) {
+        this(context, attrs, false, DIGITS);
+    }
+    public NumberPicker(Context context, AttributeSet attrs, Boolean floatInput, int digits) {
         super(context, attrs);
 
+        this.floatInput = floatInput;
+        this.digits = digits;
         createValueText(context);
         createButton(context, '+');
         createButton(context, '-');
@@ -141,7 +153,17 @@ public class NumberPicker extends LinearLayout {
                 }
             }
         });
-        valueText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        if (floatInput) {
+            valueText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            //"other" separators in for instance Arabic/Persian
+            //Android (before 8.0) only parses '.' (bug)
+            char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+            valueText.setKeyListener(DigitsKeyListener.getInstance("0123456789.," + separator));
+            fmtString = "%." + digits + "f";
+        } else {
+            valueText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            fmtString = "%0" + digits + "d";
+        }
         valueText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
     }
 
@@ -159,7 +181,7 @@ public class NumberPicker extends LinearLayout {
         }
     };
 
-    private void setValueImpl(int newValue) {
+    private void setValueImpl(double newValue) {
         if (newValue < minValue) {
             if (wrapValue)
                 newValue = maxValue;
@@ -171,7 +193,7 @@ public class NumberPicker extends LinearLayout {
             else
                 newValue = maxValue;
         }
-        int save = prevValue;
+        double save = prevValue;
         prevValue = currValue;
         currValue = newValue;
         if (listener != null)
@@ -243,9 +265,17 @@ public class NumberPicker extends LinearLayout {
             updateView();
         } else {
             try {
-                int l = Integer.valueOf(str);
-                setValueImpl(l);
+                if (floatInput) {
+                    char separator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+                    str = str.replace('.', separator).replace(',', separator);
+                    Double l = Double.parseDouble(str);
+                    setValueImpl(l);
+                } else {
+                    int l = Integer.valueOf(str);
+                    setValueImpl(l);
+                }
             } catch (NumberFormatException ex) {
+                Log.i("NumberPicker", "Failed to validateInput for: " + str+ex);
             }
         }
     }
@@ -275,19 +305,19 @@ public class NumberPicker extends LinearLayout {
         final java.util.Formatter fmt = new java.util.Formatter(builder);
         final Object[] args = new Object[1];
 
-        public String toString(int value) {
-            args[0] = value;
+        public String toString(double value) {
+
+            args[0] = floatInput ? value : (int) Math.round(value);
+            if (floatInput) {
+                args[0] = value;
+            } else {
+                args[0] = (int) Math.round(value);
+            }
             builder.delete(0, builder.length());
             fmt.format(fmtString, args);
             return fmt.toString();
         }
     };
-
-    public void setRange(int min, int max, boolean wrap) {
-        this.minValue = min;
-        this.maxValue = max;
-        this.wrapValue = wrap;
-    }
 
     public void setDigits(int digits) {
         this.digits = digits;
@@ -300,9 +330,17 @@ public class NumberPicker extends LinearLayout {
         setValueImpl(newValue);
     }
 
-    public int getValue() {
+    public void setValue(double newValue) {
+        setValueImpl(newValue);
+    }
+
+    public double getValue() {
         validateInput(valueText);
         return currValue;
+    }
+
+    public int getValueInt() {
+        return (int)Math.round(getValue());
     }
 
     private void readd() {

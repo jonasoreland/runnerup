@@ -77,6 +77,7 @@
         android:prompt="@string/Type"
         android:inputType="numberDecimal"
         android:text="@string/Distance"
+        android:defaultValue="0"
         runnerup:type="distancepicker" />
 
     <org.runnerup.widget.TitleSpinner

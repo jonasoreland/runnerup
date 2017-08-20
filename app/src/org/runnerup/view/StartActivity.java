@@ -724,10 +724,11 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
             Location l = mTracker.getLastKnownLocation();
 
             if (l != null && l.getAccuracy() > 0) {
-                s = String.format(Locale.getDefault(), ", %s m", l.getAccuracy());
+                s = formatter.formatDistance(Formatter.Format.TXT_LONG, l.getAccuracy());
             }
             if (mTracker.getCurrentElevation() != null) {
-                s += String.format(Locale.getDefault(), " (%.1f m)", mTracker.getCurrentElevation());
+                s += String.format(Locale.getDefault(), " ("+
+                        formatter.formatDistance(Formatter.Format.TXT_LONG, mTracker.getCurrentElevation())+")");
             }
         }
 

@@ -154,7 +154,7 @@ public class StepButton extends TableLayout {
             alert.setView(layout);
             alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    step.setRepeatCount(numberPicker.getValue());
+                    step.setRepeatCount(numberPicker.getValueInt());
                     dialog.dismiss();
                     setStep(step); // redraw
                     if (mOnChangedListener != null) {
