@@ -17,20 +17,16 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
-import org.runnerup.db.entities.LapEntity;
-import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.feed.FeedList.FeedUpdater;
@@ -47,13 +43,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public abstract class DefaultSynchronizer implements Synchronizer {
 
-    protected final Set<String> cookies = new HashSet<String>();
-    protected final FormValues formValues = new FormValues();
+    final Set<String> cookies = new HashSet<>();
+    final FormValues formValues = new FormValues();
 
-    public DefaultSynchronizer() {
+    DefaultSynchronizer() {
         super();
         logout();
     }
@@ -140,7 +136,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return persistActivity(db, download(item));
     }
 
-    protected ActivityEntity download(SyncActivityItem item) {
+    ActivityEntity download(SyncActivityItem item) {
         Log.e(Constants.LOG, "No download method implemented for the synchronizer " + getName());
         return null;
     }
@@ -162,7 +158,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         }
 
         //update with activity id
-        activity.putPoints(new ArrayList<LocationEntity>(activity.getLocationPoints()));
+        activity.putPoints(new ArrayList<>(activity.getLocationPoints()));
         // insert location and end transaction unsuccessfully
         if (DBHelper.bulkInsert(activity.getLocationPoints(), db) != activity.getLocationPoints().size()) {
             db.endTransaction();
@@ -170,7 +166,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         }
 
         //update with activity id
-        activity.putLaps(new ArrayList<LapEntity>(activity.getLaps()));
+        activity.putLaps(new ArrayList<>(activity.getLaps()));
         // insert all lap objects
         if (DBHelper.bulkInsert(activity.getLaps(), db) != activity.getLaps().size()) {
             db.endTransaction();
@@ -198,7 +194,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return Status.ERROR;
     }
 
-    protected void addCookies(HttpURLConnection conn) {
+    void addCookies(HttpURLConnection conn) {
         boolean first = true;
         StringBuilder buf = new StringBuilder();
         for (String cookie : cookies) {
@@ -210,9 +206,9 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         conn.addRequestProperty("Cookie", buf.toString());
     }
 
-    protected void getCookies(HttpURLConnection conn) {
+    void getCookies(HttpURLConnection conn) {
         List<String> connCookies = conn.getHeaderFields().get("Set-Cookie");
-        /**
+        /*
          * work-around for weird android 2.2 bug ref
          * http://stackoverflow.com/questions
          * /9134657/nullpointer-exception-with-
@@ -226,14 +222,14 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         }
     }
 
-    protected void clearCookies() {
+    void clearCookies() {
         cookies.clear();
     }
 
-    protected String getFormValues(HttpURLConnection conn) throws IOException {
+    String getFormValues(HttpURLConnection conn) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         StringBuilder buf = new StringBuilder();
-        String s = null;
+        String s;
         while ((s = in.readLine()) != null) {
             buf.append(s);
         }
@@ -258,5 +254,5 @@ public abstract class DefaultSynchronizer implements Synchronizer {
 
     //Common helper
     //JSON getString() interprets null as the string "null"
-    public static String noNullStr(String s) { return ("null".equals(s)) ? null : s; }
+    static String noNullStr(String s) { return ("null".equals(s)) ? null : s; }
 }

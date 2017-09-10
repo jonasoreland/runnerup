@@ -16,11 +16,11 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relative_layout1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_horizontal"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/name"
@@ -33,18 +33,15 @@
             android:id="@+id/account_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_marginStart="200dp"
             android:layout_marginLeft="200dp" />
 
         <ImageView
             android:id="@+id/account_list_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/account_list_name"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/account_list_name"
-            android:scaleType="center" />
+            android:scaleType="center"
+            tools:ignore="ContentDescription"/>
     </LinearLayout>
 
    	<TableLayout

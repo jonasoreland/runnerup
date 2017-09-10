@@ -32,7 +32,7 @@ public enum Scope {
     int value = 0;
     int cueId = 0;
 
-    private Scope(int val, int cueId) {
+    Scope(int val, int cueId) {
         this.value = val;
         this.cueId = cueId;
     }
@@ -45,9 +45,7 @@ public enum Scope {
     }
 
     public boolean equal(Scope what) {
-        if (what == null || what.value != this.value)
-            return false;
-        return true;
+        return !(what == null || what.value != this.value);
     }
 
     public int getCueId() {

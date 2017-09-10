@@ -17,41 +17,41 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.BuildConfig;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TargetTrigger extends Trigger {
 
-    boolean inited = false;
-    boolean paused = false;
+    private boolean inited = false;
+    private boolean paused = false;
 
-    int graceCount = 30; //
-    final int initialGrace = 20;
-    int minGraceCount = 30; //
+    private int graceCount = 30; //
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int initialGrace = 20;
+    private int minGraceCount = 30; //
 
     Scope scope = Scope.STEP;
-    Dimension dimension = Dimension.PACE;
+    private Dimension dimension = Dimension.PACE;
 
     Range range = null;
 
-    int cntMeasures = 0;
-    double measure[] = null;
-    int skip_values = 1;
-    double sort_measure[] = null;
-    double lastTimestamp = 0;
+    private int cntMeasures = 0;
+    private double[] measure = null;
+    @SuppressWarnings("FieldCanBeLocal")
+    private int skip_values = 1;
+    private double[] sort_measure = null;
+    private double lastTimestamp = 0;
 
-    double measure_time[] = null;
-    double measure_distance[] = null;
+    private double[] measure_time = null;
+    private double[] measure_distance = null;
 
     /**
      * cache computing of median
      */
-    double lastVal = 0;
-    int lastValCnt = 0;
+    private double lastVal = 0;
+    private int lastValCnt = 0;
 
     public TargetTrigger(Dimension dim, int movingAverageSeconds, int graceSeconds) {
         dimension = dim;
@@ -90,7 +90,7 @@ public class TargetTrigger extends Trigger {
             return false;
         }
 
-        if (inited == false) {
+        if (!inited) {
             Log.i(getClass().getName(), "inited == false");
             lastTimestamp = time_now;
             initMeasurement(w, time_now);

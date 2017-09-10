@@ -17,14 +17,12 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -38,11 +36,9 @@ import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Bitfield;
-import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -51,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Facebook";
@@ -60,20 +56,17 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.facebook.com/dialog/oauth";
-    public static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/facebook";
+    private static final String AUTH_URL = "https://www.facebook.com/dialog/oauth";
+    private static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/facebook";
 
     private static final String COURSE_ENDPOINT = "https://graph.facebook.com/me/objects/fitness.course";
     private static final String RUN_ENDPOINT = "https://graph.facebook.com/me/fitness.runs";
     private static final String BIKE_ENDPOINT = "https://graph.facebook.com/me/fitness.bikes";
     private static final String WALK_ENDPOINT = "https://graph.facebook.com/me/fitness.walks";
-
-    final boolean uploadComment = false;
-    final boolean explicitly_shared = false; // Doesn't work now...don't know why...
 
     private long id = 0;
     private String access_token = null;
@@ -82,7 +75,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     private boolean skipMapInPost = false;
     private final Context context;
 
-    final SimpleDateFormat dateFormat = new SimpleDateFormat(
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
     FacebookSynchronizer(Context context, SyncManager syncManager) {
@@ -207,10 +200,8 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
+        return access_token != null;
 
-        return true;
     }
 
     @Override
@@ -220,7 +211,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         token_now = 0;
     }
 
-    public static final long ONE_DAY = 24 * 60 * 60;
+    private static final long ONE_DAY = 24 * 60 * 60;
 
     @Override
     public Status connect() {
@@ -300,8 +291,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
             return runRef;
         }
     }
-    private JSONObject createCourse(JSONObject course) throws JSONException,
-            IOException, Exception {
+    private JSONObject createCourse(JSONObject course) throws Exception {
         JSONObject obj = new JSONObject();
         /* create a facebook course instance */
         obj.put("fb:app_id", FacebookSynchronizer.CLIENT_ID);
@@ -309,10 +299,10 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         obj.put("og:title", "a RunnerUp course");
         obj.put("fitness", course);
 
-        Part<StringWritable> themePart = new Part<StringWritable>(
+        Part<StringWritable> themePart = new Part<>(
                 "access_token", new StringWritable(
-                        SyncHelper.URLEncode(access_token)));
-        Part<StringWritable> payloadPart = new Part<StringWritable>("object",
+                SyncHelper.URLEncode(access_token)));
+        Part<StringWritable> payloadPart = new Part<>("object",
                 new StringWritable(obj.toString()));
         Part<?> parts[] = {
                 themePart, payloadPart
@@ -337,26 +327,28 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
             return null;
         }
         String id = ref.getString("id");
-        ArrayList<Part<?>> list = new ArrayList<Part<?>>();
-        list.add(new Part<StringWritable>("access_token",
+        ArrayList<Part<?>> list = new ArrayList<>();
+        list.add(new Part<>("access_token",
                 new StringWritable(SyncHelper.URLEncode(access_token))));
-        list.add(new Part<StringWritable>("course",
+        list.add(new Part<>("course",
                 new StringWritable(id)));
-        if (explicitly_shared)
-            list.add(new Part<StringWritable>(
-                    "fb:explicitly_shared", new StringWritable("true")));
+        //boolean explicitly_shared = false; // Doesn't work now...don't know why...
+        //if (explicitly_shared)
+        //    list.add(new Part<>(
+        //            "fb:explicitly_shared", new StringWritable("true")));
 
-        list.add(new Part<StringWritable>(
+        list.add(new Part<>(
                 "start_time", new StringWritable(formatTime(runObj.getLong("startTime")))));
         if (runObj.has("endTime")) {
-            list.add(new Part<StringWritable>(
+            list.add(new Part<>(
                     "end_time", new StringWritable(formatTime(runObj.getLong("endTime")))));
         }
 
-        if (uploadComment && runObj.has("comment")) {
-            list.add(new Part<StringWritable>(
-                    "message", new StringWritable(runObj.getString("comment"))));
-        }
+        //boolean uploadComment = false;
+        //if (uploadComment && runObj.has("comment")) {
+        //    list.add(new Part<>(
+        //            "message", new StringWritable(runObj.getString("comment"))));
+        //}
 
         Part<?> parts[] = new Part<?>[list.size()];
         list.toArray(parts);
@@ -369,6 +361,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return dateFormat.format(new Date(1000 * long1));
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void deleteCourse(JSONObject ref) {
     }
 

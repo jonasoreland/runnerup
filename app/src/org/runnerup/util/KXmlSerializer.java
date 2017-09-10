@@ -21,14 +21,13 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
+import android.text.TextUtils;
 
 import java.io.*;
 import java.util.Locale;
 import org.xmlpull.v1.*;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class KXmlSerializer implements XmlSerializer {
 
     //    static final String UNDEFINED = ":";
@@ -56,7 +55,7 @@ public class KXmlSerializer implements XmlSerializer {
     private boolean unicode;
     private String encoding;
 
-    private final void check(boolean close) throws IOException {
+    private void check(boolean close) throws IOException {
         if (!pending)
             return;
 
@@ -73,11 +72,11 @@ public class KXmlSerializer implements XmlSerializer {
         for (int i = nspCounts[depth - 1]; i < nspCounts[depth]; i++) {
             writer.write(' ');
             writer.write("xmlns");
-            if (!isEmpty(nspStack[i * 2])) {
+            if (!TextUtils.isEmpty(nspStack[i * 2])) {
                 writer.write(':');
                 writer.write(nspStack[i * 2]);
             }
-            else if (isEmpty(getNamespace()) && !isEmpty(nspStack[i * 2 + 1]))
+            else if (TextUtils.isEmpty(getNamespace()) && !TextUtils.isEmpty(nspStack[i * 2 + 1]))
                 throw new IllegalStateException("Cannot set default namespace for elements in no namespace");
             writer.write("=\"");
             writeEscaped(nspStack[i * 2 + 1], '"');
@@ -96,7 +95,7 @@ public class KXmlSerializer implements XmlSerializer {
         writer.write(close ? " />" : ">");
     }
 
-    private final void writeEscaped(String s, int quot) throws IOException {
+    private void writeEscaped(String s, int quot) throws IOException {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             switch (c) {
@@ -190,11 +189,8 @@ public class KXmlSerializer implements XmlSerializer {
     public boolean getFeature(String name) {
         //return false;
         return (
-            "http://xmlpull.org/v1/doc/features.html#indent-output"
-                .equals(
-                name))
-            ? indent[depth]
-            : false;
+                "http://xmlpull.org/v1/doc/features.html#indent-output"
+                        .equals(name)) && indent[depth];
     }
 
     public String getPrefix(String namespace, boolean create) {
@@ -206,7 +202,7 @@ public class KXmlSerializer implements XmlSerializer {
         }
     }
 
-    private final String getPrefix(
+    private String getPrefix(
         String namespace,
         boolean includeDefault,
         boolean create)
@@ -216,7 +212,7 @@ public class KXmlSerializer implements XmlSerializer {
             i >= 0;
             i -= 2) {
             if (nspStack[i + 1].equals(namespace)
-                && (includeDefault || !isEmpty(nspStack[i]))) {
+                && (includeDefault || !TextUtils.isEmpty(nspStack[i]))) {
                 String cand = nspStack[i];
                 for (int j = i + 2;
                     j < nspCounts[depth + 1] * 2;
@@ -236,7 +232,7 @@ public class KXmlSerializer implements XmlSerializer {
 
         String prefix;
 
-        if (isEmpty(namespace))
+        if (TextUtils.isEmpty(namespace))
             prefix = "";
         else {
             do {
@@ -404,11 +400,11 @@ public class KXmlSerializer implements XmlSerializer {
                 ? ""
                 : getPrefix(namespace, true, true);
 
-        if (namespace != null && isEmpty(namespace)) {
+        if (namespace != null && TextUtils.isEmpty(namespace)) {
             for (int i = nspCounts[depth];
                 i < nspCounts[depth + 1];
                 i++) {
-                if (isEmpty(nspStack[i * 2]) && !isEmpty(nspStack[i * 2 + 1])) {
+                if (TextUtils.isEmpty(nspStack[i * 2]) && !TextUtils.isEmpty(nspStack[i * 2 + 1])) {
                     throw new IllegalStateException("Cannot set default namespace for elements in no namespace");
                 }
             }
@@ -419,7 +415,7 @@ public class KXmlSerializer implements XmlSerializer {
         elementStack[esp] = name;
 
         writer.write('<');
-        if (!isEmpty(prefix)) {
+        if (!TextUtils.isEmpty(prefix)) {
             writer.write(prefix);
             writer.write(':');
         }
@@ -448,7 +444,7 @@ public class KXmlSerializer implements XmlSerializer {
         //        pending = false;
 
         String prefix =
-            isEmpty(namespace)
+                TextUtils.isEmpty(namespace)
                 ? ""
                 : getPrefix(namespace, false, true);
 
@@ -469,7 +465,7 @@ public class KXmlSerializer implements XmlSerializer {
                 */
 
         writer.write(' ');
-        if (!isEmpty(prefix)) {
+        if (!TextUtils.isEmpty(prefix)) {
             writer.write(prefix);
             writer.write(':');
         }
@@ -521,7 +517,7 @@ public class KXmlSerializer implements XmlSerializer {
 
             writer.write("</");
             String prefix = elementStack[depth * 3 + 1];
-            if (!isEmpty(prefix)) {
+            if (!TextUtils.isEmpty(prefix)) {
                 writer.write(prefix);
                 writer.write(':');
             }
@@ -592,9 +588,5 @@ public class KXmlSerializer implements XmlSerializer {
         writer.write("<?");
         writer.write(pi);
         writer.write("?>");
-    }
-
-    private static boolean isEmpty(String s) {
-        return s.length() == 0;
     }
 }

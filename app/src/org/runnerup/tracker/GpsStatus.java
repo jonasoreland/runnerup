@@ -18,7 +18,6 @@
 package org.runnerup.tracker;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.GpsSatellite;
@@ -26,7 +25,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 
@@ -39,36 +37,39 @@ import org.runnerup.util.TickListener;
  *
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class GpsStatus implements LocationListener,
         android.location.GpsStatus.Listener {
 
-    static final int HIST_LEN = 3;
+    private static final int HIST_LEN = 3;
 
-    boolean mIsFixed = false;
-    Context context = null;
-    Location mHistory[] = null;
-    LocationManager locationManager = null;
-    TickListener listener = null;
+    private boolean mIsFixed = false;
+    private Context context = null;
+    private Location[] mHistory = null;
+    private LocationManager locationManager = null;
+    private TickListener listener = null;
 
     /**
      * If we get a location with accurancy <= mFixAccurancy mFixed => true
      */
-    final float mFixAccurancy = 10;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final float mFixAccurancy = 10;
 
     /**
      * If we get fixed satellites >= mFixSatellites mFixed => true
      */
-    final int mFixSatellites = 2;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int mFixSatellites = 2;
 
     /**
      * If we get location updates with time difference <= mFixTime mFixed =>
      * true
      */
-    final int mFixTime = 3;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int mFixTime = 3;
 
-    int mKnownSatellites = 0;
-    int mUsedInLastFixSatellites = 0;
+    private int mKnownSatellites = 0;
+    private int mUsedInLastFixSatellites = 0;
 
     public GpsStatus(Context ctx) {
         this.context = ctx;
@@ -159,9 +160,12 @@ public class GpsStatus implements LocationListener,
         if (locationManager == null)
             return;
 
-        //noinspection MissingPermission
-        android.location.GpsStatus gpsStatus = locationManager
-                .getGpsStatus(null);
+        android.location.GpsStatus gpsStatus;
+        try {
+            gpsStatus = locationManager.getGpsStatus(null);
+        } catch (SecurityException ex) {
+            gpsStatus = null;
+        }
 
         if (gpsStatus == null)
             return;
@@ -206,6 +210,7 @@ public class GpsStatus implements LocationListener,
         return mUsedInLastFixSatellites;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isEnabled() {
         LocationManager lm = (LocationManager) context
                 .getSystemService(Context.LOCATION_SERVICE);

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="all">
-        <ignore path="../GraphView/**" />
         <ignore path="../ANT-Android-SDKs/**" />
-    </issue>
-    <issue id="InvalidPackage">
-        <ignore path="**/com.squareup.okio/**" />
-        <ignore path="**/com.vividsolutions/**" />
     </issue>
     <issue id="ResourceType">
         <ignore path="src/org/runnerup/view/MainLayout.java" />
     </issue>
     <issue id="MissingQuantity">
-        <!-- Transifex refuses quantity="one" for tr, (gradle) lint requires it, Inspect allows both-->
+        <!-- Transifex refuses quantity="one" for tr,pl (gradle) lint requires it, Inspect allows both-->
         <ignore path="res/values-tr/cues.xml" />
         <ignore path="res/values-pl/cues.xml" />
+    </issue>
+    <issue id="UnusedResources">
+        <ignore path="res/drawable-mdpi/a12_googleplus.png" />
     </issue>
     <issue id="InvalidPackage">
         <ignore regexp=".*okio.*" />
         <ignore regexp=".*retrofit.*" />
+        <ignore path="**/com.squareup.okio/**" />
+        <ignore path="**/com.vividsolutions/**" />
     </issue>
     <issue id="IconDensities">
         <ignore path="res/**" />
@@ -29,5 +29,14 @@
     </issue>
     <issue id="WrongRegion" severity="ignore">
         <ignore regexp="^.*?\Q\res\values-en-rNL\\E.*?$" />
+    </issue>
+    <issue id="ObsoleteSdkInt" severity="ignore">
+        <ignore regexp=".*-r14$" />
+    </issue>
+    <!-- used by library? -->
+    <issue id="LogNotTimber" severity="ignore"/>
+    <!-- SuppressLint has no effect in gradle plugin 3.0.0, bug? -->
+    <issue id="ClickableViewAccessibility" severity="ignore">
+        <ignore path="**/NumberPicker.java" />
     </issue>
 </lint>

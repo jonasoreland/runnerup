@@ -17,18 +17,16 @@
 
 package org.runnerup.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class DurationPicker extends LinearLayout {
 
-    final NumberPicker hours;
-    final NumberPicker minutes;
-    final NumberPicker seconds;
+    private final NumberPicker hours;
+    private final NumberPicker minutes;
+    private final NumberPicker seconds;
 
     public DurationPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -51,9 +49,9 @@ public class DurationPicker extends LinearLayout {
 
     public long getEpochTime() {
         long ret = 0;
-        ret += seconds.getValue();
-        ret += (long) minutes.getValue() * 60;
-        ret += (long) hours.getValue() * 60 * 60;
+        ret += seconds.getValueInt();
+        ret += (long) minutes.getValueInt() * 60;
+        ret += (long) hours.getValueInt() * 60 * 60;
         return ret;
     }
 

@@ -16,9 +16,7 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 
 import java.util.HashMap;
 
@@ -26,7 +24,7 @@ import java.util.HashMap;
  * Created by jonas on 12/11/14.
  *
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public abstract class DefaultTrackerComponent implements TrackerComponent {
 
     /**

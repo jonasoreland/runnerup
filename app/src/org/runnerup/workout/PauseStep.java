@@ -17,30 +17,20 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import org.runnerup.BuildConfig;
 
-import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class PauseStep extends Step {
 
-    long elapsedTime = 0;
-    long lastTime = 0;
-    double saveDurationValue = 0;
+    private long elapsedTime = 0;
+    private long lastTime = 0;
+    private double saveDurationValue = 0;
 
     @Override
     public void onInit(Workout s) {
         super.onInit(s);
         if (BuildConfig.DEBUG && (getIntensity() != Intensity.RESTING || getDurationType() != Dimension.TIME)) { throw new AssertionError(); }
         saveDurationValue = super.durationValue;
-    }
-
-    @Override
-    public void onBind(Workout s, HashMap<String, Object> bindValues) {
-        super.onBind(s, bindValues);
     }
 
     @Override
@@ -71,7 +61,7 @@ public class PauseStep extends Step {
         lastTime = now;
         elapsedTime += diff;
         if (paused) {
-            /**
+            /*
              * to make sure that actual pause time is save...we increase the
              * durationValue every time elapsedTime is increased if we're
              * currently paused to handle repeats, this is later restored in

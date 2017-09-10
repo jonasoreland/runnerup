@@ -16,11 +16,9 @@
  */
 package org.runnerup.service;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -32,10 +30,10 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.view.MainActivity;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class ListenerService extends WearableListenerService {
 
-    private int notificationId = 10;
+    private final int notificationId = 10;
 
     @Override
     public void onCreate() {

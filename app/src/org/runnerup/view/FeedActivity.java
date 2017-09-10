@@ -17,14 +17,12 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,27 +49,27 @@ import org.runnerup.util.Formatter;
 
 import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FeedActivity extends Activity implements Constants {
 
-    SQLiteDatabase mDB = null;
-    SyncManager syncManager = null;
-    Formatter formatter = null;
+    private SQLiteDatabase mDB = null;
+    private SyncManager syncManager = null;
+    private Formatter formatter = null;
 
-    FeedList feed = null;
-    ListView feedList = null;
-    FeedListAdapter feedAdapter = null;
+    private FeedList feed = null;
+    private FeedListAdapter feedAdapter = null;
 
-    Button refreshButton = null;
-    LinearLayout feedHeader = null;
-    TextView feedStatus = null;
+    private Button refreshButton = null;
+    private LinearLayout feedHeader = null;
+    private TextView feedStatus = null;
     ProgressBar feedProgressBar = null;
 
-    Button feedAccountButton = null;
+    private Button feedAccountButton = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +83,7 @@ public class FeedActivity extends Activity implements Constants {
         feed.load(); // load from DB
 
         feedAdapter = new FeedListAdapter(this, feed);
-        feedList = (ListView) findViewById(R.id.feed_list);
+        ListView feedList = (ListView) findViewById(R.id.feed_list);
         feedList.setAdapter(feedAdapter);
         feedList.setDividerHeight(2);
 
@@ -116,7 +114,7 @@ public class FeedActivity extends Activity implements Constants {
         startSync();
     }
 
-    void startSync() {
+    private void startSync() {
         syncManager.clear();
         Set<String> set = syncManager.feedSynchronizersSet(this);
         if (!set.isEmpty()) {
@@ -133,18 +131,13 @@ public class FeedActivity extends Activity implements Constants {
         }
     }
 
-    final Callback syncDone = new Callback() {
+    private final Callback syncDone = new Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
             refreshButton.setEnabled(true);
             feedHeader.setVisibility(View.GONE);
         }
     };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     public void onDestroy() {
@@ -236,7 +229,7 @@ public class FeedActivity extends Activity implements Constants {
                 String name = formatter.formatName(tmp.getAsString(DB.FEED.USER_FIRST_NAME),
                         tmp.getAsString(DB.FEED.USER_LAST_NAME));
                 String sport = FeedActivity.GetSportActivity(tmp);
-                tv1.setText(name + " trained " + sport);
+                tv1.setText(String.format("%s trained %s", name, sport));//TODO string to translate
                 if (tmp.containsKey(DB.FEED.DISTANCE) || tmp.containsKey(DB.FEED.DURATION)) {
                     double distance = 0;
                     long duration = 0;
@@ -303,7 +296,7 @@ public class FeedActivity extends Activity implements Constants {
                 feedAdapter.notifyDataSetChanged();
             } else {
                 String synchronizerName = (String) data;
-                feedStatus.setText(getString(R.string.Synchronizing) + " " + synchronizerName);
+                feedStatus.setText(String.format(Locale.getDefault(), "%s %s", getString(R.string.Synchronizing), synchronizerName)); //TODO parameter
             }
         }
     }

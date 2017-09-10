@@ -17,13 +17,12 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
+import android.util.SparseArray;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,10 +43,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
@@ -58,26 +58,23 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     private static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
     private static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
 
     private Integer userId = null;
     private String authToken = null;
 
-    static final Map<Integer, Sport> runtastic2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2runtasticMap = new HashMap<Sport, Integer>();
+    private static final SparseArray<Sport> runtastic2sportMap = new SparseArray<>();
+    private static final Map<Sport, Integer> sport2runtasticMap = new HashMap<>();
     static {
-        runtastic2sportMap.put(1, Sport.RUNNING);
-        runtastic2sportMap.put(3, Sport.BIKING);
-        for (Integer i : runtastic2sportMap.keySet()) {
-            sport2runtasticMap.put(runtastic2sportMap.get(i), i);
+        sport2runtasticMap.put(Sport.RUNNING, 1);
+        sport2runtasticMap.put(Sport.BIKING, 3);
+        for (Sport s : sport2runtasticMap.keySet()) {
+            runtastic2sportMap.put(sport2runtasticMap.get(s), s);
         }
     }
 
-
-    RuntasticSynchronizer(SyncManager syncManager) {
-    }
 
     @Override
     public long getId() {
@@ -109,9 +106,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null)
-            return true;
-        return false;
+        return username != null && password != null;
     }
 
     @Override
@@ -165,7 +160,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         cookies.clear();
 
         try {
-            /**
+            /*
              * connect to START_URL to get cookies/formValues
              */
             conn = (HttpURLConnection) new URL(START_URL).openConnection();
@@ -184,7 +179,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                 return Status.ERROR;
 
 
-            /**
+            /*
              * Then login using a post
              */
             FormValues kv = new FormValues();
@@ -226,7 +221,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                             else
                                 url2 = tmp;
 
-                            if (url2 != null)
+                            //if (url2 != null)
                                 break;
                         }
                     }
@@ -290,7 +285,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         try {
             Pair<String, Sport> res = tcx.exportWithSport(mID, writer);
             Sport sport = res.second;
-            String filename = String.format("activity%s%d.tcx", Long.toString(Math.round(1000 * Math.random())), mID);
+            String filename = String.format(Locale.ENGLISH, "activity%s%d.tcx", Long.toString(Math.round(1000 * Math.random())), mID);
 
             String url = UPLOAD_URL + "?authenticity_token=" + SyncHelper.URLEncode(authToken) + "&qqfile=" +
                     filename;
@@ -361,8 +356,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
             s.ex = e;
         }
 
-        if (s.ex != null)
-            Log.e(getName(), "ex: " + s.ex);
+        Log.e(getName(), "ex: " + s.ex);
 
         if (conn != null)
             conn.disconnect();

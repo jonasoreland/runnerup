@@ -17,12 +17,11 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.Gravity;
@@ -44,7 +43,9 @@ import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Range;
 import org.runnerup.workout.Step;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+import java.util.Locale;
+
+
 public class StepButton extends TableLayout {
 
     private final Context mContext;
@@ -64,8 +65,8 @@ public class StepButton extends TableLayout {
     private Step step;
     private Runnable mOnChangedListener = null;
 
-    static final boolean editRepeatCount = true;
-    static final boolean editStepButton = true;
+    private static final boolean editRepeatCount = true;
+    private static final boolean editStepButton = true;
 
     public StepButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -103,7 +104,7 @@ public class StepButton extends TableLayout {
         mIntensity.setText(res.getText(step.getIntensity().getTextId()));
         if (step.getIntensity() == Intensity.REPEAT) {
             mDurationType.setText("");
-            mDurationValue.setText("" + step.getRepeatCount());
+            mDurationValue.setText(String.format(Locale.getDefault(), "%d", step.getRepeatCount()));
             mGoalRow.setVisibility(View.GONE);
             if (editRepeatCount)
                 mLayout.setOnClickListener(onRepeatClickListener);
@@ -125,17 +126,16 @@ public class StepButton extends TableLayout {
         } else {
             mGoalRow.setVisibility(View.VISIBLE);
             mGoalType.setText(res.getString(goalType.getTextId()));
-            mGoalValue.setText(formatter.format(Formatter.Format.TXT_SHORT, goalType,
-                    step.getTargetValue().minValue)
-                    + "-" +
-                    formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue));
+            mGoalValue.setText(String.format(Locale.getDefault(), "%s-%s",
+                    formatter.format(Formatter.Format.TXT_SHORT, goalType, step.getTargetValue().minValue),
+                    formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue)));
         }
         if (editStepButton) {
             mLayout.setOnClickListener(onStepClickListener);
         }
     }
 
-    final OnClickListener onRepeatClickListener = new OnClickListener() {
+    private final OnClickListener onRepeatClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -154,7 +154,7 @@ public class StepButton extends TableLayout {
             alert.setView(layout);
             alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    step.setRepeatCount(numberPicker.getValue());
+                    step.setRepeatCount(numberPicker.getValueInt());
                     dialog.dismiss();
                     setStep(step); // redraw
                     if (mOnChangedListener != null) {
@@ -173,7 +173,7 @@ public class StepButton extends TableLayout {
         }
     };
 
-    final OnClickListener onStepClickListener = new OnClickListener() {
+    private final OnClickListener onStepClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -181,7 +181,7 @@ public class StepButton extends TableLayout {
             alert.setTitle(getResources().getString(R.string.Edit_step));
 
             final LayoutInflater inflater = LayoutInflater.from(mContext);
-            final View layout = inflater.inflate(
+            @SuppressLint("InflateParams") final View layout = inflater.inflate(
                     R.layout.step_dialog, null);
 
             final Runnable save = setupEditStep(inflater, layout);
@@ -206,7 +206,7 @@ public class StepButton extends TableLayout {
         }
     };
 
-    Runnable setupEditStep(LayoutInflater inflator, View layout) {
+    private Runnable setupEditStep(LayoutInflater inflator, View layout) {
         final TitleSpinner stepType = (TitleSpinner) layout.findViewById(R.id.step_intensity);
         stepType.setValue(step.getIntensity().getValue());
 

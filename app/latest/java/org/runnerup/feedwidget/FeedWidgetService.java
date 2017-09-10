@@ -1,12 +1,10 @@
 package org.runnerup.feedwidget;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,7 +21,7 @@ import org.runnerup.view.FeedActivity;
 
 import java.text.DateFormat;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+
 public class FeedWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -62,8 +60,7 @@ public class FeedWidgetService extends RemoteViewsService {
                     Log.w(getClass().getSimpleName(), "getViewAt: " + position + " is invalid position!");
                     return null;
                 }
-                final RemoteViews rv = getViewFactorizedAt(position);
-                return rv;
+                return getViewFactorizedAt(position);
             }
 
             // code is mainly a copy/paste from FeedActivity.java:getViewAt - however it could/should be done properly byy refactoring

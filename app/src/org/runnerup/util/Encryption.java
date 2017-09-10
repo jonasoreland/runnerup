@@ -17,8 +17,7 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
+import android.annotation.SuppressLint;
 import android.util.Base64;
 
 import java.io.FileInputStream;
@@ -39,7 +38,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Encryption {
     private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
@@ -82,7 +81,8 @@ public class Encryption {
      * @param key
      * @throws Exception
      */
-    public static void encrypt(final InputStream in, final OutputStream out, final String key)
+    @SuppressLint("TrulyRandom")
+    private static void encrypt(final InputStream in, final OutputStream out, final String key)
             throws Exception {
         final PBEKeySpec keySpec = new PBEKeySpec(key.toCharArray());
         final SecretKeyFactory keyFactory = SecretKeyFactory
@@ -138,6 +138,7 @@ public class Encryption {
 
         // Read in the previously stored salt and set the iteration count.
         final byte[] salt = new byte[8];
+        //noinspection ResultOfMethodCallIgnored
         in.read(salt);
         final int iterations = 100;
         final PBEParameterSpec parameterSpec = new PBEParameterSpec(salt, iterations);

@@ -17,10 +17,7 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class SafeParse {
 
     public static int parseInt(String string, int defaultValue) {

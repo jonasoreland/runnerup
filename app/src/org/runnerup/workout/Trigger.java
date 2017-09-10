@@ -17,18 +17,16 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public abstract class Trigger implements TickComponent {
 
-    ArrayList<Feedback> triggerAction = new ArrayList<Feedback>();
-    final ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<TriggerSuppression>();
+    ArrayList<Feedback> triggerAction = new ArrayList<>();
+    final ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<>();
 
     @Override
     public void onInit(Workout s) {
@@ -51,7 +49,7 @@ public abstract class Trigger implements TickComponent {
         }
     }
 
-    public void fire(Workout w) {
+    void fire(Workout w) {
         for (TriggerSuppression s : triggerSuppression) {
             if (s.suppress(this, w)) {
                 Log.e(getClass().getName(), "trigger: " + this + "suppressed by: " + s);

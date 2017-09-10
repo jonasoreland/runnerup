@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
     android:id="@+id/widget_layout"
-    tools:showIn="@xml/feed_widget_provider_info"
-    android:background="@android:color/background_dark">
+    tools:showIn="@xml/feed_widget_provider_info">
 
     <ImageButton
         android:layout_width="30dp"
@@ -14,13 +13,14 @@
         android:src="@drawable/ic_feed_widget"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        tools:ignore="ContentDescription" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/latest_feed_click_to_refresh"
-        android:id="@+id/textView"
         android:layout_above="@+id/widget_empty"
+        android:layout_toEndOf="@+id/widget_app_icon"
         android:layout_toRightOf="@+id/widget_app_icon"
         android:gravity="center" />
     <ListView

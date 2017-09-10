@@ -17,12 +17,10 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -45,15 +43,16 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.workout.Sport;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+import java.util.Locale;
+
+
 public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
-    SQLiteDatabase mDB = null;
-    Formatter formatter = null;
+    private SQLiteDatabase mDB = null;
+    private Formatter formatter = null;
 
-    ListView listView = null;
-    CursorAdapter cursorAdapter = null;
+    private CursorAdapter cursorAdapter = null;
 
     /** Called when the activity is first created. */
 
@@ -61,7 +60,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history);
-        listView = (ListView) findViewById(R.id.history_list);
+        ListView listView = (ListView) findViewById(R.id.history_list);
 
         mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);
@@ -147,7 +146,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
             {
                 TextView tv = (TextView) view.findViewById(to[0]);
-                tv.setText(Long.toString(id));
+                tv.setText(String.format(Locale.getDefault(), "%d", id));
             }
 
             {

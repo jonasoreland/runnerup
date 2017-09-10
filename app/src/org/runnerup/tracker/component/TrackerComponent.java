@@ -16,9 +16,7 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 
 import java.util.HashMap;
 
@@ -29,12 +27,12 @@ import java.util.HashMap;
  * typically a sensor but could also be a system service that
  * needs blocking initialization (with callback)
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public interface TrackerComponent {
 
-    public static final String KEY_CONTEXT = "KEY_CONTEXT";
+    String KEY_CONTEXT = "KEY_CONTEXT";
 
-    public enum ResultCode {
+    enum ResultCode {
         RESULT_OK,
         RESULT_UNKNOWN,       // we don't know if hw is present
         RESULT_NOT_SUPPORTED, // hw not present or not configured
@@ -44,14 +42,14 @@ public interface TrackerComponent {
         RESULT_PENDING        // will call callback
     }
 
-    public interface Callback {
+    interface Callback {
         void run(TrackerComponent component, ResultCode resultCode);
     }
 
     /**
      * Component name
      */
-    public String getName();
+    String getName();
 
     /**
      * Called by Tracker during initialization

@@ -17,10 +17,8 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,16 +30,16 @@ import org.runnerup.common.util.Constants.DB;
 
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 class AudioSchemeListAdapter extends BaseAdapter {
 
     /**
 	 * 
 	 */
-    LayoutInflater inflater = null;
-    SQLiteDatabase mDB = null;
-    boolean createNewItem = true;
-    final ArrayList<String> audioSchemes = new ArrayList<String>();
+    private LayoutInflater inflater = null;
+    private SQLiteDatabase mDB = null;
+    private boolean createNewItem = true;
+    private final ArrayList<String> audioSchemes = new ArrayList<>();
 
     public AudioSchemeListAdapter(SQLiteDatabase db, LayoutInflater inflater, boolean createNew) {
         super();
@@ -53,7 +51,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         return audioSchemes.size() +
-                /** default */
+                /* default */
                 1 +
                 (createNewItem ? 1 : 0);
     }

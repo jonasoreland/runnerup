@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -30,7 +29,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -77,30 +75,29 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class ManageWorkoutsActivity extends Activity implements Constants {
 
-    SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB = null;
 
     private String PHONE_STRING = "my phone";
     public final static String WORKOUT_NAME = "";
 
-    final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<SyncManager.WorkoutRef>();
-    final ArrayList<ContentValues> providers = new ArrayList<ContentValues>();
-    final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<String, ArrayList<SyncManager.WorkoutRef>>();
-    WorkoutAccountListAdapter adapter = null;
+    private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<>();
+    private final ArrayList<ContentValues> providers = new ArrayList<>();
+    private final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<>();
+    private WorkoutAccountListAdapter adapter = null;
 
-    final HashSet<String> loadedProviders = new HashSet<String>();
+    private final HashSet<String> loadedProviders = new HashSet<>();
 
-    boolean uploading = false;
-    ExpandableListView list = null;
-    CompoundButton currentlySelectedWorkout = null;
-    Button downloadButton = null;
-    Button deleteButton = null;
-    Button shareButton = null;
-    Button createButton = null;
+    private boolean uploading = false;
+    private CompoundButton currentlySelectedWorkout = null;
+    private Button downloadButton = null;
+    private Button deleteButton = null;
+    private Button shareButton = null;
+    private Button createButton = null;
 
-    SyncManager syncManager = null;
+    private SyncManager syncManager = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -113,7 +110,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         adapter = new WorkoutAccountListAdapter(this);
-        list = (ExpandableListView) findViewById(R.id.expandable_list_view);
+        ExpandableListView list = (ExpandableListView) findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
         downloadButton = (Button) findViewById(R.id.download_workout_button);
         downloadButton.setOnClickListener(downloadButtonClick);
@@ -148,13 +145,10 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 ManageWorkoutsActivity.this.finish();
-                                return;
                             }
                         });
                 builder.show();
-                return;
             }
-            return;
         }
         // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
     }
@@ -186,7 +180,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         if (is == null) {
             throw new Exception("Failed to get input stream");
         }
-        boolean convertRestToRecovery = true; // we just test to import, value of this doesnt matter
+        final boolean convertRestToRecovery = true; // we just test to import, value of this doesnt matter
         Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)),
                 convertRestToRecovery);
         is.close();
@@ -206,7 +200,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         dialog.dismiss();
                         String saveName = fileName;
                         try {
-                            if (exists && selected[0] == false) {
+                            if (exists && !selected[0]) {
                                 String name = "";
                                 String tmp[] = fileName.split("\\.");
                                 if (tmp.length > 0) {
@@ -234,7 +228,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             e.printStackTrace();
                         }
                         launchMain(saveName);
-                        return;
                     }
                 });
         builder.setNegativeButton(getString(R.string.No_way),
@@ -243,7 +236,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         // Do nothing but close the dialog
                         dialog.dismiss();
                         finish();
-                        return;
                     }
                 });
 
@@ -262,7 +254,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
 
         builder.show();
-        return;
     }
 
     private void saveImport(String file, InputStream is) throws IOException {
@@ -277,7 +268,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         out.close();
     }
 
-    protected void launchMain(String fileName) {
+    private void launchMain(String fileName) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), fileName).commit();
 
@@ -286,7 +277,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
-        return;
     }
 
     @Override
@@ -318,8 +308,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
     }
 
-    void listLocal() {
-        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<SyncManager.WorkoutRef>();
+    private void listLocal() {
+        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<>();
         String[] list = org.runnerup.view.WorkoutListAdapter.load(this);
         if (list != null) {
             for (String s : list) {
@@ -341,10 +331,10 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         syncManager.close();
     }
 
-    void requery() {
-        ContentValues allSynchronizers[] = null;
+    private void requery() {
+        ContentValues allSynchronizers[];
         {
-            /**
+            /*
              * Accounts/reports
              */
             String sql = "SELECT DISTINCT "
@@ -383,8 +373,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     @Override
     public void onBackPressed() {
-        if (uploading == true) {
-            /**
+        if (uploading) {
+            /*
              * Ignore while uploading
              */
             return;
@@ -398,12 +388,12 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
             Filter<SyncManager.WorkoutRef> f) {
-        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<SyncManager.WorkoutRef>();
+        ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<>();
         return filter(list, newlist, f);
     }
 
-    ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
-            ArrayList<WorkoutRef> newlist, Filter<SyncManager.WorkoutRef> f) {
+    private ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
+                                                     ArrayList<WorkoutRef> newlist, Filter<SyncManager.WorkoutRef> f) {
         for (SyncManager.WorkoutRef w : list) {
             if (f.match(w))
                 newlist.add(w);
@@ -412,7 +402,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     }
 
 
-    final OnClickListener createButtonClick = new OnClickListener() {
+    private final OnClickListener createButtonClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
             final Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
@@ -445,7 +435,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
     };
 
-    final OnClickListener downloadButtonClick = new OnClickListener() {
+    private final OnClickListener downloadButtonClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -463,7 +453,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 downloadWorkout(selected);
-                                return;
                             }
                         });
                 builder.setNegativeButton(getString(R.string.No),
@@ -483,7 +472,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         private void downloadWorkout(WorkoutRef selected) {
             uploading = true;
-            HashSet<WorkoutRef> list = new HashSet<WorkoutRef>();
+            HashSet<WorkoutRef> list = new HashSet<>();
             list.add((WorkoutRef) currentlySelectedWorkout.getTag());
             syncManager.loadWorkouts(list, new SyncManager.Callback() {
                 @Override
@@ -523,7 +512,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             deleteWorkout(selected);
-                            return;
                         }
                     });
             builder.setNegativeButton(getString(R.string.No),
@@ -535,7 +523,6 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
                     });
             builder.show();
-            return;
         }
     };
 
@@ -551,7 +538,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         listLocal();
     }
 
-    public final OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
+    private final OnCheckedChangeListener onWorkoutChecked = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
             if (currentlySelectedWorkout != null) {
@@ -676,7 +663,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded,
                 View convertView, ViewGroup parent) {
-            TextView view = null;
+            TextView view;
             if (convertView != null && convertView instanceof TextView)
                 view = (TextView) convertView;
             else
@@ -737,7 +724,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                 ArrayList<WorkoutRef> list = workouts.get(synchronizerName);
                 list.clear();
 
-                HashSet<String> tmp = new HashSet<String>();
+                HashSet<String> tmp = new HashSet<>();
                 tmp.add(synchronizerName);
 
                 syncManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);

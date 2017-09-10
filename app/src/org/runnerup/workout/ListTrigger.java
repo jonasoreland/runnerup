@@ -17,25 +17,22 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class ListTrigger extends Trigger {
 
     boolean remaining = false;
     Scope scope = Scope.ACTIVITY;
     Dimension dimension = Dimension.TIME;
 
-    int pos = Integer.MAX_VALUE;
-    ArrayList<Double> triggerTimes = new ArrayList<Double>();
+    private int pos = Integer.MAX_VALUE;
+    ArrayList<Double> triggerTimes = new ArrayList<>();
 
     @Override
     public boolean onTick(Workout w) {
         if (pos < triggerTimes.size()) {
-            if (remaining == false) {
+            if (!remaining) {
                 double now = w.get(scope, dimension);
                 if (now >= triggerTimes.get(pos)) {
                     fire(w);
@@ -53,7 +50,7 @@ public class ListTrigger extends Trigger {
     }
 
     private void scheduleNext(Workout w, double now) {
-        if (remaining == false) {
+        if (!remaining) {
             while (pos < triggerTimes.size() && now >= triggerTimes.get(pos)) {
                 pos++;
             }

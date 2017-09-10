@@ -31,7 +31,6 @@
 		runnerup:type="spinner_txt"/>
     
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/basic_sport"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/sportEntries"

@@ -24,7 +24,6 @@ import android.preference.PreferenceManager;
 
 import org.runnerup.BuildConfig;
 
-import java.util.HashMap;
 import java.util.Random;
 
 public class TrackerPressure extends DefaultTrackerComponent implements SensorEventListener {
@@ -136,7 +135,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
     public void onConnected() {
     }
 
-    /**
+    /*
      * Called by Tracker before start
      *   Component shall populate bindValues
      *   with objects that will then be passed

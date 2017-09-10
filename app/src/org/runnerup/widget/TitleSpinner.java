@@ -17,18 +17,17 @@
 
 package org.runnerup.widget;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +43,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.runnerup.R;
+import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 
 import java.text.DateFormat;
@@ -51,7 +51,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TitleSpinner extends LinearLayout {
 
     private enum Type {
@@ -69,7 +69,7 @@ public class TitleSpinner extends LinearLayout {
     private TextView mTitle = null;
     private TextView mValue = null;
     private Spinner mSpinner = null;
-    int mInputType = 0;
+    private int mInputType = 0;
     private final Context mContext;
     private OnSetValueListener mSetValueListener = null;
     private OnCloseDialogListener mCloseDialogListener = null;
@@ -84,18 +84,18 @@ public class TitleSpinner extends LinearLayout {
          * @return
          * @throws java.lang.IllegalArgumentException
          */
-        public String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
+        String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
 
         /**
          * @param newValue
          * @return
          * @throws java.lang.IllegalArgumentException
          */
-        public int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
+        int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
     }
 
     public interface OnCloseDialogListener {
-        public void onClose(TitleSpinner spinner, boolean ok);
+        void onClose(TitleSpinner spinner, boolean ok);
     }
 
     public TitleSpinner(Context context, AttributeSet attrs) {
@@ -115,7 +115,6 @@ public class TitleSpinner extends LinearLayout {
         if (title != null) {
             mTitle.setText(title);
         }
-        //Note: R.styleable.TitleSpinner_android_prompt is not used
 
         CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
         CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
@@ -419,14 +418,11 @@ public class TitleSpinner extends LinearLayout {
                 alert.setView(layout);
                 alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(distancePicker));
+                        double dist = distancePicker.getDistance();
+                        setValue(((Long)Math.round(dist)).toString(), dist, true);
                         dialog.dismiss();
                         layout.removeView(distancePicker);
                         onClose(true);
-                    }
-
-                    private String getValue(DistancePicker dp) {
-                        return Long.toString(dp.getDistance());
                     }
                 });
                 alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
@@ -470,7 +466,7 @@ public class TitleSpinner extends LinearLayout {
                     }
 
                     private String getValue(NumberPicker dp) {
-                        return Integer.toString(dp.getValue());
+                        return Integer.toString(dp.getValueInt());
                     }
                 });
                 alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
@@ -504,9 +500,11 @@ public class TitleSpinner extends LinearLayout {
             mCloseDialogListener.onClose(this, b);
     }
 
-    public void setTitle(String title) {
-        mTitle.setText(title);
-    }
+// --Commented out by Inspection START (2017-08-11 13:10):
+//    public void setTitle(String title) {
+//        mTitle.setText(title);
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:10)
 
     private void loadValue(String defaultValue) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -537,12 +535,18 @@ public class TitleSpinner extends LinearLayout {
         setValue (value, true);
     }
 
-    public void setValue(CharSequence value, Boolean savePreferences) {
+    private void setValue(CharSequence value, Boolean savePreferences) {
         String str = value == null ? "" : value.toString();
         setValue(str, savePreferences);
     }
 
-    public void setValue(String value, Boolean savePreferences) {
+    private void setValue(String value, Boolean savePreferences) {
+        //Handle default values
+        Double valInt = TextUtils.isEmpty(value) || "0".equals(value) ? 0.0 : null;
+        setValue(value, valInt, savePreferences);
+    }
+
+    private void setValue(String value, Double valInt, Boolean savePreferences) {
         if (mSetValueListener != null) {
             try {
                 value = mSetValueListener.preSetValue(value);
@@ -557,10 +561,15 @@ public class TitleSpinner extends LinearLayout {
         } else if (mType == Type.TS_DURATIONPICKER) {
             mCurrValue = SafeParse.parseSeconds(value, 0);
         } else {
-            mCurrValue = (long) SafeParse.parseDouble(value.toString(), 0);
+            mCurrValue = (long) SafeParse.parseDouble(value, 0);
         }
         if (mType == Type.TS_DISTANCEPICKER && !TextUtils.isEmpty(value)) {
-            mValue.setText(String.format("%s %s", value, getResources().getString(R.string.metrics_distance_m)));
+            if (valInt != null) {
+                Formatter f = new Formatter(this.mContext);
+                mValue.setText(f.formatDistance(Formatter.Format.TXT_LONG, valInt));
+            } else {
+                mValue.setText(String.format("%s %s", value, getResources().getString(R.string.metrics_distance_m)));
+            }
         } else {
             mValue.setText(value);
         }
@@ -587,7 +596,7 @@ public class TitleSpinner extends LinearLayout {
         return 0;
     }
 
-    int getSelectionValue(int value) {
+    private int getSelectionValue(int value) {
         if (values == null)
             return value;
         int p = 0;
@@ -601,7 +610,7 @@ public class TitleSpinner extends LinearLayout {
         return 0;
     }
 
-    int getRealValue(int value) {
+    private int getRealValue(int value) {
         if (values == null)
             return value;
         if (value >= 0 && value < values.length)

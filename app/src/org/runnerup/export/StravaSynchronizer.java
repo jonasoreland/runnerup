@@ -22,7 +22,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -54,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Strava";
-    public static final String PUBLIC_URL = "http://www.strava.com";
+    private static final String PUBLIC_URL = "http://www.strava.com";
 
     /**
      * @todo register OAuth2Server
@@ -333,7 +332,6 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
                 amsg = conn.getResponseMessage();
 
                 final InputStream in = new BufferedInputStream(conn.getInputStream());
-                //Log.v(getName(), "code: " + responseCode + " " + conn.getURL() + ", amsg: " + amsg + in.toString());
                 json = SyncHelper.parse(in);
                 conn.disconnect();
 

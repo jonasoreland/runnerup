@@ -16,10 +16,8 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
@@ -39,17 +37,17 @@ import org.runnerup.service.StateService;
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class RunInfoFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
-    List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-    int screen;
-    int rowsOnScreen;
-    long dataUpdateTime;
-    long headersTimestamp;
-    Handler handler = new Handler();
-    boolean handlerOutstanding = false;
-    Runnable periodicTick = new Runnable() {
+    private final List<Pair<String, TextView>> textViews = new ArrayList<>(3);
+    private int screen;
+    private int rowsOnScreen;
+    private long dataUpdateTime;
+    private long headersTimestamp;
+    private final Handler handler = new Handler();
+    private boolean handlerOutstanding = false;
+    private final Runnable periodicTick = new Runnable() {
         @Override
         public void run() {
             update();
@@ -61,15 +59,15 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
     };
     private MainActivity mainActivity;
 
-    static final int card1ids[] = new int[]{
+    private static final int[] card1ids = new int[]{
             R.id.textView11,
             R.id.textViewHeader11,
     };
-    static final int card2ids[] = new int[]{
+    private static final int[] card2ids = new int[]{
             R.id.textView21, R.id.textView22,
             R.id.textViewHeader21, R.id.textViewHeader22
     };
-    static final int card3ids[] = new int[]{
+    private static final int[] card3ids = new int[]{
             R.id.textView31, R.id.textView32, R.id.textView33,
             R.id.textViewHeader31, R.id.textViewHeader32, R.id.textViewHeader33
     };
@@ -83,11 +81,6 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
 
     public RunInfoFragment() {
         super();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -111,19 +104,19 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
         }
         View view = inflater.inflate(card, container, false);
         for (int i = 0; i < rowsOnScreen; i++) {
-            textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.DATA +
+            textViews.add(new Pair<>(Constants.Wear.RunInfo.DATA +
                     Integer.toString(screen) + "." + Integer.toString(i),
                     (TextView) view.findViewById(ids[i])));
         }
         for (int i = 0; i < rowsOnScreen; i++) {
-            textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.HEADER +
+            textViews.add(new Pair<>(Constants.Wear.RunInfo.HEADER +
                     Integer.toString(screen) + "." + Integer.toString(i),
                     (TextView) view.findViewById(ids[rowsOnScreen + i])));
         }
         return view;
     }
 
-    void startTimer() {
+    private void startTimer() {
         if (handlerOutstanding)
             return;
         handlerOutstanding = true;

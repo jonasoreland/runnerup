@@ -16,10 +16,8 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
@@ -35,14 +33,14 @@ import org.runnerup.service.StateService;
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class CountdownFragment extends Fragment {
 
-    long dataUpdateTime;
-    List<Pair<String, TextView>> textViews = new ArrayList<Pair<String, TextView>>(3);
-    Handler handler = new Handler();
-    boolean handlerOutstanding = false;
-    Runnable periodicTick = new Runnable() {
+    private long dataUpdateTime;
+    private final List<Pair<String, TextView>> textViews = new ArrayList<>(3);
+    private final Handler handler = new Handler();
+    private boolean handlerOutstanding = false;
+    private final Runnable periodicTick = new Runnable() {
         @Override
         public void run() {
             update();
@@ -59,19 +57,14 @@ public class CountdownFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.countdown, container, false);
-        textViews.add(new Pair<String, TextView>(Constants.Wear.RunInfo.COUNTDOWN,
+        textViews.add(new Pair<>(Constants.Wear.RunInfo.COUNTDOWN,
                 (TextView) view.findViewById(R.id.countdown_txt)));
         return view;
     }
 
-    void startTimer() {
+    private void startTimer() {
         if (handlerOutstanding)
             return;
         handlerOutstanding = true;
@@ -104,11 +97,6 @@ public class CountdownFragment extends Fragment {
         startTimer();
         reset();
         update();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     @Override

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
   ~  it under the terms of the GNU General Public License as published by
@@ -15,12 +15,16 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-
-    <solid android:color="@color/action_button" />
-
-    <size
-        android:width="256dp"
-        android:height="256dp" />
-</shape>
+<resources>
+<declare-styleable name="NumberPicker">
+	<attr name="digits" format="string" />
+	<attr name="min_val" format="string" />
+	<attr name="max_val" format="string" />
+	<attr name="android:text" />
+    <attr name="android:prompt" />
+    <attr name="android:entries" />
+    <attr name="android:inputType" />
+    <attr name="android:defaultValue" />
+    <attr name="android:key" />
+</declare-styleable>    
+</resources>

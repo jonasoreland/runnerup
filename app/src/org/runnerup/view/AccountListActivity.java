@@ -17,13 +17,11 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -53,16 +51,15 @@ import org.runnerup.util.Bitfield;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.widget.WidgetUtil;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AccountListActivity extends AppCompatActivity implements Constants,
         LoaderCallbacks<Cursor> {
 
-    SQLiteDatabase mDB = null;
-    SyncManager mSyncManager = null;
-    boolean mTabFormat = false;
+    private SQLiteDatabase mDB = null;
+    private SyncManager mSyncManager = null;
+    private boolean mTabFormat = false;
     private boolean mShowDisabled = false;
-    ListView mListView;
-    CursorAdapter mCursorAdapter;
+    private CursorAdapter mCursorAdapter;
 
     /** Called when the activity is first created. */
 
@@ -74,11 +71,11 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
-        mListView = (ListView) findViewById(R.id.account_list);
-        mListView.setDividerHeight(10);
+        ListView listView = (ListView) findViewById(R.id.account_list);
+        listView.setDividerHeight(10);
         mCursorAdapter = new AccountListAdapter(this, null);
-        mListView.setAdapter(mCursorAdapter);
-        mListView.setOnItemLongClickListener(itemLongClickListener);
+        listView.setAdapter(mCursorAdapter);
+        listView.setOnItemLongClickListener(itemLongClickListener);
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
@@ -232,7 +229,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     }
 
-    final OnClickListener configureButtonClick = new OnClickListener() {
+    private final OnClickListener configureButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final String synchronizerName = (String) v.getTag();
             if (mSyncManager.isConfigured(synchronizerName)) {
@@ -243,7 +240,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     };
 
-    final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
+    private final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
         public boolean onItemLongClick(AdapterView<?> arg0, View v,
                                     int pos, long id) {
             ContentValues tmp = DBHelper.get((Cursor)arg0.getItemAtPosition(pos));
@@ -273,7 +270,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     }
 
-    final SyncManager.Callback callback = new SyncManager.Callback() {
+    private final SyncManager.Callback callback = new SyncManager.Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
             if (status == Synchronizer.Status.OK) {
@@ -282,7 +279,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     };
 
-    void startActivity(String synchronizer, boolean edit) {
+    private void startActivity(String synchronizer, boolean edit) {
         Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
         intent.putExtra("synchronizer", synchronizer);
         intent.putExtra("edit", edit);

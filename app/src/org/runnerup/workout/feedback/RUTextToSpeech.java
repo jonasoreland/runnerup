@@ -17,6 +17,7 @@
 
 package org.runnerup.workout.feedback;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
@@ -32,15 +33,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RUTextToSpeech {
 
     private static final String UTTERANCE_ID = "RUTextTospeech";
-    boolean mute = false;
-    final boolean trace = true;
-    final TextToSpeech textToSpeech;
-    final AudioManager audioManager;
-    long id = (long) (System.nanoTime() + (1000 * Math.random()));
+    private boolean mute = false;
+    private final TextToSpeech textToSpeech;
+    private final AudioManager audioManager;
+    private long id = (long) (System.nanoTime() + (1000 * Math.random()));
 
     class Entry {
         final String text;
@@ -52,8 +52,8 @@ public class RUTextToSpeech {
         }
     }
 
-    final HashSet<String> cueSet = new HashSet<String>();
-    final ArrayList<Entry> cueList = new ArrayList<Entry>();
+    private final HashSet<String> cueSet = new HashSet<>();
+    private final ArrayList<Entry> cueList = new ArrayList<>();
 
     public RUTextToSpeech(TextToSpeech tts, boolean mute_, Context context) {
         this.textToSpeech = tts;
@@ -90,9 +90,12 @@ public class RUTextToSpeech {
         return UTTERANCE_ID + Long.toString(val);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     int speak(String text, int queueMode, HashMap<String, String> params) {
 
+        final boolean trace = true;
         if (queueMode == TextToSpeech.QUEUE_FLUSH) {
+            //noinspection ConstantConditions
             if (trace) {
                 Log.e(getClass().getName(), "speak (mute: " + mute + "): " + text);
             }
@@ -104,12 +107,14 @@ public class RUTextToSpeech {
             }
         } else {
             if (!cueSet.contains(text)) {
+                //noinspection ConstantConditions
                 if (trace) {
                     Log.e(getClass().getName(), "buffer speak: " + text);
                 }
                 cueSet.add(text);
                 cueList.add(new Entry(text, params));
             } else {
+                //noinspection ConstantConditions
                 if (trace) {
                     Log.e(getClass().getName(), "skip buffer (duplicate) speak: " + text);
                 }
@@ -134,7 +139,7 @@ public class RUTextToSpeech {
             outstanding.add(utId);
 
             if (params == null) {
-                params = new HashMap<String, String>();
+                params = new HashMap<>();
             }
             params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
             int res = textToSpeech.speak(text, queueMode, params);
@@ -150,7 +155,7 @@ public class RUTextToSpeech {
         return TextToSpeech.ERROR;
     }
 
-    final HashSet<String> outstanding = new HashSet<String>();
+    private final HashSet<String> outstanding = new HashSet<>();
 
     void utteranceCompleted(String id) {
         outstanding.remove(id);
@@ -160,8 +165,7 @@ public class RUTextToSpeech {
     }
 
     private boolean requestFocus() {
-        final AudioManager am = audioManager;
-        int result = am.requestAudioFocus(
+        int result = audioManager.requestAudioFocus(
                 null,// afChangeListener,
                 AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
@@ -172,14 +176,14 @@ public class RUTextToSpeech {
         if (cueSet.isEmpty()) {
             return;
         }
-        if (mute && requestFocus() == true) {
+        if (mute && requestFocus()) {
             for (Entry e : cueList) {
                 final String utId = getId(e.text);
                 outstanding.add(utId);
 
                 HashMap<String, String> params = e.params;
                 if (params == null) {
-                    params = new HashMap<String, String>();
+                    params = new HashMap<>();
                 }
                 params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
                 int res = textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, params);
@@ -202,16 +206,16 @@ public class RUTextToSpeech {
     }
 }
 
-// separate class to handle FROYO/deprecation
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+//Explicit check for Android 4.3
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class UtteranceCompletion {
 
+    @SuppressLint("ObsoleteSdkInt")
     @SuppressWarnings("deprecation")
     public static void setUtteranceCompletedListener(
             TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {
         if (Build.VERSION.SDK_INT < 15) {
-            tts
-                    .setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
+            tts.setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
                         @Override
                         public void onUtteranceCompleted(String utteranceId) {
                             ruTextToSpeech.utteranceCompleted(utteranceId);

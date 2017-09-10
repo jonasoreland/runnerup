@@ -16,20 +16,14 @@
  */
 package org.runnerup.common.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import java.util.ArrayList;
 
-/**
- * Created by jonas on 12/29/14.
- */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class ValueModel<T> {
 
     private T value;
     final private ArrayList<ChangeListener<T>> listeners =
-            new ArrayList<ChangeListener<T>>();
+            new ArrayList<>();
 
     public interface ChangeListener<T> {
         void onValueChanged(ValueModel<T> instance, T oldValue, T newValue);
@@ -54,11 +48,11 @@ public class ValueModel<T> {
         T oldValue = value;
         value = newValue;
 
-        /**
+        /*
          * iterate over copy so that this can be modified during iteration
          * (i.e by onValueChanged())
          */
-        ArrayList<ChangeListener<T>> copy = new ArrayList<ChangeListener<T>>(listeners);
+        ArrayList<ChangeListener<T>> copy = new ArrayList<>(listeners);
         for (ChangeListener<T> l : copy) {
             l.onValueChanged(this, oldValue, newValue);
         }

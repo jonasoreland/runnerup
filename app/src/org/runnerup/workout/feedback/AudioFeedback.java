@@ -17,9 +17,7 @@
 
 package org.runnerup.workout.feedback;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import org.runnerup.util.Formatter;
@@ -32,15 +30,15 @@ import org.runnerup.workout.Workout;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AudioFeedback extends Feedback {
 
-    int msgId = 0;
-    String msgTxt = null;
-    Event event = Event.STARTED;
+    private int msgId = 0;
+    private String msgTxt = null;
+    private Event event = Event.STARTED;
     Scope scope = Scope.ACTIVITY;
     Dimension dimension = Dimension.DISTANCE;
-    Intensity intensity = null;
+    private Intensity intensity = null;
     RUTextToSpeech textToSpeech;
     Formatter formatter;
 
@@ -92,13 +90,10 @@ public class AudioFeedback extends Feedback {
         if (this.event != other.event)
             return false;
 
-        if (this.dimension != other.dimension)
-            return false;
-
-        return true;
+        return this.dimension == other.dimension;
     }
 
-    protected String getCue(Workout w, Context ctx) {
+    String getCue(Workout w, Context ctx) {
         String msg = null;
         if (msgId != 0) {
             if (msgTxt == null) {
