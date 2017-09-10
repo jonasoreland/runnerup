@@ -17,19 +17,16 @@
 
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 /**
  * This interface is used instead as a device handle. (since Ant+ doesn't used
  * BluetoothDevice as a device representation)
  * 
  * @author jonas
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRDeviceRef {
 
-    public final String provider;
+    private final String provider;
     public final String deviceName;
     public final String deviceAddress;
 

@@ -17,7 +17,7 @@
 
 package org.runnerup.tracker;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -77,65 +77,65 @@ import java.util.List;
  * @author jonas.oreland@gmail.com
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Tracker extends android.app.Service implements
         LocationListener, Constants {
-    public static final int MAX_HR_AGE = 3000; // 3s
+    private static final int MAX_HR_AGE = 3000; // 3s
 
     private final Handler handler = new Handler();
 
-    TrackerComponentCollection components = new TrackerComponentCollection();
+    private final TrackerComponentCollection components = new TrackerComponentCollection();
     //Some trackers may select separate sensors depending on sport, handled in onBind()
-    TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
-    TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
+    private final TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
+    private final TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
     TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
-    private TrackerCadence trackerCadence = (TrackerCadence) components.addComponent(new TrackerCadence());
-    private TrackerTemperature trackerTemperature = (TrackerTemperature) components.addComponent(new TrackerTemperature());
-    private TrackerPressure trackerPressure = (TrackerPressure) components.addComponent(new TrackerPressure());
-    private TrackerElevation trackerElevation = (TrackerElevation) components.addComponent(new TrackerElevation(this, trackerGPS, trackerPressure));
+    private final TrackerCadence trackerCadence = (TrackerCadence) components.addComponent(new TrackerCadence());
+    private final TrackerTemperature trackerTemperature = (TrackerTemperature) components.addComponent(new TrackerTemperature());
+    private final TrackerPressure trackerPressure = (TrackerPressure) components.addComponent(new TrackerPressure());
+    private final TrackerElevation trackerElevation = (TrackerElevation) components.addComponent(new TrackerElevation(this, trackerGPS, trackerPressure));
     TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(
             new TrackerReceiver(this));
-    TrackerWear trackerWear; // created if version is sufficient
-    TrackerPebble trackerPebble; // created if version is sufficient
+    private TrackerWear trackerWear; // created if version is sufficient
+    private TrackerPebble trackerPebble; // created if version is sufficient
     /**
      * Work-around for http://code.google.com/p/android/issues/detail?id=23937
      */
-    boolean mBug23937Checked = false;
-    long mBug23937Delta = 0;
+    private boolean mBug23937Checked = false;
+    private long mBug23937Delta = 0;
 
     /**
 	 *
 	 */
-    long mLapId = 0;
-    long mActivityId = 0;
-    long mElapsedTimeMillis = 0;
-    double mElapsedDistance = 0;
-    double mHeartbeats = 0;
-    double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
-    long mMaxHR = 0;
+    private long mLapId = 0;
+    private long mActivityId = 0;
+    private long mElapsedTimeMillis = 0;
+    private double mElapsedDistance = 0;
+    private double mHeartbeats = 0;
+    private double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
+    private long mMaxHR = 0;
 
     final boolean mWithoutGps = false;
 
-    TrackerState nextState; //
-    final ValueModel<TrackerState> state = new ValueModel<TrackerState>(TrackerState.INIT);
-    int mLocationType = DB.LOCATION.TYPE_START;
+    private TrackerState nextState; //
+    private final ValueModel<TrackerState> state = new ValueModel<>(TrackerState.INIT);
+    private int mLocationType = DB.LOCATION.TYPE_START;
 
     /**
      * Last location given by LocationManager
      */
-    Location mLastLocation = null;
+    private Location mLastLocation = null;
     //Second to last location - to get speed
-    Location mLast2Location = null;
+    private Location mLast2Location = null;
 
     /**
      * Last location given by LocationManager when in state STARTED
      */
-    Location mActivityLastLocation = null;
+    private Location mActivityLastLocation = null;
 
-    SQLiteDatabase mDB = null;
-    PersistentGpsLoggerListener mDBWriter = null;
-    PowerManager.WakeLock mWakeLock = null;
-    final List<WorkoutObserver> liveLoggers = new ArrayList<WorkoutObserver>();
+    private SQLiteDatabase mDB = null;
+    private PersistentGpsLoggerListener mDBWriter = null;
+    private PowerManager.WakeLock mWakeLock = null;
+    private final List<WorkoutObserver> liveLoggers = new ArrayList<>();
 
     private Workout workout = null;
 
@@ -194,7 +194,7 @@ public class Tracker extends android.app.Service implements
                 if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 return;
             case CLEANUP:
-                /**
+                /*
                  * if CLEANUP is in progress, setup will continue once complete
                  */
                 nextState = TrackerState.INITIALIZING;
@@ -320,11 +320,12 @@ public class Tracker extends android.app.Service implements
         return mBug23937Delta;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     private long createActivity(int sport) {
         Resources res = getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean logGpxAccuracy = prefs.getBoolean(res.getString(R.string.pref_log_gpx_accuracy), false);
-        /**
+        /*
          * Create an Activity instance
          */
         ContentValues tmp = new ContentValues();
@@ -349,14 +350,14 @@ public class Tracker extends android.app.Service implements
         // connect workout and tracker
         workout.setTracker(this);
 
-        /** Add Wear to live loggers if it's active */
+        /* Add Wear to live loggers if it's active */
         if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK)
             liveLoggers.add(trackerWear);
 
         if (components.getResultCode(TrackerPebble.NAME) == TrackerComponent.ResultCode.RESULT_OK)
             liveLoggers.add(trackerPebble);
 
-        /**
+        /*
          * create the DB activity
          */
         createActivity(workout.getSport());
@@ -385,17 +386,17 @@ public class Tracker extends android.app.Service implements
 
         activityOngoingState = new OngoingState(new Formatter(this), workout, this);
 
-        /**
+        /*
          * And finally let workout know that we started
          */
         workout.onStart(Scope.ACTIVITY, this.workout);
     }
 
     private void doBind() {
-        /**
+        /*
          * Let components populate bindValues
          */
-        HashMap<String, Object> bindValues = new HashMap<String, Object>();
+        HashMap<String, Object> bindValues = new HashMap<>();
         Context ctx = getApplicationContext();
         bindValues.put(TrackerComponent.KEY_CONTEXT, ctx);
         bindValues.put(Workout.KEY_FORMATTER, new Formatter(ctx));
@@ -406,7 +407,7 @@ public class Tracker extends android.app.Service implements
 
         components.onBind(bindValues);
 
-        /**
+        /*
          * and then give them to workout
          */
         workout.onBind(workout, bindValues);
@@ -446,7 +447,7 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.PAUSED);
         setNextLocationType(DB.LOCATION.TYPE_PAUSE);
         if (mActivityLastLocation != null) {
-            /**
+            /*
              * This saves mLastLocation as a PAUSE location
              */
             internalOnLocationChanged(mActivityLastLocation);
@@ -474,7 +475,7 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.STOPPED);
         setNextLocationType(DB.LOCATION.TYPE_PAUSE);
         if (mActivityLastLocation != null) {
-            /**
+            /*
              * This saves mLastLocation as a PAUSE location
              */
             internalOnLocationChanged(mActivityLastLocation);
@@ -514,7 +515,7 @@ public class Tracker extends android.app.Service implements
         state.set(TrackerState.STARTED);
         setNextLocationType(DB.LOCATION.TYPE_RESUME);
         if (mActivityLastLocation != null) {
-            /**
+            /*
              * save last know location as resume location
              */
             internalOnLocationChanged(mActivityLastLocation);
@@ -626,7 +627,7 @@ public class Tracker extends android.app.Service implements
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
     }
 
-    void setNextLocationType(int newType) {
+    private void setNextLocationType(int newType) {
         ContentValues key = mDBWriter.getKey();
         key.put(DB.LOCATION.TYPE, newType);
         mDBWriter.setKey(key);
@@ -774,6 +775,7 @@ public class Tracker extends android.app.Service implements
         return mBinder;
     }
 
+    @SuppressLint("Wakelock")
     private void wakeLock(boolean get) {
         if (mWakeLock != null) {
             if (mWakeLock.isHeld()) {
@@ -787,7 +789,8 @@ public class Tracker extends android.app.Service implements
             mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                     "RunnerUp");
             if (mWakeLock != null) {
-                mWakeLock.acquire();
+                //Set a timeout, this is before activity is started
+                mWakeLock.acquire(300000);
             }
         }
     }
@@ -836,7 +839,7 @@ public class Tracker extends android.app.Service implements
         return (trackerHRM.getHrProvider());
     }
 
-    public Integer getCurrentHRValue(long now, long maxAge) {
+    private Integer getCurrentHRValue(long now, long maxAge) {
         HRProvider hrProvider = trackerHRM.getHrProvider();
         if (hrProvider == null)
             return null;

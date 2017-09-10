@@ -17,9 +17,7 @@
 
 package org.runnerup.db.entities;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
@@ -29,7 +27,7 @@ import java.util.ArrayList;
 /**
  * Content values wrapper for the {@code feed} table.
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FeedEntity extends AbstractEntity {
 
     public FeedEntity() {
@@ -223,7 +221,7 @@ public class FeedEntity extends AbstractEntity {
 
     @Override
     public ArrayList<String> getValidColumns() {
-        ArrayList<String> columns = new ArrayList<String>();
+        ArrayList<String> columns = new ArrayList<>();
         columns.add(Constants.DB.PRIMARY_KEY);
         columns.add(Constants.DB.FEED.ACCOUNT_ID);
         columns.add(Constants.DB.FEED.EXTERNAL_ID);

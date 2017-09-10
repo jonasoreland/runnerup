@@ -41,7 +41,7 @@ public enum Dimension {
     int value = 0;
     int textId = 0;
 
-    private Dimension(int val, int textId) {
+    Dimension(int val, int textId) {
         this.value = val;
         this.textId = textId;
     }
@@ -58,9 +58,7 @@ public enum Dimension {
     }
 
     public boolean equal(Dimension what) {
-        if (what == null || what.value != this.value)
-            return false;
-        return true;
+        return !(what == null || what.value != this.value);
     }
 
     public static Dimension valueOf(int val) {

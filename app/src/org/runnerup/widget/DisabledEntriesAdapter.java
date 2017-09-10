@@ -1,8 +1,23 @@
+/*
+ * Copyright (C) 2014 jonas.oreland@gmail.com
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.runnerup.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +26,12 @@ import android.widget.TextView;
 
 import java.util.HashSet;
 
-/**
- * Created by jonas on 9/18/14.
- */
-@TargetApi(Build.VERSION_CODES.FROYO)
-public class DisabledEntriesAdapter extends BaseAdapter {
 
-    String[] entries;
-    LayoutInflater inflator;
-    HashSet<String> disabled;
+class DisabledEntriesAdapter extends BaseAdapter {
+
+    private final String[] entries;
+    private final LayoutInflater inflator;
+    private HashSet<String> disabled;
 
     public DisabledEntriesAdapter(Context ctx, int id) {
         inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -28,7 +40,7 @@ public class DisabledEntriesAdapter extends BaseAdapter {
 
     public void addDisabled(int i) {
         if (disabled == null)
-            disabled = new HashSet<String>();
+            disabled = new HashSet<>();
         if (i < entries.length)
             disabled.add(entries[i]);
     }
@@ -87,9 +99,6 @@ public class DisabledEntriesAdapter extends BaseAdapter {
         if (str == null)
             return true;
 
-        if (disabled.contains(str))
-            return false;
-
-        return true;
+        return !disabled.contains(str);
     }
 }

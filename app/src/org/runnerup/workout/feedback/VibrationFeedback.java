@@ -17,22 +17,17 @@
 
 package org.runnerup.workout.feedback;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Workout;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class VibrationFeedback extends Feedback {
 
     @Override
     public boolean equals(Feedback _other) {
-        if (!(_other instanceof VibrationFeedback))
-            return false;
-
-        return true;
+        return _other instanceof VibrationFeedback;
     }
 
     @Override

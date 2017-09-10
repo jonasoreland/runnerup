@@ -16,7 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -29,22 +28,20 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/total_time"
             style="@style/RunHeader"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/time" />
 
         <TextView
-            android:id="@+id/total_distance"
             style="@style/RunHeader"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/distance" />
 
         <TextView
-            android:id="@+id/total_pace"
             style="@style/RunHeader"
+            android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
-            android:gravity="right"
+            android:gravity="end"
             android:text="@string/pace" />
     </LinearLayout>
 
@@ -57,19 +54,17 @@
         android:orientation="vertical" >
 
         <LinearLayout
-            android:id="@+id/header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp" >
 
             <TextView
-                android:id="@+id/text_view01"
                 style="@style/RunHeader"
                 android:text="@string/Total" />
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_layout3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
@@ -85,6 +80,7 @@
             <TextView
                 android:id="@+id/activity_pace"
                 style="@style/RunInfo"
+                android:layout_marginEnd="3dp"
                 android:layout_marginRight="3dp" />
         </LinearLayout>
     </LinearLayout>
@@ -131,11 +127,10 @@
                         android:id="@+id/notes_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="top|left"
+                        android:gravity="top|start"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
-                        android:hint="@string/Notes_about_your_workout"
-                        android:singleLine="false" />
+                        android:hint="@string/Notes_about_your_workout" />
 
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"
@@ -143,7 +138,7 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        android:background="@color/black">
+                        android:background="@android:color/black">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -157,7 +152,8 @@
                 <LinearLayout
                     android:id="@+id/tab_lap"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/laplist"
@@ -170,7 +166,8 @@
                 <LinearLayout
                     android:id="@+id/tab_upload"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/report_list"
@@ -209,9 +206,9 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
             android:text="@string/Resume"
+            android:drawableEnd="@drawable/ic_av_play_arrow"
             android:drawableRight="@drawable/ic_av_play_arrow"
             android:drawablePadding="-32dp" />
 
@@ -220,17 +217,14 @@
             android:id="@+id/upload_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/Upload_activity"
-            android:singleLine="false" />
+            android:text="@string/Upload_activity" />
 
         <Button
             android:id="@+id/save_button"
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/discard_button"
             android:background="@drawable/btn_green"
             android:text="@string/Save_activity" />
 
@@ -239,7 +233,6 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="@drawable/btn_red"
             android:text="@string/Discard_activity" />
     </LinearLayout>

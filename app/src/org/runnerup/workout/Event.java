@@ -33,7 +33,7 @@ public enum Event {
     int value = 0;
     final int cueId;
 
-    private Event(int val, int cueId) {
+    Event(int val, int cueId) {
         this.value = val;
         this.cueId = cueId;
     }
@@ -46,9 +46,7 @@ public enum Event {
     }
 
     public boolean equal(Event what) {
-        if (what == null || what.value != this.value)
-            return false;
-        return true;
+        return !(what == null || what.value != this.value);
     }
 
     public int getCueId() {

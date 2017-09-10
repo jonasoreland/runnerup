@@ -1,8 +1,5 @@
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import java.util.Arrays;
 
 /**
@@ -36,19 +33,19 @@ import java.util.Arrays;
  * }
  * </pre>
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRData {
     
     public boolean hasHeartRate = false;
     public long hrValue = -1;
-    public boolean timeStampIsFromDevice = false;
+    private boolean timeStampIsFromDevice = false;
     public long timestamp = -1;
-    public boolean hasRrIntervals = false;
-    public long[] rrIntervals = null;
+    private boolean hasRrIntervals = false;
+    private long[] rrIntervals = null;
 
     @Override
     public String toString() {
-        String sb = "HRData{" + ", hrValue=" + (hasHeartRate ? hrValue : "<no_heart_rate_data>") +
+        return "HRData{" + ", hrValue=" + (hasHeartRate ? hrValue : "<no_heart_rate_data>") +
                 '\n' +
                 ", timeStampIsFromDevice=" + timeStampIsFromDevice +
                 '\n' +
@@ -57,7 +54,6 @@ public class HRData {
                 ", rrIntervals=" + (hasRrIntervals ? Arrays.toString(rrIntervals) : "<no_rr_interval_data>") +
                 '\n' +
                 '}';
-        return sb;
     }
 
     public HRData setHeartRate(long heartRate){

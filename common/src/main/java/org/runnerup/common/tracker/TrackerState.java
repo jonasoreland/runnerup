@@ -16,15 +16,12 @@
  */
 package org.runnerup.common.tracker;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import org.runnerup.common.util.Constants;
 
 /**
 * Created by jonas on 12/12/14.
 */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public enum TrackerState {
     INIT(Constants.TRACKER_STATE.INIT),                // initial state
     INITIALIZING(Constants.TRACKER_STATE.INITIALIZING),// initializing components
@@ -76,8 +73,6 @@ public enum TrackerState {
     public static boolean equals(TrackerState oldVal, TrackerState newVal) {
         if (oldVal != null && newVal != null)
             return oldVal.getValue() == newVal.getValue();
-        if (oldVal == null && newVal == null)
-            return true;
-        return false;
+        return oldVal == null && newVal == null;
     }
 }

@@ -17,23 +17,21 @@
 
 package org.runnerup.db;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class ActivityCleaner implements Constants {
-    long _totalSumHr = 0;
-    int _totalCount = 0;
-    int _totalMaxHr = 0;
+    private long _totalSumHr = 0;
+    private int _totalCount = 0;
+    private int _totalMaxHr = 0;
 
     /**
      * recompute laps aggregates based on locations
@@ -43,7 +41,7 @@ public class ActivityCleaner implements Constants {
                 DB.LAP.LAP
         };
 
-        ArrayList<Long> laps = new ArrayList<Long>();
+        ArrayList<Long> laps = new ArrayList<>();
         Cursor c = db.query(DB.LAP.TABLE, cols, DB.LAP.ACTIVITY + " = " + activityId,
                 null, null, null, "_id", null);
         if (c.moveToFirst()) {
@@ -191,7 +189,7 @@ public class ActivityCleaner implements Constants {
             DB.LAP.LAP
         };
 
-        ArrayList<Long> laps = new ArrayList<Long>();
+        ArrayList<Long> laps = new ArrayList<>();
         Cursor c = db.query(DB.LOCATION.LAP, cols, DB.LAP.ACTIVITY + " = "
                 + activityId, null, null, null, "_id", null);
         if (c.moveToFirst()) {

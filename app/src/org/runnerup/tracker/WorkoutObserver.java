@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2014 niklas.weidemann
+ *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,10 +18,7 @@ package org.runnerup.tracker;
 
 import org.runnerup.workout.WorkoutInfo;
 
-/**
- * Created by niklas.weidemann on 2014-10-13.
- */
 public interface WorkoutObserver {
     // @note: type is in Constants.DB.LOCATION.TYPE
-    public void workoutEvent(WorkoutInfo workoutInfo, int type);
+    void workoutEvent(WorkoutInfo workoutInfo, int type);
 }

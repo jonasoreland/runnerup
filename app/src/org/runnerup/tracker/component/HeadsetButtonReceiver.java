@@ -17,21 +17,19 @@
 
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HeadsetButtonReceiver extends BroadcastReceiver {
 
     public static void registerHeadsetListener(Context context) {

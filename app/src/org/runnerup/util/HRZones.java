@@ -17,11 +17,9 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
@@ -30,12 +28,12 @@ import org.runnerup.R;
 
 import java.util.Vector;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRZones {
 
-    int zones[] = null;
-    final String key;
-    final SharedPreferences prefs;
+    private int[] zones = null;
+    private final String key;
+    private final SharedPreferences prefs;
 
     public HRZones(Context ctx) {
         this(ctx.getResources(), PreferenceManager
@@ -76,7 +74,7 @@ public class HRZones {
 
     public double getZone(double value) {
         if (zones != null) {
-            int z = 0;
+            int z;
             for (z = 0; z < zones.length; z++) {
                 if (zones[z] >= value)
                     break;
@@ -100,7 +98,7 @@ public class HRZones {
             return 0;
         }
 
-        int z = 0;
+        int z;
         for (z = 0; z < zones.length; z++) {
             if (zones[z] >= value)
                 return z;
@@ -111,9 +109,9 @@ public class HRZones {
     public Pair<Integer, Integer> getHRValues(int zone) {
         if (zones != null && zone < zones.length) {
             if (zone == 0) {
-                return new Pair<Integer, Integer>(0, zones[0]);
+                return new Pair<>(0, zones[0]);
             } else {
-                return new Pair<Integer, Integer>(zones[zone - 1], zones[zone]);
+                return new Pair<>(zones[zone - 1], zones[zone]);
             }
         }
         return null;

@@ -17,12 +17,10 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +39,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "Google+";
@@ -50,33 +48,36 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     /**
      * @todo register OAuth2Server
      */
-    protected String mClientId = null;
-    protected String mClientSecret = null;
-    protected String projectId = null;
+    private String mClientId = null;
+    private String mClientSecret = null;
+    private String projectId = null;
 
-    protected String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
-    protected String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
 
-    protected String sRedirectUrl = "http://localhost";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String sRedirectUrl = "http://localhost";
 
     private static final String SCOPES = "https://www.googleapis.com/auth/plus.me " +
             "https://www.googleapis.com/auth/plus.login " +
             "https://www.googleapis.com/auth/plus.stream.write";
     private long id = 0;
 
-    public String getAccessToken() {
+    String getAccessToken() {
         return access_token;
     }
 
-    public String getRefreshToken() {
+    private String getRefreshToken() {
         return refresh_token;
     }
 
-    public long getTokenNow() {
+    private long getTokenNow() {
         return token_now;
     }
 
-    public long getExpireTime() {
+    private long getExpireTime() {
         return expire_time;
     }
 
@@ -107,11 +108,11 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
         this.mClientId = clientId;
     }
 
-    public void setProjectId(String projectId) {
+    private void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 
-    public String getProjectId() {
+    String getProjectId() {
         return projectId;
     }
 
@@ -139,7 +140,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
         return sTokenUrl;
     }
 
-    public String getScopes() { return SCOPES; }
+    String getScopes() { return SCOPES; }
 
     @Override
     public String getAuthExtra() {
@@ -225,10 +226,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-
-        return true;
+        return access_token != null;
     }
 
     @Override
@@ -269,7 +267,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
 
     public Status refreshToken() {
         Status s = Status.OK;
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
 
         final FormValues fv = new FormValues();
         fv.put("client_id", getClientId());
@@ -308,8 +306,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
             s.ex = e;
         }
 
-        if (s.ex != null)
-            s.ex.printStackTrace();
+        s.ex.printStackTrace();
 
         return s;
     }

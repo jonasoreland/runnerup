@@ -16,11 +16,13 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/title_spinner"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/title_spinner"
     android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 
@@ -30,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center_vertical|left"
+        android:gravity="center_vertical|start"
         android:textColor="@android:color/black"
         android:textStyle="bold" />
 
@@ -40,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center_vertical|right"
+        android:gravity="center_vertical|end"
         android:text="@string/value"
         android:textColor="@android:color/black" />
 
@@ -48,5 +50,6 @@
         android:id="@+id/spinner"
         android:spinnerMode="dialog"
         android:layout_width="0dp"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        tools:ignore="UnusedAttribute" />
 </LinearLayout>

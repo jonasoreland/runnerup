@@ -177,7 +177,7 @@ public final class JsonWriter {
     /** The output data, containing at most one top-level array or object. */
     private final Writer out;
 
-    private final List<JsonScope> stack = new ArrayList<JsonScope>();
+    private final List<JsonScope> stack = new ArrayList<>();
     {
         stack.add(JsonScope.EMPTY_DOCUMENT);
     }
@@ -366,7 +366,7 @@ public final class JsonWriter {
      * 
      * @return this writer.
      */
-    public JsonWriter nullValue() throws IOException {
+    private JsonWriter nullValue() throws IOException {
         beforeValue(false);
         out.write("null");
         return this;

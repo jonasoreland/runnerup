@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -39,7 +37,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     public static final String NAME = "GoogleFit";
@@ -65,7 +63,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     }
 
     @Override
-    public String getScopes() {
+    String getScopes() {
         return SCOPES;
     }
 
@@ -111,7 +109,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
         //export DataSource if not yet existing
         GoogleFitData gfd = new GoogleFitData(db, getProjectId(), getContext());
-        List<String> presentDataSources = null;
+        List<String> presentDataSources;
         try {
             presentDataSources = listExistingDataSources();
         } catch (Exception e) {
@@ -197,16 +195,16 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
             int code = connect.getResponseCode();
             try {
-                if (code == HttpURLConnection.HTTP_INTERNAL_ERROR) {
-                    continue;
-                } else if (code != HttpURLConnection.HTTP_OK) {
-                    Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
-                    status = Status.ERROR;
-                    break;
-                } else {
-                    Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getInputStream())).toString());
-                    status = Status.OK;
-                    break;
+                if (code != HttpURLConnection.HTTP_INTERNAL_ERROR) {
+                    if (code != HttpURLConnection.HTTP_OK) {
+                        Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
+                        status = Status.ERROR;
+                        break;
+                    } else {
+                        Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getInputStream())).toString());
+                        status = Status.OK;
+                        break;
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -239,9 +237,9 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
         return connect;
     }
 
-    public List<String> listExistingDataSources() throws Exception {
-        HttpURLConnection conn = null;
-        List<String> dataStreamIds = new ArrayList<String>();
+    private List<String> listExistingDataSources() throws Exception {
+        HttpURLConnection conn;
+        List<String> dataStreamIds = new ArrayList<>();
         try {
             conn = getHttpURLConnection(REST_DATASOURCE, RequestMethod.GET);
             final JSONObject reply = SyncHelper.parse(new GZIPInputStream(conn.getInputStream()));

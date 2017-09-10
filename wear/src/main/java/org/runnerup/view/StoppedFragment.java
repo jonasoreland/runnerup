@@ -16,9 +16,7 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,15 +24,10 @@ import android.view.ViewGroup;
 
 import org.runnerup.R;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class StoppedFragment extends Fragment {
 
     public StoppedFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override

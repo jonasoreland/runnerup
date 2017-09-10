@@ -17,19 +17,12 @@
   -->
 
 <android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        >
-
-        <LinearLayout
             android:id="@+id/layout1"
             android:orientation="vertical"
             android:layout_width="fill_parent"
@@ -40,15 +33,14 @@
 
                 <TextView
                     android:id="@+id/textViewHeader11"
-                    android:text="time"
+                    android:text="@string/time"
                     style="@style/Card1TextSmall" />
 
                 <TextView
                     android:id="@+id/textView11"
                     android:text="--:--"
+                    tools:ignore="HardcodedText"
                     style="@style/Card1TextLarge" />
-
-        </LinearLayout>
 
     </LinearLayout>
 

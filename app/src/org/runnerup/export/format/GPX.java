@@ -17,10 +17,8 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.KXmlSerializer;
@@ -33,23 +31,19 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
-public class GPX {
 
-    final boolean export_rest_laps = false;
+public class GPX {
 
     enum RestLapMode {
         EMPTY_TRKSEG,
         START_STOP_TRKSEG
     }
 
-    final RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
+    private final RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
 
-    long mID = 0;
-    SQLiteDatabase mDB = null;
-    KXmlSerializer mXML = null;
-    String notes = null;
-    SimpleDateFormat simpleDateFormat = null;
+    private SQLiteDatabase mDB = null;
+    private KXmlSerializer mXML = null;
+    private SimpleDateFormat simpleDateFormat = null;
     final private boolean mGarminExt; //Also Cluetrust
     private final boolean mAccuracyExtensions;
 
@@ -65,7 +59,7 @@ public class GPX {
         this.mAccuracyExtensions = accuracyExtensions;
     }
 
-    String formatTime(long time) {
+    private String formatTime(long time) {
         return simpleDateFormat.format(new Date(time));
     }
 
@@ -74,7 +68,7 @@ public class GPX {
      * @param writer
      * @throws IOException
      */
-    public String export(long activityId, Writer writer) throws IOException {
+    public void export(long activityId, Writer writer) throws IOException {
 
         String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
@@ -132,7 +126,7 @@ public class GPX {
             mXML.text("RunnerUp-"+sportName+"-"+time);
             mXML.endTag("", "name");
             if (!cursor.isNull(1)) {
-                notes = cursor.getString(1);
+                String notes = cursor.getString(1);
                 mXML.startTag("", "desc");
                 mXML.text(notes);
                 mXML.endTag("", "desc");
@@ -145,7 +139,6 @@ public class GPX {
             mXML.endDocument();
             mXML = null;
             cursor.close();
-            return time;
         } catch (IOException e) {
             cursor.close();
             mXML = null;
@@ -177,6 +170,7 @@ public class GPX {
         boolean pok = cLocation.moveToFirst();
 
         while (lok) {
+            final boolean export_rest_laps = false;
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
                 long lap = cLap.getLong(0);
                 while (pok && cLocation.getLong(0) != lap) {
@@ -312,7 +306,8 @@ public class GPX {
                     }
                 }
                 mXML.endTag("", "trkseg");
-            } else if (export_rest_laps && (cLap.getFloat(1) != 0 || cLap.getLong(2) != 0)) {
+            } else //noinspection PointlessBooleanExpression,ConstantConditions
+                if (export_rest_laps && (cLap.getFloat(1) != 0 || cLap.getLong(2) != 0)) {
                 long lap = cLap.getLong(0);
                 if (restLapMode == RestLapMode.START_STOP_TRKSEG) {
                     if (lap > 0 && !cLap.isLast()) {
@@ -380,7 +375,9 @@ public class GPX {
         cLocation.close();
     }
 
-    public String getNotes() {
-        return notes;
-    }
+// --Commented out by Inspection START (2017-08-11 13:06):
+//    public String getNotes() {
+//        return notes;
+//    }
+// --Commented out by Inspection STOP (2017-08-11 13:06)
 }

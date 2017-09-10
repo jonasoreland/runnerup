@@ -17,24 +17,21 @@
 
 package org.runnerup.tracker.filter;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
-import android.os.Bundle;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.LocationListenerBase;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class PersistentGpsLoggerListener extends LocationListenerBase implements
         Constants {
     private final java.lang.Object mLock;
     private SQLiteDatabase mDB;
     private java.lang.String mTable;
     private ContentValues mKey;
-    private boolean mLogGpxAccuracy;
+    private final boolean mLogGpxAccuracy;
 
     public PersistentGpsLoggerListener(SQLiteDatabase _db, String _table,
             ContentValues _key, boolean logGpxAccuracy) {
@@ -139,20 +136,5 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
         if (mDB != null) {
             mDB.insert(mTable, null, values);
         }
-    }
-
-    @Override
-    public void onProviderDisabled(String arg0) {
-        super.onProviderDisabled(arg0);
-    }
-
-    @Override
-    public void onProviderEnabled(String arg0) {
-        super.onProviderEnabled(arg0);
-    }
-
-    @Override
-    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-        super.onStatusChanged(arg0, arg1, arg2);
     }
 }

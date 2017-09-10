@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<!--suppress XmlUnboundNsPrefix -->
 <map>
 <boolean name="cueinfo_target_coaching" value="false" />
 <boolean name="cueinfo_total_time" value="false" />

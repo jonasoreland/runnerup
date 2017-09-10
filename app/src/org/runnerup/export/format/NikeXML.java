@@ -17,11 +17,9 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
@@ -38,14 +36,14 @@ import java.util.Vector;
  * @author jonas.oreland@gmail.com
  * 
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class NikeXML {
 
     private static final String DEVICE = "iPod";
 
-    SQLiteDatabase mDB = null;
-    KXmlSerializer mXML = null;
-    SimpleDateFormat simpleDateFormat = null;
+    private SQLiteDatabase mDB = null;
+    private KXmlSerializer mXML = null;
+    private SimpleDateFormat simpleDateFormat = null;
 
     public NikeXML(final SQLiteDatabase db) {
         mDB = db;
@@ -237,7 +235,7 @@ public class NikeXML {
 
     private void emitHRPosition(long mID, String string, int hrVal)
             throws IllegalArgumentException, IllegalStateException, IOException {
-        long _id = 0;
+        long _id;
         { // 1 find a point with specified value
             String args[] = {
                     Long.toString(mID), Integer.toString(hrVal)
@@ -458,8 +456,8 @@ public class NikeXML {
         try {
             final Pos p = new Pos();
             int lastLap = 0;
-            final Vector<Location> locHist = new Vector<Location>();
-            final Vector<Pos> posHist = new Vector<Pos>();
+            final Vector<Location> locHist = new Vector<>();
+            final Vector<Pos> posHist = new Vector<>();
             if (c.moveToFirst()) {
                 do {
                     final int type = c.getInt(5);
@@ -493,9 +491,9 @@ public class NikeXML {
                     while ((d == Dim.DISTANCE && p.sumDistance + deltaDist >= first)
                             || (d == Dim.TIME && p.sumTime + deltaTime >= first)) {
 
-                        double diffTime = 0;
-                        double diffDist = 0;
-                        double pct = 0;
+                        double diffTime;
+                        double diffDist;
+                        double pct;
                         if (d == Dim.DISTANCE) {
                             diffDist = first - p.sumDistance;
                             pct = diffDist / deltaDist;
@@ -553,7 +551,7 @@ public class NikeXML {
         }
     }
 
-    static final double R = 6371.0; // radius of earth in km
+    private static final double R = 6371.0; // radius of earth in km
 
     /**
      * Move a location <em>dist</em> meters in direction of <em>bearing</em>
@@ -563,7 +561,7 @@ public class NikeXML {
      * @param dist
      * @see <url>http://www.movable-type.co.uk/scripts/latlong.html</url>
      */
-    public static void move(final Location l, final double bearing, final double dist) {
+    private static void move(final Location l, final double bearing, final double dist) {
         final double d = dist / 1000.0; // in km
         final double lat1 = Math.toRadians(l.getLatitude());
         final double lon1 = Math.toRadians(l.getLongitude());

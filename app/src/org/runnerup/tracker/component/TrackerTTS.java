@@ -16,10 +16,8 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
 import org.runnerup.R;
@@ -28,17 +26,13 @@ import org.runnerup.workout.feedback.RUTextToSpeech;
 
 import java.util.HashMap;
 
-/**
- * Created by jonas on 12/11/14.
- */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TrackerTTS extends DefaultTrackerComponent {
 
     private TextToSpeech tts;
     private Context context;
-    private RUTextToSpeech ruTTS;
 
-    public static final String NAME = "TTS";
+    private static final String NAME = "TTS";
 
     @Override
     public String getName() {
@@ -80,7 +74,6 @@ public class TrackerTTS extends DefaultTrackerComponent {
 
     RUTextToSpeech getTTS(SharedPreferences prefs) {
         final boolean mute = prefs.getBoolean(context.getString(R.string.pref_mute_bool), false);
-        ruTTS = new RUTextToSpeech(tts, mute, context);
-        return ruTTS;
+        return new RUTextToSpeech(tts, mute, context);
     }
 }

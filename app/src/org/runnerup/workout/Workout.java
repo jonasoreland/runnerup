@@ -17,11 +17,9 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.os.Build;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
@@ -44,22 +42,22 @@ import java.util.List;
  * RunActivity, and by the Workout components
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Workout implements WorkoutComponent, WorkoutInfo {
 
-    long lap = 0;
-    int currentStepNo = -1;
-    int workoutType = Constants.WORKOUT_TYPE.BASIC;
-    Step currentStep = null;
-    boolean paused = false;
-    final ArrayList<Step> steps = new ArrayList<Step>();
-    final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<WorkoutStepListener>();
+    private long lap = 0;
+    private int currentStepNo = -1;
+    private int workoutType = Constants.WORKOUT_TYPE.BASIC;
+    private Step currentStep = null;
+    private boolean paused = false;
+    final ArrayList<Step> steps = new ArrayList<>();
+    private final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<>();
     int sport = DB.ACTIVITY.SPORT_RUNNING;
     private boolean mute;
 
     class PendingFeedback {
         int depth = 0;
-        final HashSet<Feedback> set = new HashSet<Feedback>(); // For uniquing
+        final HashSet<Feedback> set = new HashSet<>(); // For uniquing
 
         void init() {
             depth++;
@@ -78,6 +76,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             }
         }
 
+        @SuppressWarnings("UnusedReturnValue")
         boolean end() {
             --depth;
             if (depth == 0) {
@@ -94,12 +93,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
     }
 
-    final PendingFeedback pendingFeedback = new PendingFeedback();
+    private final PendingFeedback pendingFeedback = new PendingFeedback();
 
     Tracker tracker = null;
     SharedPreferences audioCuePrefs;
-    HRZones hrZones = null;
-    RUTextToSpeech textToSpeech = null;
+    private HRZones hrZones = null;
+    private RUTextToSpeech textToSpeech = null;
 
     public static final String KEY_TTS = "tts";
     public static final String KEY_COUNTER_VIEW = "CountdownView";
@@ -181,7 +180,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
         while (currentStep != null) {
             boolean finished = currentStep.onTick(this);
-            if (finished == false)
+            if (!finished)
                 break;
 
             onNextStep();
@@ -566,7 +565,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     /**
-     * @return flattened list of all steps in workout
+     * flattened list of all steps in workout
      */
     static public class StepListEntry {
         public StepListEntry(int index, Step step, int level, Step parent) {
@@ -591,7 +590,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public List<StepListEntry> getStepList() {
-        ArrayList<StepListEntry> list = new ArrayList<StepListEntry>();
+        ArrayList<StepListEntry> list = new ArrayList<>();
         for (Step s : steps) {
             s.getSteps(null, 0, list);
         }
@@ -642,9 +641,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 case ACTIVITY:
                     return (10 * 60 + 50 * 60 * Math.random());
                 case STEP:
-                    return (1 * 60 + 5 * 60 * Math.random());
+                    return (/* 1* */ 60 + 5 * 60 * Math.random());
                 case LAP:
-                    return (1 * 60 + 5 * 60 * Math.random());
+                    return (/* 1* */ 60 + 5 * 60 * Math.random());
                 case CURRENT:
                     return System.currentTimeMillis() / 1000;
             }
@@ -670,8 +669,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public static Workout fakeWorkoutForTestingAudioCue() {
-        FakeWorkout w = new FakeWorkout();
-        return w;
+        return new FakeWorkout();
     }
 
     public void setMute(boolean mute) {

@@ -17,10 +17,7 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class IntervalTrigger extends Trigger {
 
     Scope scope = Scope.ACTIVITY;
@@ -28,9 +25,8 @@ public class IntervalTrigger extends Trigger {
 
     double first = 120;
     double interval = 120;
-    final int count = 0; // endless
 
-    double next = 0;
+    private double next = 0;
 
     @Override
     public boolean onTick(Workout w) {
@@ -52,7 +48,8 @@ public class IntervalTrigger extends Trigger {
             while (next <= now) {
                 next += interval;
             }
-            if (count != 0 && (next > (first + interval * (count - 1)))) {
+            int count = 0; //endless
+            if (/*count != 0 &&*/ (next > (first + interval * (count - 1)))) {
                 // no more occurrences
                 next = 0;
             }

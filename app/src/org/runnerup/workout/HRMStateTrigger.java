@@ -1,7 +1,5 @@
 package org.runnerup.workout;
 
-import android.util.Log;
-
 import org.runnerup.hr.HRProvider;
 
 public class HRMStateTrigger extends Trigger {

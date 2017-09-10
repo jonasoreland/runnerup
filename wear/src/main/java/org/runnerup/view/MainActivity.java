@@ -16,7 +16,6 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -25,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -40,15 +38,13 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
-
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
 public class MainActivity extends Activity implements Constants, ValueModel.ChangeListener<TrackerState> {
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
     private GridViewPager pager;
     private StateService mStateService;
-    final private ValueModel<TrackerState> trackerState = new ValueModel<TrackerState>();
+    final private ValueModel<TrackerState> trackerState = new ValueModel<>();
     final private ValueModel<Bundle> headers = new ValueModel<>();
     private boolean pauseStep = false;
     private int scroll = 0;
@@ -78,11 +74,6 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         getApplicationContext().bindService(new Intent(this, StateService.class),
@@ -100,19 +91,12 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         mStateService = null;
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
     private class PagerAdapter extends FragmentGridPagerAdapter
             implements ValueModel.ChangeListener<TrackerState> {
-        int currentRow = 0;
-        int currentCol = 0;
         int rows = 1;
         int cols = 1;
 
-        public PagerAdapter(FragmentManager fm) {
+        PagerAdapter(FragmentManager fm) {
             super(fm);
             update(trackerState.get());
             trackerState.registerChangeListener(this);
@@ -125,8 +109,6 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
             else if (mStateService == null)
                 return new ConnectToPhoneFragment();
 
-            currentRow = row;
-            currentCol = col;
             switch (trackerState.get()) {
                 case INIT:
                 case INITIALIZING:
@@ -262,7 +244,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         pager.setCurrentItem(RUN_INFO_ROW, curr.x, true);
     }
 
-    public void scrollRight() {
+    private void scrollRight() {
         Point curr = pager.getCurrentItem();
         if (curr.y != RUN_INFO_ROW)
             return;
@@ -272,7 +254,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         pager.setCurrentItem(curr.y, newx, true);
     }
 
-    private ServiceConnection mStateServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mStateServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             if (mStateService == null) {
@@ -323,7 +305,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         }
     }
 
-    void postScrollRight() {
+    private void postScrollRight() {
         if (postScrollRightRunning)
             return;
         if (scroll > 0 && getScreensCount() > 1) {
@@ -344,7 +326,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         }
     }
 
-    public void onValueChanged(final Bundle oldValue, final Bundle newValue) {
+    public void onValueChanged(final Bundle newValue) {
         synchronized (trackerState) {
             runOnUiThread(new Runnable() {
                 @Override

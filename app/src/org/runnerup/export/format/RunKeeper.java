@@ -17,10 +17,8 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -56,17 +54,16 @@ import java.util.concurrent.TimeUnit;
  * 
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RunKeeper {
 
-    long mID = 0;
-    SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB = null;
 
     public RunKeeper(SQLiteDatabase db) {
         mDB = db;
     }
 
-    static String formatTime(long time) {
+    private static String formatTime(long time) {
         return new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US)
                 .format(new Date(time));
     }
@@ -98,10 +95,10 @@ public class RunKeeper {
             if (ae.getMaxHr()!=null) {
                 w.name("heart_rate");
                 w.beginArray();
-                exportHeartRate(activityId, startTime, w);
+                exportHeartRate(activityId, w);
                 w.endArray();
             }
-            exportPath("path", activityId, startTime, w);
+            exportPath("path", activityId, w);
             w.name("post_to_facebook").value(false);
             w.name("post_to_twitter").value(false);
             w.endObject();
@@ -110,7 +107,7 @@ public class RunKeeper {
         }
     }
 
-    private void exportHeartRate(long activityId, long startTime, JsonWriter w)
+    private void exportHeartRate(long activityId, JsonWriter w)
             throws IOException {
         String[] pColumns = {
                 DB.LOCATION.TIME, DB.LOCATION.HR
@@ -119,7 +116,7 @@ public class RunKeeper {
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
                 null);
         if (cursor.moveToFirst()) {
-            startTime = cursor.getLong(0);
+            long startTime = cursor.getLong(0);
             do {
                 if (!cursor.isNull(1)) {
                     w.beginObject();
@@ -133,7 +130,7 @@ public class RunKeeper {
         cursor.close();
     }
 
-    private void exportPath(String name, long activityId, long startTime, JsonWriter w)
+    private void exportPath(String name, long activityId, JsonWriter w)
             throws IOException {
         String[] pColumns = {
                 DB.LOCATION.TIME, DB.LOCATION.LATITUDE,
@@ -145,7 +142,7 @@ public class RunKeeper {
         if (cursor.moveToFirst()) {
             w.name(name);
             w.beginArray();
-            startTime = cursor.getLong(0);
+            long startTime = cursor.getLong(0);
             do {
                 w.beginObject();
                 w.name("timestamp").value(
@@ -193,8 +190,8 @@ public class RunKeeper {
             return null;
         }
 
-        List<LapEntity> laps = new ArrayList<LapEntity>();
-        List<LocationEntity> locations = new ArrayList<LocationEntity>();
+        List<LapEntity> laps = new ArrayList<>();
+        List<LocationEntity> locations = new ArrayList<>();
 
         JSONArray distance = response.getJSONArray("distance");
         JSONArray path = response.getJSONArray("path");
@@ -325,13 +322,13 @@ public class RunKeeper {
     }
 
     private static SortedMap<Long, HashMap<String, String>> createPointsMap(JSONArray distance, JSONArray path, JSONArray hr) throws JSONException {
-        SortedMap<Long, HashMap<String, String>> result = new TreeMap<Long, HashMap<String, String>>();
+        SortedMap<Long, HashMap<String, String>> result = new TreeMap<>();
 
         if (distance != null && distance.length() > 0) {
             for (int i = 0; i < distance.length(); i++) {
                 JSONObject o = distance.getJSONObject(i);
                 Long key = TimeUnit.SECONDS.toMillis((long) Float.parseFloat(o.getString("timestamp")));
-                HashMap<String, String> value = new HashMap<String, String>();
+                HashMap<String, String> value = new HashMap<>();
                 String valueMapKey = "distance";
                 String valueMapValue = o.getString(valueMapKey);
                 value.put(valueMapKey, valueMapValue);
@@ -345,7 +342,7 @@ public class RunKeeper {
                 Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
-                    value = new HashMap<String, String>();
+                    value = new HashMap<>();
                 }
                 String[] attrs = new String[] {"latitude", "longitude", "altitude", "type"};
                 for (String valueMapKey : attrs) {
@@ -362,7 +359,7 @@ public class RunKeeper {
                 Long key = TimeUnit.SECONDS.toMillis((long)Float.parseFloat(o.getString("timestamp")));
                 HashMap<String, String> value = result.get(key);
                 if (value == null) {
-                    value = new HashMap<String, String>();
+                    value = new HashMap<>();
                 }
                 String valueMapKey = "heart_rate";
                 String valueMapValue = o.getString(valueMapKey);

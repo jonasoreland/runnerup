@@ -42,8 +42,8 @@ import java.util.TimeZone;
 public class RunalyzePost {
 
     private SQLiteDatabase mDB = null;
-    private Map<String,Map<String,String>> sports;
-    private Map<String,Map<String,String>> types;
+    private final Map<String,Map<String,String>> sports;
+    private final Map<String,Map<String,String>> types;
 
     /**
      * Constructor using the database.
@@ -66,7 +66,7 @@ public class RunalyzePost {
      * @param activityId The activity id
      * @return The cursor associated to the list of locations of the activity
      */
-    public Cursor createLocationCursor(long activityId) {
+    private Cursor createLocationCursor(long activityId) {
         String[] columns = {
                 Constants.DB.LOCATION.TIME,
                 Constants.DB.LOCATION.LATITUDE,
@@ -86,7 +86,7 @@ public class RunalyzePost {
      * @param writer The writer to write with
      * @throws IOException Some error writing the value
      */
-    public void writeValue(String value, String defaultValue, Writer writer) throws IOException {
+    private void writeValue(String value, String defaultValue, Writer writer) throws IOException {
         try {
             if (value == null) {
                 value = defaultValue;
@@ -104,7 +104,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeArrTime(Cursor c, Writer writer) throws IOException {
+    private void writeArrTime(Cursor c, Writer writer) throws IOException {
         writer.write("arr_time");
         writer.write("=");
         if (c.moveToFirst()) {
@@ -124,7 +124,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeArrDist(Cursor c, Writer writer) throws IOException {
+    private void writeArrDist(Cursor c, Writer writer) throws IOException {
         writer.write("arr_dist");
         writer.write("=");
         if (c.moveToFirst()) {
@@ -157,7 +157,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeLocationField(String name, int column, String defaultValue, Cursor c, Writer writer) throws IOException {
+    private void writeLocationField(String name, int column, String defaultValue, Cursor c, Writer writer) throws IOException {
         writer.write(name);
         writer.write("=");
         if (c.moveToFirst()) {
@@ -176,7 +176,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeLocationFields(long activityId, Writer writer) throws IOException {
+    private void writeLocationFields(long activityId, Writer writer) throws IOException {
         Cursor c = null;
         try {
             c = createLocationCursor(activityId);
@@ -202,7 +202,7 @@ public class RunalyzePost {
      * @param activityId The activity id
      * @return The cursor associated to the list of laps of the activity
      */
-    public Cursor createLapCursor(long activityId) {
+    private Cursor createLapCursor(long activityId) {
         String[] columns = {
                 Constants.DB.LAP.DISTANCE,
                 Constants.DB.LAP.TIME,
@@ -220,7 +220,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeNomalField(String name, String value, String defaultValue, Writer writer) throws IOException {
+    private void writeNomalField(String name, String value, String defaultValue, Writer writer) throws IOException {
         writer.write(name);
         writer.write("=");
         writeValue(value, defaultValue, writer);
@@ -232,7 +232,7 @@ public class RunalyzePost {
      * @param seconds The seconds to transform
      * @return The string with the seconds in format mm:ss
      */
-    public String seconds2MinuteAndSeconds(long seconds) {
+    private String seconds2MinuteAndSeconds(long seconds) {
         // runalyze has some data that is expressed in mm:ss (TIME_MINUTES)
         // you can check it in class.FormularValueParser.php method validateTimeMinutes
         long m = seconds / 60;
@@ -261,7 +261,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeLapFields(long activityId, Writer writer) throws IOException {
+    private void writeLapFields(long activityId, Writer writer) throws IOException {
         Cursor c = null;
         try {
             c = createLapCursor(activityId);
@@ -288,7 +288,7 @@ public class RunalyzePost {
      * @param activityId The activity id
      * @return The cursor associated to the activity
      */
-    public Cursor createActivityCursor(long activityId) {
+    private Cursor createActivityCursor(long activityId) {
         String[] columns = {
                 Constants.DB.ACTIVITY.START_TIME,
                 Constants.DB.ACTIVITY.TIME,
@@ -303,21 +303,20 @@ public class RunalyzePost {
     }
 
     /**
-     * <em>Runalyze</em> calculates the calories using the table of sports. By default they
-     * are using this:
+     * Runalyze sports are stored in the table <em>runalyze_sport</em>. For the moment
+     * they are:
      * <pre>
-     * | id | name       | kcal |
-     * |  1 | Running    |  880 |
-     * |  2 | Swimming   |  743 |
-     * |  3 | Biking     |  770 |
-     * |  4 | Gymnastics |  280 |
-     * |  5 | Other      |  500 |
+     * |  1 | Running
+     * |  2 | Swimming
+     * |  3 | Biking
+     * |  4 | Gymnastics
+     * |  5 | Other
      * </pre>
-     * @param dbValue The sport id used in runnerup
-     * @param seconds The time of the activity for the calculation
-     * @return The kCal used in string
+     *
+     * @param dbValue The sport as used in runnerup
+     * @return The id of the sport in a string
      */
-    public String calculateKCal(int dbValue, long seconds) {
+    private String calculateKCal(int dbValue, long seconds) {
         Sport sport = Sport.valueOf(dbValue);
         if (sport.IsRunning()) {
             return Integer.toString(Math.round((880.0F / 3600.0F) * seconds));
@@ -341,15 +340,15 @@ public class RunalyzePost {
      * @param seconds The time of the activity for the calculation
      * @throws IOException Some error
      */
-    public void calculateSportTypeAndKCal(int dbValue, long seconds, Writer writer) throws IOException {
+    private void calculateSportTypeAndKCal(int dbValue, long seconds, Writer writer) throws IOException {
         //
         // calculate sportid
         Sport sport = Sport.valueOf(dbValue);
-        String sportName = sport.name().toLowerCase();
+        String sportName = sport.name().toLowerCase(Locale.US);
         String sportId = "1"; // default values is 1 (just something)
         String sportFound = null;
         for (String runalyzeSport: sports.keySet()) {
-            if (runalyzeSport.toLowerCase().contains(sportName) &&
+            if (runalyzeSport.toLowerCase(Locale.US).contains(sportName) &&
                     sports.get(runalyzeSport).containsKey("value")) {
                 sportId = sports.get(runalyzeSport).get("value");
                 sportFound = runalyzeSport;
@@ -381,7 +380,7 @@ public class RunalyzePost {
         writeNomalField("typeid", typeId, null, writer);
         //
         // calculate kcal
-        String kcal = null;
+        String kcal;
         if (sportFound != null && sports.get(sportFound).containsKey("data-kcal")) {
             kcal = Integer.toString(Math.round((Float.parseFloat(sports.get(sportFound).get("data-kcal")) / 3600.0F) * seconds));
             Log.d(getClass().getName(), "Kcal using sports value: " + sports.get(sportFound).get("data-kcal"));
@@ -399,7 +398,7 @@ public class RunalyzePost {
      * @param writer The writer to write
      * @throws IOException Some error
      */
-    public void writeActivityFields(long activityId, Writer writer) throws IOException {
+    private void writeActivityFields(long activityId, Writer writer) throws IOException {
         Cursor c = null;
         try {
             c = createActivityCursor(activityId);
@@ -413,10 +412,10 @@ public class RunalyzePost {
                 writeNomalField("pulse_max", c.getString(4), "0", writer);
                 writeNomalField("comment", c.getString(5), "", writer);
                 writeNomalField("pace", seconds2MinuteAndSeconds(Math.round(c.getFloat(1)*1000.0F/c.getFloat(2))), "", writer);
-                // write sportid, typeid and kcal depending the sports and types read from runalyze
+                // the type is finally blank, it was decided better not to provide anything
                 calculateSportTypeAndKCal(c.getInt(6), c.getLong(1), writer);
+                // previously it was called with runnerupSport2RunalyzeType(c.getInt(6))
                 // it seems that the activity_id in runalyze is set in "class.ParserAbstractSingle.php"
-                // and it is just the timestamp in seconds of the activity
                 writeNomalField("activity_id", Long.toString(c.getLong(0)), null, writer);
             }
         } finally {
@@ -435,7 +434,7 @@ public class RunalyzePost {
      * @param writer The writer to write.
      * @throws IOException Some error
      */
-    public void writeFixedFields(Writer writer) throws IOException {
+    private void writeFixedFields(Writer writer) throws IOException {
         writeNomalField("creator", "", null, writer);
         writeNomalField("creator_details", "", null, writer);
         writeNomalField("timezone_offset", Integer.toString(TimeZone.getDefault().getRawOffset() / 60000), null, writer);

@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -31,7 +30,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,7 +76,7 @@ import java.util.Map;
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class DetailActivity extends AppCompatActivity implements Constants {
 
     private long mID = 0;
@@ -117,6 +115,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     /**
      * Called when the activity is first created.
      */
+    @SuppressLint("ObsoleteSdkInt")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -315,7 +314,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private void requery() {
         {
-            /**
+            /*
              * Laps
              */
             String[] from = new String[]{
@@ -339,7 +338,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
 
         {
-            /**
+            /*
              * Accounts/reports
              */
             String sql = "SELECT DISTINCT "
@@ -506,7 +505,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 case RECOVERY:
                 case WARMUP:
                 case REPEAT:
-                    viewHolder.tv0.setText("(" + getResources().getString(intensity.getTextId()) + ")");
+                    viewHolder.tv0.setText(String.format(Locale.getDefault(), "(%s)",
+                            getResources().getString(intensity.getTextId())));
                 default:
                     break;
 
@@ -527,7 +527,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     .getAsInteger(DB.LAP.AVG_HR) : 0;
             if (hr > 0) {
                 viewHolder.tvHr.setVisibility(View.VISIBLE);
-                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_LONG, hr) + " bpm");
+                // Use CUE_LONG instead of TXT_LONG to include unit
+                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.CUE_LONG, hr));
             } else if (lapHrPresent) {
                 viewHolder.tvHr.setVisibility(View.INVISIBLE);
             } else {
@@ -748,7 +749,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onBackPressed() {
         if (uploading) {
-            /**
+            /*
              * Ignore while uploading
              */
             return;
