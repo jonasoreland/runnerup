@@ -57,7 +57,8 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     protected String sAuthUrl = "https://accounts.google.com/o/oauth2/auth";
     protected String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
 
-    protected String sRedirectUrl = "http://localhost";
+    @SuppressWarnings("FieldCanBeLocal")
+    private final String sRedirectUrl = "https://localhost";
 
     private static final String SCOPES = "https://www.googleapis.com/auth/plus.me " +
             "https://www.googleapis.com/auth/plus.login " +

@@ -48,8 +48,8 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     private boolean isConnected = false;
 
     public static final String NAME = "RunningFreeOnline";
-    public static final String PUBLIC_URL = "http://www.runningfreeonline.com";
-    private static final String BASE_URL = "http://www.runsaturday.com/runsaturday/SportTrackSync.asmx";
+    public static final String PUBLIC_URL = "https://www.runningfreeonline.com";
+    private static final String BASE_URL = "https://www.runsaturday.com/runsaturday/SportTrackSync.asmx";
     private static final String LOG_TAG = RunningFreeOnlineSynchronizer.class.getName();
 
     public String getName() {
@@ -139,7 +139,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         mXML.startDocument("UTF-8", true);
         mXML.startTag("", "soap:Envelope");
         mXML.attribute("", "xmlns:soap", "http://www.w3.org/2003/05/soap-envelope");
-        mXML.attribute("", "xmlns:run", "http://www.runsaturday.com");
+        mXML.attribute("", "xmlns:run", "https://www.runsaturday.com");
 
         mXML.startTag("", "soap:Header");
         mXML.startTag("", "run:SportTrackCredentials");
@@ -271,7 +271,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         conn.setDoOutput(true);
         conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Content-Type", "text/xml; charset=utf-8");
-        conn.addRequestProperty("SOAPAction", "http://www.runsaturday.com/Upload");
+        conn.addRequestProperty("SOAPAction", "https://www.runsaturday.com/Upload");
         return conn;
     }
 
