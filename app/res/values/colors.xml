@@ -18,4 +18,6 @@
 <resources>
      <color name="black">#000</color>
      <color name="subsectionBg">#212121</color>
+     <color name="bottom_nav_bg">#212121</color>
+     <color name="secondary_color">#00E5FF</color>
 </resources>
