@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -17,55 +16,43 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:layout_height="88dp"
+    android:descendantFocusability="blocksDescendants"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="16dp">
 
-    <TableRow
-        android:id="@+id/table_row1"
-        android:longClickable="true"
-        android:layout_width="fill_parent"
+    <ImageView
+        android:id="@+id/add_or_edit_indicator"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:layout_marginRight="16dp"/>
 
-        <TextView
-            android:id="@+id/account_list_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3" />
+    <TextView
+        android:id="@+id/account_list_name"
+        style="@style/AccountListText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
 
-        <ImageView
-            android:id="@+id/account_list_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="center"
-            />
-        
-        <CheckBox
-            android:id="@+id/account_list_upload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/upload" />
-        
-        <CheckBox
-            android:id="@+id/account_list_feed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-			android:text="@string/feed" />
-        
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />                
-        
-        <Button
-            android:id="@+id/account_list_configure_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/ButtonText"
-	        android:background="@drawable/btn_blue"
-            android:text="@string/Configure" />
+    <ImageView
+        android:id="@+id/account_list_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:scaleType="fitStart" />
 
-    </TableRow>
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/account_list_feed"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/feed"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/account_list_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/upload"/>
+
 
 </LinearLayout>

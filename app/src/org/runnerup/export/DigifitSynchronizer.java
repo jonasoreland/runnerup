@@ -35,7 +35,6 @@ import android.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.Part;
@@ -312,7 +311,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a9_digifit;}
+    public int getIconId() {return 0;}
 
     private String getUploadUrl() throws IOException, MalformedURLException, ProtocolException,
             JSONException {

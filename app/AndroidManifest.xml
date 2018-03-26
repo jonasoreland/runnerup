@@ -87,7 +87,14 @@
 		<activity android:name=".view.HistoryActivity"/>
 
 		<activity android:name=".view.AccountListActivity"
-			android:theme="@style/AppTheme" />
+			android:theme="@style/AppTheme"
+			android:label="@string/Configure_accounts"
+			android:parentActivityName=".view.MainLayout">
+			<!-- Parent activity meta-data to support 4.0 and lower -->
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".view.MainLayout" />
+		</activity>
 
 		<activity android:name=".view.AccountActivity"
 			android:theme="@style/AppTheme" />

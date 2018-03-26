@@ -177,7 +177,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
-    public int getIconId() {return R.drawable.a1_rklogo;}
+    public int getIconId() {return 0;}
 
     @Override
     public void init(ContentValues config) {

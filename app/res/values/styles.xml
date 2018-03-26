@@ -84,4 +84,8 @@
         <item name="android:textColor">@color/bottom_tabs</item>
     </style>
 
+    <style name="AccountListText">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>

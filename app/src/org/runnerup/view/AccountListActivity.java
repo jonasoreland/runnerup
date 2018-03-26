@@ -23,21 +23,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -51,7 +52,6 @@ import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.SimpleCursorLoader;
-import org.runnerup.widget.WidgetUtil;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class AccountListActivity extends AppCompatActivity implements Constants,
@@ -59,27 +59,51 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     SQLiteDatabase mDB = null;
     SyncManager mSyncManager = null;
-    boolean mTabFormat = false;
     private boolean mShowDisabled = false;
     ListView mListView;
     CursorAdapter mCursorAdapter;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) { //todo write up logo usage permissions
         super.onCreate(savedInstanceState);
         setContentView(R.layout.account_list);
-        WidgetUtil.addLegacyOverflowButton(getWindow());
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
         mListView = (ListView) findViewById(R.id.account_list);
-        mListView.setDividerHeight(10);
+
+        // button footer
+        Button showDisabledBtn = new Button(this);
+        showDisabledBtn.setTextAppearance(this, R.style.TextAppearance_AppCompat_Button);
+        showDisabledBtn.setText(R.string.Show_disabled_accounts);
+        showDisabledBtn.setBackgroundResource(0);
+        showDisabledBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mShowDisabled = !mShowDisabled;
+                if (mShowDisabled) {
+                    ((Button) view).setText(R.string.Hide_disabled_accounts);
+                } else {
+                    ((Button) view).setText(R.string.Show_disabled_accounts);
+                }
+                getSupportLoaderManager().restartLoader(0, null, (LoaderCallbacks<Object>) view.getContext());
+            }
+        });
+        mListView.addFooterView(showDisabledBtn); //todo should look like a button on Froyo
+
+        // adapter
         mCursorAdapter = new AccountListAdapter(this, null);
         mListView.setAdapter(mCursorAdapter);
-        mListView.setOnItemLongClickListener(itemLongClickListener);
         getSupportLoaderManager().initLoader(0, null, this);
+
+        mListView.setOnItemClickListener(configureItemClick);
+        mListView.setOnItemLongClickListener(itemLongClickListener);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -90,23 +114,10 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.account_list_menu, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_tab_format:
-                mTabFormat = !mTabFormat;
-                item.setTitle(getString(R.string.Icon_list));
-                getSupportLoaderManager().restartLoader(0, null, this);
-                break;
-            case R.id.menu_show_disabled:
-                mShowDisabled = !mShowDisabled;
-                item.setChecked(mShowDisabled);
-                getSupportLoaderManager().restartLoader(0, null, this);
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
                 break;
         }
         return true;
@@ -114,7 +125,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        String[] from = new String[] {
+        String[] from = new String[]{
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
         };
         String showDisabled = null;
@@ -152,77 +163,66 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             final Synchronizer synchronizer = mSyncManager.add(tmp);
             final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
 
-            ImageView accountIcon = (ImageView) view.findViewById(R.id.account_list_icon);
-            TextView accountNameText = (TextView) view.findViewById(R.id.account_list_name);
-            CheckBox accountUploadBox = (CheckBox) view.findViewById(R.id.account_list_upload);
-            CheckBox accountFeedBox = (CheckBox) view.findViewById(R.id.account_list_feed);
-            Button accountConfigureBtn = (Button) view.findViewById(R.id.account_list_configure_button);
+            view.setTag(id);
+
+            ImageView addOrEditIndicator = view.findViewById(R.id.add_or_edit_indicator);
+            ImageView accountIcon = view.findViewById(R.id.account_list_icon);
+            TextView accountNameText = view.findViewById(R.id.account_list_name);
+            SwitchCompat accountUploadBox = view.findViewById(R.id.account_list_upload);
+            SwitchCompat accountFeedBox = view.findViewById(R.id.account_list_feed);
 
             // upload box
             accountUploadBox.setTag(id);
-            accountUploadBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            setCustomThumb(accountUploadBox, R.drawable.switch_upload, context);
+            accountUploadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
+                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1); //todo doesn't seem to work
                 }
             });
 
             // feed box
             accountFeedBox.setTag(id);
-            accountFeedBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            setCustomThumb(accountFeedBox, R.drawable.switch_feed, context);
+            accountFeedBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(arg0.getTag(), DB.ACCOUNT.FLAG_FEED, arg1);
+                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_FEED, arg1);
                 }
-
             });
 
             boolean configured = mSyncManager.isConfigured(id);
-            if (!mTabFormat) {
-                if (synchronizer.getIconId() == 0) {
-                    accountIcon.setVisibility(View.GONE);
-                    accountNameText.setVisibility(View.VISIBLE);
-                    accountNameText.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-                } else {
-                    accountIcon.setVisibility(View.VISIBLE);
-                    accountNameText.setVisibility(View.GONE);
-                    accountIcon.setBackgroundResource(synchronizer.getIconId());
-                }
-                accountUploadBox.setVisibility(View.GONE);
-                accountFeedBox.setVisibility(View.GONE);
-            } else {
+            int synchronizerIcon = synchronizer.getIconId();
+            if (synchronizerIcon == 0) {
                 accountIcon.setVisibility(View.GONE);
                 accountNameText.setVisibility(View.VISIBLE);
                 accountNameText.setText(id);
-                if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
-                    accountUploadBox.setEnabled(true);
-                    accountUploadBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
-                    accountUploadBox.setVisibility(View.VISIBLE);
-                } else {
-                    accountUploadBox.setVisibility(View.INVISIBLE);
-                }
-                if (configured && synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
-                    accountFeedBox.setEnabled(true);
-                    accountFeedBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
-                    accountFeedBox.setVisibility(View.VISIBLE);
-                } else {
-                    accountFeedBox.setVisibility(View.INVISIBLE);
-                }
+            } else {
+                accountIcon.setVisibility(View.VISIBLE);
+                accountNameText.setVisibility(View.GONE);
+                accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
             }
 
-            //configure button
-            {
-                accountConfigureBtn.setTag(id);
-                accountConfigureBtn.setOnClickListener(configureButtonClick);
-                if (configured) {
-                    accountConfigureBtn.setText(getString(R.string.edit));
-                    WidgetUtil.setBackground(accountConfigureBtn, getResources().getDrawable(
-                            R.drawable.btn_blue));
-                } else {
-                    accountConfigureBtn.setText(getString(R.string.Connect));
-                    WidgetUtil.setBackground(accountConfigureBtn, getResources().getDrawable(
-                            R.drawable.btn_green));
-                }
+            if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
+                accountUploadBox.setEnabled(true);
+                accountUploadBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
+                accountUploadBox.setVisibility(View.VISIBLE);
+            } else {
+                accountUploadBox.setVisibility(View.INVISIBLE);
+            }
+            if (configured && synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
+                accountFeedBox.setEnabled(true);
+                accountFeedBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
+                accountFeedBox.setVisibility(View.VISIBLE);
+            } else {
+                accountFeedBox.setVisibility(View.INVISIBLE);
+            }
+
+            //edit indicator
+            if (configured) {
+                addOrEditIndicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_edit_white_24dp));
+            } else {
+                addOrEditIndicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_add_white_24dp));
             }
         }
 
@@ -230,11 +230,18 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             return inflater.inflate(R.layout.account_row, parent, false);
         }
+
+        private void setCustomThumb(SwitchCompat switchCompat, int drawableId,  Context context) {
+            switchCompat.setThumbDrawable(ContextCompat.getDrawable(context, drawableId));
+            switchCompat.setThumbTintList(ContextCompat.getColorStateList(context, R.color.switch_thumb));
+            switchCompat.setThumbTintMode(PorterDuff.Mode.MULTIPLY);
+        }
     }
 
-    final OnClickListener configureButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            final String synchronizerName = (String) v.getTag();
+    final AdapterView.OnItemClickListener configureItemClick = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            final String synchronizerName = (String) view.getTag();
             if (mSyncManager.isConfigured(synchronizerName)) {
                 startActivity(synchronizerName, true);
             } else {
@@ -245,21 +252,20 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
         public boolean onItemLongClick(AdapterView<?> arg0, View v,
-                                    int pos, long id) {
-            ContentValues tmp = DBHelper.get((Cursor)arg0.getItemAtPosition(pos));
+                                       int pos, long id) {
+            ContentValues tmp = DBHelper.get((Cursor) arg0.getItemAtPosition(pos));
             final String synchronizerName = tmp.getAsString(DB.ACCOUNT.NAME);
 
             //Toggle value for ENABLED
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.ENABLED + " = 1 - " + DB.ACCOUNT.ENABLED +
                     " where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName + "\'");
-            getSupportLoaderManager().restartLoader(0, null, (AccountListActivity)v.getContext());
+            getSupportLoaderManager().restartLoader(0, null, (AccountListActivity) v.getContext());
 
             return true;
         }
     };
 
-    private void setFlag(Object obj, int flag, boolean val) {
-        String name = (String) obj;
+    private void setFlag(String name, int flag, boolean val) {
         if (val) {
             long bitval = (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +

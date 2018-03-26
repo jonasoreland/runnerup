@@ -26,7 +26,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.R;
 import org.runnerup.export.format.GoogleFitData;
 import org.runnerup.export.util.SyncHelper;
 
@@ -75,7 +74,7 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a14_googlefit;}
+    public int getIconId() {return 0;}
 
     private Context getContext() {
         return context;
