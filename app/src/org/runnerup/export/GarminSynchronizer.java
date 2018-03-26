@@ -99,7 +99,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a0_garminlogo;}
+    public int getIconId() {return R.drawable.connect_garmin;}
 
     @Override
     public void init(ContentValues config) {

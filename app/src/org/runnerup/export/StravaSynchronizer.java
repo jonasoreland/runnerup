@@ -22,7 +22,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -47,7 +46,6 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 
@@ -129,7 +127,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     }
 
     @Override
-    public int getIconId() {return R.drawable.a10_strava;}
+    public int getIconId() {return R.drawable.connect_strava;}
 
     @Override
     public void init(ContentValues config) {

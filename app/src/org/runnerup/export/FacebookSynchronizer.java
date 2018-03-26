@@ -29,7 +29,6 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
@@ -38,7 +37,6 @@ import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Bitfield;
-import org.runnerup.view.FeedActivity;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
@@ -144,7 +142,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     @Override
-    public int getIconId() {return R.drawable.a11_facebook;}
+    public int getIconId() {return 0;}
 
     @Override
     public void init(ContentValues config) {

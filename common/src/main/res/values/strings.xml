@@ -118,6 +118,7 @@
   <string name="OK">OK</string>
   <string name="Table_format">Table format</string>
   <string name="Show_disabled_accounts">Show disabled accounts</string>
+  <string name="Hide_disabled_accounts">Hide disabled accounts</string>
   <string name="Clear_uploads">Clear uploads</string>
   <string name="Upload_missing_workouts">Upload (missing) workouts</string>
   <string name="Disconnect_account">Disconnect account</string>

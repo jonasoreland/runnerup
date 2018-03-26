@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -64,7 +65,7 @@ import java.util.ArrayList;
 public class AccountActivity extends AppCompatActivity implements Constants {
     private long synchronizerID = -1;
     private String synchronizer = null;
-    private Integer synchronizerIcon = null;
+    private int synchronizerIcon = 0;
 
     private SQLiteDatabase mDB = null;
     private final ArrayList<Cursor> mCursors = new ArrayList<>();
@@ -152,14 +153,15 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 ImageView im = (ImageView) findViewById(R.id.account_list_icon);
                 TextView tv = (TextView) findViewById(R.id.account_list_name);
                 tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-                if (synchronizer.getIconId() == 0) {
+                synchronizerIcon = synchronizer.getIconId();
+                if (synchronizerIcon == 0) {
                     im.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                 } else {
                     im.setVisibility(View.VISIBLE);
                     tv.setVisibility(View.GONE);
-                    im.setBackgroundResource(synchronizer.getIconId());
-                    synchronizerIcon = synchronizer.getIconId();
+                    if (synchronizerIcon != 0)
+                        im.setImageDrawable(ContextCompat.getDrawable(this, synchronizerIcon));
                 }
             }
 
@@ -295,8 +297,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             intent.putExtra("synchronizer", synchronizer);
             intent.putExtra("synchronizerID", synchronizerID);
             intent.putExtra("mode", SyncManager.SyncMode.UPLOAD.name());
-            if (synchronizerIcon != null)
-                intent.putExtra("synchronizerIcon", synchronizerIcon.intValue());
+            if (synchronizerIcon != 0)
+                intent.putExtra("synchronizerIcon", synchronizerIcon);
             AccountActivity.this.startActivityForResult(intent, 113);
         }
     };
@@ -309,8 +311,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             intent.putExtra("synchronizer", synchronizer);
             intent.putExtra("synchronizerID", synchronizerID);
             intent.putExtra("mode", SyncManager.SyncMode.DOWNLOAD.name());
-            if (synchronizerIcon != null)
-                intent.putExtra("synchronizerIcon", synchronizerIcon.intValue());
+            if (synchronizerIcon != 0)
+                intent.putExtra("synchronizerIcon", synchronizerIcon);
             AccountActivity.this.startActivityForResult(intent, 113);
         }
     };

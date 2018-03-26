@@ -62,7 +62,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a15_runningfreeonline;}
+    public int getIconId() {return 0;}
 
     @Override
     public Integer getAuthNotice() { return R.string.RunningFreeOnlinePasswordNotice; }
