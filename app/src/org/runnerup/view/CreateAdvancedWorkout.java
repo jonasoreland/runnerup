@@ -2,7 +2,7 @@ package org.runnerup.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -187,7 +187,6 @@ public class CreateAdvancedWorkout extends Activity {
             final StepButton stepButton = (StepButton) row.findViewById(R.id.workout_step_button);
 
             if(!dontAskAgain) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this);
 
                 builder.setMultiChoiceItems(new String[] {"Don't ask again"}, new boolean[] {dontAskAgain},
