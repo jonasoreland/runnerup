@@ -20,7 +20,7 @@ package org.runnerup.view;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
 import android.content.ContentValues;
