@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -19,34 +18,39 @@
     android:id="@+id/title_spinner"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:layout_margin="4dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:paddingBottom="12dp"
+    android:paddingTop="12dp">
 
     <TextView
         android:id="@+id/title"
-	    android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
         android:layout_weight="1"
+        android:clickable="false"
         android:gravity="center_vertical|left"
-        android:textColor="@android:color/black"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/value"
-	    android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="40dp"
         android:layout_weight="1"
+        android:clickable="false"
         android:gravity="center_vertical|right"
-        android:text="@string/value"
-        android:textColor="@android:color/black" />
+        android:text="@string/value" />
 
     <Spinner
         android:id="@+id/spinner"
-        android:spinnerMode="dialog"
         android:layout_width="0dp"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:spinnerMode="dialog" />
 </LinearLayout>

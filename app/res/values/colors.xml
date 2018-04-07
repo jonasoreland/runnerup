@@ -17,4 +17,5 @@
   -->
 <resources>
      <color name="black">#000</color>
+     <color name="subsectionBg">#212121</color>
 </resources>
