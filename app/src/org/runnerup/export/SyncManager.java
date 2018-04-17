@@ -210,7 +210,7 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
             synchronizer = new FileSynchronizer();
         } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
-            synchronizer = new RunalyzeSynchronizer();
+            synchronizer = new RunalyzeSynchronizer(this);
         }
 
         if (synchronizer != null) {
