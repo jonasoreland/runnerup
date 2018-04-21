@@ -206,7 +206,7 @@ public class RunalyzePost {
         String[] columns = {
                 Constants.DB.LAP.DISTANCE,
                 Constants.DB.LAP.TIME,
-                //Constants.DB.LAP.INTENSITY,
+                Constants.DB.LAP.INTENSITY,
         };
         return mDB.query(Constants.DB.LAP.TABLE, columns,
                 Constants.DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
@@ -241,7 +241,22 @@ public class RunalyzePost {
     }
 
     /**
-     * Method that writes all runalyze fields that are dependant of the laps information.
+     * Method that transforms intensity in the ldap to splits[active][]. In runalyze
+     * there are only 0 (inactive) or 1 (active) so only active is "1" and all the rest are "0"
+     * @param intensity The intensity in the lap
+     * @return "0" or "1" for active
+     */
+    public String intensity2Active(int intensity) {
+        switch(intensity) {
+            case Constants.DB.INTENSITY.ACTIVE:
+                return "1";
+            default:
+                return "0";
+        }
+    }
+
+    /**
+     * Method that writes all runalyzefields that are dependant of the laps information.
      * @param activityId The activity id to export
      * @param writer The writer to write
      * @throws IOException Some error
@@ -254,7 +269,7 @@ public class RunalyzePost {
             while (more) {
                 writeNomalField("splits[km][]", Float.toString(c.getFloat(0)/1000.0F), null, writer);
                 writeNomalField("splits[time][]", seconds2MinuteAndSeconds(c.getLong(1)), null, writer);
-                writeNomalField("splits[active][]", "1", null, writer);
+                writeNomalField("splits[active][]", intensity2Active(c.getInt(2)), null, writer);
                 more = c.moveToNext();
             }
         } finally {

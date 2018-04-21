@@ -551,8 +551,10 @@ public class GraphWrapper implements Constants {
                     graphData.clearSmooth(tot_distance);
                     lastLap = lap;
                 }
-                graphData.addObservation(time - lastTime, tot_distance - lastDistance,
-                        tot_distance, loc);
+                if (lastTime > 0) {
+                    graphData.addObservation(time - lastTime, tot_distance - lastDistance,
+                            tot_distance, loc);
+                }
                 lastTime = time;
                 lastDistance = tot_distance;
 
