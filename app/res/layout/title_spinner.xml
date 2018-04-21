@@ -34,7 +34,7 @@
         android:layout_marginRight="8dp"
         android:layout_weight="1"
         android:clickable="false"
-        android:gravity="center_vertical|left"
+        android:gravity="center_vertical|start"
         android:textStyle="bold" />
 
     <TextView
@@ -45,7 +45,7 @@
         android:layout_marginRight="40dp"
         android:layout_weight="1"
         android:clickable="false"
-        android:gravity="center_vertical|right"
+        android:gravity="center_vertical|end"
         android:text="@string/value" />
 
     <Spinner
