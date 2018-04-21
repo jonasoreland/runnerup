@@ -50,8 +50,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/advanced_download_button"
         android:layout_below="@+id/advanced_workout_spinner"
-        android:background="@android:color/darker_gray"
-        android:cacheColorHint="@android:color/darker_gray"
+        android:background="@color/subsectionBg"
+        android:cacheColorHint="@color/subsectionBg"
         android:fadeScrollbars="false"
         android:paddingTop="5dp"
         android:scrollbarAlwaysDrawVerticalTrack="true" />
