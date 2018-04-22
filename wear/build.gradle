@@ -33,18 +33,10 @@ android {
     }
 
     lintOptions {
-        //disable specific checks for specific paths
+        //Configure checks with paths
         lintConfig file("lint.xml")
         baseline file("lint-baseline.xml")
         checkReleaseBuilds true
-        //promote to error
-        fatal 'InlinedApi', 'InconsistentArrays'
-        //https://code.google.com/p/android/issues/detail?id=231325
-        warning 'GradleCompatible'
-        // Ignore some specific checks completely
-        ignore 'MissingTranslation', 'UnusedResources'
-        //icon with all densities are not included - don't bother
-        ignore 'IconMissingDensityFolder'
 
         showAll true
         //debug issues in Travis
