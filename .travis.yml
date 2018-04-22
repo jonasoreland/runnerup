@@ -1,4 +1,4 @@
-dist: trusty #Force trusty for git-lfs (default from 2017-09)
+#dist: trusty #Force trusty for git-lfs (default from 2017-09)
 
 language: android
 
