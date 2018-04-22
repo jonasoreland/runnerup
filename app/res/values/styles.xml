@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,52 +15,73 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="MainLayoutTheme" parent="AppTheme">
+        <item name="android:tabWidgetStyle">@style/BottomNavigationTabWidget</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:tabWidgetStyle">@android:style/Widget.TabWidget</item>
-        <!--
-            <item name="colorPrimary">@color/colorPrimary</item>
-            <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-            <item name="colorAccent">@color/colorAccent</item>
-         -->
     </style>
+
     <style name="ButtonText" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@color/btn_text_color</item>
         <item name="android:layout_margin">3dp</item>
         <item name="android:textSize">20sp</item>
     </style>
-<style name="ButtonTextGrey" parent="ButtonText">
-    <item name="android:textColor">#000000</item>
-</style>
-<style name="RunHeader" parent="AppTheme">
-    <item name="android:layout_width">0dp</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_weight">1</item>
-    <item name="android:textColor">@android:color/white</item>
-    <item name="android:textSize">15sp</item>
-    <item name="android:textStyle">italic</item>
-</style>
-<style name="RunInfo" parent="AppTheme">
-    <item name="android:layout_width">0dp</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_weight">1</item>
-    <item name="android:gravity">right</item>
-    <item name="android:textColor">@android:color/white</item>
-    <item name="android:textSize">20sp</item>
-</style>
-<style name="FeedDateHeader" parent="AppTheme">
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_margin">10dp</item>
-    <item name="android:textColor">@android:color/white</item>
-    <item name="android:textSize">20sp</item>
-</style>
-<style name="FeedActivitySource" parent="AppTheme">
-    <item name="android:layout_width">fill_parent</item>
-    <item name="android:layout_height">wrap_content</item>
-    <item name="android:layout_marginLeft">5dp</item>
-    <item name="android:textSize">8sp</item>
-    <item name="android:textStyle">italic</item>
-</style>
+
+    <style name="ButtonTextGrey" parent="ButtonText">
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="RunHeader" parent="AppTheme">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="RunInfo" parent="AppTheme">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="FeedDateHeader" parent="AppTheme">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="FeedActivitySource" parent="AppTheme">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:textSize">8sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="BottomNavigationTabWidget" parent="android:Widget.TabWidget">
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:tabStripEnabled">false</item>
+        <item name="android:divider">@null</item>
+        <item name="android:gravity">fill_horizontal|center_vertical</item>
+    </style>
+
+    <style name="BottomNavigationTabText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/bottom_tabs</item>
+    </style>
+
 </resources>

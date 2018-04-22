@@ -16,9 +16,9 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- When selected, use grey -->
-    <item android:drawable="@drawable/ic_tab_history_selected"
+    <!-- When selected, use secondary color -->
+    <item android:drawable="@drawable/ic_tab_settings_seccolor_24dp"
           android:state_selected="true"/>
     <!-- When not selected, use white-->
-    <item android:drawable="@drawable/ic_tab_history_unselected" />
+    <item android:drawable="@drawable/ic_tab_settings_white_24dp" />
 </selector>
