@@ -20,7 +20,7 @@ package org.runnerup.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
 import android.content.ContentValues;
@@ -41,9 +41,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,7 +51,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.runnerup.R;
@@ -73,6 +75,14 @@ public class MainLayout extends TabActivity
 
     private Drawable myGetDrawable(int resId) {
         return getResources().getDrawable(resId);
+    }
+
+    private View getTabView(CharSequence label, int iconResource) {
+        View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
+        ((TextView)tabView.findViewById(R.id.title)).setText(label);
+        Drawable icon = ContextCompat.getDrawable(this, iconResource);
+        ((ImageView)tabView.findViewById(R.id.icon)).setImageDrawable(icon);
+        return tabView;
     }
 
     private enum UpgradeState {
@@ -137,19 +147,19 @@ public class MainLayout extends TabActivity
         TabHost tabHost = getTabHost(); // The activity TabHost
 
         tabHost.addTab(tabHost.newTabSpec("Start")
-                .setIndicator(getString(R.string.Start), myGetDrawable(R.drawable.ic_tab_main))
+                .setIndicator(getTabView(getString(R.string.Start), R.drawable.ic_tab_main_24dp))
                 .setContent(new Intent(this, StartActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Feed")
-                .setIndicator(getString(R.string.feed), myGetDrawable(R.drawable.ic_tab_feed))
+                .setIndicator(getTabView(getString(R.string.feed), R.drawable.ic_tab_feed_24dp))
                 .setContent(new Intent(this, FeedActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("History")
-                .setIndicator(getString(R.string.History), myGetDrawable(R.drawable.ic_tab_history))
+                .setIndicator(getTabView(getString(R.string.History), R.drawable.ic_tab_history_24dp))
                 .setContent(new Intent(this, HistoryActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Settings")
-                .setIndicator(getString(R.string.Settings), myGetDrawable(R.drawable.ic_tab_setup))
+                .setIndicator(getTabView(getString(R.string.Settings), R.drawable.ic_tab_settings_24dp))
                 .setContent(new Intent(this, SettingsActivity.class)));
 
         tabHost.setCurrentTab(0);
@@ -384,6 +394,7 @@ public class MainLayout extends TabActivity
      * Id to identify a permission request.
      */
     private static final int REQUEST_LOCATION = 1000;
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {

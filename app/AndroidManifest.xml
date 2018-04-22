@@ -43,7 +43,7 @@
 		android:extractNativeLibs="false"
 		android:supportsRtl="true"
 		android:allowBackup="true"
-		android:theme="@style/AppTheme"
+		android:theme="@style/MainLayoutTheme"
 		android:fullBackupContent="@xml/backup_descriptor"
 		tools:ignore="UnusedAttribute">
 
@@ -87,19 +87,19 @@
 		<activity android:name=".view.SettingsActivity"/>
 
 		<activity android:name=".view.AudioCueSettingsActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.DetailActivity"
 			android:configChanges="orientation|screenSize|uiMode"
-		    android:theme="@style/Theme.AppCompat" />
+		    android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.HistoryActivity"/>
 
 		<activity android:name=".view.AccountListActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.AccountActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.UploadActivity"/>
 
@@ -130,13 +130,13 @@
             tools:ignore="ExportedContentProvider" />
 
 		<activity android:name=".export.oauth2client.OAuth2Activity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.HRSettingsActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.HRZonesActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<service android:name=".tracker.Tracker" />
 		<service android:name=".export.RunnerUpLiveSynchronizer$LiveService" />

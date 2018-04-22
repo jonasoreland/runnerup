@@ -17,7 +17,7 @@
 
 package org.runnerup.view;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
