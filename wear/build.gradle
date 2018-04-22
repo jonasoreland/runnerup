@@ -52,11 +52,10 @@ repositories {
 }
 
 dependencies {
-    compile project(':common')
+    implementation project(':common')
 
-    //Lint bug: https://code.google.com/p/android/issues/detail?id=231325
-    compile "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
-    compile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    implementation "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
+    implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
 }
 
 def props = new Properties()
