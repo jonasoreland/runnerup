@@ -34,6 +34,11 @@ android {
     }
 }
 
+repositories {
+    google()
+    jcenter()
+}
+
 dependencies {
     if (!project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
         provided files('libs/samsung_ble_sdk_200.jar')

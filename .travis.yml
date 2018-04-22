@@ -20,9 +20,9 @@ android:
     components:
         - tools #latest for "builtin" sdk tools (24.4.1 in Android-25)
         #To update SDK Tools to latest, another update is required
-        #- tools #latest, 25.2.4 as of 2016-12-16
-        - platform-tools #latest, 25.0.3 as of 2016-12-17
-        - build-tools-26.0.1
+        #- tools #latest, 26.0.2 as of 2017-07-30
+        - platform-tools #latest, 26.0.0 as of 2017-07-30
+        - build-tools-27.0.3
         - android-25
         - extra-android-m2repository
         - extra-google-m2repository
@@ -32,7 +32,6 @@ notifications:
   email: false
 
 script:
-    - ./gradlew lintFroyoRelease  assembleFroyoRelease
-    - ./gradlew wear:lR wear:aR
-    - ./gradlew lintLatestRelease assembleLatestRelease
+    - ./gradlew lintLatestRelease assembleLatestRelease wear:lR
+    - ./gradlew assembleFroyoRelease lintFroyoRelease
     - ./gradlew test
