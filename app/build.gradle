@@ -46,15 +46,14 @@ android {
     productFlavors {
         latest {
             dimension "all"
-            minSdkVersion 21
+            minSdkVersion 15
             targetSdkVersion rootProject.ext.compileSdkVersion
             versionName rootProject.ext.versionName
-            versionCode 21000000 + rootProject.ext.versionCode
+            versionCode 14000000 + rootProject.ext.versionCode
         }
         froyo {
-            //Used to be targeted to 8 (froyo), minimal version without graphs/maps
             dimension "all"
-            minSdkVersion 21
+            minSdkVersion 8
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
             versionCode 8000000 + rootProject.ext.versionCode
@@ -100,9 +99,13 @@ android {
         checkReleaseBuilds true
         //promote to error, must be handled
         fatal 'InlinedApi', 'InconsistentArrays'
-        //Remove with AS3: https://issuetracker.google.com/issues/37131435
+        //Remove with AS3? https://issuetracker.google.com/issues/37131435
+        //TODO: See GradleCompatible comments, check manually with ./gradlew app:dependencies
         warning 'GradleCompatible'
+        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
+        warning 'RestrictedApi'
         // Ignore some specific checks completely
+ 
         //All translations will not be complete
         ignore 'MissingTranslation'
         //icon with all densities are not included - don't bother
@@ -134,9 +137,10 @@ dependencies {
     compile project(':hrdevice')
     latestWearApp project(':wear')
 
+    //Lint bug: https://issuetracker.google.com/issues/231323
     latestCompile "com.android.support:design:${rootProject.ext.supportLibrary}"
 
-    //Lint bug: https://issuetracker.google.com/issues/37131433
+    //Lint bug: https://issuetracker.google.com/issues/231321
     //noinspection GradleDependency
     froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
 
