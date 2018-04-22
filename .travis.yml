@@ -23,7 +23,7 @@ android:
         #- tools #latest, 26.0.2 as of 2017-07-30
         - platform-tools #latest, 26.0.0 as of 2017-07-30
         - build-tools-27.0.3
-        - android-25
+        - android-27
         - extra-android-m2repository
         - extra-google-m2repository
         - extra-google-google_play_services
