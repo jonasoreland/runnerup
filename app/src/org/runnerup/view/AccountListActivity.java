@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -32,6 +33,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -70,6 +72,8 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     @Override
     public void onCreate(Bundle savedInstanceState) { //todo write up logo usage permissions
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+
         setContentView(R.layout.account_list);
 
         mDB = DBHelper.getReadableDatabase(this);
@@ -134,42 +138,111 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
 
         return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, showDisabled, null,
-                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME);
+                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME + " collate nocase"); //todo I'm guessing AUTH_CONFIG lets me know whether an account is set up
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-        mCursorAdapter.swapCursor(arg1);
+        mCursorAdapter.swapCursor(arg1); //todo why isn't the old cursor being closed???!!!
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
         mCursorAdapter.swapCursor(null);
-    }
+    } //todo why isn't the old cursor being closed???!!!
 
     class AccountListAdapter extends CursorAdapter {
         final LayoutInflater inflater;
+        int[] categories;
+        static final int CATEGORY_UNSET = 0;
+        static final int CATEGORY_SAME_AS_PREV = -1;
 
-        public AccountListAdapter(Context context, Cursor c) {
-            super(context, c, true);
+        public AccountListAdapter(Context context, Cursor cursor) {
+            super(context, cursor, true);
             inflater = LayoutInflater.from(context);
+            categories = (cursor == null) ? null : new int[cursor.getCount()];
+        }
+
+        @Override
+        public void changeCursor(Cursor cursor) {
+            super.changeCursor(cursor);
+            categories = (cursor == null) ? null : new int[cursor.getCount()];
+        }
+
+        @Override
+        public Cursor swapCursor(Cursor newCursor) {
+            categories = (newCursor == null) ? null : new int[newCursor.getCount()];
+            return super.swapCursor(newCursor);
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            ContentValues tmp = DBHelper.get(cursor);
+            ContentValues values = DBHelper.get(cursor);
 
-            final String id = tmp.getAsString(DB.ACCOUNT.NAME);
-            final Synchronizer synchronizer = mSyncManager.add(tmp);
-            final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
+            final String id = values.getAsString(DB.ACCOUNT.NAME);
+            final Synchronizer synchronizer = mSyncManager.add(values);
+            final long flags = values.getAsLong(DB.ACCOUNT.FLAGS);
+            boolean configured = mSyncManager.isConfigured(id);
 
             view.setTag(id);
 
-            ImageView addOrEditIndicator = view.findViewById(R.id.add_or_edit_indicator);
+            TextView sectionTitle = view.findViewById(R.id.section_title);
             ImageView accountIcon = view.findViewById(R.id.account_list_icon);
+            TextView accountIconText = view.findViewById(R.id.account_list_icon_text);
             TextView accountNameText = view.findViewById(R.id.account_list_name);
             SwitchCompat accountUploadBox = view.findViewById(R.id.account_list_upload);
             SwitchCompat accountFeedBox = view.findViewById(R.id.account_list_feed);
+
+            // category name
+            {
+                int curPosition = cursor.getPosition();
+                if (categories[curPosition] == CATEGORY_UNSET) {
+                    String curConnected = values.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+
+                    if (curPosition == 0) {
+                        if (curConnected == null) {
+                            categories[curPosition] = R.string.accounts_category_unconnected;
+                        } else {
+                            categories[curPosition] = R.string.accounts_category_connected;
+                        }
+                    } else {
+                        // get data for previous item
+                        cursor.moveToPrevious();
+                        String prevConnected = DBHelper.get(cursor).getAsString(DB.ACCOUNT.AUTH_CONFIG);
+                        cursor.moveToNext();
+
+                        // compare the two
+                        if (prevConnected == null && curConnected != null
+                                || ((prevConnected != null && !prevConnected.equals(curConnected)))) { // start of unconnected //todo test
+                            categories[cursor.getPosition()] = R.string.accounts_category_unconnected;
+                        } else { // same categories
+                            categories[cursor.getPosition()] = CATEGORY_SAME_AS_PREV;
+                        }
+                    }
+                }
+            }
+
+            if (categories[cursor.getPosition()] == CATEGORY_SAME_AS_PREV) {
+                sectionTitle.setVisibility(View.GONE);
+            } else {
+                sectionTitle.setText(getString(categories[cursor.getPosition()]));
+                sectionTitle.setVisibility(View.VISIBLE);
+            }
+
+            // service icon
+            int synchronizerIcon = synchronizer.getIconId();
+            if (synchronizerIcon == 0) {
+                Drawable circle = ContextCompat.getDrawable(context, R.drawable.circle_40dp);
+                circle.setColorFilter(getResources().getColor(synchronizer.getColorId()), PorterDuff.Mode.SRC_IN);
+                accountIcon.setImageDrawable(circle);
+                accountIconText.setText(id.substring(0,1));
+            } else {
+                accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
+                accountIconText.setText(null);
+            }
+
+            // service title
+            accountNameText.setText(id);
 
             // upload box
             accountUploadBox.setTag(id);
@@ -191,38 +264,19 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 }
             });
 
-            boolean configured = mSyncManager.isConfigured(id);
-            int synchronizerIcon = synchronizer.getIconId();
-            if (synchronizerIcon == 0) {
-                accountIcon.setVisibility(View.GONE);
-                accountNameText.setVisibility(View.VISIBLE);
-                accountNameText.setText(id);
-            } else {
-                accountIcon.setVisibility(View.VISIBLE);
-                accountNameText.setVisibility(View.GONE);
-                accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
-            }
-
             if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 accountUploadBox.setEnabled(true);
                 accountUploadBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
                 accountUploadBox.setVisibility(View.VISIBLE);
             } else {
-                accountUploadBox.setVisibility(View.INVISIBLE);
+                accountUploadBox.setVisibility(View.GONE);
             }
             if (configured && synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
                 accountFeedBox.setEnabled(true);
                 accountFeedBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
                 accountFeedBox.setVisibility(View.VISIBLE);
             } else {
-                accountFeedBox.setVisibility(View.INVISIBLE);
-            }
-
-            //edit indicator
-            if (configured) {
-                addOrEditIndicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_edit_white_24dp));
-            } else {
-                addOrEditIndicator.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_add_white_24dp));
+                accountFeedBox.setVisibility(View.GONE);
             }
         }
 
@@ -231,7 +285,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             return inflater.inflate(R.layout.account_row, parent, false);
         }
 
-        private void setCustomThumb(SwitchCompat switchCompat, int drawableId,  Context context) {
+        private void setCustomThumb(SwitchCompat switchCompat, int drawableId, Context context) {
             switchCompat.setThumbDrawable(ContextCompat.getDrawable(context, drawableId));
             switchCompat.setThumbTintList(ContextCompat.getColorStateList(context, R.color.switch_thumb));
             switchCompat.setThumbTintMode(PorterDuff.Mode.MULTIPLY);

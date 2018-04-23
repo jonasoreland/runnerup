@@ -83,6 +83,9 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     public int getIconId() {return 0;}
 
     @Override
+    public int getColorId() {return R.color.serviceRunnerUpLive;}
+
+    @Override
     public void init(ContentValues config) {
         id = config.getAsLong("_id");
         String auth = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);

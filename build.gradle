@@ -19,7 +19,7 @@ project.ext {
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '26.0.1' //Update Travis manually
-    compileSdkVersion = 27 //Update Travis manually
+    compileSdkVersion = 25 //Update Travis manually
     targetSdkVersion = 25
 
     supportLibrary = '25.3.1'

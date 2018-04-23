@@ -27,6 +27,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
@@ -62,7 +63,10 @@ public class FileSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public int getIconId() {return R.drawable.service_file;}
+
+    @Override
+    public int getColorId() {return R.color.colorPrimary;}
 
     @Override
     public String getUrl() {

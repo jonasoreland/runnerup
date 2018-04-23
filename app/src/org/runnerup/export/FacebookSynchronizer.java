@@ -29,6 +29,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
@@ -142,7 +143,10 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public int getIconId() {return R.drawable.service_facebook;}
+
+    @Override
+    public int getColorId() { return R.color.serviceFacebook; }
 
     @Override
     public void init(ContentValues config) {

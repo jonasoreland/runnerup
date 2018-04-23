@@ -26,6 +26,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.export.format.GPX;
@@ -110,6 +111,11 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     @Override
     public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {
+        return R.color.serviceNike;
+    }
 
     @Override
     public void init(ContentValues config) {

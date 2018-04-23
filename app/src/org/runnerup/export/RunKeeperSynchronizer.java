@@ -180,6 +180,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     public int getIconId() {return 0;}
 
     @Override
+    public int getColorId() {return R.color.serviceRunkeeper;}
+
+    @Override
     public void init(ContentValues config) {
         String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
         id = config.getAsLong("_id");

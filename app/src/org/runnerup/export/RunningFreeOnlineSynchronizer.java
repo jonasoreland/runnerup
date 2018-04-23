@@ -65,6 +65,9 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     public int getIconId() {return 0;}
 
     @Override
+    public int getColorId() {return R.color.serviceRunningFreeOnline;}
+
+    @Override
     public Integer getAuthNotice() { return R.string.RunningFreeOnlinePasswordNotice; }
 
     @Override

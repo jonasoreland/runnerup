@@ -16,43 +16,73 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="88dp"
+    android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/add_or_edit_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"/>
-
     <TextView
-        android:id="@+id/account_list_name"
-        style="@style/AccountListText"
-        android:layout_width="0dp"
+        android:id="@+id/section_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/ListCategoryHeading"
+        android:visibility="visible"
+        android:text="asdf"/>
 
-    <ImageView
-        android:id="@+id/account_list_icon"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:scaleType="fitStart" />
+        android:gravity="center">
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/account_list_feed"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/feed"/>
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp">
 
-    <android.support.v7.widget.SwitchCompat
-        android:id="@+id/account_list_upload"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/upload"/>
+            <ImageView
+                android:id="@+id/account_list_icon"
+                android:src="@drawable/circle_40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/account_list_icon_text"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="#ffffffff"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/account_list_name"
+            style="@style/AccountListText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/account_list_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/feed" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/account_list_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/upload" />
+
+    </LinearLayout>
 
 </LinearLayout>

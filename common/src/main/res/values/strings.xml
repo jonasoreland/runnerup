@@ -117,6 +117,8 @@
   <string name="synchronizing_feed">synchronizing feed…</string>
   <string name="OK">OK</string>
   <string name="Table_format">Table format</string>
+  <string name="accounts_category_connected">Manage connections</string>
+  <string name="accounts_category_unconnected">Connect an account</string>
   <string name="Show_disabled_accounts">Show disabled accounts</string>
   <string name="Hide_disabled_accounts">Hide disabled accounts</string>
   <string name="Clear_uploads">Clear uploads</string>
