@@ -27,6 +27,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
@@ -124,6 +125,9 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
     @Override
     public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunningAhead;}
 
     @Override
     public void init(ContentValues config) {

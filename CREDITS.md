@@ -3,3 +3,7 @@
 * res/drawable*/*holo* from ASOP
 * icons from https://octicons.github.com/
 * [Material icons v2.2](https://github.com/google/material-design-icons) (in the bottom nav. bar) by Google are licensed under [CC-BY 4.0](http://creativecommons.org/licenses/by/4.0/)
+
+* The Facebook icon was used in accordance to its [guidelines](https://en.facebookbrand.com/assets/f-logo). The symbol is intellectual property of Facebook.
+* Runalyze logo used with permission from Runalyze.
+* The Garmin Connect logo used in accordance to the [Garmin brand guidelines](https://developer.garmin.com/resources/brand-guidelines/).

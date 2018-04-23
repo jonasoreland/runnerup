@@ -24,6 +24,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.export.format.RunalyzePost;
 
@@ -78,7 +79,10 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public int getIconId() {return R.drawable.service_runalyze;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunalyze;}
 
     @Override
     public String getUrl() {
