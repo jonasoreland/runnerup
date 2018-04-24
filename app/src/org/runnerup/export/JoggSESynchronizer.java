@@ -90,7 +90,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public int getIconId() {return R.drawable.service_jogg;}
 
     @Override
     public int getColorId() {return R.color.serviceJogg;}
