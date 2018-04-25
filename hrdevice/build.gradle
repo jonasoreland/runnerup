@@ -16,9 +16,6 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
-            if (project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
-                java.excludes = ['org/runnerup/hr/SamsungBLEHRProvider.java']
-            }
             resources.srcDirs = ['src']
             aidl.srcDirs = ['src']
             renderscript.srcDirs = ['src']
@@ -40,8 +37,5 @@ repositories {
 }
 
 dependencies {
-    if (!project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
-        compileOnly files('libs/samsung_ble_sdk_200.jar')
-    }
     implementation files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar')
 }

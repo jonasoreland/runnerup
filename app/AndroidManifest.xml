@@ -142,10 +142,6 @@
             </intent-filter>
         </receiver>
 
-		<uses-library
-			android:name="com.samsung.android.sdk.bt"
-			android:required="false" />
-
 		<activity
 			android:name=".view.CreateAdvancedWorkout"/>
 	</application>
