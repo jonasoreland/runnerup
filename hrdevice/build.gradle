@@ -34,9 +34,14 @@ android {
     }
 }
 
+repositories {
+    google()
+    jcenter()
+}
+
 dependencies {
     if (!project.hasProperty('org.runnerup.hr.disableSamsungBLE')) {
-        provided files('libs/samsung_ble_sdk_200.jar')
+        compileOnly files('libs/samsung_ble_sdk_200.jar')
     }
-    compile files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar')
+    implementation files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar')
 }

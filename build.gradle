@@ -1,16 +1,15 @@
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.1.2'
     }
 }
 
 repositories {
-    maven {
-        url "https://maven.google.com"
-    }
+    google()
 }
 
 project.ext {
@@ -18,7 +17,7 @@ project.ext {
     //Note that Android Studio does not know about the 'ext' module and will warn
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
-    buildToolsVersion = '26.0.1' //Update Travis manually
+    buildToolsVersion = '27.0.3' //Update Travis manually
     compileSdkVersion = 25 //Update Travis manually
     targetSdkVersion = 25
 

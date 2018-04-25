@@ -8,8 +8,35 @@
         <ignore path="**/com.squareup.okio/**" />
         <ignore path="**/com.vividsolutions/**" />
     </issue>
+
+    <!-- promote to error, must be handled -->
+    <issue id="InlinedApi" severity="fatal" />
+    <issue id="InconsistentArrays" severity="fatal" />
+
+    <!-- Libraries depend on older support libraries, must be replaced. -->
+    <!-- Some bugs with the warning, https://issuetracker.google.com/issues/37131435, check manually with ./gradlew app:dependencies -->
+    <issue id="GradleCompatible" severity="warning" />
+
+    <!-- Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though -->
+    <issue id="RestrictedApi" severity="warning" />
+
+    <!-- All translations will not be complete -->
+    <issue id="MissingTranslation" severity="ignore" />
+
+    <!-- icon with all densities are not included - don't bother -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+
+    <!-- apply() is supported from SDK 9, but min version is 8 -->
+    <issue id="ApplySharedPref" severity="ignore" />
+
+    <!-- Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though -->
+    <issue id="RestrictedApi" severity="warning" />
+
     <issue id="ResourceType">
         <ignore path="src/org/runnerup/view/MainLayout.java" />
+    </issue>
+    <issue id="PrivateResource">
+        <ignore path="src/org/runnerup/notification/NotificationStateManager.java" />
     </issue>
     <issue id="MissingQuantity">
         <!-- Transifex refuses quantity="one" for tr, (gradle) lint requires it, Inspect allows both-->
@@ -29,5 +56,19 @@
     </issue>
     <issue id="WrongRegion" severity="ignore">
         <ignore regexp="^.*?\Q\res\values-en-rNL\\E.*?$" />
+    </issue>
+    <issue id="ObsoleteSdkInt" severity="ignore">
+        <ignore regexp=".*-r14$" />
+    </issue>
+    <!-- Ignored since minimum version less than 17 requires both left/right and start/end -->
+    <issue id="RtlHardcoded" severity="ignore"/>
+    <!-- used by library? -->
+    <!--issue id="LogNotTimber" severity="ignore"/-->
+    <issue id="ObsoleteLintCustomCheck" severity="ignore">
+        <ignore regexp="timber.*" />
+    </issue>
+    <!-- SuppressLint has no effect in gradle plugin 3.0.0, bug? -->
+    <issue id="ClickableViewAccessibility" severity="ignore">
+        <ignore path="**/NumberPicker.java" />
     </issue>
 </lint>

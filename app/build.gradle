@@ -93,27 +93,10 @@ android {
     }
 
     lintOptions {
-        //disable specific checks for specific paths
+        //Configure checks with paths
         lintConfig file("lint.xml")
         baseline file("lint-baseline.xml")
         checkReleaseBuilds true
-        //promote to error, must be handled
-        fatal 'InlinedApi', 'InconsistentArrays'
-        //TODO: See GradleCompatible comments, check manually with ./gradlew app:dependencies
-        warning 'GradleCompatible'
-        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
-        warning 'RestrictedApi'
-        // Ignore some specific checks completely
-        ignore 'MissingTranslation'
-
-        //All translations will not be complete
-        ignore 'MissingTranslation'
-        //icon with all densities are not included - don't bother
-        ignore 'IconMissingDensityFolder'
-        //apply() is supported from SDK 9, but min version is 8
-        ignore 'ApplySharedPref'
-        //Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though
-        warning 'RestrictedApi'
 
         showAll true
         //debug issues in Travis
@@ -123,37 +106,31 @@ android {
 }
 
 repositories {
-    maven {
-        url "https://maven.google.com"
-    }
-    //jcenter and mavenCentral normally have the same packages but there may be a delay after updating the primary
+    google()
     jcenter()
     mavenCentral() //MapBox GraphView
     maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
 }
 
 dependencies {
-    compile project(':common')
-    compile project(':hrdevice')
+    implementation project(':common')
+    implementation project(':hrdevice')
     latestWearApp project(':wear')
 
-    //Lint bug: https://code.google.com/p/android/issues/detail?id=231323
-    latestCompile "com.android.support:design:${rootProject.ext.supportLibrary}"
-
+    latestImplementation "com.android.support:design:${rootProject.ext.supportLibrary}"
     //Lint bug: https://code.google.com/p/android/issues/detail?id=231321
     //noinspection GradleDependency
-    froyoCompile 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
+    froyoImplementation 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
 
-    latestCompile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
-    latestCompile 'com.getpebble:pebblekit:4.0.1'
-    latestCompile ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.1@aar'){
+    latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    latestImplementation 'com.getpebble:pebblekit:4.0.1'
+    latestImplementation ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.1@aar'){
         transitive=true
     }
-    compile 'com.jjoe64:graphview:4.2.1'
+    implementation 'com.jjoe64:graphview:4.2.1'
 
-
-    testCompile "junit:junit:${rootProject.ext.junitVersion}"
-    testCompile "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+    testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 }
 
 allprojects {
