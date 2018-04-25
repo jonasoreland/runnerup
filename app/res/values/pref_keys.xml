@@ -144,6 +144,4 @@
     <string name="pref_exportdb">pref_exportdb</string>
     <string name="pref_importdb">pref_importdb</string>
     <string name="pref_prunedb">pref_prunedb</string>
-    <string name="pref_aboutcategory">pref_aboutcategory</string>
-    <string name="pref_googleplayserviceslegalnotices">pref_googleplayserviceslegalnotices</string>
 </resources>
