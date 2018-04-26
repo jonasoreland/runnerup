@@ -55,21 +55,14 @@ public class AboutPreference extends DialogPreference {
         return res;
     }
 
-    private boolean isPlayPref(Context ctx) {
-        Resources res = ctx.getResources();
-        return this.getKey() != null && this.getKey().contentEquals(res.getString(R.string.pref_googleplayserviceslegalnotices));
-    }
-
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            if (!isPlayPref(this.getContext())) {
-                try {
-                    Uri uri = Uri.parse("market://details?id=" + this.getContext().getPackageName());
-                    this.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            try {
+                Uri uri = Uri.parse("market://details?id=" + this.getContext().getPackageName());
+                this.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -77,34 +70,24 @@ public class AboutPreference extends DialogPreference {
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        if (!isPlayPref(this.getContext())) {
-            WebView wv = (WebView) view.findViewById(R.id.web_view1);
-            wv.loadUrl("file:///android_asset/about.html");
-        }
+        WebView wv = (WebView) view.findViewById(R.id.web_view1);
+        wv.loadUrl("file:///android_asset/about.html");
     }
 
     private void init(Context context) {
-        if (isPlayPref(context)) {
-            setNegativeButtonText(null);
-            CharSequence msg = GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(context);
-            if (msg != null) {
-                this.setDialogMessage(msg);
-            }
-        } else {
-            try {
-                PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-                this.setDialogTitle(context.getString(R.string.About_RunnerUp)+" v" + pInfo.versionName);
-            } catch (NameNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            if (isGooglePlayServicesAvailable(context)) {
-                setNegativeButtonText(context.getString(R.string.OK));
-                setPositiveButtonText(context.getString(R.string.Rate_RunnerUp));
-            } else {
-                setNegativeButtonText(null);
-            }
-            setDialogLayoutResource(R.layout.whatsnew);
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            this.setDialogTitle(context.getString(R.string.About_RunnerUp) + " v" + pInfo.versionName);
+        } catch (NameNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+        if (isGooglePlayServicesAvailable(context)) {
+            setNegativeButtonText(context.getString(R.string.OK));
+            setPositiveButtonText(context.getString(R.string.Rate_RunnerUp));
+        } else {
+            setNegativeButtonText(null);
+        }
+        setDialogLayoutResource(R.layout.whatsnew);
     }
 }

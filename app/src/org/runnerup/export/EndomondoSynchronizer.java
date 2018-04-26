@@ -63,10 +63,10 @@ import java.util.zip.GZIPOutputStream;
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
-    public static final String PUBLIC_URL = "http://www.endomondo.com";
+    public static final String PUBLIC_URL = "https://www.endomondo.com";
     private static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
-    private static final String UPLOAD_URL = "http://api.mobile.endomondo.com/mobile/track";
-    private static final String FEED_URL = "http://api.mobile.endomondo.com/mobile/api/feed";
+    private static final String UPLOAD_URL = "https://api.mobile.endomondo.com/mobile/track";
+    private static final String FEED_URL = "https://api.mobile.endomondo.com/mobile/api/feed";
 
     private long id = 0;
     private String username = null;
@@ -394,7 +394,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         c.put(FEED.EXTERNAL_ID, o.getLong("id"));
         c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
         SyncHelper.setName(c, o.getJSONObject("from").getString("name"));
-        final String IMAGE_URL = "http://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
+        final String IMAGE_URL = "https://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
         c.put(FEED.USER_IMAGE_URL,
                 String.format(Locale.ENGLISH, IMAGE_URL, o.getJSONObject("from").getLong("picture")));
         c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
@@ -403,7 +403,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         setTrainingType(c, m.getJSONArray("actions").getJSONObject(0), m.getString("short"));
         setDistanceDuration(c, m.getString("text.win"));
 
-        final String WORKOUT_URL = "http://www.endomondo.com/workouts/%d/%d";
+        final String WORKOUT_URL = "https://www.endomondo.com/workouts/%d/%d";
         c.put(DB.FEED.URL, String.format(Locale.ENGLISH, WORKOUT_URL,
                 m.getJSONArray("actions").getJSONObject(0).getLong("id"),
                 o.getJSONObject("from").getLong("id")));

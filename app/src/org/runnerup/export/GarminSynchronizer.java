@@ -57,13 +57,13 @@ import java.util.Map;
 public class GarminSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Garmin";
-    private static final String PUBLIC_URL = "http://connect.garmin.com";
+    private static final String PUBLIC_URL = "https://connect.garmin.com";
 
     private static final String CHOOSE_URL = PUBLIC_URL + "/";
 
     private static final String START_URL = "https://connect.garmin.com/signin";
     private static final String LOGIN_URL = "https://connect.garmin.com/signin";
-    private static final String CHECK_URL = "http://connect.garmin.com/user/username";
+    private static final String CHECK_URL = "https://connect.garmin.com/user/username";
     private static final String UPLOAD_URL = "https://connect.garmin.com/proxy/upload-service-1.1/json/upload/.tcx";
     private static final String LIST_WORKOUTS_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workoutlist";
     private static final String GET_WORKOUT_URL = "https://connect.garmin.com/proxy/workout-service-1.0/json/workout/";

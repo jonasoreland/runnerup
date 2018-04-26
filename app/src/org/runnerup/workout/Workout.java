@@ -308,7 +308,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             case LAP:
                 if (currentStep != null)
                     return currentStep.getDistance(this, scope);
-                if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                //if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 break;
             case CURRENT:
                 break;
@@ -325,7 +325,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             case LAP:
                 if (currentStep != null)
                     return currentStep.getTime(this, scope);
-                if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                //if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 break;
             case CURRENT:
                 return System.currentTimeMillis() / 1000; // now
@@ -441,6 +441,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         double t = getTime(scope); // in seconds
         double b = -1; //TODO get steps for scope
 
+        //TODO
         if (BuildConfig.DEBUG) { throw new AssertionError(); }
         if (t != 0) {
             return (60 * b)/ 2 / t; // bpm
@@ -500,8 +501,8 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     @Override
     public Intensity getIntensity() {
-        if (currentStep == null)
-            return Intensity.ACTIVE; // needed ??
+        if (currentStep == null || currentStep.getCurrentStep() == null)
+            return Intensity.ACTIVE; //No next step, assertion
 
         return currentStep.getCurrentStep().getIntensity();
     }
@@ -552,9 +553,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
     }
 
-    public int getStepCount() {
-        return steps.size();
-    }
+    //public int getStepCount() {
+    //    return steps.size();
+    //}
 
     public boolean isLastStep() {
         if (currentStepNo + 1 < steps.size())

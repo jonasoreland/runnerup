@@ -50,10 +50,10 @@ import java.util.Map;
 
 
 public class DigifitSynchronizer extends DefaultSynchronizer {
-    private static final String DIGIFIT_URL = "http://my.digifit.com";
+    private static final String DIGIFIT_URL = "https://my.digifit.com";
 
     public static final String NAME = "Digifit";
-    public static final String PUBLIC_URL = "http://www.digifit.com";
+    public static final String PUBLIC_URL = "https://www.digifit.com";
 
     public static void main(String args[]) {
         if (args.length < 2) {

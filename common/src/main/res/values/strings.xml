@@ -313,4 +313,5 @@
   <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to GPS Elevation</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Use initial GPS elevation to average barometric elevation</string>
   <string name="google_play_not_installed">Google Play Services is not installed</string>
+  <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
 </resources>

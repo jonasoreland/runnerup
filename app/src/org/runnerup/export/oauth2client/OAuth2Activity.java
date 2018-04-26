@@ -124,13 +124,13 @@ public class OAuth2Activity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String loadurl) {
                 if (loadurl
-                        .startsWith("http://runkeeper.com/jsp/widgets/streetTeamWidgetClose.jsp")
+                        .startsWith("https://runkeeper.com/jsp/widgets/streetTeamWidgetClose.jsp")
                         ||
-                        loadurl.startsWith("http://runkeeper.com/jsp/widgets/friendWidgetClose.jsp")) {
-                    wv.loadUrl("http://runkeeper.com/facebookSignIn");
+                        loadurl.startsWith("https://runkeeper.com/jsp/widgets/friendWidgetClose.jsp")) {
+                    wv.loadUrl("https://runkeeper.com/facebookSignIn");
                     return true;
                 }
-                if (loadurl.startsWith("http://runkeeper.com/home")) {
+                if (loadurl.startsWith("https://runkeeper.com/home")) {
                     wv.loadUrl(url);
                     return true;
                 }

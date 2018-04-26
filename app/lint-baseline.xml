@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <issues format="4" by="lint 2.3.3">
 
-    <issue
-        id="GradleCompatible"
-        message="All com.android.support libraries must use the exact same version specification (mixing versions can lead to runtime crashes). Found versions 25.3.1, 24.1.0. Examples include `com.android.support:animated-vector-drawable:25.3.1` and `com.android.support:support-v4:24.1.0`">
-        <location
-            file="build.gradle"/>
-    </issue>
-
 </issues>

@@ -59,14 +59,14 @@ import java.security.SignatureException;
 public class FunBeatSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "FunBeat";
-    private static final String PUBLIC_URL = "http://www.funbeat.se";
+    private static final String PUBLIC_URL = "https://www.funbeat.se";
     private static final String BASE_URL = PUBLIC_URL;
     private static final String START_URL = BASE_URL + "/index.aspx";
     private static final String LOGIN_URL = BASE_URL + "/index.aspx";
     private static final String UPLOAD_URL = BASE_URL
             + "/importexport/upload.aspx";
 
-    private static final String API_URL = "http://1.0.0.android.api.funbeat.se/json/Default.asmx/";
+    private static final String API_URL = "https://1.0.0.android.api.funbeat.se/json/Default.asmx/";
     private static final String FEED_URL = API_URL + "GetMyNewsFeed";
 
     private static String APP_ID = null;
@@ -568,11 +568,11 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             c.put(FEED.USER_LAST_NAME, o.getString("Lastname"));
         if (!o.isNull("PictureURL"))
             c.put(FEED.USER_IMAGE_URL,
-                    o.getString("PictureURL").replace("~/", "http://www.funbeat.se/"));
+                    o.getString("PictureURL").replace("~/", "https://www.funbeat.se/"));
         if (!o.isNull("Description"))
             c.put(FEED.NOTES, o.getString("Description"));
         c.put(FEED.URL,
-                "http://www.funbeat.se/training/show.aspx?TrainingID="
+                "https://www.funbeat.se/training/show.aspx?TrainingID="
                         + Long.toString(o.getLong("ID")));
         // TODO FEED.COMMENTS
         return c;

@@ -51,7 +51,7 @@ import java.util.Locale;
 public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Facebook";
-    public static final String PUBLIC_URL = "http://www.facebook.com";
+    public static final String PUBLIC_URL = "https://www.facebook.com";
 
     /**
      * @todo register OAuth2Server
@@ -61,7 +61,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     private static final String AUTH_URL = "https://www.facebook.com/dialog/oauth";
     private static final String TOKEN_URL = "https://graph.facebook.com/oauth/access_token";
-    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/facebook";
+    private static final String REDIRECT_URI = "https://localhost:8080/runnerup/facebook";
 
     private static final String COURSE_ENDPOINT = "https://graph.facebook.com/me/objects/fitness.course";
     private static final String RUN_ENDPOINT = "https://graph.facebook.com/me/fitness.runs";
@@ -186,7 +186,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         if (resultCode == Activity.RESULT_OK) {
             try {
                 String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
-                Uri uri = Uri.parse("http://keso?" + authConfig);
+                Uri uri = Uri.parse("https://keso?" + authConfig);
                 access_token = uri.getQueryParameter("access_token");
                 expire_time = Long.valueOf(uri.getQueryParameter("expires"));
                 token_now = System.currentTimeMillis();

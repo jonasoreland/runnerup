@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+
+    <!-- promote to error, must be handled -->
+    <issue id="InlinedApi" severity="fatal" />
+    <issue id="InconsistentArrays" severity="fatal" />
+
+    <!-- All translations will not be complete -->
+    <issue id="MissingTranslation" severity="ignore" />
+
+    <!-- icon with all densities are not included - don't bother -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+
     <issue id="IconDensities">
         <ignore path="res/**" />
         <ignore path="**/common/src/main/res/**" />
@@ -20,5 +31,5 @@
         <ignore regexp="^.*?\Q\res\values-en-rNL\\E.*?$" />
     </issue>
     <issue id="AllowBackup" severity="ignore"/>
-    <issue id="GradleCompatible" severity="ignore"/>
+    <issue id="GradleCompatible" severity="warning"/>
 </lint>

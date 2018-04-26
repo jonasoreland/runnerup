@@ -50,7 +50,7 @@ import java.util.Map;
 public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "MapMyRun";
-    public static final String PUBLIC_URL = "http://www.mapmyrun.com";
+    public static final String PUBLIC_URL = "https://www.mapmyrun.com";
     private static String CONSUMER_KEY;
     private static final String BASE_URL = "https://api.mapmyfitness.com/3.1";
     private static final String GET_USER_URL = BASE_URL + "/users/get_user";

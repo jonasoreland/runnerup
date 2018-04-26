@@ -1,16 +1,20 @@
 -dontobfuscate
 -dontwarn com.dsi.ant.**
 -dontwarn com.samsung.**
--dontwarn okio.**
 -dontwarn com.vividsolutions.jts.awt.**
 -dontwarn android.support.**
 -dontwarn com.squareup.okhttp.**
 -dontnote android.net.http.*
 -dontnote org.apache.commons.codec.**
 -dontnote org.apache.http.**
--dontwarn javax.annotation.**
 -dontwarn sun.misc.Unsafe
 -dontwarn java.lang.invoke.**
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
--dontwarn okhttp3.internal.http.HttpEngine
--dontwarn okhttp3.internal.Platform
+#mapbox
+#okhttp related
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase

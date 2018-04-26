@@ -77,13 +77,6 @@ public class SettingsActivity extends PreferenceActivity
             getPreferenceManager().findPreference(res.getString(R.string.pref_experimental_features)).setEnabled(false);
         }
 
-        //remove google play notices from froyo since we do not use it
-        if (BuildConfig.FLAVOR.equals("froyo") || !AboutPreference.isGooglePlayServicesAvailable(this)) {
-            Preference pref = findPreference(res.getString(R.string.pref_googleplayserviceslegalnotices));
-            PreferenceCategory category = (PreferenceCategory)findPreference(res.getString(R.string.pref_aboutcategory));
-            category.removePreference(pref);
-        }
-
         //Geoid correction is not included in Froyo
         if (BuildConfig.FLAVOR.equals("froyo")) {
             getPreferenceManager().findPreference(res.getString(R.string.pref_altitude_adjust)).setEnabled(false);
