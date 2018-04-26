@@ -19,7 +19,8 @@
     android:id="@+id/linear1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,7 +50,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textEmailAddress" />
+                android:inputType="textUri"
+                android:hint="@string/Website" />
 
         </TableRow>
 
@@ -69,7 +71,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:autofillHints="AUTOFILL_HINT_USERNAME"
+                android:hint="@string/Username"
+                tools:ignore="UnusedAttribute" />
 
         </TableRow>
 
@@ -89,7 +94,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:autofillHints="AUTOFILL_HINT_PASSWORD"
+                android:hint="@string/Password"
+                tools:ignore="UnusedAttribute" />
 
         </TableRow>
     </TableLayout>

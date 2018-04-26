@@ -15,6 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.runnerup"
 	xmlns:tools="http://schemas.android.com/tools">
@@ -41,7 +42,12 @@
 	    android:icon="@drawable/ic_launcher"
 	    android:label="@string/app_name"
 		android:extractNativeLibs="false"
-		android:theme="@style/AppTheme">
+		android:supportsRtl="true"
+		android:allowBackup="true"
+		android:theme="@style/MainLayoutTheme"
+		android:fullBackupContent="@xml/backup_descriptor"
+		android:appCategory="maps"
+		tools:ignore="UnusedAttribute">
 
 		<activity
 			android:name=".view.MainLayout"
@@ -72,31 +78,31 @@
 		<activity android:name=".view.SettingsActivity"/>
 
 		<activity android:name=".view.AudioCueSettingsActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.DetailActivity"
 			android:configChanges="orientation|screenSize|uiMode"
-		    android:theme="@style/Theme.AppCompat" />
+		    android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.HistoryActivity"/>
 
 		<activity android:name=".view.AccountListActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.AccountActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.UploadActivity"/>
 
 		<activity android:name=".view.ManageWorkoutsActivity">
-			<intent-filter>
+			<intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
 				<action android:name="android.intent.action.VIEW" />
   				<action android:name="android.intent.action.EDIT" />
   				<category android:name="android.intent.category.DEFAULT" />
   				<data android:mimeType="application/vnd.garmin.workout+json"/>
 			</intent-filter>
 <!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
-			<intent-filter>
+			<intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
 				<action android:name="android.intent.action.VIEW" />
   				<action android:name="android.intent.action.EDIT" />
   				<category android:name="android.intent.category.DEFAULT" />
@@ -115,13 +121,13 @@
             tools:ignore="ExportedContentProvider" />
 
 		<activity android:name=".export.oauth2client.OAuth2Activity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.HRSettingsActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<activity android:name=".view.HRZonesActivity"
-			android:theme="@style/Theme.AppCompat" />
+			android:theme="@style/AppTheme" />
 
 		<service android:name=".tracker.Tracker" />
 		<service android:name=".export.RunnerUpLiveSynchronizer$LiveService" />
@@ -141,10 +147,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
             </intent-filter>
         </receiver>
-
-		<uses-library
-			android:name="com.samsung.android.sdk.bt"
-			android:required="false" />
 
 		<activity
 			android:name=".view.CreateAdvancedWorkout"/>

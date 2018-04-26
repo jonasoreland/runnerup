@@ -48,7 +48,7 @@ import java.util.zip.GZIPOutputStream;
 public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "RunningAHEAD";
-    public static final String PUBLIC_URL = "http://www.runningahead.com";
+    public static final String PUBLIC_URL = "https://www.runningahead.com";
 
     /**
      * @todo register OAuth2Server
@@ -56,9 +56,9 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     public static String CLIENT_ID = null;
     public static String CLIENT_SECRET = null;
 
-    public static final String AUTH_URL = "https://www.runningahead.com/oauth2/authorize";
-    public static final String TOKEN_URL = "https://api.runningahead.com/oauth2/token";
-    public static final String REDIRECT_URI = "http://localhost:8080/runnerup/runningahead";
+    private static final String AUTH_URL = "https://www.runningahead.com/oauth2/authorize";
+    private static final String TOKEN_URL = "https://api.runningahead.com/oauth2/token";
+    private static final String REDIRECT_URI = "https://localhost:8080/runnerup/runningahead";
 
     public static final String REST_URL = "https://api.runningahead.com/rest";
     public static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";

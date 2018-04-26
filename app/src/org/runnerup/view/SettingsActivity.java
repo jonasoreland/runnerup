@@ -21,7 +21,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -76,13 +76,6 @@ public class SettingsActivity extends PreferenceActivity
         {
             //Currently unused, should maybe be removed?
             getPreferenceManager().findPreference(res.getString(R.string.pref_experimental_features)).setEnabled(false);
-        }
-
-        //remove google play notices from froyo since we do not use it
-        if (BuildConfig.FLAVOR.equals("froyo") || !AboutPreference.isGooglePlayServicesAvailable(this)) {
-            Preference pref = findPreference(res.getString(R.string.pref_googleplayserviceslegalnotices));
-            PreferenceCategory category = (PreferenceCategory)findPreference(res.getString(R.string.pref_aboutcategory));
-            category.removePreference(pref);
         }
 
         //Geoid correction is not included in Froyo

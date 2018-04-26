@@ -337,17 +337,7 @@
 
     </PreferenceScreen>
 
-    <PreferenceCategory
-        android:key="@string/pref_aboutcategory"
-        android:title="@string/About">
-
-        <org.runnerup.widget.AboutPreference
-            android:title="@string/About_RunnerUp" />
-
-        <org.runnerup.widget.AboutPreference
-            android:key="@string/pref_googleplayserviceslegalnotices"
-            android:title="@string/Google_Play_Services_Legal_Notices"
-            android:dialogMessage="@string/google_play_not_installed" />
-    </PreferenceCategory>
+    <org.runnerup.widget.AboutPreference
+        android:title="@string/About_RunnerUp" />
 
 </PreferenceScreen>
