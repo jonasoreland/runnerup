@@ -27,7 +27,7 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class RepeatStep extends Step {
 
-    int repeatCount = 1;
+    int repeatCount = 0;
 
     public ArrayList<Step> getSteps() {
         return steps;
@@ -105,20 +105,17 @@ public class RepeatStep extends Step {
 
     @Override
     public boolean onTick(Workout w) {
-        if (steps.get(currentStep).onTick(w)) {
-            return true;
-        }
-        return false;
+        return currentRepeat >= repeatCount || steps.get(currentStep).onTick(w);
     }
 
     @Override
     public boolean onNextStep(Workout w) {
         if (steps.get(currentStep).onNextStep(w)) {
             currentStep++;
-            if (currentStep == steps.size()) {
+            if (currentStep >= steps.size()) {
                 currentStep = 0;
                 currentRepeat++;
-                if (currentRepeat == repeatCount) {
+                if (currentRepeat >= repeatCount) {
                     return true;
                 }
                 for (Step s : steps) {
@@ -188,9 +185,9 @@ public class RepeatStep extends Step {
 
     @Override
     public boolean isLastStep() {
+        if (currentRepeat >= repeatCount)
+            return true;
         if (currentStep + 1 < steps.size())
-            return false;
-        if (currentRepeat < repeatCount)
             return false;
         return steps.get(currentStep).isLastStep();
     }
