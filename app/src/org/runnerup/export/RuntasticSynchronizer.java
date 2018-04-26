@@ -51,7 +51,7 @@ import java.util.regex.Matcher;
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
-    public static final String PUBLIC_URL = "http://www.runtastic.com";
+    public static final String PUBLIC_URL = "https://www.runtastic.com";
     private static final String BASE_URL = "https://www.runtastic.com";
     private static final String START_URL = BASE_URL + "/en/login";
     private static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";

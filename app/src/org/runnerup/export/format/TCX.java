@@ -205,7 +205,7 @@ public class TCX {
                 mXML.text("Active");
                 mXML.endTag("", "Intensity");
                 mXML.startTag("", "TriggerMethod");
-                mXML.text("Manual");
+                mXML.text("Manual");//TODO
                 mXML.endTag("", "TriggerMethod");
                 int maxHR = 0;
                 long sumHR = 0;
