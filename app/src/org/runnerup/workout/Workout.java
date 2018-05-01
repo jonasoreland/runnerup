@@ -523,9 +523,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             return tracker.isComponentConnected(TrackerTemperature.NAME);
         } else if (dim == Dimension.PRESSURE) {
             return tracker.isComponentConnected(TrackerPressure.NAME);
-        } else if ((dim == Dimension.SPEED || dim == Dimension.PACE) &&
-                scope == Scope.CURRENT) {
-            return tracker.getCurrentSpeed() != null;
         }
         return true;
     }

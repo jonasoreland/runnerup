@@ -83,6 +83,10 @@ public class Tracker extends android.app.Service implements
     public static final int MAX_HR_AGE = 3000; // 3s
 
     private final Handler handler = new Handler();
+    private Double distanceI0 = null;
+    private Double distanceI1 = null;
+    private Long timeI0 = null;
+    private Long timeI1 = null;
 
     TrackerComponentCollection components = new TrackerComponentCollection();
     //Some trackers may select separate sensors depending on sport, handled in onBind()
@@ -864,20 +868,24 @@ public class Tracker extends android.app.Service implements
     }
 
     public Double getCurrentSpeed() {
-        return getCurrentSpeed(System.currentTimeMillis(), 3000);
+        return getCurrentSpeed(System.currentTimeMillis());
     }
 
-    private Double getCurrentSpeed(long now, long maxAge) {
-        if (mLastLocation == null)
-            return null;
-        if (now > mLastLocation.getTime() + maxAge)
-            return null;
-        double speed = mLastLocation.getSpeed();
-        if ((!mLastLocation.hasSpeed() || speed == 0.0f)
-                && mLastLocation != null && mLast2Location != null &&
-                mLastLocation.getTime() > mLast2Location.getTime() ) {
-            //Some Android (at least emulators) do not implement getSpeed() (even if hasSpeed() is true)
-            speed = mLastLocation.distanceTo(mLast2Location) * 1000 / (mLastLocation.getTime() - mLast2Location.getTime());
+    private Double getCurrentSpeed(long now) {
+        // Calculating speed manually because many Android devices do not
+        // implement getSpeed() (even if hasSpeed() is true) or provide incorrect readings
+        distanceI0 = distanceI1;
+        distanceI1 = getDistance();
+        timeI0 = timeI1;
+        timeI1 = getTime();
+        Double speed = null;
+
+        if (distanceI0 != null && timeI0 != null){
+            double d_c = distanceI1 - distanceI0;
+            double t_c = timeI1 - timeI0;
+            if (t_c != 0) {
+                speed = d_c / t_c;
+            }
         }
         return speed;
     }
