@@ -129,7 +129,7 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
             data.addUint8(Constants.SPORTS_HR_BPM_KEY, (byte) workoutInfo.getHeartRate(Scope.CURRENT));
         }
         data.addString(Constants.SPORTS_CUSTOM_LABEL_KEY, "SPEED");
-        data.addString(Constants.SPORTS_CUSTOM_VALUE_KEY, formatter.format(Formatter.Format.TXT_SHORT, Dimension.SPEED, workoutInfo.getSpeed(Scope.ACTIVITY)));
+        data.addString(Constants.SPORTS_CUSTOM_VALUE_KEY, formatter.format(Formatter.Format.TXT_SHORT, Dimension.SPEED, workoutInfo.getSpeed(Scope.CURRENT)));
         data.addUint8(Constants.SPORTS_LABEL_KEY, (byte) Constants.SPORTS_DATA_PACE);
         data.addUint8(Constants.SPORTS_UNITS_KEY, isMetric ? (byte) Constants.SPORTS_UNITS_METRIC : (byte) Constants.SPORTS_UNITS_IMPERIAL);
 
