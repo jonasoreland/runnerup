@@ -70,7 +70,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
      */
 
     @Override
-    public void onCreate(Bundle savedInstanceState) { //todo write up logo usage permissions
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
@@ -97,7 +97,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 getSupportLoaderManager().restartLoader(0, null, (LoaderCallbacks<Object>) view.getContext());
             }
         });
-        mListView.addFooterView(showDisabledBtn); //todo should look like a button on Froyo
+        mListView.addFooterView(showDisabledBtn);
 
         // adapter
         mCursorAdapter = new AccountListAdapter(this, null);
@@ -138,18 +138,17 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
 
         return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, showDisabled, null,
-                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME + " collate nocase"); //todo I'm guessing AUTH_CONFIG lets me know whether an account is set up
+                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME + " collate nocase");
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-        mCursorAdapter.swapCursor(arg1); //todo why isn't the old cursor being closed???!!!
+        mCursorAdapter.swapCursor(arg1);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
         mCursorAdapter.swapCursor(null);
-    } //todo why isn't the old cursor being closed???!!!
 
     class AccountListAdapter extends CursorAdapter {
         final LayoutInflater inflater;
@@ -197,25 +196,26 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             {
                 int curPosition = cursor.getPosition();
                 if (categories[curPosition] == CATEGORY_UNSET) {
-                    String curConnected = values.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+                    String curAuthConfig = values.getAsString(DB.ACCOUNT.AUTH_CONFIG);
+                    boolean curConnected = curAuthConfig != null && curAuthConfig.length() != 0;
 
                     if (curPosition == 0) {
-                        if (curConnected == null) {
-                            categories[curPosition] = R.string.accounts_category_unconnected;
-                        } else {
+                        if (curConnected) {
                             categories[curPosition] = R.string.accounts_category_connected;
+                        } else {
+                            categories[curPosition] = R.string.accounts_category_unconnected;
                         }
                     } else {
                         // get data for previous item
                         cursor.moveToPrevious();
-                        String prevConnected = DBHelper.get(cursor).getAsString(DB.ACCOUNT.AUTH_CONFIG);
+                        String prevAuthConfig = DBHelper.get(cursor).getAsString(DB.ACCOUNT.AUTH_CONFIG);
+                        boolean prevConnected = prevAuthConfig != null && prevAuthConfig.length() != 0;
                         cursor.moveToNext();
 
                         // compare the two
-                        if (prevConnected == null && curConnected != null
-                                || ((prevConnected != null && !prevConnected.equals(curConnected)))) { // start of unconnected //todo test
+                        if (prevConnected != curConnected) {
                             categories[cursor.getPosition()] = R.string.accounts_category_unconnected;
-                        } else { // same categories
+                        } else {
                             categories[cursor.getPosition()] = CATEGORY_SAME_AS_PREV;
                         }
                     }
@@ -250,7 +250,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             accountUploadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1); //todo doesn't seem to work
+                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
                 }
             });
 
