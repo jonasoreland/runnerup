@@ -149,6 +149,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     @Override
     public void onLoaderReset(Loader<Cursor> arg0) {
         mCursorAdapter.swapCursor(null);
+    }
 
     class AccountListAdapter extends CursorAdapter {
         final LayoutInflater inflater;
@@ -235,7 +236,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 Drawable circle = ContextCompat.getDrawable(context, R.drawable.circle_40dp);
                 circle.setColorFilter(getResources().getColor(synchronizer.getColorId()), PorterDuff.Mode.SRC_IN);
                 accountIcon.setImageDrawable(circle);
-                accountIconText.setText(id.substring(0,1));
+                accountIconText.setText(id.substring(0, 1));
             } else {
                 accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
                 accountIconText.setText(null);
@@ -284,12 +285,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             return inflater.inflate(R.layout.account_row, parent, false);
         }
+    }
 
-        private void setCustomThumb(SwitchCompat switchCompat, int drawableId, Context context) {
-            switchCompat.setThumbDrawable(ContextCompat.getDrawable(context, drawableId));
-            switchCompat.setThumbTintList(ContextCompat.getColorStateList(context, R.color.switch_thumb));
-            switchCompat.setThumbTintMode(PorterDuff.Mode.MULTIPLY);
-        }
+    private void setCustomThumb(SwitchCompat switchCompat, int drawableId, Context context) {
+        switchCompat.setThumbDrawable(ContextCompat.getDrawable(context, drawableId));
+        switchCompat.setThumbTintList(ContextCompat.getColorStateList(context, R.color.switch_thumb));
+        switchCompat.setThumbTintMode(PorterDuff.Mode.MULTIPLY);
     }
 
     final AdapterView.OnItemClickListener configureItemClick = new AdapterView.OnItemClickListener() {
