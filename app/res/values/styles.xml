@@ -89,7 +89,7 @@
     </style>
 
     <style name="ListCategoryHeading">
-        <item name="android:fontFamily">@string/fontFamily_medium</item>
+        <!-- item name="android:fontFamily">@string/fontFamily_medium</item -->
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textSize">14sp</item>
     </style>
