@@ -28,8 +28,7 @@
         android:layout_marginBottom="24dp"
         android:layout_marginTop="8dp"
         android:textAppearance="@style/ListCategoryHeading"
-        android:visibility="visible"
-        android:text="asdf"/>
+        android:visibility="visible"/>
 
     <LinearLayout
         android:layout_width="match_parent"

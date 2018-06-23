@@ -24,15 +24,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,10 +47,12 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
-import org.runnerup.workout.Sport;
+
+import java.util.Calendar;
+import java.util.Date;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
+public class HistoryActivity extends AppCompatActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
     SQLiteDatabase mDB = null;
@@ -55,7 +61,9 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     ListView listView = null;
     CursorAdapter cursorAdapter = null;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +79,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
         listView.setAdapter(cursorAdapter);
 
         this.getSupportLoaderManager().initLoader(0, null, this);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         new ActivityCleaner().conditionalRecompute(mDB);
     }
@@ -89,7 +98,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        String[] from = new String[] {
+        String[] from = new String[]{
                 "_id", DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
         };
@@ -130,70 +139,83 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             inflater = LayoutInflater.from(context);
         }
 
+        private boolean sameDayAsPrevious(long curTimeInSecs, Cursor cursor) {
+            int curPosition = cursor.getPosition();
+            if (curPosition == 0)
+                return false;
+
+            cursor.moveToPrevious();
+            long prevTimeInSecs = new ActivityEntity(cursor).getStartTime();
+
+            Calendar prevCal = Calendar.getInstance();
+            Calendar curCal = Calendar.getInstance();
+            prevCal.setTime(new Date(prevTimeInSecs * 1000));
+            curCal.setTime(new Date(curTimeInSecs * 1000));
+            return prevCal.get(Calendar.YEAR) == curCal.get(Calendar.YEAR)
+                    && prevCal.get(Calendar.DAY_OF_YEAR) == curCal.get(Calendar.DAY_OF_YEAR);
+        }
+
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ActivityEntity ae = new ActivityEntity(cursor);
-            int[] to = new int[] {
-                    R.id.history_list_id,
-                    R.id.history_list_start_time, R.id.history_list_distance,
-                    R.id.history_list_time, R.id.history_list_pace, R.id.history_list_sport
-            };
 
-            Long id = ae.getId();
+            // date
+            TextView sectionTitle = view.findViewById(R.id.section_title);
             Long st = ae.getStartTime();
-            Float d = ae.getDistance();
-            Long t = ae.getTime();
+            if (st == null || sameDayAsPrevious(st, cursor)) {
+                sectionTitle.setVisibility(View.GONE);
+            } else {
+                sectionTitle.setVisibility(View.VISIBLE);
+                sectionTitle.setText(formatter.formatDate(st));
+            }
+
+            // sport
             Integer s = ae.getSport();
-
-            {
-                TextView tv = (TextView) view.findViewById(to[0]);
-                tv.setText(Long.toString(id));
+            ImageView emblem = view.findViewById(R.id.history_list_emblem);
+            switch (s) {
+                case DB.ACTIVITY.SPORT_RUNNING:
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.emblem_running));
+                    break;
+                case DB.ACTIVITY.SPORT_BIKING:
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_biking));
+                    break;
+                case DB.ACTIVITY.SPORT_OTHER:
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_other));
+                    break;
+                case DB.ACTIVITY.SPORT_ORIENTEERING:
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_orienteering));
+                    break;
+                case DB.ACTIVITY.SPORT_WALKING:
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_walking));
+                    break;
+                default:
+                    emblem.setImageResource(0);
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(to[1]);
-                if (st != null) {
-                    tv.setText(formatter.formatDateTime(st));
-                } else {
-                    tv.setText("");
-                }
+            // distance
+            Float d = ae.getDistance();
+            TextView distanceText = view.findViewById(R.id.history_list_distance);
+            if (d != null) {
+                distanceText.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
+            } else {
+                distanceText.setText("");
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(to[2]);
-                if (d != null) {
-                    tv.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
-                } else {
-                    tv.setText("");
-                }
+            // duration
+            Long dur = ae.getTime();
+            TextView durationText = view.findViewById(R.id.history_list_duration);
+            if (dur != null) {
+                durationText.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, dur));
+            } else {
+                durationText.setText("");
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(to[3]);
-                if (t != null) {
-                    tv.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
-                } else {
-                    tv.setText("");
-                }
-            }
-
-            {
-                TextView tv = (TextView) view.findViewById(to[4]);
-                if (d != null && t != null && d != 0 && t != 0) {
-                    tv.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
-                } else {
-                    tv.setText("");
-                }
-            }
-
-            {
-                TextView tv = (TextView) view.findViewById(to[5]);
-
-                if (s != null) {
-                    tv.setText(Sport.textOf(getResources(), s));
-                } else {
-                    tv.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
-                }
+            // pace
+            TextView paceText = view.findViewById(R.id.history_list_pace);
+            if (d != null && dur != null && d != 0 && dur != 0) {
+                paceText.setText(formatter.formatPace(Formatter.Format.TXT_LONG, dur / d));
+            } else {
+                paceText.setText("");
             }
         }
 
