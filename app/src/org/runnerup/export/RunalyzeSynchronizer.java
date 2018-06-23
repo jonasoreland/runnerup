@@ -79,7 +79,10 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a17_runalyze;}
+    public int getIconId() {return R.drawable.service_runalyze;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunalyze;}
 
     @Override
     public String getUrl() {

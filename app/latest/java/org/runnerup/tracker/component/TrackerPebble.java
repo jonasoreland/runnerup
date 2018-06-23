@@ -125,6 +125,11 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
         data.addString(Constants.SPORTS_TIME_KEY, formatter.format(Formatter.Format.TXT_SHORT, Dimension.TIME, workoutInfo.get(Scope.ACTIVITY, Dimension.TIME)));
         data.addString(Constants.SPORTS_DISTANCE_KEY, formatter.format(Formatter.Format.TXT, Dimension.DISTANCE, workoutInfo.get(Scope.ACTIVITY, Dimension.DISTANCE)));
         data.addString(Constants.SPORTS_DATA_KEY, formatter.format(Formatter.Format.TXT_SHORT, Dimension.PACE, workoutInfo.get(Scope.ACTIVITY, Dimension.PACE)));
+        if (tracker.isComponentConnected(TrackerHRM.NAME)) {
+            data.addUint8(Constants.SPORTS_HR_BPM_KEY, (byte) workoutInfo.getHeartRate(Scope.CURRENT));
+        }
+        data.addString(Constants.SPORTS_CUSTOM_LABEL_KEY, "SPEED");
+        data.addString(Constants.SPORTS_CUSTOM_VALUE_KEY, formatter.format(Formatter.Format.TXT_SHORT, Dimension.SPEED, workoutInfo.getSpeed(Scope.CURRENT)));
         data.addUint8(Constants.SPORTS_LABEL_KEY, (byte) Constants.SPORTS_DATA_PACE);
         data.addUint8(Constants.SPORTS_UNITS_KEY, isMetric ? (byte) Constants.SPORTS_UNITS_METRIC : (byte) Constants.SPORTS_UNITS_IMPERIAL);
 

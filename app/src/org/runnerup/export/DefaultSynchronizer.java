@@ -26,6 +26,7 @@ import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
@@ -72,6 +73,11 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     public int getIconId() {
         //0 is used if the resource id cannot be found
         return 0;
+    }
+
+    @Override
+    public int getColorId() {
+        return R.color.serviceDefault;
     }
 
     @Override

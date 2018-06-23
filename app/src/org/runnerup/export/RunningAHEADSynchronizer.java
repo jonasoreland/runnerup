@@ -124,7 +124,10 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     }
 
     @Override
-    public int getIconId() {return R.drawable.a7_runningahead;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunningAhead;}
 
     @Override
     public void init(ContentValues config) {

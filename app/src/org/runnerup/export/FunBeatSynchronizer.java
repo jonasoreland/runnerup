@@ -121,7 +121,10 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a2_funbeatlogo;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceFunbeat; }
 
     @Override
     public void init(ContentValues config) {

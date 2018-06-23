@@ -100,7 +100,10 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a3_mapmyrun_logo;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() { return R.color.serviceMapMyRun; }
 
     @Override
     public void init(ContentValues config) {

@@ -63,7 +63,10 @@ public class FileSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a16_localfile;}
+    public int getIconId() {return R.drawable.service_file;}
+
+    @Override
+    public int getColorId() {return R.color.colorPrimary;}
 
     @Override
     public String getUrl() {

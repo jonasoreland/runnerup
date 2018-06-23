@@ -21,4 +21,22 @@
      <color name="bottomNavBg">#212121</color>
      <color name="colorPrimary">#003366</color>
      <color name="colorAccent">#53B1FC</color>
+
+     <color name="serviceDefault">#003366</color>
+     <color name="serviceDigifit">#5DA9D3</color>
+     <color name="serviceEndomondo">#87AA14</color>
+     <color name="serviceFunbeat">#267294</color>
+     <color name="serviceFacebook">#3b5998</color>
+     <color name="serviceGarmin">#0172AD</color>
+     <color name="serviceGoogleFit">#DD5144</color>
+     <color name="serviceJogg">#29AA2D</color>
+     <color name="serviceMapMyRun">#0077C0</color>
+     <color name="serviceNike">#000000</color>
+     <color name="serviceRunalyze">#67B14C</color>
+     <color name="serviceRunkeeper">#3CC2D2</color>
+     <color name="serviceRunnerUpLive">#003366</color>
+     <color name="serviceRunningAhead">#336699</color>
+     <color name="serviceRunningFreeOnline">#028AC9</color>
+     <color name="serviceRuntastic">#0067B0</color>
+     <color name="serviceStrava">#FC4C02</color>
 </resources>
