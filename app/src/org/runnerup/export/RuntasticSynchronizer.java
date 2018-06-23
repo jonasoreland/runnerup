@@ -90,7 +90,10 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a13_runtastic;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRuntastic;}
 
     @Override
     public void init(ContentValues config) {

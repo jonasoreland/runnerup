@@ -104,7 +104,10 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a6_endomondo;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() { return R.color.serviceEndomondo; }
 
     @Override
     public void init(ContentValues config) {

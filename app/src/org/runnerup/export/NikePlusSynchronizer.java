@@ -110,7 +110,12 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a4_nikeplus;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {
+        return R.color.serviceNike;
+    }
 
     @Override
     public void init(ContentValues config) {

@@ -75,7 +75,10 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a14_googlefit;}
+    public int getColorId() { return R.color.serviceGoogleFit; }
+
+    @Override
+    public int getIconId() {return 0;}
 
     private Context getContext() {
         return context;

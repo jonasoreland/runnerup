@@ -46,7 +46,7 @@
   </LinearLayout>
 
   <ListView
-    android:id="@android:id/list"
+    android:id="@+id/upload_list"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_above="@+id/account_upload_buttons"
