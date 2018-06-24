@@ -132,7 +132,7 @@ public class StepButton extends LinearLayout {
 
         Dimension goalType = step.getTargetType();
         if (goalType == null) {
-            mGoalValue.setText("");
+            mGoalValue.setText(step.getIntensity().getTextId());
         } else {
             String prefix;
             if (goalType == Dimension.HR || goalType == Dimension.HRZ)
