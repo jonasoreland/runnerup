@@ -17,7 +17,6 @@
   -->
 <resources>
      <color name="subsectionBg">#212121</color>
-     <color name="bottomNavBg">#212121</color>
      <color name="colorPrimary">#003366</color>
      <color name="colorAccent">#53B1FC</color>
 
