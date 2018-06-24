@@ -137,7 +137,10 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     @Override
-    public int getIconId() {return R.drawable.a11_facebook;}
+    public int getIconId() {return R.drawable.service_facebook;}
+
+    @Override
+    public int getColorId() { return R.color.serviceFacebook; }
 
     @Override
     public void init(ContentValues config) {

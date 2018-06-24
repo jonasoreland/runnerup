@@ -28,12 +28,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
@@ -44,6 +38,11 @@ import org.runnerup.util.Formatter;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.WorkoutInfo;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
@@ -79,7 +78,10 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     }
 
     @Override
-    public int getIconId() {return R.drawable.a8_runneruplive;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunnerUpLive;}
 
     @Override
     public void init(ContentValues config) {
