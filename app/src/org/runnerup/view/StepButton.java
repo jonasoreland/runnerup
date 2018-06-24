@@ -134,8 +134,14 @@ public class StepButton extends LinearLayout {
         if (goalType == null) {
             mGoalValue.setText("");
         } else {
-            mGoalValue.setText(formatter.format(Formatter.Format.TXT_SHORT, goalType,
-                    step.getTargetValue().minValue)
+            String prefix;
+            if (goalType == Dimension.HR || goalType == Dimension.HRZ)
+                prefix = "HR ";
+            else
+                prefix = "";
+
+            mGoalValue.setText(prefix +
+                    formatter.format(Formatter.Format.TXT_SHORT, goalType, step.getTargetValue().minValue)
                     + "-" +
                     formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue));
         }
