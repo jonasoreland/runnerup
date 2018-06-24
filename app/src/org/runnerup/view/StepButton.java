@@ -95,28 +95,35 @@ public class StepButton extends LinearLayout {
         this.step = step;
         Resources res = getResources();
 
+        mDurationValue.setVisibility(VISIBLE);
         switch (step.getIntensity()) {
             case ACTIVE:
-                mIntensityIcon.setImageResource(R.drawable.step_active); //todo check if vector drawable in API 8
+                mIntensityIcon.setImageResource(R.drawable.step_active);
+                mGoalValue.setTextColor(res.getColor(R.color.stepActive)); //todo check if it works
                 break;
             case RESTING:
-                mIntensityIcon.setImageResource(R.drawable.step_resting); //todo check if vector drawable in API 8
+                mIntensityIcon.setImageResource(R.drawable.step_resting);
+                mGoalValue.setTextColor(res.getColor(R.color.stepResting));
                 break;
             case REPEAT:
                 mIntensityIcon.setImageResource(R.drawable.step_repeat);
-                mDurationValue.setText("" + step.getRepeatCount());
-                mGoalValue.setText("");
+                mDurationValue.setVisibility(GONE); //todo better wording in string
+                mGoalValue.setText(String.format(res.getString(R.string.repeat_times), step.getRepeatCount()));
+                mGoalValue.setTextColor(res.getColor(R.color.stepRepeat));
                 if (editRepeatCount)
                     mLayout.setOnClickListener(onRepeatClickListener);
                 return;
             case WARMUP:
                 mIntensityIcon.setImageResource(R.drawable.step_warmup);
+                mGoalValue.setTextColor(res.getColor(R.color.stepWarmup));
                 break;
             case COOLDOWN:
                 mIntensityIcon.setImageResource(R.drawable.step_cooldown);
+                mGoalValue.setTextColor(res.getColor(R.color.stepCooldown));
                 break;
             case RECOVERY:
                 mIntensityIcon.setImageResource(R.drawable.step_recovery);
+                mGoalValue.setTextColor(res.getColor(R.color.stepRecovery));
                 break;
             default:
                 mIntensityIcon.setImageResource(0);
@@ -136,7 +143,7 @@ public class StepButton extends LinearLayout {
         } else {
             String prefix;
             if (goalType == Dimension.HR || goalType == Dimension.HRZ)
-                prefix = "HR ";
+                prefix = "HR "; //todo should use a string
             else
                 prefix = "";
 

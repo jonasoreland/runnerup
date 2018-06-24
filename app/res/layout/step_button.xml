@@ -27,13 +27,6 @@
     android:gravity="center_vertical"
     android:paddingTop="12dp">
 
-    <ImageView
-        android:id="@+id/step_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp" />
-
     <TextView
         android:id="@+id/step_duration_value"
         android:layout_width="0dp"
@@ -42,12 +35,18 @@
         android:layout_marginRight="8dp"
         android:layout_weight="1" />
 
+    <ImageView
+        android:id="@+id/step_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="0dp" />
+
     <TextView
         android:id="@+id/step_goal_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="40dp"
-        android:layout_weight="1"
-        android:textStyle="bold" />
+        android:layout_weight="2" />
 </LinearLayout>
