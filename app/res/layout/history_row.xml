@@ -14,9 +14,10 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
@@ -28,21 +29,33 @@
         android:textAppearance="@style/ListCategoryHeading"
         android:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/history_list_emblem"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/section_title"
-        android:layout_marginRight="16dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/history_list_distance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/section_title"
-        android:layout_toRightOf="@id/history_list_emblem"
-        android:gravity="right"
-        android:textAppearance="@style/TwoRowListPrimary" />
+        <ImageView
+            android:id="@+id/history_list_emblem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/history_list_distance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TwoRowListPrimary" />
+
+        <TextView
+            android:id="@+id/history_list_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:textAppearance="@style/TwoRowListPrimary" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -64,5 +77,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAppearance="@style/TwoRowListSecondary" />
+
+        <TextView
+            android:id="@+id/history_list_additional"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="@style/TwoRowListSecondary" />
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

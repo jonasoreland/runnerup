@@ -33,6 +33,8 @@ import org.runnerup.R;
 import org.runnerup.workout.Dimension;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -44,6 +46,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private SharedPreferences sharedPreferences = null;
     private java.text.DateFormat dateFormat = null;
     private java.text.DateFormat timeFormat = null;
+    private java.text.DateFormat monthFormat = null;
+    private java.text.DateFormat dayOfMonthFormat = null;
     //private HRZones hrZones = null;
     private final Locale defaultLocale;
 
@@ -74,6 +78,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
         dateFormat = android.text.format.DateFormat.getDateFormat(ctx);
         timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
+        monthFormat = new SimpleDateFormat("MMM yyyy");
+        dayOfMonthFormat = new SimpleDateFormat("E d");
         //hrZones = new HRZones(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
@@ -538,11 +544,19 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param seconds_since_epoch
-     * @return date as a string
+     * @param date date to format
+     * @return month and year as a string (e.g. "Feb 2000")
      */
-    public String formatDate(long seconds_since_epoch) {
-        return dateFormat.format(seconds_since_epoch * 1000);
+    public String formatMonth(Date date) {
+        return monthFormat.format(date);
+    }
+
+    /**
+     * @param date date to format
+     * @return day of the week and day of the month as a string (e.g. "Fri 13")
+     */
+    public String formatDayOfMonth(Date date) {
+        return dayOfMonthFormat.format(date);
     }
 
     /**

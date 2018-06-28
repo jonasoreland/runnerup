@@ -41,4 +41,10 @@
      <color name="serviceRunningFreeOnline">#028AC9</color>
      <color name="serviceRuntastic">#0067B0</color>
      <color name="serviceStrava">#FC4C02</color>
+
+     <color name="sportBiking">#FEBC5A</color>
+     <color name="sportOrienteering">#FFB38E</color>
+     <color name="sportRunning">#46FFBE</color>
+     <color name="sportWalking">#ACBFFF</color>
+     <color name="sportOther">#FFD95C</color>
 </resources>

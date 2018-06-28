@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
@@ -139,7 +138,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             inflater = LayoutInflater.from(context);
         }
 
-        private boolean sameDayAsPrevious(long curTimeInSecs, Cursor cursor) {
+        private boolean sameMonthAsPrevious(int curYear, int curMonth, Cursor cursor) {
             int curPosition = cursor.getPosition();
             if (curPosition == 0)
                 return false;
@@ -148,49 +147,32 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             long prevTimeInSecs = new ActivityEntity(cursor).getStartTime();
 
             Calendar prevCal = Calendar.getInstance();
-            Calendar curCal = Calendar.getInstance();
             prevCal.setTime(new Date(prevTimeInSecs * 1000));
-            curCal.setTime(new Date(curTimeInSecs * 1000));
-            return prevCal.get(Calendar.YEAR) == curCal.get(Calendar.YEAR)
-                    && prevCal.get(Calendar.DAY_OF_YEAR) == curCal.get(Calendar.DAY_OF_YEAR);
+            return prevCal.get(Calendar.YEAR) == curYear
+                    && prevCal.get(Calendar.MONTH) == curMonth;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ActivityEntity ae = new ActivityEntity(cursor);
 
-            // date
+            // month + day
+            Date curDate = new Date(ae.getStartTime() * 1000);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(curDate);
+
             TextView sectionTitle = view.findViewById(R.id.section_title);
-            Long st = ae.getStartTime();
-            if (st == null || sameDayAsPrevious(st, cursor)) {
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            if (curDate == null || sameMonthAsPrevious(year, month, cursor)) {
                 sectionTitle.setVisibility(View.GONE);
             } else {
                 sectionTitle.setVisibility(View.VISIBLE);
-                sectionTitle.setText(formatter.formatDate(st));
+                sectionTitle.setText(formatter.formatMonth(curDate));
             }
 
-            // sport
-            Integer s = ae.getSport();
-            ImageView emblem = view.findViewById(R.id.history_list_emblem);
-            switch (s) {
-                case DB.ACTIVITY.SPORT_RUNNING:
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.emblem_running));
-                    break;
-                case DB.ACTIVITY.SPORT_BIKING:
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_biking));
-                    break;
-                case DB.ACTIVITY.SPORT_OTHER:
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_other));
-                    break;
-                case DB.ACTIVITY.SPORT_ORIENTEERING:
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_orienteering));
-                    break;
-                case DB.ACTIVITY.SPORT_WALKING:
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.emblem_walking));
-                    break;
-                default:
-                    emblem.setImageResource(0);
-            }
+            TextView dateText = view.findViewById(R.id.history_list_date);
+            dateText.setText(formatter.formatDayOfMonth(curDate));
 
             // distance
             Float d = ae.getDistance();
@@ -199,6 +181,73 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
                 distanceText.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
             } else {
                 distanceText.setText("");
+            }
+
+            // sport + additional info
+            Integer s = ae.getSport();
+            ImageView emblem = view.findViewById(R.id.history_list_emblem);
+            TextView additionalInfo = view.findViewById(R.id.history_list_additional);
+
+            switch (s) {
+                case DB.ACTIVITY.SPORT_RUNNING: {
+                    int sportColor = getResources().getColor(R.color.sportRunning);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_running));
+                    distanceText.setTextColor(sportColor);
+
+                    Integer hr = ae.getAvgHr();
+                    if (hr != null) {
+                        additionalInfo.setTextColor(sportColor);
+                        additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
+                    } else {
+                        additionalInfo.setText(null);
+                    }
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_BIKING: {
+                    int sportColor = getResources().getColor(R.color.sportBiking);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_biking));
+                    distanceText.setTextColor(sportColor);
+                    additionalInfo.setTextColor(sportColor);
+                    Float cad = ae.getAvgCadence();
+                    if (cad != null) {
+                        additionalInfo.setTextColor(sportColor);
+                        additionalInfo.setText(formatter.formatCadence(Formatter.Format.TXT_SHORT, cad));
+                    } else {
+                        additionalInfo.setText(null);
+                    }
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_OTHER: {
+                    int sportColor = getResources().getColor(R.color.sportOther);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_other));
+                    distanceText.setTextColor(sportColor);
+//                    additionalInfo.setTextColor(sportColor);
+                    additionalInfo.setText(null);
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_ORIENTEERING: {
+                    int sportColor = getResources().getColor(R.color.sportOrienteering);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_orienteering));
+                    distanceText.setTextColor(sportColor);
+                    Integer hr = ae.getAvgHr();
+                    if (hr != null) {
+                        additionalInfo.setTextColor(sportColor);
+                        additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
+                    } else {
+                        additionalInfo.setText(null);
+                    }
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_WALKING: {
+                    int sportColor = getResources().getColor(R.color.sportWalking);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_walking));
+                    distanceText.setTextColor(sportColor);
+//                    additionalInfo.setTextColor(sportColor);
+                    additionalInfo.setText(null);
+                    break;
+                }
+                default:
+                    emblem.setImageResource(0);
             }
 
             // duration
