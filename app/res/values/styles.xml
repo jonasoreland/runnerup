@@ -14,7 +14,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -88,8 +88,14 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="AppBarStatisticsText">
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
     <style name="ListCategoryHeading">
-        <!-- item name="android:fontFamily">@string/fontFamily_medium</item -->
+        <item name="android:fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textSize">14sp</item>
     </style>

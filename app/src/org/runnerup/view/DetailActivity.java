@@ -28,8 +28,10 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -102,6 +104,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private Button resumeButton = null;
     private TextView activityTime = null;
     private TextView activityPace = null;
+    private View activityPaceSeparator = null;
     private TextView activityDistance = null;
 
     private TitleSpinner sport = null;
@@ -121,6 +124,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         super.onCreate(savedInstanceState);
         MapWrapper.start(this);
         setContentView(R.layout.detail);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.actionbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         Intent intent = getIntent();
@@ -148,6 +156,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         activityTime = (TextView) findViewById(R.id.activity_time);
         activityDistance = (TextView) findViewById(R.id.activity_distance);
         activityPace = (TextView) findViewById(R.id.activity_pace);
+        activityPaceSeparator = findViewById(R.id.activity_pace_separator);
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
 
@@ -220,7 +229,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private void setEdit(boolean value) {
         edit = value;
-        saveButton.setEnabled(value);
+        if (value)
+            saveButton.setVisibility(View.VISIBLE);
+        else
+            saveButton.setVisibility(View.GONE);
         WidgetUtil.setEditable(notes, value);
         sport.setEnabled(value);
         if (recomputeMenuItem != null)
@@ -247,6 +259,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                break;
             case R.id.menu_delete_activity:
                 deleteButtonClick.onClick(null);
                 break;
@@ -415,7 +430,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
             long st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
-            setTitle("RunnerUp - " + formatter.formatDateTime(st));
+            setTitle(formatter.formatDateTime(st));
         }
         float d = 0;
         if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
@@ -434,9 +449,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
 
         if (d != 0 && t != 0) {
+            activityPace.setVisibility(View.VISIBLE);
+            activityPaceSeparator.setVisibility(View.VISIBLE);
             activityPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
         } else {
-            activityPace.setText("");
+            activityPace.setVisibility(View.GONE);
+            activityPaceSeparator.setVisibility(View.GONE);
         }
 
         if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {

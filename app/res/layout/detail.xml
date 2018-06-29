@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -22,70 +21,62 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/linear_layout0"
-        android:layout_width="fill_parent"
+        android:id="@+id/appbarlayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:orientation="horizontal" >
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/total_time"
-            style="@style/RunHeader"
-            android:gravity="right"
-            android:text="@string/time" />
-
-        <TextView
-            android:id="@+id/total_distance"
-            style="@style/RunHeader"
-            android:gravity="right"
-            android:text="@string/distance" />
-
-        <TextView
-            android:id="@+id/total_pace"
-            style="@style/RunHeader"
-            android:layout_marginRight="3dp"
-            android:gravity="right"
-            android:text="@string/pace" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/total"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_layout0"
-        android:background="@drawable/countdown_background"
-        android:orientation="vertical" >
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/actionbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:id="@+id/header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp" >
-
-            <TextView
-                android:id="@+id/text_view01"
-                style="@style/RunHeader"
-                android:text="@string/Total" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_layout3"
+            android:id="@+id/stat_overview"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/activity_time"
-                style="@style/RunInfo" />
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
                 android:id="@+id/activity_distance"
-                style="@style/RunInfo" />
+                style="@style/AppBarStatisticsText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:background="@android:color/white" />
+
+            <TextView
+                android:id="@+id/activity_time"
+                style="@style/AppBarStatisticsText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center" />
+
+            <View
+                android:id="@+id/activity_pace_separator"
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:background="@android:color/white" />
 
             <TextView
                 android:id="@+id/activity_pace"
-                style="@style/RunInfo"
-                android:layout_marginRight="3dp" />
+                style="@style/AppBarStatisticsText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center" />
         </LinearLayout>
     </LinearLayout>
 
@@ -94,29 +85,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/buttons"
-        android:layout_below="@id/total" >
+        android:layout_below="@id/appbarlayout">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-            </TabWidget>
+                android:layout_height="wrap_content"></TabWidget>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:id="@+id/tab_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/summary_sport"
@@ -132,52 +122,51 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top|left"
+                        android:hint="@string/Notes_about_your_workout"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
-                        android:hint="@string/Notes_about_your_workout"
                         android:singleLine="false" />
 
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:background="@color/black"
                         android:orientation="vertical"
-                        android:visibility="gone"
-                        android:background="@color/black">
+                        android:visibility="gone">
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/Heartrate_zones_distribution"
-                            android:textColor="@android:color/white"
                             android:layout_gravity="center"
-                            android:textAlignment="center"/>
+                            android:text="@string/Heartrate_zones_distribution"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/white" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tab_lap"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent">
 
                     <ListView
                         android:id="@+id/laplist"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" >
-                    </ListView>
+                        android:layout_weight="1"></ListView>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tab_upload"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent">
 
                     <ListView
                         android:id="@+id/report_list"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" >
-                    </ListView>
+                        android:layout_weight="1"></ListView>
                 </LinearLayout>
 
                 <LinearLayout
@@ -185,14 +174,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:weightSum="1">
-                </LinearLayout>
+                    android:weightSum="1"></LinearLayout>
 
                 <include
                     android:id="@+id/tab_map"
                     layout="@layout/map_area"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent" />
             </FrameLayout>
         </LinearLayout>
     </TabHost>
@@ -202,7 +190,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/resume_button"
@@ -211,19 +199,19 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/Resume"
+            android:drawablePadding="-32dp"
             android:drawableRight="@drawable/ic_av_play_arrow"
-            android:drawablePadding="-32dp" />
+            android:text="@string/Resume" />
 
         <Button
-            style="@style/ButtonText"
             android:id="@+id/upload_button"
+            style="@style/ButtonText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
-            android:text="@string/Upload_activity"
-            android:singleLine="false" />
+            android:singleLine="false"
+            android:text="@string/Upload_activity" />
 
         <Button
             android:id="@+id/save_button"
