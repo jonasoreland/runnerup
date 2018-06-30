@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -17,145 +16,173 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="org.runnerup"
-	xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.runnerup">
 
-		<uses-feature
-  			android:glEsVersion="0x00020000"
-  			android:required="true"/>
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
-		<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-		<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-		<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-		<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-		<uses-permission android:name="android.permission.WAKE_LOCK" />
-		<uses-permission android:name="android.permission.INTERNET" />
-		<permission android:name="org.runnerup.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
-        <uses-permission android:name="org.runnerup.permission.MAPS_RECEIVE"/>
-    	<uses-permission android:name="android.permission.BLUETOOTH" />
-    	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
-	<application
-	    android:icon="@drawable/ic_launcher"
-	    android:label="@string/app_name"
-		android:extractNativeLibs="false"
-		android:supportsRtl="true"
-		android:allowBackup="true"
-		android:theme="@style/MainLayoutTheme"
-		android:fullBackupContent="@xml/backup_descriptor"
-		android:appCategory="maps"
-		tools:ignore="UnusedAttribute">
+    <permission
+        android:name="org.runnerup.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
 
-		<activity
-			android:name=".view.MainLayout"
-			android:label="@string/app_name">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
+    <uses-permission android:name="org.runnerup.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:mimeType="application/octet-stream"
-					android:scheme="http" />
-				<data android:host="*" />
-				<data android:pathPattern="runnerup.db.export" />
-			</intent-filter>
-  		</activity>
+    <application
+        android:allowBackup="true"
+        android:appCategory="maps"
+        android:extractNativeLibs="false"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/MainLayoutTheme"
+        tools:ignore="UnusedAttribute">
 
-		<activity android:name=".view.StartActivity"/>
+        <activity
+            android:name=".view.MainLayout"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
-		<activity android:name="org.runnerup.view.FeedActivity"/>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-		<activity android:name=".view.RunActivity"
-		    android:configChanges="keyboardHidden|orientation"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-		<activity android:name=".view.SettingsActivity"/>
+                <data
+                    android:mimeType="application/octet-stream"
+                    android:scheme="http" />
+                <data android:host="*" />
+                <data android:pathPattern="runnerup.db.export" />
+            </intent-filter>
+        </activity>
 
-		<activity android:name=".view.AudioCueSettingsActivity"
-			android:theme="@style/AppTheme" />
+        <activity android:name=".view.StartActivity" />
 
-		<activity android:name=".view.DetailActivity"
-			android:configChanges="orientation|screenSize|uiMode"
-		    android:theme="@style/AppTheme" />
+        <activity android:name="org.runnerup.view.FeedActivity" />
 
-		<activity android:name=".view.HistoryActivity"/>
+        <activity
+            android:name=".view.RunActivity"
+            android:configChanges="keyboardHidden|orientation" />
 
-		<activity android:name=".view.AccountListActivity"
-			android:theme="@style/AppTheme"
-			android:label="@string/Configure_accounts"
-			android:parentActivityName=".view.MainLayout">
-			<!-- Parent activity meta-data to support 4.0 and lower -->
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".view.MainLayout" />
-		</activity>
+        <activity android:name=".view.SettingsActivity" />
 
-		<activity android:name=".view.AccountActivity"
-			android:theme="@style/AppTheme" />
+        <activity
+            android:name=".view.AudioCueSettingsActivity"
+            android:theme="@style/AppTheme" />
 
-		<activity android:name=".view.UploadActivity"/>
+        <activity
+            android:name=".view.DetailActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:parentActivityName=".view.MainLayout"
+            android:theme="@style/MainLayoutTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.MainLayout" />
+        </activity>
 
-		<activity android:name=".view.ManageWorkoutsActivity">
-			<intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
-				<action android:name="android.intent.action.VIEW" />
-  				<action android:name="android.intent.action.EDIT" />
-  				<category android:name="android.intent.category.DEFAULT" />
-  				<data android:mimeType="application/vnd.garmin.workout+json"/>
-			</intent-filter>
-<!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
-			<intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
-				<action android:name="android.intent.action.VIEW" />
-  				<action android:name="android.intent.action.EDIT" />
-  				<category android:name="android.intent.category.DEFAULT" />
-  				<data android:mimeType="application/json"/>
-			</intent-filter>
-		</activity>
+        <activity android:name=".view.HistoryActivity" />
 
-        <provider android:name=".content.WorkoutFileProvider"
+        <activity
+            android:name=".view.AccountListActivity"
+            android:label="@string/Configure_accounts"
+            android:parentActivityName=".view.MainLayout"
+            android:theme="@style/AppTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.MainLayout" />
+        </activity>
+
+        <activity
+            android:name=".view.AccountActivity"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".view.UploadActivity" />
+
+        <activity android:name=".view.ManageWorkoutsActivity">
+            <intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/vnd.garmin.workout+json" />
+            </intent-filter>
+            <!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
+            <intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.EDIT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/json" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name=".content.WorkoutFileProvider"
             android:authorities="org.runnerup.workout.file.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider" />
 
-        <provider android:name=".content.ActivityProvider"
+        <provider
+            android:name=".content.ActivityProvider"
             android:authorities="org.runnerup.activity.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider" />
 
-		<activity android:name=".export.oauth2client.OAuth2Activity"
-			android:theme="@style/AppTheme" />
+        <activity
+            android:name=".export.oauth2client.OAuth2Activity"
+            android:theme="@style/AppTheme" />
 
-		<activity android:name=".view.HRSettingsActivity"
-			android:theme="@style/AppTheme" />
+        <activity
+            android:name=".view.HRSettingsActivity"
+            android:theme="@style/AppTheme" />
 
-		<activity android:name=".view.HRZonesActivity"
-			android:theme="@style/AppTheme" />
+        <activity
+            android:name=".view.HRZonesActivity"
+            android:theme="@style/AppTheme" />
 
-		<service android:name=".tracker.Tracker" />
-		<service android:name=".export.RunnerUpLiveSynchronizer$LiveService" />
-
-		<receiver
-		    android:name=".tracker.component.HeadsetButtonReceiver"
-		    android:enabled="true" >
-		    <intent-filter>
-		        <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
-		    </intent-filter>
-		</receiver>
+        <service android:name=".tracker.Tracker" />
+        <service android:name=".export.RunnerUpLiveSynchronizer$LiveService" />
 
         <receiver
-            android:name=".view.StartActivityHeadsetButtonReceiver"
-            android:enabled="true" >
+            android:name=".tracker.component.HeadsetButtonReceiver"
+            android:enabled="true">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" android:priority="2147483647" />
+                <action
+                    android:name="android.intent.action.MEDIA_BUTTON"
+                    android:priority="2147483647" />
             </intent-filter>
         </receiver>
 
-		<activity
-			android:name=".view.CreateAdvancedWorkout"/>
-	</application>
+        <receiver
+            android:name=".view.StartActivityHeadsetButtonReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.MEDIA_BUTTON"
+                    android:priority="2147483647" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".view.CreateAdvancedWorkout" />
+    </application>
 </manifest>
