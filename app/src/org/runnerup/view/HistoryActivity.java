@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
@@ -91,6 +92,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
         DBHelper.closeDB(mDB);
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         String[] from = new String[]{
@@ -103,12 +105,12 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+    public void onLoadFinished(@NonNull Loader<Cursor> arg0, Cursor arg1) {
         cursorAdapter.swapCursor(arg1);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> arg0) {
+    public void onLoaderReset(@NonNull Loader<Cursor> arg0) {
         cursorAdapter.swapCursor(null);
     }
 

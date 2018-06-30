@@ -20,6 +20,7 @@ package org.runnerup.db.entities;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import org.runnerup.common.util.Constants;
 
@@ -84,6 +85,7 @@ public class LocationEntity extends AbstractEntity {
             this.mDB = mDB;
         }
 
+        @NonNull
         @Override
         @SuppressWarnings("unchecked")
         public Iterator<E> iterator() {

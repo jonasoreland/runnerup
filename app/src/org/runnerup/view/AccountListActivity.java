@@ -25,6 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
@@ -124,6 +125,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         return true;
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         String[] from = new String[]{
@@ -139,12 +141,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+    public void onLoadFinished(@NonNull Loader<Cursor> arg0, Cursor arg1) {
         mCursorAdapter.swapCursor(arg1);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> arg0) {
+    public void onLoaderReset(@NonNull Loader<Cursor> arg0) {
         mCursorAdapter.swapCursor(null);
     }
 
