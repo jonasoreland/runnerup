@@ -32,8 +32,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, rats</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Informacje prawne - Google Play Services</string>
-  <string name="Type">Rodzaj</string>
+    <string name="Type">Rodzaj</string>
   <string name="active">aktywność</string>
   <string name="rest">odpoczynek</string>
   <string name="recovery">regeneracja</string>
@@ -96,8 +95,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Wykres</string>
   <string name="Upload">Eksport</string>
-  <string name="Configure">Konfiguruj</string>
-  <string name="Disconnect">Rozłącz</string>
+    <string name="Disconnect">Rozłącz</string>
   <string name="Resume">Wznów</string>
   <string name="Save_activity">Zapisz aktywność</string>
   <string name="Upload_activity">Synchronizuj aktywność</string>
@@ -108,12 +106,10 @@
   <string name="Configure_accounts">Konfiguruj konta</string>
   <string name="Refresh">Odśwież</string>
   <string name="Age">Wiek</string>
-  <string name="edit">edytuj</string>
-  <string name="Synchronizing">Sychronizuje:</string>
+    <string name="Synchronizing">Sychronizuje:</string>
   <string name="synchronizing_feed">aktualizuje kanał</string>
   <string name="OK">OK</string>
-  <string name="Table_format">Tabela</string>
-  <string name="Clear_uploads">Usuń aktywności</string>
+    <string name="Clear_uploads">Usuń aktywności</string>
   <string name="Upload_missing_workouts">Synchronizuje brakujące aktywności</string>
   <string name="Disconnect_account">Odłącz konto</string>
   <string name="Edit_activity">Edytuj aktywność</string>
@@ -136,8 +132,7 @@
   <string name="Select_type_of_Bluetooth_device">Wybierz rodzaj urządzenia Bluetooth</string>
   <string name="Scanning">Skanuje</string>
   <string name="Failed_to_load_workout">Błąd przy ładowaniu treningu</string>
-  <string name="Icon_list">Lista ikon</string>
-  <string name="Problem">Problem</string>
+    <string name="Problem">Problem</string>
   <string name="Edit_step">Edycja etapu</string>
   <string name="Create_new_audio_cue_scheme">Utwórz schemat wskazówek audio</string>
   <string name="Great">Udało się!</string>
@@ -151,8 +146,7 @@
   <string name="Loading">Ładuje…</string>
   <string name="Saving">Zapisuje</string>
   <string name="Cancellingplease_wait">Anuluje…</string>
-  <string name="try_again_later">spróbuj później</string>
-  <string name="Are_you_sure">Jesteś pewien?</string>
+    <string name="Are_you_sure">Jesteś pewien?</string>
   <string name="Configure_audio_cues">Konfiguruj wskazówki audio</string>
   <string name="Downloadeditremove_workouts">Pobierz/edytuj/usuń treningi</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Aby aktywować musisz połączyć się z kontem</string>
@@ -197,8 +191,7 @@
   <string name="Experimental_HRM_devices">Eksperymentalne urządzenia HRM</string>
   <string name="Experimental_features">Eksperymentalne funkcje</string>
   <string name="Mock_HRM_devices">Imituj urządzenie HRM</string>
-  <string name="About">O…</string>
-  <string name="About_RunnerUp">O RunnerUp</string>
+    <string name="About_RunnerUp">O RunnerUp</string>
   <string name="Triggers">Wyzwalacze</string>
   <string name="Time_triggered_audio_cue">Wskazówki wyzwalane czasowo</string>
   <string name="Cue_interval_s">Interwał wskazówek (s)</string>

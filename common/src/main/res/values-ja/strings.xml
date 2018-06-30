@@ -33,8 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Google Play サービス法律上の注意</string>
-  <string name="Type">タイプ</string>
+    <string name="Type">タイプ</string>
   <string name="active">アクティブ</string>
   <string name="rest">休憩</string>
   <string name="recovery">リカバリー</string>
@@ -100,8 +99,7 @@
   <string name="Map">地図</string>
   <string name="Graph">グラフ</string>
   <string name="Upload">アップロード</string>
-  <string name="Configure">設定</string>
-  <string name="Disconnect">切断</string>
+    <string name="Disconnect">切断</string>
   <string name="Resume">再開</string>
   <string name="Save_activity">アクティビティを保存</string>
   <string name="Upload_activity">アクティビティをアップロード</string>
@@ -112,12 +110,10 @@
   <string name="Configure_accounts">アカウントを設定</string>
   <string name="Refresh">リフレッシュ</string>
   <string name="Age">年齢</string>
-  <string name="edit">編集</string>
-  <string name="Synchronizing">同期中:</string>
+    <string name="Synchronizing">同期中:</string>
   <string name="synchronizing_feed">フィードを同期中…</string>
   <string name="OK">OK</string>
-  <string name="Table_format">テーブル形式</string>
-  <string name="Clear_uploads">アップロードをクリア</string>
+    <string name="Clear_uploads">アップロードをクリア</string>
   <string name="Upload_missing_workouts">(不足) ワークアウトをアップロード</string>
   <string name="Disconnect_account">アカウントを切断</string>
   <string name="Edit_activity">アクティビティを編集</string>
@@ -140,8 +136,7 @@
   <string name="Select_type_of_Bluetooth_device">Bluetooth デバイスのタイプを選択してください</string>
   <string name="Scanning">スキャン中</string>
   <string name="Failed_to_load_workout">ワークアウトのロードに失敗しました!!</string>
-  <string name="Icon_list">アイコンリスト</string>
-  <string name="Problem">問題</string>
+    <string name="Problem">問題</string>
   <string name="Edit_step">ステップを編集</string>
   <string name="Create_new_audio_cue_scheme">新しい音声合図スキームを作成</string>
   <string name="Great">すばらしい!</string>
@@ -155,8 +150,7 @@
   <string name="Loading">ロード中…</string>
   <string name="Saving">保存中</string>
   <string name="Cancellingplease_wait">キャンセル中…しばらくお待ちください</string>
-  <string name="try_again_later">後で再度実行してください!</string>
-  <string name="Are_you_sure">よろしいですか?</string>
+    <string name="Are_you_sure">よろしいですか?</string>
   <string name="Configure_audio_cues">音声合図の設定</string>
   <string name="Downloadeditremove_workouts">ワークアウトをダウンロード/編集/削除</string>
   <string name="Note_you_need_to_connect_to_the_account_too">注意、アカウントに接続する必要があります</string>
@@ -203,8 +197,7 @@
   <string name="Experimental_HRM_devices">実験的な HRM デバイス</string>
   <string name="Experimental_features">実験的な機能</string>
   <string name="Mock_HRM_devices">モックの HRM デバイス</string>
-  <string name="About">アプリについて</string>
-  <string name="About_RunnerUp">RunnerUp について</string>
+    <string name="About_RunnerUp">RunnerUp について</string>
   <string name="Triggers">トリガー</string>
   <string name="Time_triggered_audio_cue">時間でトリガーされる音声合図</string>
   <string name="Cue_interval_s">合図インターバル (s)</string>
@@ -311,5 +304,4 @@
   <string name="use_pressure_sensor_summary">気圧計を使用して標高を計算する</string>
   <string name="adjust_barometer_altitude_from_gps">気圧計の高度をGPS高度に合わせる</string>
   <string name="adjust_barometer_elevation_from_gps_summary">最初の GPS 高度を使用して気圧計の高度を平均化する</string>
-  <string name="google_play_not_installed">Google Play サービスがインストールされていません</string>
 </resources>

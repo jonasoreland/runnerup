@@ -33,8 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, ratos</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Infos. legais do Google Play</string>
-  <string name="Type">Tipo</string>
+    <string name="Type">Tipo</string>
   <string name="active">ativo</string>
   <string name="rest">descanso</string>
   <string name="recovery">recuperação</string>
@@ -100,8 +99,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Gráfico</string>
   <string name="Upload">Enviar</string>
-  <string name="Configure">Configurar</string>
-  <string name="Disconnect">Desconectar</string>
+    <string name="Disconnect">Desconectar</string>
   <string name="Resume">Recomeçar</string>
   <string name="Save_activity">Guardar atividade</string>
   <string name="Upload_activity">Enviar atividade</string>
@@ -112,12 +110,10 @@
   <string name="Configure_accounts">Configurar contas</string>
   <string name="Refresh">Atualizar</string>
   <string name="Age">Idade</string>
-  <string name="edit">editar</string>
-  <string name="Synchronizing">Sincronismo:</string>
+    <string name="Synchronizing">Sincronismo:</string>
   <string name="synchronizing_feed">sincronizando feed..</string>
   <string name="OK">OK</string>
-  <string name="Table_format">Formato da tabela</string>
-  <string name="Clear_uploads">Apagar envios</string>
+    <string name="Clear_uploads">Apagar envios</string>
   <string name="Upload_missing_workouts">Enviar exercícios (ausentes)</string>
   <string name="Disconnect_account">Desconectar conta</string>
   <string name="Edit_activity">Editar atividade</string>
@@ -140,8 +136,7 @@
   <string name="Select_type_of_Bluetooth_device">Selecionar o tipo de dispositivo Bluetooth</string>
   <string name="Scanning">Escaneando</string>
   <string name="Failed_to_load_workout">Falhar ao carregar exercício!!</string>
-  <string name="Icon_list">lista de ícones</string>
-  <string name="Problem">Problema</string>
+    <string name="Problem">Problema</string>
   <string name="Edit_step">Editar passo</string>
   <string name="Create_new_audio_cue_scheme">Criar novo esquema de aviso de audio</string>
   <string name="Great">Excelente!</string>
@@ -155,8 +150,7 @@
   <string name="Loading">Carregando…</string>
   <string name="Saving">Guardar</string>
   <string name="Cancellingplease_wait">Cancelando… por favor, espere</string>
-  <string name="try_again_later">tente novamente mais tarde!</string>
-  <string name="Are_you_sure">Você tem certeza?</string>
+    <string name="Are_you_sure">Você tem certeza?</string>
   <string name="Configure_audio_cues">Configurar avisos de áudio</string>
   <string name="Downloadeditremove_workouts">Baixar/editar/remover exercícios</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Anotações, você precisa se conectar à conta também</string>
@@ -203,8 +197,7 @@
   <string name="Experimental_HRM_devices">Experim. - Dispos. HRM</string>
   <string name="Experimental_features">Recursos experimentais</string>
   <string name="Mock_HRM_devices">Dispos. HRM simulados</string>
-  <string name="About">Sobre</string>
-  <string name="About_RunnerUp">Sobre o RunnerUp</string>
+    <string name="About_RunnerUp">Sobre o RunnerUp</string>
   <string name="Triggers">Acionadores</string>
   <string name="Time_triggered_audio_cue">Aviso acionado pelo tempo</string>
   <string name="Cue_interval_s">Intervalo do aviso (s)</string>
@@ -311,5 +304,4 @@
   <string name="use_pressure_sensor_summary">Usar o barômetro para calcular a elevação</string>
   <string name="adjust_barometer_altitude_from_gps">Ajustar a altitude do barômetro para a elevação do GPS</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Usar a elevação inicial do GPS para a elevação barométrica média</string>
-  <string name="google_play_not_installed">Google Play Services não está instalado</string>
 </resources>
