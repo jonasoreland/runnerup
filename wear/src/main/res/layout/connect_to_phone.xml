@@ -45,7 +45,6 @@
                 />
 
             <TextView
-                android:id="@+id/txt_open_on_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/Waiting_for_phone"

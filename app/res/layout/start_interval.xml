@@ -35,7 +35,6 @@
             runnerup:type="spinner_txt" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_repetitions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="5"

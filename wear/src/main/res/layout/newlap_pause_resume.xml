@@ -46,7 +46,6 @@
                 app:circle_radius="@dimen/two_button_radius" />
 
             <TextView
-                android:id="@+id/txt_newlap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/New_lap"
