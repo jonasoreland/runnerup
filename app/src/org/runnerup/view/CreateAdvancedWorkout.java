@@ -1,11 +1,12 @@
 package org.runnerup.view;
 
-import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CreateAdvancedWorkout extends Activity {
+public class CreateAdvancedWorkout extends AppCompatActivity {
 
     private Workout advancedWorkout = null;
     private TitleSpinner advancedWorkoutSpinner = null;
@@ -38,6 +39,8 @@ public class CreateAdvancedWorkout extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         setContentView(R.layout.create_advanced_workout);
 
@@ -133,7 +136,8 @@ public class CreateAdvancedWorkout extends Activity {
 
             Workout.StepListEntry entry = steps.get(position);
             viewHolder.button.setStep(entry.step);
-            viewHolder.button.setPadding(entry.level * 12, 0, 0, 0);
+            float pxToDp = getResources().getDisplayMetrics().density;
+            viewHolder.button.setPadding((int)(entry.level * 8 * pxToDp + 0.5f), 0, 0, 0);
 
             return view;
         }

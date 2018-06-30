@@ -91,7 +91,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 } else {
                     ((Button) view).setText(R.string.Show_disabled_accounts);
                 }
-                getSupportLoaderManager().restartLoader(0, null, (LoaderCallbacks<Object>) view.getContext());
+                getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
             }
         });
         listView.addFooterView(showDisabledBtn);
