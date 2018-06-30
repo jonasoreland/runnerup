@@ -387,8 +387,7 @@ public class NikeXML {
         }
 
         @Override
-        public void emit(final Pos p, final Vector<Pos> posHist, final Vector<Location> hist)
-                throws Exception {
+        public void emit(final Pos p, final Vector<Pos> posHist, final Vector<Location> hist) {
             if (d == Dim.DISTANCE) {
                 buf.append(' ');
                 buf.append(Double.toString(Math.round(1000.0 * p.sumDistance / 1000.0) / 1000.0d));
