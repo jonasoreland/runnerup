@@ -1,4 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="4" by="lint 2.3.3">
+<issues format="4" by="lint 3.1.3">
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.android.support:design than 24.1.0 is available: 27.1.1"
+        errorLine1="    latestImplementation &quot;com.android.support:design:${rootProject.ext.supportLibrary}&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="120"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 15.0.1"
+        errorLine1="    latestImplementation &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="125"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.mapbox.mapboxsdk:mapbox-android-sdk than 5.1.1 is available: 6.0.1"
+        errorLine1="    latestImplementation (&apos;com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.1@aar&apos;){"
+        errorLine2="    ^">
+        <location
+            file="build.gradle"
+            line="127"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: title_spinner_pressed.9.png, title_spinner_selected.9.png">
+        <location
+            file="res\drawable-hdpi\title_spinner_selected.9.png"/>
+        <location
+            file="res\drawable-hdpi\title_spinner_pressed.9.png"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="        ^">
+        <location
+            file="res\layout\history_row.xml"
+            line="38"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="    ^">
+        <location
+            file="res\layout\step_button.xml"
+            line="39"
+            column="5"/>
+    </issue>
 
 </issues>
