@@ -35,6 +35,17 @@
     </issue>
 
     <issue
+        id="SpUsage"
+        message="Should use &quot;`sp`&quot; instead of &quot;`dp`&quot; for text sizes"
+        errorLine1="                android:textSize=&quot;20dp&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\account_row.xml"
+            line="55"
+            column="17"/>
+    </issue>
+
+    <issue
         id="IconDuplicates"
         message="The following unrelated icon files have identical contents: title_spinner_pressed.9.png, title_spinner_selected.9.png">
         <location
