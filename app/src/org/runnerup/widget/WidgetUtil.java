@@ -73,6 +73,7 @@ public class WidgetUtil {
         }
 
         try {
+            //noinspection JavaReflectionMemberAccess
             window.addFlags(WindowManager.LayoutParams.class.getField("FLAG_NEEDS_MENU_KEY").getInt(null));
         } catch (NoSuchFieldException e) {
             // Ignore since this field won't exist in most versions of Android

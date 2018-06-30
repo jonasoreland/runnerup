@@ -333,7 +333,7 @@ public abstract class Bt20Base extends BtHRBase {
             case 2: {
                 Method m;
                 try {
-                    //noinspection RedundantArrayCreation
+                    //noinspection RedundantArrayCreation,JavaReflectionMemberAccess
                     m = device.getClass().getMethod("createInsecureRfcommSocket",
                             new Class[]{
                                     int.class
