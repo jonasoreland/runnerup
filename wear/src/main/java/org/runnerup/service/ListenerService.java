@@ -88,7 +88,7 @@ public class ListenerService extends WearableListenerService {
                 NotificationManager notificationManager =
                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 String id = "runnerup_ongoing";
-                CharSequence name = context.getString(R.string.app_name);;
+                CharSequence name = context.getString(R.string.app_name);
                 String description = context.getString(R.string.channel_notification_ongoing);
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 mChannel = new NotificationChannel(id, name, importance);
