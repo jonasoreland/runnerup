@@ -22,6 +22,7 @@
     android:layout_margin="4dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
+    android:focusable="true"
     android:orientation="horizontal"
     android:paddingBottom="12dp"
     android:gravity="center_vertical"

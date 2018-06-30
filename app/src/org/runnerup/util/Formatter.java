@@ -78,8 +78,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
         dateFormat = android.text.format.DateFormat.getDateFormat(ctx);
         timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
-        monthFormat = new SimpleDateFormat("MMM yyyy");
-        dayOfMonthFormat = new SimpleDateFormat("E d");
+        monthFormat = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
+        dayOfMonthFormat = new SimpleDateFormat("E d", Locale.getDefault());
         //hrZones = new HRZones(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&

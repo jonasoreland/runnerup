@@ -15,6 +15,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -27,7 +28,8 @@
         android:layout_alignParentTop="true"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UnusedAttribute">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/actionbar"
@@ -135,7 +137,7 @@
                         android:id="@+id/hrzonesBarLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/black"
+                        android:background="@android:color/black"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -152,7 +154,8 @@
                 <LinearLayout
                     android:id="@+id/tab_lap"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/laplist"
@@ -164,7 +167,8 @@
                 <LinearLayout
                     android:id="@+id/tab_upload"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/report_list"
@@ -201,7 +205,6 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
             android:drawablePadding="-32dp"
             android:drawableRight="@drawable/ic_av_play_arrow"
@@ -212,7 +215,6 @@
             style="@style/ButtonText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/save_button"
             android:background="@drawable/btn_blue"
             android:singleLine="false"
             android:text="@string/Upload_activity" />
@@ -222,7 +224,6 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/discard_button"
             android:background="@drawable/btn_green"
             android:text="@string/Save_activity" />
 
@@ -231,7 +232,6 @@
             style="@style/ButtonText"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="@drawable/btn_red"
             android:text="@string/Discard_activity" />
     </LinearLayout>
