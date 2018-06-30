@@ -213,8 +213,7 @@ public class TrackerComponentCollection implements TrackerComponent {
                                Context context) {
         synchronized (components) {
             HashMap<String, Pair<TrackerComponent, ResultCode>> list =
-                    new HashMap<>();
-            list.putAll(components);
+                    new HashMap<>(components);
             components.clear();
 
             for (TrackerComponent component : pending.values()) {

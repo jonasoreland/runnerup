@@ -115,7 +115,7 @@ public class HRManager {
                 .getBoolean(res.getString(R.string.pref_bt_experimental), false);
         boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
 
-        List<HRProvider> providers = new ArrayList<HRProvider>();
+        List<HRProvider> providers = new ArrayList<>();
         if (AndroidBLEHRProvider.checkLibrary(ctx)) {
             providers.add(new AndroidBLEHRProvider(ctx));
         }
