@@ -37,5 +37,6 @@ public interface OAuth2Server {
 
     String getTokenUrl();
 
+    @SuppressWarnings("SameReturnValue")
     String getRevokeUrl();
 }

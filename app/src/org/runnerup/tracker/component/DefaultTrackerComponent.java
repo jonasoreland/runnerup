@@ -50,6 +50,7 @@ public abstract class DefaultTrackerComponent implements TrackerComponent {
         return true;
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void onConnected() {
     }

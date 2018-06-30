@@ -272,6 +272,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
     }
 
+    @SuppressWarnings("SameReturnValue")
     private Status connectNew() throws IOException {
         Status s = Status.NEED_AUTH;
         s.authMethod = Synchronizer.AuthMethod.USER_PASS;
