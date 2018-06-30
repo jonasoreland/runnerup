@@ -41,6 +41,7 @@
   <string name="warm_up">warm up</string>
   <string name="cool_down">cool down</string>
   <string name="repeat">repeat</string>
+  <string name="repeat_times">Repeat %1$dx</string>
   <string name="time">time</string>
   <string name="distance">distance</string>
   <string name="Distance">Distance</string>
