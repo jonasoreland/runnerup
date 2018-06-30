@@ -20,7 +20,6 @@ package org.runnerup.hr;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.lang.reflect.Constructor;
