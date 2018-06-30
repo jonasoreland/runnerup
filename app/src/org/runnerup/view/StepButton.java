@@ -152,7 +152,7 @@ public class StepButton extends LinearLayout {
             mGoalValue.setText((String.format(Locale.getDefault(), "%s%s-%s",
                     prefix,
                     formatter.format(Formatter.Format.TXT_SHORT, goalType, step.getTargetValue().minValue),
-                    formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue));
+                    formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue))));
         }
         if (editStepButton) {
             mLayout.setOnClickListener(onStepClickListener);
