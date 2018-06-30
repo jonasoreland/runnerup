@@ -24,15 +24,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,10 +46,12 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
-import org.runnerup.workout.Sport;
+
+import java.util.Calendar;
+import java.util.Date;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class HistoryActivity extends FragmentActivity implements Constants, OnItemClickListener,
+public class HistoryActivity extends AppCompatActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
     SQLiteDatabase mDB = null;
@@ -55,7 +60,9 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
     ListView listView = null;
     CursorAdapter cursorAdapter = null;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
         listView.setAdapter(cursorAdapter);
 
         this.getSupportLoaderManager().initLoader(0, null, this);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         new ActivityCleaner().conditionalRecompute(mDB);
     }
@@ -89,7 +97,7 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
 
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-        String[] from = new String[] {
+        String[] from = new String[]{
                 "_id", DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
         };
@@ -130,70 +138,133 @@ public class HistoryActivity extends FragmentActivity implements Constants, OnIt
             inflater = LayoutInflater.from(context);
         }
 
+        private boolean sameMonthAsPrevious(int curYear, int curMonth, Cursor cursor) {
+            int curPosition = cursor.getPosition();
+            if (curPosition == 0)
+                return false;
+
+            cursor.moveToPrevious();
+            long prevTimeInSecs = new ActivityEntity(cursor).getStartTime();
+
+            Calendar prevCal = Calendar.getInstance();
+            prevCal.setTime(new Date(prevTimeInSecs * 1000));
+            return prevCal.get(Calendar.YEAR) == curYear
+                    && prevCal.get(Calendar.MONTH) == curMonth;
+        }
+
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ActivityEntity ae = new ActivityEntity(cursor);
-            int[] to = new int[] {
-                    R.id.history_list_id,
-                    R.id.history_list_start_time, R.id.history_list_distance,
-                    R.id.history_list_time, R.id.history_list_pace, R.id.history_list_sport
-            };
 
-            Long id = ae.getId();
-            Long st = ae.getStartTime();
+            // month + day
+            Date curDate = new Date(ae.getStartTime() * 1000);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(curDate);
+
+            TextView sectionTitle = view.findViewById(R.id.section_title);
+            int year = cal.get(Calendar.YEAR);
+            int month = cal.get(Calendar.MONTH);
+            if (curDate == null || sameMonthAsPrevious(year, month, cursor)) {
+                sectionTitle.setVisibility(View.GONE);
+            } else {
+                sectionTitle.setVisibility(View.VISIBLE);
+                sectionTitle.setText(formatter.formatMonth(curDate));
+            }
+
+            TextView dateText = view.findViewById(R.id.history_list_date);
+            dateText.setText(formatter.formatDayOfMonth(curDate));
+
+            // distance
             Float d = ae.getDistance();
-            Long t = ae.getTime();
+            TextView distanceText = view.findViewById(R.id.history_list_distance);
+            if (d != null) {
+                distanceText.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
+            } else {
+                distanceText.setText("");
+            }
+
+            // sport + additional info
             Integer s = ae.getSport();
+            ImageView emblem = view.findViewById(R.id.history_list_emblem);
+            TextView additionalInfo = view.findViewById(R.id.history_list_additional);
 
-            {
-                TextView tv = (TextView) view.findViewById(to[0]);
-                tv.setText(Long.toString(id));
+            switch (s) {
+                case DB.ACTIVITY.SPORT_RUNNING: {
+                    int sportColor = getResources().getColor(R.color.sportRunning);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_running));
+                    distanceText.setTextColor(sportColor);
+
+                    Integer hr = ae.getAvgHr();
+                    if (hr != null) {
+                        additionalInfo.setTextColor(sportColor);
+                        additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
+                    } else {
+                        additionalInfo.setText(null);
+                    }
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_BIKING: {
+                    int sportColor = getResources().getColor(R.color.sportBiking);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_biking));
+                    distanceText.setTextColor(sportColor);
+                    additionalInfo.setTextColor(sportColor);
+                    Float cad = ae.getAvgCadence();
+                    if (cad != null) {
+                        additionalInfo.setTextColor(sportColor);
+                        additionalInfo.setText(formatter.formatCadence(Formatter.Format.TXT_SHORT, cad));
+                    } else {
+                        additionalInfo.setText(null);
+                    }
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_OTHER: {
+                    int sportColor = getResources().getColor(R.color.sportOther);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_other));
+                    distanceText.setTextColor(sportColor);
+//                    additionalInfo.setTextColor(sportColor);
+                    additionalInfo.setText(null);
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_ORIENTEERING: {
+                    int sportColor = getResources().getColor(R.color.sportOrienteering);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_orienteering));
+                    distanceText.setTextColor(sportColor);
+                    Integer hr = ae.getAvgHr();
+                    if (hr != null) {
+                        additionalInfo.setTextColor(sportColor);
+                        additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
+                    } else {
+                        additionalInfo.setText(null);
+                    }
+                    break;
+                }
+                case DB.ACTIVITY.SPORT_WALKING: {
+                    int sportColor = getResources().getColor(R.color.sportWalking);
+                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_walking));
+                    distanceText.setTextColor(sportColor);
+//                    additionalInfo.setTextColor(sportColor);
+                    additionalInfo.setText(null);
+                    break;
+                }
+                default:
+                    emblem.setImageResource(0);
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(to[1]);
-                if (st != null) {
-                    tv.setText(formatter.formatDateTime(st));
-                } else {
-                    tv.setText("");
-                }
+            // duration
+            Long dur = ae.getTime();
+            TextView durationText = view.findViewById(R.id.history_list_duration);
+            if (dur != null) {
+                durationText.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, dur));
+            } else {
+                durationText.setText("");
             }
 
-            {
-                TextView tv = (TextView) view.findViewById(to[2]);
-                if (d != null) {
-                    tv.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
-                } else {
-                    tv.setText("");
-                }
-            }
-
-            {
-                TextView tv = (TextView) view.findViewById(to[3]);
-                if (t != null) {
-                    tv.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
-                } else {
-                    tv.setText("");
-                }
-            }
-
-            {
-                TextView tv = (TextView) view.findViewById(to[4]);
-                if (d != null && t != null && d != 0 && t != 0) {
-                    tv.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
-                } else {
-                    tv.setText("");
-                }
-            }
-
-            {
-                TextView tv = (TextView) view.findViewById(to[5]);
-
-                if (s != null) {
-                    tv.setText(Sport.textOf(getResources(), s));
-                } else {
-                    tv.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
-                }
+            // pace
+            TextView paceText = view.findViewById(R.id.history_list_pace);
+            if (d != null && dur != null && d != 0 && dur != 0) {
+                paceText.setText(formatter.formatPace(Formatter.Format.TXT_LONG, dur / d));
+            } else {
+                paceText.setText("");
             }
         }
 
