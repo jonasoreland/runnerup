@@ -478,7 +478,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //DBVERSION 29
         insertAccount(arg0, FileSynchronizer.NAME);
         //DBVERSION 30
-        insertAccount(arg0, RunalyzeSynchronizer.NAME);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0, -1);
     }
 
     private static void insertAccount(SQLiteDatabase arg0, String name) {
