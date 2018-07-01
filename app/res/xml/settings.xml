@@ -32,7 +32,7 @@
         android:key="sensors_preferencescreen">
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/pref_startgps"
             android:persistent="true"
             android:title="@string/Auto_start_GPS" />
@@ -75,7 +75,7 @@
             android:summary="@string/Use_your_headset_to_startpauseresume_RunnerUp" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:persistent="true"
             android:key="@string/pref_use_cadence_step_sensor"
             android:title="@string/use_step_sensor_title"
@@ -124,13 +124,13 @@
             android:enabled="true" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/pref_autopause_active"
             android:persistent="true"
             android:title="@string/Autopause"/>
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="3"
+            android:defaultValue="15"
             android:dependency="@string/pref_autopause_active"
             android:inputType="number"
             android:key="@string/pref_autopause_afterseconds"
@@ -139,7 +139,7 @@
             android:enabled="true"/>
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="60"
+            android:defaultValue="20"
             android:dependency="@string/pref_autopause_active"
             android:inputType="number"
             android:key="@string/pref_autopause_minpace"
@@ -168,14 +168,14 @@
             android:title="@string/Adjust_altitude" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="500"
+            android:defaultValue="2000"
             android:inputType="number"
             android:key="@string/pref_pollInterval"
             android:persistent="true"
             android:title="@string/Poll_interval_ms" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="0"
+            android:defaultValue="5"
             android:inputType="number"
             android:key="@string/pref_pollDistance"
             android:persistent="true"
@@ -236,11 +236,11 @@
     </Preference>
 
     <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="@string/pref_runneruplive_active"
-            android:persistent="true"
-            android:title="@string/Enable_RunnerUpLive"
-            android:summary="@string/Note_you_need_to_connect_to_the_account_too" />
+        android:defaultValue="false"
+        android:key="@string/pref_runneruplive_active"
+        android:persistent="true"
+        android:title="@string/Enable_RunnerUpLive"
+        android:summary="@string/Note_you_need_to_connect_to_the_account_too" />
 
     <Preference
         android:key="@string/pref_cue_audiocues"
