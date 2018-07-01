@@ -24,7 +24,6 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
-import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Workout;
 
@@ -43,8 +42,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     private SensorManager sensorManager = null;
 
     //For debug builds, use random if sensor is unavailable
-    private final static boolean testMode = BuildConfig.DEBUG;
-    private static boolean isEmulating = false;
+    private static boolean isMockSensor = false;
 
     private boolean isSportEnabled = true;
     //The sensor fires continuously, use the last available values (no smoothing)
@@ -56,7 +54,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     private Float currentCadence = null;
 
     public Float getValue() {
-        if (isEmulating) {
+        if (isMockSensor) {
             if (latestVal == null) {latestVal = 0.0f;}
             //if GPS update is every second, this is 0-120 rpm
             latestVal += (int)((new Random()).nextFloat() * 4);
@@ -112,7 +110,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
      * Sensor is available
      */
     public static boolean isAvailable(final Context context) {
-        return ((new TrackerCadence()).getSensor(context) != null) || testMode;
+        return ((new TrackerCadence()).getSensor(context) != null) || isMockSensor;
     }
 
     private Sensor getSensor(final Context context) {
@@ -127,10 +125,12 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
                 sensorManager = null;
             }
         }
-        if (testMode && sensor == null) {
-            //No real sensor, emulate
-            isEmulating = true;
+
+        if (sensor == null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
         }
+
         return sensor;
     }
 
@@ -155,7 +155,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
             if (sensor != null) {
                 sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
                 res = ResultCode.RESULT_OK;
-            } else if (isEmulating) {
+            } else if (isMockSensor) {
                 res = ResultCode.RESULT_OK;
             } else {
                 res = ResultCode.RESULT_NOT_SUPPORTED;
@@ -230,7 +230,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         isStarted = false;
         if (sensorManager != null) { sensorManager.unregisterListener(this); }
         sensorManager = null;
-        isEmulating = false;
+        isMockSensor = false;
         return ResultCode.RESULT_OK;
     }
 }
