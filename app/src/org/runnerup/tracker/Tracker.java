@@ -401,7 +401,7 @@ public class Tracker extends android.app.Service implements
         bindValues.put(Workout.KEY_FORMATTER, new Formatter(ctx));
         bindValues.put(Workout.KEY_HRZONES, new HRZones(ctx));
         bindValues.put(Workout.KEY_MUTE, workout.getMute());
-        bindValues.put(DB.ACTIVITY.SPORT, workout.getSport());
+        bindValues.put(Workout.KEY_SPORT_TYPE, workout.getSport());
         bindValues.put(Workout.KEY_WORKOUT_TYPE, workout.getWorkoutType());
 
         components.onBind(bindValues);
