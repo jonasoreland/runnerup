@@ -473,7 +473,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //DBVERSION 29
         insertAccount(arg0, FileSynchronizer.NAME);
         //DBVERSION 30
-        insertAccount(arg0, RunalyzeSynchronizer.NAME);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0, -1);
     }
 
     private static void insertAccount(SQLiteDatabase arg0, String name) {
@@ -497,9 +497,9 @@ public class DBHelper extends SQLiteOpenHelper implements
         long newId = arg0.insertWithOnConflict(DB.ACCOUNT.TABLE, null, arg1, SQLiteDatabase.CONFLICT_IGNORE);
         if (newId == -1 && arg1.size() > 1) {
             //values could be updated
-        String arr[] = {
-            arg1.getAsString(DB.ACCOUNT.NAME)
-        };
+            String arr[] = {
+                    arg1.getAsString(DB.ACCOUNT.NAME)
+            };
             //DBVERSION update
             arg1.remove(DB.ACCOUNT.FORMAT);
             arg1.remove(DB.ACCOUNT.AUTH_METHOD);
