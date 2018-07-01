@@ -20,7 +20,6 @@ package org.runnerup.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,11 +32,11 @@ import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import org.runnerup.BuildConfig;
@@ -47,7 +46,6 @@ import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerPressure;
 import org.runnerup.tracker.component.TrackerTemperature;
 import org.runnerup.util.FileUtil;
-import org.runnerup.widget.AboutPreference;
 
 import java.io.IOException;
 
@@ -75,13 +73,6 @@ public class SettingsActivity extends PreferenceActivity
         {
             //Currently unused, should maybe be removed?
             getPreferenceManager().findPreference(res.getString(R.string.pref_experimental_features)).setEnabled(false);
-        }
-
-        //remove google play notices from froyo since we do not use it
-        if (BuildConfig.FLAVOR.equals("froyo") || !AboutPreference.isGooglePlayServicesAvailable(this)) {
-            Preference pref = findPreference(res.getString(R.string.pref_googleplayserviceslegalnotices));
-            PreferenceCategory category = (PreferenceCategory)findPreference(res.getString(R.string.pref_aboutcategory));
-            category.removePreference(pref);
         }
 
         //Geoid correction is not included in Froyo

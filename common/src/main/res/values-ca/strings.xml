@@ -32,8 +32,7 @@
   <string name="formatting_date_at_time">%1$s a %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Termes legals dels serveis de Google</string>
-  <string name="Type">Tipus</string>
+    <string name="Type">Tipus</string>
   <string name="active">actiu</string>
   <string name="rest">descans</string>
   <string name="recovery">recuperació</string>
@@ -97,8 +96,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Gràfic</string>
   <string name="Upload">Penja</string>
-  <string name="Configure">Configura</string>
-  <string name="Disconnect">Desconnecta</string>
+    <string name="Disconnect">Desconnecta</string>
   <string name="Resume">Continua</string>
   <string name="Save_activity">Desa l\'activitat</string>
   <string name="Upload_activity">Penja l\'activitat</string>
@@ -109,11 +107,9 @@
   <string name="Configure_accounts">Configura els comptes</string>
   <string name="Refresh">Actualitza</string>
   <string name="Age">Edat</string>
-  <string name="edit">edita</string>
-  <string name="Synchronizing">Sincronitzant:</string>
+    <string name="Synchronizing">Sincronitzant:</string>
   <string name="OK">D\'acord</string>
-  <string name="Table_format">Format</string>
-  <string name="Clear_uploads">Neteja els enviaments</string>
+    <string name="Clear_uploads">Neteja els enviaments</string>
   <string name="Disconnect_account">Desconnecta el compte</string>
   <string name="Edit_activity">Edita l\'activitat</string>
   <string name="Share_activity">Comparteix l\'activitat</string>
@@ -131,8 +127,7 @@
   <string name="Waiting_for_GPS">S\'està esperant el GPS</string>
   <string name="Start_activity">Inicia l\'activitat</string>
   <string name="Scanning">S\'està analitzant</string>
-  <string name="Icon_list">Llista d\'icones</string>
-  <string name="Problem">Error</string>
+    <string name="Problem">Error</string>
   <string name="Edit_step">Editar pas</string>
   <string name="Great">Enhorabona!</string>
   <string name="Yes">Sí</string>
@@ -141,8 +136,7 @@
   <string name="Loading">S\'està carregant…</string>
   <string name="Saving">Desant</string>
   <string name="Cancellingplease_wait">S\'està cancel·lant…</string>
-  <string name="try_again_later">Torneu a provar més tard!</string>
-  <string name="Are_you_sure">N\'esteu segur?</string>
+    <string name="Are_you_sure">N\'esteu segur?</string>
   <string name="Downloadeditremove_workouts">Baixa/edita/suprimeix els progressos</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporta la base de dades a la SD</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importa la base de dades des de la SD</string>
@@ -158,8 +152,7 @@
   <string name="Advanced_options">Opcions avançades</string>
   <string name="Export">Exporta</string>
   <string name="Import">Importa</string>
-  <string name="About">Quant a…</string>
-  <string name="About_RunnerUp">Quant al RunnerUp</string>
+    <string name="About_RunnerUp">Quant al RunnerUp</string>
   <string name="Total_distance">Distància total</string>
   <string name="Total_time">Temps total</string>
   <string name="Total_speed">Velocitat total</string>
@@ -227,5 +220,4 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de pressió</string>
   <string name="use_pressure_sensor_summary">Utilitzar baròmetre per calcular elevació</string>
-  <string name="google_play_not_installed">Google Play Services no està instal·lat</string>
 </resources>

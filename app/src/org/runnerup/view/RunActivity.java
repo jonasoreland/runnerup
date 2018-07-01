@@ -507,7 +507,7 @@ public class RunActivity extends Activity implements TickListener {
                 durationValue.setText("");
             }
             if (currentStep == step) {
-                view.setBackgroundResource(android.R.color.background_light);
+                //view.setBackgroundResource(android.R.color.background_light);
             } else {
                 view.setBackgroundResource(android.R.color.black);
             }
@@ -526,9 +526,8 @@ public class RunActivity extends Activity implements TickListener {
                             formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), maxValue)));
                 }
             }
-
-            if (step.getRepeatCount() > 0) {
-                if (step.getCurrentRepeat() == step.getRepeatCount()) {
+            if (step.getIntensity() == Intensity.REPEAT){
+                if (step.getCurrentRepeat() >= step.getRepeatCount()) {
                     durationValue.setText(getString(R.string.Finished));
                 } else {
                     durationValue.setText(String.format(Locale.getDefault(), "%d/%d",

@@ -33,16 +33,10 @@ android {
     }
 
     lintOptions {
-        //disable specific checks for specific paths
+        //Configure checks with paths
         lintConfig file("lint.xml")
         baseline file("lint-baseline.xml")
         checkReleaseBuilds true
-        //promote to error
-        fatal 'InlinedApi', 'InconsistentArrays'
-        // Ignore some specific checks completely
-        ignore 'MissingTranslation', 'UnusedResources'
-        //icon with all densities are not included - don't bother
-        ignore 'IconMissingDensityFolder'
 
         showAll true
         //debug issues in Travis
@@ -52,18 +46,16 @@ android {
 }
 
 repositories {
-    maven {
-        url "https://maven.google.com"
-    }
+    google()
+    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    compile project(':common')
+    implementation project(':common')
 
-    compile "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
-    //Implicit dependency https://issuetracker.google.com/issues/37131437 https://code.google.com/p/android/issues/detail?id=231325
-    provided "com.google.android.wearable:wearable:${rootProject.ext.googleWearVersion}"
-    compile "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    implementation "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
+    implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
 }
 
 def props = new Properties()

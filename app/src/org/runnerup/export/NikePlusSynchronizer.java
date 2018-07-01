@@ -58,7 +58,7 @@ import java.util.TimeZone;
 public class NikePlusSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Nike+";
-    public static final String PUBLIC_URL = "http://nikeplus.nike.com";
+    public static final String PUBLIC_URL = "https://nikeplus.nike.com";
     private static String CLIENT_ID = null;
     private static String CLIENT_SECRET = null;
     private static String APP_ID = null;
@@ -107,7 +107,12 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a4_nikeplus;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {
+        return R.color.serviceNike;
+    }
 
     @Override
     public void init(ContentValues config) {

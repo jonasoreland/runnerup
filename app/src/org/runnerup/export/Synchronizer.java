@@ -95,6 +95,11 @@ public interface Synchronizer {
     int getIconId();
 
     /**
+     * @return The color resource id
+     */
+    int getColorId();
+
+    /**
      * Init synchronizer
      *
      * @param config

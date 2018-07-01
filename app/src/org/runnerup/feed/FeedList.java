@@ -144,6 +144,7 @@ public class FeedList extends Observable implements Constants {
             return currList.size() - 1;
         }
 
+        @SuppressWarnings("SameReturnValue")
         private int findStartIndex(int startIndex, long l) {
             return 0;
         }

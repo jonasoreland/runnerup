@@ -199,8 +199,7 @@ public abstract class Bt20Base extends BtHRBase {
         hrClientHandler.post(new Runnable() {
             @Override
             public void run() {
-                Set<BluetoothDevice> list = new HashSet<>();
-                list.addAll(btAdapter.getBondedDevices());
+                Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
                 publishDevice(list);
             }
         });
@@ -334,7 +333,7 @@ public abstract class Bt20Base extends BtHRBase {
             case 2: {
                 Method m;
                 try {
-                    //noinspection RedundantArrayCreation
+                    //noinspection RedundantArrayCreation,JavaReflectionMemberAccess
                     m = device.getClass().getMethod("createInsecureRfcommSocket",
                             new Class[]{
                                     int.class

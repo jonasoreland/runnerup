@@ -8,6 +8,7 @@ import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
+import org.runnerup.util.SupportWrapper;
 import org.runnerup.view.MainLayout;
 
 
@@ -16,7 +17,8 @@ public class GpsBoundState implements NotificationState {
 
     public GpsBoundState(Context context) {
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        String chanId = NotificationStateManager.getChannelId(context);
+        NotificationCompat.Builder builder = SupportWrapper.Builder(context, chanId);
         Intent i = new Intent(context, MainLayout.class);
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         i.putExtra(Constants.Intents.FROM_NOTIFICATION, true);

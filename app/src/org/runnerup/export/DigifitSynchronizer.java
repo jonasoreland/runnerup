@@ -46,14 +46,13 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
 
 
 public class DigifitSynchronizer extends DefaultSynchronizer {
-    private static final String DIGIFIT_URL = "http://my.digifit.com";
+    private static final String DIGIFIT_URL = "https://my.digifit.com";
 
     public static final String NAME = "Digifit";
-    public static final String PUBLIC_URL = "http://www.digifit.com";
+    public static final String PUBLIC_URL = "https://www.digifit.com";
 
     public static void main(String args[]) {
         if (args.length < 2) {
@@ -297,7 +296,10 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return R.drawable.a9_digifit;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() { return R.color.serviceDigifit; }
 
     private String getUploadUrl() throws IOException, JSONException {
         String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";

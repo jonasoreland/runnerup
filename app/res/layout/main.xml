@@ -16,28 +16,32 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/tabhost"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    tools:ignore="UnusedAttribute">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_weight="1"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp" />
 
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:padding="0px"
             android:layout_marginTop="0px"
             android:layout_marginBottom="0px"
-             />
-
-        <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:elevation="8dp"
+            />
     </LinearLayout>
 
 </TabHost>

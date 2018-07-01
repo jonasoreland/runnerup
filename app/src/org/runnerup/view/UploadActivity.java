@@ -18,13 +18,14 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.runnerup.R;
@@ -53,13 +55,14 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class UploadActivity extends ListActivity implements Constants {
+public class UploadActivity extends AppCompatActivity implements Constants {
 
     private long synchronizerID = -1;
     private String synchronizer = null;
     private Integer synchronizerIcon = null;
     private SyncManager.SyncMode syncMode = SyncManager.SyncMode.UPLOAD;
     private SyncManager syncManager = null;
+    private ListView listView = null;
 
     private SQLiteDatabase mDB = null;
     private Formatter formatter = null;
@@ -90,8 +93,9 @@ public class UploadActivity extends ListActivity implements Constants {
         formatter = new Formatter(this);
         syncManager = new SyncManager(this);
 
-        this.getListView().setDividerHeight(1);
-        setListAdapter(new UploadListAdapter(this));
+        listView = (ListView) findViewById(R.id.upload_list);
+        listView.setDividerHeight(1);
+        listView.setAdapter(new UploadListAdapter(this));
 
         {
             Button btn = (Button) findViewById(R.id.account_upload_set_all);
@@ -129,7 +133,7 @@ public class UploadActivity extends ListActivity implements Constants {
             } else {
                 im.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.GONE);
-                im.setBackgroundResource(synchronizerIcon);
+                im.setImageDrawable(ContextCompat.getDrawable(this, synchronizerIcon));
             }
         }
 
@@ -236,7 +240,8 @@ public class UploadActivity extends ListActivity implements Constants {
     }
 
     private void requery() {
-        ((BaseAdapter) this.getListAdapter()).notifyDataSetChanged();
+        if (listView != null)
+        ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
         if (syncCount > 0) {
             actionButton.setText(String.format(Locale.getDefault(), "%s (%d)", actionButtonText, syncCount));
             actionButton.setEnabled(true);

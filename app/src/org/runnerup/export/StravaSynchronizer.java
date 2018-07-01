@@ -46,14 +46,13 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Strava";
-    private static final String PUBLIC_URL = "http://www.strava.com";
+    private static final String PUBLIC_URL = "https://www.strava.com";
 
     /**
      * @todo register OAuth2Server
@@ -63,7 +62,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     private static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
     private static final String TOKEN_URL = "https://www.strava.com/oauth/token";
-    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/strava";
+    private static final String REDIRECT_URI = "https://localhost:8080/runnerup/strava";
 
     private static final String REST_URL = "https://www.strava.com/api/v3/uploads";
 
@@ -128,7 +127,10 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     }
 
     @Override
-    public int getIconId() {return R.drawable.a10_strava;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceStrava;}
 
     @Override
     public void init(ContentValues config) {

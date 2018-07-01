@@ -33,8 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, sorcetti</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Informazioni legali Google Play Services</string>
-  <string name="Type">Tipo</string>
+    <string name="Type">Tipo</string>
   <string name="active">attivo</string>
   <string name="rest">riposo</string>
   <string name="recovery">recupero</string>
@@ -97,8 +96,7 @@
   <string name="Map">Mappa</string>
   <string name="Graph">Grafico</string>
   <string name="Upload">Carica</string>
-  <string name="Configure">Configura</string>
-  <string name="Disconnect">Disconnetti</string>
+    <string name="Disconnect">Disconnetti</string>
   <string name="Resume">Riprendi</string>
   <string name="Save_activity">Salva attività</string>
   <string name="Upload_activity">Carica attività</string>
@@ -109,12 +107,10 @@
   <string name="Configure_accounts">Configura account</string>
   <string name="Refresh">Aggiorna</string>
   <string name="Age">Età</string>
-  <string name="edit">modifica</string>
-  <string name="Synchronizing">Sincronizzando:</string>
+    <string name="Synchronizing">Sincronizzando:</string>
   <string name="synchronizing_feed">sincronizzando feed…</string>
   <string name="OK">OK</string>
-  <string name="Table_format">Formato tabella</string>
-  <string name="Clear_uploads">Svuota caricamenti</string>
+    <string name="Clear_uploads">Svuota caricamenti</string>
   <string name="Upload_missing_workouts">Carica allenamenti (mancanti)</string>
   <string name="Disconnect_account">Disconnetti account</string>
   <string name="Edit_activity">Modifica attività</string>
@@ -137,8 +133,7 @@
   <string name="Select_type_of_Bluetooth_device">Seleziona tipo dispositivo Bluetooth</string>
   <string name="Scanning">Ricerca…</string>
   <string name="Failed_to_load_workout">Caricamento allenamento fallito!!</string>
-  <string name="Icon_list">Lista icone</string>
-  <string name="Problem">Problema</string>
+    <string name="Problem">Problema</string>
   <string name="Edit_step">Modifica passo</string>
   <string name="Create_new_audio_cue_scheme">Crea nuovo schema riferimenti audio</string>
   <string name="Great">Grande!</string>
@@ -152,8 +147,7 @@
   <string name="Loading">Caricamento…</string>
   <string name="Saving">Salvando…</string>
   <string name="Cancellingplease_wait">Cancellando…prego attendere</string>
-  <string name="try_again_later">riprova più tardi!</string>
-  <string name="Are_you_sure">Ne sei sicuro?</string>
+    <string name="Are_you_sure">Ne sei sicuro?</string>
   <string name="Configure_audio_cues">Configura riferimenti audio</string>
   <string name="Downloadeditremove_workouts">Scarica/modifica/rimuovi allenamenti</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Attento, devi anche connettere l\'account</string>
@@ -199,8 +193,7 @@
   <string name="Experimental_HRM_devices">Dispositivi HRM sperimentali</string>
   <string name="Experimental_features">Funzionalità sperimentali</string>
   <string name="Mock_HRM_devices">Dispositivi HRM \"fantoccio\"</string>
-  <string name="About">A proposito…</string>
-  <string name="About_RunnerUp">Info su RunnerUp</string>
+    <string name="About_RunnerUp">Info su RunnerUp</string>
   <string name="Triggers">Eventi</string>
   <string name="Time_triggered_audio_cue">Riferimento audio attivato per tempo</string>
   <string name="Cue_interval_s">Intervallo riferimento (m)</string>

@@ -24,7 +24,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -58,7 +57,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     private final String sTokenUrl = "https://accounts.google.com/o/oauth2/token";
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final String sRedirectUrl = "http://localhost";
+    private final String sRedirectUrl = "https://localhost";
 
     private static final String SCOPES = "https://www.googleapis.com/auth/plus.me " +
             "https://www.googleapis.com/auth/plus.login " +
@@ -165,7 +164,7 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     }
 
     @Override
-    public int getIconId() {return R.drawable.a12_googleplus;}
+    public int getIconId() {return 0;}
 
     @Override
     public void init(ContentValues config) {

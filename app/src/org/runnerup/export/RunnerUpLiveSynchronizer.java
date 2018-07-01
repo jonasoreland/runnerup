@@ -24,14 +24,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,12 +38,17 @@ import org.runnerup.util.Formatter;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.WorkoutInfo;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
-    public static final String PUBLIC_URL = "http://weide.devsparkles.se/Demo/Map";
-    private static final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+    public static final String PUBLIC_URL = "https://weide.devsparkles.se/Demo/Map";
+    private static final String POST_URL = "https://weide.devsparkles.se/api/Resource/";
     private final Context context;
 
     private long id = 0;
@@ -78,7 +78,10 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     }
 
     @Override
-    public int getIconId() {return R.drawable.a8_runneruplive;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunnerUpLive;}
 
     @Override
     public void init(ContentValues config) {
@@ -189,7 +192,11 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
         msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
         msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);
-        context.startService(msgIntent);
+        if (Build.VERSION.SDK_INT >= 26) {
+            context.startForegroundService(msgIntent);
+        } else {
+            context.startService(msgIntent);
+        }
     }
 
     public static class LiveService extends IntentService {

@@ -78,8 +78,7 @@
   <string name="Laps">Voltas</string>
   <string name="Map">Mapa</string>
   <string name="Upload">Carregar</string>
-  <string name="Configure">Configurar</string>
-  <string name="Disconnect">Desconetar</string>
+    <string name="Disconnect">Desconetar</string>
   <string name="Resume">Reatar</string>
   <string name="Save_activity">Gravar atividade</string>
   <string name="Upload_activity">Carregar atividade</string>
@@ -87,8 +86,7 @@
   <string name="Finished">Acabado</string>
   <string name="Refresh">Renovar</string>
   <string name="Age">Idade</string>
-  <string name="edit">editar</string>
-  <string name="OK">OK</string>
+    <string name="OK">OK</string>
   <string name="Edit_activity">Editar atividade</string>
   <string name="Share_activity">Partilhar atividade</string>
   <string name="Delete_activity">Apagar atividade</string>
@@ -110,8 +108,7 @@
   <string name="Enable_RunnerUpLive">Ativar Live</string>
   <string name="Export">Exportar</string>
   <string name="Import">Importar</string>
-  <string name="About">Sobre</string>
-  <string name="About_RunnerUp">Sobre RunnerUp</string>
+    <string name="About_RunnerUp">Sobre RunnerUp</string>
   <string name="Lap_time">Tempo por volta</string>
   <string name="Lap_speed">Velocidade por volta</string>
   <string name="Current_speed">Velocidade atual</string>

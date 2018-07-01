@@ -33,8 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, nedrans</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Google Play Services juridisk information</string>
-  <string name="Type">Typ</string>
+    <string name="Type">Typ</string>
   <string name="active">aktiv</string>
   <string name="rest">vila</string>
   <string name="recovery">återhämtning</string>
@@ -100,8 +99,7 @@
   <string name="Map">Karta</string>
   <string name="Graph">Diagram</string>
   <string name="Upload">Ladda upp</string>
-  <string name="Configure">Konfigurera</string>
-  <string name="Disconnect">Koppla ifrån</string>
+    <string name="Disconnect">Koppla ifrån</string>
   <string name="Resume">Återuppta</string>
   <string name="Save_activity">Spara aktivitet</string>
   <string name="Upload_activity">Ladda upp aktivitet</string>
@@ -112,12 +110,10 @@
   <string name="Configure_accounts">Konfigurera konton</string>
   <string name="Refresh">Uppdatera</string>
   <string name="Age">Ålder</string>
-  <string name="edit">redigera</string>
-  <string name="Synchronizing">Synkroniserar:</string>
+    <string name="Synchronizing">Synkroniserar:</string>
   <string name="synchronizing_feed">synkroniserar flöde…</string>
   <string name="OK">Ok</string>
-  <string name="Table_format">Tabellformat</string>
-  <string name="Show_disabled_accounts">Visa inaktiverade konton</string>
+    <string name="Show_disabled_accounts">Visa inaktiverade konton</string>
   <string name="Clear_uploads">Rensa uppladdningar</string>
   <string name="Upload_missing_workouts">Ladda upp (saknade) träningspass</string>
   <string name="Disconnect_account">Koppla ifrån konto</string>
@@ -141,8 +137,7 @@
   <string name="Select_type_of_Bluetooth_device">Välj typ av Bluetooth-enhet</string>
   <string name="Scanning">Skannar</string>
   <string name="Failed_to_load_workout">Misslyckades med att ladda träningspass!!</string>
-  <string name="Icon_list">Ikonlista</string>
-  <string name="Problem">Problem</string>
+    <string name="Problem">Problem</string>
   <string name="Edit_step">Redigera steg</string>
   <string name="Create_new_audio_cue_scheme">Skapa nytt schema för ljudmeddelande</string>
   <string name="Great">Kanon!</string>
@@ -156,8 +151,7 @@
   <string name="Loading">Laddar…</string>
   <string name="Saving">Sparar</string>
   <string name="Cancellingplease_wait">Avbryter… vänta</string>
-  <string name="try_again_later">försök igen senare!</string>
-  <string name="Are_you_sure">Är du säker?</string>
+    <string name="Are_you_sure">Är du säker?</string>
   <string name="Configure_audio_cues">Konfigurera ljudmeddelanden</string>
   <string name="Downloadeditremove_workouts">Ladda ned/redigera/ta bort träningspass</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Obs, du måste ansluta till kontot också</string>
@@ -204,8 +198,7 @@
   <string name="Experimental_HRM_devices">Experimentella pulsmätare</string>
   <string name="Experimental_features">Experimentella funktioner</string>
   <string name="Mock_HRM_devices">Sken-pulsmätare</string>
-  <string name="About">Om</string>
-  <string name="About_RunnerUp">Om RunnerUp</string>
+    <string name="About_RunnerUp">Om RunnerUp</string>
   <string name="Triggers">Starta ljud vid</string>
   <string name="Time_triggered_audio_cue">Meddelande triggat av tid</string>
   <string name="Cue_interval_s">Meddelande intervall (s)</string>
@@ -312,5 +305,4 @@
   <string name="use_pressure_sensor_summary">Använd barometer för höjd</string>
   <string name="adjust_barometer_altitude_from_gps">Justera barometerhöjd till GPS höjd</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
-  <string name="google_play_not_installed">Google Play Services är inte installerade</string>
 </resources>

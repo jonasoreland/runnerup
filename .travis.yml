@@ -1,4 +1,4 @@
-dist: trusty #Force trusty for git-lfs (default from 2017-09)
+#dist: trusty #Force trusty for git-lfs (default from 2017-09)
 
 language: android
 
@@ -22,8 +22,8 @@ android:
         #To update SDK Tools to latest, another update is required
         #- tools #latest, 26.0.2 as of 2017-07-30
         - platform-tools #latest, 26.0.0 as of 2017-07-30
-        - build-tools-26.0.1
-        - android-25
+        - build-tools-27.0.3
+        - android-27
         - extra-android-m2repository
         - extra-google-m2repository
         - extra-google-google_play_services
@@ -33,4 +33,5 @@ notifications:
 
 script:
     - ./gradlew lintLatestRelease assembleLatestRelease wear:lR
+    - ./gradlew assembleFroyoRelease lintFroyoRelease
     - ./gradlew test

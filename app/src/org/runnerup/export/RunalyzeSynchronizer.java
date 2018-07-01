@@ -68,7 +68,10 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     private Map<String,Map<String,String>> _types = new HashMap<>();
 
     @Override
-    public int getIconId() {return R.drawable.a17_runalyze;}
+    public int getIconId() {return R.drawable.service_runalyze;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunalyze;}
 
     @Override
     public String getUrl() {

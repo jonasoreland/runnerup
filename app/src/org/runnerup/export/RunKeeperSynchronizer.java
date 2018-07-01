@@ -65,7 +65,7 @@ import java.util.concurrent.TimeUnit;
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
-    private static final String PUBLIC_URL = "http://runkeeper.com";
+    private static final String PUBLIC_URL = "https://runkeeper.com";
     private Context context = null;
     /**
      * @todo register OAuth2Server
@@ -75,7 +75,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     private static final String AUTH_URL = "https://runkeeper.com/apps/authorize";
     private static final String TOKEN_URL = "https://runkeeper.com/apps/token";
-    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/runkeeper";
+    private static final String REDIRECT_URI = "https://localhost:8080/runnerup/runkeeper";
 
     private static String REST_URL = "https://api.runkeeper.com";
 
@@ -176,7 +176,10 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
-    public int getIconId() {return R.drawable.a1_rklogo;}
+    public int getIconId() {return 0;}
+
+    @Override
+    public int getColorId() {return R.color.serviceRunkeeper;}
 
     @Override
     public void init(ContentValues config) {
