@@ -60,8 +60,6 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/history_list_distance"
-        android:layout_toRightOf="@id/history_list_emblem"
         android:orientation="horizontal">
 
         <TextView

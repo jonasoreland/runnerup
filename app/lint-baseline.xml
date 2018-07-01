@@ -1,4 +1,1231 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="4" by="lint 2.3.3">
+<issues format="4" by="lint 3.1.3">
+
+
+    <issue
+        id="TextViewEdits"
+        message="Attribute `android:autoText` should not be used with `&lt;TextView>`: Change element type to `&lt;EditText>` ?"
+        errorLine1="            android:autoText=&quot;false&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout-v14\feed_widget_item.xml"
+            line="94"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="CustomViewStyleable"
+        message="By convention, the custom view (`NumberPicker`) and the declare-styleable (`TitleSpinner`) should have the same name (various editor features rely on this convention)"
+        errorLine1="            TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);"
+        errorLine2="                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\widget\NumberPicker.java"
+            line="85"
+            column="68"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="                String.format(IMAGE_URL, o.getJSONObject(&quot;from&quot;).getLong(&quot;picture&quot;)));"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\EndomondoSynchronizer.java"
+            line="416"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="        c.put(DB.FEED.URL, String.format(WORKOUT_URL,"
+        errorLine2="                           ^">
+        <location
+            file="src\org\runnerup\export\EndomondoSynchronizer.java"
+            line="424"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            String str_today = String.format(&quot;%1$tY-%1$tm-%1td&quot;, today);"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\GarminSynchronizer.java"
+            line="537"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            String workout_url = String.format(CALENDAR_URL, today, month);"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\GarminSynchronizer.java"
+            line="538"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="        builder.setContentText(String.format(&quot;%s: %d/%d%s&quot;,"
+        errorLine2="                               ^">
+        <location
+            file="src\org\runnerup\notification\GpsSearchingState.java"
+            line="45"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            JSONObject feed = makeGetRequest(String.format(MY_FEED_URL, access_token, 1, 25));"
+        errorLine2="                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\NikePlusSynchronizer.java"
+            line="399"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            JSONObject feed = makeGetRequest(String.format(FRIEND_FEED_URL, access_token, 1, 25));"
+        errorLine2="                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\NikePlusSynchronizer.java"
+            line="440"
+            column="46"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="        String sportName = sport.name().toLowerCase();"
+        errorLine2="                                        ~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\format\RunalyzePost.java"
+            line="348"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="            if (runalyzeSport.toLowerCase().contains(sportName) &amp;&amp;"
+        errorLine2="                              ~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\format\RunalyzePost.java"
+            line="352"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            String filename = String.format(&quot;activity%s%d.tcx&quot;, Long.toString(Math.round(1000 * Math.random())), mID);"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\RuntasticSynchronizer.java"
+            line="296"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `widgetCategory` is only used in API level 17 and higher (current min is 15)"
+        errorLine1="    android:widgetCategory=&quot;home_screen&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\xml-v14\feed_widget_provider_info.xml"
+            line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `spinnerMode` is only used in API level 11 and higher (current min is 8)"
+        errorLine1="        android:spinnerMode=&quot;dialog&quot; />"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\title_spinner.xml"
+            line="55"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="        TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);"
+        errorLine2="                                                                              ~~~~">
+        <location
+            file="src\org\runnerup\view\HRZonesActivity.java"
+            line="62"
+            column="79"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="        View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);"
+        errorLine2="                                                                                  ~~~~">
+        <location
+            file="src\org\runnerup\view\MainLayout.java"
+            line="78"
+            column="83"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="        View view = inflater.inflate(R.layout.whatsnew, null);"
+        errorLine2="                                                        ~~~~">
+        <location
+            file="src\org\runnerup\view\MainLayout.java"
+            line="296"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="InflateParams"
+        message="Avoid passing `null` as the view root (needed to resolve layout parameters on the inflated layout&apos;s root element)"
+        errorLine1="                    R.layout.step_dialog, null);"
+        errorLine2="                                          ~~~~">
+        <location
+            file="src\org\runnerup\view\StepButton.java"
+            line="207"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 15.0.1"
+        errorLine1="    latestImplementation &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="125"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.android.support:design than 24.1.0 is available: 27.1.1"
+        errorLine1="    latestImplementation &quot;com.android.support:design:${rootProject.ext.supportLibrary}&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="120"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.mapbox.mapboxsdk:mapbox-android-sdk than 5.1.1 is available: 6.0.1"
+        errorLine1="    latestImplementation (&apos;com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.1@aar&apos;){"
+        errorLine2="    ^">
+        <location
+            file="build.gradle"
+            line="127"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PrivateResource"
+        message="The resource `@string/app_name` is marked as private in com.mapbox.mapboxsdk:mapbox-android-sdk"
+        errorLine1="        w.name(&quot;name&quot;).value(mContext.getString(R.string.app_name));"
+        errorLine2="                                                         ~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\format\GoogleFitData.java"
+            line="382"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="PrivateResource"
+        message="The resource `@string/app_name` is marked as private in com.mapbox.mapboxsdk:mapbox-android-sdk"
+        errorLine1="            w.name(&quot;id&quot;).value(mContext.getString(R.string.app_name) + &quot;-&quot; + startTime + &quot;-&quot; + endTime);"
+        errorLine2="                                                           ~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\format\GoogleFitData.java"
+            line="423"
+            column="60"/>
+    </issue>
+
+    <issue
+        id="PrivateResource"
+        message="The resource `@string/app_name` is marked as private in com.mapbox.mapboxsdk:mapbox-android-sdk"
+        errorLine1="        return GoogleFitSynchronizer.REST_SESSIONS + &quot;/&quot; + mContext.getString(R.string.app_name) + &quot;-&quot; + startTime + &quot;-&quot; + endTime;"
+        errorLine2="                                                                                       ~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\format\GoogleFitData.java"
+            line="450"
+            column="88"/>
+    </issue>
+
+    <issue
+        id="SpUsage"
+        message="Should use &quot;`sp`&quot; instead of &quot;`dp`&quot; for text sizes"
+        errorLine1="                android:textSize=&quot;20dp&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\account_row.xml"
+            line="53"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="Deprecated"
+        message="`android:autoText` is deprecated: Use `inputType` instead"
+        errorLine1="            android:autoText=&quot;false&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout-v14\feed_widget_item.xml"
+            line="94"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="TrulyRandom"
+        message="Potentially insecure random numbers on Android 4.3 and older. Read https://android-developers.blogspot.com/2013/08/some-securerandom-thoughts.html for more info."
+        errorLine1="        cipher.init(Cipher.ENCRYPT_MODE, passwordKey, parameterSpec);"
+        errorLine2="               ~~~~">
+        <location
+            file="src\org\runnerup\util\Encryption.java"
+            line="108"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="Wakelock"
+        message="The `release()` call is not always reached"
+        errorLine1="                mWakeLock.release();"
+        errorLine2="                          ~~~~~~~">
+        <location
+            file="src\org\runnerup\tracker\Tracker.java"
+            line="780"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="WakelockTimeout"
+        message="Provide a timeout when requesting a wakelock with `PowerManager.Wakelock.acquire(long timeout)`. This will ensure the OS will cleanup any wakelocks that last longer than you intend, and will save your user&apos;s battery."
+        errorLine1="                mWakeLock.acquire();"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\tracker\Tracker.java"
+            line="790"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentLeft`"
+        errorLine1="            android:layout_alignParentLeft=&quot;true&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\account.xml"
+            line="36"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentTop`"
+        errorLine1="            android:layout_alignParentTop=&quot;true&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\account.xml"
+            line="37"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignBaseline`"
+        errorLine1="            android:layout_alignBaseline=&quot;@+id/account_list_name&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\account.xml"
+            line="44"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentTop`"
+        errorLine1="            android:layout_alignParentTop=&quot;true&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\account.xml"
+            line="45"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_toRightOf`"
+        errorLine1="            android:layout_toRightOf=&quot;@+id/account_list_name&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\account.xml"
+            line="46"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentTop`"
+        errorLine1="      android:layout_alignParentTop=&quot;true&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="36"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentTop`"
+        errorLine1="      android:layout_alignParentTop=&quot;true&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="43"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_toRightOf`"
+        errorLine1="      android:layout_toRightOf=&quot;@+id/account_upload_list_name&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="44"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_above`"
+        errorLine1="      android:layout_above=&quot;@+id/account_download_button&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="99"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentRight`"
+        errorLine1="      android:layout_alignParentRight=&quot;true&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="100"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentEnd`"
+        errorLine1="      android:layout_alignParentEnd=&quot;true&quot;/>"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="101"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentBottom`"
+        errorLine1="      android:layout_alignParentBottom=&quot;true&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="110"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentRight`"
+        errorLine1="      android:layout_alignParentRight=&quot;true&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="111"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ObsoleteLayoutParam"
+        message="Invalid layout param in a `LinearLayout`: `layout_alignParentEnd`"
+        errorLine1="      android:layout_alignParentEnd=&quot;true&quot;/>"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\upload.xml"
+            line="112"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (org.runnerup.util.GraphWrapper.LoadGraph)"
+        errorLine1="    private class LoadGraph extends AsyncTask&lt;LoadParam, Void, GraphProducer> {"
+        errorLine2="                  ~~~~~~~~~">
+        <location
+            file="src\org\runnerup\util\GraphWrapper.java"
+            line="529"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (org.runnerup.util.MapWrapper.LoadRoute)"
+        errorLine1="    private class LoadRoute extends AsyncTask&lt;LoadParam, Void, Route> {"
+        errorLine2="                  ~~~~~~~~~">
+        <location
+            file="latest\java\org\runnerup\util\MapWrapper.java"
+            line="154"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="                    new AsyncTask&lt;String, String, Integer>() {"
+        errorLine2="                    ^">
+        <location
+            file="src\org\runnerup\export\oauth2client\OAuth2Activity.java"
+            line="207"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="                userName = new AsyncTask&lt;Void, Void, String>() {"
+        errorLine2="                           ^">
+        <location
+            file="src\org\runnerup\export\RunKeeperSynchronizer.java"
+            line="447"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="        new AsyncTask&lt;Synchronizer, String, Synchronizer.Status>() {"
+        errorLine2="        ^">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="444"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="        new AsyncTask&lt;Synchronizer, String, Synchronizer.Status>() {"
+        errorLine2="        ^">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="603"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="        new AsyncTask&lt;Synchronizer, String, Status>() {"
+        errorLine2="        ^">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="780"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="        new AsyncTask&lt;Synchronizer, String, Synchronizer.Status>() {"
+        errorLine2="        ^">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="846"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="        new AsyncTask&lt;String, String, Synchronizer.Status>() {"
+        errorLine2="        ^">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="910"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="        new AsyncTask&lt;Synchronizer, String, Status>() {"
+        errorLine2="        ^">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="1127"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="This AsyncTask class should be static or leaks might occur (anonymous android.os.AsyncTask)"
+        errorLine1="        new AsyncTask&lt;Synchronizer, String, Synchronizer.Status>() {"
+        errorLine2="        ^">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="1232"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="VectorPath"
+        message="Very long vector path (871 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
+        errorLine1="        android:pathData=&quot;M19.43,12.98c0.04,-0.32 0.07,-0.64 0.07,-0.98s-0.03,-0.66 -0.07,-0.98l2.11,-1.65c0.19,-0.15 0.24,-0.42 0.12,-0.64l-2,-3.46c-0.12,-0.22 -0.39,-0.3 -0.61,-0.22l-2.49,1c-0.52,-0.4 -1.08,-0.73 -1.69,-0.98l-0.38,-2.65C14.46,2.18 14.25,2 14,2h-4c-0.25,0 -0.46,0.18 -0.49,0.42l-0.38,2.65c-0.61,0.25 -1.17,0.59 -1.69,0.98l-2.49,-1c-0.23,-0.09 -0.49,0 -0.61,0.22l-2,3.46c-0.13,0.22 -0.07,0.49 0.12,0.64l2.11,1.65c-0.04,0.32 -0.07,0.65 -0.07,0.98s0.03,0.66 0.07,0.98l-2.11,1.65c-0.19,0.15 -0.24,0.42 -0.12,0.64l2,3.46c0.12,0.22 0.39,0.3 0.61,0.22l2.49,-1c0.52,0.4 1.08,0.73 1.69,0.98l0.38,2.65c0.03,0.24 0.24,0.42 0.49,0.42h4c0.25,0 0.46,-0.18 0.49,-0.42l0.38,-2.65c0.61,-0.25 1.17,-0.59 1.69,-0.98l2.49,1c0.23,0.09 0.49,0 0.61,-0.22l2,-3.46c0.12,-0.22 0.07,-0.49 -0.12,-0.64l-2.11,-1.65zM12,15.5c-1.93,0 -3.5,-1.57 -3.5,-3.5s1.57,-3.5 3.5,-3.5 3.5,1.57 3.5,3.5 -1.57,3.5 -3.5,3.5z&quot; />"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\drawable-v21\ic_tab_settings_24dp.xml"
+            line="10"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="VectorPath"
+        message="Very long vector path (1157 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
+        errorLine1="    &lt;path android:fillColor=&quot;#333333&quot; android:pathData=&quot;M11.992,10.492C12.43,10.492 12.906,10.555 13.422,10.68C13.938,10.805 14.414,11.008 14.852,11.289C15.289,11.57 15.508,11.891 15.508,12.25L15.508,13.492L12.508,13.492L12.508,12.25C12.508,11.563 12.18,10.984 11.523,10.516C11.633,10.5 11.789,10.492 11.992,10.492ZM6.578,10.68C7.094,10.555 7.57,10.492 8.008,10.492C8.445,10.492 8.922,10.555 9.438,10.68C9.953,10.805 10.422,11.008 10.844,11.289C11.281,11.57 11.5,11.891 11.5,12.25L11.5,13.492L4.492,13.492L4.492,12.25C4.492,11.891 4.711,11.57 5.148,11.289C5.586,11.008 6.063,10.805 6.578,10.68ZM9.039,9.063C8.758,9.359 8.414,9.508 8.008,9.508C7.602,9.508 7.25,9.359 6.953,9.063C6.656,8.766 6.508,8.414 6.508,8.008C6.508,7.602 6.656,7.25 6.953,6.953C7.25,6.656 7.602,6.508 8.008,6.508C8.414,6.508 8.758,6.656 9.039,6.953C9.336,7.25 9.484,7.602 9.484,8.008C9.484,8.414 9.336,8.766 9.039,9.063ZM13.047,9.063C12.75,9.359 12.398,9.508 11.992,9.508C11.586,9.508 11.234,9.359 10.938,9.063C10.641,8.766 10.492,8.414 10.492,8.008C10.492,7.602 10.641,7.25 10.938,6.953C11.234,6.656 11.586,6.508 11.992,6.508C12.398,6.508 12.75,6.656 13.047,6.953C13.344,7.25 13.492,7.602 13.492,8.008C13.492,8.414 13.344,8.766 13.047,9.063Z&quot;/>"
+        errorLine2="                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\drawable\switch_feed.xml"
+            line="4"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="UseSparseArrays"
+        message="Use `new SparseArray&lt;Sport>(...)` instead for better performance"
+        errorLine1="    public static final Map&lt;Integer, Sport> endomondo2sportMap = new HashMap&lt;Integer, Sport>();"
+        errorLine2="                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\EndomondoSynchronizer.java"
+            line="78"
+            column="66"/>
+    </issue>
+
+    <issue
+        id="UseSparseArrays"
+        message="Use `new SparseArray&lt;Sport>(...)` instead for better performance"
+        errorLine1="    static final Map&lt;Integer, Sport> funbeat2sportMap = new HashMap&lt;Integer, Sport>();"
+        errorLine2="                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\FunBeatSynchronizer.java"
+            line="84"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="UseSparseArrays"
+        message="Use `new SparseArray&lt;Sport>(...)` instead for better performance"
+        errorLine1="    static final Map&lt;Integer, Sport> mapmyrun2sportMap = new HashMap&lt;Integer, Sport>();"
+        errorLine2="                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\MapMyRunSynchronizer.java"
+            line="68"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="UseSparseArrays"
+        message="Use `new SparseArray&lt;Sport>(...)` instead for better performance"
+        errorLine1="    static final Map&lt;Integer, Sport> runtastic2sportMap = new HashMap&lt;Integer, Sport>();"
+        errorLine2="                                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\RuntasticSynchronizer.java"
+            line="68"
+            column="59"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/bottomNavBg` with a theme that also paints a background (inferred theme is `@style/MainLayoutTheme`)"
+        errorLine1="    android:background=&quot;@color/bottomNavBg&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\bottom_tab_indicator.xml"
+            line="6"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@android:color/background_dark` with a theme that also paints a background (inferred theme is `@style/MainLayoutTheme`)"
+        errorLine1="    android:background=&quot;@android:color/background_dark&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout-v14\feed_widget.xml"
+            line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.btn_grey` appears to be unused"
+        errorLine1="&lt;selector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; >"
+        errorLine2="^">
+        <location
+            file="res\drawable\btn_grey.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.black` appears to be unused"
+        errorLine1="     &lt;color name=&quot;black&quot;>#000&lt;/color>"
+        errorLine2="            ~~~~~~~~~~~~">
+        <location
+            file="res\values\colors.xml"
+            line="19"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.laplist` appears to be unused"
+        errorLine1="&lt;ListView xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="res\layout\laplist.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.mapboxMapID` appears to be unused"
+        errorLine1="    &lt;string name=&quot;mapboxMapID&quot;>cqnqrd.4004d33f&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\values\mapbox.xml"
+            line="19"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `TableRow` layout or its `LinearLayout` parent is possibly useless"
+        errorLine1="  &lt;TableRow"
+        errorLine2="  ^">
+        <location
+            file="res\layout\advanced_workout_row.xml"
+            line="7"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `GridLayout` layout or its `LinearLayout` parent is useless"
+        errorLine1="    &lt;GridLayout"
+        errorLine2="    ^">
+        <location
+            file="res\layout-v14\feed_widget_item.xml"
+            line="27"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `TableRow` layout or its `TableLayout` parent is possibly useless"
+        errorLine1="        &lt;TableRow"
+        errorLine2="        ^">
+        <location
+            file="res\layout\filepermission.xml"
+            line="37"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `LinearLayout` layout or its `LinearLayout` parent is possibly useless"
+        errorLine1="    &lt;LinearLayout"
+        errorLine2="    ^">
+        <location
+            file="res\layout\step_dialog.xml"
+            line="23"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `LinearLayout` layout or its `LinearLayout` parent is useless"
+        errorLine1=" &lt;LinearLayout"
+        errorLine2=" ^">
+        <location
+            file="res\layout\workout_row.xml"
+            line="23"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="IconLocation"
+        message="Found bitmap drawable `res/drawable/feed_widget_preview.png` in densityless folder">
+        <location
+            file="res\drawable\feed_widget_preview.png"/>
+    </issue>
+
+    <issue
+        id="IconDuplicates"
+        message="The following unrelated icon files have identical contents: title_spinner_pressed.9.png, title_spinner_selected.9.png">
+        <location
+            file="res\drawable-hdpi\title_spinner_selected.9.png"/>
+        <location
+            file="res\drawable-hdpi\title_spinner_pressed.9.png"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="    &lt;Button"
+        errorLine2="    ^">
+        <location
+            file="res\layout\upload.xml"
+            line="68"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="    &lt;Button"
+        errorLine2="    ^">
+        <location
+            file="res\layout\upload.xml"
+            line="75"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GoogleAppIndexingWarning"
+        message="App is not indexable by Google Search; consider adding at least one Activity with an ACTION-VIEW intent filter. See issue explanation for more details."
+        errorLine1=" &lt;application"
+        errorLine2=" ^">
+        <location
+            file="latest\AndroidManifest.xml"
+            line="22"
+            column="2"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="        ^">
+        <location
+            file="res\layout\account.xml"
+            line="40"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="            ^">
+        <location
+            file="res\layout\account_row.xml"
+            line="42"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="    ^">
+        <location
+            file="res\layout\bottom_tab_indicator.xml"
+            line="11"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="    ^">
+        <location
+            file="res\layout-small\feed_row_activity.xml"
+            line="24"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="    ^">
+        <location
+            file="res\layout\feed_row_activity.xml"
+            line="24"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageButton"
+        errorLine2="    ^">
+        <location
+            file="res\layout-v14\feed_widget.xml"
+            line="10"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="        ^">
+        <location
+            file="res\layout-v14\feed_widget_item.xml"
+            line="35"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="        &lt;ImageView"
+        errorLine2="        ^">
+        <location
+            file="res\layout\history_row.xml"
+            line="38"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageButton"
+        errorLine2="            ^">
+        <location
+            file="res\layout\start.xml"
+            line="114"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageButton"
+        errorLine2="            ^">
+        <location
+            file="res\layout\start.xml"
+            line="137"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="    ^">
+        <location
+            file="res\layout\step_button.xml"
+            line="39"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="    ^">
+        <location
+            file="res\layout\upload.xml"
+            line="39"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="KeyboardInaccessibleWidget"
+        message="&apos;clickable&apos; attribute found, please also add &apos;focusable&apos;"
+        errorLine1="    android:clickable=&quot;true&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\title_spinner.xml"
+            line="23"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="LabelFor"
+        message="Missing accessibility label: where minSdk &lt; 17, you should provide an `android:hint`"
+        errorLine1="    &lt;EditText"
+        errorLine2="    ^">
+        <location
+            file="res\layout\heartratezonerow.xml"
+            line="34"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="LabelFor"
+        message="Missing accessibility label: where minSdk &lt; 17, you should provide an `android:hint`"
+        errorLine1="    &lt;EditText"
+        errorLine2="    ^">
+        <location
+            file="res\layout\heartratezonerow.xml"
+            line="47"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                    viewHolder.tv0.setText(&quot;(&quot; + getResources().getString(intensity.getTextId()) + &quot;)&quot;);"
+        errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\DetailActivity.java"
+            line="526"
+            column="44"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_LONG, hr) + &quot; bpm&quot;);"
+        errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\DetailActivity.java"
+            line="547"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_LONG, hr) + &quot; bpm&quot;);"
+        errorLine2="                                                                                                   ~~~~~~">
+        <location
+            file="src\org\runnerup\view\DetailActivity.java"
+            line="547"
+            column="100"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                tv1.setText(name + &quot; trained &quot; + sport);"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\FeedActivity.java"
+            line="239"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                tv1.setText(name + &quot; trained &quot; + sport);"
+        errorLine2="                                   ~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\FeedActivity.java"
+            line="239"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                feedStatus.setText(getString(R.string.Synchronizing) + &quot; &quot; + synchronizerName);"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\FeedActivity.java"
+            line="306"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                tvBatteryLevel.setText(getResources().getText(R.string.Battery_level) + &quot;: &quot; + hrProvider.getBatteryLevel() + &quot;%&quot;);"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\HRSettingsActivity.java"
+            line="599"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        tv.setText(getString(R.string.Zone) + &quot; &quot; + zone + &quot; &quot; + lim.first + &quot;% - &quot; + lim.second + &quot;%&quot;);"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\HRZonesActivity.java"
+            line="67"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
+        errorLine1="                lo.setText(Integer.toString(values.first));"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\HRZonesActivity.java"
+            line="160"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
+        errorLine1="                hi.setText(Integer.toString(values.second));"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\HRZonesActivity.java"
+            line="161"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
+        errorLine1="                        zones.get(2 * i + 0).setText(Integer.toString(val.first));"
+        errorLine2="                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\HRZonesActivity.java"
+            line="196"
+            column="54"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
+        errorLine1="                        zones.get(2 * i + 1).setText(Integer.toString(val.second));"
+        errorLine2="                                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\HRZonesActivity.java"
+            line="197"
+            column="54"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        b.setText(&quot;&quot; + c);"
+        errorLine2="                  ~~~~~~">
+        <location
+            file="src\org\runnerup\widget\NumberPicker.java"
+            line="122"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                    targetPace.setText(formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(),"
+        errorLine2="                                       ^">
+        <location
+            file="src\org\runnerup\view\RunActivity.java"
+            line="536"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                    durationValue.setText(&quot;&quot; + (step.getCurrentRepeat() + 1) + &quot;/&quot;"
+        errorLine2="                                          ^">
+        <location
+            file="src\org\runnerup\view\RunActivity.java"
+            line="545"
+            column="43"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="            gpsInfoView1.setText(&quot;: &quot; + cnt0 + &quot;/&quot; + cnt1);"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\StartActivity.java"
+            line="640"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
+        errorLine1="                    hrValueText.setText(Integer.toString(hrVal));"
+        errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\StartActivity.java"
+            line="701"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="            mGoalValue.setText(prefix +"
+        errorLine2="                               ^">
+        <location
+            file="src\org\runnerup\view\StepButton.java"
+            line="150"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="            actionButton.setText(actionButtonText + &quot; (&quot; + syncCount + &quot;)&quot;);"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\view\UploadActivity.java"
+            line="246"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="RelativeOverlap"
+        message="`@id/upload_list_sport` can overlap `@id/upload_list_start_time` if @id/upload_list_start_time, @id/upload_list_sport grow due to localized text expansion"
+        errorLine1="        &lt;TextView"
+        errorLine2="        ^">
+        <location
+            file="res\layout\upload_row.xml"
+            line="36"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlSymmetry"
+        message="When you define `paddingLeft` you should probably also define `paddingRight` for right-to-left symmetry"
+        errorLine1="    android:paddingLeft=&quot;20dp&quot; >"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\layout\manage_workouts_list_row.xml"
+            line="22"
+            column="5"/>
+    </issue>
 
 </issues>
