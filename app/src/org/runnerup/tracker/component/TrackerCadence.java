@@ -146,7 +146,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     public ResultCode onConnecting(final Callback callback, final Context context) {
         ResultCode res;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean enabled = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), false);
+        boolean enabled = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), true);
 
         if (!enabled) {
             res = ResultCode.RESULT_NOT_ENABLED;
