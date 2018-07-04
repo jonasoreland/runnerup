@@ -110,21 +110,21 @@ public class WorkoutBuilder {
     }
 
     private static void addAutoPauseTrigger(Resources res, Step step, SharedPreferences prefs) {
-        boolean enableAutoPause = prefs.getBoolean(res.getString(R.string.pref_autopause_active), true);
+        boolean enableAutoPause = prefs.getBoolean(res.getString(R.string.pref_autopause_active), false);
         if (!enableAutoPause)
             return;
 
         float autoPauseMinSpeed = 0;
         float autoPauseAfterSeconds = 4f;
 
-        String val = prefs.getString(res.getString(R.string.pref_autopause_minpace), "60");
+        String val = prefs.getString(res.getString(R.string.pref_autopause_minpace), "20");
         try {
             float autoPauseMinPace = Float.parseFloat(val);
             if (autoPauseMinPace > 0)
                 autoPauseMinSpeed = 1000 / (autoPauseMinPace * 60);
         } catch (NumberFormatException e) {
         }
-        val = prefs.getString(res.getString(R.string.pref_autopause_afterseconds), "4");
+        val = prefs.getString(res.getString(R.string.pref_autopause_afterseconds), "15");
         try {
             autoPauseAfterSeconds = Float.parseFloat(val);
         } catch (NumberFormatException e) {
