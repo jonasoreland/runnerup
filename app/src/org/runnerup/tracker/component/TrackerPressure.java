@@ -22,8 +22,6 @@ import android.content.SharedPreferences;
 import android.hardware.*;
 import android.preference.PreferenceManager;
 
-import org.runnerup.BuildConfig;
-
 import java.util.HashMap;
 import java.util.Random;
 
@@ -38,9 +36,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
 
     private SensorManager sensorManager = null;
 
-    //For debug builds, use random if sensor is unavailable
-    private final static boolean testMode = BuildConfig.DEBUG;
-    private static boolean isEmulating = false;
+    private static boolean isMockSensor = false;
 
     //The sensor fires continuously, use the last available values (no smoothing)
     @SuppressWarnings("unused")
@@ -48,7 +44,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
     private Float latestVal = null;
 
     public Float getValue() {
-        if (isEmulating) {
+        if (isMockSensor) {
             latestVal = (new Random()).nextFloat() * 0.2f + 1013.25f/*SensorManager.PRESSURE_STANDARD_ATMOSPHERE*/;
             //latestTime = SystemClock.elapsedRealtime()*1000000;
         }
@@ -76,7 +72,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
      * Sensor is available
      */
     public static boolean isAvailable(final Context context) {
-        return ((new TrackerPressure()).getSensor(context) != null) || testMode;
+        return ((new TrackerPressure()).getSensor(context) != null) || isMockSensor;
     }
 
     private Sensor getSensor(final Context context) {
@@ -89,9 +85,9 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
             sensorManager = null;
         }
 
-        if (testMode && sensor == null) {
-            //No real sensor, emulate
-            isEmulating = true;
+        if (sensor == null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
         }
 
         return sensor;
@@ -116,7 +112,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
             if (sensor != null) {
                 sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
                 res = ResultCode.RESULT_OK;
-            } else if (isEmulating) {
+            } else if (isMockSensor) {
                 res = ResultCode.RESULT_OK;
             } else {
                 res = ResultCode.RESULT_NOT_SUPPORTED;
@@ -185,7 +181,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
         isStarted = false;
         if (sensorManager != null) { sensorManager.unregisterListener(this); }
         sensorManager = null;
-        isEmulating = false;
+        isMockSensor = false;
         return ResultCode.RESULT_OK;
     }
 }
