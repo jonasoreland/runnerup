@@ -24,7 +24,9 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
+import org.runnerup.workout.Workout;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -145,7 +147,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     public ResultCode onConnecting(final Callback callback, final Context context) {
         ResultCode res;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean enabled = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), false);
+        boolean enabled = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), true);
 
         if (!enabled) {
             res = ResultCode.RESULT_NOT_ENABLED;
@@ -179,7 +181,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
      *   to workout
      */
     public void onBind(HashMap<String, Object> bindValues) {
-        int sport = (int) bindValues.get(Constants.DB.ACTIVITY.SPORT);
+        int sport = (int) bindValues.get(Workout.KEY_SPORT_TYPE);
         if (sport == Constants.DB.ACTIVITY.SPORT_BIKING) {
             //Not used, disconnect sensor so nothing is returned
             isSportEnabled = false;
@@ -230,6 +232,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         if (sensorManager != null) { sensorManager.unregisterListener(this); }
         sensorManager = null;
         isMockSensor = false;
+
         return ResultCode.RESULT_OK;
     }
 }

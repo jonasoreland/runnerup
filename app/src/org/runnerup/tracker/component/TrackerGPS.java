@@ -88,7 +88,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             frequency_ms = Integer.valueOf(preferences.getString(context.getString(
-                    R.string.pref_pollInterval), "500"));
+                    R.string.pref_pollInterval), "2000"));
             if (!mWithoutGps) {
                 String frequency_meters = preferences.getString(context.getString(
                         R.string.pref_pollDistance), "5");

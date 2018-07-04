@@ -106,7 +106,8 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public static final String KEY_FORMATTER = "Formatter";
     public static final String KEY_HRZONES = "HrZones";
     public static final String KEY_MUTE = "mute";
-    public static final String KEY_WORKOUT_TYPE = "type";
+    public static final String KEY_WORKOUT_TYPE = "workout_type";
+    public static final String KEY_SPORT_TYPE = "sport";
 
     public Workout() {
     }
