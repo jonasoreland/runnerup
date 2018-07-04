@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
+import org.runnerup.workout.Workout;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -179,7 +180,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
      *   to workout
      */
     public void onBind(HashMap<String, Object> bindValues) {
-        int sport = (int) bindValues.get(Constants.DB.ACTIVITY.SPORT);
+        int sport = (int) bindValues.get(Workout.KEY_SPORT_TYPE);
         if (sport == Constants.DB.ACTIVITY.SPORT_BIKING) {
             //Not used, disconnect sensor so nothing is returned
             isSportEnabled = false;
