@@ -92,7 +92,7 @@
             android:name=".view.DetailActivity"
             android:configChanges="orientation|screenSize|uiMode"
             android:parentActivityName=".view.MainLayout"
-            android:theme="@style/AppTheme">
+            android:theme="@style/MainLayoutTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

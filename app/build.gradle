@@ -118,7 +118,7 @@ dependencies {
     latestWearApp project(':wear')
 
     latestImplementation "com.android.support:design:${rootProject.ext.supportLibrary}"
-    //Lint bug: https://code.google.com/p/android/issues/detail?id=231321
+    //Lint bug: https://issuetracker.google.com/issues/231321
     //noinspection GradleDependency
     froyoImplementation 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
 

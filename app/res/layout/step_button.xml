@@ -14,7 +14,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/step_button"
     android:layout_width="fill_parent"
@@ -22,82 +22,32 @@
     android:layout_margin="4dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
-    android:gravity="center_vertical"
+    android:focusable="true"
+    android:orientation="horizontal"
     android:paddingBottom="12dp"
+    android:gravity="center_vertical"
     android:paddingTop="12dp">
 
-    <TableRow
-        android:id="@+id/step_row0"
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/step_duration_value"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|fill_horizontal"
-        android:orientation="horizontal"
-        tools:ignore="HardcodedText">
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/step_intensity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="27"
-            android:gravity="center_vertical|left"
-            android:text="@string/cool_down"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/step_duration_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="25"
-            android:gravity="center_vertical|left"
-            android:text="@string/Duration" />
-
-        <TextView
-            android:id="@+id/step_duration_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="40dp"
-            android:layout_weight="50"
-            android:gravity="center_vertical|right" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/step_row1"
-        android:layout_width="fill_parent"
+    <ImageView
+        android:id="@+id/step_icon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical|fill_horizontal"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        tools:ignore="HardcodedText">
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="0dp" />
 
-        <TextView
-            android:id="@+id/text_view03"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="27"
-            android:gravity="center_vertical|left"
-            android:textStyle="bold"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/step_goal_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="25"
-            android:gravity="center_vertical|left"
-            android:text="@string/pace" />
-
-        <TextView
-            android:id="@+id/step_goal_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="40dp"
-            android:layout_weight="50"
-            android:gravity="center_vertical|right" />
-    </TableRow>
-</TableLayout>
+    <TextView
+        android:id="@+id/step_goal_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="40dp"
+        android:layout_weight="2" />
+</LinearLayout>

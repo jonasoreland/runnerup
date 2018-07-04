@@ -18,19 +18,19 @@
 package org.runnerup.view;
 
 import android.annotation.TargetApi;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.runnerup.R;
@@ -45,16 +45,13 @@ import org.runnerup.workout.Range;
 import org.runnerup.workout.Step;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class StepButton extends TableLayout {
+public class StepButton extends LinearLayout {
 
     private final Context mContext;
-    private final TableLayout mLayout;
-    private final TextView mIntensity;
-    private final TextView mDurationType;
+    private final ViewGroup mLayout;
+    private final ImageView mIntensityIcon;
     private final TextView mDurationValue;
-    private final TextView mGoalType;
     private final TextView mGoalValue;
-    private final TableRow mGoalRow;
     private final Formatter formatter;
 
     public Step getStep() {
@@ -75,13 +72,10 @@ public class StepButton extends TableLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.step_button, this);
         formatter = new Formatter(context);
-        mLayout = (TableLayout) findViewById(R.id.step_button);
-        mIntensity = (TextView) findViewById(R.id.step_intensity);
-        mDurationType = (TextView) findViewById(R.id.step_duration_type);
-        mDurationValue = (TextView) findViewById(R.id.step_duration_value);
-        mGoalType = (TextView) findViewById(R.id.step_goal_type);
-        mGoalValue = (TextView) findViewById(R.id.step_goal_value);
-        mGoalRow = (TableRow) findViewById(R.id.step_row1);
+        mLayout = findViewById(R.id.step_button);
+        mIntensityIcon = findViewById(R.id.step_icon);
+        mDurationValue = findViewById(R.id.step_duration_value);
+        mGoalValue = findViewById(R.id.step_goal_value);
     }
 
     @Override
@@ -100,33 +94,61 @@ public class StepButton extends TableLayout {
     public void setStep(Step step) {
         this.step = step;
         Resources res = getResources();
-        mIntensity.setText(res.getText(step.getIntensity().getTextId()));
-        if (step.getIntensity() == Intensity.REPEAT) {
-            mDurationType.setText("");
-            mDurationValue.setText("" + step.getRepeatCount());
-            mGoalRow.setVisibility(View.GONE);
-            if (editRepeatCount)
-                mLayout.setOnClickListener(onRepeatClickListener);
-            return;
+
+        mDurationValue.setVisibility(VISIBLE);
+        switch (step.getIntensity()) {
+            case ACTIVE:
+                mIntensityIcon.setImageResource(R.drawable.step_active);
+                mGoalValue.setTextColor(res.getColor(R.color.stepActive)); //todo check if it works
+                break;
+            case RESTING:
+                mIntensityIcon.setImageResource(R.drawable.step_resting);
+                mGoalValue.setTextColor(res.getColor(R.color.stepResting));
+                break;
+            case REPEAT:
+                mIntensityIcon.setImageResource(R.drawable.step_repeat);
+                mDurationValue.setVisibility(GONE); //todo better wording in string
+                mGoalValue.setText(String.format(res.getString(R.string.repeat_times), step.getRepeatCount()));
+                mGoalValue.setTextColor(res.getColor(R.color.stepRepeat));
+                if (editRepeatCount)
+                    mLayout.setOnClickListener(onRepeatClickListener);
+                return;
+            case WARMUP:
+                mIntensityIcon.setImageResource(R.drawable.step_warmup);
+                mGoalValue.setTextColor(res.getColor(R.color.stepWarmup));
+                break;
+            case COOLDOWN:
+                mIntensityIcon.setImageResource(R.drawable.step_cooldown);
+                mGoalValue.setTextColor(res.getColor(R.color.stepCooldown));
+                break;
+            case RECOVERY:
+                mIntensityIcon.setImageResource(R.drawable.step_recovery);
+                mGoalValue.setTextColor(res.getColor(R.color.stepRecovery));
+                break;
+            default:
+                mIntensityIcon.setImageResource(0);
         }
+
         Dimension durationType = step.getDurationType();
         if (durationType == null) {
-            mDurationType.setText("");
             mDurationValue.setText(res.getString(R.string.Until_press));
         } else {
-            mDurationType.setText(res.getString(durationType.getTextId()));
             mDurationValue.setText(formatter.format(Formatter.Format.TXT_LONG, durationType,
                     step.getDurationValue()));
         }
 
         Dimension goalType = step.getTargetType();
         if (goalType == null) {
-            mGoalRow.setVisibility(View.GONE);
+            mGoalValue.setText(step.getIntensity().getTextId());
         } else {
-            mGoalRow.setVisibility(View.VISIBLE);
-            mGoalType.setText(res.getString(goalType.getTextId()));
-            mGoalValue.setText(formatter.format(Formatter.Format.TXT_SHORT, goalType,
-                    step.getTargetValue().minValue)
+            String prefix;
+            if (goalType == Dimension.HR || goalType == Dimension.HRZ)
+                prefix = "HR "; //todo should use a string
+            else
+                prefix = "";
+
+            mGoalValue.setText(prefix +
+                    formatter.format(Formatter.Format.TXT_SHORT, goalType, step.getTargetValue().minValue)
                     + "-" +
                     formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue));
         }

@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -37,6 +36,8 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,7 +87,7 @@ import java.util.List;
 import java.util.Locale;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class StartActivity extends Activity implements TickListener, GpsInformation {
+public class StartActivity extends AppCompatActivity implements TickListener, GpsInformation {
 
     final static String TAB_BASIC = "basic";
     final static String TAB_INTERVAL = "interval";
@@ -150,6 +151,8 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         mDB = DBHelper.getWritableDatabase(this);
         formatter = new Formatter(this);
@@ -903,7 +906,9 @@ public class StartActivity extends Activity implements TickListener, GpsInformat
                 button = new StepButton(StartActivity.this, null);
             }
             button.setStep(entry.step);
-            button.setPadding(entry.level * 7, 0, 0, 0);
+
+            float pxToDp = getResources().getDisplayMetrics().density;
+            button.setPadding((int)(entry.level * 8 * pxToDp + 0.5f), 0, 0, 0);
             button.setOnChangedListener(onWorkoutChanged);
             return button;
         }
