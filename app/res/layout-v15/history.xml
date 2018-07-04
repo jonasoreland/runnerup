@@ -17,7 +17,7 @@
       ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
       -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab1_layout"
@@ -44,4 +44,4 @@
         app:srcCompat="@drawable/ic_add_white_24dp"
         tools:ignore="UnusedAttribute" />
 
-</FrameLayout>
+</merge>
