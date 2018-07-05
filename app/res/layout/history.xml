@@ -15,18 +15,30 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tab1_layout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/history_list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
-    </ListView>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/margin_for_fab"
+        android:scrollbarStyle="outsideOverlay"
+        android:clipToPadding="false" />
 
-</RelativeLayout>
+    <ImageButton
+        android:id="@+id/history_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_gravity="right|bottom"
+        app:srcCompat="@drawable/ic_add_white_24dp"
+        android:contentDescription="@string/Add_manual_entry"
+        android:padding="16dp"
+        android:background="@drawable/fab_compat_bg"
+        />
+
+</merge>

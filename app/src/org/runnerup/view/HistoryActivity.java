@@ -59,6 +59,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
 
     ListView listView = null;
     CursorAdapter cursorAdapter = null;
+    View fab = null;
 
     /**
      * Called when the activity is first created.
@@ -67,8 +68,19 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.history);
         listView = (ListView) findViewById(R.id.history_list);
+        fab = findViewById(R.id.history_add);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(HistoryActivity.this,
+                        ManualActivity.class);
+                startActivityForResult(i, 0);
+            }
+        });
 
         mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);
@@ -133,7 +145,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
     class HistoryListAdapter extends CursorAdapter {
         final LayoutInflater inflater;
 
-        public HistoryListAdapter(Context context, Cursor c) {
+        HistoryListAdapter(Context context, Cursor c) {
             super(context, c, true);
             inflater = LayoutInflater.from(context);
         }
@@ -164,7 +176,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             TextView sectionTitle = view.findViewById(R.id.section_title);
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
-            if (curDate == null || sameMonthAsPrevious(year, month, cursor)) {
+            if (sameMonthAsPrevious(year, month, cursor)) {
                 sectionTitle.setVisibility(View.GONE);
             } else {
                 sectionTitle.setVisibility(View.VISIBLE);

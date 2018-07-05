@@ -20,7 +20,8 @@
     android:id="@+id/tab_manual"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="@dimen/activity_margin">
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manual_sport"
@@ -100,4 +101,3 @@
         android:hint="@string/Add_workout_notes" />
 
 </RelativeLayout>
-
