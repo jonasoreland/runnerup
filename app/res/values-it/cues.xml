@@ -20,7 +20,7 @@
   <string name="cue_warmup">riscaldamento</string>
   <string name="cue_cooldown">defaticamento</string>
   <string name="cue_current">attuale</string>
-  <string name="cue_perkilometer">al kilometro</string>
+  <string name="cue_perkilometer">al chilometro</string>
   <string name="cue_permile">al miglio</string>
   <string name="cue_started">iniziato</string>
   <string name="cue_paused">interrotto</string>
