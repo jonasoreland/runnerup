@@ -38,8 +38,8 @@
         <ignore path="res/values-tr/cues.xml" />
         <ignore path="res/values-pl/cues.xml" />
     </issue>
-    <issue id="UnusedResources">
-        <ignore path="res/drawable-mdpi/a12_googleplus.png" />
+    <issue id="UnusedQuantity">
+        <ignore path="res/values-lt/cues.xml" />
     </issue>
     <issue id="InvalidPackage">
         <ignore regexp=".*okio.*" />

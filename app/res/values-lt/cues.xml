@@ -32,36 +32,43 @@
   <plurals name="cue_hour">
     <item quantity="one">%d valanda</item>
     <item quantity="few">%d valandos</item>
+    <item quantity="many">%d valandos</item>
     <item quantity="other">%d valandos</item>
   </plurals>
   <plurals name="cue_minute">
     <item quantity="one">%d minutė</item>
     <item quantity="few">%d minutės</item>
+    <item quantity="many">%d minutės</item>
     <item quantity="other">%d minutės</item>
   </plurals>
   <plurals name="cue_second">
     <item quantity="one">%d sekundė</item>
     <item quantity="few">%d sekundės</item>
+    <item quantity="many">%d sekundės</item>
     <item quantity="other">%d sekundės</item>
   </plurals>
   <plurals name="cue_meter">
     <item quantity="one">%d metras</item>
     <item quantity="few">%d metrai</item>
+    <item quantity="many">%d metrai</item>
     <item quantity="other">%d metrai</item>
   </plurals>
   <plurals name="cue_kilometer">
     <item quantity="one">%d kilometras</item>
     <item quantity="few">%d kilometrai</item>
+    <item quantity="many">%d kilometrai</item>
     <item quantity="other">%d kilometrai</item>
   </plurals>
   <plurals name="cue_mile">
     <item quantity="one">%d mylia</item>
     <item quantity="few">%d mylios</item>
+    <item quantity="many">%d mylios</item>
     <item quantity="other">%d mylios</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
     <item quantity="few">%d bpm</item>
+    <item quantity="many">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
   <string name="cue_activity_paused">veikla pristabdyta</string>
