@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -15,62 +14,39 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="0dp"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/feed_header"
+        android:id="@+id/feed_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center_horizontal|center_vertical" >
-
-        <TextView
-            android:id="@+id/feed_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp" />
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ProgressBar
-            android:id="@+id/feed_progress_bar"
-            style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp" />
+
+        <TextView
+            android:id="@+id/feed_progress_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp" />
     </LinearLayout>
 
     <ListView
         android:id="@+id/feed_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linear_layout1"
-        android:layout_below="@id/feed_header" >
-    </ListView>
+        android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:id="@+id/linear_layout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/feed_account_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_blue"
-            android:textColor="@color/btn_text_color"
-            android:text="@string/Configure_accounts" />
-        
-        <Button
-            android:id="@+id/refresh_feed_button"
-            style="@style/ButtonText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_blue"
-            android:text="@string/Refresh" />
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

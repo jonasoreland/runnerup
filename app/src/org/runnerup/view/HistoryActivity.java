@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -46,6 +47,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
+import org.runnerup.workout.Sport;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -54,11 +56,10 @@ import java.util.Date;
 public class HistoryActivity extends AppCompatActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
-    SQLiteDatabase mDB = null;
-    Formatter formatter = null;
-
-    ListView listView = null;
-    CursorAdapter cursorAdapter = null;
+    private SQLiteDatabase mDB = null;
+    private Formatter formatter = null;
+    private ListView listView = null;
+    private CursorAdapter cursorAdapter = null;
 
     /**
      * Called when the activity is first created.
@@ -133,7 +134,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
     class HistoryListAdapter extends CursorAdapter {
         final LayoutInflater inflater;
 
-        public HistoryListAdapter(Context context, Cursor c) {
+        HistoryListAdapter(Context context, Cursor c) {
             super(context, c, true);
             inflater = LayoutInflater.from(context);
         }
@@ -164,7 +165,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             TextView sectionTitle = view.findViewById(R.id.section_title);
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
-            if (curDate == null || sameMonthAsPrevious(year, month, cursor)) {
+            if (sameMonthAsPrevious(year, month, cursor)) {
                 sectionTitle.setVisibility(View.GONE);
             } else {
                 sectionTitle.setVisibility(View.VISIBLE);
@@ -188,15 +189,16 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             ImageView emblem = view.findViewById(R.id.history_list_emblem);
             TextView additionalInfo = view.findViewById(R.id.history_list_additional);
 
+            int sportColor = getResources().getColor(Sport.colorOf(s));
+            Drawable sportDrawable = ContextCompat.getDrawable(context, Sport.drawableColored16Of(s));
+            emblem.setImageDrawable(sportDrawable);
+            distanceText.setTextColor(sportColor);
+            additionalInfo.setTextColor(sportColor);
+
             switch (s) {
                 case DB.ACTIVITY.SPORT_RUNNING: {
-                    int sportColor = getResources().getColor(R.color.sportRunning);
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_running));
-                    distanceText.setTextColor(sportColor);
-
                     Integer hr = ae.getAvgHr();
                     if (hr != null) {
-                        additionalInfo.setTextColor(sportColor);
                         additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
                     } else {
                         additionalInfo.setText(null);
@@ -204,13 +206,8 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
                     break;
                 }
                 case DB.ACTIVITY.SPORT_BIKING: {
-                    int sportColor = getResources().getColor(R.color.sportBiking);
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_biking));
-                    distanceText.setTextColor(sportColor);
-                    additionalInfo.setTextColor(sportColor);
                     Float cad = ae.getAvgCadence();
                     if (cad != null) {
-                        additionalInfo.setTextColor(sportColor);
                         additionalInfo.setText(formatter.formatCadence(Formatter.Format.TXT_SHORT, cad));
                     } else {
                         additionalInfo.setText(null);
@@ -218,20 +215,12 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
                     break;
                 }
                 case DB.ACTIVITY.SPORT_OTHER: {
-                    int sportColor = getResources().getColor(R.color.sportOther);
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_other));
-                    distanceText.setTextColor(sportColor);
-//                    additionalInfo.setTextColor(sportColor);
                     additionalInfo.setText(null);
                     break;
                 }
                 case DB.ACTIVITY.SPORT_ORIENTEERING: {
-                    int sportColor = getResources().getColor(R.color.sportOrienteering);
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_orienteering));
-                    distanceText.setTextColor(sportColor);
                     Integer hr = ae.getAvgHr();
                     if (hr != null) {
-                        additionalInfo.setTextColor(sportColor);
                         additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
                     } else {
                         additionalInfo.setText(null);
@@ -239,15 +228,9 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
                     break;
                 }
                 case DB.ACTIVITY.SPORT_WALKING: {
-                    int sportColor = getResources().getColor(R.color.sportWalking);
-                    emblem.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sport_walking));
-                    distanceText.setTextColor(sportColor);
-//                    additionalInfo.setTextColor(sportColor);
                     additionalInfo.setText(null);
                     break;
                 }
-                default:
-                    emblem.setImageResource(0);
             }
 
             // duration

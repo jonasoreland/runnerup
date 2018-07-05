@@ -18,24 +18,26 @@
 package org.runnerup.view;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.runnerup.R;
@@ -48,6 +50,7 @@ import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.feed.FeedImageLoader;
 import org.runnerup.feed.FeedList;
 import org.runnerup.util.Formatter;
+import org.runnerup.workout.Sport;
 
 import java.text.DateFormat;
 import java.util.List;
@@ -56,22 +59,37 @@ import java.util.Observer;
 import java.util.Set;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
-public class FeedActivity extends Activity implements Constants {
+public class FeedActivity extends AppCompatActivity implements Constants {
 
-    SQLiteDatabase mDB = null;
-    SyncManager syncManager = null;
-    Formatter formatter = null;
+    private SQLiteDatabase mDB = null;
+    private SyncManager syncManager = null;
+    private Formatter formatter = null;
 
-    FeedList feed = null;
-    ListView feedList = null;
-    FeedListAdapter feedAdapter = null;
+    private FeedList feed = null;
+    private ListView feedList = null;
+    private FeedListAdapter feedAdapter = null;
 
-    Button refreshButton = null;
-    LinearLayout feedHeader = null;
-    TextView feedStatus = null;
-    ProgressBar feedProgressBar = null;
+    private LinearLayout feedProgress = null;
+    private TextView feedProgressLabel = null;
 
-    Button feedAccountButton = null;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.feed_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_configure_accounts:
+                configureAccounts();
+                return true;
+            case R.id.menu_refresh:
+                refresh();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,62 +107,45 @@ public class FeedActivity extends Activity implements Constants {
         feedList.setAdapter(feedAdapter);
         feedList.setDividerHeight(2);
 
-        refreshButton = (Button) findViewById(R.id.refresh_feed_button);
-        refreshButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                feed.reset();
-                feed.getList().clear();
-                feedAdapter.feed.clear();
-                feedAdapter.notifyDataSetInvalidated();
-                startSync();
-            }
-        });
+        feedProgress = (LinearLayout) findViewById(R.id.feed_progress);
+        feedProgressLabel = (TextView) findViewById(R.id.feed_progress_label);
+        startSync();
 
-        feedAccountButton = (Button) findViewById(R.id.feed_account_button);
-        feedAccountButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(FeedActivity.this,
-                        AccountListActivity.class);
-                startActivityForResult(i, 0);
-            }
-        });
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
-        feedHeader = (LinearLayout) findViewById(R.id.feed_header);
-        feedStatus = (TextView) findViewById(R.id.feed_status);
+    private void refresh() {
+        feed.reset();
+        feed.getList().clear();
+        feedAdapter.feed.clear();
+        feedAdapter.notifyDataSetInvalidated();
         startSync();
     }
 
-    void startSync() {
+    private void configureAccounts() {
+        Intent i = new Intent(FeedActivity.this,
+                AccountListActivity.class);
+        startActivityForResult(i, 0);
+    }
+
+    private void startSync() {
         syncManager.clear();
         Set<String> set = syncManager.feedSynchronizersSet(this);
         if (!set.isEmpty()) {
-            feedAccountButton.setVisibility(View.GONE);
-            refreshButton.setVisibility(View.VISIBLE);
-            feedHeader.setVisibility(View.VISIBLE);
-            refreshButton.setEnabled(false);
-            feedStatus.setText(getString(R.string.synchronizing_feed));
+            feedProgress.setVisibility(View.VISIBLE);
+            feedProgressLabel.setText(getString(R.string.synchronizing_feed));
             syncManager.synchronizeFeed(syncDone, set, feed, null);
         } else {
-            feedHeader.setVisibility(View.GONE);
-            refreshButton.setVisibility(View.GONE);
-            feedAccountButton.setVisibility(View.VISIBLE);
+            feedProgress.setVisibility(View.GONE);
         }
     }
 
-    final Callback syncDone = new Callback() {
+    private final Callback syncDone = new Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
-            refreshButton.setEnabled(true);
-            feedHeader.setVisibility(View.GONE);
+            feedProgress.setVisibility(View.GONE);
         }
     };
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     public void onDestroy() {
@@ -175,7 +176,7 @@ public class FeedActivity extends Activity implements Constants {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
-        public void close() {
+        void close() {
             feedList.deleteObserver(this);
         }
 
@@ -206,80 +207,94 @@ public class FeedActivity extends Activity implements Constants {
             ContentValues tmp = feed.get(arg0);
 
             if (FeedList.isHeaderDate(tmp)) {
+
                 View v = layoutInflator.inflate(R.layout.feed_row_date_header, parent, false);
-                TextView tv = (TextView) v.findViewById(R.id.feed_activity_date_header);
+                TextView tv = v.findViewById(R.id.feed_date_header);
                 DateFormat a = android.text.format.DateFormat.getLongDateFormat(context);
                 tv.setText(a.format(tmp.getAsLong(DB.FEED.START_TIME)));
                 return v;
-            } else if (FeedList.isActivity(tmp)) {
-                View v = layoutInflator.inflate(R.layout.feed_row_activity, parent, false);
-                final ImageView iv = (ImageView) v.findViewById(R.id.feed_image);
-                TextView tv0 = (TextView) v.findViewById(R.id.feed_activity_source);
-                TextView tv1 = (TextView) v.findViewById(R.id.feed_activity_header);
-                TextView tv2 = (TextView) v.findViewById(R.id.feed_activity_summary);
-                TextView tv3 = (TextView) v.findViewById(R.id.feed_activity_notes);
 
-                String src = syncManager.getSynchronizer(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
+            } else if (FeedList.isActivity(tmp)) {
+
+                View v = layoutInflator.inflate(R.layout.feed_row_activity, parent, false);
+                final ImageView ivAvatar = v.findViewById(R.id.feed_avatar);
+                ImageView ivSport = v.findViewById(R.id.feed_sport_emblem);
+                TextView tvPerson = v.findViewById(R.id.feed_person);
+                TextView tvSource = v.findViewById(R.id.feed_source);
+                TextView tvSport = v.findViewById(R.id.feed_sport);
+                TextView tvDistance = v.findViewById(R.id.feed_distance);
+                TextView tvDuration = v.findViewById(R.id.feed_duration);
+                TextView tvPace = v.findViewById(R.id.feed_pace);
+                TextView tvNotes = v.findViewById(R.id.feed_notes);
+
+                // avatar
                 if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {
                     FeedImageLoader.LoadImageAsync(tmp.getAsString(DB.FEED.USER_IMAGE_URL), new FeedImageLoader.Callback() {
                         @Override
                         public void run(String url, Bitmap b) {
-                            iv.setImageBitmap(b);
+                            ivAvatar.setImageBitmap(b);
                         }
                     });
                 }
 
                 // String time = formatter.formatTime(Formatter.TXT,
                 // tmp.getAsLong(DB.FEED.START_TIME) / 1000);
-                tv0.setText(src); // + " (" + time + ")");
 
+                // person
                 String name = formatter.formatName(tmp.getAsString(DB.FEED.USER_FIRST_NAME),
                         tmp.getAsString(DB.FEED.USER_LAST_NAME));
-                String sport = FeedActivity.GetSportActivity(tmp);
-                tv1.setText(name + " trained " + sport);
-                if (tmp.containsKey(DB.FEED.DISTANCE) || tmp.containsKey(DB.FEED.DURATION)) {
-                    double distance = 0;
-                    long duration = 0;
-                    if (tmp.containsKey(DB.FEED.DISTANCE))
-                        distance = tmp.getAsDouble(DB.FEED.DISTANCE);
-                    if (tmp.containsKey(DB.FEED.DURATION))
-                        duration = tmp.getAsLong(DB.FEED.DURATION);
+                tvPerson.setText(name);
 
-                    StringBuilder p = new StringBuilder();
-                    if (duration != 0) {
-                        p.append(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, duration));
-                    }
+                // source
+                String src = syncManager.getSynchronizer(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
+                tvSource.setText(src);
 
-                    if (distance != 0) {
-                        if (p.length() > 0)
-                            p.append(", ");
-                        p.append(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(distance)));
-                    }
+                // sport
+                int sportId = tmp.getAsInteger(DB.FEED.FEED_SUBTYPE);
+                Drawable sportDrawable = ContextCompat.getDrawable(context, Sport.drawableColored16Of(sportId));
+                ivSport.setImageDrawable(sportDrawable);
 
-                    if (distance != 0 && duration != 0) {
-                        double pace = duration / distance;
-                        p.append(", ");
-                        p.append(formatter.formatPace(Formatter.Format.TXT_LONG, pace));
-                    }
-                    if (p.length() > 0)
-                        tv2.setText(p.toString());
-                    else
-                        tv2.setVisibility(View.GONE);
-                } else {
-                    tv2.setVisibility(View.GONE);
+                String sportName = Sport.textOf(getResources(), sportId);
+                int sportColor = getResources().getColor(Sport.colorOf(sportId));
+                tvSport.setText(sportName);
+                tvSport.setTextColor(sportColor);
+
+                // distance
+                double distance = 0;
+                if (tmp.containsKey(DB.FEED.DISTANCE)) {
+                    distance = tmp.getAsDouble(DB.FEED.DISTANCE);
+                    tvDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(distance)));
                 }
 
+                // duration
+                long duration = 0;
+                if (tmp.containsKey(DB.FEED.DURATION)) {
+                    duration = tmp.getAsLong(DB.FEED.DURATION);
+                    tvDuration.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, duration));
+                }
+
+                // pace
+                if (distance != 0 && duration != 0) {
+                    double pace = duration / distance;
+                    tvPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, pace));
+                }
+
+                // notes
                 if (tmp.containsKey(DB.FEED.NOTES)) {
-                    tv3.setText(tmp.getAsString(DB.FEED.NOTES));
+                    tvNotes.setVisibility(View.VISIBLE);
+                    tvNotes.setText(tmp.getAsString(DB.FEED.NOTES));
                 } else {
-                    tv3.setVisibility(View.GONE);
+                    tvNotes.setVisibility(View.GONE);
                 }
 
                 return v;
+
             } else {
+
                 TextView tv = new TextView(context);
                 tv.setText(FeedList.toString(tmp));
                 return tv;
+
             }
         }
 
@@ -290,9 +305,7 @@ public class FeedActivity extends Activity implements Constants {
 
         @Override
         public boolean isEnabled(int position) {
-            if (position < feed.size())
-                return !FeedList.isHeaderDate(feed.get(position));
-            return false;
+            return position < feed.size() && !FeedList.isHeaderDate(feed.get(position));
         }
 
         @Override
@@ -303,27 +316,8 @@ public class FeedActivity extends Activity implements Constants {
                 feedAdapter.notifyDataSetChanged();
             } else {
                 String synchronizerName = (String) data;
-                feedStatus.setText(getString(R.string.Synchronizing) + " " + synchronizerName);
+                feedProgressLabel.setText(getString(R.string.Synchronizing) + " " + synchronizerName);
             }
-        }
-    }
-
-    public static String GetSportActivity(ContentValues tmp) {
-        switch (tmp.getAsInteger(DB.FEED.FEED_SUBTYPE)) {
-            case DB.ACTIVITY.SPORT_RUNNING:
-                return "running";
-            case DB.ACTIVITY.SPORT_BIKING:
-                return "biking";
-            case DB.ACTIVITY.SPORT_ORIENTEERING:
-                return "orienteering";
-            case DB.ACTIVITY.SPORT_WALKING:
-                return "walking";
-            case DB.ACTIVITY.SPORT_OTHER:
-            default:
-                if (tmp.containsKey(DB.FEED.FEED_TYPE_STRING))
-                    return tmp.getAsString(DB.FEED.FEED_TYPE_STRING);
-
-                return "something";
         }
     }
 }
