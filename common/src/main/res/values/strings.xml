@@ -134,6 +134,8 @@
   <string name="Manage_accounts">Manage accounts</string>
   <string name="Manage_audio_cues">Manage audio cues</string>
   <string name="Manage_workouts">Manage workouts</string>
+  <string name="Manage_audio_cues___">Manage audio cues…</string>
+  <string name="Manage_workouts___">Manage workouts…</string>
   <string name="Settings">Settings</string>
   <string name="Whats_new">What\'s new</string>
   <string name="Rate_RunnerUp">Rate RunnerUp</string>

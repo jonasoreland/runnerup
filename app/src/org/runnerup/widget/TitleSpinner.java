@@ -18,7 +18,6 @@
 package org.runnerup.widget;
 
 import android.annotation.TargetApi;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -26,6 +25,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
@@ -547,6 +547,9 @@ public class TitleSpinner extends LinearLayout {
             try {
                 value = mSetValueListener.preSetValue(value);
             } catch (java.lang.IllegalArgumentException ex) {
+                if (mSpinner.getAdapter() != null) {
+                    mSpinner.setSelection((int) mCurrValue);
+                }
                 return;
             }
         }
@@ -567,6 +570,7 @@ public class TitleSpinner extends LinearLayout {
         if (mType == Type.TS_SPINNER_TXT) {
             if (mSpinner.getAdapter() != null) {
                 int intVal = find(mSpinner.getAdapter(), value);
+                mCurrValue = intVal; // here because onclicklistener doesn't react to changing to the same value twice
                 mSpinner.setSelection(intVal);
             }
         }
@@ -616,7 +620,7 @@ public class TitleSpinner extends LinearLayout {
             try {
                 value = mSetValueListener.preSetValue(value);
             } catch (java.lang.IllegalArgumentException ex) {
-                if ((int)mCurrValue != -1) {
+                if ((int)mCurrValue != -1) { // here because onclicklistener doesn't react to changing to the same value twice
                     mSpinner.setSelection((int)mCurrValue);
                 }
                 return;
