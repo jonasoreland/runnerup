@@ -49,7 +49,6 @@
                 <include layout="@layout/start_basic" />
                 <include layout="@layout/start_interval" />
                 <include layout="@layout/start_advanced" />
-                <include layout="@layout/start_manual" />
 			</FrameLayout>
         </RelativeLayout>
     </TabHost>

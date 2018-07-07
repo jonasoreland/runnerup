@@ -56,10 +56,12 @@ import java.util.Date;
 public class HistoryActivity extends AppCompatActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
-    private SQLiteDatabase mDB = null;
-    private Formatter formatter = null;
-    private ListView listView = null;
-    private CursorAdapter cursorAdapter = null;
+    SQLiteDatabase mDB = null;
+    Formatter formatter = null;
+
+    ListView listView = null;
+    CursorAdapter cursorAdapter = null;
+    View fab = null;
 
     /**
      * Called when the activity is first created.
@@ -68,8 +70,19 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.history);
         listView = (ListView) findViewById(R.id.history_list);
+        fab = findViewById(R.id.history_add);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(HistoryActivity.this,
+                        ManualActivity.class);
+                startActivityForResult(i, 0);
+            }
+        });
 
         mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);

@@ -144,13 +144,13 @@ public class MainLayout extends TabActivity
                 .setIndicator(getTabView(getString(R.string.Start), R.drawable.ic_tab_main_24dp))
                 .setContent(new Intent(this, StartActivity.class)));
 
-        tabHost.addTab(tabHost.newTabSpec("Feed")
-                .setIndicator(getTabView(getString(R.string.feed), R.drawable.ic_tab_feed_24dp))
-                .setContent(new Intent(this, FeedActivity.class)));
-
         tabHost.addTab(tabHost.newTabSpec("History")
                 .setIndicator(getTabView(getString(R.string.History), R.drawable.ic_tab_history_24dp))
                 .setContent(new Intent(this, HistoryActivity.class)));
+
+        tabHost.addTab(tabHost.newTabSpec("Feed")
+                .setIndicator(getTabView(getString(R.string.feed), R.drawable.ic_tab_feed_24dp))
+                .setContent(new Intent(this, FeedActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Settings")
                 .setIndicator(getTabView(getString(R.string.Settings), R.drawable.ic_tab_settings_24dp))
@@ -335,7 +335,7 @@ public class MainLayout extends TabActivity
             //Snackbar, no popup
             final String[] perms = new String[shouldPerms.size()];
             shouldPerms.toArray(perms);
-            Snackbar.make(view, "GPS permission is required",
+            Snackbar.make(view, activity.getResources().getString(R.string.GPS_permission_required),
                     Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.OK, new View.OnClickListener() {
                         @Override

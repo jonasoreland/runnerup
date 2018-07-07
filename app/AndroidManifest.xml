@@ -106,6 +106,16 @@
             android:label="@string/History"
             android:theme="@style/AppTheme"/>
 
+        <activity android:name=".view.ManualActivity"
+            android:label="@string/Manual_activity_title"
+            android:parentActivityName=".view.MainLayout"
+            android:theme="@style/AppTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.MainLayout" />
+        </activity>
+
         <activity
             android:name=".view.AccountListActivity"
             android:label="@string/Configure_accounts"

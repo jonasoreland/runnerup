@@ -21,7 +21,6 @@ import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,7 +46,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -84,10 +82,7 @@ import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.WorkoutSerializer;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -97,7 +92,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     final static String TAB_BASIC = "basic";
     final static String TAB_INTERVAL = "interval";
     final static String TAB_ADVANCED = "advanced";
-    final static String TAB_MANUAL = "manual";
 
     boolean skipStopGps = false;
     Tracker mTracker = null;
@@ -144,15 +138,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     Workout advancedWorkout = null;
     ListView advancedStepList = null;
     final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
-
-    boolean manualSetValue = false;
-    TitleSpinner manualSport = null;
-    TitleSpinner manualDate = null;
-    TitleSpinner manualTime = null;
-    TitleSpinner manualDistance = null;
-    TitleSpinner manualDuration = null;
-    TitleSpinner manualPace = null;
-    EditText manualNotes = null;
 
     SQLiteDatabase mDB = null;
 
@@ -215,11 +200,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         tabSpec.setContent(R.id.tab_advanced);
         tabHost.addTab(tabSpec);
 
-        tabSpec = tabHost.newTabSpec(TAB_MANUAL);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Manual)));
-        tabSpec.setContent(R.id.tab_manual);
-        tabHost.addTab(tabSpec);
-
         tabHost.setOnTabChangedListener(onTabChangeListener);
         //tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
@@ -273,19 +253,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 StartActivity.this.startActivityForResult(intent, 113);
             }
         });
-
-        manualSport = (TitleSpinner) findViewById(R.id.manual_sport);
-        manualDate = (TitleSpinner) findViewById(R.id.manual_date);
-        manualDate.setOnSetValueListener(onSetValueManual);
-        manualTime = (TitleSpinner) findViewById(R.id.manual_time);
-        manualTime.setOnSetValueListener(onSetValueManual);
-        manualDistance = (TitleSpinner) findViewById(R.id.manual_distance);
-        manualDistance.setOnSetValueListener(onSetManualDistance);
-        manualDuration = (TitleSpinner) findViewById(R.id.manual_duration);
-        manualDuration.setOnSetValueListener(onSetManualDuration);
-        manualPace = (TitleSpinner) findViewById(R.id.manual_pace);
-        manualPace.setVisibility(View.GONE);
-        manualNotes = (EditText) findViewById(R.id.manual_notes);
 
         if (getParent() != null && getParent().getIntent() != null) {
             Intent i = getParent().getIntent();
@@ -571,7 +538,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 if (dontShowAgain.isChecked()) {
                     prefs.edit().putBoolean(pref_key, true).commit();
                 }
-                return;
             }
         });
 
@@ -589,8 +555,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
             else if (tabId.contentEquals(TAB_ADVANCED)) {
                 startButton.setVisibility(View.VISIBLE);
                 loadAdvanced(null);
-            } else if (tabId.contentEquals(TAB_MANUAL)) {
-                startButton.setText(getString(R.string.Save_activity));
             }
             updateView();
         }
@@ -626,10 +590,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     final OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
-            if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
-                manualSaveButtonClick.onClick(v);
-                return;
-            } else if (mGpsStatus.isEnabled() == false) {
+            if (!mGpsStatus.isEnabled()) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
@@ -679,12 +640,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
 
         int playIcon = 0;
-        if (tabHost.getCurrentTabTag().contentEquals(TAB_MANUAL)) {
-            gpsInfoLayout.setVisibility(View.GONE);
-            startButton.setEnabled(manualSetValue);
-            startButton.setText(getString(R.string.Save_activity));
-            return;
-        } else if (mGpsStatus.isEnabled() == false) {
+        if (mGpsStatus.isEnabled() == false) {
             startButton.setEnabled(true);
             startButton.setText(getString(R.string.Enable_GPS));
         } else if (mGpsStatus.isLogging() == false) {
@@ -1037,135 +993,5 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
             return newValue;
         }
 
-    };
-
-    final OnSetValueListener onSetValueManual = new OnSetValueListener() {
-
-        @Override
-        public String preSetValue(String newValue)
-                throws IllegalArgumentException {
-            manualSetValue = true;
-            startButton.setEnabled(true);
-            return newValue;
-        }
-
-        @Override
-        public int preSetValue(int newValue) throws IllegalArgumentException {
-            manualSetValue = true;
-            startButton.setEnabled(true);
-            return newValue;
-        }
-    };
-
-    void setManualPace(String distance, String duration) {
-        Log.e(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
-        double dist = SafeParse.parseDouble(distance, 0); // convert to meters
-        long seconds = SafeParse.parseSeconds(duration, 0);
-        if (dist == 0 || seconds == 0) {
-            manualPace.setVisibility(View.GONE);
-            return;
-        }
-        double pace = seconds / dist;
-        manualPace.setValue(formatter.formatPace(Formatter.Format.TXT_SHORT, pace));
-        manualPace.setVisibility(View.VISIBLE);
-        return;
-    }
-
-    final OnSetValueListener onSetManualDistance = new OnSetValueListener() {
-
-        @Override
-        public String preSetValue(String newValue)
-                throws IllegalArgumentException {
-            setManualPace(newValue, manualDuration.getValue().toString());
-            startButton.setEnabled(true);
-            return newValue;
-        }
-
-        @Override
-        public int preSetValue(int newValue) throws IllegalArgumentException {
-            startButton.setEnabled(true);
-            return newValue;
-        }
-
-    };
-
-    final OnSetValueListener onSetManualDuration = new OnSetValueListener() {
-
-        @Override
-        public String preSetValue(String newValue)
-                throws IllegalArgumentException {
-            setManualPace(manualDistance.getValue().toString(), newValue);
-            startButton.setEnabled(true);
-            return newValue;
-        }
-
-        @Override
-        public int preSetValue(int newValue) throws IllegalArgumentException {
-            startButton.setEnabled(true);
-            return newValue;
-        }
-    };
-
-    final OnClickListener manualSaveButtonClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            ContentValues save = new ContentValues();
-            int sport = manualSport.getValueInt();
-            CharSequence date = manualDate.getValue();
-            CharSequence time = manualTime.getValue();
-            CharSequence distance = manualDistance.getValue();
-            CharSequence duration = manualDuration.getValue();
-            String notes = manualNotes.getText().toString().trim();
-            long start_time = 0;
-
-            if (notes.length() > 0) {
-                save.put(DB.ACTIVITY.COMMENT, notes);
-            }
-            double dist = 0;
-            if (distance.length() > 0) {
-                dist = Double.parseDouble(distance.toString()); // convert to
-                                                                // meters
-                save.put(DB.ACTIVITY.DISTANCE, dist);
-            }
-            long secs = 0;
-            if (duration.length() > 0) {
-                secs = SafeParse.parseSeconds(duration.toString(), 0);
-                save.put(DB.ACTIVITY.TIME, secs);
-            }
-            if (date.length() > 0) {
-                DateFormat df = android.text.format.DateFormat.getDateFormat(StartActivity.this);
-                try {
-                    Date d = df.parse(date.toString());
-                    start_time += d.getTime() / 1000;
-                } catch (ParseException e) {
-                }
-            }
-            if (time.length() > 0) {
-                DateFormat df = android.text.format.DateFormat.getTimeFormat(StartActivity.this);
-                try {
-                    Date d = df.parse(time.toString());
-                    start_time += d.getTime() / 1000;
-                } catch (ParseException e) {
-                }
-            }
-            save.put(DB.ACTIVITY.START_TIME, start_time);
-
-            save.put(DB.ACTIVITY.SPORT, sport);
-            long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);
-
-            ContentValues lap = new ContentValues();
-            lap.put(DB.LAP.ACTIVITY, id);
-            lap.put(DB.LAP.LAP, 0);
-            lap.put(DB.LAP.INTENSITY, DB.INTENSITY.ACTIVE);
-            lap.put(DB.LAP.TIME, secs);
-            lap.put(DB.LAP.DISTANCE, dist);
-            mDB.insert(DB.LAP.TABLE, null, lap);
-
-            Intent intent = new Intent(StartActivity.this, DetailActivity.class);
-            intent.putExtra("mode", "save");
-            intent.putExtra("ID", id);
-            StartActivity.this.startActivityForResult(intent, 0);
-        }
     };
 }

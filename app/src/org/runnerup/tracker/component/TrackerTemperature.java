@@ -23,8 +23,6 @@ import android.hardware.*;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
-import org.runnerup.BuildConfig;
-
 import java.util.HashMap;
 import java.util.Random;
 
@@ -39,9 +37,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
 
     private SensorManager sensorManager = null;
 
-    //For debug builds, use random if sensor is unavailable
-    private final static boolean testMode = BuildConfig.DEBUG;
-    private static boolean isEmulating = false;
+    private static boolean isMockSensor = false;
 
     @SuppressWarnings("unused")
     private boolean isStarted = true;
@@ -49,7 +45,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
     //private long latestTime = -1;
 
     public Float getValue(){
-        if (isEmulating) {
+        if (isMockSensor) {
             latestVal = (new Random()).nextFloat()*20+15;
             //latestTime = SystemClock.elapsedRealtime()*1000000;
         }
@@ -73,7 +69,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
      * Sensor is available
      */
     public static boolean isAvailable(final Context context) {
-        return ((new TrackerTemperature()).getSensor(context) != null) || testMode;
+        return ((new TrackerTemperature()).getSensor(context) != null) || isMockSensor;
     }
 
     private Sensor getSensor(final Context context) {
@@ -89,9 +85,10 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
             //noinspection deprecation
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
         }
-        if (testMode && sensor == null) {
-            //No real sensor, emulate
-            isEmulating = true;
+
+        if (sensor == null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
         }
 
         return sensor;
@@ -116,7 +113,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
             if (sensor != null) {
                 sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
                 res = ResultCode.RESULT_OK;
-            } else if (isEmulating) {
+            } else if (isMockSensor) {
                 res = ResultCode.RESULT_OK;
             } else {
                 res = ResultCode.RESULT_NOT_SUPPORTED;
@@ -185,7 +182,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
         isStarted = false;
         if (sensorManager != null) { sensorManager.unregisterListener(this); }
         sensorManager = null;
-        isEmulating = false;
+        isMockSensor = false;
         return ResultCode.RESULT_OK;
     }
 }
