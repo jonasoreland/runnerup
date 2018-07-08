@@ -100,7 +100,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         // adapter
         mCursorAdapter = new AccountListAdapter(this, null);
         listView.setAdapter(mCursorAdapter);
-        listView.setOnItemLongClickListener(itemLongClickListener);
         getSupportLoaderManager().initLoader(0, null, this);
 
         listView.setOnItemClickListener(configureItemClick);
@@ -133,7 +132,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         };
         String showDisabled = null;
         if (!mShowDisabled) {
-            showDisabled = DB.ACCOUNT.ENABLED + "==1";
+            showDisabled = DB.ACCOUNT.ENABLED + "==1 or " + DB.ACCOUNT.AUTH_CONFIG + " is not null";
         }
 
         return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, showDisabled, null,
@@ -301,21 +300,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             } else {
                 mSyncManager.connect(callback, synchronizerName, false);
             }
-        }
-    };
-
-    private final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
-        public boolean onItemLongClick(AdapterView<?> arg0, View v,
-                                       int pos, long id) {
-            ContentValues tmp = DBHelper.get((Cursor) arg0.getItemAtPosition(pos));
-            final String synchronizerName = tmp.getAsString(DB.ACCOUNT.NAME);
-
-            //Toggle value for ENABLED
-            mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.ENABLED + " = 1 - " + DB.ACCOUNT.ENABLED +
-                    " where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName + "\'");
-            getSupportLoaderManager().restartLoader(0, null, (AccountListActivity) v.getContext());
-
-            return true;
         }
     };
 

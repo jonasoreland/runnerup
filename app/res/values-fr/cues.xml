@@ -19,11 +19,11 @@
   <string name="cue_lap">tour</string>
   <string name="cue_warmup">échauffement</string>
   <string name="cue_cooldown">refroidissement</string>
-  <string name="cue_current">actuellement</string>
+  <string name="cue_current">actuel</string>
   <string name="cue_perkilometer">par kilomètre</string>
-  <string name="cue_permile">par mille</string>
+  <string name="cue_permile">par mile</string>
   <string name="cue_started">démarré</string>
-  <string name="cue_paused">pausé</string>
+  <string name="cue_paused">en pause</string>
   <string name="cue_resumed">repris</string>
   <string name="cue_stopped">stoppé</string>
   <string name="cue_completed">terminé</string>
@@ -51,7 +51,7 @@
   </plurals>
   <plurals name="cue_mile">
     <item quantity="one">%d mile</item>
-    <item quantity="other">%d milles</item>
+    <item quantity="other">%d miles</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s kilomètre par heure</item>
@@ -65,11 +65,11 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_paused">activité pausée</string>
+  <string name="cue_activity_paused">activité en pause</string>
   <string name="cue_activity_resumed">activité reprise</string>
   <string name="cue_activity_stopped">activité stoppée</string>
   <string name="cue_lap_started">tour démarré</string>
   <string name="cue_lap_completed">tour terminé</string>
   <string name="cue_warmup_started">échauffement démarré</string>
-  <string name="cue_cooldown_started">récupération démarré</string>
+  <string name="cue_cooldown_started">récupération démarrée</string>
 </resources>

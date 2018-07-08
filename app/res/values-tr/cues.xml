@@ -30,24 +30,31 @@
   <string name="cue_speedup">hızlan</string>
   <string name="cue_slowdown">yavaşla</string>
   <plurals name="cue_hour">
+    <item quantity="one">%d saat</item>
     <item quantity="other">%d saat</item>
   </plurals>
   <plurals name="cue_minute">
+    <item quantity="one">%d dakika</item>
     <item quantity="other">%d dakika</item>
   </plurals>
   <plurals name="cue_second">
+    <item quantity="one">%d saniye</item>
     <item quantity="other">%d saniye</item>
   </plurals>
   <plurals name="cue_meter">
+    <item quantity="one">%d metre</item>
     <item quantity="other">%d metre</item>
   </plurals>
   <plurals name="cue_kilometer">
+    <item quantity="one">%d kilometre</item>
     <item quantity="other">%d kilometre</item>
   </plurals>
   <plurals name="cue_mile">
+    <item quantity="one">%d mil</item>
     <item quantity="other">%d mil</item>
   </plurals>
   <plurals name="cue_bpm">
+    <item quantity="one">%d kalp atışı (dakikada)</item>
     <item quantity="other">%d kalp atışı (dakikada)</item>
   </plurals>
   <string name="cue_activity_paused">etkinlik duraklatıldı</string>

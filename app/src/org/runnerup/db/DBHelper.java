@@ -17,7 +17,7 @@
 
 package org.runnerup.db;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -27,6 +27,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
 import android.util.Log;
 
 import org.runnerup.R;
@@ -39,6 +41,7 @@ import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.FunBeatSynchronizer;
 import org.runnerup.export.GarminSynchronizer;
 import org.runnerup.export.GoogleFitSynchronizer;
+import org.runnerup.export.GooglePlusSynchronizer;
 import org.runnerup.export.JoggSESynchronizer;
 import org.runnerup.export.MapMyRunSynchronizer;
 import org.runnerup.export.NikePlusSynchronizer;
@@ -49,13 +52,16 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.Synchronizer;
 import org.runnerup.util.FileUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 
@@ -189,7 +195,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     private static synchronized DBHelper getHelper(Context context) {
         if (sInstance == null) {
-            sInstance = new DBHelper(context.getApplicationContext());
+            sInstance = new DBHelper(context.getApplicationContext(), 1);
         }
         return sInstance;
     }
@@ -220,11 +226,10 @@ public class DBHelper extends SQLiteOpenHelper implements
         return sWritableDB;
     }
 
-    @SuppressWarnings("EmptyMethod")
     public static synchronized void closeDB(SQLiteDatabase db) {
     }
 
-    private DBHelper(Context context) {
+    private DBHelper(Context context, int a) {
         super(context, DBNAME, null, DBVERSION);
     }
 
@@ -409,10 +414,10 @@ public class DBHelper extends SQLiteOpenHelper implements
                 tmp = new ContentValues();
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, authConfig);
                 arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
-        }
-        }
-                c.close();
             }
+        }
+        c.close();
+    }
 
     private void recreateAccount(SQLiteDatabase arg0) {
         StringBuilder newtab = new StringBuilder();
@@ -451,35 +456,35 @@ public class DBHelper extends SQLiteOpenHelper implements
         //The accounts must exist in the database, but normally the default values are sufficient
         //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
         //"Minor changes" like adding a new syncher can be handled with updating DB.DBINFO.ACCOUNT_VERSION
-        insertAccount(arg0, GarminSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, RunKeeperSynchronizer.NAME);
-        insertAccount(arg0, JoggSESynchronizer.NAME, 0, -1);
-        insertAccount(arg0, FunBeatSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, MapMyRunSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, NikePlusSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, EndomondoSynchronizer.NAME);
-        insertAccount(arg0, RunningAHEADSynchronizer.NAME);
-        insertAccount(arg0, DigifitSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, StravaSynchronizer.NAME);
-        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, 1 << DB.ACCOUNT.FLAG_LIVE);
-        insertAccount(arg0, FacebookSynchronizer.NAME, 0, -1);
-        //insertAccount(arg0, GooglePlusSynchronizer.NAME);
+        insertAccount(arg0, GarminSynchronizer.NAME, 0);
+        insertAccount(arg0, RunKeeperSynchronizer.NAME, 1);
+        insertAccount(arg0, JoggSESynchronizer.NAME, 0);
+        insertAccount(arg0, FunBeatSynchronizer.NAME, 0);
+        insertAccount(arg0, MapMyRunSynchronizer.NAME, 0);
+        insertAccount(arg0, NikePlusSynchronizer.NAME, 0);
+        insertAccount(arg0, EndomondoSynchronizer.NAME, 1);
+        insertAccount(arg0, RunningAHEADSynchronizer.NAME, 1);
+        insertAccount(arg0, DigifitSynchronizer.NAME, 0);
+        insertAccount(arg0, StravaSynchronizer.NAME, 1);
+        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
+        insertAccount(arg0, FacebookSynchronizer.NAME, 0);
+        //insertAccount(arg0, GooglePlusSynchronizer.NAME, 0);
         //DBVERSION 26
-        insertAccount(arg0, RuntasticSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RuntasticSynchronizer.NAME, 0);
         //DBVERSION 27
-        insertAccount(arg0, GoogleFitSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
         //DBVERSION 28
-        insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0);
         //DBVERSION 29
-        insertAccount(arg0, FileSynchronizer.NAME);
+        insertAccount(arg0, FileSynchronizer.NAME, 1);
         //DBVERSION 30
-        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0);
     }
 
-    private static void insertAccount(SQLiteDatabase arg0, String name) {
-        insertAccount(arg0, name, -1, -1);
+    private static void insertAccount(SQLiteDatabase arg0, String name, int enabled) {
+        insertAccount(arg0, name, enabled, -1);
     }
-    
+
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled, int flags) {
         ContentValues arg1 = new ContentValues();
         arg1.put(DB.ACCOUNT.NAME, name);
@@ -542,7 +547,6 @@ public class DBHelper extends SQLiteOpenHelper implements
         db.delete(DB.ACTIVITY.TABLE, "_id = ?", args);
     }
 
-    @SuppressLint("StaticFieldLeak")
     public static void purgeDeletedActivities(Context ctx, final ProgressDialog dialog,
                                               final Runnable onComplete) {
 

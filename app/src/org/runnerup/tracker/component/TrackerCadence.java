@@ -231,6 +231,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         if (sensorManager != null) { sensorManager.unregisterListener(this); }
         sensorManager = null;
         isMockSensor = false;
+
         return ResultCode.RESULT_OK;
     }
 }

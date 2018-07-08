@@ -33,9 +33,6 @@ import java.util.ArrayList;
 
 class AudioSchemeListAdapter extends BaseAdapter {
 
-    /**
-	 * 
-	 */
     private LayoutInflater inflater = null;
     private SQLiteDatabase mDB = null;
     private boolean createNewItem = true;
@@ -50,10 +47,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return audioSchemes.size() +
-                /* default */
-                1 +
-                (createNewItem ? 1 : 0);
+        return audioSchemes.size() + 2; // default + newItem or settings
     }
 
     @Override
@@ -67,7 +61,10 @@ class AudioSchemeListAdapter extends BaseAdapter {
         if (position < audioSchemes.size())
             return audioSchemes.get(position);
 
-        return inflater.getContext().getString(R.string.New_audio_scheme);
+        if (createNewItem)
+            return inflater.getContext().getString(R.string.New_audio_scheme);
+        else
+            return inflater.getContext().getString(R.string.Manage_audio_cues___);
     }
 
     @Override
@@ -97,8 +94,8 @@ class AudioSchemeListAdapter extends BaseAdapter {
 
     public void reload() {
         audioSchemes.clear();
-        String[] from = new String[] {
-            DB.AUDIO_SCHEMES.NAME
+        String[] from = new String[]{
+                DB.AUDIO_SCHEMES.NAME
         };
 
         Cursor c = mDB.query(DB.AUDIO_SCHEMES.TABLE, from, null, null, null, null,

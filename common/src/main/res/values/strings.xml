@@ -94,7 +94,7 @@
   <string name="High_pace">High pace</string>
   <string name="Sex">Sex</string>
   <string name="upload">upload</string>
-  <string name="feed">feed</string>
+  <string name="feed">Feed</string>
   <string name="Notes">Notes</string>
   <string name="Laps">Laps</string>
   <string name="Map">Map</string>
@@ -108,7 +108,7 @@
   <string name="Finished">Finished</string>
   <string name="Until_press">Until press</string>
   <string name="Discard_activity">Discard activity</string>
-  <string name="Configure_accounts">Configure accounts</string>
+  <string name="Configure_accounts">Edit accounts</string>
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>
   <string name="Synchronizing">Synchronizing:</string>
@@ -130,6 +130,8 @@
   <string name="Manage_accounts">Manage accounts</string>
   <string name="Manage_audio_cues">Manage audio cues</string>
   <string name="Manage_workouts">Manage workouts</string>
+  <string name="Manage_audio_cues___">Manage audio cues…</string>
+  <string name="Manage_workouts___">Manage workouts…</string>
   <string name="Settings">Settings</string>
   <string name="Whats_new">What\'s new</string>
   <string name="Rate_RunnerUp">Rate RunnerUp</string>
@@ -243,6 +245,8 @@
   <string name="Basic">Basic</string>
   <string name="Advanced">Advanced</string>
   <string name="Manual">Manual</string>
+  <string name="Manual_activity_title">Add manual entry</string>
+  <string name="Add_manual_entry">Add manual entry</string>
   <string name="Add_workout_notes">Add workout notes</string>
   <string name="Pruning_deleted_activities_from_database">Pruning deleted activities from database</string>
   <string name="Prune">Prune</string>
@@ -283,6 +287,7 @@
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nHere is a workout I think you might like.</string>
   <string name="Share_workout">Share workout…</string>
   <string name="New_audio_scheme">New audio scheme</string>
+  <string name="GPS_permission_required">GPS permission is required</string>
   <string name="Default">Default</string>
   <string name="Notes_about_your_workout">Notes about your workout</string>
   <string name="Downloading_from_1s">Downloading from %1$s</string>

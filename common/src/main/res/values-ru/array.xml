@@ -17,7 +17,7 @@
     <item>Заминка</item>
   </string-array>
   <string-array name="duration_types">
-    <item>Until pressed</item>
+    <item>До нажатия</item>
     <item>Время</item>
     <item>Дистанция</item>
   </string-array>
