@@ -456,35 +456,35 @@ public class DBHelper extends SQLiteOpenHelper implements
         //The accounts must exist in the database, but normally the default values are sufficient
         //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
         //"Minor changes" like adding a new syncher can be handled with updating DB.DBINFO.ACCOUNT_VERSION
-        insertAccount(arg0, GarminSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, RunKeeperSynchronizer.NAME);
-        insertAccount(arg0, JoggSESynchronizer.NAME, 0, -1);
-        insertAccount(arg0, FunBeatSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, MapMyRunSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, NikePlusSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, EndomondoSynchronizer.NAME);
-        insertAccount(arg0, RunningAHEADSynchronizer.NAME);
-        insertAccount(arg0, DigifitSynchronizer.NAME, 0, -1);
-        insertAccount(arg0, StravaSynchronizer.NAME);
-        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0, (int) (1 << DB.ACCOUNT.FLAG_LIVE));
-        insertAccount(arg0, FacebookSynchronizer.NAME, 0, -1);
-        //insertAccount(arg0, GooglePlusSynchronizer.NAME);
+        insertAccount(arg0, GarminSynchronizer.NAME, 0);
+        insertAccount(arg0, RunKeeperSynchronizer.NAME, 1);
+        insertAccount(arg0, JoggSESynchronizer.NAME, 0);
+        insertAccount(arg0, FunBeatSynchronizer.NAME, 0);
+        insertAccount(arg0, MapMyRunSynchronizer.NAME, 0);
+        insertAccount(arg0, NikePlusSynchronizer.NAME, 0);
+        insertAccount(arg0, EndomondoSynchronizer.NAME, 1);
+        insertAccount(arg0, RunningAHEADSynchronizer.NAME, 1);
+        insertAccount(arg0, DigifitSynchronizer.NAME, 0);
+        insertAccount(arg0, StravaSynchronizer.NAME, 1);
+        insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
+        insertAccount(arg0, FacebookSynchronizer.NAME, 0);
+        //insertAccount(arg0, GooglePlusSynchronizer.NAME, 0);
         //DBVERSION 26
-        insertAccount(arg0, RuntasticSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RuntasticSynchronizer.NAME, 0);
         //DBVERSION 27
-        insertAccount(arg0, GoogleFitSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
         //DBVERSION 28
-        insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0);
         //DBVERSION 29
-        insertAccount(arg0, FileSynchronizer.NAME);
+        insertAccount(arg0, FileSynchronizer.NAME, 1);
         //DBVERSION 30
-        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0, -1);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0);
     }
 
-    private static void insertAccount(SQLiteDatabase arg0, String name) {
-        insertAccount(arg0, name, -1, -1);
+    private static void insertAccount(SQLiteDatabase arg0, String name, int enabled) {
+        insertAccount(arg0, name, enabled, -1);
     }
-    
+
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled, int flags) {
         ContentValues arg1 = new ContentValues();
         arg1.put(DB.ACCOUNT.NAME, name);

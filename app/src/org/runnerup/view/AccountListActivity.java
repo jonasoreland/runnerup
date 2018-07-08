@@ -133,7 +133,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         };
         String showDisabled = null;
         if (!mShowDisabled) {
-            showDisabled = DB.ACCOUNT.ENABLED + "==1";
+            showDisabled = DB.ACCOUNT.ENABLED + "==1 or " + DB.ACCOUNT.AUTH_CONFIG + " is not null";
         }
 
         return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, showDisabled, null,
