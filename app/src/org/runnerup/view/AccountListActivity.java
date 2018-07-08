@@ -105,7 +105,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         getSupportLoaderManager().initLoader(0, null, this);
 
         mListView.setOnItemClickListener(configureItemClick);
-        mListView.setOnItemLongClickListener(itemLongClickListener);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -302,21 +301,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             } else {
                 mSyncManager.connect(callback, synchronizerName, false);
             }
-        }
-    };
-
-    final AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
-        public boolean onItemLongClick(AdapterView<?> arg0, View v,
-                                       int pos, long id) {
-            ContentValues tmp = DBHelper.get((Cursor) arg0.getItemAtPosition(pos));
-            final String synchronizerName = tmp.getAsString(DB.ACCOUNT.NAME);
-
-            //Toggle value for ENABLED
-            mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.ENABLED + " = 1 - " + DB.ACCOUNT.ENABLED +
-                    " where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName + "\'");
-            getSupportLoaderManager().restartLoader(0, null, (AccountListActivity) v.getContext());
-
-            return true;
         }
     };
 
