@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import org.runnerup.R;
 import org.runnerup.workout.WorkoutSerializer;
 
 import java.io.File;
@@ -47,12 +48,15 @@ class WorkoutListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return workoutList.length;
+        return workoutList.length + 1;
     }
 
     @Override
     public Object getItem(int position) {
-        return workoutList[position];
+        if (position < workoutList.length)
+            return workoutList[position];
+
+        return inflater.getContext().getString(R.string.Manage_workouts___);
     }
 
     @Override

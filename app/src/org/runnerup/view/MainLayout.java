@@ -20,7 +20,6 @@ package org.runnerup.view;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.app.Service;
 import android.app.TabActivity;
 import android.content.ContentValues;
@@ -45,10 +44,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
@@ -62,7 +60,6 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
-import org.runnerup.widget.WidgetUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -160,7 +157,6 @@ public class MainLayout extends TabActivity
                 .setContent(new Intent(this, SettingsActivity.class)));
 
         tabHost.setCurrentTab(0);
-        WidgetUtil.addLegacyOverflowButton(getWindow());
 
         if (upgradeState == UpgradeState.UPGRADE) {
             whatsNew();
@@ -349,41 +345,6 @@ public class MainLayout extends TabActivity
                     })
                     .show();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent i = null;
-        switch (item.getItemId()) {
-            case R.id.menu_accounts:
-                i = new Intent(this, AccountListActivity.class);
-                break;
-            case R.id.menu_workouts:
-                i = new Intent(this, ManageWorkoutsActivity.class);
-                break;
-            case R.id.menu_audio_cues:
-                i = new Intent(this, AudioCueSettingsActivity.class);
-                break;
-            case R.id.menu_settings:
-                getTabHost().setCurrentTab(3);
-                return true;
-            case R.id.menu_rate:
-                onRateClick.onClick(null);
-                break;
-            case R.id.menu_whatsnew:
-                whatsNew();
-                break;
-        }
-        if (i != null) {
-            startActivity(i);
-        }
-        return true;
     }
 
     /**

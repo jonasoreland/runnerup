@@ -207,6 +207,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         simpleAudioListAdapter.reload();
         simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
         simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
+        simpleAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(simpleAudioListAdapter));
         simpleTargetType = (TitleSpinner) findViewById(R.id.tab_basic_target_type);
         simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.tab_basic_target_pace_max);
         hrZonesAdapter = new HRZonesListAdapter(this, inflater);
@@ -229,30 +230,18 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         intervalAudioListAdapter.reload();
         intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
         intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
+        intervalAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(intervalAudioListAdapter));
 
         advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         advancedAudioListAdapter.reload();
         advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
         advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
+        advancedAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(advancedAudioListAdapter));
         advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advanced_workout_spinner);
         advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
         advancedWorkoutListAdapter.reload();
         advancedWorkoutSpinner.setAdapter(advancedWorkoutListAdapter);
-        advancedWorkoutSpinner.setOnSetValueListener(new OnSetValueListener() {
-            @Override
-            public String preSetValue(String newValue)
-                    throws IllegalArgumentException {
-                loadAdvanced(newValue);
-                return newValue;
-            }
-
-            @Override
-            public int preSetValue(int newValue)
-                    throws IllegalArgumentException {
-                loadAdvanced(null);
-                return newValue;
-            }
-        });
+        advancedWorkoutSpinner.setOnSetValueListener(new OnConfigureWorkoutsListener(advancedWorkoutListAdapter));
         advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
@@ -276,6 +265,54 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
 
         updateTargetView();
+    }
+
+    private class OnConfigureAudioListener implements OnSetValueListener {
+        AudioSchemeListAdapter adapter;
+
+        OnConfigureAudioListener(AudioSchemeListAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_audio_cues___))) {
+                Intent i = new Intent(StartActivity.this, AudioCueSettingsActivity.class);
+                startActivity(i);
+                throw new IllegalArgumentException();
+            }
+            return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValueId) throws IllegalArgumentException {
+            return newValueId;
+        }
+    }
+
+    private class OnConfigureWorkoutsListener implements OnSetValueListener {
+        WorkoutListAdapter adapter;
+
+        OnConfigureWorkoutsListener(WorkoutListAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_workouts___))) {
+                Intent i = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
+                startActivity(i);
+                throw new IllegalArgumentException();
+            }
+            loadAdvanced(newValue);
+            return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValueId) throws IllegalArgumentException {
+            loadAdvanced(null);
+            return newValueId;
+        }
     }
 
     @Override

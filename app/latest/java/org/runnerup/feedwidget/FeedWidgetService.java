@@ -19,7 +19,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.feed.FeedImageLoader;
 import org.runnerup.feed.FeedList;
 import org.runnerup.util.Formatter;
-import org.runnerup.view.FeedActivity;
+import org.runnerup.workout.Sport;
 
 import java.text.DateFormat;
 
@@ -96,7 +96,7 @@ public class FeedWidgetService extends RemoteViewsService {
 
                     String name = formatter.formatName(tmp.getAsString(Constants.DB.FEED.USER_FIRST_NAME),
                             tmp.getAsString(Constants.DB.FEED.USER_LAST_NAME));
-                    String sport = FeedActivity.GetSportActivity(tmp);
+                    String sport = Sport.textOf(getResources(), tmp.getAsInteger(Constants.DB.FEED.FEED_SUBTYPE));
                     rv.setTextViewText(R.id.feed_widget_item_header, name + " trained " + sport);
                     if (tmp.containsKey(Constants.DB.FEED.DISTANCE) || tmp.containsKey(Constants.DB.FEED.DURATION)) {
                         double distance = 0;

@@ -54,6 +54,7 @@
 
         <activity
             android:name=".view.MainLayout"
+            android:theme="@style/AppTheme"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -76,7 +77,9 @@
 
         <activity android:name=".view.StartActivity" />
 
-        <activity android:name="org.runnerup.view.FeedActivity" />
+        <activity android:name="org.runnerup.view.FeedActivity"
+            android:label="@string/feed"
+            android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".view.RunActivity"
@@ -99,7 +102,9 @@
                 android:value=".view.MainLayout" />
         </activity>
 
-        <activity android:name=".view.HistoryActivity" />
+        <activity android:name=".view.HistoryActivity"
+            android:label="@string/History"
+            android:theme="@style/AppTheme"/>
 
         <activity android:name=".view.ManualActivity"
             android:label="@string/Manual_activity_title"

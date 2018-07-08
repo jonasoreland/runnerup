@@ -55,22 +55,6 @@
         <item name="android:textSize">20sp</item>
     </style>
 
-    <style name="FeedDateHeader" parent="AppTheme">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">10dp</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="FeedActivitySource" parent="AppTheme">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">5dp</item>
-        <item name="android:textSize">8sp</item>
-        <item name="android:textStyle">italic</item>
-    </style>
-
     <style name="BottomNavigationTabWidget" parent="android:Widget.TabWidget">
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
@@ -108,6 +92,16 @@
         <item name="android:fontFamily" tools:ignore="NewApi">@string/fontFamily_medium</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="CardAnnotation">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/colorTextSecondary</item>
+    </style>
+
+    <style name="CardParagraph">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorText</item>
     </style>
 
 </resources>

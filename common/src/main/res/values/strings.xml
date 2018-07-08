@@ -110,7 +110,7 @@
   <string name="Finished">Finished</string>
   <string name="Until_press">Until press</string>
   <string name="Discard_activity">Discard activity</string>
-  <string name="Configure_accounts">Configure accounts</string>
+  <string name="Configure_accounts">Edit accounts</string>
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>
   <string name="edit">edit</string>
@@ -134,6 +134,8 @@
   <string name="Manage_accounts">Manage accounts</string>
   <string name="Manage_audio_cues">Manage audio cues</string>
   <string name="Manage_workouts">Manage workouts</string>
+  <string name="Manage_audio_cues___">Manage audio cues…</string>
+  <string name="Manage_workouts___">Manage workouts…</string>
   <string name="Settings">Settings</string>
   <string name="Whats_new">What\'s new</string>
   <string name="Rate_RunnerUp">Rate RunnerUp</string>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -15,44 +14,11 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:orientation="horizontal" >
+    android:layout_marginBottom="16dp">
 
-    <ImageView
-        android:id="@+id/feed_image"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_margin="2dp" />
+    <include layout="@layout/feed_row_contents" />
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/feed_activity_source"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/FeedActivitySource" />
-
-        <TextView
-            android:id="@+id/feed_activity_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/feed_activity_summary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/feed_activity_notes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

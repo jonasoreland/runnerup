@@ -50,7 +50,7 @@
             android:id="@+id/feed_widget_item_source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/FeedActivitySource"
+            style="@style/CardParagraph"
         />
         <TextView
             android:layout_row="0"
@@ -58,7 +58,7 @@
             android:id="@+id/feed_widget_item_start_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/FeedActivitySource"
+            style="@style/CardAnnotation"
             android:textAlignment="gravity"
             android:layout_gravity="right" />
 
