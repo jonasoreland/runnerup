@@ -1,50 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="4" by="lint 2.3.1">
+<issues format="4" by="lint 3.1.3">
 
     <issue
         id="GradleCompatible"
-        message="All com.android.support libraries must use the exact same version specification (mixing versions can lead to runtime crashes). Found versions 24.0.0, 23.0.1. Examples include `com.android.support:support-v4:24.0.0` and `com.android.support:percent:23.0.1`">
-        <location
-            file="build.gradle"/>
-    </issue>
-
-    <issue
-        id="GradleCompatible"
-        message="Project depends on com.google.android.support:wearable:2.0.0, so it must also depend (as a provided dependency) on com.google.android.wearable:wearable:2.0.0">
+        message="Project depends on com.google.android.support:wearable:2.3.0, so it must also depend (as a provided dependency) on com.google.android.wearable:wearable:2.3.0">
         <location
             file="build.gradle"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.google.android.support:wearable than 2.0.0 is available: 2.0.4"
-        errorLine1="    compile &quot;com.google.android.support:wearable:${rootProject.ext.googleWearVersion}&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 15.0.1"
+        errorLine1="    implementation &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="60"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="GradleDependency"
-        message="A newer version of com.google.android.gms:play-services-wearable than 10.2.0 is available: 11.0.4"
-        errorLine1="    compile &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="build.gradle"
-            line="61"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="AllowBackup"
-        message="On SDK version 23 and up, your app data will be automatically backed up and restored on app install. Consider adding the attribute `android:fullBackupContent` to specify an `@xml` resource which configures which files to backup. More info: https://developer.android.com/training/backup/autosyncapi.html"
-        errorLine1="    &lt;application"
-        errorLine2="    ^">
-        <location
-            file="src\main\AndroidManifest.xml"
-            line="23"
+            line="58"
             column="5"/>
     </issue>
 
@@ -56,6 +27,46 @@
         <location
             file="src\main\res\layout\activity_main.xml"
             line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.circle` appears to be unused"
+        errorLine1="&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src\main\res\drawable\circle.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.heart16` appears to be unused">
+        <location
+            file="src\main\res\drawable\heart16.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.newlap` appears to be unused"
+        errorLine1="&lt;android.support.wearable.view.BoxInsetLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src\main\res\layout\newlap.xml"
+            line="19"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.pause_resume` appears to be unused"
+        errorLine1="&lt;android.support.wearable.view.BoxInsetLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src\main\res\layout\pause_resume.xml"
+            line="19"
             column="1"/>
     </issue>
 
@@ -157,13 +168,13 @@
         errorLine2="    ^">
         <location
             file="src\main\AndroidManifest.xml"
-            line="23"
+            line="24"
             column="5"/>
     </issue>
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;time&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;time&quot;, should use `@string` resource"
         errorLine1="                    android:text=&quot;time&quot;"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
         <location
@@ -174,7 +185,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;--:--&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;--:--&quot;, should use `@string` resource"
         errorLine1="                    android:text=&quot;--:--&quot;"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -185,7 +196,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;time&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;time&quot;, should use `@string` resource"
         errorLine1="                    android:text=&quot;time&quot;"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
         <location
@@ -196,7 +207,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;--:--&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;--:--&quot;, should use `@string` resource"
         errorLine1="                    android:text=&quot;--:--&quot;"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -207,7 +218,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;lap pace&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;lap pace&quot;, should use `@string` resource"
         errorLine1="                android:text=&quot;lap pace&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -218,7 +229,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;-:--&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;-:--&quot;, should use `@string` resource"
         errorLine1="                android:text=&quot;-:--&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~">
         <location
@@ -229,7 +240,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;distance&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;distance&quot;, should use `@string` resource"
         errorLine1="                android:text=&quot;distance&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -240,7 +251,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;-.--&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;-.--&quot;, should use `@string` resource"
         errorLine1="                android:text=&quot;-.--&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~">
         <location
@@ -251,7 +262,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;time&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;time&quot;, should use `@string` resource"
         errorLine1="                    android:text=&quot;time&quot;"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~">
         <location
@@ -262,7 +273,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;--:--&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;--:--&quot;, should use `@string` resource"
         errorLine1="                    android:text=&quot;--:--&quot;"
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -273,7 +284,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;lap pace&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;lap pace&quot;, should use `@string` resource"
         errorLine1="                android:text=&quot;lap pace&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -284,7 +295,7 @@
 
     <issue
         id="HardcodedText"
-        message="[I18N] Hardcoded string &quot;-:--&quot;, should use `@string` resource"
+        message="Hardcoded string &quot;-:--&quot;, should use `@string` resource"
         errorLine1="                android:text=&quot;-:--&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~">
         <location
