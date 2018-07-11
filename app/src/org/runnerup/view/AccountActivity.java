@@ -192,7 +192,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 addRow(getResources().getString(R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
             }
 
-            flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
             if (synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);
