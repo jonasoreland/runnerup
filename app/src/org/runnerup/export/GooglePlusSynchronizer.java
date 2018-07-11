@@ -164,9 +164,6 @@ public class GooglePlusSynchronizer extends DefaultSynchronizer implements Synch
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public void init(ContentValues config) {
         String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
         if (authConfig != null) {

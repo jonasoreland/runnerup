@@ -228,10 +228,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         addCookies(conn);
 
         {
-            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-            kv.write(wr);
-            wr.flush();
-            wr.close();
+            SyncHelper.postData(conn, kv);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             Log.e(getName(), "code: " + responseCode + ", msg=" + amsg);

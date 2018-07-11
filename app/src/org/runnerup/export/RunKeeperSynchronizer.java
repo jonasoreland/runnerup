@@ -176,9 +176,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() {return R.color.serviceRunkeeper;}
 
     @Override

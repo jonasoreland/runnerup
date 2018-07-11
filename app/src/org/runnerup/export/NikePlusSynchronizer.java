@@ -107,9 +107,6 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() {
         return R.color.serviceNike;
     }
@@ -192,10 +189,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             kv.put("password", password);
 
             {
-                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
 
                 String response;
                 {

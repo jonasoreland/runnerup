@@ -296,9 +296,6 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() { return R.color.serviceDigifit; }
 
     private String getUploadUrl() throws IOException, JSONException {

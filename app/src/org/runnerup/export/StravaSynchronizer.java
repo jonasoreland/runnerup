@@ -127,9 +127,6 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() {return R.color.serviceStrava;}
 
     @Override

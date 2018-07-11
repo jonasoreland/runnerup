@@ -87,9 +87,6 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() {return R.color.serviceRuntastic;}
 
     @Override
@@ -201,11 +198,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
 
             String url2 = null;
             {
-                OutputStream wr = new BufferedOutputStream(
-                        conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
                 // int responseCode = conn.getResponseCode();
                 // String amsg = conn.getResponseMessage();
                 getCookies(conn);

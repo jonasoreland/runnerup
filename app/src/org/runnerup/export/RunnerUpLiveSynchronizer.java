@@ -78,9 +78,6 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() {return R.color.serviceRunnerUpLive;}
 
     @Override

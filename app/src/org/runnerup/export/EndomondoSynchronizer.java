@@ -100,9 +100,6 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() { return R.color.serviceEndomondo; }
 
     @Override
@@ -187,11 +184,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-            kv.write(wr);
-            wr.flush();
-            wr.close();
+            SyncHelper.postData(conn, kv);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             JSONObject res = parseKVP(in);

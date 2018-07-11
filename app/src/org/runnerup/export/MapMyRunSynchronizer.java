@@ -99,9 +99,6 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
-
-    @Override
     public int getColorId() { return R.color.serviceMapMyRun; }
 
     @Override
@@ -199,11 +196,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             kv.put("p", pass);
 
             {
-                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
-
+                SyncHelper.postData(conn, kv);
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 JSONObject obj = SyncHelper.parse(in);
                 conn.disconnect();
@@ -267,10 +260,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             kv.put("tcx", writer.toString());
 
             {
-                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
 
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 JSONObject obj = SyncHelper.parse(in);
@@ -302,10 +292,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 conn.setDoOutput(true);
                 conn.setRequestMethod(RequestMethod.POST.name());
                 conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
 
                 in = new BufferedInputStream(conn.getInputStream());
                 SyncHelper.parse(in);

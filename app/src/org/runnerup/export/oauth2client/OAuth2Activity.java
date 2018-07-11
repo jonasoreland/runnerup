@@ -214,12 +214,7 @@ public class OAuth2Activity extends AppCompatActivity {
                                 conn.setRequestMethod(Synchronizer.RequestMethod.POST.name());
                                 conn.setRequestProperty("Content-Type",
                                         "application/x-www-form-urlencoded");
-                                {
-                                    OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                                    fv.write(wr);
-                                    wr.flush();
-                                    wr.close();
-                                }
+                                SyncHelper.postData(conn, fv);
                                 StringBuilder obj = new StringBuilder();
                                 BufferedReader in = new BufferedReader(new InputStreamReader(conn
                                         .getInputStream()));
