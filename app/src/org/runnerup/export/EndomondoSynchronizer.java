@@ -398,8 +398,10 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
         SyncHelper.setName(c, o.getJSONObject("from").getString("name"));
         final String IMAGE_URL = "https://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
-        c.put(FEED.USER_IMAGE_URL,
-                String.format(Locale.ENGLISH, IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+        if(o.getJSONObject("from").has("picture")) {
+            c.put(FEED.USER_IMAGE_URL,
+                    String.format(Locale.ENGLISH, IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+        }
         c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
 
         final JSONObject m = o.getJSONObject("message");
