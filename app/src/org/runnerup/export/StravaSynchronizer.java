@@ -117,6 +117,11 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     }
 
     @Override
+    public String getActivityUrl(String extId) {
+        return PUBLIC_URL + "/activities/" + extId;
+    }
+
+    @Override
     public long getId() {
         return id;
     }
@@ -354,11 +359,6 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
             ex.printStackTrace();
         return result;
-    }
-
-    @Override
-    public String getActivityUrl(String extId) {
-        return PUBLIC_URL + "/activities/" + extId;
     }
 
     @Override

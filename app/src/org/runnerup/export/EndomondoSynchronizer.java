@@ -102,6 +102,12 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     @Override
     public int getColorId() { return R.color.serviceEndomondo; }
 
+
+    @Override
+    public String getActivityUrl(String extId) {
+        return PUBLIC_URL + "/workouts/" + extId;
+    }
+
     @Override
     public void init(ContentValues config) {
         id = config.getAsLong("_id");
@@ -285,6 +291,10 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             if (responseCode == HttpURLConnection.HTTP_OK &&
                     "OK".contentEquals(res.getString("_0"))) {
                 s.activityId = mID;
+                if (res.has("workout.id")) {
+                    s.externalId = res.getString("workout.id");
+                    s.externalIdStatus = ExternalIdStatus.OK;
+                }
                 return s;
             }
             ex = new Exception(amsg);
