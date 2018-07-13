@@ -65,6 +65,18 @@
     <item quantity="many">%d миль</item>
     <item quantity="other">%d миль</item>
   </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s километр в час</item>
+    <item quantity="few">%s километра в час</item>
+    <item quantity="many">%s километров в час</item>
+    <item quantity="other">%s километров в час</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s миля в час</item>
+    <item quantity="few">%s мили в час</item>
+    <item quantity="many">%s миль в час</item>
+    <item quantity="other">%s миль в час</item>
+  </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d удар в минуту</item>
     <item quantity="few">%d удара в минуту</item>

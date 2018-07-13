@@ -32,6 +32,7 @@ notifications:
   email: false
 
 script:
-    - ./gradlew lintLatestRelease assembleLatestRelease wear:lR
+    - ./gradlew wear:lintRelease
+    - ./gradlew lintLatestRelease assembleLatestRelease
     - ./gradlew assembleFroyoRelease lintFroyoRelease
     - ./gradlew test
