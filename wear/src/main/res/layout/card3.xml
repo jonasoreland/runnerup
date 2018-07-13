@@ -17,6 +17,7 @@
   -->
 
 <android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp">
@@ -30,7 +31,6 @@
         >
 
         <LinearLayout
-            android:id="@+id/layout2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -39,18 +39,18 @@
 
             <TextView
                 android:id="@+id/textViewHeader32"
-                android:text="distance"
+                android:text="@string/distance"
                 style="@style/Card3TextSmall" />
 
             <TextView
                 android:id="@+id/textView32"
                 android:text="-.--"
-                style="@style/Card3TextMedium" />
+                style="@style/Card3TextMedium"
+                tools:ignore="HardcodedText" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout1"
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -60,18 +60,18 @@
 
                 <TextView
                     android:id="@+id/textViewHeader31"
-                    android:text="time"
+                    android:text="@string/time"
                     style="@style/Card3TextSmall" />
 
                 <TextView
                     android:id="@+id/textView31"
                     android:text="--:--"
-                    style="@style/Card3TextLarge" />
+                    style="@style/Card3TextLarge"
+                    tools:ignore="HardcodedText" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -81,13 +81,14 @@
 
             <TextView
                 android:id="@+id/textViewHeader33"
-                android:text="lap pace"
+                android:text="@string/Lap_pace"
                 style="@style/Card3TextSmall" />
 
             <TextView
                 android:id="@+id/textView33"
                 android:text="-:--"
-                style="@style/Card3TextMedium" />
+                style="@style/Card3TextMedium"
+                tools:ignore="HardcodedText" />
 
         </LinearLayout>
 

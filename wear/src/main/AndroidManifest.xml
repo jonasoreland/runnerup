@@ -26,7 +26,9 @@
         android:theme="@android:style/Theme.Black"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:keepScreenOn="true">
+        android:keepScreenOn="true"
+        android:supportsRtl="true"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <meta-data
             tools:replace="android:value"
@@ -54,8 +56,8 @@
             </intent-filter>
         </service>
 
-        <service android:name=".service.StateService"></service>
+        <service android:name=".service.StateService" />
 
-</application>
+    </application>
 
 </manifest>

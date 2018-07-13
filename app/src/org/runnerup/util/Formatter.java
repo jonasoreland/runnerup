@@ -17,7 +17,6 @@
 
 package org.runnerup.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -37,7 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class Formatter implements OnSharedPreferenceChangeListener {
 
     private Context context = null;
@@ -501,7 +500,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param seconds_per_meter
      * @return
      */
-    public String formatSpeed(Format target, double seconds_per_meter) {
+    private String formatSpeed(Format target, double seconds_per_meter) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
@@ -643,11 +642,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return "";
     }
 
-    public String formatRemainingTime(Format target, double value) {
+    private String formatRemainingTime(Format target, double value) {
         return formatElapsedTime(target, Math.round(value));
     }
 
-    public String formatRemainingDistance(Format target, double value) {
+    private String formatRemainingDistance(Format target, double value) {
         return formatDistance(target, Math.round(value));
     }
 
@@ -656,12 +655,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             return first + " " + last;
         else if (first == null && last != null)
             return last;
-        else if (first != null && last == null)
+        else if (first != null /*&& last == null*/)
             return first;
         return "";
     }
 
-    public String formatTime(long seconds_since_epoch) {
+    private String formatTime(long seconds_since_epoch) {
         return timeFormat.format(seconds_since_epoch * 1000);
     }
 

@@ -32,7 +32,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|center"
+            android:layout_gravity="start|center"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -46,11 +46,10 @@
                 app:circle_radius="@dimen/two_button_radius" />
 
             <TextView
-                android:id="@+id/txt_newlap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/New_lap"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -58,7 +57,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|center"
+            android:layout_gravity="end|center"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -76,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/Resume"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -32,7 +32,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
-        android:gravity="right"
+        android:gravity="end"
         android:text=""
         android:textStyle="" />
 
@@ -41,7 +41,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="right"
+        android:gravity="end"
         android:text="@string/time" />
 
     <TextView
@@ -49,7 +49,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="right"
+        android:gravity="end"
         android:text="@string/distance" />
 
     <TextView
@@ -57,14 +57,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="right"
+        android:gravity="end"
         android:text="@string/pace" />
     <TextView
         android:id="@+id/lap_list_hr"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="right"
+        android:gravity="end"
         android:text="@string/metrics_heartrate" />
 
 </LinearLayout>

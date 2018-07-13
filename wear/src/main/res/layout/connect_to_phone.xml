@@ -22,19 +22,15 @@
     android:layout_height="match_parent"
     android:padding="15dp">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:padding="5dp"
-        app:layout_box="all">
+        app:layout_box="all"
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
             <android.support.wearable.view.DelayedConfirmationView
                 android:id="@+id/icon_open_on_phone"
@@ -45,20 +41,17 @@
                 app:circle_radius="40dp"
                 app:circle_radius_pressed="50dp"
                 app:circle_border_width="5dp"
-                app:circle_border_color="@color/white"
+                app:circle_border_color="@android:color/white"
                 />
 
             <TextView
-                android:id="@+id/txt_open_on_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/Waiting_for_phone"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
-
-    </FrameLayout>
 
 </android.support.wearable.view.BoxInsetLayout>

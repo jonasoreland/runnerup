@@ -17,13 +17,13 @@
 
 package org.runnerup.tracker.component;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.*;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
-import java.util.HashMap;
 import java.util.Random;
 
 public class TrackerTemperature extends DefaultTrackerComponent implements SensorEventListener {
@@ -72,6 +72,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
         return ((new TrackerTemperature()).getSensor(context) != null) || isMockSensor;
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private Sensor getSensor(final Context context) {
         Sensor sensor = null;
         if (sensorManager == null) {
@@ -133,7 +134,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
     public void onConnected() {
     }
 
-    /**
+    /*
      * Called by Tracker before start
      *   Component shall populate bindValues
      *   with objects that will then be passed

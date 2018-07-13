@@ -17,41 +17,39 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import org.runnerup.R;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRZonesBar extends View {
 
-    static final int colorLow = Color.WHITE; // Color for the zone 0
-    static final int colorHigh = Color.parseColor("#ff0000"); // Color for the last zone
+    private static final int colorLow = Color.WHITE; // Color for the zone 0
+    private static final int colorHigh = Color.parseColor("#ff0000"); // Color for the last zone
 
     // The two arrays will be used to make the gradient
-    static final int[] dColorLow = new int[]{Color.red(colorLow), Color.green(colorLow), Color.blue(colorLow)};
-    static final int[] dColorDiff = new int[]{Color.red(colorHigh) - dColorLow[0],
+    private static final int[] dColorLow = new int[]{Color.red(colorLow), Color.green(colorLow), Color.blue(colorLow)};
+    private static final int[] dColorDiff = new int[]{Color.red(colorHigh) - dColorLow[0],
             Color.green(colorHigh) - dColorLow[1],
             Color.blue(colorHigh) - dColorLow[2]};
 
-    static final float borderSize = 10; // Border around the chart
-    static final float separatorSize = 2; // Separator between two zones
-    static final int minBarHeight = 15;
-    static final int maxBarHeight = 40;
-    static final double chartSize = 0.8;
+    private static final float borderSize = 10; // Border around the chart
+    private static final float separatorSize = 2; // Separator between two zones
+    private static final int minBarHeight = 15;
+    private static final int maxBarHeight = 40;
+    private static final double chartSize = 0.8;
 
-    final Paint paint = new Paint();
-    final Paint fontPaint = new Paint();
+    private final Paint paint = new Paint();
+    private final Paint fontPaint = new Paint();
 
-    double[] hrzData = null;
+    private double[] hrzData = null;
 
     public HRZonesBar (Context ctx) {
         super(ctx);

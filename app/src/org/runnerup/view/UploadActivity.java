@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -53,27 +52,28 @@ import org.runnerup.workout.Sport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class UploadActivity extends AppCompatActivity implements Constants {
 
-    long synchronizerID = -1;
-    String synchronizer = null;
-    Integer synchronizerIcon = null;
-    SyncManager.SyncMode syncMode = SyncManager.SyncMode.UPLOAD;
-    SyncManager syncManager = null;
-    ListView listView = null;
+    private long synchronizerID = -1;
+    private String synchronizer = null;
+    private Integer synchronizerIcon = null;
+    private SyncManager.SyncMode syncMode = SyncManager.SyncMode.UPLOAD;
+    private SyncManager syncManager = null;
+    private ListView listView = null;
 
-    SQLiteDatabase mDB = null;
-    Formatter formatter = null;
-    final List<SyncActivityItem> allSyncActivities = new ArrayList<SyncActivityItem>();
+    private SQLiteDatabase mDB = null;
+    private Formatter formatter = null;
+    private final List<SyncActivityItem> allSyncActivities = new ArrayList<>();
 
-    int syncCount = 0;
-    Button actionButton = null;
-    CharSequence actionButtonText = null;
+    private int syncCount = 0;
+    private Button actionButton = null;
+    private CharSequence actionButtonText = null;
 
-    boolean fetching = false;
-    final StringBuffer cancelSync = new StringBuffer();
+    private boolean fetching = false;
+    private final StringBuffer cancelSync = new StringBuffer();
 
     /** Called when the activity is first created. */
 
@@ -142,8 +142,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
     @Override
     public void onBackPressed() {
-        if (fetching == true) {
-            /**
+        if (fetching) {
+            /*
              * Cancel
              */
             cancelSync.append("1");
@@ -159,7 +159,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         syncManager.close();
     }
 
-    void fillData() {
+    private void fillData() {
         if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
             syncManager.load(synchronizer);
             syncManager.loadActivityList(allSyncActivities, synchronizer, new SyncManager.Callback() {
@@ -199,7 +199,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
     }
 
     private void filterAlreadyPresentActivities() {
-        List<SyncActivityItem> presentActivities = new ArrayList<SyncActivityItem>();
+        List<SyncActivityItem> presentActivities = new ArrayList<>();
         final String[] from = new String[]{
                 DB.PRIMARY_KEY, DB.ACTIVITY.START_TIME,
                 DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
@@ -239,11 +239,11 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    void requery() {
+    private void requery() {
         if (listView != null)
         ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
         if (syncCount > 0) {
-            actionButton.setText(actionButtonText + " (" + syncCount + ")");
+            actionButton.setText(String.format(Locale.getDefault(), "%s (%d)", actionButtonText, syncCount));
             actionButton.setEnabled(true);
         } else {
             actionButton.setText(actionButtonText);
@@ -251,7 +251,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    final OnClickListener onActivityClick = new OnClickListener() {
+    private final OnClickListener onActivityClick = new OnClickListener() {
 
         @Override
         public void onClick(View arg0) {
@@ -372,7 +372,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    final OnCheckedChangeListener checkedChangeClick = new OnCheckedChangeListener() {
+    private final OnCheckedChangeListener checkedChangeClick = new OnCheckedChangeListener() {
 
         @Override
         public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
@@ -385,7 +385,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
     };
 
-    final OnClickListener uploadButtonClick = new OnClickListener() {
+    private final OnClickListener uploadButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (allSyncActivities.isEmpty()) {
@@ -401,7 +401,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
 
 
-    final OnClickListener downloadButtonClick = new OnClickListener() {
+    private final OnClickListener downloadButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (allSyncActivities.isEmpty()) {
@@ -416,7 +416,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
     };
 
     private List<SyncActivityItem> getSelectedActivities() {
-        List<SyncActivityItem> selected = new ArrayList<SyncActivityItem>();
+        List<SyncActivityItem> selected = new ArrayList<>();
         for (SyncActivityItem tmp : allSyncActivities) {
             if (tmp.synchronize(syncMode))
                 selected.add(tmp);
@@ -424,7 +424,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         return selected;
     }
 
-    final SyncManager.Callback syncCallback = new SyncManager.Callback() {
+    private final SyncManager.Callback syncCallback = new SyncManager.Callback() {
 
         @Override
         public void run(String synchronizerName, Status status) {
@@ -442,7 +442,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener clearAllButtonClick = new OnClickListener() {
+    private final OnClickListener clearAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             for (SyncActivityItem tmp : allSyncActivities) {
@@ -455,7 +455,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    final OnClickListener setAllButtonClick = new OnClickListener() {
+    private final OnClickListener setAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             for (SyncActivityItem tmp : allSyncActivities) {

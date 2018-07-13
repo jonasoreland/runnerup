@@ -15,6 +15,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/title_spinner"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -22,6 +23,7 @@
     android:layout_marginTop="4dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
+    android:focusable="true"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingBottom="12dp"
@@ -35,7 +37,7 @@
         android:layout_marginRight="8dp"
         android:layout_weight="1"
         android:clickable="false"
-        android:gravity="center_vertical|left"
+        android:gravity="center_vertical|start"
         android:textStyle="bold" />
 
     <TextView
@@ -46,12 +48,13 @@
         android:layout_marginRight="40dp"
         android:layout_weight="1"
         android:clickable="false"
-        android:gravity="center_vertical|right"
+        android:gravity="center_vertical|end"
         android:text="@string/value" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        tools:ignore="UnusedAttribute"
         android:spinnerMode="dialog" />
 </LinearLayout>

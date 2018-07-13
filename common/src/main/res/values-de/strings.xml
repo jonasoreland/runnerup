@@ -33,8 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, verflixt</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Rechtliche Anmerkungen (Google Play Services)</string>
-  <string name="Type">Typ</string>
+    <string name="Type">Typ</string>
   <string name="active">aktiv</string>
   <string name="rest">ruhend</string>
   <string name="recovery">Erholen</string>
@@ -100,8 +99,7 @@
   <string name="Map">Karte</string>
   <string name="Graph">Diagramm</string>
   <string name="Upload">Upload</string>
-  <string name="Configure">konfigurieren</string>
-  <string name="Disconnect">trennen</string>
+    <string name="Disconnect">trennen</string>
   <string name="Resume">wiederaufnehmen</string>
   <string name="Save_activity">Aktivität speichern</string>
   <string name="Upload_activity">Aktivität hochladen</string>
@@ -112,12 +110,10 @@
   <string name="Configure_accounts">Benutzerkonten</string>
   <string name="Refresh">Aktualisieren</string>
   <string name="Age">Alter</string>
-  <string name="edit">bearbeiten</string>
-  <string name="Synchronizing">Synchronisiere:</string>
+    <string name="Synchronizing">Synchronisiere:</string>
   <string name="synchronizing_feed">synchronisiere Feed…</string>
   <string name="OK">OK</string>
-  <string name="Table_format">Tabellenformat</string>
-  <string name="Clear_uploads">Uploads löschen</string>
+    <string name="Clear_uploads">Uploads löschen</string>
   <string name="Upload_missing_workouts">(Fehlende) Trainingseinheiten hochladen</string>
   <string name="Disconnect_account">Benutzerkonto trennen</string>
   <string name="Edit_activity">Aktivität bearbeiten</string>
@@ -140,8 +136,7 @@
   <string name="Select_type_of_Bluetooth_device">Wählen Sie die Art des Bluetooth-Geräts aus</string>
   <string name="Scanning">Suchen</string>
   <string name="Failed_to_load_workout">Fehler beim Laden der Trainingseinheit!!</string>
-  <string name="Icon_list">Symbolliste</string>
-  <string name="Problem">Problem</string>
+    <string name="Problem">Problem</string>
   <string name="Edit_step">Schritt bearbeiten</string>
   <string name="Create_new_audio_cue_scheme">Neues Audiohinweisschema erstellen</string>
   <string name="Great">Toll!</string>
@@ -155,8 +150,7 @@
   <string name="Loading">Lade…</string>
   <string name="Saving">Speichern</string>
   <string name="Cancellingplease_wait">Abbruch… bitte warten</string>
-  <string name="try_again_later">Bitte später erneut versuchen.</string>
-  <string name="Are_you_sure">Bist Du sicher?</string>
+    <string name="Are_you_sure">Bist Du sicher?</string>
   <string name="Configure_audio_cues">Audiohinweise konfigurieren</string>
   <string name="Downloadeditremove_workouts">Trainingseinheiten herunterladen/bearbeiten/löschen</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Anmerkung: Sie müssen sich auch mit dem Konto verbinden</string>
@@ -197,8 +191,7 @@
   <string name="Experimental_HRM_devices">Experimentelle Herzfrequenzzähler</string>
   <string name="Experimental_features">Experimentelle Funktionen</string>
   <string name="Mock_HRM_devices">Herzfrequenzzähler-Attrappe</string>
-  <string name="About">Über</string>
-  <string name="About_RunnerUp">Über RunnerUp</string>
+    <string name="About_RunnerUp">Über RunnerUp</string>
   <string name="Triggers">Auslöser</string>
   <string name="Time_triggered_audio_cue">Zeitgesteuerter Audiohinweis</string>
   <string name="Cue_interval_s">Hinweisintervall (s)</string>
@@ -301,5 +294,4 @@
   <string name="use_pressure_sensor_summary">Barometer zum Berechnen der Höhe verwenden</string>
   <string name="adjust_barometer_altitude_from_gps">Barometerhöhe an GPS-Höhe anpassen</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Anfängliche GPS-Höhe zum Ausmitteln der barometrischen Höhe verwenden</string>
-  <string name="google_play_not_installed">Google Play-Dienste ist nicht installiert</string>
 </resources>

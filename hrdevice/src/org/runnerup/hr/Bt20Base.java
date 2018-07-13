@@ -17,6 +17,7 @@
 
 package org.runnerup.hr;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -65,15 +66,13 @@ public abstract class Bt20Base extends BtHRBase {
         return true;
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     public static boolean checkLibrary(@SuppressWarnings("UnusedParameters") Context ctx) {
 
         // Don't bother if createInsecureRfcommSocketToServiceRecord isn't
         // available
-        //noinspection RedundantIfStatement
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1)
-            return false;
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
 
-        return true;
     }
 
     // UUID
@@ -88,7 +87,7 @@ public abstract class Bt20Base extends BtHRBase {
 
     // private Context context = null;
 
-    public Bt20Base(@SuppressWarnings("UnusedParameters") Context ctx) {
+    Bt20Base(@SuppressWarnings("UnusedParameters") Context ctx) {
         // context = ctx;
     }
 
@@ -200,8 +199,7 @@ public abstract class Bt20Base extends BtHRBase {
         hrClientHandler.post(new Runnable() {
             @Override
             public void run() {
-                Set<BluetoothDevice> list = new HashSet<BluetoothDevice>();
-                list.addAll(btAdapter.getBondedDevices());
+                Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
                 publishDevice(list);
             }
         });
@@ -335,7 +333,7 @@ public abstract class Bt20Base extends BtHRBase {
             case 2: {
                 Method m;
                 try {
-                    //noinspection RedundantArrayCreation
+                    //noinspection RedundantArrayCreation,JavaReflectionMemberAccess
                     m = device.getClass().getMethod("createInsecureRfcommSocket",
                             new Class[]{
                                     int.class
@@ -589,9 +587,9 @@ public abstract class Bt20Base extends BtHRBase {
         public abstract int findNextAlignment(byte buffer[]);
     }
 
-    public abstract int getFrameSize();
+    protected abstract int getFrameSize();
 
-    public abstract int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr);
+    protected abstract int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr);
 
     public static class ZephyrHRM extends Bt20BaseOld {
 

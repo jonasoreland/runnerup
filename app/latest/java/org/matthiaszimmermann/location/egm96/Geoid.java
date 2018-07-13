@@ -39,6 +39,7 @@ public class Geoid {
 	private static short offset_south_pole = 0;
 	private static boolean s_model_ok = false;
 
+	@SuppressWarnings("UnusedReturnValue")
 	public static boolean init(InputStream is) {
 		if(s_model_ok) {
 			return true;

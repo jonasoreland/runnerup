@@ -17,11 +17,9 @@
 
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.lang.reflect.Constructor;
@@ -33,10 +31,10 @@ import java.util.List;
  *
  * @author jonas
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRManager {
 
-    public static HRProvider createProviderByReflection(String clazz, Context ctx) {
+    private static HRProvider createProviderByReflection(String clazz, Context ctx) {
         try {
             Class<?> classDefinition = Class.forName(clazz);
             Constructor<?> cons = classDefinition.getConstructor(Context.class);
@@ -49,7 +47,7 @@ public class HRManager {
     /**
      * Creates an {@link HRProvider}. This will be wrapped in a {@link RetryingHRProviderProxy}.
      * *
-     * @param src The type of {@link HRProvider} to create. See {@link #getHRProvider(android.content.Context, String)}
+     * @param src The type of {@link HRProvider} to create.
      * @return A new instance of an {@link HRProvider} or null if
      *   A) 'src' is not a valid {@link HRProvider} type
      *   B) the device does not support an {@link HRProvider} of type 'src'
@@ -59,7 +57,7 @@ public class HRManager {
         if (provider != null) {
             return new RetryingHRProviderProxy(provider);
         }
-        return provider;
+        return null;
     }
 
     
@@ -117,7 +115,7 @@ public class HRManager {
                 .getBoolean(res.getString(R.string.pref_bt_experimental), false);
         boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
 
-        List<HRProvider> providers = new ArrayList<HRProvider>();
+        List<HRProvider> providers = new ArrayList<>();
         if (AndroidBLEHRProvider.checkLibrary(ctx)) {
             providers.add(new AndroidBLEHRProvider(ctx));
         }

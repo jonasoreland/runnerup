@@ -17,7 +17,6 @@
   -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -70,17 +69,20 @@
         android:id="@+id/gps_info1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/gps_info_text"
         android:layout_toRightOf="@+id/gps_info_text" />
 
     <TextView
         android:id="@+id/gps_info2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/gps_info1"
         android:layout_toRightOf="@+id/gps_info1" />
     <TextView
         android:id="@+id/hr_info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/gps_info2"
         android:layout_toRightOf="@+id/gps_info2"
         android:gravity="center" />
     </RelativeLayout>
@@ -101,6 +103,7 @@
             android:enabled="true"
             android:text="@string/Start_GPS"
             android:layout_weight="0.8"
+            android:drawableEnd="@drawable/ic_av_play_arrow"
             android:drawableRight="@drawable/ic_av_play_arrow"
             android:drawablePadding="-32dp" />
 
@@ -116,7 +119,8 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/heart" />
+                android:src="@drawable/heart"
+                tools:ignore="ContentDescription"/>
 
             <TextView
                 android:id="@+id/hr_value_text"
@@ -134,12 +138,12 @@
             android:layout_height="match_parent" >
 
             <ImageButton
-                android:id="@+id/wear_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_wear"/>
+                android:src="@drawable/ic_wear"
+                tools:ignore="ContentDescription"/>
 
             <TextView
                 android:id="@+id/wear_value_text"

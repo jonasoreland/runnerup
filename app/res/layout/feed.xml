@@ -19,6 +19,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_marginLeft="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
     android:layout_marginRight="8dp"
     android:layout_marginBottom="8dp"
     android:layout_marginTop="0dp"
@@ -35,13 +37,15 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp" />
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp" />
 
         <TextView
             android:id="@+id/feed_progress_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp" />
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
 
     <ListView

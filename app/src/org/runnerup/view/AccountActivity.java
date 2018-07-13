@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.support.v7.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -61,7 +60,7 @@ import org.runnerup.widget.WidgetUtil;
 
 import java.util.ArrayList;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AccountActivity extends AppCompatActivity implements Constants {
     private long synchronizerID = -1;
     private String synchronizer = null;
@@ -130,7 +129,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         syncManager.close();
     }
 
-    void fillData() {
+    private void fillData() {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
         String[] from = new String[]{
@@ -230,7 +229,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         mCursors.add(c);
     }
 
-    void addRow(String string, View btn) {
+    private void addRow(String string, View btn) {
         TableLayout table = (TableLayout) findViewById(R.id.account_table);
         TableRow row = new TableRow(this);
         TextView title = new TextView(this);

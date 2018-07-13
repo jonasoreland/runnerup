@@ -17,12 +17,10 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -44,7 +42,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "RunningAHEAD";
@@ -53,15 +51,15 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     /**
      * @todo register OAuth2Server
      */
-    public static String CLIENT_ID = null;
-    public static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = null;
+    private static String CLIENT_SECRET = null;
 
     private static final String AUTH_URL = "https://www.runningahead.com/oauth2/authorize";
     private static final String TOKEN_URL = "https://api.runningahead.com/oauth2/token";
     private static final String REDIRECT_URI = "https://localhost:8080/runnerup/runningahead";
 
-    public static final String REST_URL = "https://api.runningahead.com/rest";
-    public static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";
+    private static final String REST_URL = "https://api.runningahead.com/rest";
+    private static final String IMPORT_URL = REST_URL + "/logs/me/workouts/tcx";
 
     private long id = 0;
     private String access_token = null;
@@ -177,9 +175,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
     @Override
     public boolean isConfigured() {
-        if (access_token == null)
-            return false;
-        return true;
+        return access_token != null;
     }
 
     @Override
@@ -206,8 +202,8 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
         String URL = IMPORT_URL + "?access_token=" + access_token;
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer);
@@ -229,13 +225,13 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
             JSONObject data = obj.getJSONObject("data");
 
             boolean found = false;
-            if (found == false) {
+            //if (!found) {
                 try {
                     found = data.getJSONArray("workoutIds").length() == 1;
                 } catch (JSONException e) {
                 }
-            }
-            if (found == false) {
+            //}
+            if (!found) {
                 try {
                     found = data.getJSONArray("ids").length() == 1;
                 } catch (JSONException e) {
@@ -257,9 +253,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 

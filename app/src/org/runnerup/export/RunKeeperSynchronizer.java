@@ -17,7 +17,7 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,7 +26,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -62,7 +61,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
@@ -85,11 +84,11 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     private String fitnessActivitiesUrl = null;
     private String userName = null;
 
-    public static final Map<String, Sport> runkeeper2sportMap = new HashMap<String, Sport>();
-    public static final Map<Sport, String> sport2runkeeperMap = new HashMap<Sport, String>();
+    public static final Map<String, Sport> runkeeper2sportMap = new HashMap<>();
+    public static final Map<Sport, String> sport2runkeeperMap = new HashMap<>();
     static {
         //sports list can be found at http://developer.runkeeper.com/healthgraph/fitness-activities#past
-        /**
+        /*
          * Running, Cycling, Mountain Biking, Walking, Hiking, Downhill Skiing, Cross-Country Skiing,
          * Snowboarding, Skating, Swimming, Wheelchair, Rowing, Elliptical, Other, Yoga, Pilates,
          * CrossFit, Spinning, Zumba, Barre, Group Workout, Dance, Bootcamp, Boxing / MMA, Meditation,
@@ -108,7 +107,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         }
     }
 
-    public static final Map<String, Integer> POINT_TYPE = new HashMap<String, Integer>();
+    public static final Map<String, Integer> POINT_TYPE = new HashMap<>();
     static {
         POINT_TYPE.put("start", DB.LOCATION.TYPE_START);
         POINT_TYPE.put("end", DB.LOCATION.TYPE_END);
@@ -118,7 +117,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         POINT_TYPE.put("manual", DB.LOCATION.TYPE_GPS);
     }
 
-    public RunKeeperSynchronizer(SyncManager syncManager) {
+    RunKeeperSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
                 JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -251,7 +250,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return Synchronizer.Status.OK;
         }
 
-        /**
+        /*
          * Get the fitnessActivities end-point
          */
         String uri = null;
@@ -385,7 +384,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return s;
         }
 
-        /**
+        /*
          * Get the fitnessActivities end-point
          */
         HttpURLConnection conn = null;
@@ -423,9 +422,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             ex = e;
         }
 
-        if (ex != null) {
-            Log.e(getName(), "Failed to upload: " + ex.getMessage());
-        }
+        Log.e(getName(), "Failed to upload: " + ex.getMessage());
 
         if (conn != null) {
             conn.disconnect();
@@ -436,6 +433,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return s;
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public String getActivityUrl(String extId) {
         //username is part of the "web" URL but is not directly accessible in the API
@@ -459,8 +457,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                             conn.disconnect();
 
                             String uri = obj.getString("profile");
-                            String user = uri.substring(uri.lastIndexOf("/") + 1);
-                            return user;
+                            return uri.substring(uri.lastIndexOf("/") + 1);
                         } catch (Exception e) {
                         }
                         return null;
@@ -500,7 +497,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             return null;
         }
 
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try {
             URL activityUrl = new URL(item.getURI());
             conn = (HttpURLConnection) activityUrl.openConnection();

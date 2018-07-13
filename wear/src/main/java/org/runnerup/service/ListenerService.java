@@ -16,7 +16,6 @@
  */
 package org.runnerup.service;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -35,10 +34,10 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.view.MainActivity;
 
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class ListenerService extends WearableListenerService {
 
-    private int notificationId = 10;
+    private final int notificationId = 10;
 
     @Override
     public void onCreate() {
@@ -89,7 +88,7 @@ public class ListenerService extends WearableListenerService {
                 NotificationManager notificationManager =
                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 String id = "runnerup_ongoing";
-                CharSequence name = context.getString(R.string.app_name);;
+                CharSequence name = context.getString(R.string.app_name);
                 String description = context.getString(R.string.channel_notification_ongoing);
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 mChannel = new NotificationChannel(id, name, importance);

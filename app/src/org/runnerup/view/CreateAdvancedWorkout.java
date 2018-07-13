@@ -1,10 +1,8 @@
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,18 +28,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class CreateAdvancedWorkout extends AppCompatActivity {
 
-    Workout advancedWorkout = null;
-    TitleSpinner advancedWorkoutSpinner = null;
-    Button addStepButton = null;
-    Button addRepeatButton = null;
-    Button saveWorkoutButton = null;
-    Button discardWorkoutButton = null;
-    ListView advancedStepList = null;
-    final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
-    boolean dontAskAgain = false;
+    private Workout advancedWorkout = null;
+    private TitleSpinner advancedWorkoutSpinner = null;
+    private final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
+    private boolean dontAskAgain = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +53,20 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
 
         dontAskAgain = false;
 
-        advancedStepList = (ListView) findViewById(R.id.new_advnced_workout_steps);
+        ListView advancedStepList = (ListView) findViewById(R.id.new_advnced_workout_steps);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 
-        addStepButton = (Button) findViewById(R.id.add_step_button);
+        Button addStepButton = (Button) findViewById(R.id.add_step_button);
         addStepButton.setOnClickListener(addStepButtonClick);
 
-        addRepeatButton = (Button) findViewById(R.id.add_repeat_button);
+        Button addRepeatButton = (Button) findViewById(R.id.add_repeat_button);
         addRepeatButton.setOnClickListener(addRepeatStepButtonClick);
 
-        saveWorkoutButton = (Button) findViewById(R.id.workout_save_button);
+        Button saveWorkoutButton = (Button) findViewById(R.id.workout_save_button);
         saveWorkoutButton.setOnClickListener(saveWorkoutButtonClick);
 
-        discardWorkoutButton = (Button) findViewById(R.id.workout_discard_button);
+        Button discardWorkoutButton = (Button) findViewById(R.id.workout_discard_button);
         discardWorkoutButton.setOnClickListener(discardWorkoutButtonClick);
 
         try {
@@ -90,10 +83,10 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         advancedWorkoutStepsAdapter.notifyDataSetChanged();
     }
 
-    @TargetApi(Build.VERSION_CODES.FROYO)
+    
     final class WorkoutStepsAdapter extends BaseAdapter {
 
-        List<Workout.StepListEntry> steps = new ArrayList<Workout.StepListEntry>();
+        List<Workout.StepListEntry> steps = new ArrayList<>();
 
         @Override
         public int getCount() {
@@ -151,7 +144,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     }
 
 
-    final View.OnClickListener onAddButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener onAddButtonClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
@@ -183,7 +176,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     };
 
 
-    final View.OnClickListener onDeleteButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener onDeleteButtonClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
@@ -207,14 +200,12 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
                                 deleteStep(stepButton);
-                                return;
                             }
                         });
                 builder.setNegativeButton(getString(R.string.No),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                return;
                             }
                         });
                 builder.show();
@@ -245,7 +236,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         }
     };
 
-    final Runnable onWorkoutChanged = new Runnable() {
+    private final Runnable onWorkoutChanged = new Runnable() {
         @Override
         public void run() {
             String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
@@ -264,13 +255,12 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                                 }
                             });
                     builder.show();
-                    return;
                 }
             }
         }
     };
 
-    final View.OnClickListener addStepButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener addStepButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             advancedWorkout.addStep(new Step());
@@ -279,7 +269,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         }
     };
 
-    final View.OnClickListener addRepeatStepButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener addRepeatStepButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             advancedWorkout.addStep(new RepeatStep());
@@ -288,7 +278,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         }
     };
 
-    final View.OnClickListener saveWorkoutButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener saveWorkoutButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
@@ -312,10 +302,9 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                     }
                 });
         builder.show();
-        return;
     }
 
-    final View.OnClickListener discardWorkoutButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener discardWorkoutButtonClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this);
@@ -330,18 +319,15 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                             //noinspection ResultOfMethodCallIgnored
                             f.delete();
                             finish();
-                            return;
                         }
                     });
             builder.setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            return;
                         }
                     });
             builder.show();
-            return;
         }
     };
 }

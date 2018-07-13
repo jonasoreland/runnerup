@@ -23,19 +23,20 @@ public interface OAuth2Server {
      * 
      * @return
      */
-    public String getName();
+    String getName();
 
-    public String getClientId();
+    String getClientId();
 
-    public String getRedirectUri();
+    String getRedirectUri();
 
-    public String getClientSecret();
+    String getClientSecret();
 
-    public String getAuthUrl();
+    String getAuthUrl();
 
-    public String getAuthExtra();
+    String getAuthExtra();
 
-    public String getTokenUrl();
+    String getTokenUrl();
 
-    public String getRevokeUrl();
+    @SuppressWarnings("SameReturnValue")
+    String getRevokeUrl();
 }

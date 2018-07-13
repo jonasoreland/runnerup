@@ -24,7 +24,6 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
-import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Workout;
 

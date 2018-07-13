@@ -17,11 +17,10 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -44,27 +43,28 @@ import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 
+import java.util.Locale;
 import java.util.Vector;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRZonesActivity extends AppCompatActivity implements Constants {
 
-    TitleSpinner ageSpinner;
-    TitleSpinner sexSpinner;
-    TitleSpinner maxHRSpinner;
-    HRZones hrZones;
-    HRZoneCalculator hrZoneCalculator;
+    private TitleSpinner ageSpinner;
+    private TitleSpinner sexSpinner;
+    private TitleSpinner maxHRSpinner;
+    private HRZones hrZones;
+    private HRZoneCalculator hrZoneCalculator;
 
-    final Vector<EditText> zones = new Vector<EditText>();
-    boolean skipSave = false;
+    private final Vector<EditText> zones = new Vector<>();
+    private boolean skipSave = false;
 
-    View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
-        TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
+    private View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
+        @SuppressLint("InflateParams") TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
         TextView tv = (TextView) row.findViewById(R.id.zonetext);
         EditText lo = (EditText) row.findViewById(R.id.zonelo);
         EditText hi = (EditText) row.findViewById(R.id.zonehi);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
-        tv.setText(getString(R.string.Zone) + " " + zone + " " + lim.first + "% - " + lim.second + "%");
+        tv.setText(String.format(Locale.getDefault(), "%s %d %d%% - %d%%", getString(R.string.Zone), zone, lim.first, lim.second));
         lo.setTag("zone" + zone + "lo");
         hi.setTag("zone" + zone + "hi");
         zones.add(lo);
@@ -155,17 +155,17 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         for (int zone = 0; zone < zones.size() / 2; zone++) {
             Pair<Integer, Integer> values = hrZones.getHRValues(zone + 1);
             if (values != null) {
-                EditText lo = zones.get(2 * zone + 0);
+                EditText lo = zones.get(2 * zone /*+ 0*/);
                 EditText hi = zones.get(2 * zone + 1);
-                lo.setText(Integer.toString(values.first));
-                hi.setText(Integer.toString(values.second));
+                lo.setText(String.format(Locale.getDefault(), "%d", values.first));
+                hi.setText(String.format(Locale.getDefault(), "%d", values.second));
                 Log.e(getClass().getName(), "loaded " + (zone + 1) + " " + values.first + "-"
                         + values.second);
             }
         }
     }
 
-    protected void recomputeMaxHR() {
+    private void recomputeMaxHR() {
         new Handler().post(new Runnable() {
 
             @Override
@@ -183,7 +183,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         });
     }
 
-    protected void recomputeZones() {
+    private void recomputeZones() {
         new Handler().post(new Runnable() {
 
             @Override
@@ -193,8 +193,8 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
                     for (int i = 0; i < zoneCount; i++) {
                         Pair<Integer, Integer> val = hrZoneCalculator.computeHRZone(i + 1, maxHR);
-                        zones.get(2 * i + 0).setText(Integer.toString(val.first));
-                        zones.get(2 * i + 1).setText(Integer.toString(val.second));
+                        zones.get(2 * i /*+ 0*/).setText(String.format(Locale.getDefault(), "%d", val.first));
+                        zones.get(2 * i + 1).setText(String.format(Locale.getDefault(), "%d", val.second));
                     }
                 } catch (NumberFormatException ex) {
                 }
@@ -202,9 +202,9 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         });
     }
 
-    protected void saveHR() {
+    private void saveHR() {
         try {
-            Vector<Integer> vals = new Vector<Integer>();
+            Vector<Integer> vals = new Vector<>();
             System.err.print("saving: ");
             for (int i = 0; i < zones.size(); i += 2) {
                 vals.add(Integer.valueOf(zones.get(i).getText().toString()));
@@ -217,7 +217,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    void clearHRSettings() {
+    private void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Clear_heart_rate_zone_settings));
         builder.setMessage(getString(R.string.Are_you_sure));

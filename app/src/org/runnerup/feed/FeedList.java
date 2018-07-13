@@ -17,11 +17,9 @@
 
 package org.runnerup.feed;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants;
@@ -36,15 +34,15 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.TimeZone;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FeedList extends Observable implements Constants {
 
-    static final int MAX_ITEMS = 50;
-    static final long TIME_MARGIN = 5 * 60; // 5 minutes
+    private static final int MAX_ITEMS = 50;
+    private static final long TIME_MARGIN = 5 * 60; // 5 minutes
 
-    final SQLiteDatabase mDB;
-    List<ContentValues> list = new ArrayList<ContentValues>();
-    boolean filterDuplicates = true;
+    private final SQLiteDatabase mDB;
+    private List<ContentValues> list = new ArrayList<>();
+    private boolean filterDuplicates = true;
 
     public FeedList(SQLiteDatabase db) {
         mDB = db;
@@ -74,14 +72,13 @@ public class FeedList extends Observable implements Constants {
         mDB.execSQL("DELETE FROM " + DB.FEED.TABLE);
     }
 
-    public void prune() {
+    private void prune() {
         if (list.size() >= MAX_ITEMS + 1) {
             ContentValues tmp = list.get(MAX_ITEMS);
             long start_time = tmp.getAsLong(DB.FEED.START_TIME);
             mDB.execSQL("DELETE FROM " + DB.FEED.TABLE + " WHERE " + DB.FEED.START_TIME + " < "
                     + start_time);
-            List<ContentValues> swap = list.subList(0, MAX_ITEMS);
-            list = swap;
+            list = list.subList(0, MAX_ITEMS);
         }
     }
 
@@ -97,13 +94,13 @@ public class FeedList extends Observable implements Constants {
         int discarded = 0;
 
         FeedUpdater() {
-            currList = new ArrayList<ContentValues>(list.size());
+            currList = new ArrayList<>(list.size());
             for (ContentValues c : list) { // initialize list with already
                                            // present items
                 if (!isHeaderDate(c))
                     currList.add(c);
             }
-            addList = new ArrayList<ContentValues>(list.size());
+            addList = new ArrayList<>(list.size());
         }
 
         public void start(String synchronizerName) {
@@ -132,7 +129,7 @@ public class FeedList extends Observable implements Constants {
 
             for (int i = startIndex; i <= endIndex; i++) {
                 ContentValues c = currList.get(i);
-                if (match(values, c, filterDuplicates) == true) {
+                if (match(values, c, filterDuplicates)) {
                     // Set already contains matching row...skip this
                     discarded++;
                     return;
@@ -147,6 +144,7 @@ public class FeedList extends Observable implements Constants {
             return currList.size() - 1;
         }
 
+        @SuppressWarnings("SameReturnValue")
         private int findStartIndex(int startIndex, long l) {
             return 0;
         }
@@ -177,7 +175,7 @@ public class FeedList extends Observable implements Constants {
     }
 
     public static List<ContentValues> addHeaders(List<ContentValues> oldList) {
-        List<ContentValues> newList = new ArrayList<ContentValues>(oldList.size());
+        List<ContentValues> newList = new ArrayList<>(oldList.size());
         Calendar lastDate = Calendar.getInstance();
         lastDate.setTimeInMillis(0);
         Calendar tmp = Calendar.getInstance();
@@ -230,10 +228,10 @@ public class FeedList extends Observable implements Constants {
         return tmp.getAsInteger(DB.FEED.FEED_TYPE) == DB.FEED.FEED_TYPE_ACTIVITY;
     }
 
-    public static boolean match(ContentValues c0, ContentValues c1, boolean filterDuplicates) {
-        boolean same_account = c0.getAsLong(DB.FEED.ACCOUNT_ID) == c1.getAsLong(DB.FEED.ACCOUNT_ID);
+    private static boolean match(ContentValues c0, ContentValues c1, boolean filterDuplicates) {
+        boolean same_account = c0.getAsLong(DB.FEED.ACCOUNT_ID).equals(c1.getAsLong(DB.FEED.ACCOUNT_ID));
         if (same_account) {
-            /**
+            /*
              * Always filter duplicates from same account
              */
             if (c0.containsKey(DB.FEED.EXTERNAL_ID) && c1.containsKey(DB.FEED.EXTERNAL_ID)) {
@@ -262,7 +260,7 @@ public class FeedList extends Observable implements Constants {
         if (!filterDuplicates)
             return false;
 
-        boolean print = false; // enable printout of match failure
+        final boolean print = false; // enable printout of match failure
 
         String keys[] = {
                 DB.FEED.FEED_TYPE,
@@ -275,18 +273,14 @@ public class FeedList extends Observable implements Constants {
         for (String k : keys) {
             if (c0.containsKey(k) && c1.containsKey(k))
                 if (!c0.getAsString(k).equalsIgnoreCase(c1.getAsString(k))) {
-                    if (print)
-                        Log.i("FeedList", "fail at " + k + " c0: " + c0.getAsString(k) + ", c1: "
-                                + c1.getAsString(k));
+                    //if (print)
+                    //    Log.i("FeedList", "fail at " + k + " c0: " + c0.getAsString(k) + ", c1: "
+                    //            + c1.getAsString(k));
                     return false;
                 }
         }
 
-        if (overlaps(c0, c1, print)) {
-            return true;
-        }
-
-        return false;
+        return overlaps(c0, c1, print);
     }
 
     private static boolean overlaps(ContentValues c0, ContentValues c1, boolean print) {
@@ -314,7 +308,7 @@ public class FeedList extends Observable implements Constants {
         boolean broken1 = c1.containsKey(DB.FEED.FLAGS)
                 && c1.getAsString(DB.FEED.FLAGS).contains("brokenStartTime");
         if (broken0 || broken1) {
-            /**
+            /*
              * check if same day, if so compare distance/duration instead
              */
             Calendar d0 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));

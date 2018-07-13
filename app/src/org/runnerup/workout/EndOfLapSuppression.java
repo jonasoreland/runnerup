@@ -17,8 +17,6 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Log;
 
 /**
@@ -27,7 +25,7 @@ import android.util.Log;
  * 
  * @author jonas
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class EndOfLapSuppression extends TriggerSuppression {
 
     enum t_type {
@@ -41,18 +39,18 @@ public class EndOfLapSuppression extends TriggerSuppression {
     public static final TriggerSuppression EndOfLapSuppression = new EndOfLapSuppression(
             t_type.t_EndOfLap);
 
-    t_type suppressionType = t_type.t_Interval;
-    double lapDuration = 0;
+    private t_type suppressionType = t_type.t_Interval;
+    private double lapDuration = 0;
 
-    static final double lapTimeLimit = 10; // seconds
-    static final double lapDistanceLimit = 5; // meters
+    private static final double lapTimeLimit = 10; // seconds
+    private static final double lapDistanceLimit = 5; // meters
 
-    static final double minTimeLimit = 3; // suppress Event.COMPLETED if lap/step is
+    private static final double minTimeLimit = 3; // suppress Event.COMPLETED if lap/step is
                                     // shorter than this
-    static final double minDistanceLimit = 3;// suppress Event.COMPLETED if lap/step
+    private static final double minDistanceLimit = 3;// suppress Event.COMPLETED if lap/step
                                        // is shorter than this
 
-    public EndOfLapSuppression(t_type type) {
+    private EndOfLapSuppression(t_type type) {
         suppressionType = type;
     }
 
@@ -88,14 +86,10 @@ public class EndOfLapSuppression extends TriggerSuppression {
             return false;
         }
 
-        if (w.getTime(s) > minTimeLimit) {
-            return false;
-        }
-
-        return true;
+        return w.getTime(s) <= minTimeLimit;
     }
 
-    public boolean suppressInterval(Trigger trigger, Workout w) {
+    private boolean suppressInterval(Trigger trigger, Workout w) {
 
         if (!(trigger instanceof IntervalTrigger))
             return false;

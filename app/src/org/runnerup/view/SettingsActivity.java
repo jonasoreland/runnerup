@@ -19,9 +19,7 @@ package org.runnerup.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,11 +32,11 @@ import android.os.Environment;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import org.runnerup.BuildConfig;
@@ -48,11 +46,10 @@ import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerPressure;
 import org.runnerup.tracker.component.TrackerTemperature;
 import org.runnerup.util.FileUtil;
-import org.runnerup.widget.AboutPreference;
 
 import java.io.IOException;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class SettingsActivity extends PreferenceActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback{
 

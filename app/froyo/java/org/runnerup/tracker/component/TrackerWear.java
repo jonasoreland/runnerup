@@ -24,7 +24,7 @@ import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.workout.WorkoutInfo;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class TrackerWear extends DefaultTrackerComponent implements WorkoutObserver {
 
     public static final String NAME = "WEAR";

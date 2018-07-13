@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.support.v7.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,7 +26,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -59,19 +57,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AudioCueSettingsActivity extends PreferenceActivity {
 
-    boolean started = false;
-    boolean delete = false;
-    String settingsName = null;
-    AudioSchemeListAdapter adapter = null;
-    SQLiteDatabase mDB = null;
-    MenuItem newSettings;
+    private boolean started = false;
+    private boolean delete = false;
+    private String settingsName = null;
+    private AudioSchemeListAdapter adapter = null;
+    private SQLiteDatabase mDB = null;
+    private MenuItem newSettings;
 
     private String DEFAULT = "Default";
     public static final String SUFFIX = "_audio_cues";
-    static final String PREFS_DIR = "shared_prefs";
+    private static final String PREFS_DIR = "shared_prefs";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,7 +218,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         return true;
     }
 
-    void createNewAudioScheme(String scheme) {
+    private void createNewAudioScheme(String scheme) {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.AUDIO_SCHEMES.NAME, scheme);
         tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
@@ -230,7 +228,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     private void deleteAudioScheme() {
         delete = true;
         getPreferenceManager().getSharedPreferences().edit().clear().commit();
-        /**
+        /*
          * Can only delete file in "next" activity...cause on destory on this,
          * will save file...
          */
@@ -239,7 +237,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     }
 
     private void deleteAudioSchemeImpl(String name) {
-        /**
+        /*
          * Start by deleting file...then delete from table...so we don't get
          * stray files
          */
@@ -254,14 +252,14 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         mDB.delete(DB.AUDIO_SCHEMES.TABLE, DB.AUDIO_SCHEMES.NAME + "= ?", args);
     }
 
-    void updateSortOrder(String name) {
+    private void updateSortOrder(String name) {
         mDB.execSQL("UPDATE " + DB.AUDIO_SCHEMES.TABLE + " set " + DB.AUDIO_SCHEMES.SORT_ORDER +
                 " = (SELECT MAX(" + DB.AUDIO_SCHEMES.SORT_ORDER + ") + 1 FROM "
                 + DB.AUDIO_SCHEMES.TABLE + ") " +
                 " WHERE " + DB.AUDIO_SCHEMES.NAME + " = '" + name + "'");
     }
 
-    final OnSetValueListener onSetValueListener = new OnSetValueListener() {
+    private final OnSetValueListener onSetValueListener = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -290,7 +288,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     private void switchTo(String name) {
 
-        if (started == false) {
+        if (!started) {
             // TODO investigate "spurious" onItemSelected during start
             started = true;
             return;
@@ -338,7 +336,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         dialog.show();
     }
 
-    final OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
+    private final OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             Resources res = getResources();
@@ -378,16 +376,16 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     };
 
-    final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
+    private final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 
         TextToSpeech tts = null;
-        final ArrayList<Feedback> feedback = new ArrayList<Feedback>();
+        final ArrayList<Feedback> feedback = new ArrayList<>();
 
         private final OnInitListener mTTSOnInitListener = new OnInitListener() {
 
             @Override
             public void onInit(int arg0) {
-                SharedPreferences prefs = null;
+                SharedPreferences prefs;
                 if (settingsName == null || settingsName.contentEquals(DEFAULT))
                     prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 else
@@ -398,7 +396,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
                 Workout w = Workout.fakeWorkoutForTestingAudioCue();
                 RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
-                HashMap<String, Object> bindValues = new HashMap<String, Object>();
+                HashMap<String, Object> bindValues = new HashMap<>();
                 bindValues.put(Workout.KEY_TTS, rutts);
                 bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
                 bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
@@ -418,7 +416,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             Resources res = getResources();
 
             feedback.clear();
-            SharedPreferences prefs = null;
+            SharedPreferences prefs;
             if (settingsName == null || settingsName.contentEquals(DEFAULT))
                 prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
             else

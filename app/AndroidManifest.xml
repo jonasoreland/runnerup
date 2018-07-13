@@ -73,6 +73,17 @@
                 <data android:host="*" />
                 <data android:pathPattern="runnerup.db.export" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!--FirebaseAppIndexing-->
+                <data
+                    android:host="github.com"
+                    android:pathPrefix="/jonasoreland/runnerup"
+                    android:scheme="http" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".view.StartActivity" />

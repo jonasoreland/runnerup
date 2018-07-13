@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,8 +24,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
@@ -55,15 +54,14 @@ import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.SimpleCursorLoader;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class AccountListActivity extends AppCompatActivity implements Constants,
         LoaderCallbacks<Cursor> {
 
-    SQLiteDatabase mDB = null;
-    SyncManager mSyncManager = null;
+    private SQLiteDatabase mDB = null;
+    private SyncManager mSyncManager = null;
     private boolean mShowDisabled = false;
-    ListView mListView;
-    CursorAdapter mCursorAdapter;
+    private CursorAdapter mCursorAdapter;
 
     /**
      * Called when the activity is first created.
@@ -78,7 +76,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
-        mListView = (ListView) findViewById(R.id.account_list);
+        ListView listView = (ListView) findViewById(R.id.account_list);
 
         // button footer
         Button showDisabledBtn = new Button(this);
@@ -97,14 +95,14 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
             }
         });
-        mListView.addFooterView(showDisabledBtn);
+        listView.addFooterView(showDisabledBtn);
 
         // adapter
         mCursorAdapter = new AccountListAdapter(this, null);
-        mListView.setAdapter(mCursorAdapter);
+        listView.setAdapter(mCursorAdapter);
         getSupportLoaderManager().initLoader(0, null, this);
 
-        mListView.setOnItemClickListener(configureItemClick);
+        listView.setOnItemClickListener(configureItemClick);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -126,6 +124,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         return true;
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         String[] from = new String[]{
@@ -141,12 +140,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+    public void onLoadFinished(@NonNull Loader<Cursor> arg0, Cursor arg1) {
         mCursorAdapter.swapCursor(arg1);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> arg0) {
+    public void onLoaderReset(@NonNull Loader<Cursor> arg0) {
         mCursorAdapter.swapCursor(null);
     }
 
@@ -292,7 +291,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         switchCompat.setThumbTintMode(PorterDuff.Mode.MULTIPLY);
     }
 
-    final AdapterView.OnItemClickListener configureItemClick = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemClickListener configureItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             final String synchronizerName = (String) view.getTag();
@@ -318,7 +317,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     }
 
-    final SyncManager.Callback callback = new SyncManager.Callback() {
+    private final SyncManager.Callback callback = new SyncManager.Callback() {
         @Override
         public void run(String synchronizerName, Status status) {
             if (status == Synchronizer.Status.OK) {
@@ -327,7 +326,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     };
 
-    void startActivity(String synchronizer, boolean edit) {
+    private void startActivity(String synchronizer, boolean edit) {
         Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
         intent.putExtra("synchronizer", synchronizer);
         intent.putExtra("edit", edit);

@@ -17,15 +17,14 @@
 
 package org.runnerup.workout;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public abstract class Feedback {
 
+    @SuppressWarnings("EmptyMethod")
     public void onInit(Workout s) {
     }
 

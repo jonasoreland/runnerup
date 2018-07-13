@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -54,11 +53,12 @@ import org.runnerup.workout.Sport;
 
 import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FeedActivity extends AppCompatActivity implements Constants {
 
     private SQLiteDatabase mDB = null;
@@ -103,7 +103,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
         feed.load(); // load from DB
 
         feedAdapter = new FeedListAdapter(this, feed);
-        feedList = (ListView) findViewById(R.id.feed_list);
+        ListView feedList = (ListView) findViewById(R.id.feed_list);
         feedList.setAdapter(feedAdapter);
         feedList.setDividerHeight(2);
 
@@ -316,7 +316,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
                 feedAdapter.notifyDataSetChanged();
             } else {
                 String synchronizerName = (String) data;
-                feedProgressLabel.setText(getString(R.string.Synchronizing) + " " + synchronizerName);
+                feedProgressLabel.setText(String.format(Locale.getDefault(), "%s %s", getString(R.string.Synchronizing), synchronizerName)); //TODO parameter
             }
         }
     }

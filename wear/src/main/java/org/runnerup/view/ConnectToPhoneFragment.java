@@ -16,16 +16,13 @@
  */
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.wearable.view.DelayedConfirmationView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
@@ -34,18 +31,12 @@ import org.runnerup.common.util.ValueModel;
 /**
  * @todo make this fragment contact phone and start app
  */
-@TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+
 public class ConnectToPhoneFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
-    private TextView mTxt;
     private DelayedConfirmationView mButton;
     private MainActivity activity;
     public ConnectToPhoneFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -54,7 +45,7 @@ public class ConnectToPhoneFragment extends Fragment implements ValueModel.Chang
         super.onViewCreated(view, savedInstanceState);
 
         mButton = (DelayedConfirmationView) view.findViewById(R.id.icon_open_on_phone);
-        mTxt = (TextView) view.findViewById(R.id.txt_open_on_phone);
+        //TextView txt = (TextView) view.findViewById(R.id.txt_open_on_phone);
 
         mButton.setListener(mListener);
 
@@ -95,7 +86,7 @@ public class ConnectToPhoneFragment extends Fragment implements ValueModel.Chang
             updateView(newState);
     }
 
-    private DelayedConfirmationView.DelayedConfirmationListener mListener = new DelayedConfirmationView.DelayedConfirmationListener() {
+    private final DelayedConfirmationView.DelayedConfirmationListener mListener = new DelayedConfirmationView.DelayedConfirmationListener() {
         @Override
         public void onTimerFinished(View view) {
             updateView(activity.getTrackerState());

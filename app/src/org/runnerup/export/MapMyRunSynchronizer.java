@@ -17,12 +17,11 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
+import android.util.SparseArray;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +46,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "MapMyRun";
@@ -58,23 +57,23 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     private static final String IMPORT_URL = BASE_URL + "/workouts/import_tcx";
     private static final String UPDATE_URL = BASE_URL + "/workouts/edit_workout";
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private String md5pass = null;
     private String user_id = null;
     private String user_key = null;
 
-    static final Map<Integer, Sport> mapmyrun2sportMap = new HashMap<Integer, Sport>();
-    static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<Sport, Integer>();
+    private static final SparseArray<Sport> mapmyrun2sportMap = new SparseArray<>();
+    private static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<>();
     static {
         // V3 API (what we use): 16 is Walking (specifically a long walk)
         // V7 API is different: 11: Biking, 16: Running, 9: Walk
         // documentation can be found at http://www.mapmyrun.com/api/3.1/?doc
-        mapmyrun2sportMap.put(1, Sport.RUNNING);
-        mapmyrun2sportMap.put(3, Sport.BIKING);
-        for (Integer i : mapmyrun2sportMap.keySet()) {
-            sport2mapmyrunMap.put(mapmyrun2sportMap.get(i), i);
+        sport2mapmyrunMap.put(Sport.RUNNING, 1);
+        sport2mapmyrunMap.put(Sport.BIKING, 3);
+        for (Sport s : sport2mapmyrunMap.keySet()) {
+            mapmyrun2sportMap.put(sport2mapmyrunMap.get(s), s);
         }
     }
 
@@ -125,11 +124,8 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && md5pass != null &&
-                user_id != null && user_key != null) {
-            return true;
-        }
-        return false;
+        return username != null && md5pass != null &&
+                user_id != null && user_key != null;
     }
 
     @Override
@@ -181,7 +177,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        Exception ex = null;
+        Exception ex;
         HttpURLConnection conn = null;
         try {
             String pass = md5pass;
@@ -189,7 +185,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 pass = toHexString(Encryption.md5(password));
             }
 
-            /**
+            /*
              * get user id/key
              */
             conn = (HttpURLConnection) new URL(GET_USER_URL).openConnection();
@@ -238,9 +234,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             conn.disconnect();
 
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -252,8 +246,8 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         }
 
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             Pair<String, Sport> res = tcx.exportWithSport(mID, writer);
@@ -330,9 +324,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
         s.activityId = mID;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 

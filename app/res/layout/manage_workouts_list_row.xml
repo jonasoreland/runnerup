@@ -19,7 +19,10 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingLeft="20dp" >
+    android:paddingStart="20dp"
+    android:paddingLeft="20dp"
+    android:paddingEnd="20dp"
+    android:paddingRight="20dp" >
 
     <RadioButton
         android:id="@+id/download_workout_checkbox"

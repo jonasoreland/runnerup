@@ -17,11 +17,10 @@
 
 package org.runnerup.db.entities;
 
-import android.annotation.TargetApi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
+import android.support.annotation.NonNull;
 
 import org.runnerup.common.util.Constants;
 
@@ -32,7 +31,7 @@ import java.util.List;
 /**
  * Content values wrapper for the {@code location} table.
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class LocationEntity extends AbstractEntity {
 
     private Double mDistance;
@@ -86,6 +85,7 @@ public class LocationEntity extends AbstractEntity {
             this.mDB = mDB;
         }
 
+        @NonNull
         @Override
         @SuppressWarnings("unchecked")
         public Iterator<E> iterator() {

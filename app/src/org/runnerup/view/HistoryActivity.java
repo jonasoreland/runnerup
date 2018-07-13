@@ -17,14 +17,13 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
@@ -52,14 +51,12 @@ import org.runnerup.workout.Sport;
 import java.util.Calendar;
 import java.util.Date;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class HistoryActivity extends AppCompatActivity implements Constants, OnItemClickListener,
         LoaderCallbacks<Cursor> {
 
-    SQLiteDatabase mDB = null;
-    Formatter formatter = null;
+    private SQLiteDatabase mDB = null;
+    private Formatter formatter = null;
 
-    ListView listView = null;
     CursorAdapter cursorAdapter = null;
     View fab = null;
 
@@ -72,7 +69,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.history);
-        listView = (ListView) findViewById(R.id.history_list);
+        ListView listView = (ListView) findViewById(R.id.history_list);
         fab = findViewById(R.id.history_add);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -109,6 +106,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
         DBHelper.closeDB(mDB);
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
         String[] from = new String[]{
@@ -121,12 +119,12 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+    public void onLoadFinished(@NonNull Loader<Cursor> arg0, Cursor arg1) {
         cursorAdapter.swapCursor(arg1);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> arg0) {
+    public void onLoaderReset(@NonNull Loader<Cursor> arg0) {
         cursorAdapter.swapCursor(null);
     }
 

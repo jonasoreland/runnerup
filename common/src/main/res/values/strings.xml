@@ -33,7 +33,6 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK, rats</string>
   <!--other-->
-  <string name="Google_Play_Services_Legal_Notices">Google Play Services Legal Notices</string>
   <string name="Type">Type</string>
   <string name="active">active</string>
   <string name="rest">rest</string>
@@ -101,7 +100,6 @@
   <string name="Map">Map</string>
   <string name="Graph">Graph</string>
   <string name="Upload">Upload</string>
-  <string name="Configure">Configure</string>
   <string name="Disconnect">Disconnect</string>
   <string name="Resume">Resume</string>
   <string name="Save_activity">Save activity</string>
@@ -113,11 +111,9 @@
   <string name="Configure_accounts">Edit accounts</string>
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>
-  <string name="edit">edit</string>
   <string name="Synchronizing">Synchronizing:</string>
   <string name="synchronizing_feed">synchronizing feed…</string>
   <string name="OK">OK</string>
-  <string name="Table_format">Table format</string>
   <string name="accounts_category_connected">Manage connections</string>
   <string name="accounts_category_unconnected">Connect an account</string>
   <string name="Show_disabled_accounts">Show disabled accounts</string>
@@ -147,7 +143,6 @@
   <string name="Select_type_of_Bluetooth_device">Select type of Bluetooth device</string>
   <string name="Scanning">Scanning</string>
   <string name="Failed_to_load_workout">Failed to load workout!!</string>
-  <string name="Icon_list">Icon list</string>
   <string name="Problem">Problem</string>
   <string name="Edit_step">Edit step</string>
   <string name="Create_new_audio_cue_scheme">Create new audio cue scheme</string>
@@ -162,7 +157,6 @@
   <string name="Loading">Loading…</string>
   <string name="Saving">Saving</string>
   <string name="Cancellingplease_wait">Cancelling… please wait</string>
-  <string name="try_again_later">try again later!</string>
   <string name="Are_you_sure">Are you sure?</string>
   <string name="Configure_audio_cues">Configure audio cues</string>
   <string name="Downloadeditremove_workouts">Download/edit/remove workouts</string>
@@ -210,7 +204,6 @@
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
   <string name="Experimental_features">Experimental features</string>
   <string name="Mock_HRM_devices">Mock HRM devices</string>
-  <string name="About">About</string>
   <string name="About_RunnerUp">About RunnerUp</string>
   <string name="Triggers">Triggers</string>
   <string name="Time_triggered_audio_cue">Time triggered audio cue</string>
@@ -321,6 +314,5 @@
   <string name="use_pressure_sensor_summary">Use barometer to calculate elevation</string>
   <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to GPS Elevation</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Use initial GPS elevation to average barometric elevation</string>
-  <string name="google_play_not_installed">Google Play Services is not installed</string>
   <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
 </resources>

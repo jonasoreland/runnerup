@@ -1,11 +1,9 @@
 package org.runnerup.notification;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
@@ -16,7 +14,7 @@ import org.runnerup.view.RunActivity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.WorkoutInfo;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class OngoingState implements NotificationState {
     private final Formatter formatter;
     private final WorkoutInfo workoutInfo;

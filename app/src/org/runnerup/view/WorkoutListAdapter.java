@@ -17,9 +17,7 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,14 +30,14 @@ import org.runnerup.workout.WorkoutSerializer;
 import java.io.File;
 import java.io.FilenameFilter;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 class WorkoutListAdapter extends BaseAdapter {
 
     /**
 	 * 
 	 */
-    LayoutInflater inflater = null;
-    String[] workoutList = new String[0];
+    private LayoutInflater inflater = null;
+    private String[] workoutList = new String[0];
 
     public WorkoutListAdapter(LayoutInflater inflater) {
         super();
@@ -87,11 +85,7 @@ class WorkoutListAdapter extends BaseAdapter {
     public void reload() {
         String[] list = load(inflater.getContext());
         if (list == null) {
-            if (workoutList != null && workoutList.length == 0) {
-                // return;
-            } else {
-                workoutList = new String[0];
-            }
+            workoutList = new String[0];
         } else {
             workoutList = new String[list.length];
             int index = 0;

@@ -17,10 +17,8 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
@@ -52,9 +50,10 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class GarminSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Garmin";
@@ -75,18 +74,15 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     //TCX format supports only 2 sports by default (Running / Biking);
     // Otherwise "other" is chosen and we have to edit the workout to add the real sport
     //list of sports ID can be found on Garmin website when editing an activity:
-    public static final Map<Sport, String> sport2garminMap = new HashMap<Sport, String>();
+    private static final Map<Sport, String> sport2garminMap = new HashMap<>();
     static {
         sport2garminMap.put(Sport.WALKING, "walking");
     }
 
-    long id = 0;
+    private long id = 0;
     private String username = null;
     private String password = null;
     private boolean isConnected = false;
-
-    GarminSynchronizer(SyncManager syncManager) {
-    }
 
     @Override
     public long getId() {
@@ -121,9 +117,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean isConfigured() {
-        if (username != null && password != null)
-            return true;
-        return false;
+        return username != null && password != null;
     }
 
     @Override
@@ -196,13 +190,13 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return s;
     }
 
-    private Status connectOld() throws MalformedURLException, IOException, JSONException {
+    private Status connectOld() throws IOException, JSONException {
         Status s = Status.NEED_AUTH;
         s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
 
-        /**
+        /*
          * connect to START_URL to get cookies
          */
         conn = (HttpURLConnection) new URL(START_URL).openConnection();
@@ -217,10 +211,9 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
         conn.disconnect();
 
-        /**
+        /*
          * Then login using a post
          */
-        String login = LOGIN_URL;
         FormValues kv = new FormValues();
         kv.put("login", "login");
         kv.put("login:loginUsernameField", username);
@@ -228,7 +221,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         kv.put("login:signInButton", "Sign In");
         kv.put("javax.faces.ViewState", "j_id1");
 
-        conn = (HttpURLConnection) new URL(login).openConnection();
+        conn = (HttpURLConnection) new URL(LOGIN_URL).openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod(RequestMethod.POST.name());
         conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -246,13 +239,13 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
         conn.disconnect();
 
-        /**
+        /*
          * An finally check that all is OK
          */
         return checkLogin();
     }
 
-    private Status checkLogin() throws MalformedURLException, IOException, JSONException {
+    private Status checkLogin() throws IOException, JSONException {
         HttpURLConnection conn = (HttpURLConnection) new URL(CHECK_URL).openConnection();
         addCookies(conn);
         {
@@ -279,7 +272,8 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    private Status connectNew() throws MalformedURLException, IOException, JSONException {
+    @SuppressWarnings("SameReturnValue")
+    private Status connectNew() throws IOException {
         Status s = Status.NEED_AUTH;
         s.authMethod = Synchronizer.AuthMethod.USER_PASS;
 
@@ -349,7 +343,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return Status.OK; // return checkLogin();
     }
 
-    private HttpURLConnection open(String base, FormValues fv) throws MalformedURLException,
+    private HttpURLConnection open(String base, FormValues fv) throws
             IOException {
         HttpURLConnection conn;
         if (fv != null) {
@@ -361,7 +355,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return conn;
     }
 
-    private HttpURLConnection get(String base, FormValues fv) throws MalformedURLException,
+    private HttpURLConnection get(String base, FormValues fv) throws
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(false);
@@ -369,7 +363,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return conn;
     }
 
-    private HttpURLConnection post(String base, FormValues fv) throws MalformedURLException,
+    private HttpURLConnection post(String base, FormValues fv) throws
             IOException {
         HttpURLConnection conn = open(base, fv);
         conn.setDoOutput(true);
@@ -412,9 +406,9 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         int responseCode = conn.getResponseCode();
         String amsg = conn.getResponseMessage();
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            JSONObject reply = SyncHelper.parse(new BufferedReader(new InputStreamReader(
+            //JSONObject reply = SyncHelper.parse(new BufferedReader(new InputStreamReader(
+            //    conn.getInputStream())));
             // if "activityType" not in res or res["activityType"]["key"] != acttype:
-            conn.getInputStream())));
             conn.disconnect();
         } else {
             throw new Exception("Impossible to connect" + responseCode + amsg);
@@ -429,8 +423,8 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
 
         TCX tcx = new TCX(db);
-        HttpURLConnection conn = null;
-        Exception ex = null;
+        HttpURLConnection conn;
+        Exception ex;
         try {
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer);
@@ -440,7 +434,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             conn.setRequestMethod(RequestMethod.POST.name());
             addCookies(conn);
 
-            Part<StringWritable> part2 = new Part<StringWritable>("data",
+            Part<StringWritable> part2 = new Part<>("data",
                     new StringWritable(writer.toString()));
             part2.setFilename("RunnerUp.tcx");
             part2.setContentType("application/octet-stream");
@@ -476,9 +470,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
 
         s = Synchronizer.Status.ERROR;
         s.ex = ex;
-        if (ex != null) {
-            ex.printStackTrace();
-        }
+        ex.printStackTrace();
         return s;
     }
 
@@ -528,14 +520,14 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             return s;
         }
         // s = Status.OK
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
 
         try {
 
             Calendar today = Calendar.getInstance();
             int month = today.get(Calendar.MONTH); //jan = 0
-            String str_today = String.format("%1$tY-%1$tm-%1td", today);
-            String workout_url = String.format(CALENDAR_URL, today, month);
+            String str_today = String.format(Locale.ENGLISH, "%1$tY-%1$tm-%1td", today);
+            String workout_url = String.format(Locale.ENGLISH, CALENDAR_URL, today, month);
 
             conn = (HttpURLConnection) new URL(workout_url).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());
@@ -559,7 +551,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     if (obj.optString("date").equals(str_today)) {
                         title = '*' + title; //mark workout scheduled for today
                     }
-                    list.add(new Pair<String, String>(getWorkoutIdFromSchedule(obj.getString("id")),
+                    list.add(new Pair<>(getWorkoutIdFromSchedule(obj.getString("id")),
                             title + ".json"));
                 }
             } else {
@@ -592,7 +584,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     obj = arr.optJSONObject(i);
                     if (obj == null)
                         break;
-                    list.add(new Pair<String, String>(obj.getString("workoutId"), obj
+                    list.add(new Pair<>(obj.getString("workoutId"), obj
                             .getString("workoutName") + ".json"));
                 }
             } else {
@@ -616,7 +608,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     @Override
     public void downloadWorkout(File dst, String key) throws Exception {
         HttpURLConnection conn = null;
-        Exception ex = null;
+        Exception ex;
         FileOutputStream out = null;
         try {
             conn = (HttpURLConnection) new URL(GET_WORKOUT_URL + key).openConnection();

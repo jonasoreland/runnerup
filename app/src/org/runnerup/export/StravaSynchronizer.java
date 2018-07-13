@@ -334,7 +334,6 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
                 amsg = conn.getResponseMessage();
 
                 final InputStream in = new BufferedInputStream(conn.getInputStream());
-                //Log.v(getName(), "code: " + responseCode + " " + conn.getURL() + ", amsg: " + amsg + in.toString());
                 json = SyncHelper.parse(in);
                 conn.disconnect();
 

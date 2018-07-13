@@ -18,14 +18,12 @@
 package org.runnerup.export.oauth2client;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,7 +47,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 @SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Activity extends AppCompatActivity {
 
@@ -58,29 +56,27 @@ public class OAuth2Activity extends AppCompatActivity {
      */
     public interface OAuth2ServerCredentials {
 
-        public static final String AUTH_ARGUMENTS = "auth_arguments";
+        String AUTH_ARGUMENTS = "auth_arguments";
 
         /**
          * Used as title when opening authorization dialog
-         * 
-         * @return
          */
-        public static final String NAME = "name";
-        public static final String CLIENT_ID = "client_id";
-        public static final String CLIENT_SECRET = "client_secret";
-        public static final String AUTH_URL = "auth_url";
-        public static final String AUTH_EXTRA = "auth_extra";
-        public static final String TOKEN_URL = "token_url";
-        public static final String REDIRECT_URI = "redirect_uri";
-        public static final String REVOKE_URL = "revoke_url";
+        String NAME = "name";
+        String CLIENT_ID = "client_id";
+        String CLIENT_SECRET = "client_secret";
+        String AUTH_URL = "auth_url";
+        String AUTH_EXTRA = "auth_extra";
+        String TOKEN_URL = "token_url";
+        String REDIRECT_URI = "redirect_uri";
+        String REVOKE_URL = "revoke_url";
 
-        public static final String AUTH_TOKEN = "auth_token";
+        String AUTH_TOKEN = "auth_token";
     }
 
-    boolean mFinished = false;
-    String mRedirectUri = null;
-    ProgressDialog mSpinner = null;
-    Bundle mArgs = null;
+    private boolean mFinished = false;
+    private String mRedirectUri = null;
+    private ProgressDialog mSpinner = null;
+    private Bundle mArgs = null;
 
     @SuppressWarnings("deprecation")
     private void setSavedPassword(WebView wv, boolean val) {
@@ -149,6 +145,7 @@ public class OAuth2Activity extends AppCompatActivity {
                     mSpinner.show();
             }
 
+            @SuppressLint("StaticFieldLeak")
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -205,11 +202,6 @@ public class OAuth2Activity extends AppCompatActivity {
                     res.putExtra("url", token_url);
 
                     new AsyncTask<String, String, Integer>() {
-                        @Override
-                        protected void onPreExecute() {
-                            super.onPreExecute();
-                        }
-
                         @Override
                         protected Integer doInBackground(String... params) {
                             int resultCode = Activity.RESULT_OK;

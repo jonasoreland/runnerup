@@ -17,7 +17,7 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -64,43 +63,43 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private final Handler handler = new Handler();
     private final StringBuffer logBuffer = new StringBuffer();
 
-    List<HRProvider> providers = null;
-    String btName;
-    String btAddress;
-    String btProviderName;
-    HRProvider hrProvider = null;
+    private List<HRProvider> providers = null;
+    private String btName;
+    private String btAddress;
+    private String btProviderName;
+    private HRProvider hrProvider = null;
 
-    Button connectButton = null;
-    Button scanButton = null;
-    TextView tvBTName = null;
-    TextView tvHR = null;
-    TextView tvLog = null;
-    TextView tvBatteryLevel = null;
+    private Button connectButton = null;
+    private Button scanButton = null;
+    private TextView tvBTName = null;
+    private TextView tvHR = null;
+    private TextView tvLog = null;
+    private TextView tvBatteryLevel = null;
 
-    Formatter formatter = null;
-    GraphView graphView = null;
-    LineGraphSeries<DataPoint> graphViewSeries = null;
-    final ArrayList<DataPoint> graphViewListData = new ArrayList<>();
-    DataPoint graphViewArrayData[] = new DataPoint[0];
-    static final int GRAPH_HISTORY_SECONDS = 180;
+    private Formatter formatter = null;
+    private GraphView graphView = null;
+    private LineGraphSeries<DataPoint> graphViewSeries = null;
+    private final ArrayList<DataPoint> graphViewListData = new ArrayList<>();
+    private DataPoint[] graphViewArrayData = new DataPoint[0];
+    private static final int GRAPH_HISTORY_SECONDS = 180;
 
-    DeviceAdapter deviceAdapter = null;
-    boolean mIsScanning = false;
+    private DeviceAdapter deviceAdapter = null;
+    private boolean mIsScanning = false;
 
-    final OnClickListener hrZonesClick = new OnClickListener() {
+    private final OnClickListener hrZonesClick = new OnClickListener() {
         @Override
         public void onClick(View arg0) {
             startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
         }
     };
     
-    final OnClickListener scanButtonClick = new OnClickListener() {
+    private final OnClickListener scanButtonClick = new OnClickListener() {
         public void onClick(View v) {
             clear();
             stopTimer();
@@ -230,11 +229,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
         if (requestCode == 123) {
             startScan();
-            return;
         }
     }
     
-    int lineNo = 0;
+    private int lineNo = 0;
 
     private void log(String msg) {
         logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
@@ -244,7 +242,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         tvLog.setText(logBuffer.toString());
     }
 
-    void clearHRSettings() {
+    private void clearHRSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Clear_HR_settings));
         builder.setMessage(getString(R.string.Are_you_sure));
@@ -283,7 +281,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private void open() {
         if (hrProvider != null && !hrProvider.isEnabled()) {
-            if (hrProvider.startEnableIntent(this, 0) == true) {
+            if (hrProvider.startEnableIntent(this, 0)) {
                 return;
             }
             hrProvider = null;
@@ -304,7 +302,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
     }
 
-    public void notSupported() {
+    private void notSupported() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device));
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -315,7 +313,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         };
         builder.setNegativeButton(getString(R.string.ok_rats), listener);
         builder.show();
-        return;
     }
 
     private void clear() {
@@ -450,7 +447,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         builder.show();
     }
 
-    void connect() {
+    private void connect() {
         stopTimer();
         if (hrProvider == null || btName == null || btAddress == null) {
             updateView();
@@ -500,9 +497,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         return btAddress;
     }
 
-    Timer hrReader = null;
+    private Timer hrReader = null;
 
-    void startTimer() {
+    private void startTimer() {
         hrReader = new Timer();
         hrReader.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -516,7 +513,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }, 0, 500);
     }
 
-    void stopTimer() {
+    private void stopTimer() {
         if (hrReader == null)
             return;
 
@@ -525,10 +522,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         hrReader = null;
     }
 
-    long lastTimestamp = 0;
-    long timerStartTime = 0;
+    private long lastTimestamp = 0;
+    private long timerStartTime = 0;
 
-    protected void readHR() {
+    private void readHR() {
         if (hrProvider != null) {
             HRData data = hrProvider.getHRData();
             if(data != null) {
@@ -596,10 +593,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             save();
             if (hrProvider.getBatteryLevel() > 0) {
                 tvBatteryLevel.setVisibility(View.VISIBLE);
-                tvBatteryLevel.setText(getResources().getText(R.string.Battery_level) + ": " + hrProvider.getBatteryLevel() + "%");
+                tvBatteryLevel.setText(String.format(Locale.getDefault(), "%s: %d%%",
+                        getResources().getText(R.string.Battery_level), hrProvider.getBatteryLevel()));
             }
             startTimer();
-        } else {
         }
         updateView();
     }
@@ -619,15 +616,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         log(src.getProviderName() + ": " + msg);
     }
 
+    @SuppressLint("InflateParams")
     class DeviceAdapter extends BaseAdapter {
 
-        final ArrayList<HRDeviceRef> deviceList = new ArrayList<HRDeviceRef>();
+        final ArrayList<HRDeviceRef> deviceList = new ArrayList<>();
         LayoutInflater inflater = null;
-        Resources resources = null;
+        // --Commented out by Inspection (2017-08-11 13:06):Resources resources = null;
 
         DeviceAdapter(Context ctx) {
             inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            resources = ctx.getResources();
+            //resources = ctx.getResources();
         }
 
         @Override
@@ -649,8 +647,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         public View getView(int position, View convertView, ViewGroup parent) {
             View row;
             if (convertView == null) {
-                row = inflater.inflate(android.R.layout.simple_list_item_single_choice,
-                        null);
+                //Note: Parent is AlertDialog so parent in inflate must be null
+                row = inflater.inflate(android.R.layout.simple_list_item_single_choice, null);
             } else {
                 row = convertView;
             }

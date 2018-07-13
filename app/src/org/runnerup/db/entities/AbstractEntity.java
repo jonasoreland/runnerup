@@ -18,7 +18,6 @@
 package org.runnerup.db.entities;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -31,7 +30,7 @@ import org.runnerup.common.util.Constants;
 import java.util.Arrays;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public abstract class AbstractEntity implements DBEntity {
 
     private final ContentValues mContentValues;
@@ -43,14 +42,14 @@ public abstract class AbstractEntity implements DBEntity {
     protected abstract String getNullColumnHack();
 
 
-    public AbstractEntity() {
+    AbstractEntity() {
         this.mContentValues = new ContentValues();
     }
 
     /**
      * Returns the {@code ContentValues} wrapped by this object.
      */
-    protected final ContentValues values() {
+    final ContentValues values() {
         return mContentValues;
     }
 
@@ -61,7 +60,7 @@ public abstract class AbstractEntity implements DBEntity {
         return null;
     }
 
-    public void setId(Long value) {
+    private void setId(Long value) {
         values().put(Constants.DB.PRIMARY_KEY, value);
     }
 
@@ -78,13 +77,15 @@ public abstract class AbstractEntity implements DBEntity {
         }
     }
 
-    protected void toContentValues(Cursor c) {
+    @SuppressLint("ObsoleteSdkInt")
+    void toContentValues(Cursor c) {
         if (c.isClosed() || c.isAfterLast() || c.isBeforeFirst()) {
             throw new CursorIndexOutOfBoundsException("Cursor not readable");
         }
 
         if (getValidColumns().containsAll(Arrays.asList(c.getColumnNames()))) {
             if (Build.VERSION.SDK_INT > 10) {
+                //noinspection AccessStaticViaInstance
                 this.cursorRowToContentValues(c, values());
             } else {
                 DatabaseUtils.cursorRowToContentValues(c, values());
@@ -131,6 +132,7 @@ public abstract class AbstractEntity implements DBEntity {
         getValidColumns().toArray(cols);
         Cursor cursor = DB.query(getTableName(), cols, "_id = "
                 + primaryKey, null, null, null, null);
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             if (cursor.moveToFirst()) {
                 toContentValues(cursor);

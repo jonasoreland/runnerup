@@ -16,7 +16,6 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/selected"
     android:oneshot="false" >
 
     <item

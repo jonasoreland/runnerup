@@ -17,8 +17,6 @@
 
 package org.runnerup.view;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -28,7 +26,6 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -47,7 +44,6 @@ import org.runnerup.BuildConfig;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.HRZones;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
@@ -58,32 +54,32 @@ import org.runnerup.workout.Workout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
-public class RunActivity extends Activity implements TickListener {
-    Workout workout = null;
-    Tracker mTracker = null;
-    final Handler handler = new Handler();
 
-    Button pauseButton = null;
-    Button stopButton = null;
-    Button newLapButton = null;
-    TextView activityTime = null;
-    TextView activityDistance = null;
-    TextView activityPace = null;
-    TextView lapTime = null;
-    TextView lapDistance = null;
-    TextView lapPace = null;
-    TextView intervalTime = null;
-    TextView intervalDistance = null;
-    TextView intervalPace = null;
-    TextView countdownView = null;
-    ListView workoutList = null;
-    View tableRowInterval = null;
-    org.runnerup.workout.Step currentStep = null;
-    Formatter formatter = null;
+public class RunActivity extends Activity implements TickListener {
+    private Workout workout = null;
+    private Tracker mTracker = null;
+    private final Handler handler = new Handler();
+
+    private Button pauseButton = null;
+    private Button newLapButton = null;
+    private TextView activityTime = null;
+    private TextView activityDistance = null;
+    private TextView activityPace = null;
+    private TextView lapTime = null;
+    private TextView lapDistance = null;
+    private TextView lapPace = null;
+    private TextView intervalTime = null;
+    private TextView intervalDistance = null;
+    private TextView intervalPace = null;
+    private TextView countdownView = null;
+    private ListView workoutList = null;
+    private View tableRowInterval = null;
+    private org.runnerup.workout.Step currentStep = null;
+    private Formatter formatter = null;
     private TextView activityHr;
     private TextView lapHr;
     private TextView intervalHr;
@@ -95,10 +91,9 @@ public class RunActivity extends Activity implements TickListener {
         public int level;
     }
 
-    final ArrayList<WorkoutRow> workoutRows = new ArrayList<WorkoutRow>();
-    final ArrayList<BaseAdapter> adapters = new ArrayList<BaseAdapter>(2);
-    boolean simpleWorkout;
-    HRZones hrZones = null;
+    private final ArrayList<WorkoutRow> workoutRows = new ArrayList<>();
+    //private final ArrayList<BaseAdapter> adapters = new ArrayList<>(2);
+    private boolean simpleWorkout;
 
     /** Called when the activity is first created. */
 
@@ -108,9 +103,9 @@ public class RunActivity extends Activity implements TickListener {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.run);
         formatter = new Formatter(this);
-        hrZones = new HRZones(this);
+        //HRZones hrZones = new HRZones(this);
 
-        stopButton = (Button) findViewById(R.id.stop_button);
+        Button stopButton = (Button) findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);
         pauseButton = (Button) findViewById(R.id.pause_button);
         pauseButton.setOnClickListener(pauseButtonClick);
@@ -161,7 +156,7 @@ public class RunActivity extends Activity implements TickListener {
 
     }
 
-    void onGpsTrackerBound() {
+    private void onGpsTrackerBound() {
         if (mTracker == null) {
             // should not happen
             return;
@@ -175,11 +170,11 @@ public class RunActivity extends Activity implements TickListener {
         workout = mTracker.getWorkout();
 
         {
-            /**
+            /*
              * Countdown view can't be bound until RunActivity is started
              *   since it's not created until then
              */
-            HashMap<String, Object> bindValues = new HashMap<String, Object>();
+            HashMap<String, Object> bindValues = new HashMap<>();
             bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
             workout.onBind(workout, bindValues);
         }
@@ -187,12 +182,9 @@ public class RunActivity extends Activity implements TickListener {
         startTimer();
 
         populateWorkoutList();
-        simpleWorkout = false;
-        if (workoutRows.size() == 1 ||
+        simpleWorkout = workoutRows.size() == 1 ||
                 workoutRows.size() == 2
-                && workoutRows.get(0).step.getIntensity() == Intensity.RESTING) {
-            simpleWorkout = true;
-        }
+                        && workoutRows.get(0).step.getIntensity() == Intensity.RESTING;
 
         if (simpleWorkout) {
             newLapButton.setOnClickListener(newLapButtonClick);
@@ -212,14 +204,14 @@ public class RunActivity extends Activity implements TickListener {
             row.lap = null;
             workoutRows.add(row);
         }
-        for (BaseAdapter a : adapters) {
-            a.notifyDataSetChanged();
-        }
+        //for (BaseAdapter a : adapters) {
+        //    a.notifyDataSetChanged();
+        //}
     }
 
-    Timer timer = null;
+    private Timer timer = null;
 
-    void startTimer() {
+    private void startTimer() {
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -233,7 +225,7 @@ public class RunActivity extends Activity implements TickListener {
         }, 0, 500);
     }
 
-    void stopTimer() {
+    private void stopTimer() {
         if (timer != null) {
             timer.cancel();
             timer.purge();
@@ -241,7 +233,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    Location l = null;
+    private Location l = null;
 
     public void onTick() {
         if (workout != null) {
@@ -257,14 +249,14 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    final OnClickListener stopButtonClick = new OnClickListener() {
+    private final OnClickListener stopButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (timer != null) {
                 workout.onStop(workout);
                 stopTimer(); // set timer=null;
                 mTracker.stopForeground(true); // remove notification
                 Intent intent = new Intent(RunActivity.this, DetailActivity.class);
-                /**
+                /*
                  * The same activity is used to show details and to save
                  * activity they show almost the same information
                  */
@@ -277,11 +269,10 @@ public class RunActivity extends Activity implements TickListener {
 
     @Override
     public void onBackPressed() {
-        boolean ignore_back = true; // atleast magnus belives that this is
-                                    // better...
-        if (ignore_back == false) {
-            stopButtonClick.onClick(stopButton);
-        }
+        //boolean ignore_back = true; // atleast magnus belives that this is better...
+        //if (!ignore_back) {
+        //    stopButtonClick.onClick(stopButton);
+        //}
     }
 
     @Override
@@ -292,36 +283,33 @@ public class RunActivity extends Activity implements TickListener {
             return;
         }
         if (resultCode == Activity.RESULT_OK) {
-            /**
+            /*
              * they saved
              */
             workout.onComplete(Scope.ACTIVITY, workout);
             workout.onSave();
             mTracker = null;
             finish();
-            return;
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            /**
+            /*
              * they discarded
              */
             workout.onComplete(Scope.ACTIVITY, workout);
             workout.onDiscard();
             mTracker = null;
             finish();
-            return;
         } else if (resultCode == Activity.RESULT_FIRST_USER) {
             startTimer();
             if (requestCode == 0) {
                 workout.onResume(workout);
-            } else {
-                // we were paused before stopButtonClick...don't resume
+                //else: we were paused before stopButtonClick...don't resume
             }
         } else {
             if (BuildConfig.DEBUG) { throw new AssertionError(); }
         }
     }
 
-    final OnClickListener pauseButtonClick = new OnClickListener() {
+    private final OnClickListener pauseButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (workout.isPaused()) {
                 workout.onResume(workout);
@@ -344,13 +332,13 @@ public class RunActivity extends Activity implements TickListener {
         }
     }
 
-    final OnClickListener newLapButtonClick = new OnClickListener() {
+    private final OnClickListener newLapButtonClick = new OnClickListener() {
         public void onClick(View v) {
             workout.onNewLap();
         }
     };
 
-    final OnClickListener nextStepButtonClick = new OnClickListener() {
+    private final OnClickListener nextStepButtonClick = new OnClickListener() {
         public void onClick(View v) {
             workout.onNextStep();
         }
@@ -446,7 +434,7 @@ public class RunActivity extends Activity implements TickListener {
         }
     };
 
-    void bindGpsTracker() {
+    private void bindGpsTracker() {
         // Establish a connection with the service. We use an explicit
         // class name because we want a specific service implementation that
         // we know will be running in our own process (and thus won't be
@@ -456,7 +444,7 @@ public class RunActivity extends Activity implements TickListener {
         mIsBound = true;
     }
 
-    void unbindGpsTracker() {
+    private void unbindGpsTracker() {
         if (mIsBound) {
             // Detach our existing connection.
             getApplicationContext().unbindService(mConnection);
@@ -533,17 +521,17 @@ public class RunActivity extends Activity implements TickListener {
                     targetPace.setText(formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(),
                             minValue));
                 } else {
-                    targetPace.setText(formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(),
-                            minValue) + "-" +
-                            formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), maxValue));
+                    targetPace.setText(String.format(Locale.getDefault(), "%s-%s",
+                            formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), minValue),
+                            formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), maxValue)));
                 }
             }
             if (step.getIntensity() == Intensity.REPEAT){
                 if (step.getCurrentRepeat() >= step.getRepeatCount()) {
                     durationValue.setText(getString(R.string.Finished));
                 } else {
-                    durationValue.setText("" + (step.getCurrentRepeat() + 1) + "/"
-                            + step.getRepeatCount());
+                    durationValue.setText(String.format(Locale.getDefault(), "%d/%d",
+                            (step.getCurrentRepeat() + 1), step.getRepeatCount()));
                 }
             }
             return view;
@@ -551,8 +539,7 @@ public class RunActivity extends Activity implements TickListener {
 
         private View getLapRow(ContentValues tmp, View convertView, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
-            View view = inflater.inflate(R.layout.laplist_row, parent, false);
-            return view;
+            return inflater.inflate(R.layout.laplist_row, parent, false);
         }
 
         @Override

@@ -17,11 +17,10 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Pair;
@@ -44,8 +43,10 @@ import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Range;
 import org.runnerup.workout.Step;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+import java.util.Locale;
+
 public class StepButton extends LinearLayout {
+
 
     private final Context mContext;
     private final ViewGroup mLayout;
@@ -61,8 +62,8 @@ public class StepButton extends LinearLayout {
     private Step step;
     private Runnable mOnChangedListener = null;
 
-    static final boolean editRepeatCount = true;
-    static final boolean editStepButton = true;
+    private static final boolean editRepeatCount = true;
+    private static final boolean editStepButton = true;
 
     public StepButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -108,7 +109,7 @@ public class StepButton extends LinearLayout {
             case REPEAT:
                 mIntensityIcon.setImageResource(R.drawable.step_repeat);
                 mDurationValue.setVisibility(GONE); //todo better wording in string
-                mGoalValue.setText(String.format(res.getString(R.string.repeat_times), step.getRepeatCount()));
+                mGoalValue.setText(String.format(Locale.getDefault(), res.getString(R.string.repeat_times), step.getRepeatCount()));
                 mGoalValue.setTextColor(res.getColor(R.color.stepRepeat));
                 if (editRepeatCount)
                     mLayout.setOnClickListener(onRepeatClickListener);
@@ -147,17 +148,17 @@ public class StepButton extends LinearLayout {
             else
                 prefix = "";
 
-            mGoalValue.setText(prefix +
-                    formatter.format(Formatter.Format.TXT_SHORT, goalType, step.getTargetValue().minValue)
-                    + "-" +
-                    formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue));
+            mGoalValue.setText((String.format(Locale.getDefault(), "%s%s-%s",
+                    prefix,
+                    formatter.format(Formatter.Format.TXT_SHORT, goalType, step.getTargetValue().minValue),
+                    formatter.format(Formatter.Format.TXT_LONG, goalType, step.getTargetValue().maxValue))));
         }
         if (editStepButton) {
             mLayout.setOnClickListener(onStepClickListener);
         }
     }
 
-    final OnClickListener onRepeatClickListener = new OnClickListener() {
+    private final OnClickListener onRepeatClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -195,7 +196,7 @@ public class StepButton extends LinearLayout {
         }
     };
 
-    final OnClickListener onStepClickListener = new OnClickListener() {
+    private final OnClickListener onStepClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -203,7 +204,7 @@ public class StepButton extends LinearLayout {
             alert.setTitle(getResources().getString(R.string.Edit_step));
 
             final LayoutInflater inflater = LayoutInflater.from(mContext);
-            final View layout = inflater.inflate(
+            @SuppressLint("InflateParams") final View layout = inflater.inflate(
                     R.layout.step_dialog, null);
 
             final Runnable save = setupEditStep(inflater, layout);
@@ -228,7 +229,7 @@ public class StepButton extends LinearLayout {
         }
     };
 
-    Runnable setupEditStep(LayoutInflater inflator, View layout) {
+    private Runnable setupEditStep(LayoutInflater inflator, View layout) {
         final TitleSpinner stepType = (TitleSpinner) layout.findViewById(R.id.step_intensity);
         stepType.setValue(step.getIntensity().getValue());
 

@@ -17,7 +17,6 @@
 
 package org.runnerup.export;
 
-import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Context;
@@ -45,7 +44,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";

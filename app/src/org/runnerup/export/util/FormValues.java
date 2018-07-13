@@ -17,15 +17,12 @@
 
 package org.runnerup.export.util;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FormValues extends HashMap<String, String> implements Writable {
     /**
      *

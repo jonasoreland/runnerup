@@ -17,12 +17,10 @@
 
 package org.runnerup.export.format;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.os.Build;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +28,6 @@ import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -39,13 +36,12 @@ import java.util.Locale;
  * @author jonas.oreland@gmail.com
  */
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class FacebookCourse {
 
-    long mID = 0;
-    SQLiteDatabase mDB = null;
-    Formatter formatter = null;
-    final SimpleDateFormat dateFormat = new SimpleDateFormat(
+    private SQLiteDatabase mDB = null;
+    private Formatter formatter = null;
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
 
     public FacebookCourse(Context ctx, SQLiteDatabase db) {
@@ -53,17 +49,17 @@ public class FacebookCourse {
         formatter = new Formatter(ctx);
     }
 
-    String formatTime(long time) {
+    private String formatTime(long time) {
         return dateFormat.format(new Date(time));
     }
 
-    JSONObject pace(double distance, double duration) throws JSONException {
+    private JSONObject pace(double distance, double duration) throws JSONException {
         if (distance != 0)
             return pace(duration / distance);
         return null;
     }
 
-    JSONObject pace(double val) throws JSONException {
+    private JSONObject pace(double val) throws JSONException {
         if (formatter.getUnitMeters() == Formatter.km_meters) {
             return new JSONObject().put("value", val).put("units", "s/m");
         } else {
@@ -72,7 +68,7 @@ public class FacebookCourse {
     }
 
     public JSONObject export(long activityId, boolean showTrail, JSONObject runObj)
-            throws IOException, JSONException {
+            throws JSONException {
 
         final String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,

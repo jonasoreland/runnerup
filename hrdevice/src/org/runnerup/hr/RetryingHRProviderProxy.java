@@ -1,8 +1,6 @@
 package org.runnerup.hr;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -19,7 +17,7 @@ import android.os.Looper;
  *   if loosing connection when connected,
  *   it will auto connect
  */
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient {
 
     private HRDeviceRef connectRef;
@@ -38,8 +36,6 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     }
 
     private int attempt = 0;
-    private final int kMaxConnectRetries = 3;
-    private final int kMaxReconnectRetires = 10;
     private final HRProvider provider;
     private HRClient client = null;
     private Handler handler = null;
@@ -58,18 +54,16 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             case ERROR:
                 return 0;
             case CONNECTING:
-                return kMaxConnectRetries;
+                return 3; //kMaxConnectRetries
             case RECONNECTING:
-                return kMaxReconnectRetires;
+                return 10; //kMaxReconnectRetries
         }
         return 0;
     }
 
     private boolean checkMaxAttempts() {
         attempt++;
-        if (attempt > getMaxRetries())
-            return false;
-        return true;
+        return attempt <= getMaxRetries();
     }
 
     private int getRetryDelayMillis() {
@@ -135,13 +129,12 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             return;
         }
 
-        if (ok == true) {
+        if (ok) {
             state = State.OPENED;
-            client.onOpenResult(ok);
         } else {
             state = State.CLOSED;
-            client.onOpenResult(ok);
         }
+        client.onOpenResult(ok);
     }
 
     @Override
@@ -229,7 +222,6 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
                 log("client.onConnectResult(true)");
                 client.onConnectResult(true);
             }
-            return;
         } else {
             if (!checkMaxAttempts()) {
                 state = State.OPENED;
@@ -249,7 +241,6 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
                 }
             }, delayMillis);
 
-            return;
         }
     }
 
@@ -319,7 +310,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
         log(msg);
     }
 
-    public void log(final String msg) {
+    private void log(final String msg) {
 
         String res = "[ RetryingHRProviderProxy: " +
                 provider.getProviderName() +

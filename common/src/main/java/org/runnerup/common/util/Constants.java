@@ -21,9 +21,9 @@ public interface Constants {
 
     String LOG = "org.runnerup";
 
-    public interface DB {
+    interface DB {
 
-        public static final String PRIMARY_KEY = "_id";
+        String PRIMARY_KEY = "_id";
 
         //DBVERSION update
         //interface DBINFO {
@@ -31,109 +31,110 @@ public interface Constants {
         //    String ACCOUNT_VERSION = "account_version";
         //}
 
-        public interface ACTIVITY {
-            public static final String TABLE = "activity";
-            public static final String START_TIME = "start_time";
-            public static final String DISTANCE = "distance";
-            public static final String TIME = "time";
-            public static final String NAME = "name";
-            public static final String COMMENT = "comment";
-            public static final String SPORT = "type";
-            public static final String MAX_HR = "avg_hr";
-            public static final String AVG_HR = "max_hr";
-            public static final String AVG_CADENCE = "avg_cadence";
-            public static final String META_DATA = "meta_data";
-            public static final String DELETED = "deleted";
-            public static final String NULLCOLUMNHACK = "nullColumnHack";
+        interface ACTIVITY {
+            String TABLE = "activity";
+            String START_TIME = "start_time";
+            String DISTANCE = "distance";
+            String TIME = "time";
+            String NAME = "name";
+            String COMMENT = "comment";
+            String SPORT = "type";
+            String MAX_HR = "avg_hr";
+            String AVG_HR = "max_hr";
+            String AVG_CADENCE = "avg_cadence";
+            String META_DATA = "meta_data";
+            String DELETED = "deleted";
+            String NULLCOLUMNHACK = "nullColumnHack";
 
-            public static final int SPORT_RUNNING = 0;
-            public static final int SPORT_BIKING = 1;
-            public static final int SPORT_OTHER = 2; // unknown
-            public static final int SPORT_ORIENTEERING = 3;
-            public static final int SPORT_WALKING = 4;
-            public static final String WITH_BAROMETER = "<WithBarometer/>";
+            int SPORT_RUNNING = 0;
+            int SPORT_BIKING = 1;
+            int SPORT_OTHER = 2; // unknown
+            int SPORT_ORIENTEERING = 3;
+            int SPORT_WALKING = 4;
+            String WITH_BAROMETER = "<WithBarometer/>";
         }
 
-        public interface LOCATION {
-            public static final String TABLE = "location";
-            public static final String ACTIVITY = "activity_id";
-            public static final String LAP = "lap";
-            public static final String TYPE = "type";
-            public static final String TIME = "time"; // in milliseconds since epoch
-            public static final String ELAPSED = "elapsed";
-            public static final String DISTANCE = "distance";
-            public static final String LATITUDE = "latitude";
-            public static final String LONGITUDE = "longitude";
-            public static final String ACCURANCY = "accurancy";
-            public static final String ALTITUDE = "altitude";
-            public static final String GPS_ALTITUDE = "gps_altitude";
-            public static final String SPEED = "speed";
-            public static final String BEARING = "bearing";
-            public static final String SATELLITES = "satellites";
-            public static final String HR = "hr";
-            public static final String CADENCE = "cadence";
-            public static final String TEMPERATURE = "temperature";
-            public static final String PRESSURE = "pressure";
+        interface LOCATION {
+            String TABLE = "location";
+            String ACTIVITY = "activity_id";
+            String LAP = "lap";
+            String TYPE = "type";
+            String TIME = "time"; // in milliseconds since epoch
+            String ELAPSED = "elapsed";
+            String DISTANCE = "distance";
+            String LATITUDE = "latitude";
+            String LONGITUDE = "longitude";
+            String ACCURANCY = "accurancy";
+            String ALTITUDE = "altitude";
+            String GPS_ALTITUDE = "gps_altitude";
+            String SPEED = "speed";
+            String BEARING = "bearing";
+            String SATELLITES = "satellites";
+            String HR = "hr";
+            String CADENCE = "cadence";
+            String TEMPERATURE = "temperature";
+            String PRESSURE = "pressure";
 
-            public static final int TYPE_START = 1;
-            public static final int TYPE_END = 2;
-            public static final int TYPE_GPS = 3;
-            public static final int TYPE_PAUSE = 4;
-            public static final int TYPE_RESUME = 5;
-            public static final int TYPE_DISCARD = 6;
+            int TYPE_START = 1;
+            int TYPE_END = 2;
+            int TYPE_GPS = 3;
+            int TYPE_PAUSE = 4;
+            int TYPE_RESUME = 5;
+            int TYPE_DISCARD = 6;
         }
 
-        public interface LAP {
-            public static final String TABLE = "lap";
-            public static final String ACTIVITY = "activity_id";
-            public static final String LAP = "lap";
-            public static final String INTENSITY = "type";
-            public static final String TIME = "time";
-            public static final String DISTANCE = "distance";
-            public static final String PLANNED_TIME = "planned_time";
-            public static final String PLANNED_DISTANCE = "planned_distance";
-            public static final String PLANNED_PACE = "planned_pace";
-            public static final String AVG_HR = "avg_hr";
-            public static final String MAX_HR = "max_hr";
-            public static final String AVG_CADENCE = "avg_cadence";
+        interface LAP {
+            String TABLE = "lap";
+            String ACTIVITY = "activity_id";
+            String LAP = "lap";
+            String INTENSITY = "type";
+            String TIME = "time";
+            String DISTANCE = "distance";
+            String PLANNED_TIME = "planned_time";
+            String PLANNED_DISTANCE = "planned_distance";
+            String PLANNED_PACE = "planned_pace";
+            String AVG_HR = "avg_hr";
+            String MAX_HR = "max_hr";
+            String AVG_CADENCE = "avg_cadence";
         }
 
-        public interface INTENSITY {
-            public static final int ACTIVE = 0;
-            public static final int RESTING = 1;
-            public static final int WARMUP = 2;
-            public static final int COOLDOWN = 3;
-            public static final int REPEAT = 4;
-            public static final int RECOVERY = 5;
+        interface INTENSITY {
+            int ACTIVE = 0;
+            int RESTING = 1;
+            int WARMUP = 2;
+            int COOLDOWN = 3;
+            int REPEAT = 4;
+            int RECOVERY = 5;
         }
 
-        public interface DIMENSION {
-            public static final int TIME = 1;
-            public static final int DISTANCE = 2;
-            public static final int SPEED = 3;
-            public static final int PACE = 4;
-            public static final int HR = 5;
-            public static final int HRZ = 6;
-            public static final int CAD = 7;
-            public static final int TEMPERATURE = 8;
-            public static final int PRESSURE = 9;
+        interface DIMENSION {
+            int TIME = 1;
+            int DISTANCE = 2;
+            int SPEED = 3;
+            int PACE = 4;
+            int HR = 5;
+            int HRZ = 6;
+            int CAD = 7;
+            int TEMPERATURE = 8;
+            int PRESSURE = 9;
         }
 
-        public interface ACCOUNT {
-            public static final String TABLE = "account";
-            public static final String NAME = "name";
-            public static final String FLAGS = "default_send";
-            public static final String ENABLED = "enabled";
-            public static final String AUTH_CONFIG = "auth_config";
+        interface ACCOUNT {
+            String TABLE = "account";
+            String NAME = "name";
+            String FLAGS = "default_send";
+            String ENABLED = "enabled";
+            String AUTH_CONFIG = "auth_config";
 
             String URL = "url";
             String FORMAT = "format";
 
-            public static final int FLAG_UPLOAD = 0;
-            public static final int FLAG_FEED = 1;
-            public static final int FLAG_LIVE = 2;
-            public static final int FLAG_SKIP_MAP = 3;
-            public static final long DEFAULT_FLAGS =
+            int FLAG_UPLOAD = 0;
+            int FLAG_FEED = 1;
+            int FLAG_LIVE = 2;
+            int FLAG_SKIP_MAP = 3;
+            @SuppressWarnings("PointlessBitwiseExpression")
+            long DEFAULT_FLAGS =
                     (1 << FLAG_UPLOAD) +
                             (1 << FLAG_FEED) +
                             (1 << FLAG_LIVE);
@@ -144,114 +145,112 @@ public interface Constants {
             String AUTH_NOTICE = "auth_notice";
         }
 
-        public interface EXPORT {
-            public static final String TABLE = "report";
-            public static final String ACTIVITY = "activity_id";
-            public static final String ACCOUNT = "account_id";
-            public static final String STATUS = "status";
-            public static final String EXTERNAL_ID = "ext_id";
-            public static final String EXTRA = "extra";
+        interface EXPORT {
+            String TABLE = "report";
+            String ACTIVITY = "activity_id";
+            String ACCOUNT = "account_id";
+            String STATUS = "status";
+            String EXTERNAL_ID = "ext_id";
+            String EXTRA = "extra";
         }
 
-        public interface AUDIO_SCHEMES {
-            public static final String TABLE = "audio_schemes";
-            public static final String NAME = "name";
-            public static final String SORT_ORDER = "sort_order";
+        interface AUDIO_SCHEMES {
+            String TABLE = "audio_schemes";
+            String NAME = "name";
+            String SORT_ORDER = "sort_order";
         }
 
-        public interface FEED {
-            public static final String TABLE = "feed";
-            public static final String ACCOUNT_ID = "account_id";
-            public static final String EXTERNAL_ID = "ext_id"; // ID per account
-            public static final String FEED_TYPE = "entry_type";
-            public static final String FEED_SUBTYPE = "type";
-            public static final String FEED_TYPE_STRING = "type_string";
-            public static final String START_TIME = "start_time";
-            public static final String DURATION = "duration";
-            public static final String DISTANCE = "distance";
-            public static final String USER_ID = "user_id";
-            public static final String USER_FIRST_NAME = "user_first_name";
-            public static final String USER_LAST_NAME = "user_last_name";
-            public static final String USER_IMAGE_URL = "user_image_url";
-            public static final String NOTES = "notes";
-            public static final String COMMENTS = "comments";
-            public static final String URL = "url";
-            public static final String FLAGS = "flags";
+        interface FEED {
+            String TABLE = "feed";
+            String ACCOUNT_ID = "account_id";
+            String EXTERNAL_ID = "ext_id"; // ID per account
+            String FEED_TYPE = "entry_type";
+            String FEED_SUBTYPE = "type";
+            String FEED_TYPE_STRING = "type_string";
+            String START_TIME = "start_time";
+            String DURATION = "duration";
+            String DISTANCE = "distance";
+            String USER_ID = "user_id";
+            String USER_FIRST_NAME = "user_first_name";
+            String USER_LAST_NAME = "user_last_name";
+            String USER_IMAGE_URL = "user_image_url";
+            String NOTES = "notes";
+            String COMMENTS = "comments";
+            String URL = "url";
+            String FLAGS = "flags";
 
-            public static final int FEED_TYPE_ACTIVITY = 0; // FEED_SUBTYPE
-                                                            // contains
-                                                            // activity.type
-            public static final int FEED_TYPE_EVENT = 1;
+            int FEED_TYPE_ACTIVITY = 0; // FEED_SUBTYPE contains activity.type
+            int FEED_TYPE_EVENT = 1;
 
-            public static final int FEED_TYPE_EVENT_DATE_HEADER = 0;
+            int FEED_TYPE_EVENT_DATE_HEADER = 0;
         }
     }
 
-    public interface Intents {
-        final String PAUSE_RESUME = "org.runnerup.PAUSE_RESUME";
-        final String NEW_LAP = "org.runnerup.NEW_LAP";
-        final String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
-        final String START_WORKOUT = "org.runnerup.START_WORKOUT";
-        final String PAUSE_WORKOUT = "org.runnerup.PAUSE_WORKOUT";
-        final String RESUME_WORKOUT = "org.runnerup.RESUME_WORKOUT";
+    interface Intents {
+        String PAUSE_RESUME = "org.runnerup.PAUSE_RESUME";
+        String NEW_LAP = "org.runnerup.NEW_LAP";
+        String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
+        String START_WORKOUT = "org.runnerup.START_WORKOUT";
+        String PAUSE_WORKOUT = "org.runnerup.PAUSE_WORKOUT";
+        String RESUME_WORKOUT = "org.runnerup.RESUME_WORKOUT";
     }
 
-    public interface TRACKER_STATE {
-        public static final int INIT = 0;         // initial state
-        public static final int INITIALIZING = 1; // initializing components
-        public static final int INITIALIZED = 2;  // initialized
-        public static final int STARTED = 3;      // Workout started
-        public static final int PAUSED = 4;       // Workout paused
-        public static final int CLEANUP = 5;      // Cleaning up components
-        public static final int ERROR = 6;        // Components failed to initialize ;
-        public static final int CONNECTING = 7;
-        public static final int CONNECTED = 8;
-        public static final int STOPPED = 9;
+    interface TRACKER_STATE {
+        int INIT = 0;         // initial state
+        int INITIALIZING = 1; // initializing components
+        int INITIALIZED = 2;  // initialized
+        int STARTED = 3;      // Workout started
+        int PAUSED = 4;       // Workout paused
+        int CLEANUP = 5;      // Cleaning up components
+        int ERROR = 6;        // Components failed to initialize ;
+        int CONNECTING = 7;
+        int CONNECTED = 8;
+        int STOPPED = 9;
     }
 
-    public interface WORKOUT_TYPE {
-        public static final int BASIC = 0;
-        public static final int INTERVAL = 1;
-        public static final int ADVANCED = 2;
+    interface WORKOUT_TYPE {
+        int BASIC = 0;
+        int INTERVAL = 1;
+        int ADVANCED = 2;
     }
 
-    public interface Wear {
+    interface Wear {
 
-        public interface Path {
-            static final String PREFIX = "/org.runnerup";
+        interface Path {
+            String PREFIX = "/org.runnerup";
 
             /* Data: phone/wear nodes */
-            static final String WEAR_NODE_ID = PREFIX + "/config/wear/node_id";
-            static final String PHONE_NODE_ID = PREFIX + "/config/phone/node_id";
+            String WEAR_NODE_ID = PREFIX + "/config/wear/node_id";
+            String PHONE_NODE_ID = PREFIX + "/config/phone/node_id";
 
             /* Data: Card headers */
-            static final String HEADERS = PREFIX + "/config/headers";
+            String HEADERS = PREFIX + "/config/headers";
 
             /* Data: Tracker/workout state */
-            static final String TRACKER_STATE = PREFIX + "/tracker/state";
-            static final String WORKOUT_PLAN = PREFIX + "/workout/plan";
+            String TRACKER_STATE = PREFIX + "/tracker/state";
+            String WORKOUT_PLAN = PREFIX + "/workout/plan";
 
             /* Msg: workout event */
-            static final String MSG_WORKOUT_EVENT = PREFIX + "/workout/event";
+            String MSG_WORKOUT_EVENT = PREFIX + "/workout/event";
 
             /* Msg: pause/resume from wear to phone */
-            static final String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
-            static final String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
-            static final String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
-            static final String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
+            String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
+            String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
+            String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
+            String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
         }
 
-        public interface RunInfo {
-            static final String HEADER = "HEADER/";
-            static final String DATA = "DATA/";
-            static final String SCREENS = "SCREENS"; // Array of screen sizes, stored in HEADERS
-            static final String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
-            static final String SCROLL = "SCROLL"; // Stored in HEADERS
-            static final String COUNTDOWN = "COUNTDOWN";   // Stored in DATA
+        interface RunInfo {
+            String HEADER = "HEADER/";
+            String DATA = "DATA/";
+            String SCREENS = "SCREENS"; // Array of screen sizes, stored in HEADERS
+            String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
+            String SCROLL = "SCROLL"; // Stored in HEADERS
+            String COUNTDOWN = "COUNTDOWN";   // Stored in DATA
         }
 
-        public interface TrackerState {
-            static final String STATE = "state";
+        interface TrackerState {
+            String STATE = "state";
         }
     }
 }

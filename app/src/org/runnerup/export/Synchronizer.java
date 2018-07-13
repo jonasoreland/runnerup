@@ -151,7 +151,7 @@ public interface Synchronizer {
      * @param uploadStatus The status with the (temporary) identifier for the upload
      * @return the external ID
      */
-    public Status getExternalId(SQLiteDatabase db, Status uploadStatus);
+    Status getExternalId(SQLiteDatabase db, Status uploadStatus);
 
     /**
      * Check if an synchronizer supports a feature
@@ -221,5 +221,5 @@ public interface Synchronizer {
      * @param externalId
      * @return
      */
-    public String getActivityUrl(String externalId);
+    String getActivityUrl(String externalId);
 }

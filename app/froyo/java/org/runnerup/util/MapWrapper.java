@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class MapWrapper implements Constants {
 
     public MapWrapper(Context context, SQLiteDatabase mDB, long mID, Formatter formatter, MapView mapView) {

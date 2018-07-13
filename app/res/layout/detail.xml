@@ -16,7 +16,6 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab1_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
@@ -37,7 +36,6 @@
             android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:id="@+id/stat_overview"
             android:layout_width="fill_parent"
             android:layout_height="48dp"
             android:gravity="center"
@@ -101,7 +99,7 @@
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"></TabWidget>
+                android:layout_height="wrap_content" />
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
@@ -161,7 +159,7 @@
                         android:id="@+id/laplist"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"></ListView>
+                        android:layout_weight="1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -174,7 +172,7 @@
                         android:id="@+id/report_list"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"></ListView>
+                        android:layout_weight="1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -182,7 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:weightSum="1"></LinearLayout>
+                    android:weightSum="1" />
 
                 <include
                     android:id="@+id/tab_map"

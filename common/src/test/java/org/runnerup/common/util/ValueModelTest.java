@@ -20,7 +20,7 @@ public class ValueModelTest {
 
     @Before
     public void setUp() {
-        sut = new ValueModel<TestObject>();
+        sut = new ValueModel<>();
     }
 
     @Test
@@ -147,7 +147,7 @@ public class ValueModelTest {
     @Test
     public void shouldGetValueSetInConstructor() {
         TestObject value = new TestObject();
-        ValueModel<TestObject> valueModel = new ValueModel<TestObject>(value);
+        ValueModel<TestObject> valueModel = new ValueModel<>(value);
 
         assertThat(valueModel.get(), is(equalTo(value)));
     }

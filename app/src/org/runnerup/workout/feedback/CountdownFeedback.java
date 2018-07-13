@@ -17,9 +17,7 @@
 
 package org.runnerup.workout.feedback;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 import android.view.View;
 import android.widget.TextView;
 
@@ -31,13 +29,13 @@ import org.runnerup.workout.Workout;
 
 import java.util.HashMap;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
+
 public class CountdownFeedback extends Feedback {
 
-    Scope scope = Scope.STEP;
-    Dimension dimension = Dimension.TIME;
-    TextView textView = null;
-    Formatter formatter;
+    private Scope scope = Scope.STEP;
+    private Dimension dimension = Dimension.TIME;
+    private TextView textView = null;
+    private Formatter formatter;
 
     public CountdownFeedback(Scope s, Dimension d) {
         this.scope = s;
@@ -69,10 +67,7 @@ public class CountdownFeedback extends Feedback {
 
     @Override
     public boolean equals(Feedback _other) {
-        if (!(_other instanceof CountdownFeedback))
-            return false;
-
-        return true;
+        return _other instanceof CountdownFeedback;
     }
 
     @Override
