@@ -49,10 +49,9 @@ import java.net.URL;
 
 
 public class DigifitSynchronizer extends DefaultSynchronizer {
-    private static final String DIGIFIT_URL = "https://my.digifit.com";
 
     public static final String NAME = "Digifit";
-    public static final String PUBLIC_URL = "https://www.digifit.com";
+    private static final String PUBLIC_URL = "https://www.digifit.com";
 
     public static void main(String args[]) {
         if (args.length < 2) {
@@ -151,7 +150,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
         Status errorStatus = Status.ERROR;
         try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(DIGIFIT_URL + "/site/authenticate")
+            HttpURLConnection conn = (HttpURLConnection) new URL(PUBLIC_URL + "/site/authenticate")
                     .openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
@@ -197,12 +196,12 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
 
     private void deleteFile(long fileId, String fileType) {
         try {
-            String deleteUrl = DIGIFIT_URL + "/rpc/json/userfile/delete_workout?file_id=" + fileId
+            String deleteUrl = PUBLIC_URL + "/rpc/json/userfile/delete_workout?file_id=" + fileId
                     + "&file_type="
                     + fileType;
             HttpURLConnection conn = (HttpURLConnection) new URL(deleteUrl).openConnection();
             conn.setRequestMethod(RequestMethod.GET.name());
-            conn.addRequestProperty("Referer", DIGIFIT_URL + "/site/workoutimport");
+            conn.addRequestProperty("Referer", PUBLIC_URL + "/site/workoutimport");
             addCookies(conn);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -296,10 +295,15 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
+
+    @Override
     public int getColorId() { return R.color.serviceDigifit; }
 
     private String getUploadUrl() throws IOException, JSONException {
-        String getUploadUrl = DIGIFIT_URL + "/rpc/json/workout/import_workouts_url";
+        String getUploadUrl = PUBLIC_URL + "/rpc/json/workout/import_workouts_url";
         JSONObject response = callDigifitEndpoint(getUploadUrl, new JSONObject());
 
         return response.getJSONObject("response").getJSONObject("upload_url")
@@ -494,7 +498,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
             // the import we just did above won't show up in this list. In the
             // general case, this will remove *old* imports from Digifit only
             // leaving the user with ~1ish file of import cruft.
-            JSONObject response = callDigifitEndpoint(DIGIFIT_URL
+            JSONObject response = callDigifitEndpoint(PUBLIC_URL
                     + "/rpc/json/workout/import_workouts_list",
                     new JSONObject());
             JSONArray uploadList = response.getJSONObject("response").getJSONArray("upload_list");

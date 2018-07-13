@@ -51,7 +51,7 @@ import java.util.Locale;
 public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Facebook";
-    public static final String PUBLIC_URL = "https://www.facebook.com";
+    private static final String PUBLIC_URL = "https://www.facebook.com";
 
     /**
      * @todo register OAuth2Server
@@ -134,6 +134,11 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
     }
 
     @Override

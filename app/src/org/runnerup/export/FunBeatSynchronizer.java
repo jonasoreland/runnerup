@@ -118,6 +118,11 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
+
+    @Override
     public int getColorId() {return R.color.serviceFunbeat; }
 
     @Override

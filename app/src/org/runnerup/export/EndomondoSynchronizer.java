@@ -63,7 +63,7 @@ import java.util.zip.GZIPOutputStream;
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
-    public static final String PUBLIC_URL = "https://www.endomondo.com";
+    private static final String PUBLIC_URL = "https://www.endomondo.com";
     private static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
     private static final String UPLOAD_URL = "https://api.mobile.endomondo.com/mobile/track";
     private static final String FEED_URL = "https://api.mobile.endomondo.com/mobile/api/feed";
@@ -100,8 +100,12 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getColorId() { return R.color.serviceEndomondo; }
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
+    @Override
+    public int getColorId() { return R.color.serviceEndomondo; }
 
     @Override
     public String getActivityUrl(String extId) {

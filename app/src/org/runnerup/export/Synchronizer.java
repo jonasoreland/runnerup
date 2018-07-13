@@ -75,12 +75,7 @@ public interface Synchronizer {
     }
 
     /**
-     * The default URL, most synchronizers returns this with getUrl()
-     */
-    String PUBLIC_URL = "";
-
-    /**
-     * @return
+     * @return The numeric db identifier for the synchronizer
      */
     long getId();
 
@@ -102,12 +97,12 @@ public interface Synchronizer {
     /**
      * Init synchronizer
      *
-     * @param config
+     * @param config specific for each synchronizer
      */
     void init(ContentValues config);
 
     /**
-     *
+     * The synchronizer specific config format
      */
     String getAuthConfig();
 
@@ -214,7 +209,7 @@ public interface Synchronizer {
     /**
      * Get the public URL
      */
-    String getUrl();
+    String getPublicUrl();
 
     /**
      * Get the external URL for the activity, to open in app or on the web

@@ -176,6 +176,11 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
+
+    @Override
     public int getColorId() {return R.color.serviceRunkeeper;}
 
     @Override

@@ -251,8 +251,8 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     }
 
     @Override
-    public String getUrl() {
-        return PUBLIC_URL;
+    public String getPublicUrl() {
+        return null;
     }
 
     @Override

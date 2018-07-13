@@ -41,16 +41,16 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
 
+    public static final String NAME = "RunningFreeOnline";
+    private static final String PUBLIC_URL = "https://www.runningfreeonline.com";
+    private static final String BASE_URL = "https://www.runsaturday.com/runsaturday/SportTrackSync.asmx";
+    private static final String LOG_TAG = RunningFreeOnlineSynchronizer.class.getName();
+
     private long id = 0;
 
     private String username = null;
     private String secretKey  = null;
     private boolean isConnected = false;
-
-    public static final String NAME = "RunningFreeOnline";
-    public static final String PUBLIC_URL = "https://www.runningfreeonline.com";
-    private static final String BASE_URL = "https://www.runsaturday.com/runsaturday/SportTrackSync.asmx";
-    private static final String LOG_TAG = RunningFreeOnlineSynchronizer.class.getName();
 
     public String getName() {
         return NAME;
@@ -59,6 +59,11 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     @Override
     public long getId() {
         return id;
+    }
+
+    @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
     }
 
     @Override

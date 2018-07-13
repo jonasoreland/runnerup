@@ -166,15 +166,15 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
             addRow("", null);
 
-            if (!TextUtils.isEmpty(synchronizer.getUrl())) {
+            if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
                 Button btn = new Button(this);
-                btn.setText(synchronizer.getUrl());
+                btn.setText(synchronizer.getPublicUrl());
                 //TODO SDK 24 requires the file URI to be handled as FileProvider
                 //Something like OI File Manager is needed too
                 if (Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.NAME).equals(FileSynchronizer.NAME)) {
                     btn.setOnClickListener(urlButtonClick);
                 }
-                btn.setTag(synchronizer.getUrl());
+                btn.setTag(synchronizer.getPublicUrl());
                 addRow(getResources().getString(R.string.Website) + ":", btn);
             }
 

@@ -95,6 +95,11 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
+
+    @Override
     public int getIconId() {return R.drawable.service_garmin;}
 
     @Override
