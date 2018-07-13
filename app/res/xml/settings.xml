@@ -235,12 +235,12 @@
                 android:targetClass="org.runnerup.view.AccountListActivity" />
     </Preference>
 
-    <CheckBoxPreference
+    <!--CheckBoxPreference
         android:defaultValue="false"
         android:key="@string/pref_runneruplive_active"
         android:persistent="true"
         android:title="@string/Enable_RunnerUpLive"
-        android:summary="@string/Note_you_need_to_connect_to_the_account_too" />
+        android:summary="@string/Note_you_need_to_connect_to_the_account_too" /-->
 
     <Preference
         android:key="@string/pref_cue_audiocues"
