@@ -45,6 +45,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.export.SyncManager;
+import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SyncActivityItem;
@@ -57,9 +58,7 @@ import java.util.Locale;
 
 public class UploadActivity extends AppCompatActivity implements Constants {
 
-    private long synchronizerID = -1;
-    private String synchronizer = null;
-    private Integer synchronizerIcon = null;
+    private String mSynchronizerName = null;
     private SyncManager.SyncMode syncMode = SyncManager.SyncMode.UPLOAD;
     private SyncManager syncManager = null;
     private ListView listView = null;
@@ -83,11 +82,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         setContentView(R.layout.upload);
 
         Intent intent = getIntent();
-        synchronizer = intent.getStringExtra("synchronizer");
-        synchronizerID = intent.getLongExtra("synchronizerID", -1);
+        mSynchronizerName = intent.getStringExtra("synchronizer");
         syncMode = SyncManager.SyncMode.valueOf(intent.getStringExtra("mode"));
-        if (intent.hasExtra("synchronizerIcon"))
-            synchronizerIcon = intent.getIntExtra("synchronizerIcon", 0);
 
         mDB = DBHelper.getReadableDatabase(this);
         formatter = new Formatter(this);
@@ -123,21 +119,23 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             }
         }
 
+        fillData();
         {
+            // synchronizer initialized in fillData() for DOWNLOAD only
+            Synchronizer synchronizer = syncManager.getSynchronizerByName(mSynchronizerName);
+
             TextView tv = (TextView) findViewById(R.id.account_upload_list_name);
             ImageView im = (ImageView) findViewById(R.id.account_upload_list_icon);
-            tv.setText(synchronizer);
-            if (synchronizerIcon == null) {
+            if (synchronizer == null || synchronizer.getIconId() == 0) {
                 im.setVisibility(View.GONE);
+                tv.setText(mSynchronizerName);
                 tv.setVisibility(View.VISIBLE);
             } else {
                 im.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.GONE);
-                im.setImageDrawable(ContextCompat.getDrawable(this, synchronizerIcon));
+                im.setImageDrawable(ContextCompat.getDrawable(this, synchronizer.getIconId()));
             }
         }
-
-        fillData();
     }
 
     @Override
@@ -161,8 +159,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
     private void fillData() {
         if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
-            syncManager.load(synchronizer);
-            syncManager.loadActivityList(allSyncActivities, synchronizer, new SyncManager.Callback() {
+            syncManager.load(mSynchronizerName);
+            syncManager.loadActivityList(allSyncActivities, mSynchronizerName, new SyncManager.Callback() {
                 @Override
                 public void run(String synchronizerName, Status status) {
                     filterAlreadyPresentActivities();
@@ -171,18 +169,21 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             });
         } else {
             // Fields from the database (projection)
-            // Must include the _id column for the adapter to work
             final String[] from = new String[]{
                     DB.PRIMARY_KEY, DB.ACTIVITY.START_TIME,
                     DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
             };
-
-            final String w = "NOT EXISTS (SELECT 1 FROM " + DB.EXPORT.TABLE + " r WHERE r."
-                    + DB.EXPORT.ACTIVITY + " = " + DB.ACTIVITY.TABLE + "._id " +
-                    " AND r." + DB.EXPORT.ACCOUNT + " = " + synchronizerID + ")";
+            String args[] = {
+                    mSynchronizerName
+            };
+            final String w = "NOT EXISTS (SELECT 1 FROM " + DB.EXPORT.TABLE + " r," +
+                    DB.ACCOUNT.TABLE + " a WHERE " +
+                    "r." + DB.EXPORT.ACTIVITY + " = " + DB.ACTIVITY.TABLE + "._id " +
+                    " AND r." + DB.EXPORT.ACCOUNT + " = a." + "_id" +
+                    " AND a." + DB.ACCOUNT.NAME + " = ?)";
 
             Cursor c = mDB.query(DB.ACTIVITY.TABLE, from,
-                    " deleted == 0 AND " + w, null,
+                    " deleted == 0 AND " + w, args,
                     null, null, "_id desc", "100");
             allSyncActivities.clear();
             if (c.moveToFirst()) {
@@ -255,7 +256,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
         @Override
         public void onClick(View arg0) {
-            long id = (Long) arg0.getTag();
+            long id = ((UploadListAdapter.ViewHolderUploadActivity) arg0.getTag()).activityID;
             Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
             intent.putExtra("ID", id);
             intent.putExtra("mode", "details");
@@ -293,6 +294,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             private TextView tvPace;
             private TextView tvSport;
             private CheckBox cb;
+            // metadata when clicking activities
+            private long activityID;
         }
 
         @SuppressLint("ObsoleteSdkInt")
@@ -316,6 +319,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             } else {
                 viewHolder = (ViewHolderUploadActivity) view.getTag();
             }
+            viewHolder.activityID = getItemId(arg0);
             SyncActivityItem ai = allSyncActivities.get(arg0);
 
             Float d = ai.getDistance();
@@ -395,7 +399,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             Log.i(Constants.LOG, "Start uploading " + upload.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
-            syncManager.syncActivities(SyncManager.SyncMode.UPLOAD, syncCallback, synchronizer, upload, cancelSync);
+            syncManager.syncActivities(SyncManager.SyncMode.UPLOAD, syncCallback, mSynchronizerName, upload, cancelSync);
         }
     };
 
@@ -411,7 +415,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             Log.i(Constants.LOG, "Start downloading " + download.size());
             fetching = true;
             cancelSync.delete(0, cancelSync.length());
-            syncManager.syncActivities(SyncManager.SyncMode.DOWNLOAD, syncCallback, synchronizer, download, cancelSync);
+            syncManager.syncActivities(SyncManager.SyncMode.DOWNLOAD, syncCallback, mSynchronizerName, download, cancelSync);
         }
     };
 
