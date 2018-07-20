@@ -14,7 +14,7 @@ Inspiration Garmin 410, RunKeeper and Everywhere Run.
 * GPL.
 * Support Heart Rate sensors for Bluetooth LE, ANT+ and a few other protocols as well as phone internal sensors like step sensor and barometer.
 * Highly configurable audio cues.
-* Automatic upload, download and feed updates from various providers including Digifit, Endomondo, Facebook, FunBeat, Garmin, GoogleFit, jogg.se, MapMyRun, Nike, RunKeeper, RunningAHEAD, Runtastic, Strava ([see here for details](SYNCHRONIZERS.md)).
+* Automatic upload, download and feed updates from various providers including Endomondo, RunKeeper, RunningAHEAD, Strava ([see here for details](SYNCHRONIZERS.md)).
 * Interval wizard (ala Garmin 410).
 * Mediocre GUI.
 * Messy code (my first android project even and first Java project in +10 years).
@@ -26,12 +26,16 @@ Releases can be downloaded either:
 
 * [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
 * [Play beta](https://plus.google.com/communities/112040124647770742805).
-* [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup). (Only the 4.0.3 and later versions)
 * [GitHub](https://github.com/jonasoreland/runnerup/releases). (Not all versions.)
 
-[![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup)
+<!--
+* [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup). (Only the 4.0.3 and later versions)
 
+[![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup)
+-->
 Join the [G+ beta release group](https://plus.google.com/communities/112040124647770742805?cfem=1) for release candidates.
+
+Note: RunnerUp used to be available on [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup), but it has been removed as the app has support for the closed source ANT+ sensors.
 
 ## User information
 
