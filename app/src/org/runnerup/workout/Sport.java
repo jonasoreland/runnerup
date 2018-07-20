@@ -131,4 +131,17 @@ public enum Sport {
     public boolean IsCycling() {
         return dbValue == DB.ACTIVITY.SPORT_BIKING;
     }
+
+    // part of filename used to determine type for Tapiriik files
+    public String TapiriikType() {
+        if (IsRunning()) {
+            return "run";
+        } else if (IsCycling()) {
+            return "bike";
+        } else if (IsWalking()) {
+            return "walk";
+        } else {
+            return "other";
+        }
+    }
 }

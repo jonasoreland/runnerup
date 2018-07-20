@@ -449,7 +449,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     s = Status.OK;
                     s.activityId = mID;
                 } else {
-                    s = Status.CANCEL;
+                    s = Status.ERROR;
                 }
                 return s;
             }

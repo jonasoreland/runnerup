@@ -176,7 +176,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             boolean configured = synchronizer.isConfigured();
             String name = synchronizer.getName();
 
-            view.setTag(name);
+            view.setTag(synchronizer);
 
             TextView sectionTitle = view.findViewById(R.id.section_title);
             ImageView accountIcon = view.findViewById(R.id.account_list_icon);
@@ -224,22 +224,22 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             accountNameText.setText(name);
 
             // upload box
-            accountUploadBox.setTag(name);
+            accountUploadBox.setTag(synchronizer);
             setCustomThumb(accountUploadBox, R.drawable.switch_upload, context);
             accountUploadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
+                    setFlag(((Synchronizer)arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
                 }
             });
 
             // feed box
-            accountFeedBox.setTag(name);
+            accountFeedBox.setTag(synchronizer);
             setCustomThumb(accountFeedBox, R.drawable.switch_feed, context);
             accountFeedBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_FEED, arg1);
+                    setFlag(((Synchronizer)arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1);
                 }
             });
 
@@ -274,25 +274,25 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     private final AdapterView.OnItemClickListener configureItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            final String synchronizerName = (String) view.getTag();
-            if (mSyncManager.isConfigured(synchronizerName)) {
-                startActivity(synchronizerName, true);
+            final Synchronizer synchronizer = ((Synchronizer)view.getTag());
+            if (synchronizer.isConfigured()) {
+                startActivity(synchronizer.getName(), true);
             } else {
-                mSyncManager.connect(callback, synchronizerName, false);
+                mSyncManager.connect(callback, synchronizer.getName(), false);
             }
         }
     };
 
-    private void setFlag(String name, int flag, boolean val) {
+    private void setFlag(String synchronizerName, int flag, boolean val) {
         if (val) {
             long bitval = (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + name
+                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
                     + "\'");
         } else {
             long mask = ~(long) (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + name
+                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
                     + "\'");
         }
     }
@@ -306,10 +306,10 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     };
 
-    private void startActivity(String synchronizer, boolean edit) {
+    private void startActivity(String synchronizerName, boolean edit) {
         Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
-        intent.putExtra("synchronizer", synchronizer);
-        intent.putExtra("edit", edit);
+        intent.putExtra("synchronizer", synchronizerName);
+        //intent.putExtra("edit", edit);
         AccountListActivity.this.startActivityForResult(intent,
                 SyncManager.CONFIGURE_REQUEST + 1000);
     }
