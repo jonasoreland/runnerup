@@ -473,7 +473,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
         insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0);
         insertAccount(arg0, FileSynchronizer.NAME, 1);
-        insertAccount(arg0, RunalyzeSynchronizer.NAME, 1);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
     }
 
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled) {

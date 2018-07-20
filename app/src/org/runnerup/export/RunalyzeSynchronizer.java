@@ -26,6 +26,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
@@ -52,8 +53,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     public static final String NAME = "Runalyze";
     private static final String PUBLIC_URL = "https://runalyze.com";
 
-    private static String CLIENT_ID = null;
-    private static String CLIENT_SECRET = null;
+    private static String CLIENT_ID = BuildConfig.RUNALIZE_ID;
+    private static String CLIENT_SECRET = BuildConfig.RUNALIZE_SECRET;
+    public static int ENABLED = BuildConfig.RUNALIZE_ENABLED;
 
     private static final String UPLOAD_URL = "https://runalyze.com/api/v1/activities/uploads";
     private static final String AUTH_URL = "https://runalyze.com/oauth/v2/auth";
@@ -65,20 +67,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     private String refresh_token = null;
     private long access_expire = -1;
 
-    @Override
-    public String getPublicUrl() {
-        return _url;
-    }
-
-    RunalyzeSynchronizer(SyncManager syncManager) {
-        if (CLIENT_ID == null || CLIENT_SECRET == null) {
-            try {
-                JSONObject tmp = new JSONObject(syncManager.loadData(this));
-                CLIENT_ID = tmp.getString("CLIENT_ID");
-                CLIENT_SECRET = tmp.getString("CLIENT_SECRET");
-            } catch (Exception ex) {
-                Log.w(NAME, "Could not parse client id, assuming no key configured in this build");;
-            }
+    RunalyzeSynchronizer() {
+        if (ENABLED == 0) {
+            Log.w(NAME, "No client id configured in this build");
         }
     }
 

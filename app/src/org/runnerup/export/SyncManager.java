@@ -219,7 +219,7 @@ public class SyncManager {
         if (synchronizer != null) {
             if (!config.containsKey(DB.ACCOUNT.FLAGS)) {
                 if (BuildConfig.DEBUG) {
-                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                    throw new AssertionError();
                 }
             }
             synchronizer.init(config);
