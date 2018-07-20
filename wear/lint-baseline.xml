@@ -1,3 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="4" by="lint 3.0.0-alpha9">
+<issues format="4" by="lint 3.1.3">
+
+    <issue
+        id="GradleCompatible"
+        message="Project depends on com.google.android.support:wearable:2.3.0, so it must also depend (as a provided dependency) on com.google.android.wearable:wearable:2.3.0">
+        <location
+            file="build.gradle"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 15.0.1"
+        errorLine1="    implementation &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="58"
+            column="5"/>
+    </issue>
+
 </issues>
