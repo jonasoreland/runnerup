@@ -118,7 +118,9 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
     public int getColorId() {return R.color.serviceFunbeat; }
@@ -226,11 +228,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
 
             boolean ok;
             {
-                OutputStream wr = new BufferedOutputStream(
-                        conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
                 int responseCode = conn.getResponseCode();
                 String amsg = conn.getResponseMessage();
                 getCookies(conn);
@@ -426,11 +424,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                     "application/x-www-form-urlencoded");
             addCookies(conn);
             {
-                OutputStream wr = new BufferedOutputStream(
-                        conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
                 responseCode = conn.getResponseCode();
                 //amsg = conn.getResponseMessage();
                 getCookies(conn);

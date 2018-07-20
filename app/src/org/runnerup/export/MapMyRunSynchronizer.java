@@ -50,7 +50,7 @@ import java.util.Map;
 public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "MapMyRun";
-    public static final String PUBLIC_URL = "https://www.mapmyrun.com";
+    private static final String PUBLIC_URL = "https://www.mapmyrun.com";
     private static String CONSUMER_KEY;
     private static final String BASE_URL = "https://api.mapmyfitness.com/3.1";
     private static final String GET_USER_URL = BASE_URL + "/users/get_user";
@@ -99,7 +99,9 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
     public int getColorId() { return R.color.serviceMapMyRun; }
@@ -199,11 +201,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             kv.put("p", pass);
 
             {
-                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
-
+                SyncHelper.postData(conn, kv);
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 JSONObject obj = SyncHelper.parse(in);
                 conn.disconnect();
@@ -267,10 +265,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             kv.put("tcx", writer.toString());
 
             {
-                OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
 
                 InputStream in = new BufferedInputStream(conn.getInputStream());
                 JSONObject obj = SyncHelper.parse(in);
@@ -302,10 +297,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 conn.setDoOutput(true);
                 conn.setRequestMethod(RequestMethod.POST.name());
                 conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                wr = new BufferedOutputStream(conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
 
                 in = new BufferedInputStream(conn.getInputStream());
                 SyncHelper.parse(in);

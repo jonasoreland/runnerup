@@ -61,15 +61,15 @@ public class FileSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
+    public String getPublicUrl() {
+        return "file://" + mPath;
+    }
+
+    @Override
     public int getIconId() {return R.drawable.service_file;}
 
     @Override
     public int getColorId() {return R.color.colorPrimary;}
-
-    @Override
-    public String getUrl() {
-        return "file://" + mPath;
-    }
 
     static public String contentValuesToAuthConfig(ContentValues config) {
         FileSynchronizer f = new FileSynchronizer();

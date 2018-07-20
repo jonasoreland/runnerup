@@ -46,7 +46,7 @@ import java.util.zip.GZIPOutputStream;
 public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "RunningAHEAD";
-    public static final String PUBLIC_URL = "https://www.runningahead.com";
+    private static final String PUBLIC_URL = "https://www.runningahead.com";
 
     /**
      * @todo register OAuth2Server
@@ -122,7 +122,9 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
     public int getColorId() {return R.color.serviceRunningAhead;}

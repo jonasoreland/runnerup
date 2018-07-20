@@ -95,6 +95,11 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
+
+    @Override
     public int getIconId() {return R.drawable.service_garmin;}
 
     @Override
@@ -228,10 +233,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         addCookies(conn);
 
         {
-            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-            kv.write(wr);
-            wr.flush();
-            wr.close();
+            SyncHelper.postData(conn, kv);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             Log.e(getName(), "code: " + responseCode + ", msg=" + amsg);

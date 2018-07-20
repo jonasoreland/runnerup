@@ -143,42 +143,44 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 null, null, null);
 
         if (c.moveToFirst()) {
-            ContentValues tmp = DBHelper.get(c);
-            //noinspection ConstantConditions
-            synchronizerID = tmp.getAsLong("_id");
-            Synchronizer synchronizer = syncManager.add(tmp);
+            Synchronizer synchronizer;
+            {
+                ContentValues tmp = DBHelper.get(c);
+                synchronizer = syncManager.add(tmp);
+                flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
+            }
 
             {
                 ImageView im = (ImageView) findViewById(R.id.account_list_icon);
                 TextView tv = (TextView) findViewById(R.id.account_list_name);
-                tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
                 synchronizerIcon = synchronizer.getIconId();
-                if (synchronizerIcon == 0) {
+                if (synchronizerIcon == 0 || synchronizer.getName().equals(FileSynchronizer.NAME)) {
+                    if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
+                        tv.setText(synchronizer.getPublicUrl());
+                        tv.setTag(synchronizer.getPublicUrl());
+                        // FileSynchronizer: SDK 24 requires the file URI to be handled as FileProvider
+                        // Something like OI File Manager is needed too
+                        if (Build.VERSION.SDK_INT < 24 || !synchronizer.getName().equals(FileSynchronizer.NAME)) {
+                            tv.setOnClickListener(urlButtonClick);
+                        }
+                    }
+                    else {
+                        tv.setText(synchronizer.getName());
+                    }
                     im.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                 } else {
+                    im.setImageDrawable(ContextCompat.getDrawable(this, synchronizerIcon));
+                    if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
+                        im.setTag(synchronizer.getPublicUrl());
+                        im.setOnClickListener(urlButtonClick);
+                    }
                     im.setVisibility(View.VISIBLE);
                     tv.setVisibility(View.GONE);
-                    if (synchronizerIcon != 0)
-                        im.setImageDrawable(ContextCompat.getDrawable(this, synchronizerIcon));
                 }
             }
 
-            addRow("", null);
-
-            if (!TextUtils.isEmpty(synchronizer.getUrl())) {
-                Button btn = new Button(this);
-                btn.setText(synchronizer.getUrl());
-                //TODO SDK 24 requires the file URI to be handled as FileProvider
-                //Something like OI File Manager is needed too
-                if (Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.NAME).equals(FileSynchronizer.NAME)) {
-                    btn.setOnClickListener(urlButtonClick);
-                }
-                btn.setTag(synchronizer.getUrl());
-                addRow(getResources().getString(R.string.Website) + ":", btn);
-            }
-
-            if (tmp.getAsString(DB.ACCOUNT.NAME).equals(RunnerUpLiveSynchronizer.NAME)) {
+            if (synchronizer.getName().equals(RunnerUpLiveSynchronizer.NAME)) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
                 final Resources res = this.getResources();
                 final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
@@ -190,7 +192,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 addRow(getResources().getString(R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
             }
 
-            flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
             if (synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);

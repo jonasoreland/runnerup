@@ -41,7 +41,7 @@ import java.util.zip.GZIPOutputStream;
 public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     public static final String NAME = "GoogleFit";
-    public static final String PUBLIC_URL = "https://fit.google.com";
+    private static final String PUBLIC_URL = "https://fit.google.com";
     private static final String REST_URL = "https://www.googleapis.com/fitness/v1/users/me/";
     public static final String REST_DATASOURCE = "dataSources";
     public static final String REST_DATASETS = "datasets";
@@ -73,10 +73,12 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     }
 
     @Override
-    public int getColorId() { return R.color.serviceGoogleFit; }
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
-    public int getIconId() {return 0;}
+    public int getColorId() { return R.color.serviceGoogleFit; }
 
     private Context getContext() {
         return context;

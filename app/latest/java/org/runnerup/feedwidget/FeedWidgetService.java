@@ -139,11 +139,8 @@ public class FeedWidgetService extends RemoteViewsService {
             }
 
             private String getSynchronizerName(long id) {
-                String from[] = new String[]{"name", Constants.DB.ACCOUNT.NAME, Constants.DB.ACCOUNT.AUTH_CONFIG, Constants.DB.ACCOUNT.FLAGS
-                };
-                String args[] = {
-                        "" + id
-                };
+                String from[] = new String[]{ "name", Constants.DB.ACCOUNT.NAME };
+                String args[] = { "" + id };
                 Cursor c = mDB.query(Constants.DB.ACCOUNT.TABLE, from, "_id = ?",
                         args, null, null, null, null);
                 c.moveToFirst();

@@ -74,7 +74,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer {
     public int getColorId() {return R.color.serviceRunalyze;}
 
     @Override
-    public String getUrl() {
+    public String getPublicUrl() {
         return _url;
     }
 
