@@ -109,9 +109,11 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
                 values.put(DB.LOCATION.BEARING, arg0.getBearing());
             }
             //Most GPS chips also includes no of sats
-            int sats = arg0.getExtras().getInt("satellites", -1);
-            if (sats >= 0) {
-                values.put(DB.LOCATION.SATELLITES, sats);
+            if (arg0.getExtras() != null) {
+                int sats = arg0.getExtras().getInt("satellites", -1);
+                if (sats >= 0) {
+                    values.put(DB.LOCATION.SATELLITES, sats);
+                }
             }
             //Not accuracy related but unused by exporters
             if (pressureValue != null) {
