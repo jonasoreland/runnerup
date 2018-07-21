@@ -30,25 +30,25 @@
   <string name="cue_speedup">lebih cepat</string>
   <string name="cue_slowdown">lebih lambat</string>
   <plurals name="cue_hour">
-    <item quantity="other">jam</item>
+    <item quantity="other">%d jam</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="other">menit</item>
+    <item quantity="other">%d menit</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="other">detik</item>
+    <item quantity="other">%d detik</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="other">meter</item>
+    <item quantity="other">%d meter</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="other">kilometer</item>
+    <item quantity="other">%s kilometer</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="other">mil</item>
+    <item quantity="other">%s mil</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="other">dpm</item>
+    <item quantity="other">%d dpm</item>
   </plurals>
   <string name="cue_activity_paused">aktivitas dijeda</string>
   <string name="cue_activity_resumed">aktivitas dilanjutkan</string>

@@ -581,47 +581,48 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE:
             case CUE_LONG:
             case CUE_SHORT:
-                return cueDistance(meters, false);
+                return formatDistance(meters, false);
             case TXT:
-                return cueDistanceInKmOrMiles(meters);
+                return formatDistanceInKmOrMiles(getRoundedDistanceInKmOrMiles(meters));
             case TXT_SHORT:
-                return cueDistance(meters, true);
+                return formatDistance(meters, true);
             case TXT_LONG:
                 return Long.toString(meters) + " m";
         }
         return null;
     }
 
-    private String cueDistanceInKmOrMiles(long meters) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        return df.format(meters / base_meters);
+    private double getRoundedDistanceInKmOrMiles(long meters) {
+        double decimals = 2;
+        return round(meters/base_meters, decimals);
     }
 
-    private String cueDistance(long meters, boolean txt) {
-        double base_val = km_meters; // 1km
-        double decimals = 2;
-        if (!km) {
-            base_val = mi_meters;
-        }
+    private String formatDistanceInKmOrMiles(double meters) {
+        return String.format(cueResources.defaultLocale, "%.2f", meters);
+    }
 
-        StringBuilder s = new StringBuilder();
-        if (meters >= base_val) {
-            double base = ((double) meters) / base_val;
-            double val = round(base, decimals);
+    private String formatDistance(long meters, boolean txt) {
+        String res;
+        if (meters >= base_meters) {
+            double val = getRoundedDistanceInKmOrMiles(meters);
             if (txt) {
-                s.append(val).append(" ")
-                        .append(resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
+                res = String.format(cueResources.defaultLocale, "%.2f %s", val,
+                        resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
-                s.append(val).append(" ")
-                        .append(cueResources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, (int)val));
+                // Get a localized presentation string, used with the localized plurals string
+                String v2 = String.format(cueResources.audioLocale, "%.2f", val);
+                res = cueResources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, v2);
             }
         } else {
-            if (txt)
-                s.append(meters).append(" ").append("m");
-            else
-                s.append(cueResources.getQuantityString(R.plurals.cue_meter, (int)meters, (int)meters));
+            // Present distance in meters if less than 1km/1mi
+            if (txt) {
+                res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
+            }
+            else {
+                res = cueResources.getQuantityString(R.plurals.cue_meter, (int)meters, meters);
+            }
         }
-        return s.toString();
+        return res;
     }
 
     public String formatRemaining(Format target, Dimension dimension, double value) {

@@ -46,12 +46,12 @@
     <item quantity="other">%d méter</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d kilométer</item>
-    <item quantity="other">%d kilométer</item>
+    <item quantity="one">%s kilométer</item>
+    <item quantity="other">%s kilométer</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d mérföld</item>
-    <item quantity="other">%d mérföld</item>
+    <item quantity="one">%s mérföld</item>
+    <item quantity="other">%s mérföld</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s kilométer per óra</item>

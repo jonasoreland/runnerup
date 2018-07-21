@@ -42,10 +42,10 @@
     <item quantity="other">%d メートル</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="other">%d キロメートル</item>
+    <item quantity="other">%s キロメートル</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="other">%d マイル</item>
+    <item quantity="other">%s マイル</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="other">%s キロメートル毎時</item>

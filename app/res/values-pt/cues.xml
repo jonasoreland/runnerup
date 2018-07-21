@@ -45,12 +45,12 @@
     <item quantity="other">%d metros</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d quilómetros</item>
-    <item quantity="other">%d quilómetros</item>
+    <item quantity="one">%s quilómetros</item>
+    <item quantity="other">%s quilómetros</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d milhas</item>
-    <item quantity="other">%d milhas</item>
+    <item quantity="one">%s milhas</item>
+    <item quantity="other">%s milhas</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>

@@ -46,12 +46,12 @@
     <item quantity="other">%d metres</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d kilòmetre</item>
-    <item quantity="other">%d kilòmetres</item>
+    <item quantity="one">%s kilòmetre</item>
+    <item quantity="other">%s kilòmetres</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d milla</item>
-    <item quantity="other">%d milles</item>
+    <item quantity="one">%s milla</item>
+    <item quantity="other">%s milles</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s quilòmetre per hora</item>
