@@ -679,6 +679,7 @@ public class WorkoutBuilder {
     public static void addFeedbackFromPreferences(SharedPreferences prefs,
             Resources res, ArrayList<Feedback> feedback) {
 
+        int feedbackStart = feedback.size();
         /* TOTAL */
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
             feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.DISTANCE));
@@ -759,5 +760,18 @@ public class WorkoutBuilder {
             feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.CAD));
         }
 
+        // Insert Scope
+        for (int i=feedbackStart; i<feedback.size(); i++)
+        {
+            if (feedback.get(i) instanceof AudioFeedback &&
+                    (i == 0 ||
+                            feedback.get(i-1) == null ||
+                            !(feedback.get(i-1) instanceof AudioFeedback) ||
+                            ((AudioFeedback) feedback.get(i-1)).getScope() == null ||
+                            ((AudioFeedback) feedback.get(i-1)).getScope() != ((AudioFeedback) feedback.get(i)).getScope())) {
+                feedback.add(i, new AudioFeedback(((AudioFeedback)feedback.get(i)).getScope()));
+                i++;
+            }
+        }
     }
 }
