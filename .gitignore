@@ -18,3 +18,4 @@ gen/
 
 # Release signing property file
 release.properties
+/runalyze.properties

@@ -80,6 +80,8 @@ import java.util.Set;
 
 public class SyncManager {
     public static final int CONFIGURE_REQUEST = 1;
+    public static final int EDIT_REQUEST = 1001; //Hack
+    public static final int EDIT_ACCOUNT_REQUEST = 2; //Hack
     public static final long ERROR_ACTIVITY_ID = -1L;
 
     private SQLiteDatabase mDB = null;
@@ -217,7 +219,7 @@ public class SyncManager {
         if (synchronizer != null) {
             if (!config.containsKey(DB.ACCOUNT.FLAGS)) {
                 if (BuildConfig.DEBUG) {
-                    if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                    throw new AssertionError();
                 }
             }
             synchronizer.init(config);
@@ -242,27 +244,21 @@ public class SyncManager {
         return synchronizers.get(name);
     }
 
-    public void connect(final Callback callback, final String name, final boolean uploading) {
-        Synchronizer l = synchronizers.get(name);
-        if (l == null) {
+    public void connect(final Callback callback, final String name) {
+        Synchronizer synchronizer = synchronizers.get(name);
+        if (synchronizer == null) {
             callback.run(name, Synchronizer.Status.INCORRECT_USAGE);
             return;
         }
-        Status s = l.connect();
+        Status s = synchronizer.connect();
+        if (s == Synchronizer.Status.NEED_REFRESH) {
+            s = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+        }
         switch (s) {
             case OK:
                 callback.run(name, s);
                 return;
-            case CANCEL:
-            case SKIP:
-            case INCORRECT_USAGE:
-            case ERROR:
-                l.reset();
-                callback.run(name, s);
-                return;
-            case NEED_REFRESH:
-                mSpinner.show();
-                handleRefreshResult(l, l.refreshToken());
+
             case NEED_AUTH:
                 mSpinner.show();
                 handleAuth(new Callback() {
@@ -271,15 +267,18 @@ public class SyncManager {
                         mSpinner.dismiss();
                         callback.run(synchronizerName, status);
                     }
-                }, l, s.authMethod);
+                }, synchronizer, s.authMethod);
+                return;
+
+            default:
+                synchronizer.reset();
+                callback.run(name, s);
+                return;
         }
     }
 
-    private void handleRefreshResult(Synchronizer synchronizer, Status status) {
-        switch (status) {
-            case ERROR:
-                synchronizer.reset();
-                return;
+    private Status handleRefreshComplete(final Synchronizer synchronizer, Status s) {
+        switch (s) {
             case OK: {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
@@ -288,10 +287,17 @@ public class SyncManager {
                         Long.toString(synchronizer.getId())
                 };
                 mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-                return;
+                break;
             }
+
+            case NEED_AUTH:
+                //Handle by caller
+                break;
+
+            default:
+                synchronizer.reset();
         }
-        mSpinner.dismiss();
+        return s;
     }
 
     private Synchronizer authSynchronizer = null;
@@ -319,27 +325,23 @@ public class SyncManager {
         authCallback = null;
         authSynchronizer = null;
         switch (s) {
-            case CANCEL:
-            case ERROR:
-            case INCORRECT_USAGE:
-            case SKIP:
-                synchronizer.reset();
-                cb.run(synchronizer.getName(), s);
-                return;
             case OK: {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
 
                 String args[] = {
-                    Long.toString(synchronizer.getId())
+                        Long.toString(synchronizer.getId())
                 };
                 mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
                 cb.run(synchronizer.getName(), s);
-                return;
+                break;
             }
-            case NEED_AUTH:
-                handleAuth(cb, synchronizer, s.authMethod);
+
+            default:
+                synchronizer.reset();
+                cb.run(synchronizer.getName(), s);
+                break;
         }
     }
 
@@ -606,7 +608,15 @@ public class SyncManager {
             @Override
             protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
-                    return params[0].upload(copyDB, mID);
+                    Synchronizer.Status s2 = params[0].upload(copyDB, mID);
+                    // See doUpload() for motivation
+                    if (s2 == Synchronizer.Status.NEED_REFRESH) {
+                        s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+                        if (s2 == Synchronizer.Status.OK) {
+                            s2 = params[0].upload(copyDB, mID);
+                        }
+                    }
+                    return s2;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return Synchronizer.Status.ERROR;
@@ -616,44 +626,37 @@ public class SyncManager {
             @Override
             protected void onPostExecute(Synchronizer.Status result) {
                 switch (result) {
-                    case CANCEL:
-                        disableSynchronizer(disableSynchronizerCallback, synchronizer, false);
-                        return;
-
-                    case SKIP:
-                    case ERROR:
-                    case INCORRECT_USAGE:
-                        nextSynchronizer();
-                        return;
-
                     case OK:
-                        result.activityId = mID; //Not always set
                         syncOK(synchronizer, copySpinner, copyDB, result);
-                        getExternalId(synchronizer, copyDB, result);
                         nextSynchronizer();
-                        return;
+                        break;
 
-                    case NEED_AUTH: // should be handled inside connect "loop"
+                    case NEED_AUTH:
                         handleAuth(new Callback() {
                             @Override
                             public void run(String synchronizerName,
-                                    Synchronizer.Status status) {
+                                            Synchronizer.Status status) {
                                 switch (status) {
-                                    case CANCEL:
-                                        disableSynchronizer(disableSynchronizerCallback, synchronizer, false);
-                                        return;
-                                    case SKIP:
-                                    case ERROR:
-                                    case INCORRECT_USAGE:
-                                    case NEED_AUTH: // should be handled inside
-                                                    // connect "loop"
-                                        nextSynchronizer();
-                                        return;
                                     case OK:
                                         doUpload(synchronizer);
+                                        break;
+
+                                    default:
+                                        nextSynchronizer();
+                                        break;
                                 }
                             }
                         }, synchronizer, result.authMethod);
+                        return;
+
+                    case CANCEL:
+                        pendingSynchronizers.clear();
+                        doneUploading();
+                        return;
+
+                    default:
+                        nextSynchronizer();
+                        break;
                 }
             }
         }.execute(synchronizer);
@@ -672,13 +675,14 @@ public class SyncManager {
 
                 @Override
                 protected Synchronizer.Status doInBackground(Void... args) {
+                    // Implementation must delay the call rate
                     return synchronizer.getExternalId(copyDB, status);
                 }
 
                 @Override
                 protected void onPostExecute(Synchronizer.Status result) {
                     //the external status is updated, check
-                    externalIdOK(synchronizer, copyDB, result);
+                    externalIdCompleted(synchronizer, copyDB, result);
                 }
             }.execute();
         }
@@ -694,16 +698,20 @@ public class SyncManager {
     private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
                         Synchronizer.Status status) {
         copySpinner.setMessage(getResources().getString(R.string.Saving));
+        status.activityId = mID; //Not always set
+
         ContentValues tmp = new ContentValues();
         tmp.put(DB.EXPORT.ACCOUNT, synchronizer.getId());
         tmp.put(DB.EXPORT.ACTIVITY, status.activityId);
         tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
         tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
         copyDB.insert(DB.EXPORT.TABLE, null, tmp);
+
+        getExternalId(synchronizer, copyDB, status);
     }
 
-    private static void externalIdOK(Synchronizer synchronizer, SQLiteDatabase copyDB,
-                               Synchronizer.Status status) {
+    private static void externalIdCompleted(Synchronizer synchronizer, SQLiteDatabase copyDB,
+                                            Synchronizer.Status status) {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
         tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
@@ -717,7 +725,6 @@ public class SyncManager {
         uploadCallback = null;
         if (cb != null)
             cb.run(null, null);
-
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -849,7 +856,15 @@ public class SyncManager {
             @Override
             protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
-                    return params[0].listWorkouts(list);
+                    Synchronizer.Status s2 = params[0].listWorkouts(list);
+                    // See doUpload() for motivation
+                    if (s2 == Synchronizer.Status.NEED_REFRESH) {
+                        s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+                        if (s2 == Synchronizer.Status.OK) {
+                            s2 = params[0].listWorkouts(list);
+                        }
+                    }
+                    return s2;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return Synchronizer.Status.ERROR;
@@ -859,39 +874,36 @@ public class SyncManager {
             @Override
             protected void onPostExecute(Synchronizer.Status result) {
                 switch (result) {
-                    case CANCEL:
-                    case ERROR:
-                    case INCORRECT_USAGE:
-                    case SKIP:
-                        break;
                     case OK:
                         for (Pair<String, String> w : list) {
                             workoutRef.add(new WorkoutRef(synchronizer.getName(), w.first, w.second));
                         }
+                        nextListWorkout();
                         break;
+
                     case NEED_AUTH:
                         handleAuth(new Callback() {
                             @Override
                             public void run(String synchronizerName,
                                     Synchronizer.Status status) {
                                 switch (status) {
-                                    case CANCEL:
-                                    case SKIP:
-                                    case ERROR:
-                                    case INCORRECT_USAGE:
-                                    case NEED_AUTH: // should be handled inside
-                                                    // connect "loop"
-                                        nextListWorkout();
-                                        break;
                                     case OK:
                                         doListWorkout(synchronizer);
+                                        break;
+
+                                    default:
+                                        // Unexpected result, nothing to do
+                                        nextListWorkout();
                                         break;
                                 }
                             }
                         }, synchronizer, result.authMethod);
                         return;
+
+                    default:
+                        nextListWorkout();
+                        break;
                 }
-                nextListWorkout();
             }
         }.execute(synchronizer);
     }
@@ -1133,13 +1145,34 @@ public class SyncManager {
             @Override
             protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
+                    Synchronizer.Status s2;
                     switch (mode) {
                         case UPLOAD:
-                            return synchronizer.upload(copyDB, activityItem.getId());
+                            s2 = synchronizer.upload(copyDB, activityItem.getId());
+                            break;
                         case DOWNLOAD:
-                            return synchronizer.download(copyDB, activityItem);
+                            s2 = synchronizer.download(copyDB, activityItem);
+                            break;
+                        default:
+                            s2 = Synchronizer.Status.INCORRECT_USAGE;
                     }
-                    return Synchronizer.Status.ERROR;
+                    // See doUpload() for motivation
+                    if (s2 == Synchronizer.Status.NEED_REFRESH) {
+                        s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+                        if (s2 == Synchronizer.Status.OK) {
+                            switch (mode) {
+                                case UPLOAD:
+                                    s2 = synchronizer.upload(copyDB, activityItem.getId());
+                                    break;
+                                case DOWNLOAD:
+                                    s2 = synchronizer.download(copyDB, activityItem);
+                                    break;
+                                default:
+                                    s2 = Synchronizer.Status.INCORRECT_USAGE;
+                            }
+                        }
+                    }
+                    return s2;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return Synchronizer.Status.ERROR;
@@ -1149,41 +1182,39 @@ public class SyncManager {
             @Override
             protected void onPostExecute(Synchronizer.Status result) {
                 switch (result) {
-                    case CANCEL:
-                    case ERROR:
-                    case INCORRECT_USAGE:
-                    case SKIP:
-                        break;
                     case OK:
-                        result.activityId = mID; //Not always set
                         syncOK(synchronizer, copySpinner, copyDB, result);
-                        getExternalId(synchronizer, copyDB, result);
+                        syncNextActivity(synchronizer, mode);
                         break;
+
+                        // TODO Handling of NEED_AUTH and CANCEL hangs the app
                     case NEED_AUTH:
                         handleAuth(new Callback() {
                             @Override
-                            public void run(String synchronizerName,
-                                    Synchronizer.Status status) {
-                                switch (status) {
-                                    case CANCEL:
-                                    case SKIP:
-                                    case ERROR:
-                                    case INCORRECT_USAGE:
-                                    case NEED_AUTH: // should be handled inside
-                                                    // connect "loop"
-                                        syncActivitiesList.clear();
-                                        syncNextActivity(synchronizer, mode);
-                                        break;
+                            public void run(String synchronizerName, Synchronizer.Status s2) {
+                                switch (s2) {
                                     case OK:
                                         doSyncMulti(synchronizer, mode, activityItem);
+                                        break;
+
+                                    default:
+                                        // Unexpected result, nothing to do
+                                        syncNextActivity(synchronizer, mode);
                                         break;
                                 }
                             }
                         }, synchronizer, result.authMethod);
+                        return;
 
+                    case CANCEL:
+                        syncActivitiesList.clear();
+                        syncNextActivity(synchronizer, mode);
+                        break;
+
+                    default:
+                        syncNextActivity(synchronizer, mode);
                         break;
                 }
-                syncNextActivity(synchronizer, mode);
             }
         }.execute(synchronizer);
     }
@@ -1239,7 +1270,15 @@ public class SyncManager {
             @Override
             protected Synchronizer.Status doInBackground(Synchronizer... params) {
                 try {
-                    return params[0].getFeed(feedUpdater);
+                    Synchronizer.Status s2 = params[0].getFeed(feedUpdater);
+                    // See doUpload() for motivation
+                    if (s2 == Synchronizer.Status.NEED_REFRESH) {
+                        s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+                        if (s2 == Synchronizer.Status.OK) {
+                            s2 = params[0].getFeed(feedUpdater);
+                        }
+                    }
+                    return s2;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     return Synchronizer.Status.ERROR;
@@ -1248,25 +1287,31 @@ public class SyncManager {
 
             @Override
             protected void onPostExecute(Synchronizer.Status result) {
-                if (result == Synchronizer.Status.OK) {
-                    feedUpdater.complete();
-                } else if (result == Synchronizer.Status.NEED_AUTH) {
-                    handleAuth(new Callback() {
-                        @Override
-                        public void run(String synchronizerName, Synchronizer.Status s2) {
-                            if (s2 == Synchronizer.Status.OK) {
-                                syncFeed(synchronizer);
-                            } else {
-                                nextSyncFeed();
+                switch (result) {
+                    case OK:
+                        feedUpdater.complete();
+                        nextSyncFeed();
+                        break;
+
+                    case NEED_AUTH:
+                        handleAuth(new Callback() {
+                            @Override
+                            public void run(String synchronizerName, Synchronizer.Status s2) {
+                                if (s2 == Synchronizer.Status.OK) {
+                                    syncFeed(synchronizer);
+                                } else {
+                                    nextSyncFeed();
+                                }
                             }
-                        }
-                    }, synchronizer, result.authMethod);
-                    return;
-                } else {
-                    if (result.ex != null)
-                        result.ex.printStackTrace();
+                        }, synchronizer, result.authMethod);
+                        return;
+
+                    default:
+                        if (result.ex != null)
+                            result.ex.printStackTrace();
+                        nextSyncFeed();
+                        break;
                 }
-                nextSyncFeed();
             }
         }.execute(synchronizer);
     }

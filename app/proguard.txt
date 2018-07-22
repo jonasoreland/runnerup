@@ -1,4 +1,3 @@
--dontobfuscate
 -dontwarn com.dsi.ant.**
 -dontwarn com.samsung.**
 -dontwarn com.vividsolutions.jts.awt.**

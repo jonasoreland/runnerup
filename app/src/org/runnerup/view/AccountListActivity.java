@@ -278,7 +278,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             if (synchronizer.isConfigured()) {
                 startActivity(synchronizer.getName(), true);
             } else {
-                mSyncManager.connect(callback, synchronizer.getName(), false);
+                mSyncManager.connect(callback, synchronizer.getName());
             }
         }
     };
@@ -311,14 +311,15 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         intent.putExtra("synchronizer", synchronizerName);
         //intent.putExtra("edit", edit);
         AccountListActivity.this.startActivityForResult(intent,
-                SyncManager.CONFIGURE_REQUEST + 1000);
+                SyncManager.EDIT_REQUEST);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SyncManager.CONFIGURE_REQUEST) {
             mSyncManager.onActivityResult(requestCode, resultCode, data);
-        } else if (requestCode == SyncManager.CONFIGURE_REQUEST + 1000) {
+            this.mCursorAdapter.notifyDataSetChanged();
+        } else if (requestCode == SyncManager.EDIT_REQUEST) {
             mSyncManager.clear();
             getSupportLoaderManager().restartLoader(0, null, this);
         }

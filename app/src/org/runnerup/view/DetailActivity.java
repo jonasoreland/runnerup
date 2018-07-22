@@ -607,7 +607,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         Intent i = new Intent(DetailActivity.this,
                                 AccountListActivity.class);
                         DetailActivity.this.startActivityForResult(i,
-                                SyncManager.CONFIGURE_REQUEST + 1);
+                                SyncManager.EDIT_ACCOUNT_REQUEST);
                     }
                 });
                 return b;

@@ -705,7 +705,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             saveGroupPosition = groupPosition;
 
             if (!syncManager.isConfigured(provider)) {
-                syncManager.connect(onSynchronizerConfiguredCallback, provider, false);
+                syncManager.connect(onSynchronizerConfiguredCallback, provider);
             }
             else {
                 onSynchronizerConfiguredCallback.run(provider, Synchronizer.Status.OK);

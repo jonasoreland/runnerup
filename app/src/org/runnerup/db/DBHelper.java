@@ -469,16 +469,11 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
         insertAccount(arg0, FacebookSynchronizer.NAME, 0);
         //insertAccount(arg0, GooglePlusSynchronizer.NAME, 0);
-        //DBVERSION 26
         insertAccount(arg0, RuntasticSynchronizer.NAME, 0);
-        //DBVERSION 27
         insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
-        //DBVERSION 28
         insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0);
-        //DBVERSION 29
         insertAccount(arg0, FileSynchronizer.NAME, 1);
-        //DBVERSION 30
-        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
     }
 
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled) {

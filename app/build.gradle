@@ -165,6 +165,18 @@ android.applicationVariants.all { variant ->
             valuesFile.write(content, 'UTF-8')
         }
     }
+    // Note: As a minimum extra security at least obfuscate the strings with Proguard
+    if (rootProject.file("runalyze.properties").exists()) {
+        props.load(new FileInputStream(rootProject.file("runalyze.properties")))
+        variant.buildConfigField 'int', 'RUNALIZE_ENABLED', "1"
+        variant.buildConfigField 'String', 'RUNALIZE_ID', props.RUNALIZE_ID
+        variant.buildConfigField 'String', 'RUNALIZE_SECRET', props.RUNALIZE_SECRET
+    }
+    else {
+        variant.buildConfigField 'int', 'RUNALIZE_ENABLED', "0"
+        variant.buildConfigField 'String', 'RUNALIZE_ID', "null"
+        variant.buildConfigField 'String', 'RUNALIZE_SECRET', "null"
+    }
 }
 
 //Based on an example from https://developer.android.com/studio/build/configure-apk-splits.html
