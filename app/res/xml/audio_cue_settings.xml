@@ -174,24 +174,26 @@
 			android:persistent="true"
 			android:key="@string/cueinfo_current_pace"
 			android:title="@string/Current_pace" />
-
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:persistent="true"
 			android:key="@string/cueinfo_current_speed"
 			android:title="@string/Current_speed" />
-
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:persistent="true"
 			android:key="@string/cueinfo_current_hr"
 			android:title="@string/Current_heart_rate" />
-
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:persistent="true"
 			android:key="@string/cueinfo_current_hrz"
 			android:title="@string/Current_heart_rate_zone" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:persistent="true"
+			android:key="@string/cueinfo_current_cad"
+			android:title="@string/Current_cadence" />
 
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/Misc_cues">

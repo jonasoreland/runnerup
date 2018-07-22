@@ -755,6 +755,9 @@ public class WorkoutBuilder {
         if (prefs.getBoolean(res.getString(R.string.cueinfo_current_hrz), false)) {
             feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.HRZ));
         }
+        if (prefs.getBoolean(res.getString(R.string.cueinfo_current_cad), false)) {
+            feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.CAD));
+        }
 
     }
 }

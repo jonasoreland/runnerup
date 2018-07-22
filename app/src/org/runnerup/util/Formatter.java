@@ -374,14 +374,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return
      */
     public String formatCadence(Format target, double val) {
+        int val2 = (int) Math.round(val);
         switch (target) {
             case CUE:
             case CUE_SHORT:
             case CUE_LONG:
+                return cueResources.getQuantityString(R.plurals.cue_rpm, val2, val2);
             case TXT:
             case TXT_SHORT:
             case TXT_LONG:
-                return Integer.toString((int) Math.round(val));
+                return Integer.toString((int) val2);
         }
         return "";
     }

@@ -430,7 +430,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             case CURRENT: {
                 Float val = tracker.getCurrentCadence();
                 if (val == null)
-                    return -1; //TODO should not be used
+                    return 0; //TODO should not be used
                 return val;
             }
             case LAP:
@@ -662,6 +662,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
         public double getHeartRate(Scope scope) {
             return 150 + 25 * Math.random();
+        }
+
+        public double getCadence(Scope scope) {
+            return 50 + 25 * Math.random();
         }
     }
 
