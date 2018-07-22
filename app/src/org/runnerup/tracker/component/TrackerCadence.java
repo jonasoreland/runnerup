@@ -55,6 +55,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
     public Float getValue() {
         if (isMockSensor) {
+            if (!isSportEnabled) { return null; }
             if (latestVal == null) {latestVal = 0.0f;}
             //if GPS update is every second, this is 0-120 rpm
             latestVal += (int)((new Random()).nextFloat() * 4);
@@ -166,7 +167,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
     @Override
     public boolean isConnected() {
-        return sensorManager != null;
+        return sensorManager != null || isMockSensor;
     }
 
     @Override
@@ -185,6 +186,8 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
             //Not used, disconnect sensor so nothing is returned
             isSportEnabled = false;
             latestVal = null;
+            sensorManager = null;
+            isMockSensor = false;
         } else {
             isSportEnabled = true;
         }
