@@ -52,10 +52,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     public static final String NAME = "Runalyze";
     private static final String PUBLIC_URL = "https://runalyze.com";
-
-    private static String CLIENT_ID = BuildConfig.RUNALIZE_ID;
-    private static String CLIENT_SECRET = BuildConfig.RUNALIZE_SECRET;
-    public static int ENABLED = BuildConfig.RUNALIZE_ENABLED;
+    public static int ENABLED = BuildConfig.RUNALYZE_ENABLED;
 
     private static final String UPLOAD_URL = "https://runalyze.com/api/v1/activities/uploads";
     private static final String AUTH_URL = "https://runalyze.com/oauth/v2/auth";
@@ -84,7 +81,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     public String getClientId() {
-        return CLIENT_ID;
+        return BuildConfig.RUNALYZE_ID;
     }
 
     @Override
@@ -94,7 +91,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     @Override
     public String getClientSecret() {
-        return CLIENT_SECRET;
+        return BuildConfig.RUNALYZE_SECRET;
     }
 
     @Override

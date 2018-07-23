@@ -295,7 +295,8 @@ public class SyncManager {
                 break;
 
             default:
-                synchronizer.reset();
+                // No reset, refresh_token should still be valid
+                break;
         }
         return s;
     }
