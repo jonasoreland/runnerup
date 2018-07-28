@@ -29,7 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
-import org.runnerup.export.format.GPX;
+import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.Part;
@@ -245,11 +245,11 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             return s;
         }
 
-        GPX gpx = new GPX(db, true, false);
+        TCX tcx = new TCX(db);
         Exception ex;
         try {
             StringWriter writer = new StringWriter();
-            gpx.export(mID, writer);
+            tcx.export(mID, writer);
             ActivityDbInfo dbInfo = getStravaType(db, mID);
 
             HttpURLConnection conn = (HttpURLConnection) new URL(REST_URL).openConnection();
@@ -258,10 +258,10 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             conn.setRequestProperty("Authorization", "Bearer " + access_token);
 
             Part<StringWritable> dataTypePart = new Part<>("data_type",
-                    new StringWritable("gpx"));
+                    new StringWritable("tcx"));
             Part<StringWritable> filePart = new Part<>("file",
                     new StringWritable(writer.toString()));
-            filePart.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.gpx", mID));
+            filePart.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.tcx", mID));
             filePart.setContentType("application/octet-stream");
             Part<StringWritable> activityTypePart = new Part<>("activity_type",
                     new StringWritable(dbInfo.stravaType));
