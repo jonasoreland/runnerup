@@ -18,11 +18,11 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Pair;
@@ -40,6 +40,7 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.HRZones;
+import org.runnerup.widget.SpinnerInterface;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 
@@ -94,30 +95,30 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                 zonesTable.addView(row);
             }
         }
-        ageSpinner.setOnCloseDialogListener(new TitleSpinner.OnCloseDialogListener() {
+        ageSpinner.setOnCloseDialogListener(new SpinnerInterface.OnCloseDialogListener() {
 
             @Override
-            public void onClose(TitleSpinner spinner, boolean ok) {
+            public void onClose(SpinnerInterface spinner, boolean ok) {
                 if (ok) {
                     recomputeMaxHR();
                 }
             }
         });
 
-        sexSpinner.setOnCloseDialogListener(new TitleSpinner.OnCloseDialogListener() {
+        sexSpinner.setOnCloseDialogListener(new SpinnerInterface.OnCloseDialogListener() {
 
             @Override
-            public void onClose(TitleSpinner spinner, boolean ok) {
+            public void onClose(SpinnerInterface spinner, boolean ok) {
                 if (ok) {
                     recomputeMaxHR();
                 }
             }
         });
 
-        maxHRSpinner.setOnCloseDialogListener(new TitleSpinner.OnCloseDialogListener() {
+        maxHRSpinner.setOnCloseDialogListener(new SpinnerInterface.OnCloseDialogListener() {
 
             @Override
-            public void onClose(TitleSpinner spinner, boolean ok) {
+            public void onClose(SpinnerInterface spinner, boolean ok) {
                 if (ok) {
                     recomputeZones();
                 }

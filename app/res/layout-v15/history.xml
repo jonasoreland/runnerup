@@ -41,6 +41,7 @@
         android:contentDescription="@string/Add_manual_entry"
         android:tooltipText="@string/Add_manual_entry"
         app:backgroundTint="@color/colorPrimaryFab"
+        app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_white_24dp"
         tools:ignore="UnusedAttribute" />
 

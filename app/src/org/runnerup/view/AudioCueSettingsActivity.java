@@ -46,7 +46,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.widget.TitleSpinner;
-import org.runnerup.widget.TitleSpinner.OnSetValueListener;
+import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Workout;
@@ -247,7 +247,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         a.delete();
 
         String args[] = {
-            name
+                name
         };
         mDB.delete(DB.AUDIO_SCHEMES.TABLE, DB.AUDIO_SCHEMES.NAME + "= ?", args);
     }

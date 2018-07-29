@@ -17,627 +17,133 @@
 
 package org.runnerup.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.res.TypedArray;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
+import android.os.Build;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import org.runnerup.R;
-import org.runnerup.util.SafeParse;
 
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
-
-public class TitleSpinner extends LinearLayout {
-
-    private enum Type {
-        TS_SPINNER,
-        TS_SPINNER_TXT,
-        TS_EDITTEXT,
-        TS_DATEPICKER,
-        TS_TIMEPICKER,
-        TS_DURATIONPICKER,
-        TS_DISTANCEPICKER,
-        TS_NUMBERPICKER
-    }
-
-    private String mKey = null;
-    private TextView mTitle = null;
-    private TextView mValue = null;
-    private Spinner mSpinner = null;
-    private int mInputType = 0;
-    private final Context mContext;
-    private OnSetValueListener mSetValueListener = null;
-    private OnCloseDialogListener mCloseDialogListener = null;
-    private Type mType = null;
-    private boolean mFirstSetValue = true;
-    private int values[] = null;
-    private long mCurrValue = -1;
-
-    public interface OnSetValueListener {
-        /**
-         * @param newValue
-         * @return
-         * @throws java.lang.IllegalArgumentException
-         */
-        String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
-
-        /**
-         * @param newValue
-         * @return
-         * @throws java.lang.IllegalArgumentException
-         */
-        int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
-    }
-
-    public interface OnCloseDialogListener {
-        void onClose(TitleSpinner spinner, boolean ok);
-    }
+@TargetApi(Build.VERSION_CODES.FROYO)
+public class TitleSpinner extends LinearLayout implements SpinnerInterface {
+    SpinnerPresenter mPresenter;
+    LinearLayout mLayout;
+    TextView mLabel;
+    TextView mValue;
+    Spinner mSpinner;
 
     public TitleSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.title_spinner, this);
 
-        mTitle = (TextView) findViewById(R.id.title);
-        mValue = (TextView) findViewById(R.id.value);
-        mSpinner = (Spinner) findViewById(R.id.spinner);
+        mLayout = findViewById(R.id.title_spinner);
+        mLabel = findViewById(R.id.title);
+        mValue = findViewById(R.id.value);
+        mSpinner = findViewById(R.id.spinner);
 
-        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TitleSpinner);
-        CharSequence title = arr.getString(R.styleable.TitleSpinner_android_text);
-        if (title != null) {
-            mTitle.setText(title);
-        }
-
-        CharSequence type = arr.getString(R.styleable.TitleSpinner_type);
-        CharSequence defaultValue = arr.getString(R.styleable.TitleSpinner_android_defaultValue);
-
-        if (type == null || "spinner".contentEquals(type)) {
-            mType = Type.TS_SPINNER;
-            setupSpinner(context, attrs, arr, defaultValue);
-        } else if ("spinner_txt".contentEquals(type)) {
-            mType = Type.TS_SPINNER_TXT;
-            setupSpinner(context, attrs, arr, defaultValue);
-        } else if ("edittext".contentEquals(type)) {
-            mType = Type.TS_EDITTEXT;
-            setupEditText(context, attrs, arr, defaultValue);
-        } else if ("datepicker".contentEquals(type)) {
-            mType = Type.TS_DATEPICKER;
-            setupDatePicker(context, attrs, arr, defaultValue);
-        } else if ("timepicker".contentEquals(type)) {
-            mType = Type.TS_TIMEPICKER;
-            setupTimePicker(context, attrs, arr, defaultValue);
-        } else if ("durationpicker".contentEquals(type)) {
-            mType = Type.TS_DURATIONPICKER;
-            setupDurationPicker(context, attrs, arr, defaultValue);
-        } else if ("distancepicker".contentEquals(type)) {
-            mType = Type.TS_DISTANCEPICKER;
-            setupDistancePicker(context, attrs, arr, defaultValue);
-        } else if ("numberpicker".contentEquals(type)) {
-            mType = Type.TS_NUMBERPICKER;
-            setupNumberPicker(context, attrs, arr, defaultValue);
-        } else {
-            arr = null; // force null pointer exception
-        }
-
-        CharSequence key = arr.getString(R.styleable.TitleSpinner_android_key);
-        if (key != null) {
-            mKey = key.toString();
-            loadValue(defaultValue != null ? defaultValue.toString() : null);
-        }
-
-        arr.recycle(); // Do this when done.
+        mPresenter = new SpinnerPresenter(context, attrs, this);
     }
 
-    private void setupEditText(final Context context, final AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
-        mInputType = arr.getInt(R.styleable.TitleSpinner_android_inputType,
-                EditorInfo.TYPE_CLASS_NUMBER | EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-        setValue(defaultValue, false);
-
-        final EditText edit = new EditText(context, attrs);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setOnClickListener(new OnClickListener() {
+    @Override
+    public void setOnClickSpinnerOpen() {
+        setViewOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mTitle.getText());
-
-                edit.setText(mValue.getText());
-                edit.setInputType(mInputType);
-                final LinearLayout layout = createLayout(context);
-                layout.addView(edit);
-                alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(edit.getText().toString());
-                        dialog.dismiss();
-                        layout.removeView(edit);
-                        onClose(true);
-                    }
-                });
-                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                        layout.removeView(edit);
-                        onClose(false);
-                    }
-                });
-                AlertDialog dialog = alert.create();
-                dialog.show();
-            }
-        });
-    }
-
-    private void setupSpinner(Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
-        mSpinner.setPrompt(mTitle.getText());
-
-        int entriesId = arr.getResourceId(R.styleable.TitleSpinner_android_entries, 0);
-        int valuesId = arr.getResourceId(R.styleable.TitleSpinner_values, 0);
-        if (valuesId != 0) {
-            values = getResources().getIntArray(valuesId);
-        }
-        if (entriesId != 0) {
-            DisabledEntriesAdapter adapter = new DisabledEntriesAdapter(mContext, entriesId);
-            mSpinner.setAdapter(adapter);
-            int value = 0;
-            if (defaultValue != null) {
-                value = SafeParse.parseInt(defaultValue.toString(), 0);
-            }
-            setValue(value);
-//            if (value >= 0 && value < entries.length) {
-//                mValueInt = value;
-//                mValue.setText(entries[value]);
-//            }
-        }
-
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 mSpinner.performClick();
             }
         });
-
-        mSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                if (mType == Type.TS_SPINNER_TXT) {
-                    if (mSpinner.getAdapter() != null) {
-                        setValue(mSpinner.getAdapter().getItem(arg2).toString());
-                    }
-                } else {
-                    setValue(getRealValue(arg2));
-                }
-                if (!mFirstSetValue) {
-                    onClose(true);
-                }
-                mFirstSetValue = false;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-            }
-        });
     }
 
-    private static LinearLayout createLayout(Context context) {
-        final LinearLayout layout = new LinearLayout(context);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
-        layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
-        return layout;
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        mLayout.setEnabled(enabled);
+        mSpinner.setEnabled(enabled);
     }
 
-    private void setupDatePicker(final Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
-        if (defaultValue != null && "today".contentEquals(defaultValue)) {
-            DateFormat df = android.text.format.DateFormat.getDateFormat(context);
-            defaultValue = df.format(new Date());
-        }
-        setValue(defaultValue, false);
-
-        final DatePicker datePicker = new DatePicker(context, attrs);
-
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mTitle.getText());
-
-                final LinearLayout layout = createLayout(context);
-                layout.addView(datePicker);
-                alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(datePicker));
-                        dialog.dismiss();
-                        layout.removeView(datePicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(DatePicker dp) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
-                        DateFormat df = android.text.format.DateFormat.getDateFormat(context);
-                        return df.format(c.getTime());
-                    }
-                });
-                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                        layout.removeView(datePicker);
-                        onClose(false);
-                    }
-                });
-                AlertDialog dialog = alert.create();
-                dialog.show();
-            }
-        });
+    @Override
+    public void setViewPrompt(CharSequence charSequence) {
+        mSpinner.setPrompt(charSequence);
     }
 
-    private void setupTimePicker(final Context context, AttributeSet attrs, TypedArray arr, CharSequence defaultValue) {
-        if (defaultValue != null && "now".contentEquals(defaultValue)) {
-            DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
-            defaultValue = df.format(new Date());
-        }
-        setValue(defaultValue, false);
-
-        final TimePicker timePicker = new TimePicker(context, attrs);
-
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mTitle.getText());
-
-                timePicker.setIs24HourView(true);
-                final LinearLayout layout = createLayout(context);
-                layout.addView(timePicker);
-                alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(timePicker));
-                        dialog.dismiss();
-                        layout.removeView(timePicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(TimePicker dp) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(Calendar.HOUR, dp.getCurrentHour());
-                        c.set(Calendar.MINUTE, dp.getCurrentMinute());
-                        DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
-                        return df.format(c.getTime());
-                    }
-                });
-                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                        layout.removeView(timePicker);
-                        onClose(false);
-                    }
-                });
-                AlertDialog dialog = alert.create();
-                dialog.show();
-            }
-        });
+    @Override
+    public void setViewLabel(CharSequence label) {
+        mLabel.setText(label);
     }
 
-    private void setupDurationPicker(final Context context, final AttributeSet attrs, TypedArray arr,
-                                     CharSequence defaultValue) {
-        setValue(defaultValue, false);
-
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mTitle.getText());
-
-                final DurationPicker picker = new DurationPicker(context, attrs);
-                picker.setEpochTime(mCurrValue);
-                final LinearLayout layout = createLayout(context);
-                layout.addView(picker);
-                alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(picker));
-                        dialog.dismiss();
-                        layout.removeView(picker);
-                        onClose(true);
-                    }
-
-                    private String getValue(DurationPicker dp) {
-                        return DateUtils.formatElapsedTime(picker.getEpochTime());
-                    }
-                });
-                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                        layout.removeView(picker);
-                        onClose(false);
-                    }
-                });
-                AlertDialog dialog = alert.create();
-                dialog.show();
-            }
-        });
+    @Override
+    public void setViewValue(CharSequence charSequence) {
+        mValue.setText(charSequence);
     }
 
-    private void setupDistancePicker(final Context context, AttributeSet attrs, TypedArray arr,
-                                     CharSequence defaultValue) {
-        setValue(defaultValue, false);
-
-        final DistancePicker distancePicker = new DistancePicker(context, attrs);
-
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mTitle.getText());
-
-                distancePicker.setDistance(mCurrValue);
-
-                final LinearLayout layout = createLayout(context);
-                layout.addView(distancePicker);
-                alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(distancePicker));
-                        dialog.dismiss();
-                        layout.removeView(distancePicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(DistancePicker dp) {
-                        return Long.toString(dp.getDistance());
-                    }
-                });
-                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                        layout.removeView(distancePicker);
-                        onClose(false);
-                    }
-                });
-                AlertDialog dialog = alert.create();
-                dialog.show();
-            }
-        });
+    @Override
+    public CharSequence getViewValueText() {
+        return mValue.getText();
     }
 
-    private void setupNumberPicker(final Context context, AttributeSet attrs, final TypedArray arr, CharSequence defaultValue) {
-        setValue(defaultValue, false);
+    @Override
+    public void setViewOnClickListener(OnClickListener onClickListener) {
+        mLayout.setOnClickListener(onClickListener);
+    }
 
-        final NumberPicker numberPicker = new NumberPicker(context, attrs);
-        numberPicker.setOrientation(VERTICAL);
+    @Override
+    public void setViewAdapter(SpinnerAdapter adapter) {
+        mSpinner.setAdapter(adapter);
+    }
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+    @Override
+    public SpinnerAdapter getViewAdapter() {
+        return mSpinner.getAdapter();
+    }
 
-                alert.setTitle(mTitle.getText());
+    @Override
+    public void setViewSelection(int value) {
+        mSpinner.setSelection(value);
+    }
 
-                numberPicker.setValue((int)mCurrValue);
+    @Override
+    public void viewOnClose(OnCloseDialogListener listener, boolean b) {
+        listener.onClose(this, b);
+    }
 
-                final LinearLayout layout = createLayout(context);
-                layout.addView(numberPicker);
-                alert.setView(layout);
-                alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(numberPicker));
-                        dialog.dismiss();
-                        layout.removeView(numberPicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(NumberPicker dp) {
-                        return Integer.toString(dp.getValue());
-                    }
-                });
-                alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                        layout.removeView(numberPicker);
-                        onClose(false);
-                    }
-                });
-                AlertDialog dialog = alert.create();
-                dialog.show();
-            }
-        });
+    @Override
+    public void setViewOnItemSelectedListener(AdapterView.OnItemSelectedListener listener) {
+        mSpinner.setOnItemSelectedListener(listener);
     }
 
     public void setAdapter(SpinnerAdapter adapter) {
         mSpinner.setAdapter(adapter);
-        loadValue(null);
-    }
-
-    public void setOnSetValueListener(OnSetValueListener listener) {
-        this.mSetValueListener = listener;
-    }
-
-    public void setOnCloseDialogListener(OnCloseDialogListener listener) {
-        this.mCloseDialogListener = listener;
-    }
-
-    private void onClose(boolean b) {
-        if (mCloseDialogListener != null)
-            mCloseDialogListener.onClose(this, b);
-    }
-
-    private void loadValue(String defaultValue) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if (pref == null)
-            return;
-        switch (mType) {
-            case TS_SPINNER:
-                int def = 0;
-                if (defaultValue != null) {
-                    def = SafeParse.parseInt(defaultValue, 0);
-                }
-                setValue(pref.getInt(mKey, def));
-                break;
-            case TS_SPINNER_TXT:
-            case TS_EDITTEXT:
-            case TS_DURATIONPICKER:
-            case TS_DISTANCEPICKER:
-            case TS_NUMBERPICKER:
-            case TS_DATEPICKER:
-            case TS_TIMEPICKER:
-                final String val = pref.getString(mKey, defaultValue == null ? "" : defaultValue);
-                setValue(val);
-                break;
-        }
-    }
-
-    public void setValue(String value) {
-        setValue (value, true);
-    }
-
-    private void setValue(CharSequence value, Boolean savePreferences) {
-        String str = value == null ? "" : value.toString();
-        setValue(str, savePreferences);
-    }
-
-    private void setValue(String value, Boolean savePreferences) {
-        if (mSetValueListener != null) {
-            try {
-                value = mSetValueListener.preSetValue(value);
-            } catch (java.lang.IllegalArgumentException ex) {
-                if (mSpinner.getAdapter() != null) {
-                    mSpinner.setSelection((int) mCurrValue);
-                }
-                return;
-            }
-        }
-
-        //Store the value - could be separate for distance vs time
-        if (value == null) {
-            mCurrValue = 0;
-        } else if (mType == Type.TS_DURATIONPICKER) {
-            mCurrValue = SafeParse.parseSeconds(value, 0);
-        } else {
-            mCurrValue = (long) SafeParse.parseDouble(value, 0);
-        }
-        if (mType == Type.TS_DISTANCEPICKER && !TextUtils.isEmpty(value)) {
-            mValue.setText(String.format("%s %s", value, getResources().getString(R.string.metrics_distance_m)));
-        } else {
-            mValue.setText(value);
-        }
-        if (mType == Type.TS_SPINNER_TXT) {
-            if (mSpinner.getAdapter() != null) {
-                int intVal = find(mSpinner.getAdapter(), value);
-                mCurrValue = intVal; // here because onclicklistener doesn't react to changing to the same value twice
-                mSpinner.setSelection(intVal);
-            }
-        }
-
-        if (mKey == null || !savePreferences)
-            return;
-        Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-        pref.putString(mKey, value);
-        pref.commit();
-    }
-
-    private int find(SpinnerAdapter adapter, String value) {
-        for (int i = 0; i < adapter.getCount(); i++) {
-            if (value.contentEquals(adapter.getItem(i).toString())) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    private int getSelectionValue(int value) {
-        if (values == null)
-            return value;
-        int p = 0;
-        for (int v : values) {
-            if (v == value)
-                return p;
-            p++;
-        }
-
-        /* not found, hmm...what to do... */
-        return 0;
-    }
-
-    private int getRealValue(int value) {
-        if (values == null)
-            return value;
-        if (value >= 0 && value < values.length)
-            return values[value];
-
-        /* invalid value, hmm...what to do... */
-        return values[0];
+        mPresenter.loadValue(null);
     }
 
     public void setValue(int value) {
-        if (mSetValueListener != null) {
-            try {
-                value = mSetValueListener.preSetValue(value);
-            } catch (java.lang.IllegalArgumentException ex) {
-                if ((int)mCurrValue != -1) { // here because onclicklistener doesn't react to changing to the same value twice
-                    mSpinner.setSelection((int)mCurrValue);
-                }
-                return;
-            }
-        }
-        mCurrValue = value;
-        int selectionValue = getSelectionValue(value);
-        mSpinner.setSelection(selectionValue);
-        if (mSpinner.getAdapter() != null) {
-            Object val = mSpinner.getAdapter().getItem(selectionValue);
-            if (val != null)
-                mValue.setText(val.toString());
-            else
-                mValue.setText("");
-        }
-        if (mKey == null)
-            return;
-        Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-        pref.putInt(mKey, value);
-        pref.commit();
+        mPresenter.setValue(value);
+    }
+
+    public void setValue(String value) {
+        mPresenter.setValue(value);
+    }
+
+    public CharSequence getValue() {
+        return mPresenter.getValue();
+    }
+
+    public int getValueInt() {
+        return mPresenter.getValueInt();
     }
 
     public void addDisabledValue(int value) {
-        int selection = getSelectionValue(value);
+        int selection = mPresenter.getSelectionValue(value);
         ((DisabledEntriesAdapter)mSpinner.getAdapter()).addDisabled(selection);
     }
 
@@ -645,37 +151,15 @@ public class TitleSpinner extends LinearLayout {
         ((DisabledEntriesAdapter)mSpinner.getAdapter()).clearDisabled();
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.title_spinner);
-        layout.setEnabled(enabled);
-        mSpinner.setEnabled(enabled);
-    }
-
-    public CharSequence getValue() {
-        switch(mType) {
-            case TS_SPINNER_TXT:
-            case TS_EDITTEXT:
-            case TS_DATEPICKER:
-            case TS_TIMEPICKER:
-                return mValue.getText();
-            case TS_DURATIONPICKER:
-            case TS_DISTANCEPICKER:
-            case TS_NUMBERPICKER:
-            case TS_SPINNER:
-                break;
-        }
-        return String.format(Locale.getDefault(), "%d", mCurrValue);
-    }
-
-    public int getValueInt() {
-        return (int)mCurrValue;
-    }
-
     public void clear() {
-        if (mKey != null) {
-            PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove(mKey).commit();
-        }
+        mPresenter.clear();
+    }
+
+    public void setOnSetValueListener(SpinnerInterface.OnSetValueListener listener) {
+        mPresenter.setOnSetValueListener(listener);
+    }
+
+    public void setOnCloseDialogListener(SpinnerInterface.OnCloseDialogListener listener) {
+        mPresenter.setOnCloseDialogListener(listener);
     }
 }

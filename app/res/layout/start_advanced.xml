@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,25 +25,29 @@
         android:id="@+id/advanced_audio_cue_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:key="@string/pref_advanced_audio"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/activity_margin"
         android:text="@string/Audio_cue_settings"
-        runnerup:type="spinner_txt" >
-    </org.runnerup.widget.TitleSpinner>
+        runnerup:type="spinner_txt" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/advanced_workout_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/advanced_audio_cue_spinner"
         android:key="@string/pref_advanced_workout"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
         android:text="@string/Workout"
-        runnerup:type="spinner_txt" >
-    </org.runnerup.widget.TitleSpinner>
+        runnerup:type="spinner_txt" />
 
     <ListView
         android:id="@+id/advanced_step_list"
@@ -54,17 +57,20 @@
         android:layout_below="@+id/advanced_workout_spinner"
         android:background="@color/subsectionBg"
         android:cacheColorHint="@color/subsectionBg"
-        android:fadeScrollbars="false"
-        android:paddingTop="5dp"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/activity_margin"
+        android:paddingRight="@dimen/activity_margin"
+        android:paddingTop="@dimen/activity_margin"
+        android:paddingBottom="@dimen/margin_for_fab"
         android:scrollbarAlwaysDrawVerticalTrack="true" />
-    
+
     <Button
         android:id="@+id/advanced_download_button"
         style="@style/ButtonText"
-        android:background="@drawable/btn_blue"
-		android:layout_width="fill_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_blue"
         android:text="@string/Download_workouts" />
 
 </RelativeLayout>

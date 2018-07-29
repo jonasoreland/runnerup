@@ -79,6 +79,11 @@
   <string name="Repetitions">Repetitions</string>
   <string name="Date">Date</string>
   <string name="GPS_satellites">GPS satellites</string>
+  <string name="GPS_indicator">GPS: %1$d/%2$d</string>
+  <string name="GPS_indicator_off">GPS off</string>
+  <string name="GPS_accuracy_elevation">GPS accuracy: %1$f m (%2$.1f m)</string>
+  <string name="GPS_accuracy_no_elevation">GPS accuracy: %f m</string>
+  <string name="GPS_is_required">GPS is required</string>
   <string name="Start_GPS">Start GPS</string>
   <string name="Duration">Duration</string>
   <string name="Cancel">Cancel</string>
@@ -136,7 +141,7 @@
   <string name="Whats_new">What\'s new</string>
   <string name="Rate_RunnerUp">Rate RunnerUp</string>
   <string name="Enable_GPS">Enable GPS</string>
-  <string name="Waiting_for_GPS">Waiting for GPS</string>
+  <string name="Waiting_for_GPS">Waiting for GPS...</string>
   <string name="Start_activity">Start activity</string>
   <string name="Clear_HR_settings">Clear HR settings</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Heart rate monitor is not supported for your device</string>

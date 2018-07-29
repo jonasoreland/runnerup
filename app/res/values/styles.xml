@@ -21,10 +21,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MainLayoutTheme" parent="AppTheme">
-        <item name="android:tabWidgetStyle">@style/BottomNavigationTabWidget</item>
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="MainLayoutTheme" parent="AppTheme.NoActionBar">
+        <item name="android:tabWidgetStyle">@style/BottomNavigationTabWidget</item>
     </style>
 
     <style name="ButtonText" parent="Widget.AppCompat.Button.Colored">
