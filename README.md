@@ -39,12 +39,12 @@ Note: RunnerUp used to be available on [F-Droid](https://f-droid.org/repository/
 
 ## User information
 
-Please read the [wiki](/jonasoreland/runnerup/wiki), especially the [Manual](/jonasoreland/runnerup/wiki/Overview.md)
+Please read the [wiki](https://github.com/jonasoreland/runnerup/wiki), especially the [Manual](https://github.com/jonasoreland/runnerup/wiki/Overview)
 
 ## Contributing
 
 Patches, forks, pull requests, suggestions or harsh flame is welcome!
-Please read the [wiki](/jonasoreland/runnerup/wiki).
+Please read the [wiki](https://github.com/jonasoreland/runnerup/wiki).
 
 ## Translations
 
