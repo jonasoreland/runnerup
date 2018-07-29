@@ -35,4 +35,10 @@ project.ext {
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set
     preDexEnabled = "true" == System.getProperty("pre-dex", "true")
+
+    // Note: AntPlus may have to be downloaded explicitly due to licensing
+    antPlusLib = "ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar"
+    if (project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLib).exists()) {
+        antPlusLib = ""
+    }
 }

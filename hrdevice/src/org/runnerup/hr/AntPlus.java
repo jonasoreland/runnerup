@@ -62,18 +62,6 @@ public class AntPlus extends BtHRBase {
     private boolean mIsConnecting = false;
     private PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle;
 
-    public static boolean checkLibrary(Context ctx) {
-        try {
-            Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
-            Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
-            Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
-            Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
-            return true;
-        } catch (Exception e) {
-        }
-        return false;
-    }
-
     public AntPlus(Context ctx) {
         this.context = ctx;
     }
