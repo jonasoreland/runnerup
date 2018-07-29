@@ -187,7 +187,7 @@ public class SpinnerPresenter {
     private void onItemSelected(int item) {
         if (mType == SpinnerPresenter.Type.TS_SPINNER_TXT) {
             if (mSpin.getViewAdapter() != null) {
-                setValue(mSpin.getViewAdapter().getItem(item).toString());
+                setValue(mSpin.getViewAdapter().getItem(item).toString()); //I assume that it's called with a string because of the spinner_txt type, but don't know for sure
             }
         } else {
             setValue(getRealValue(item));
@@ -480,11 +480,7 @@ public class SpinnerPresenter {
         int selectionValue = getSelectionValue(value);
         mSpin.setViewSelection(selectionValue);
         if (mSpin.getViewAdapter() != null) {
-            Object val = mSpin.getViewAdapter().getItem(selectionValue);
-            if (val != null)
-                mSpin.setViewValue(val.toString());
-            else
-                mSpin.setViewValue("");
+            mSpin.setViewValue(selectionValue);
         }
         if (mKey == null)
             return;
@@ -523,9 +519,9 @@ public class SpinnerPresenter {
             mCurrValue = (long) SafeParse.parseDouble(value, 0);
         }
         if (mType == Type.TS_DISTANCEPICKER && !TextUtils.isEmpty(value)) {
-            mSpin.setViewValue(String.format("%s %s", value, mContext.getResources().getString(R.string.metrics_distance_m)));
+            mSpin.setViewText(String.format("%s %s", value, mContext.getResources().getString(R.string.metrics_distance_m)));
         } else {
-            mSpin.setViewValue(value);
+            mSpin.setViewText(value);
         }
         if (mType == Type.TS_SPINNER_TXT) {
             if (mSpin.getViewAdapter() != null) {

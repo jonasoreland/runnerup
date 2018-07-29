@@ -82,7 +82,16 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
     }
 
     @Override
-    public void setViewValue(CharSequence charSequence) {
+    public void setViewValue(int itemId) {
+        Object val = mSpinner.getAdapter().getItem(itemId);
+        if (val != null)
+            setViewText(val.toString());
+        else
+            setViewText("");
+    }
+
+    @Override
+    public void setViewText(CharSequence charSequence) {
         mValue.setText(charSequence);
     }
 
@@ -97,7 +106,7 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
     }
 
     @Override
-    public void setViewAdapter(SpinnerAdapter adapter) {
+    public void setViewAdapter(DisabledEntriesAdapter adapter) {
         mSpinner.setAdapter(adapter);
     }
 

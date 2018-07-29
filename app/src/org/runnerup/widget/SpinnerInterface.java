@@ -10,10 +10,11 @@ import android.widget.SpinnerAdapter;
 public interface SpinnerInterface {
     void setViewPrompt(CharSequence charSequence);
     void setViewLabel(CharSequence charSequence);
-    void setViewValue(CharSequence charSequence);
+    void setViewValue(int itemId);
+    void setViewText(CharSequence charSequence);
     CharSequence getViewValueText();
     void setViewOnClickListener(View.OnClickListener onClickListener);
-    void setViewAdapter(SpinnerAdapter adapter);
+    void setViewAdapter(DisabledEntriesAdapter adapter);
     SpinnerAdapter getViewAdapter();
     void setViewSelection(int value);
     void viewOnClose(OnCloseDialogListener listener, boolean b);
