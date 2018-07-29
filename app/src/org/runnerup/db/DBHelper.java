@@ -34,6 +34,7 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
 import org.runnerup.export.DigifitSynchronizer;
+import org.runnerup.export.DropboxSynchronizer;
 import org.runnerup.export.EndomondoSynchronizer;
 import org.runnerup.export.FacebookSynchronizer;
 import org.runnerup.export.FileSynchronizer;
@@ -470,6 +471,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0);
         insertAccount(arg0, FileSynchronizer.NAME, 1);
         insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
+        insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED);
     }
 
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled) {

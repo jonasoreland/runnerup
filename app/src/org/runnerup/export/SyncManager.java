@@ -214,6 +214,8 @@ public class SyncManager {
             synchronizer = new FileSynchronizer();
         } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
             synchronizer = new RunalyzeSynchronizer();
+        } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {
+            synchronizer = new DropboxSynchronizer();
         }
 
         if (synchronizer != null) {
