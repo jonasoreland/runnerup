@@ -90,15 +90,13 @@ import java.util.Locale;
 @TargetApi(Build.VERSION_CODES.FROYO)
 public class StartActivity extends AppCompatActivity implements TickListener, GpsInformation {
 
-    //todo nicer-looking sport spinner entries + background behind bottom bar
-
-    final static String TAB_BASIC = "basic";
-    final static String TAB_INTERVAL = "interval";
+    private final static String TAB_BASIC = "basic";
+    private final static String TAB_INTERVAL = "interval";
     final static String TAB_ADVANCED = "advanced";
 
-    boolean skipStopGps = false;
-    Tracker mTracker = null;
-    org.runnerup.tracker.GpsStatus mGpsStatus = null;
+    private boolean skipStopGps = false;
+    private Tracker mTracker = null;
+    private org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
     private TabHost tabHost = null;
     private View startButton = null;
@@ -115,7 +113,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     TitleSpinner simpleTargetType = null;
     TitleSpinner simpleTargetPaceValue = null;
     TitleSpinner simpleTargetHrz = null;
-    TitleSpinner simpleAudioSpinner = null;
     AudioSchemeListAdapter simpleAudioListAdapter = null;
     HRZonesListAdapter hrZonesAdapter = null;
 
@@ -125,7 +122,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     TitleSpinner intervalRestType = null;
     TitleSpinner intervalRestTime = null;
     TitleSpinner intervalRestDistance = null;
-    TitleSpinner intervalAudioSpinner = null;
     AudioSchemeListAdapter intervalAudioListAdapter = null;
 
     TitleSpinner advancedWorkoutSpinner = null;
@@ -134,7 +130,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     Workout advancedWorkout = null;
     ListView advancedStepList = null;
     final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
-    TitleSpinner advancedAudioSpinner = null;
     AudioSchemeListAdapter advancedAudioListAdapter = null;
 
     SQLiteDatabase mDB = null;
@@ -194,11 +189,11 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 String toastString =
                         (gpsAccuracy.length() != 0 && hrDetail.length() != 0) ?
                                 gpsAccuracy + " • " + hrDetail : gpsAccuracy + hrDetail;
-                if (toastString.length() != 0) {
-                    Toast.makeText(StartActivity.this,
-                            toastString,
-                            Toast.LENGTH_SHORT).show();
-                }
+                if (toastString.length() == 0)
+                    toastString = getString(R.string.GPS_is_required);
+                Toast.makeText(StartActivity.this,
+                        toastString,
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -222,52 +217,45 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         tabHost.setOnTabChangedListener(onTabChangeListener);
         //tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
 
+        simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
+        simpleAudioListAdapter.reload();
+        TitleSpinner simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
+        simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
+        simpleAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(simpleAudioListAdapter));
         simpleTargetType = (TitleSpinner) findViewById(R.id.tab_basic_target_type);
         simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.tab_basic_target_pace_max);
         hrZonesAdapter = new HRZonesListAdapter(this, inflater);
         simpleTargetHrz = (TitleSpinner) findViewById(R.id.tab_basic_target_hrz);
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
-        simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
-        simpleAudioListAdapter.reload();
-        simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
-        simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
 
         intervalType = (TitleSpinner) findViewById(R.id.interval_type);
         intervalTime = (TitleSpinner) findViewById(R.id.interval_time);
         intervalTime.setOnSetValueListener(onSetTimeValidator);
         intervalDistance = (TitleSpinner) findViewById(R.id.interval_distance);
         intervalType.setOnSetValueListener(intervalTypeSetValue);
-        intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
-        intervalAudioListAdapter.reload();
-        intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
-        intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
-
         intervalRestType = (TitleSpinner) findViewById(R.id.interval_rest_type);
         intervalRestTime = (TitleSpinner) findViewById(R.id.interval_rest_time);
         intervalRestTime.setOnSetValueListener(onSetTimeValidator);
         intervalRestDistance = (TitleSpinner) findViewById(R.id.interval_rest_distance);
         intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
+        intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
+        intervalAudioListAdapter.reload();
+        TitleSpinner intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
+        intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
+        intervalAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(intervalAudioListAdapter));
+
+        advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
+        advancedAudioListAdapter.reload();
+        TitleSpinner advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
+        advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
+        advancedAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(advancedAudioListAdapter));
 
         advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advanced_workout_spinner);
         advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
         advancedWorkoutListAdapter.reload();
         advancedWorkoutSpinner.setAdapter(advancedWorkoutListAdapter);
-        advancedWorkoutSpinner.setOnSetValueListener(new OnSetValueListener() {
-            @Override
-            public String preSetValue(String newValue)
-                    throws IllegalArgumentException {
-                loadAdvanced(newValue);
-                return newValue;
-            }
-
-            @Override
-            public int preSetValue(int newValue)
-                    throws IllegalArgumentException {
-                loadAdvanced(null);
-                return newValue;
-            }
-        });
+        advancedWorkoutSpinner.setOnSetValueListener(new OnConfigureWorkoutsListener(advancedWorkoutListAdapter));
         advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
@@ -279,10 +267,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 StartActivity.this.startActivityForResult(intent, 113);
             }
         });
-        advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
-        advancedAudioListAdapter.reload();
-        advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
-        advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
 
         if (getParent() != null && getParent().getIntent() != null) {
             Intent i = getParent().getIntent();
@@ -295,6 +279,54 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
 
         updateTargetView();
+    }
+
+    private class OnConfigureAudioListener implements OnSetValueListener {
+        AudioSchemeListAdapter adapter;
+
+        OnConfigureAudioListener(AudioSchemeListAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_audio_cues___))) {
+                Intent i = new Intent(StartActivity.this, AudioCueSettingsActivity.class);
+                startActivity(i);
+                throw new IllegalArgumentException();
+            }
+            return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValueId) throws IllegalArgumentException {
+            return newValueId;
+        }
+    }
+
+    private class OnConfigureWorkoutsListener implements OnSetValueListener {
+        WorkoutListAdapter adapter;
+
+        OnConfigureWorkoutsListener(WorkoutListAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_workouts___))) {
+                Intent i = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
+                startActivity(i);
+                throw new IllegalArgumentException();
+            }
+            loadAdvanced(newValue);
+            return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValueId) throws IllegalArgumentException {
+            loadAdvanced(null);
+            return newValueId;
+        }
     }
 
     @Override
@@ -417,7 +449,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     }
 
-    void onGpsTrackerBound() {
+    private void onGpsTrackerBound() {
         if (getAutoStartGps()) {
             startGps();
         } else {
@@ -445,7 +477,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         updateView();
     }
 
-    boolean getAutoStartGps() {
+    private boolean getAutoStartGps() {
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
         return pref.getBoolean(getString(R.string.pref_startgps), false);
@@ -477,7 +509,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         notificationStateManager.cancelNotification();
     }
 
-    protected void notificationBatteryLevel(int batteryLevel) {
+    private void notificationBatteryLevel(int batteryLevel) {
         if ((batteryLevel < 0) || (batteryLevel > 100)) {
             return;
         }
@@ -523,7 +555,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         prompt.show();
     }
 
-    final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
+    private final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
 
         @Override
         public void onTabChanged(String tabId) {
@@ -534,7 +566,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    Workout prepareWorkout() {
+    private Workout prepareWorkout() {
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences audioPref = null;
@@ -564,7 +596,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         return w;
     }
 
-    final OnClickListener startButtonClick = new OnClickListener() {
+    private final OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (mTracker.getState() == TrackerState.CONNECTED) {
                 mGpsStatus.stop(StartActivity.this);
@@ -591,9 +623,9 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    final OnClickListener gpsEnableClick = new OnClickListener() {
+    private final OnClickListener gpsEnableClick = new OnClickListener() {
         public void onClick(View v) {
-            if (!mGpsStatus.isEnabled()) { //todo split these apart
+            if (!mGpsStatus.isEnabled()) {
                 startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             } else if (mTracker.getState() != TrackerState.CONNECTED) {
                 startGps();
@@ -704,13 +736,13 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         if (btDeviceName != null) {
             str.append(btDeviceName);
         } else if (MockHRProvider.NAME.contentEquals(prefs.getString(getString(R.string.pref_bt_provider), ""))) {
-            str.append("mock: " + prefs.getString(getString(R.string.pref_bt_address), "???"));
+            str.append("mock: ").append(prefs.getString(getString(R.string.pref_bt_address), "???"));
         }
 
         if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
             Integer hrVal = mTracker.getCurrentHRValue();
             if (hrVal != null)
-                str.append(" " + hrVal);
+                str.append(" ").append(hrVal);
         }
         return str.toString();
     }
@@ -737,7 +769,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    void bindGpsTracker() {
+    private void bindGpsTracker() {
         // Establish a connection with the service. We use an explicit
         // class name because we want a specific service implementation that
         // we know will be running in our own process (and thus won't be
@@ -747,7 +779,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         mIsBound = true;
     }
 
-    void unbindGpsTracker() {
+    private void unbindGpsTracker() {
         if (mIsBound) {
             // Detach our existing connection.
             getApplicationContext().unbindService(mConnection);
@@ -785,7 +817,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         updateView();
     }
 
-    final OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
+    private final OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
 
         @Override
         public void onClose(SpinnerInterface spinner, boolean ok) {
@@ -795,7 +827,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    void updateTargetView() {
+    private void updateTargetView() {
         Dimension dim = Dimension.valueOf(simpleTargetType.getValueInt());
         if (dim == null) {
             simpleTargetPaceValue.setEnabled(false);
@@ -815,7 +847,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     }
 
-    final OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
+    private final OnSetValueListener intervalTypeSetValue = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -832,7 +864,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    final OnSetValueListener intervalRestTypeSetValue = new OnSetValueListener() {
+    private final OnSetValueListener intervalRestTypeSetValue = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)
@@ -849,7 +881,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    void loadAdvanced(String name) {
+    private void loadAdvanced(String name) {
         Context ctx = getApplicationContext();
         if (name == null) {
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -875,7 +907,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                         }
                     });
             builder.show();
-            return;
         }
     }
 
@@ -891,7 +922,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     final class WorkoutStepsAdapter extends BaseAdapter {
 
-        List<StepListEntry> steps = new ArrayList<StepListEntry>();
+        List<StepListEntry> steps = new ArrayList<>();
 
         @Override
         public int getCount() {
@@ -924,7 +955,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     }
 
-    final Runnable onWorkoutChanged = new Runnable() {
+    private final Runnable onWorkoutChanged = new Runnable() {
         @Override
         public void run() {
             String name = advancedWorkoutSpinner.getValue().toString();
@@ -948,7 +979,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    final OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
+    private final OnSetValueListener onSetTimeValidator = new OnSetValueListener() {
 
         @Override
         public String preSetValue(String newValue)

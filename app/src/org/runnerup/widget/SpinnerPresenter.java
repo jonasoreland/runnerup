@@ -507,6 +507,9 @@ public class SpinnerPresenter {
             try {
                 value = mSetValueListener.preSetValue(value);
             } catch (java.lang.IllegalArgumentException ex) {
+                if (mSpin.getViewAdapter() != null) {
+                    mSpin.setViewSelection((int) mCurrValue);
+                }
                 return;
             }
         }
@@ -527,6 +530,7 @@ public class SpinnerPresenter {
         if (mType == Type.TS_SPINNER_TXT) {
             if (mSpin.getViewAdapter() != null) {
                 int intVal = find(mSpin.getViewAdapter(), value);
+                mCurrValue = intVal; // here because onclicklistener doesn't react to changing to the same value twice
                 mSpin.setViewSelection(intVal);
             }
         }
