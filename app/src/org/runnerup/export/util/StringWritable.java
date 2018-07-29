@@ -22,13 +22,17 @@ import java.io.OutputStream;
 
 
 public class StringWritable implements Writable {
-    private final String s;
+    private final byte[]  s;
 
     public StringWritable(String s) {
+        this.s = s.getBytes();
+    }
+
+    public StringWritable(byte[] s) {
         this.s = s;
     }
 
     public void write(OutputStream out) throws IOException {
-        out.write(s.getBytes());
+        out.write(s);
     }
 }
