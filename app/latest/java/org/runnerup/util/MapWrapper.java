@@ -45,6 +45,7 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
@@ -74,7 +75,7 @@ public class MapWrapper implements Constants {
     }
 
     public static void start(Context context) {
-        Mapbox.getInstance(context, context.getString(R.string.mapboxAccessToken));
+        Mapbox.getInstance(context, BuildConfig.MAPBOX_ACCESS_TOKEN);
     }
 
     private void setStyle() {

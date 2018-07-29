@@ -154,18 +154,18 @@ if (rootProject.file("release.properties").exists()) {
     android.buildTypes.release.signingConfig = null
 }
 
-android.applicationVariants.all { variant ->
-    variant.mergeResources.doLast {
-        if (rootProject.file("mapbox.properties").exists()) {
-            props.load(new FileInputStream(rootProject.file("mapbox.properties")))
-            File valuesFile = file("${buildDir}/intermediates/res/merged/${variant.dirName}/values/values.xml")
-            String content = valuesFile.getText('UTF-8')
-            content = content.replaceAll(/mapboxMapID.*/, "mapboxMapID\">" + props.mapboxid + "</string>")
-            content = content.replaceAll(/mapboxAccessToken.*/, "mapboxAccessToken\">" + props.mapboxAccessToken + "</string>")
-            valuesFile.write(content, 'UTF-8')
-        }
-    }
+android.applicationVariants.all {
     // Note: As a minimum extra security at least obfuscate the strings with Proguard
+    if (rootProject.file("mapbox.properties").exists()) {
+        // https://www.mapbox.com/account/
+        props.load(new FileInputStream(rootProject.file("mapbox.properties")))
+        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
+    }
+    else {
+        // Demo key
+        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '"pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw"'
+    }
+
     if (rootProject.file("runalyze.properties").exists()) {
         props.load(new FileInputStream(rootProject.file("runalyze.properties")))
         buildConfigField 'int', 'RUNALYZE_ENABLED', "1"
