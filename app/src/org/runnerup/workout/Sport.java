@@ -135,13 +135,13 @@ public enum Sport {
     // part of filename used to determine type for Tapiriik files
     public String TapiriikType() {
         if (IsRunning()) {
-            return "run";
+            return "Running";
         } else if (IsCycling()) {
-            return "bike";
+            return "Cycling";
         } else if (IsWalking()) {
-            return "walk";
+            return "Walking";
         } else {
-            return "other";
+            return "Other";
         }
     }
 }

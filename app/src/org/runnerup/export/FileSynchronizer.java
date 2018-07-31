@@ -166,7 +166,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 }
             }
             String fileBase = new File(mPath).getAbsolutePath() + File.separator +
-                    String.format(Locale.getDefault(), "RunnerUp_%s_%04d.", sport.TapiriikType(), mID);
+                    String.format(Locale.getDefault(), "RunnerUp_%04d_%s.", mID, sport.TapiriikType());
             
             if (mFormat.contains("tcx")) {
                 TCX tcx = new TCX(db);
