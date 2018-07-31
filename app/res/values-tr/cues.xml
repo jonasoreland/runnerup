@@ -46,12 +46,12 @@
     <item quantity="other">%d metre</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d kilometre</item>
-    <item quantity="other">%d kilometre</item>
+    <item quantity="one">%s kilometre</item>
+    <item quantity="other">%s kilometre</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d mil</item>
-    <item quantity="other">%d mil</item>
+    <item quantity="one">%s mil</item>
+    <item quantity="other">%s mil</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d kalp atışı (dakikada)</item>

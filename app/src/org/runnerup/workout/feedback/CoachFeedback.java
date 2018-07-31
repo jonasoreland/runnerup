@@ -41,20 +41,8 @@ public class CoachFeedback extends AudioFeedback {
         this.range = range;
         this.trigger = trigger;
 
-        switch (dimension) {
-            case PACE:
+        if (dimension == Dimension.PACE) {
                 sign = -1; // pace is "inverse"
-                break;
-            case DISTANCE:
-            case HR:
-            case HRZ:
-            case CAD:
-            case TEMPERATURE:
-            case PRESSURE:
-            case SPEED:
-            case TIME:
-            default:
-                break;
         }
     }
 

@@ -61,19 +61,19 @@
     <item quantity="other">%d أخرى</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="zero">%d صفر</item>
-    <item quantity="one">%d كيلو متر واحد</item>
-    <item quantity="two">%d كيلومتران</item>
-    <item quantity="few">%d بضع كيلومترات</item>
-    <item quantity="many">%d كيلومترات كثيرة </item>
-    <item quantity="other">%d اخرى</item>
+    <item quantity="zero">%s صفر</item>
+    <item quantity="one">%s كيلو متر واحد</item>
+    <item quantity="two">%s كيلومتران</item>
+    <item quantity="few">%s بضع كيلومترات</item>
+    <item quantity="many">%s كيلومترات كثيرة </item>
+    <item quantity="other">%s اخرى</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="zero">صفر</item>
-    <item quantity="one">%d ميل واحد</item>
-    <item quantity="two">%d ميلان</item>
-    <item quantity="few">%d بضع أميال</item>
-    <item quantity="many">%d أميال كثيرة</item>
-    <item quantity="other">%d اخرى</item>
+    <item quantity="zero">%s صفر</item>
+    <item quantity="one">%s ميل واحد</item>
+    <item quantity="two">%s ميلان</item>
+    <item quantity="few">%s بضع أميال</item>
+    <item quantity="many">%s أميال كثيرة</item>
+    <item quantity="other">%s اخرى</item>
   </plurals>
 </resources>

@@ -46,12 +46,12 @@
     <item quantity="other">%d meter</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d kilometer</item>
-    <item quantity="other">%d kilometer</item>
+    <item quantity="one">%s kilometer</item>
+    <item quantity="other">%s kilometer</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d mile</item>
-    <item quantity="other">%d miles</item>
+    <item quantity="one">%s mile</item>
+    <item quantity="other">%s miles</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s kilometer i timmen</item>

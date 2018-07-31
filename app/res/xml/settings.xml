@@ -175,7 +175,7 @@
             android:title="@string/Poll_interval_ms" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="5"
+            android:defaultValue="0"
             android:inputType="number"
             android:key="@string/pref_pollDistance"
             android:persistent="true"

@@ -66,6 +66,7 @@
     <string name="cueinfo_current_hr">cueinfo_current_hr</string>
     <string name="cueinfo_current_hrz">cueinfo_current_hrz</string>
     <string name="cueinfo_current_pace">cueinfo_current_pace</string>
+    <string name="cueinfo_current_cad">cueinfo_current_cadence</string>
 
     <string name="cueinfo_target_coaching">cueinfo_target_coaching</string>
     <string name="cueinfo_skip_startstop">cueinfo_skip_startstop</string>
