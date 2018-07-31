@@ -70,10 +70,6 @@ public class SettingsActivity extends PreferenceActivity
             Preference btn = findPreference(res.getString(R.string.pref_prunedb));
             btn.setOnPreferenceClickListener(onPruneClick);
         }
-        {
-            //Currently unused, should maybe be removed?
-            getPreferenceManager().findPreference(res.getString(R.string.pref_experimental_features)).setEnabled(false);
-        }
 
         //Geoid correction is not included in Froyo
         if (BuildConfig.FLAVOR.equals("froyo")) {
@@ -88,8 +84,8 @@ public class SettingsActivity extends PreferenceActivity
             getPreferenceManager().findPreference(res.getString(R.string.pref_battery_level_high_threshold)).setEnabled(false);
         }
         {
-            Preference pref = findPreference(this.getString(R.string.pref_experimental_features));
-            pref.setSummary(null);
+            //Preference pref = findPreference(this.getString(R.string.pref_experimental_features));
+            //pref.setSummary(null);
         }
 
         if (!TrackerCadence.isAvailable(this)) {

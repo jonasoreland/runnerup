@@ -328,12 +328,12 @@
             android:key="@string/pref_prunedb"
             android:summary="@string/Pruning_deleted_activities_from_database" />
 
-        <CheckBoxPreference
+        <!--CheckBoxPreference
             android:defaultValue="false"
             android:persistent="true"
             android:key="@string/pref_experimental_features"
             android:title="@string/Experimental_features"
-            android:summary="@string/Unused_currently" />
+            android:summary="@string/Unused_currently" /-->
 
     </PreferenceScreen>
 
