@@ -18,4 +18,5 @@ gen/
 
 # Release signing property file
 release.properties
+/mapbox.properties
 /runalyze.properties
