@@ -453,7 +453,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
         //"Minor changes" like adding a new syncher can be handled with updating DB.DBINFO.ACCOUNT_VERSION
         insertAccount(arg0, GarminSynchronizer.NAME, 0);
-        insertAccount(arg0, RunKeeperSynchronizer.NAME, 1);
+        insertAccount(arg0, RunKeeperSynchronizer.NAME, RunKeeperSynchronizer.ENABLED);
         insertAccount(arg0, JoggSESynchronizer.NAME, 0);
         insertAccount(arg0, FunBeatSynchronizer.NAME, 0);
         insertAccount(arg0, MapMyRunSynchronizer.NAME, 0);
