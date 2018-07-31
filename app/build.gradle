@@ -168,14 +168,14 @@ android.applicationVariants.all { variant ->
     // Note: As a minimum extra security at least obfuscate the strings with Proguard
     if (rootProject.file("runalyze.properties").exists()) {
         props.load(new FileInputStream(rootProject.file("runalyze.properties")))
-        variant.buildConfigField 'int', 'RUNALIZE_ENABLED', "1"
-        variant.buildConfigField 'String', 'RUNALIZE_ID', props.RUNALIZE_ID
-        variant.buildConfigField 'String', 'RUNALIZE_SECRET', props.RUNALIZE_SECRET
+        buildConfigField 'int', 'RUNALYZE_ENABLED', "1"
+        buildConfigField 'String', 'RUNALYZE_ID', props.CLIENT_ID
+        buildConfigField 'String', 'RUNALYZE_SECRET', props.CLIENT_SECRET
     }
     else {
-        variant.buildConfigField 'int', 'RUNALIZE_ENABLED', "0"
-        variant.buildConfigField 'String', 'RUNALIZE_ID', "null"
-        variant.buildConfigField 'String', 'RUNALIZE_SECRET', "null"
+        buildConfigField 'int', 'RUNALYZE_ENABLED', "0"
+        buildConfigField 'String', 'RUNALYZE_ID', "null"
+        buildConfigField 'String', 'RUNALYZE_SECRET', "null"
     }
 }
 
