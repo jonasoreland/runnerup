@@ -98,8 +98,7 @@ public class ActivityProvider extends ContentProvider {
             try {
                 Context ctx = getContext();
                 if (BuildConfig.DEBUG && ctx == null) { throw new AssertionError(); }
-                //noinspection UnusedAssignment
-                File path = null;
+                File path;
                 switch (i) {
                     case 0:
                     default:

@@ -875,7 +875,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         if ("".contentEquals(name))
             return;
         try {
-            advancedWorkout = WorkoutSerializer.readFile(ctx, name + ".json");
+            advancedWorkout = WorkoutSerializer.readFile(ctx, name);
             advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
             advancedWorkoutStepsAdapter.notifyDataSetChanged();
             advancedDownloadWorkoutButton.setVisibility(View.GONE);
