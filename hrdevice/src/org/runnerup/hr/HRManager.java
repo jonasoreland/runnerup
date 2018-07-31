@@ -34,6 +34,23 @@ import java.util.List;
 
 public class HRManager {
 
+    // AntPlus module may be disabled when building, only available in a few phones
+    private static final String AntPlusLib = "org.runnerup.hr.AntPlus";
+    private static boolean checkAntPlusLibrary() {
+        if (BuildConfig.ANTPLUS_ENABLED) {
+            try {
+                Class.forName(AntPlusLib);
+                Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
+                Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
+                Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
+                Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
+                return true;
+            } catch (Exception e) {
+            }
+        }
+        return false;
+    }
+
     private static HRProvider createProviderByReflection(String clazz, Context ctx) {
         try {
             Class<?> classDefinition = Class.forName(clazz);
@@ -79,12 +96,11 @@ public class HRManager {
             return new Bt20Base.PolarHRM(ctx);
         }
 
-        if (src.contentEquals(AntPlus.NAME)) {
-            if (!AntPlus.checkLibrary(ctx))
-                return null;
-            HRProvider p = new AntPlus(ctx);
-            System.err.println("getHRProvider(" + src + ") => " + p);
-            return p;
+        if (checkAntPlusLibrary()) {
+            HRProvider hrprov = createProviderByReflection(AntPlusLib, ctx);
+            if (src.contentEquals(hrprov.getProviderName())) {
+                return hrprov;
+            }
         }
 
         if (src.contentEquals(Bt20Base.StHRMv1.NAME)) {
@@ -132,8 +148,8 @@ public class HRManager {
             providers.add(new Bt20Base.StHRMv1(ctx));
         }
 
-        if (AntPlus.checkLibrary(ctx)) {
-            providers.add(new AntPlus(ctx));
+        if (checkAntPlusLibrary()) {
+            providers.add(createProviderByReflection(AntPlusLib, ctx));
         }
 
         if (mock) {

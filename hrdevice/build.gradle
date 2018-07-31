@@ -28,6 +28,13 @@ android {
         targetSdkVersion rootProject.ext.compileSdkVersion
         versionCode 1
         versionName = version
+
+        if (rootProject.ext.antPlusLib) {
+            buildConfigField 'Boolean', 'ANTPLUS_ENABLED', "true"
+        } else {
+            android.sourceSets.main.java.excludes = ['org/runnerup/hr/AntPlus.java']
+            buildConfigField 'Boolean', 'ANTPLUS_ENABLED', "false"
+        }
     }
 }
 
@@ -37,5 +44,7 @@ repositories {
 }
 
 dependencies {
-    implementation files('../ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar')
+    if (rootProject.ext.antPlusLib) {
+        implementation files("../" + antPlusLib)
+    }
 }
