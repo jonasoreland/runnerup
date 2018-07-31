@@ -29,7 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
-import org.runnerup.export.format.GPX;
+import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.Part;
@@ -39,6 +39,7 @@ import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,6 +48,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPOutputStream;
 
 
 public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Server {
@@ -224,6 +226,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         String desc;
         String stravaType;
     }
+
     private ActivityDbInfo getStravaType(SQLiteDatabase db, final long mID) {
         final String[] aColumns = {DB.ACTIVITY.COMMENT, DB.ACTIVITY.SPORT};
         Cursor cursor = db.query(DB.ACTIVITY.TABLE, aColumns, "_id = "
@@ -237,6 +240,16 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return dbInfo;
     }
 
+    private static byte[] gzip(String string) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream(string.length());
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+        gos.write(string.getBytes());
+        gos.close();
+        byte[] compressed = os.toByteArray();
+        os.close();
+        return compressed;
+    }
+
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s = connect();
@@ -245,11 +258,11 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             return s;
         }
 
-        GPX gpx = new GPX(db, true, false);
+        TCX tcx = new TCX(db);
         Exception ex;
         try {
             StringWriter writer = new StringWriter();
-            gpx.export(mID, writer);
+            tcx.export(mID, writer);
             ActivityDbInfo dbInfo = getStravaType(db, mID);
 
             HttpURLConnection conn = (HttpURLConnection) new URL(REST_URL).openConnection();
@@ -258,10 +271,10 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             conn.setRequestProperty("Authorization", "Bearer " + access_token);
 
             Part<StringWritable> dataTypePart = new Part<>("data_type",
-                    new StringWritable("gpx"));
+                    new StringWritable("tcx.gz"));
             Part<StringWritable> filePart = new Part<>("file",
-                    new StringWritable(writer.toString()));
-            filePart.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.gpx", mID));
+                    new StringWritable(gzip(writer.toString())));
+            filePart.setFilename(String.format(Locale.getDefault(), "RunnerUp_%04d.tcx.gz", mID));
             filePart.setContentType("application/octet-stream");
             Part<StringWritable> activityTypePart = new Part<>("activity_type",
                     new StringWritable(dbInfo.stravaType));
