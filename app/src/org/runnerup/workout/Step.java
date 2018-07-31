@@ -284,6 +284,8 @@ public class Step implements TickComponent {
         }
     }
 
+    private double mPrevLapDistance = 0;
+    private double mPrevLapTime = 0;
     /**
      * @return true if finished
      */
@@ -296,8 +298,19 @@ public class Step implements TickComponent {
             t.onTick(s);
         }
 
-        if (this.autolap > 0 && s.getDistance(Scope.LAP) >= this.autolap) {
-            s.onNewLap();
+        if (this.autolap > 0) {
+            double lapDistance = s.getDistance(Scope.LAP);
+            double lapTime = s.getTime(Scope.LAP);
+            if (lapDistance >= this.autolap ||
+                    // autolap if this point is closer to the limit then next point
+                    // (assuming the time/speed is is the same to next tick, but this should even out)
+                    mPrevLapDistance > 0 && lapTime > mPrevLapTime &&
+                    (lapDistance + (lapDistance - mPrevLapDistance)/2) >= this.autolap) {
+                s.onNewLap();
+                lapDistance = 0;
+            }
+            mPrevLapDistance = lapDistance;
+            mPrevLapTime = lapTime;
         }
         return false;
     }
