@@ -253,8 +253,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
                 conn.disconnect();
 
             } else {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-                Log.v(getName(), "refresh code: " + responseCode + amsg + " " + in.toString());
+                InputStream in = conn.getErrorStream();
+                String msg = in == null ? "" : SyncHelper.readInputStream(in);
+                Log.v(getName(), "refresh code: " + responseCode + amsg + " " + msg);
                 conn.disconnect();
 
                 // token no longer valid (normally HTTP_UNAUTHORIZED)
@@ -328,8 +329,9 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 obj = SyncHelper.parse(in);
             } catch (IOException e) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-                Log.v(getName(), "error code: " + in.toString());
+                InputStream in = conn.getErrorStream();
+                String msg = in == null ? "" : SyncHelper.readInputStream(in);
+                Log.v(getName(), "error code: " + msg);
             } finally {
                 conn.disconnect();
             }
@@ -345,17 +347,19 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
                 }
                 return s;
             }
-            Log.e(getName(),
-                    "Error uploading to Runalyze. code: " +
-                            responseCode + ", amsg: " + amsg + ", json: " + (obj == null ? "" : obj));
-            if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                // token no longer valid
-                access_token = null;
-            }
             String error = obj != null && obj.has("error") ?
                     noNullStr(obj.getString("error")) :
                     "";
+            Log.e(getName(),
+                    "Error uploading, code: " +
+                            responseCode + ", amsg: " + amsg + " " + error + ", json: " + (obj == null ? "" : obj));
             s = Status.ERROR;
+            if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                // token no longer valid
+                access_token = null;
+                s = Status.NEED_AUTH;
+                s.authMethod = AuthMethod.OAUTH2;
+            }
             s.ex = new Exception(amsg + error);
         } catch (IOException e) {
             s = Status.ERROR;
