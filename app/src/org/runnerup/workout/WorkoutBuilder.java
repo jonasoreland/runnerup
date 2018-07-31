@@ -267,12 +267,14 @@ public class WorkoutBuilder {
             ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
             triggers.add(ev);
 
-            EventTrigger ev2 = new EventTrigger(); // for autolap
-            ev2.event = Event.STARTED;
-            ev2.scope = Scope.LAP;
-            ev2.skipCounter = 1; // skip above
-            ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
-            triggers.add(ev2);
+            if (prefs.getBoolean(res.getString(R.string.pref_autolap_started), false)) {
+                EventTrigger ev2 = new EventTrigger(); // for autolap
+                ev2.event = Event.STARTED;
+                ev2.scope = Scope.LAP;
+                ev2.skipCounter = 1; // skip above
+                ev2.triggerAction.add(new AudioFeedback(R.string.cue_autolap_started));
+                triggers.add(ev2);
+            }
 
             if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
                 HRMStateTrigger hrmState = new HRMStateTrigger();
