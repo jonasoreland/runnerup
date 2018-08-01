@@ -454,6 +454,9 @@ public class WorkoutSerializer {
     }
 
     public static File getFile(Context ctx, String name) {
+        if (!name.endsWith(".json")) {
+            name += ".json";
+        }
         return new File(ctx.getDir(WORKOUTS_DIR, 0).getPath() + File.separator + name);
     }
 
