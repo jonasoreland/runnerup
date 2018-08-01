@@ -194,7 +194,7 @@ public class GPX {
                                 //raw elevation
                                 ele = cLocation.getFloat(14);
                             }
-                            else if (cLocation.isNull(4)) {
+                            else if (!cLocation.isNull(4)) {
                                 ele = cLocation.getFloat(4);
                             }
                             if (ele != null) {
