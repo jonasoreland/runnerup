@@ -177,6 +177,17 @@ android.applicationVariants.all {
         buildConfigField 'String', 'RUNALYZE_ID', "null"
         buildConfigField 'String', 'RUNALYZE_SECRET', "null"
     }
+    if (rootProject.file("dropbox.properties").exists()) {
+        props.load(new FileInputStream(rootProject.file("dropbox.properties")))
+        buildConfigField 'int', 'DROPBOX_ENABLED', "1"
+        buildConfigField 'String', 'DROPBOX_ID', props.CLIENT_ID
+        buildConfigField 'String', 'DROPBOX_SECRET', props.CLIENT_SECRET
+    }
+    else {
+        buildConfigField 'int', 'DROPBOX_ENABLED', "0"
+        buildConfigField 'String', 'DROPBOX_ID', "null"
+        buildConfigField 'String', 'DROPBOX_SECRET', "null"
+    }
 }
 
 //Based on an example from https://developer.android.com/studio/build/configure-apk-splits.html
