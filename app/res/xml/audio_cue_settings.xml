@@ -64,6 +64,13 @@
 		android:title="@string/End_of_lap_audio_cue" />
 
 	<CheckBoxPreference
+		android:dependency="@string/cue_end_of_lap"
+		android:defaultValue="true"
+		android:persistent="true"
+		android:key="@string/pref_autolap_started"
+		android:title="@string/Autolap_started" />
+
+	<CheckBoxPreference
 		android:defaultValue="false"
 		android:persistent="true"
 		android:key="@string/pref_mute_bool"

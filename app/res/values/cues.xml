@@ -73,6 +73,7 @@
   <string name="cue_activity_resumed">activity resumed</string>
   <string name="cue_activity_stopped">activity stopped</string>
   <string name="cue_lap_started">lap started</string>
+  <string name="cue_autolap_started">autolap started</string>
   <string name="cue_lap_completed">lap completed</string>
   <string name="cue_warmup_started">warmup started</string>
   <string name="cue_cooldown_started">cooldown started</string>
