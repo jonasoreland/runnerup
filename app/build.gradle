@@ -62,10 +62,9 @@ android {
 
     splits {
         abi {
-            //We would have preferred to not create split for Froyo, so explicitly enabling split
-            //.\gradlew --project-prop splitApk assembleLatestRelease
-            enable project.hasProperty('splitApk')
-            exclude 'mips64'
+            enable gradle.startParameter.taskNames.contains(":app:assembleLatestRelease")
+            // relevant archs only - these are the only available anyway for newer NDK
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
             universalApk true
         }
     }
