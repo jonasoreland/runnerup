@@ -33,6 +33,7 @@ notifications:
 
 script:
     - ./gradlew wear:lintRelease
-    - ./gradlew lintLatestRelease assembleLatestRelease
+    - ./gradlew assembleLatestRelease
+    - ./gradlew lintLatestRelease
     - ./gradlew assembleFroyoRelease lintFroyoRelease
     - ./gradlew test
