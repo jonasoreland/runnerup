@@ -31,6 +31,8 @@ project.ext {
 
     versionName = '1.58'
     versionCode = 58
+    //Set a specific name to this app. Also need to be changed in settings.xml
+    applicationIdSuffix = ""
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set
