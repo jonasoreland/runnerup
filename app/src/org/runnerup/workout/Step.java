@@ -284,8 +284,8 @@ public class Step implements TickComponent {
         }
     }
 
-    private double mPrevLapDistance = 0;
-    private double mPrevLapTime = 0;
+    private double mPrevTickLapDistance = 0;
+    private double mPrevTickLapTime = 0;
     /**
      * @return true if finished
      */
@@ -304,13 +304,13 @@ public class Step implements TickComponent {
             if (lapDistance >= this.autolap ||
                     // autolap if this point is closer to the limit then next point
                     // (assuming the time/speed is is the same to next tick, but this should even out)
-                    mPrevLapDistance > 0 && lapTime > mPrevLapTime &&
-                    (lapDistance + (lapDistance - mPrevLapDistance)/2) >= this.autolap) {
+                    mPrevTickLapDistance > 0 && lapTime > mPrevTickLapTime &&
+                    (lapDistance + (lapDistance - mPrevTickLapDistance)/2) >= this.autolap) {
                 s.onNewLap();
                 lapDistance = 0;
             }
-            mPrevLapDistance = lapDistance;
-            mPrevLapTime = lapTime;
+            mPrevTickLapDistance = lapDistance;
+            mPrevTickLapTime = lapTime;
         }
         return false;
     }
@@ -337,14 +337,14 @@ public class Step implements TickComponent {
     @Override
     public void onComplete(Scope scope, Workout s) {
         if (scope == Scope.LAP) {
-            long distance = Math.round(s.getDistance(scope));
+            double distance = s.getDistance(scope);
             long time = Math.round(s.getTime(scope));
-            double hr = s.getHeartRate(scope);
             if (distance > 0 || time > 0) {
                 ContentValues tmp = new ContentValues();
                 tmp.put(DB.LAP.DISTANCE, distance);
                 tmp.put(DB.LAP.TIME, time);
-                tmp.put(DB.LAP.AVG_HR, Math.round(hr));
+                long hr = Math.round(s.getHeartRate(scope));
+                tmp.put(DB.LAP.AVG_HR, hr);
                 s.saveLap(tmp, /* next lap */
                 true);
             }
