@@ -384,7 +384,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     Synchronizer synchronizer = syncManager.add(tmp);
                     //Note: Show all configured accounts (also those are not currently enabled)
                     //Uploaded but removed accounts are not displayed
-                    if (!synchronizer.checkSupport(Feature.UPLOAD) || !synchronizer.isConfigured()) {
+                    if (synchronizer == null || !synchronizer.checkSupport(Feature.UPLOAD) || !synchronizer.isConfigured()) {
                         continue;
                     }
 
