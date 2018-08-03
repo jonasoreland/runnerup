@@ -29,8 +29,8 @@ project.ext {
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
-    versionName = '1.58'
-    versionCode = 58
+    versionName = '1.90.1'
+    versionCode = 200
     //Set a specific name to this app. Also need to be changed in settings.xml
     applicationIdSuffix = ".alpha"
 
