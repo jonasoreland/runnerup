@@ -163,11 +163,11 @@ public class TCX {
         Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, DB.LAP.DISTANCE + " > 0 and "
                 + DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
         String[] pColumns = {
-                DB.LOCATION.LAP, DB.LOCATION.TIME,
-                DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
-                DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR,
-                DB.LOCATION.CADENCE, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE,
-                DB.LOCATION.DISTANCE
+                DB.LOCATION.LAP, DB.LOCATION.TYPE,
+                DB.LOCATION.TIME, DB.LOCATION.DISTANCE,
+                DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE,
+                DB.LOCATION.HR, DB.LOCATION.CADENCE //, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE
+
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
@@ -184,7 +184,7 @@ public class TCX {
                 }
                 mXML.startTag("", "Lap");
                 if (pok && cLocation.getLong(0) == lap) {
-                    mXML.attribute("", "StartTime", formatTime(cLocation.getLong(1)));
+                    mXML.attribute("", "StartTime", formatTime(cLocation.getLong(2)));
                 } else {
                     mXML.attribute("", "StartTime", formatTime(startTime));
                 }
@@ -221,9 +221,9 @@ public class TCX {
                             }
                             mXML.startTag("", "Track");
                         }
-                        long time = cLocation.getLong(1);
-                        float lat = cLocation.getFloat(2);
-                        float longi = cLocation.getFloat(3);
+                        long time = cLocation.getLong(2);
+                        float lat = cLocation.getFloat(4);
+                        float longi = cLocation.getFloat(5);
                         if (time != last_time) {
                             cntTrackpoints++;
 
@@ -239,13 +239,13 @@ public class TCX {
                             mXML.text("" + longi);
                             mXML.endTag("", "LongitudeDegrees");
                             mXML.endTag("", "Position");
-                            if (!cLocation.isNull(4)) {
+                            if (!cLocation.isNull(6)) {
                                 mXML.startTag("", "AltitudeMeters");
-                                mXML.text("" + cLocation.getLong(4));
+                                mXML.text("" + cLocation.getLong(6));
                                 mXML.endTag("", "AltitudeMeters");
                             }
-                            if (!cLocation.isNull(10)) {
-                                totalDistance = cLocation.getFloat(10);
+                            if (!cLocation.isNull(3)) {
+                                totalDistance = cLocation.getFloat(3);
                             } else {
                                 // Only for older activities, also increases distance when pausing
                                 // Most importers do not use this info anyway
@@ -261,8 +261,8 @@ public class TCX {
                             mXML.startTag("", "DistanceMeters");
                             mXML.text("" + totalDistance);
                             mXML.endTag("", "DistanceMeters");
-                            if (!cLocation.isNull(6)) {
-                                int hr = cLocation.getInt(6);
+                            if (!cLocation.isNull(7)) {
+                                int hr = cLocation.getInt(7);
                                 if (hr > 0) {
                                     maxHR = hr > maxHR ? hr : maxHR;
                                     sumHR += hr;
@@ -277,15 +277,15 @@ public class TCX {
                                 }
                             }
 
-                            boolean isCad = !cLocation.isNull(7);
+                            boolean isCad = !cLocation.isNull(8);
                             boolean isBikeCad = isCad && sport.IsCycling();
                             boolean isRunCad = isCad && !isBikeCad;
                             //Not supported in .tcx, uncomment for testing
-                            //boolean isTemp = !cLocation.isNull(8);
-                            //boolean isPres = !cLocation.isNull(9);
+                            //boolean isTemp = !cLocation.isNull(9);
+                            //boolean isPres = !cLocation.isNull(10);
                             //boolean isAnyExt = isRunCad || isTemp || isPres;
                             if (isBikeCad) {
-                                int val = cLocation.getInt(7);
+                                int val = cLocation.getInt(8);
                                 mXML.startTag("", "Cadence");
                                 String sval = Integer.toString(val);
                                 mXML.text(sval);
@@ -299,7 +299,7 @@ public class TCX {
                                 //"standard" extensions: RunCadence, Speed, Watts
                             }
                             if (isRunCad) {
-                                int val = cLocation.getInt(7);
+                                int val = cLocation.getInt(8);
                                 mXML.startTag("", "RunCadence");
                                 String sval = Integer.toString(val);
                                 mXML.text(sval);
@@ -308,14 +308,14 @@ public class TCX {
                             }
                             //if (isTemp || isPres) {
                             //    if (isTemp) {
-                            //        int val = cLocation.getInt(8);
+                            //        int val = cLocation.getInt(9);
                             //        mXML.startTag("", "ext:Temperature");
                             //        String sval = Float.toString(val);
                             //        mXML.text(sval);
                             //        mXML.endTag("", "ext:Temperature");
                             //    }
                             //    if (isPres) {
-                            //        int val = cLocation.getInt(9);
+                            //        int val = cLocation.getInt(10);
                             //        mXML.startTag("", "ext:Pressure");
                             //        String sval = Float.toString(val);
                             //        mXML.text(sval);
