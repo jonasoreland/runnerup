@@ -255,6 +255,8 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
             JSONObject parameters = new JSONObject();
             try {
                 parameters.put("path", file);
+                parameters.put("mode", "add");
+                parameters.put("autorename", true);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return Status.ERROR;
