@@ -166,7 +166,8 @@ public class TCX {
                 DB.LOCATION.LAP, DB.LOCATION.TIME,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
                 DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE, DB.LOCATION.HR,
-                DB.LOCATION.CADENCE, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE
+                DB.LOCATION.CADENCE, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE,
+                DB.LOCATION.DISTANCE
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
@@ -208,15 +209,22 @@ public class TCX {
                 int cntTrackpoints = 0;
 
                 if (pok && cLocation.getLong(0) == lap) {
-                    mXML.startTag("", "Track");
                     float last_lat = 0;
                     float last_longi = 0;
                     long last_time = 0;
                     while (pok && cLocation.getLong(0) == lap) {
+                        int lapType = cLocation.getInt(5);
+                        // Pauses handling
+                        if (last_time == 0 || lapType == DB.LOCATION.TYPE_RESUME) {
+                            if (last_time != 0) {
+                                mXML.endTag("", "Track");
+                            }
+                            mXML.startTag("", "Track");
+                        }
                         long time = cLocation.getLong(1);
                         float lat = cLocation.getFloat(2);
                         float longi = cLocation.getFloat(3);
-                        if (!(time == last_time && lat == last_lat && longi != last_longi)) {
+                        if (time != last_time) {
                             cntTrackpoints++;
 
                             mXML.startTag("", "Trackpoint");
@@ -236,14 +244,20 @@ public class TCX {
                                 mXML.text("" + cLocation.getLong(4));
                                 mXML.endTag("", "AltitudeMeters");
                             }
-                            float d[] = {
-                                0
-                            };
-                            if (!(last_lat == 0 && last_longi == 0)) {
-                                Location.distanceBetween(last_lat, last_longi,
-                                        lat, longi, d);
+                            if (!cLocation.isNull(10)) {
+                                totalDistance = cLocation.getFloat(10);
+                            } else {
+                                // Only for older activities, also increases distance when pausing
+                                // Most importers do not use this info anyway
+                                float d[] = {
+                                        0
+                                };
+                                if (!(last_lat == 0 && last_longi == 0)) {
+                                    Location.distanceBetween(last_lat, last_longi,
+                                            lat, longi, d);
+                                }
+                                totalDistance += d[0];
                             }
-                            totalDistance += d[0];
                             mXML.startTag("", "DistanceMeters");
                             mXML.text("" + totalDistance);
                             mXML.endTag("", "DistanceMeters");
