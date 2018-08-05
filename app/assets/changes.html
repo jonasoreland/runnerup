@@ -5,12 +5,48 @@
 </head>
 <body>
 <h1>What's new</h1>
+<h2>v1.90.1</h2>
+<p>First alpha release for 2.0. This build appears as a separate application and should be possible to use in parallel to the standard Play build.
+
+<p>The major feature in 2.0 is a refreshed user interface using material design. This also includes an updated app icon.
+<p>The first 2.0 release still supports Android from Froyo. This is likely the last release for older releases, development is expected to target 5.0.
+
+<p>Note: The database format is slightly changed in 2.0. There is however an experimental 1.58.1 on GitHub that should allow usage of the 2.0 database if reverting to 1.58 for some reason.
+
+<p>There has been many larger and smaller other changes. Some references to GitHub pull requests.
+<ul>
+    <li>#689 Synchronizer for <a href="https://runalyze.com">Runalyze</a> reimplementation</li>
+    <li>#700 Synchronizer for <a href="https://dropbox.com">Dropbox</a>. Sync is done directly to dropbox.com, the Dropbox app does not have to be installed. This can be used to sync to many other services, instructions in <a href="https://github.com/jonasoreland/runnerup/wiki/Synchronization-with-external-providers">wiki</a>.</li>
+    <li>#686 #674 Many synchronizers is no longer working. The current status is updated in <a href="https://github.com/jonasoreland/runnerup/wiki/Synchronization-with-external-providers">wiki</a>.
+    The not working synchronizers are hidden by default.
+    <li>#694 RunnerUp was removed from F-Droid as the application includes the non open source lib for ANT+. It is now possible to build without ANT+ lib.
+    <li>#704 The APK is split at the build, to limit the storage size for the app.
+    <li>#695 Strava synchronizer now uploads .tcx files, to allow export of laps. (uploads are compressed too)</li>
+    <li>#618 direct links to uploaded activities in detail activity for Strava and Endomondo</li>
+    <li>#707 TCX files did not encode pauses</li>
+    <li>#702 GPX files did not include elevation data (</li>
+    <li>#705 Possibility to disable "lap started" audio cue</li>
+    <li>#699 Workouts: Share/Import did not work</li>
+    <li>#691 Autolap: Trigger at most likely point rather than always after the limit</li>
+    <li>#689 Audio cues for distance were not correct in some locales.</li>
+    <li>#658 Android 8 support: Notification channels, autofill hints and foreground services.
+    <li>#651 Implementing heart rate display on Pebble</li>
+    <li>#673 Adjust default values to more sensible values</li>
+    <li>#673 Workout zero repeat crash</li>
+    <li>#622 HR zones could assign infinitive time to first hr point</li>
+    <li>#574 Soumi (fi) translation</li>
+    <li>#617 Move documentation to the wiki</li>
+    <li>#657 Remove the special support for Samsung4.2 BLE</li>
+    <li>#671 Major internal changes to correct minor internal issues (Lint review)</li>
+    <li>#712 Minimum version for WearOS is increased to Android 6.0</li>
+</ul>
+
 <h2>v1.58</h2>
 <ul>
-<li>HRM connection audio feedback
-<li>Support for step (cadence), tempature, pressure (elevation) sensors
-<li>Some gui updates
-<li>Wear improvements
+    <li>HRM connection audio feedback
+    <li>Support for step (cadence), tempature, pressure (elevation) sensors
+    <li>Some gui updates
+    <li>Wear improvements
 </ul>
 <h2>v1.56</h2>
 <ul>
