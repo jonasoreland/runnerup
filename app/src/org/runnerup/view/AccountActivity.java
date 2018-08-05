@@ -87,6 +87,11 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         syncManager = new SyncManager(this);
         fillData();
 
+        Synchronizer synchronizer = syncManager.getSynchronizerByName(mSynchronizerName);
+        if (synchronizer == null) {
+            return;
+        }
+
         {
             Button btn = (Button) findViewById(R.id.ok_account_button);
             btn.setOnClickListener(okButtonClick);
@@ -98,9 +103,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
 
         {
-            Synchronizer synchronizer = syncManager.getSynchronizerByName(mSynchronizerName);
             Button btn = (Button) findViewById(R.id.account_download_button);
-            if (synchronizer != null && synchronizer.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) &&
+            if (synchronizer.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) &&
                 synchronizer.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
                 btn.setOnClickListener(downloadButtonClick);
             } else {
@@ -144,6 +148,9 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 ContentValues tmp = DBHelper.get(c);
                 synchronizer = syncManager.add(tmp);
                 flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
+                if (synchronizer == null) {
+                    return;
+                }
             }
 
             {

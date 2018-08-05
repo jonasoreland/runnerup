@@ -173,8 +173,8 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
             final Synchronizer synchronizer = mSyncManager.add(values);
             final long flags = values.getAsLong(DB.ACCOUNT.FLAGS);
-            boolean configured = synchronizer.isConfigured();
-            String name = synchronizer.getName();
+            final String name = values.getAsString(DB.ACCOUNT.NAME);
+            boolean configured = synchronizer != null && synchronizer.isConfigured();
 
             view.setTag(synchronizer);
 
@@ -194,7 +194,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 ContentValues values2 = DBHelper.get(cursor);
 
                 final Synchronizer synchronizer2 = mSyncManager.add(values2);
-                prevConfigured = synchronizer2.isConfigured();
+                prevConfigured = synchronizer2 != null && synchronizer2.isConfigured();
                 cursor.moveToNext();
             }
 
@@ -208,6 +208,15 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 sectionTitle.setVisibility(View.VISIBLE);
             }
 
+            if (synchronizer == null) {
+                accountUploadBox.setVisibility(View.GONE);
+                accountFeedBox.setVisibility(View.GONE);
+                accountIcon.setVisibility(View.GONE);
+                accountIconText.setVisibility(View.GONE);
+                accountNameText.setText(name);
+                return;
+            }
+
             // service icon
             int synchronizerIcon = synchronizer.getIconId();
             if (synchronizerIcon == 0) {
@@ -219,7 +228,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
                 accountIconText.setText(null);
             }
-
+            
             // service title
             accountNameText.setText(name);
 
@@ -229,7 +238,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             accountUploadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(((Synchronizer)arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
+                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
                 }
             });
 
@@ -239,7 +248,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             accountFeedBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(((Synchronizer)arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1);
+                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1);
                 }
             });
 
@@ -275,6 +284,9 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             final Synchronizer synchronizer = ((Synchronizer)view.getTag());
+            if (synchronizer == null) {
+                return;
+            }
             if (synchronizer.isConfigured()) {
                 startActivity(synchronizer.getName(), true);
             } else {

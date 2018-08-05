@@ -216,6 +216,8 @@ public class SyncManager {
             synchronizer = new RunalyzeSynchronizer();
         } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {
             synchronizer = new DropboxSynchronizer();
+        } else {
+            Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);;
         }
 
         if (synchronizer != null) {
@@ -235,7 +237,7 @@ public class SyncManager {
 
     public boolean isConfigured(final String name) {
         Synchronizer l = synchronizers.get(name);
-        return l == null || l.isConfigured();
+        return l != null && l.isConfigured();
     }
 
     public Synchronizer getSynchronizer(long id) {
@@ -1340,7 +1342,7 @@ public class SyncManager {
                 do {
                     ContentValues config = DBHelper.get(c);
                     Synchronizer u = add(config);
-                    if (u.isConfigured() && u.checkSupport(Synchronizer.Feature.LIVE) &&
+                    if (u != null && u.isConfigured() && u.checkSupport(Synchronizer.Feature.LIVE) &&
                             (u instanceof WorkoutObserver)) {
                         liveLoggers.add((WorkoutObserver) u);
                     }
@@ -1366,7 +1368,7 @@ public class SyncManager {
                 final Synchronizer synchronizer = add(tmp);
                 @SuppressWarnings("ConstantConditions") final String name = tmp.getAsString(DB.ACCOUNT.NAME);
                 final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-                if (isConfigured(name) &&
+                if (synchronizer != null && isConfigured(name) &&
                         Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED) &&
                         synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
                     set.add(name);
