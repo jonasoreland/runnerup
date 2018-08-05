@@ -47,16 +47,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+// Not working, login redirected to the dashboard
+// There is no official API for Runtastic
+// This was based on a hack, no longer working
 
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Runtastic";
-    public static final String PUBLIC_URL = "https://www.runtastic.com";
-    private static final String BASE_URL = "https://www.runtastic.com";
-    private static final String START_URL = BASE_URL + "/en/login";
-    private static final String LOGIN_URL = BASE_URL + "/en/d/users/sign_in";
-    private static final String UPLOAD_URL = BASE_URL + "/import/upload_session";
-    private static final String UPDATE_SPORTS_TYPE = BASE_URL + "/import/update_sport_type";
+    private static final String PUBLIC_URL = "https://www.runtastic.com";
+    private static final String START_URL = PUBLIC_URL + "/en/login";
+    private static final String LOGIN_URL = PUBLIC_URL + "/en/d/users/sign_in";
+    private static final String UPLOAD_URL = PUBLIC_URL + "/import/upload_session";
+    private static final String UPDATE_SPORTS_TYPE = PUBLIC_URL + "/import/update_sport_type";
 
     private long id = 0;
     private String username = null;
@@ -87,7 +89,9 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
     public int getColorId() {return R.color.serviceRuntastic;}
@@ -201,16 +205,11 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
 
             String url2 = null;
             {
-                OutputStream wr = new BufferedOutputStream(
-                        conn.getOutputStream());
-                kv.write(wr);
-                wr.flush();
-                wr.close();
+                SyncHelper.postData(conn, kv);
                 // int responseCode = conn.getResponseCode();
                 // String amsg = conn.getResponseMessage();
                 getCookies(conn);
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                JSONObject ret = SyncHelper.parse(in);
+                JSONObject ret = SyncHelper.parse(conn, getName());
                 if (ret != null && ret.has("success") && ret.getBoolean("success")) {
                     Matcher matcher = Patterns.WEB_URL.matcher(ret.getString("update"));
                     while (matcher.find()) {

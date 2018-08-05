@@ -40,10 +40,8 @@ import org.runnerup.export.Synchronizer;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -214,12 +212,7 @@ public class OAuth2Activity extends AppCompatActivity {
                                 conn.setRequestMethod(Synchronizer.RequestMethod.POST.name());
                                 conn.setRequestProperty("Content-Type",
                                         "application/x-www-form-urlencoded");
-                                {
-                                    OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-                                    fv.write(wr);
-                                    wr.flush();
-                                    wr.close();
-                                }
+                                SyncHelper.postData(conn, fv);
                                 StringBuilder obj = new StringBuilder();
                                 BufferedReader in = new BufferedReader(new InputStreamReader(conn
                                         .getInputStream()));

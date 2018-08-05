@@ -18,6 +18,7 @@
 package org.runnerup.export.util;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -151,6 +152,25 @@ public final class SyncHelper {
         return o;
     }
 
+    public static JSONObject parse(HttpURLConnection conn, String name) throws IOException, JSONException {
+        JSONObject obj = null;
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            obj = SyncHelper.parse(in);
+        } catch (IOException e) {
+            InputStream inS = conn.getErrorStream();
+            String msg = inS == null ? "" : SyncHelper.readInputStream(inS);
+            Log.i(name, "Error stream: " + msg);
+            try {
+                // The error stream is normally a JSON object too
+                obj = SyncHelper.parse(msg);
+            } finally {}
+        } finally {
+            conn.disconnect();
+        }
+        return obj;
+    }
+
     public static String readInputStream(InputStream in) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder buf = new StringBuilder();
@@ -171,7 +191,7 @@ public final class SyncHelper {
         wr.close();
     }
 
-    public static Map<String, String> parseHtml(String html) {
+     public static Map<String, String> parseHtml(String html) {
         Matcher matcher = inputPattern.matcher(html);
         Map<String, String> parameters = new HashMap<>();
 

@@ -18,8 +18,8 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -32,6 +32,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -371,10 +372,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     + (" LEFT OUTER JOIN " + DB.EXPORT.TABLE + " rep ")
                     + (" ON ( acc._id = rep." + DB.EXPORT.ACCOUNT)
                     + ("     AND rep." + DB.EXPORT.ACTIVITY + " = "
-                    + mID + " )")
-                    //Note: Show all configured accounts (also those are not currently enabled)
-                    //Uploaded but removed accounts are not displayed
-                    + (" WHERE acc." + DB.ACCOUNT.AUTH_CONFIG + " is not null");
+                    + mID + " )");
 
             Cursor c = mDB.rawQuery(sql, null);
             alreadySynched.clear();
@@ -385,20 +383,26 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 do {
                     ContentValues tmp = DBHelper.get(c);
                     Synchronizer synchronizer = syncManager.add(tmp);
-                    if (!synchronizer.checkSupport(Feature.UPLOAD)) {
+                    //Note: Show all configured accounts (also those are not currently enabled)
+                    //Uploaded but removed accounts are not displayed
+                    if (synchronizer == null || !synchronizer.checkSupport(Feature.UPLOAD) || !synchronizer.isConfigured()) {
                         continue;
                     }
 
+                    String name = tmp.getAsString(DB.ACCOUNT.NAME);
                     reports.add(tmp);
                     if (tmp.containsKey("repid")) {
-                        alreadySynched.add(tmp.getAsString(DB.ACCOUNT.NAME));
+                        alreadySynched.add(name);
                         if (tmp.containsKey(DB.EXPORT.STATUS) && tmp.getAsInteger(DB.EXPORT.STATUS) == Synchronizer.ExternalIdStatus.getInt(Synchronizer.ExternalIdStatus.OK)) {
-                            synchedExternalId.put(tmp.getAsString(DB.ACCOUNT.NAME), tmp.getAsString(DB.EXPORT.EXTERNAL_ID));
+                            String url = syncManager.getSynchronizerByName(name).getActivityUrl(synchedExternalId.get(name));
+                            if (url != null) {
+                                synchedExternalId.put(name, tmp.getAsString(DB.EXPORT.EXTERNAL_ID));
+                            }
                         }
                     } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
                             && Bitfield.test(tmp.getAsLong(DB.ACCOUNT.FLAGS),
                             DB.ACCOUNT.FLAG_UPLOAD)) {
-                        pendingSynchronizers.add(tmp.getAsString(DB.ACCOUNT.NAME));
+                        pendingSynchronizers.add(name);
                     }
                 } while (c.moveToNext());
             }
@@ -604,7 +608,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         Intent i = new Intent(DetailActivity.this,
                                 AccountListActivity.class);
                         DetailActivity.this.startActivityForResult(i,
-                                SyncManager.CONFIGURE_REQUEST + 1);
+                                SyncManager.EDIT_ACCOUNT_REQUEST);
                     }
                 });
                 return b;
@@ -711,7 +715,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     //Note: onClick set in reportlist_row.xml
     public void onClickAccountName(View arg0) {
         final String name = (String) arg0.getTag();
-        if (synchedExternalId.containsKey(name)) {
+        if (synchedExternalId.containsKey(name) && !TextUtils.isEmpty(synchedExternalId.get(name))) {
             String url = syncManager.getSynchronizerByName(name).getActivityUrl(synchedExternalId.get(name));
             if (url != null) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -873,7 +877,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             return;
                         }
 
-                        final Activity context = DetailActivity.this;
+                        final Context context = DetailActivity.this;
                         final CharSequence fmt = items[which[0]];
                         final Intent intent = new Intent(Intent.ACTION_SEND);
 

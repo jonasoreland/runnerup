@@ -44,13 +44,14 @@ public class AudioFeedback extends Feedback {
 
     public AudioFeedback(int msgId) {
         super();
+        this.scope = null;
         this.msgId = msgId;
     }
 
-    public AudioFeedback(Scope scope, Event event) {
+    public AudioFeedback(Scope scope) {
         super();
         this.scope = scope;
-        this.event = event;
+        this.event = null;
         this.dimension = null;
     }
 
@@ -59,14 +60,6 @@ public class AudioFeedback extends Feedback {
         this.scope = scope;
         this.event = null;
         this.dimension = dimension;
-    }
-
-    public AudioFeedback(Intensity intensity, Event event) {
-        super();
-        this.scope = null;
-        this.dimension = null;
-        this.intensity = intensity;
-        this.event = event;
     }
 
     @Override
@@ -93,21 +86,28 @@ public class AudioFeedback extends Feedback {
         return this.dimension == other.dimension;
     }
 
-    String getCue(Workout w, Context ctx) {
+    public Scope getScope() { return scope; }
+
+    private String getCue(Workout w, Context ctx) {
         String msg = null;
         if (msgId != 0) {
             if (msgTxt == null) {
                 msgTxt = formatter.getCueString(msgId);
             }
             msg = msgTxt;
-        } else if (event != null && scope != null) {
-            msg = formatter.getCueString(scope.getCueId()) + " " + formatter.getCueString(event.getCueId());
-        } else if (event != null && intensity != null) {
-            msg = formatter.getCueString(intensity.getCueId()) + " " + formatter.getCueString(event.getCueId());
-        } else if (dimension != null && scope != null && w.isEnabled(dimension, scope)) {
-            double val = w.get(scope, dimension); // SI
-            msg = formatter.getCueString(scope.getCueId()) + " "
-                    + formatter.format(Formatter.Format.CUE_LONG, dimension, val);
+        } else {
+            if (event != null && scope != null) {
+                msg = formatter.getCueString(event.getCueId());
+            } else if (event != null && intensity != null) {
+                msg = formatter.getCueString(intensity.getCueId()) + " " + formatter.getCueString(event.getCueId());
+            } else if (dimension != null && scope != null) {
+                if (w.isEnabled(dimension, scope)) {
+                    double val = w.get(scope, dimension); // SI
+                    msg = formatter.format(Formatter.Format.CUE_LONG, dimension, val);
+                }
+            } else if (scope != null) {
+                msg = formatter.getCueString(scope.getCueId());
+            }
         }
         return msg;
     }

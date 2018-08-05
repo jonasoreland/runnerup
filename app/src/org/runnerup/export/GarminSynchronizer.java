@@ -35,14 +35,12 @@ import org.runnerup.export.util.SyncHelper;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -92,6 +90,11 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
     }
 
     @Override
@@ -228,10 +231,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         addCookies(conn);
 
         {
-            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-            kv.write(wr);
-            wr.flush();
-            wr.close();
+            SyncHelper.postData(conn, kv);
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
             Log.e(getName(), "code: " + responseCode + ", msg=" + amsg);

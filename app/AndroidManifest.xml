@@ -33,10 +33,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <permission
-        android:name="org.runnerup.permission.MAPS_RECEIVE"
+        android:name="${applicationId}.permission.MAPS_RECEIVE"
         android:protectionLevel="signature"/>
 
-    <uses-permission android:name="org.runnerup.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -169,13 +169,13 @@
 
         <provider
             android:name=".content.WorkoutFileProvider"
-            android:authorities="org.runnerup.workout.file.provider"
+            android:authorities="${applicationId}.workout.file.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider"/>
 
         <provider
             android:name=".content.ActivityProvider"
-            android:authorities="org.runnerup.activity.provider"
+            android:authorities="${applicationId}.activity.provider"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider"/>
 

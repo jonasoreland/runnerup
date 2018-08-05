@@ -33,8 +33,9 @@
             android:id="@+id/account_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="200dp"
-            android:layout_marginLeft="200dp" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="center" />
 
         <ImageView
             android:id="@+id/account_list_icon"

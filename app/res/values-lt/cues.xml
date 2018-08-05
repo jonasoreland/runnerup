@@ -54,16 +54,16 @@
     <item quantity="other">%d metrai</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d kilometras</item>
-    <item quantity="few">%d kilometrai</item>
-    <item quantity="many">%d kilometrai</item>
-    <item quantity="other">%d kilometrai</item>
+    <item quantity="one">%s kilometras</item>
+    <item quantity="few">%s kilometrai</item>
+    <item quantity="many">%s kilometrai</item>
+    <item quantity="other">%s kilometrai</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d mylia</item>
-    <item quantity="few">%d mylios</item>
-    <item quantity="many">%d mylios</item>
-    <item quantity="other">%d mylios</item>
+    <item quantity="one">%s mylia</item>
+    <item quantity="few">%s mylios</item>
+    <item quantity="many">%s mylios</item>
+    <item quantity="other">%s mylios</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>

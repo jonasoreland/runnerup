@@ -136,7 +136,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
 
         return new SimpleCursorLoader(this, mDB, DB.ACCOUNT.TABLE, from, showDisabled, null,
-                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.ENABLED + " desc, " + DB.ACCOUNT.NAME + " collate nocase");
+                DB.ACCOUNT.AUTH_CONFIG + " is null, " + DB.ACCOUNT.NAME + " collate nocase," + DB.ACCOUNT.ENABLED + " desc ");
     }
 
     @Override
@@ -151,25 +151,19 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     class AccountListAdapter extends CursorAdapter {
         final LayoutInflater inflater;
-        int[] categories;
-        static final int CATEGORY_UNSET = 0;
-        static final int CATEGORY_SAME_AS_PREV = -1;
 
         public AccountListAdapter(Context context, Cursor cursor) {
             super(context, cursor, true);
             inflater = LayoutInflater.from(context);
-            categories = (cursor == null) ? null : new int[cursor.getCount()];
         }
 
         @Override
         public void changeCursor(Cursor cursor) {
             super.changeCursor(cursor);
-            categories = (cursor == null) ? null : new int[cursor.getCount()];
         }
 
         @Override
         public Cursor swapCursor(Cursor newCursor) {
-            categories = (newCursor == null) ? null : new int[newCursor.getCount()];
             return super.swapCursor(newCursor);
         }
 
@@ -177,12 +171,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         public void bindView(View view, Context context, Cursor cursor) {
             ContentValues values = DBHelper.get(cursor);
 
-            final String id = values.getAsString(DB.ACCOUNT.NAME);
             final Synchronizer synchronizer = mSyncManager.add(values);
             final long flags = values.getAsLong(DB.ACCOUNT.FLAGS);
-            boolean configured = mSyncManager.isConfigured(id);
+            final String name = values.getAsString(DB.ACCOUNT.NAME);
+            boolean configured = synchronizer != null && synchronizer.isConfigured();
 
-            view.setTag(id);
+            view.setTag(synchronizer);
 
             TextView sectionTitle = view.findViewById(R.id.section_title);
             ImageView accountIcon = view.findViewById(R.id.account_list_icon);
@@ -192,40 +186,35 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             SwitchCompat accountFeedBox = view.findViewById(R.id.account_list_feed);
 
             // category name
-            {
-                int curPosition = cursor.getPosition();
-                if (categories[curPosition] == CATEGORY_UNSET) {
-                    String curAuthConfig = values.getAsString(DB.ACCOUNT.AUTH_CONFIG);
-                    boolean curConnected = curAuthConfig != null && curAuthConfig.length() != 0;
+            int curPosition = cursor.getPosition();
+            boolean prevConfigured = false;
+            if (curPosition > 0) {
+                // get data for previous item
+                cursor.moveToPrevious();
+                ContentValues values2 = DBHelper.get(cursor);
 
-                    if (curPosition == 0) {
-                        if (curConnected) {
-                            categories[curPosition] = R.string.accounts_category_connected;
-                        } else {
-                            categories[curPosition] = R.string.accounts_category_unconnected;
-                        }
-                    } else {
-                        // get data for previous item
-                        cursor.moveToPrevious();
-                        String prevAuthConfig = DBHelper.get(cursor).getAsString(DB.ACCOUNT.AUTH_CONFIG);
-                        boolean prevConnected = prevAuthConfig != null && prevAuthConfig.length() != 0;
-                        cursor.moveToNext();
-
-                        // compare the two
-                        if (prevConnected != curConnected) {
-                            categories[cursor.getPosition()] = R.string.accounts_category_unconnected;
-                        } else {
-                            categories[cursor.getPosition()] = CATEGORY_SAME_AS_PREV;
-                        }
-                    }
-                }
+                final Synchronizer synchronizer2 = mSyncManager.add(values2);
+                prevConfigured = synchronizer2 != null && synchronizer2.isConfigured();
+                cursor.moveToNext();
             }
 
-            if (categories[cursor.getPosition()] == CATEGORY_SAME_AS_PREV) {
+            if (curPosition > 0 && configured == prevConfigured) {
                 sectionTitle.setVisibility(View.GONE);
             } else {
-                sectionTitle.setText(getString(categories[cursor.getPosition()]));
+                int str = configured ?
+                        R.string.accounts_category_connected :
+                        R.string.accounts_category_unconnected;
+                sectionTitle.setText(getString(str));
                 sectionTitle.setVisibility(View.VISIBLE);
+            }
+
+            if (synchronizer == null) {
+                accountUploadBox.setVisibility(View.GONE);
+                accountFeedBox.setVisibility(View.GONE);
+                accountIcon.setVisibility(View.GONE);
+                accountIconText.setVisibility(View.GONE);
+                accountNameText.setText(name);
+                return;
             }
 
             // service icon
@@ -234,32 +223,32 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 Drawable circle = ContextCompat.getDrawable(context, R.drawable.circle_40dp);
                 circle.setColorFilter(getResources().getColor(synchronizer.getColorId()), PorterDuff.Mode.SRC_IN);
                 accountIcon.setImageDrawable(circle);
-                accountIconText.setText(id.substring(0, 1));
+                accountIconText.setText(name.substring(0, 1));
             } else {
                 accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
                 accountIconText.setText(null);
             }
-
+            
             // service title
-            accountNameText.setText(id);
+            accountNameText.setText(name);
 
             // upload box
-            accountUploadBox.setTag(id);
+            accountUploadBox.setTag(synchronizer);
             setCustomThumb(accountUploadBox, R.drawable.switch_upload, context);
             accountUploadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
+                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
                 }
             });
 
             // feed box
-            accountFeedBox.setTag(id);
+            accountFeedBox.setTag(synchronizer);
             setCustomThumb(accountFeedBox, R.drawable.switch_feed, context);
             accountFeedBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag((String) arg0.getTag(), DB.ACCOUNT.FLAG_FEED, arg1);
+                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1);
                 }
             });
 
@@ -294,25 +283,28 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     private final AdapterView.OnItemClickListener configureItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            final String synchronizerName = (String) view.getTag();
-            if (mSyncManager.isConfigured(synchronizerName)) {
-                startActivity(synchronizerName, true);
+            final Synchronizer synchronizer = ((Synchronizer)view.getTag());
+            if (synchronizer == null) {
+                return;
+            }
+            if (synchronizer.isConfigured()) {
+                startActivity(synchronizer.getName(), true);
             } else {
-                mSyncManager.connect(callback, synchronizerName, false);
+                mSyncManager.connect(callback, synchronizer.getName());
             }
         }
     };
 
-    private void setFlag(String name, int flag, boolean val) {
+    private void setFlag(String synchronizerName, int flag, boolean val) {
         if (val) {
             long bitval = (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + name
+                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
                     + "\'");
         } else {
             long mask = ~(long) (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + name
+                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
                     + "\'");
         }
     }
@@ -326,19 +318,20 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     };
 
-    private void startActivity(String synchronizer, boolean edit) {
+    private void startActivity(String synchronizerName, boolean edit) {
         Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
-        intent.putExtra("synchronizer", synchronizer);
-        intent.putExtra("edit", edit);
+        intent.putExtra("synchronizer", synchronizerName);
+        //intent.putExtra("edit", edit);
         AccountListActivity.this.startActivityForResult(intent,
-                SyncManager.CONFIGURE_REQUEST + 1000);
+                SyncManager.EDIT_REQUEST);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SyncManager.CONFIGURE_REQUEST) {
             mSyncManager.onActivityResult(requestCode, resultCode, data);
-        } else if (requestCode == SyncManager.CONFIGURE_REQUEST + 1000) {
+            this.mCursorAdapter.notifyDataSetChanged();
+        } else if (requestCode == SyncManager.EDIT_REQUEST) {
             mSyncManager.clear();
             getSupportLoaderManager().restartLoader(0, null, this);
         }

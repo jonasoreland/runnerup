@@ -389,7 +389,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                     public void onClick(DialogInterface arg0, int arg1) {
                         hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
                                 items[arg1].toString());
-                        log("hrProvider = " + hrProvider.getProviderName());
+                        log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
                     }
                 });
         builder.show();

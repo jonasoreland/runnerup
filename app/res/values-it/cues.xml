@@ -46,12 +46,12 @@
     <item quantity="other">%d metri</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d chilometro</item>
-    <item quantity="other">%d chilometri</item>
+    <item quantity="one">%s chilometro</item>
+    <item quantity="other">%s chilometri</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d miglio</item>
-    <item quantity="other">%d miglia</item>
+    <item quantity="one">%s miglio</item>
+    <item quantity="other">%s miglia</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>

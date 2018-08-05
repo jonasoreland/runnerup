@@ -95,6 +95,7 @@ public class RUTextToSpeech {
 
         final boolean trace = true;
         if (queueMode == TextToSpeech.QUEUE_FLUSH) {
+            //Unused in RU
             //noinspection ConstantConditions
             if (trace) {
                 Log.e(getClass().getName(), "speak (mute: " + mute + "): " + text);

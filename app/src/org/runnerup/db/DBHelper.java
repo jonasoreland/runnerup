@@ -28,13 +28,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
 import org.runnerup.export.DigifitSynchronizer;
+import org.runnerup.export.DropboxSynchronizer;
 import org.runnerup.export.EndomondoSynchronizer;
 import org.runnerup.export.FacebookSynchronizer;
 import org.runnerup.export.FileSynchronizer;
@@ -52,11 +52,8 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
-import org.runnerup.export.SyncManager;
-import org.runnerup.export.Synchronizer;
 import org.runnerup.util.FileUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,9 +149,9 @@ public class DBHelper extends SQLiteOpenHelper implements
             + "_id integer primary key autoincrement, "
             + DB.EXPORT.ACTIVITY + " integer not null, "
             + DB.EXPORT.ACCOUNT + " integer not null, "
-            + DB.EXPORT.STATUS + " text, "
+            + DB.EXPORT.STATUS + " text, " //status for external id
             + DB.EXPORT.EXTERNAL_ID + " text, "
-            + DB.EXPORT.EXTRA + " integer not null default 1"
+            + DB.EXPORT.EXTRA + " integer not null default 1" //DBVERSION update: remove
             + ");";
 
     private static final String CREATE_TABLE_AUDIO_SCHEMES = "create table "
@@ -469,16 +466,12 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
         insertAccount(arg0, FacebookSynchronizer.NAME, 0);
         //insertAccount(arg0, GooglePlusSynchronizer.NAME, 0);
-        //DBVERSION 26
         insertAccount(arg0, RuntasticSynchronizer.NAME, 0);
-        //DBVERSION 27
         insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
-        //DBVERSION 28
         insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0);
-        //DBVERSION 29
         insertAccount(arg0, FileSynchronizer.NAME, 1);
-        //DBVERSION 30
-        insertAccount(arg0, RunalyzeSynchronizer.NAME, 0);
+        insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
+        insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED);
     }
 
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled) {

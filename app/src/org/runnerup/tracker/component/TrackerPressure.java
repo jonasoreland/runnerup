@@ -124,7 +124,7 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
 
     @Override
     public boolean isConnected() {
-        return sensorManager != null;
+        return sensorManager != null || isMockSensor;
     }
 
     @Override

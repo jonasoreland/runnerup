@@ -18,6 +18,7 @@
 package org.runnerup.export;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -26,9 +27,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
+import org.runnerup.workout.Sport;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -61,15 +64,15 @@ public class FileSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
+    public String getPublicUrl() {
+        return "file://" + mPath;
+    }
+
+    @Override
     public int getIconId() {return R.drawable.service_file;}
 
     @Override
     public int getColorId() {return R.color.colorPrimary;}
-
-    @Override
-    public String getUrl() {
-        return "file://" + mPath;
-    }
 
     static public String contentValuesToAuthConfig(ContentValues config) {
         FileSynchronizer f = new FileSynchronizer();
@@ -145,9 +148,26 @@ public class FileSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
+        Sport sport = Sport.RUNNING;
         try {
+            String[] columns = {
+                    Constants.DB.ACTIVITY.SPORT
+            };
+            Cursor c = null;
+            try {
+                c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
+                        null, null, null, null);
+                if (c.moveToFirst()) {
+                    sport = Sport.valueOf(c.getInt(0));
+                }
+            } finally {
+                if (c != null) {
+                    c.close();
+                }
+            }
             String fileBase = new File(mPath).getAbsolutePath() + File.separator +
-            String.format(Locale.getDefault(), "RunnerUp_%04d.", mID);
+                    String.format(Locale.getDefault(), "RunnerUp_%04d_%s.", mID, sport.TapiriikType());
+            
             if (mFormat.contains("tcx")) {
                 TCX tcx = new TCX(db);
                 File file = new File(fileBase + "tcx");

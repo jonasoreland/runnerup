@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -61,6 +62,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+// Note: The HealthGraph API is depreciated
 
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
@@ -176,7 +178,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
     public int getColorId() {return R.color.serviceRunkeeper;}
@@ -406,14 +410,17 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            s.externalId = noNullStr(conn.getHeaderField("Location"));
+            String externalId = noNullStr(conn.getHeaderField("Location"));
             conn.disconnect();
             conn = null;
 
             if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
                 s.activityId = mID;
-                s.externalIdStatus = ExternalIdStatus.OK;
+                if (!TextUtils.isEmpty(externalId)) {
+                    s.externalId = externalId;
+                    s.externalIdStatus = ExternalIdStatus.OK;
+                }
                 return s;
             }
             Log.e(getName(), "Error code: " + responseCode + ", amsg: " + amsg);
@@ -467,7 +474,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             }
         }
         String url;
-        if (userName == null) {
+        if (userName == null || extId == null) {
             url = null;
         } else {
             //Do not bother with fitnessActivitiesUrl

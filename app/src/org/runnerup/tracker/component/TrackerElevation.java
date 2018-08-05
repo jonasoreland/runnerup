@@ -51,7 +51,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     private Double mElevationOffset = null;
     private Double mAverageGpsElevation = null;
     private long minEleAverageCutoffTime = Long.MAX_VALUE;
-    private boolean mAltitudeAdjust = true;
+    private GeoidAdjust mGeoidAdjust = null;
     private boolean mAltitudeFromGpsAverage = true;
     @SuppressWarnings("unused")
     private boolean isStarted;
@@ -60,6 +60,24 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
         this.tracker = tracker;
         this.trackerGPS = trackerGPS;
         this.trackerPressure = trackerPressure;
+    }
+
+    public class GeoidAdjust {
+        // "static" constructor in subclass
+        GeoidAdjust GetAltitudeAdjust(Context context) {
+            try {
+                Geoid.init(context.getAssets().open("egm96-delta.dat"));
+                return new GeoidAdjust();
+            } catch (IOException e) {
+                Log.e("TrackerElevation", "Altitude correction " + e);
+            }
+            return null;
+        }
+
+        Double getOffset(Tracker tracker) {
+            return Geoid.getOffset(tracker.getLastKnownLocation().getLatitude(),
+                    tracker.getLastKnownLocation().getLongitude());
+        }
     }
 
     @SuppressLint("NewApi")
@@ -80,17 +98,15 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
                 } else {
                     mElevationOffset = 0D;
                 }
-                if (tracker.getLastKnownLocation() != null && mAltitudeAdjust) {
-                    mElevationOffset -= Geoid.getOffset(tracker.getLastKnownLocation().getLatitude(),
-                            tracker.getLastKnownLocation().getLongitude());
+                if (tracker.getLastKnownLocation() != null && mGeoidAdjust != null) {
+                    mElevationOffset -= mGeoidAdjust.getOffset(tracker);
                 }
             }
             val += mElevationOffset;
         } else if (tracker.getLastKnownLocation() != null && tracker.getLastKnownLocation().hasAltitude()) {
             val = tracker.getLastKnownLocation().getAltitude();
-            if (mAltitudeAdjust) {
-                val -= Geoid.getOffset(tracker.getLastKnownLocation().getLatitude(),
-                        tracker.getLastKnownLocation().getLongitude());
+            if (mGeoidAdjust != null) {
+                val -= mGeoidAdjust.getOffset(tracker);
             }
         } else {
             val = null;
@@ -142,14 +158,10 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     @Override
     public ResultCode onInit(Callback callback, Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        mAltitudeAdjust = prefs.getBoolean(context.getString(R.string.pref_altitude_adjust), true);
+        Boolean altitudeAdjust = prefs.getBoolean(context.getString(R.string.pref_altitude_adjust), true);
         mAltitudeFromGpsAverage = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_pressure_elevation_gps_average), false);
-        if (mAltitudeAdjust) {
-            try {
-                Geoid.init(context.getAssets().open("egm96-delta.dat"));
-            } catch (IOException e) {
-                Log.e("TrackerElevation", "Altitude correction " + e);
-            }
+        if (altitudeAdjust) {
+            mGeoidAdjust = (new GeoidAdjust()).GetAltitudeAdjust(context);
         }
         return ResultCode.RESULT_OK;
     }

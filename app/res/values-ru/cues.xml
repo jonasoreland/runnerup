@@ -54,16 +54,16 @@
     <item quantity="other">%d метров</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d километр</item>
-    <item quantity="few">%d километра</item>
-    <item quantity="many">%d километров</item>
-    <item quantity="other">%d километров</item>
+    <item quantity="one">%s километр</item>
+    <item quantity="few">%s километра</item>
+    <item quantity="many">%s километров</item>
+    <item quantity="other">%s километров</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d миля</item>
-    <item quantity="few">%d мили</item>
-    <item quantity="many">%d миль</item>
-    <item quantity="other">%d миль</item>
+    <item quantity="one">%s миля</item>
+    <item quantity="few">%s мили</item>
+    <item quantity="many">%s миль</item>
+    <item quantity="other">%s миль</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s километр в час</item>

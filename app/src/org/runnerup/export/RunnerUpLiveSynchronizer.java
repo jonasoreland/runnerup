@@ -47,7 +47,7 @@ import java.net.URL;
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
-    public static final String PUBLIC_URL = "https://weide.devsparkles.se/Demo/Map";
+    private static final String PUBLIC_URL = "https://weide.devsparkles.se/Demo/Map";
     private static final String POST_URL = "https://weide.devsparkles.se/api/Resource/";
     private final Context context;
 
@@ -78,10 +78,12 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public int getColorId() {return R.color.serviceRunnerUpLive;}
 
     @Override
-    public int getColorId() {return R.color.serviceRunnerUpLive;}
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
     public void init(ContentValues config) {

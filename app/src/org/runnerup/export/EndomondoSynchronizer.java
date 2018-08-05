@@ -63,7 +63,7 @@ import java.util.zip.GZIPOutputStream;
 public class EndomondoSynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "Endomondo";
-    public static final String PUBLIC_URL = "https://www.endomondo.com";
+    private static final String PUBLIC_URL = "https://www.endomondo.com";
     private static final String AUTH_URL = "https://api.mobile.endomondo.com/mobile/auth";
     private static final String UPLOAD_URL = "https://api.mobile.endomondo.com/mobile/track";
     private static final String FEED_URL = "https://api.mobile.endomondo.com/mobile/api/feed";
@@ -100,10 +100,17 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public int getIconId() {return 0;}
+    public String getPublicUrl() {
+        return PUBLIC_URL;
+    }
 
     @Override
     public int getColorId() { return R.color.serviceEndomondo; }
+
+    @Override
+    public String getActivityUrl(String extId) {
+        return PUBLIC_URL + "/workouts/" + extId;
+    }
 
     @Override
     public void init(ContentValues config) {
@@ -187,11 +194,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
             conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
-            kv.write(wr);
-            wr.flush();
-            wr.close();
+            SyncHelper.postData(conn, kv);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             JSONObject res = parseKVP(in);
@@ -292,6 +295,10 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             if (responseCode == HttpURLConnection.HTTP_OK &&
                     "OK".contentEquals(res.getString("_0"))) {
                 s.activityId = mID;
+                if (res.has("workout.id")) {
+                    s.externalId = res.getString("workout.id");
+                    s.externalIdStatus = ExternalIdStatus.OK;
+                }
                 return s;
             }
             ex = new Exception(amsg);
@@ -398,8 +405,10 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         c.put(FEED.FEED_TYPE, FEED.FEED_TYPE_ACTIVITY);
         SyncHelper.setName(c, o.getJSONObject("from").getString("name"));
         final String IMAGE_URL = "https://image.endomondo.com/resources/gfx/picture/%d/thumbnail.jpg";
-        c.put(FEED.USER_IMAGE_URL,
-                String.format(Locale.ENGLISH, IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+        if(o.getJSONObject("from").has("picture")) {
+            c.put(FEED.USER_IMAGE_URL,
+                    String.format(Locale.ENGLISH, IMAGE_URL, o.getJSONObject("from").getLong("picture")));
+        }
         c.put(FEED.START_TIME, df.parse(o.getString("order_time")).getTime());
 
         final JSONObject m = o.getJSONObject("message");

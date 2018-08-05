@@ -268,12 +268,14 @@ public class WorkoutBuilder {
             ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
             triggers.add(ev);
 
-            EventTrigger ev2 = new EventTrigger(); // for autolap
-            ev2.event = Event.STARTED;
-            ev2.scope = Scope.LAP;
-            ev2.skipCounter = 1; // skip above
-            ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
-            triggers.add(ev2);
+            if (prefs.getBoolean(res.getString(R.string.pref_autolap_started), false)) {
+                EventTrigger ev2 = new EventTrigger(); // for autolap
+                ev2.event = Event.STARTED;
+                ev2.scope = Scope.LAP;
+                ev2.skipCounter = 1; // skip above
+                ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
+                triggers.add(ev2);
+            }
 
             if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
                 HRMStateTrigger hrmState = new HRMStateTrigger();
@@ -679,6 +681,7 @@ public class WorkoutBuilder {
 
     public static void addFeedbackFromPreferences(SharedPreferences prefs,
                                                   Resources res, ArrayList<Feedback> feedback) {
+        int feedbackStart = feedback.size();
 
         /* TOTAL */
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
@@ -756,6 +759,22 @@ public class WorkoutBuilder {
         if (prefs.getBoolean(res.getString(R.string.cueinfo_current_hrz), false)) {
             feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.HRZ));
         }
+        if (prefs.getBoolean(res.getString(R.string.cueinfo_current_cad), false)) {
+            feedback.add(new AudioFeedback(Scope.CURRENT, Dimension.CAD));
+        }
 
+        // Insert Scope
+        for (int i=feedbackStart; i<feedback.size(); i++)
+        {
+            if (feedback.get(i) instanceof AudioFeedback &&
+                    (i == 0 ||
+                            feedback.get(i-1) == null ||
+                            !(feedback.get(i-1) instanceof AudioFeedback) ||
+                            ((AudioFeedback) feedback.get(i-1)).getScope() == null ||
+                            ((AudioFeedback) feedback.get(i-1)).getScope() != ((AudioFeedback) feedback.get(i)).getScope())) {
+                feedback.add(i, new AudioFeedback(((AudioFeedback)feedback.get(i)).getScope()));
+                i++;
+            }
+        }
     }
 }

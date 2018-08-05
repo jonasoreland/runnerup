@@ -114,6 +114,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         list.setAdapter(adapter);
         downloadButton = (Button) findViewById(R.id.download_workout_button);
         downloadButton.setOnClickListener(downloadButtonClick);
+        // No download provider currently exists
+        downloadButton.setVisibility(View.GONE);
         deleteButton = (Button) findViewById(R.id.delete_workout_button);
         deleteButton.setOnClickListener(deleteButtonClick);
         createButton = (Button) findViewById(R.id.create_workout_button);
@@ -139,7 +141,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             } catch (Exception e) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.Problem));
-                builder.setMessage(getString(R.string.Failed_to_import) + fileName);
+                builder.setMessage(getString(R.string.Failed_to_import) + " " + fileName);
                 builder.setPositiveButton(getString(R.string.OK_darn),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -193,7 +195,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.Import_workout) + fileName);
+        builder.setTitle(getString(R.string.Import_workout) + " " + fileName);
         builder.setPositiveButton(getString(R.string.Yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -219,7 +221,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                                 }
                                 saveName = newName;
                                 Toast.makeText(ManageWorkoutsActivity.this,
-                                        getString(R.string.Saving_as) + saveName, Toast.LENGTH_SHORT).show();
+                                        getString(R.string.Saving_as) + " " + saveName, Toast.LENGTH_SHORT).show();
                             }
                             saveImport(saveName, cr.openInputStream(data));
                         } catch (FileNotFoundException e) {
@@ -341,8 +343,8 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
                     + "  acc._id, " // 0
                     + ("  acc." + DB.ACCOUNT.NAME + ", ")
                     + ("  acc." + DB.ACCOUNT.AUTH_CONFIG + ", ")
-                    + ("  acc." + DB.ACCOUNT.ENABLED + ", ")
-                    + ("  acc." + DB.ACCOUNT.FLAGS + " ")
+                    + ("  acc." + DB.ACCOUNT.FLAGS + ", ")
+                    + ("  acc." + DB.ACCOUNT.ENABLED + " ")
                     + (" FROM " + DB.ACCOUNT.TABLE + " acc ");
 
             Cursor c = mDB.rawQuery(sql, null);
@@ -360,7 +362,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             Synchronizer synchronizer = syncManager.add(tmp);
             //There is no option to show disabled providers, so check for enable or configured
             if (synchronizer != null && synchronizer.checkSupport(Synchronizer.Feature.WORKOUT_LIST) &&
-                    (tmp.getAsInteger(DB.ACCOUNT.ENABLED) == 1 || tmp.getAsString(DB.ACCOUNT.AUTH_CONFIG) != null) ) {
+                    (synchronizer.isConfigured() || tmp.getAsInteger(DB.ACCOUNT.ENABLED) == 1)) {
                 providers.add(tmp);
 
                 workouts.remove(synchronizer.getName());
@@ -505,7 +507,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this);
-            builder.setTitle(getString(R.string.Delete_workout) + selected.workoutName);
+            builder.setTitle(getString(R.string.Delete_workout) + " " + selected.workoutName);
             builder.setMessage(getString(R.string.Are_you_sure));
             builder.setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
@@ -527,7 +529,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     };
 
     private void deleteWorkout(WorkoutRef selected) {
-        File f = WorkoutSerializer.getFile(this, selected.workoutName + ".json");
+        File f = WorkoutSerializer.getFile(this, selected.workoutName);
         //noinspection ResultOfMethodCallIgnored
         f.delete();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -578,11 +580,11 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
 
-            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.RunnerUp_workout) + name);
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.RunnerUp_workout) + " " + name);
             intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.HinHere_is_a_workout_I_think_you_might_like));
 
             intent.setType(WorkoutFileProvider.MIME);
-            Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name);
+            Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name + ".json");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             context.startActivity(Intent.createChooser(intent, getString(R.string.Share_workout)));
         }
@@ -705,7 +707,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             saveGroupPosition = groupPosition;
 
             if (!syncManager.isConfigured(provider)) {
-                syncManager.connect(onSynchronizerConfiguredCallback, provider, false);
+                syncManager.connect(onSynchronizerConfiguredCallback, provider);
             }
             else {
                 onSynchronizerConfiguredCallback.run(provider, Synchronizer.Status.OK);

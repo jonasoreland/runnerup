@@ -50,11 +50,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+// Not working
+// There is no official API for Svettig
+// This was based on an internal API to https://jogg.se/iphoneservice/iphoneservice.asmx
 
 public class JoggSESynchronizer extends DefaultSynchronizer {
 
     public static final String NAME = "jogg.se";
-    public static final String PUBLIC_URL = "https://jogg.se";
+    private static final String PUBLIC_URL = "https://jogg.se";
     private static String MASTER_USER = null;
     private static String MASTER_KEY = null;
 
@@ -85,6 +88,11 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getPublicUrl() {
+        return PUBLIC_URL;
     }
 
     @Override

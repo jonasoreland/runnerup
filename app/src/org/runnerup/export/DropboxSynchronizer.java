@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
- * Copyright (C) 2018 Clayton Craft <clayton@craftyguy.net>
+ * Copyright (C) 2018 Gerhard Olsson <gerhard.nospam@gmail.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,50 +20,48 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
-import org.runnerup.export.util.FormValues;
-import org.runnerup.export.util.Part;
-import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.workout.Sport;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 
 
-public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2Server {
+public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
-    public static final String NAME = "Runalyze";
-    private static final String PUBLIC_URL = "https://runalyze.com";
-    public static int ENABLED = BuildConfig.RUNALYZE_ENABLED;
+    public static final String NAME = "Dropbox";
+    private static final String PUBLIC_URL = "https://dropbox.com";
+    // TODO replace when production status: BuildConfig.DROPBOX_ENABLED;
+    public static int ENABLED = 0;
 
-    private static final String UPLOAD_URL = "https://runalyze.com/api/v1/activities/uploads";
-    private static final String AUTH_URL = "https://runalyze.com/oauth/v2/auth";
-    private static final String TOKEN_URL = "https://runalyze.com/oauth/v2/token";
-    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/runalyze";
+    private static final String UPLOAD_URL = "https://content.dropboxapi.com/2/files/upload";
+    private static final String AUTH_URL = "https://www.dropbox.com/oauth2/authorize";
+    private static final String TOKEN_URL = "https://api.dropboxapi.com/oauth2/token";
+    private static final String REDIRECT_URI = "http://localhost:8080/runnerup/dropbox";
 
     private long id = 0;
     private String access_token = null;
-    private String refresh_token = null;
-    private long access_expire = -1;
 
-    RunalyzeSynchronizer() {
+    DropboxSynchronizer() {
         if (ENABLED == 0) {
             Log.w(NAME, "No client id configured in this build");
         }
@@ -72,16 +69,16 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     @Override
     public int getIconId() {
-        return R.drawable.service_runalyze;
+        return R.drawable.service_dropbox;
     }
 
     @Override
     public int getColorId() {
-        return R.color.serviceRunalyze;
+        return R.color.serviceDropbox;
     }
 
     public String getClientId() {
-        return BuildConfig.RUNALYZE_ID;
+        return BuildConfig.DROPBOX_ID;
     }
 
     @Override
@@ -91,7 +88,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     @Override
     public String getClientSecret() {
-        return BuildConfig.RUNALYZE_SECRET;
+        return BuildConfig.DROPBOX_SECRET;
     }
 
     @Override
@@ -100,7 +97,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     public String getAuthExtra() {
-        return "scope=activity_push";
+        return "";
     }
 
     @Override
@@ -146,9 +143,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
         try {
-            tmp.put("refresh_token", refresh_token);
             tmp.put("access_token", access_token);
-            tmp.put("access_expire", access_expire);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -176,16 +171,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     private Status parseAuthData(JSONObject obj) {
         try {
-            if (obj.has("refresh_token")) {
-                refresh_token = obj.getString("refresh_token");
-            }
             access_token = obj.getString("access_token");
-            if (obj.has("access_expire")) {
-                access_expire = obj.getInt("access_expire");
-            }
-            else if (obj.has("expires_in")) {
-                access_expire = obj.getInt("expires_in") + System.currentTimeMillis() / 1000;
-            }
             return Status.OK;
 
         } catch (JSONException e) {
@@ -196,12 +182,11 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     @Override
     public boolean isConfigured() {
-        return refresh_token != null;
+        return access_token != null;
     }
 
     @Override
     public void reset() {
-        refresh_token = null;
         access_token = null;
     }
 
@@ -213,62 +198,12 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             //Not configured in this build
             s = Status.INCORRECT_USAGE;
         }
-        else if (refresh_token == null) {
+        else if (access_token == null) {
             s = Status.NEED_AUTH;
             s.authMethod = AuthMethod.OAUTH2;
         }
-        else if (access_token == null || access_expire - 10 < System.currentTimeMillis() / 1000) {
-            // Token times out within seconds
-            s = Status.NEED_REFRESH;
-            s.authMethod = AuthMethod.OAUTH2;
-        }
 
-        //Log.v(getName(), "connect: " +s+ " "+refresh_token+" "+access_token);
-        return s;
-    }
-
-    public Status refreshToken() {
-        Status s;
-
-        try {
-            final FormValues fv = new FormValues();
-            fv.put(OAuth2Activity.OAuth2ServerCredentials.CLIENT_ID, getClientId());
-            fv.put(OAuth2Activity.OAuth2ServerCredentials.CLIENT_SECRET, getClientSecret());
-            fv.put("grant_type", "refresh_token");
-            fv.put("refresh_token", refresh_token);
-
-            URL url = new URL(getTokenUrl());
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod(RequestMethod.POST.name());
-            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            SyncHelper.postData(conn, fv);
-
-            int responseCode = conn.getResponseCode();
-            String amsg = conn.getResponseMessage();
-            JSONObject obj = SyncHelper.parse(conn, getName()+"Refresh");
-
-            if (obj != null && responseCode >= HttpURLConnection.HTTP_OK &&
-                    responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-                return parseAuthData(obj);
-            } else {
-                // token no longer valid (normally HTTP_UNAUTHORIZED)
-                s = Status.NEED_AUTH;
-                s.authMethod = AuthMethod.OAUTH2;
-                access_token = null;
-            }
-            s = Status.ERROR;
-            return s;
-
-        } catch (IOException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (JSONException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        }
-
-        s.ex.printStackTrace();
+        //Log.v(getName(), "connect: " +s+ " "+access_token);
         return s;
     }
 
@@ -282,7 +217,6 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
         return desc;
     }
 
-
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s = connect();
@@ -290,43 +224,62 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             return s;
         }
 
-        String desc = getDesc(db, mID);
-        TCX tcx = new TCX(db);
+        Sport sport = Sport.RUNNING;
         try {
+            String[] columns = {
+                Constants.DB.ACTIVITY.SPORT
+        };
+        Cursor c = null;
+        try {
+            c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
+                    null, null, null, null);
+            if (c.moveToFirst()) {
+                sport = Sport.valueOf(c.getInt(0));
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+            // Upload to default directory /Apps/RunnerUp
+            String file = String.format(Locale.getDefault(), "/RunnerUp_%04d_%s.tcx", mID, sport.TapiriikType());
+
             StringWriter writer = new StringWriter();
+            TCX tcx = new TCX(db);
             tcx.export(mID, writer);
+
             HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
+            conn.addRequestProperty("Content-Type", "application/octet-stream");
             conn.setRequestProperty("Authorization", "Bearer " + access_token);
-
-            Part<StringWritable> filePart = new Part<>("file",
-                    new StringWritable(writer.toString()));
-            filePart.setFilename(String.format(Locale.getDefault(),
-                    "RunnerUp_%04d.tcx", mID));
-            filePart.setContentType("application/octet-stream");
-            Part<?> parts[] = {
-                    filePart, null
-            };
-            if (!TextUtils.isEmpty(desc)) {
-                Part<StringWritable> descPart = new Part<>("description",
-                        new StringWritable(desc));
-                parts[1] = descPart;
+            JSONObject parameters = new JSONObject();
+            try {
+                parameters.put("path", file);
+                parameters.put("mode", "add");
+                parameters.put("autorename", true);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return Status.ERROR;
             }
-            SyncHelper.postMulti(conn, parts);
+            conn.addRequestProperty("Dropbox-API-Arg", parameters.toString());
+            OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+            out.write(writer.getBuffer().toString().getBytes());
+            out.flush();
+            out.close();
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg);
+            Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg+" ");
 
             JSONObject obj = SyncHelper.parse(conn, getName());
 
             if (obj != null && responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
                 s.activityId = mID;
-                if (obj.has("activity_id")) {
+                if (obj.has("id")) {
                     // Note: duplicate will not set activity_id
-                    s.externalId = noNullStr(obj.getString("activity_id"));
+                    s.externalId = noNullStr(obj.getString("id"));
                     if (s.externalId != null) {
                         s.externalIdStatus = ExternalIdStatus.OK;
                     }
@@ -336,8 +289,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             String error = obj != null && obj.has("error") ?
                     noNullStr(obj.getString("error")) :
                     "";
-            Log.e(getName(),
-                    "Error uploading, code: " +
+            Log.e(getName(),"Error uploading, code: " +
                             responseCode + ", amsg: " + amsg + " " + error + ", json: " + (obj == null ? "" : obj));
             if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // token no longer valid
@@ -361,7 +313,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     @Override
-    public boolean checkSupport(Synchronizer.Feature f) {
+    public boolean checkSupport(Feature f) {
         return f == Feature.UPLOAD;
     }
 }

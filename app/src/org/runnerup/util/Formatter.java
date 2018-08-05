@@ -48,7 +48,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private java.text.DateFormat monthFormat = null;
     private java.text.DateFormat dayOfMonthFormat = null;
     //private HRZones hrZones = null;
-    private final Locale defaultLocale;
 
     private boolean metric = true;
     private String base_unit = "km";
@@ -77,17 +76,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
         dateFormat = android.text.format.DateFormat.getDateFormat(ctx);
         timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
-        monthFormat = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
-        dayOfMonthFormat = new SimpleDateFormat("E d", Locale.getDefault());
+        monthFormat = new SimpleDateFormat("MMM yyyy", cueResources.defaultLocale);
+        dayOfMonthFormat = new SimpleDateFormat("E d", cueResources.defaultLocale);
         //hrZones = new HRZones(context);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-                !ctx.getResources().getConfiguration().getLocales().isEmpty()) {
-            defaultLocale = ctx.getResources().getConfiguration().getLocales().get(0);
-        } else {
-            //noinspection deprecation
-            defaultLocale = ctx.getResources().getConfiguration().locale;
-        }
         setUnit();
     }
 
@@ -97,7 +89,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         final Locale defaultLocale;
         final Locale audioLocale;
 
-        LocaleResources(Context ctx, Locale locale) {
+        LocaleResources(Context ctx, Locale configAudioLocale) {
             resources = ctx.getResources();
             configuration = resources.getConfiguration();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
@@ -107,7 +99,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 //noinspection deprecation
                 defaultLocale = configuration.locale;
             }
-            audioLocale = locale;
+
+            if (configAudioLocale == null) {
+                audioLocale = defaultLocale;
+            } else {
+                audioLocale = configAudioLocale;
+            }
         }
 
         void setLang(Locale locale) {
@@ -149,15 +146,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     private LocaleResources getCueLangResources(Context ctx) {
         Locale loc = getAudioLocale(ctx);
-        if (loc == null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
-                    !ctx.getResources().getConfiguration().getLocales().isEmpty()) {
-                loc = ctx.getResources().getConfiguration().getLocales().get(0);
-            } else {
-                //noinspection deprecation
-                loc = ctx.getResources().getConfiguration().locale;
-            }
-        }
         return new LocaleResources(ctx, loc);
     }
 
@@ -291,26 +279,26 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     private String cueElapsedTime(long seconds, boolean includeDimension) {
-        long hours = 0;
-        long minutes = 0;
+        int hours = 0;
+        int minutes = 0;
         if (seconds >= 3600) {
-            hours = seconds / 3600;
+            hours = (int)(seconds / 3600);
             seconds -= hours * 3600;
         }
         if (seconds >= 60) {
-            minutes = seconds / 60;
+            minutes = (int)(seconds / 60);
             seconds -= minutes * 60;
         }
         StringBuilder s = new StringBuilder();
         if (hours > 0) {
             includeDimension = true;
-            s.append(cueResources.getQuantityString(R.plurals.cue_hour, (int)hours, (int)hours));
+            s.append(cueResources.getQuantityString(R.plurals.cue_hour, hours, hours));
         }
         if (minutes > 0) {
             if (hours > 0)
                 s.append(" ");
             includeDimension = true;
-            s.append(cueResources.getQuantityString(R.plurals.cue_minute, (int)minutes, (int)minutes));
+            s.append(cueResources.getQuantityString(R.plurals.cue_minute, minutes, minutes));
         }
         if (seconds > 0) {
             if (hours > 0 || minutes > 0)
@@ -386,16 +374,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return
      */
     public String formatCadence(Format target, double val) {
+        int val2 = (int) Math.round(val);
         switch (target) {
             case CUE:
             case CUE_SHORT:
             case CUE_LONG:
-                return Integer.toString((int) Math.round(val)) + " "
-                        + cueResources.getQuantityString(R.plurals.cue_bpm, (int)val, (int)val);
+                return cueResources.getQuantityString(R.plurals.cue_rpm, val2, val2);
             case TXT:
             case TXT_SHORT:
             case TXT_LONG:
-                return Integer.toString((int) Math.round(val));
+                return Integer.toString((int) val2);
         }
         return "";
     }
@@ -464,9 +452,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     private String cuePace(double seconds_per_meter) {
-        long seconds_per_unit = Math.round(base_meters * seconds_per_meter);
-        long hours_per_unit = 0;
-        long minutes_per_unit = 0;
+        int seconds_per_unit = (int)Math.round(base_meters * seconds_per_meter);
+        int hours_per_unit = 0;
+        int minutes_per_unit = 0;
         if (seconds_per_unit >= 3600) {
             hours_per_unit = seconds_per_unit / 3600;
             seconds_per_unit -= hours_per_unit * 3600;
@@ -477,17 +465,17 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
         StringBuilder s = new StringBuilder();
         if (hours_per_unit > 0) {
-            s.append(cueResources.getQuantityString(R.plurals.cue_hour, (int)hours_per_unit, (int)hours_per_unit));
+            s.append(cueResources.getQuantityString(R.plurals.cue_hour, hours_per_unit, hours_per_unit));
         }
         if (minutes_per_unit > 0) {
             if (hours_per_unit > 0)
                 s.append(" ");
-            s.append(cueResources.getQuantityString(R.plurals.cue_minute, (int)minutes_per_unit, (int)minutes_per_unit));
+            s.append(cueResources.getQuantityString(R.plurals.cue_minute, minutes_per_unit, minutes_per_unit));
         }
         if (seconds_per_unit > 0) {
             if (hours_per_unit > 0 || minutes_per_unit > 0)
                 s.append(" ");
-            s.append(cueResources.getQuantityString(R.plurals.cue_second, (int)seconds_per_unit, (int)seconds_per_unit));
+            s.append(cueResources.getQuantityString(R.plurals.cue_second, seconds_per_unit, seconds_per_unit));
         }
         s.append(" ").append(cueResources.getString(metric? R.string.cue_perkilometer : R.string.cue_permile));
         return s.toString();
@@ -520,9 +508,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return string suitable for printing according to settings
      */
     private String txtSpeed(double meter_per_seconds, boolean includeUnit) {
-        double distance_per_seconds = meter_per_seconds / base_meters;
-        double distance_per_hour = distance_per_seconds * 3600;
-        String str = String.format(defaultLocale, "%.1f", distance_per_hour);
+        double distance_per_hour = meter_per_seconds * 3600 / base_meters;
+        String str = String.format(cueResources.defaultLocale, "%.1f", distance_per_hour);
         if (!includeUnit)
             return str;
         else {
@@ -535,11 +522,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     private String cueSpeed(double meter_per_seconds) {
-        double distance_per_seconds = meter_per_seconds / base_meters;
-        double distance_per_hour = distance_per_seconds * 3600;
-        String fmtDistPerHour = txtSpeed(meter_per_seconds, false);
+        double distance_per_hour = meter_per_seconds  * 3600 / base_meters;
+        String str = String.format(cueResources.audioLocale, "%.1f", distance_per_hour);
         return cueResources.getQuantityString(metric ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
-                (int)distance_per_hour, fmtDistPerHour);
+                (int)distance_per_hour, str);
     }
 
     /**
@@ -590,47 +576,48 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE:
             case CUE_LONG:
             case CUE_SHORT:
-                return cueDistance(meters, false);
+                return formatDistance(meters, false);
             case TXT:
-                return cueDistanceInKmOrMiles(meters);
+                return formatDistanceInKmOrMiles(getRoundedDistanceInKmOrMiles(meters));
             case TXT_SHORT:
-                return cueDistance(meters, true);
+                return formatDistance(meters, true);
             case TXT_LONG:
                 return Long.toString(meters) + " m";
         }
         return null;
     }
 
-    private String cueDistanceInKmOrMiles(long meters) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        return df.format(meters / base_meters);
+    private double getRoundedDistanceInKmOrMiles(long meters) {
+        double decimals = 2;
+        return round(meters/base_meters, decimals);
     }
 
-    private String cueDistance(long meters, boolean txt) {
-        double base_val = km_meters; // 1km
-        double decimals = 2;
-        if (!metric) {
-            base_val = mi_meters;
-        }
+    private String formatDistanceInKmOrMiles(double meters) {
+        return String.format(cueResources.defaultLocale, "%.2f", meters);
+    }
 
-        StringBuilder s = new StringBuilder();
-        if (meters >= base_val) {
-            double base = ((double) meters) / base_val;
-            double val = round(base, decimals);
+    private String formatDistance(long meters, boolean txt) {
+        String res;
+        if (meters >= base_meters) {
+            double val = getRoundedDistanceInKmOrMiles(meters);
             if (txt) {
-                s.append(val).append(" ")
-                        .append(resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
+                res = String.format(cueResources.defaultLocale, "%.2f %s", val,
+                        resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
-                s.append(val).append(" ")
-                        .append(cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, (int)val));
+                // Get a localized presentation string, used with the localized plurals string
+                String v2 = String.format(cueResources.audioLocale, "%.2f", val);
+                res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, v2);
             }
         } else {
-            if (txt)
-                s.append(meters).append(" ").append("m");
-            else
-                s.append(cueResources.getQuantityString(R.plurals.cue_meter, (int)meters, (int)meters));
+            // Present distance in meters if less than 1km/1mi
+            if (txt) {
+                res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
+            }
+            else {
+                res = cueResources.getQuantityString(R.plurals.cue_meter, (int)meters, meters);
+            }
         }
-        return s.toString();
+        return res;
     }
 
     public String formatRemaining(Format target, Dimension dimension, double value) {

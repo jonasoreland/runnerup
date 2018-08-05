@@ -54,16 +54,16 @@
     <item quantity="other">%d metrów</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%d kilometr</item>
-    <item quantity="few">%d kilometry</item>
-    <item quantity="many">%d kilometrów</item>
-    <item quantity="other">%d kilometrów</item>
+    <item quantity="one">%s kilometr</item>
+    <item quantity="few">%s kilometry</item>
+    <item quantity="many">%s kilometrów</item>
+    <item quantity="other">%s kilometrów</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%d mila</item>
-    <item quantity="few">%d mile</item>
-    <item quantity="many">%d mil</item>
-    <item quantity="other">%d mil</item>
+    <item quantity="one">%s mila</item>
+    <item quantity="few">%s mile</item>
+    <item quantity="many">%s mil</item>
+    <item quantity="other">%s mil</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s kilometr na godzinę</item>

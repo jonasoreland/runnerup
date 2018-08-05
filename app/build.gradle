@@ -62,15 +62,15 @@ android {
 
     splits {
         abi {
-            //We would have preferred to not create split for Froyo, so explicitly enabling split
-            //.\gradlew --project-prop splitApk assembleLatestRelease
-            enable project.hasProperty('splitApk')
-            exclude 'mips64'
+            enable gradle.startParameter.taskNames.contains(":app:assembleLatestRelease")
+            // relevant archs only - these are the only available anyway for newer NDK
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
             universalApk true
         }
     }
 
     defaultConfig {
+        applicationIdSuffix rootProject.ext.applicationIdSuffix
         applicationId = doExtractStringFromManifest("package")
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
@@ -154,16 +154,39 @@ if (rootProject.file("release.properties").exists()) {
     android.buildTypes.release.signingConfig = null
 }
 
-android.applicationVariants.all { variant ->
-    variant.mergeResources.doLast {
-        if (rootProject.file("mapbox.properties").exists()) {
-            props.load(new FileInputStream(rootProject.file("mapbox.properties")))
-            File valuesFile = file("${buildDir}/intermediates/res/merged/${variant.dirName}/values/values.xml")
-            String content = valuesFile.getText('UTF-8')
-            content = content.replaceAll(/mapboxMapID.*/, "mapboxMapID\">" + props.mapboxid + "</string>")
-            content = content.replaceAll(/mapboxAccessToken.*/, "mapboxAccessToken\">" + props.mapboxAccessToken + "</string>")
-            valuesFile.write(content, 'UTF-8')
-        }
+android.applicationVariants.all {
+    // Note: As a minimum extra security at least obfuscate the strings with Proguard
+    if (rootProject.file("mapbox.properties").exists()) {
+        // https://www.mapbox.com/account/
+        props.load(new FileInputStream(rootProject.file("mapbox.properties")))
+        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
+    }
+    else {
+        // Demo key
+        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '"pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw"'
+    }
+
+    if (rootProject.file("runalyze.properties").exists()) {
+        props.load(new FileInputStream(rootProject.file("runalyze.properties")))
+        buildConfigField 'int', 'RUNALYZE_ENABLED', "1"
+        buildConfigField 'String', 'RUNALYZE_ID', props.CLIENT_ID
+        buildConfigField 'String', 'RUNALYZE_SECRET', props.CLIENT_SECRET
+    }
+    else {
+        buildConfigField 'int', 'RUNALYZE_ENABLED', "0"
+        buildConfigField 'String', 'RUNALYZE_ID', "null"
+        buildConfigField 'String', 'RUNALYZE_SECRET', "null"
+    }
+    if (rootProject.file("dropbox.properties").exists()) {
+        props.load(new FileInputStream(rootProject.file("dropbox.properties")))
+        buildConfigField 'int', 'DROPBOX_ENABLED', "1"
+        buildConfigField 'String', 'DROPBOX_ID', props.CLIENT_ID
+        buildConfigField 'String', 'DROPBOX_SECRET', props.CLIENT_SECRET
+    }
+    else {
+        buildConfigField 'int', 'DROPBOX_ENABLED', "0"
+        buildConfigField 'String', 'DROPBOX_ID', "null"
+        buildConfigField 'String', 'DROPBOX_SECRET', "null"
     }
 }
 

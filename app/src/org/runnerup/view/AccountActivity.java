@@ -33,6 +33,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,10 +63,7 @@ import java.util.ArrayList;
 
 
 public class AccountActivity extends AppCompatActivity implements Constants {
-    private long synchronizerID = -1;
-    private String synchronizer = null;
-    private int synchronizerIcon = 0;
-
+    private String mSynchronizerName = null;
     private SQLiteDatabase mDB = null;
     private final ArrayList<Cursor> mCursors = new ArrayList<>();
 
@@ -83,13 +81,16 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         Intent intent = getIntent();
-        synchronizer = intent.getStringExtra("synchronizer");
+        mSynchronizerName = intent.getStringExtra("synchronizer");
 
         mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         fillData();
 
-        Synchronizer upd = syncManager.getSynchronizerByName(synchronizer);
+        Synchronizer synchronizer = syncManager.getSynchronizerByName(mSynchronizerName);
+        if (synchronizer == null) {
+            return;
+        }
 
         {
             Button btn = (Button) findViewById(R.id.ok_account_button);
@@ -103,7 +104,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
         {
             Button btn = (Button) findViewById(R.id.account_download_button);
-            if (upd != null && upd.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) && upd.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
+            if (synchronizer.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) &&
+                synchronizer.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
                 btn.setOnClickListener(downloadButtonClick);
             } else {
                 btn.setVisibility(View.GONE);
@@ -114,8 +116,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             Button btn = (Button) findViewById(R.id.disconnect_account_button);
             btn.setOnClickListener(disconnectButtonClick);
         }
-
-
     }
 
     @Override
@@ -137,48 +137,52 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         };
 
         String args[] = {
-                synchronizer
+                mSynchronizerName
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?", args,
                 null, null, null);
 
         if (c.moveToFirst()) {
-            ContentValues tmp = DBHelper.get(c);
-            //noinspection ConstantConditions
-            synchronizerID = tmp.getAsLong("_id");
-            Synchronizer synchronizer = syncManager.add(tmp);
+            Synchronizer synchronizer;
+            {
+                ContentValues tmp = DBHelper.get(c);
+                synchronizer = syncManager.add(tmp);
+                flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
+                if (synchronizer == null) {
+                    return;
+                }
+            }
 
             {
                 ImageView im = (ImageView) findViewById(R.id.account_list_icon);
                 TextView tv = (TextView) findViewById(R.id.account_list_name);
-                tv.setText(tmp.getAsString(DB.ACCOUNT.NAME));
-                synchronizerIcon = synchronizer.getIconId();
-                if (synchronizerIcon == 0) {
+                if (synchronizer.getIconId() == 0 || mSynchronizerName.equals(FileSynchronizer.NAME)) {
+                    if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
+                        tv.setText(synchronizer.getPublicUrl());
+                        tv.setTag(synchronizer.getPublicUrl());
+                        // FileSynchronizer: SDK 24 requires the file URI to be handled as FileProvider
+                        // Something like OI File Manager is needed too
+                        if (Build.VERSION.SDK_INT < 24 || !synchronizer.getName().equals(FileSynchronizer.NAME)) {
+                            tv.setOnClickListener(urlButtonClick);
+                        }
+                    }
+                    else {
+                        tv.setText(synchronizer.getName());
+                    }
                     im.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                 } else {
+                    im.setImageDrawable(ContextCompat.getDrawable(this, synchronizer.getIconId()));
+                    if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
+                        im.setTag(synchronizer.getPublicUrl());
+                        im.setOnClickListener(urlButtonClick);
+                    }
                     im.setVisibility(View.VISIBLE);
                     tv.setVisibility(View.GONE);
-                    if (synchronizerIcon != 0)
-                        im.setImageDrawable(ContextCompat.getDrawable(this, synchronizerIcon));
                 }
             }
 
-            addRow("", null);
-
-            if (!TextUtils.isEmpty(synchronizer.getUrl())) {
-                Button btn = new Button(this);
-                btn.setText(synchronizer.getUrl());
-                //TODO SDK 24 requires the file URI to be handled as FileProvider
-                //Something like OI File Manager is needed too
-                if (Build.VERSION.SDK_INT < 24 || !tmp.getAsString(DB.ACCOUNT.NAME).equals(FileSynchronizer.NAME)) {
-                    btn.setOnClickListener(urlButtonClick);
-                }
-                btn.setTag(synchronizer.getUrl());
-                addRow(getResources().getString(R.string.Website) + ":", btn);
-            }
-
-            if (tmp.getAsString(DB.ACCOUNT.NAME).equals(RunnerUpLiveSynchronizer.NAME)) {
+            if (synchronizer.getName().equals(RunnerUpLiveSynchronizer.NAME)) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
                 final Resources res = this.getResources();
                 final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
@@ -190,7 +194,6 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 addRow(getResources().getString(R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
             }
 
-            flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
             if (synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);
@@ -268,12 +271,11 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this);
             builder.setTitle(getString(R.string.Clear_uploads));
-            builder.setMessage(getResources().getString(R.string.Clear_uploads_from_phone,
-                    synchronizer));
+            builder.setMessage(getResources().getString(R.string.Clear_uploads_from_phone));
             builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            syncManager.clearUploadsByName(callback, synchronizer);
+                            syncManager.clearUploadsByName(callback, mSynchronizerName);
                         }
                     });
 
@@ -293,11 +295,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("synchronizer", synchronizer);
-            intent.putExtra("synchronizerID", synchronizerID);
+            intent.putExtra("synchronizer", mSynchronizerName);
             intent.putExtra("mode", SyncManager.SyncMode.UPLOAD.name());
-            if (synchronizerIcon != 0)
-                intent.putExtra("synchronizerIcon", synchronizerIcon);
             AccountActivity.this.startActivityForResult(intent, 113);
         }
     };
@@ -307,11 +306,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         @Override
         public void onClick(View v) {
             final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("synchronizer", synchronizer);
-            intent.putExtra("synchronizerID", synchronizerID);
+            intent.putExtra("synchronizer", mSynchronizerName);
             intent.putExtra("mode", SyncManager.SyncMode.DOWNLOAD.name());
-            if (synchronizerIcon != 0)
-                intent.putExtra("synchronizerIcon", synchronizerIcon);
             AccountActivity.this.startActivityForResult(intent, 113);
         }
     };
@@ -341,7 +337,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             }
             tmp.put(DB.ACCOUNT.FLAGS, flags);
             String args[] = {
-                    synchronizer
+                    mSynchronizerName
             };
             mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
         }
@@ -376,7 +372,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             builder.setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            syncManager.disableSynchronizer(disconnectCallback, synchronizer,
+                            syncManager.disableSynchronizer(disconnectCallback, mSynchronizerName,
                                     selected[0]);
                         }
                     });
