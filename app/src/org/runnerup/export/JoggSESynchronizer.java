@@ -50,6 +50,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+// Not working
+// There is no official API for Svettig
+// This was based on an internal API to https://jogg.se/iphoneservice/iphoneservice.asmx
 
 public class JoggSESynchronizer extends DefaultSynchronizer {
 

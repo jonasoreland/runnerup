@@ -62,6 +62,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+// Note: The HealthGraph API is depreciated
 
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 

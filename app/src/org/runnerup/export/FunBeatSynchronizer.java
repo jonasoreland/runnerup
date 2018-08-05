@@ -50,11 +50,10 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
-/**
- * TODO: 1) serious cleanup needed 2) maybe reverse engineer
- * 1.0.0.api.funbeat.se that I found...
- */
-
+// Not working
+// FunBeat has no official API
+// This is based on an API that was intended to be official but was never published
+// A working implementation: https://github.com/staffann/st2funbeat
 
 public class FunBeatSynchronizer extends DefaultSynchronizer {
 
@@ -63,8 +62,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     private static final String BASE_URL = PUBLIC_URL;
     private static final String START_URL = BASE_URL + "/index.aspx";
     private static final String LOGIN_URL = BASE_URL + "/index.aspx";
-    private static final String UPLOAD_URL = BASE_URL
-            + "/importexport/upload.aspx";
+    private static final String UPLOAD_URL = BASE_URL + "/importexport/upload.aspx";
 
     private static final String API_URL = "https://1.0.0.android.api.funbeat.se/json/Default.asmx/";
     private static final String FEED_URL = API_URL + "GetMyNewsFeed";

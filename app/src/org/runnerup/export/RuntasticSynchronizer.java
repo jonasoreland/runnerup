@@ -47,6 +47,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+// Not working, login redirected to the dashboard
+// There is no official API for Runtastic
+// This was based on a hack, no longer working
 
 public class RuntasticSynchronizer extends DefaultSynchronizer {
 
@@ -206,8 +209,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
                 // int responseCode = conn.getResponseCode();
                 // String amsg = conn.getResponseMessage();
                 getCookies(conn);
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                JSONObject ret = SyncHelper.parse(in);
+                JSONObject ret = SyncHelper.parse(conn, getName());
                 if (ret != null && ret.has("success") && ret.getBoolean("success")) {
                     Matcher matcher = Patterns.WEB_URL.matcher(ret.getString("update"));
                     while (matcher.find()) {
