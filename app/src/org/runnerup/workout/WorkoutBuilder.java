@@ -268,7 +268,7 @@ public class WorkoutBuilder {
             ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
             triggers.add(ev);
 
-            if (prefs.getBoolean(res.getString(R.string.pref_autolap_started), false)) {
+            if (prefs.getBoolean(res.getString(R.string.pref_lap_started), false)) {
                 EventTrigger ev2 = new EventTrigger(); // for autolap
                 ev2.event = Event.STARTED;
                 ev2.scope = Scope.LAP;

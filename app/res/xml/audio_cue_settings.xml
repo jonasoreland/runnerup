@@ -67,8 +67,8 @@
 		android:dependency="@string/cue_end_of_lap"
 		android:defaultValue="true"
 		android:persistent="true"
-		android:key="@string/pref_autolap_started"
-		android:title="@string/Autolap_started" />
+		android:key="@string/pref_lap_started"
+		android:title="@string/Lap_start" />
 
 	<CheckBoxPreference
 		android:defaultValue="false"
