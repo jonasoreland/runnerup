@@ -23,6 +23,7 @@
      <color name="colorTextSecondary">#b3ffffff</color>
 
      <color name="colorPrimaryFab">#0066B7</color>
+     <color name="colorBottomNav">#212121</color>
 
      <color name="serviceDefault">#003366</color>
      <color name="serviceDigifit">#5DA9D3</color>

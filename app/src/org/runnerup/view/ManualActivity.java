@@ -37,7 +37,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.widget.TitleSpinner;
-import org.runnerup.widget.TitleSpinner.OnSetValueListener;
+import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 
 import java.text.DateFormat;
 import java.text.ParseException;

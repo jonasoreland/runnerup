@@ -23,13 +23,12 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,28 +72,26 @@ public class FeedActivity extends AppCompatActivity implements Constants {
     private TextView feedProgressLabel = null;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.feed_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_configure_accounts:
-                configureAccounts();
-                return true;
-            case R.id.menu_refresh:
-                refresh();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed);
+
+        Toolbar actionbar = (Toolbar) findViewById(R.id.feed_actionbar);
+        actionbar.inflateMenu(R.menu.feed_menu);
+        actionbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_configure_accounts:
+                        configureAccounts();
+                        return true;
+                    case R.id.menu_refresh:
+                        refresh();
+                        return true;
+                }
+                return false;
+            }
+        });
 
         syncManager = new SyncManager(this);
         formatter = new Formatter(this);

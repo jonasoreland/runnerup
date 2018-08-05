@@ -20,23 +20,16 @@
     android:id="@+id/tab_basic"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/activity_margin"
     android:orientation="vertical">
 
-	<org.runnerup.widget.TitleSpinner
+    <org.runnerup.widget.TitleSpinner
         android:id="@+id/basic_audio_cue_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="@string/pref_basic_audio"
-		android:text="@string/Audio_cue_settings"
-		runnerup:type="spinner_txt"/>
-    
-    <org.runnerup.widget.TitleSpinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/sportEntries"
-        android:key="@string/pref_basic_sport"
-        android:prompt="@string/Type"
-        android:text="@string/Sport" />
+        android:text="@string/Audio_cue_settings"
+        runnerup:type="spinner_txt"/>
 
     <org.runnerup.widget.TitleSpinner
         android:key="@string/pref_basic_target_type"
@@ -47,7 +40,7 @@
         android:entries="@array/target_types"
         runnerup:values="@array/target_values"
         android:text="@string/Target" />
-    
+
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/tab_basic_target_pace_max"
         android:layout_width="match_parent"

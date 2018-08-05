@@ -112,7 +112,7 @@ public class MainLayout extends TabActivity
             e.printStackTrace();
         }
         editor.putInt("app-version", versionCode);
-        boolean km = Formatter.getUseKilometers(getResources(), pref, editor);
+        boolean km = Formatter.getUseMetric(getResources(), pref, editor);
 
         if (upgradeState == UpgradeState.NEW) {
             editor.putString(getResources().getString(R.string.pref_autolap),

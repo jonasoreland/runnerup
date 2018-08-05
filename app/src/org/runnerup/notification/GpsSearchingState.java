@@ -42,7 +42,7 @@ public class GpsSearchingState implements NotificationState {
 
     @Override
     public Notification createNotification() {
-        builder.setContentText(String.format(Locale.getDefault(), "%s: %d/%d%s",
+        builder.setContentText(String.format(Locale.getDefault(), "%s: %d/%d (%s)",
                 context.getString(R.string.GPS_satellites),
                 gpsInformation.getSatellitesFixed(), gpsInformation.getSatellitesAvailable(),
                 gpsInformation.getGpsAccuracy()));

@@ -48,9 +48,9 @@ public class WorkoutBuilder {
      * @return workout based on SharedPreferences
      */
     public static Workout createDefaultWorkout(Resources res, SharedPreferences prefs,
-            Dimension target) {
+                                               Dimension target) {
         Workout w = new Workout();
-        w.sport = prefs.getInt(res.getString(R.string.pref_basic_sport), DB.ACTIVITY.SPORT_RUNNING);
+        w.sport = prefs.getInt(res.getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING);
 
         if (prefs.getBoolean(res.getString(R.string.pref_countdown_active), false))
         {
@@ -102,8 +102,8 @@ public class WorkoutBuilder {
             }
         }
         /*
-		 *
-		 */
+         *
+         */
         return w;
     }
 
@@ -133,6 +133,7 @@ public class WorkoutBuilder {
 
     public static Workout createDefaultIntervalWorkout(Resources res, SharedPreferences prefs) {
         Workout w = new Workout();
+        w.sport = prefs.getInt(res.getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING);
         final boolean warmup = true;
         final boolean cooldown = true;
         final boolean convertRestToRecovery = prefs.getBoolean(res.getString(
@@ -178,23 +179,23 @@ public class WorkoutBuilder {
             repeat.steps.add(step);
 
             //if (true) {
-                Step rest = null;
-                switch (intervalRestType) {
-                    case 0: // Time
-                        rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
-                        break;
-                    case 1: // Distance
-                        if (!convertRestToRecovery) {
-                            rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
-                        } else {
-                            rest = new Step();
-                            rest.intensity = Intensity.RECOVERY;
-                            rest.durationType = Dimension.DISTANCE;
-                            rest.durationValue = intevalRestDistance;
-                        }
-                        break;
-                }
-                repeat.steps.add(rest);
+            Step rest = null;
+            switch (intervalRestType) {
+                case 0: // Time
+                    rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
+                    break;
+                case 1: // Distance
+                    if (!convertRestToRecovery) {
+                        rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
+                    } else {
+                        rest = new Step();
+                        rest.intensity = Intensity.RECOVERY;
+                        rest.durationType = Dimension.DISTANCE;
+                        rest.durationValue = intevalRestDistance;
+                    }
+                    break;
+            }
+            repeat.steps.add(rest);
             //}
         }
         w.steps.add(repeat);
@@ -219,7 +220,7 @@ public class WorkoutBuilder {
     }
 
     public static SharedPreferences getAudioCuePreferences(Context ctx, SharedPreferences pref,
-            String key) {
+                                                           String key) {
         return getSubPreferences(ctx, pref, key,
                 ctx.getString(R.string.Default),
                 AudioCueSettingsActivity.SUFFIX);
@@ -241,7 +242,7 @@ public class WorkoutBuilder {
     }
 
     private static void addAudioCuesToWorkout(Resources res, ArrayList<Step> steps,
-            SharedPreferences prefs) {
+                                              SharedPreferences prefs) {
         final boolean skip_startstop_cue = prefs.getBoolean(
                 res.getString(R.string.cueinfo_skip_startstop), false);
         ArrayList<Trigger> triggers = createDefaultTriggers(res, prefs);
@@ -272,7 +273,7 @@ public class WorkoutBuilder {
                 ev2.event = Event.STARTED;
                 ev2.scope = Scope.LAP;
                 ev2.skipCounter = 1; // skip above
-                ev2.triggerAction.add(new AudioFeedback(R.string.cue_autolap_started));
+                ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
                 triggers.add(ev2);
             }
 
@@ -489,7 +490,7 @@ public class WorkoutBuilder {
     }
 
     private static void addPauseStopResumeTriggers(Resources res, ArrayList<Trigger> list,
-            SharedPreferences prefs) {
+                                                   SharedPreferences prefs) {
         if (!prefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false)) {
             {
                 EventTrigger p = new EventTrigger();
@@ -595,7 +596,7 @@ public class WorkoutBuilder {
     }
 
     public static void prepareWorkout(Resources res, SharedPreferences prefs, Workout w,
-            boolean basic) {
+                                      boolean basic) {
         List<StepListEntry> steps = w.getStepList();
 
         /*
@@ -679,9 +680,9 @@ public class WorkoutBuilder {
     }
 
     public static void addFeedbackFromPreferences(SharedPreferences prefs,
-            Resources res, ArrayList<Feedback> feedback) {
-
+                                                  Resources res, ArrayList<Feedback> feedback) {
         int feedbackStart = feedback.size();
+
         /* TOTAL */
         if (prefs.getBoolean(res.getString(R.string.cueinfo_total_distance), false)) {
             feedback.add(new AudioFeedback(Scope.ACTIVITY, Dimension.DISTANCE));

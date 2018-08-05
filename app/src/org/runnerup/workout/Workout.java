@@ -52,7 +52,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     private boolean paused = false;
     final ArrayList<Step> steps = new ArrayList<>();
     private final ArrayList<WorkoutStepListener> stepListeners = new ArrayList<>();
-    int sport = DB.ACTIVITY.SPORT_RUNNING;
+    public int sport = DB.ACTIVITY.SPORT_RUNNING;
     private boolean mute;
 
     class PendingFeedback {

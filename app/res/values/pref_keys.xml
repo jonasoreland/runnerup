@@ -19,15 +19,15 @@
     <string name="pref_autolap_active">pref_autolap_active</string>
     <string name="pref_autolap">pref_autolap</string>
     <string name="pref_countdown_active">pref_countdown_active</string>
-	<string name="pref_countdown_time">pref_countdown_time</string>
-	<string name="pref_unit">pref_unit</string>
-	<string name="pref_startgps">pref_startgps</string>
-	<string name="pref_pollInterval">pref_pollInterval</string>
-	<string name="pref_pollDistance">pref_pollDistance</string>
-	<string name="pref_altitude_adjust">pref_altitude_adjust</string>
-	<string name="pref_mute">pref_mute</string>
-	<string name="pref_mute_bool">pref_mute_bool</string>
-	<string name="pref_cue_hrm_connection">pref_cue_hrm_connection</string>
+    <string name="pref_countdown_time">pref_countdown_time</string>
+    <string name="pref_unit">pref_unit</string>
+    <string name="pref_startgps">pref_startgps</string>
+    <string name="pref_pollInterval">pref_pollInterval</string>
+    <string name="pref_pollDistance">pref_pollDistance</string>
+    <string name="pref_altitude_adjust">pref_altitude_adjust</string>
+    <string name="pref_mute">pref_mute</string>
+    <string name="pref_mute_bool">pref_mute_bool</string>
+    <string name="pref_cue_hrm_connection">pref_cue_hrm_connection</string>
 
     <string name="cue_configure_hrzones">cue_configure_hrzones</string>
     <string name="pref_cue_accounts">pref_cue_accounts</string>
@@ -72,8 +72,9 @@
     <string name="cueinfo_target_coaching">cueinfo_target_coaching</string>
     <string name="cueinfo_skip_startstop">cueinfo_skip_startstop</string>
 
+    <string name="pref_sport">startSport</string>
+
     <string name="pref_basic_audio">basicAudio</string>
-    <string name="pref_basic_sport">basicSport</string>
     <string name="pref_basic_target_type">basicTargetType</string>
     <string name="pref_basic_target_pace_max">basic_target_pace_max</string>
     <string name="pref_basic_target_pace_min_range">basic_target_pace_min_range</string>

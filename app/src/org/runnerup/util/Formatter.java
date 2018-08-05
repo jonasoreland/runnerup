@@ -49,13 +49,13 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private java.text.DateFormat dayOfMonthFormat = null;
     //private HRZones hrZones = null;
 
-    private boolean km = true;
+    private boolean metric = true;
     private String base_unit = "km";
     private double base_meters = km_meters;
 
     public final static double km_meters = 1000.0;
     public final static double mi_meters = 1609.34;
-    //public final static double FEET_PER_METER = 3.2808;
+    public final static double meters_per_foot = 0.3048;
 
     public enum Format {
         CUE,       // for text to speech
@@ -161,9 +161,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     private void setUnit() {
-        km = getUseKilometers(context.getResources(), sharedPreferences, null);
+        metric = getUseMetric(context.getResources(), sharedPreferences, null);
 
-        if (km) {
+        if (metric) {
             base_unit = "km";
             base_meters = km_meters;
         } else {
@@ -182,12 +182,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 // return resources.getString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile);
             case TXT:
             case TXT_SHORT:
-                return resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi);
+                return resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi);
         }
         return null;
     }
 
-    public static boolean getUseKilometers(Resources res, SharedPreferences prefs, Editor editor) {
+    public static boolean getUseMetric(Resources res, SharedPreferences prefs, Editor editor) {
         boolean _km;
         String unit = prefs.getString(res.getString(R.string.pref_unit), null);
         if (unit == null)
@@ -226,7 +226,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     public static double getUnitMeters(Resources res, SharedPreferences prefs) {
-        if (getUseKilometers(res, prefs, null))
+        if (getUseMetric(res, prefs, null))
             return km_meters;
         else
             return mi_meters;
@@ -432,7 +432,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return pace unit string
      */
     public String getPaceUnit() {//Resources resources, SharedPreferences sharedPreferences) {
-        int du = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
+        int du = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
         return resources.getString(R.string.metrics_elapsed_min) + "/" + resources.getString(du);
     }
 
@@ -446,7 +446,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (!includeUnit)
             return str;
         else {
-            int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
+            int res = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
             return str + "/" + resources.getString(res);
         }
     }
@@ -477,7 +477,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 s.append(" ");
             s.append(cueResources.getQuantityString(R.plurals.cue_second, seconds_per_unit, seconds_per_unit));
         }
-        s.append(" ").append(cueResources.getString(km ? R.string.cue_perkilometer : R.string.cue_permile));
+        s.append(" ").append(cueResources.getString(metric? R.string.cue_perkilometer : R.string.cue_permile));
         return s.toString();
     }
 
@@ -513,7 +513,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (!includeUnit)
             return str;
         else {
-            int res = km ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
+            int res = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
             return str +
                     resources.getString(res) +
                     "/" +
@@ -524,7 +524,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private String cueSpeed(double meter_per_seconds) {
         double distance_per_hour = meter_per_seconds  * 3600 / base_meters;
         String str = String.format(cueResources.audioLocale, "%.1f", distance_per_hour);
-        return cueResources.getQuantityString(km ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
+        return cueResources.getQuantityString(metric ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
                 (int)distance_per_hour, str);
     }
 
@@ -555,6 +555,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return dateFormat.format(seconds_since_epoch * 1000) +
                 " " +
                 timeFormat.format(seconds_since_epoch * 1000);
+    }
+
+    public String formatDoubleDistance(double meters) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        if (metric) {
+            return df.format(meters) + " m";
+        } else {
+            return df.format(meters / meters_per_foot) + " ft";
+        }
     }
 
     /**
@@ -593,11 +602,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             double val = getRoundedDistanceInKmOrMiles(meters);
             if (txt) {
                 res = String.format(cueResources.defaultLocale, "%.2f %s", val,
-                        resources.getString(km ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
+                        resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
                 // Get a localized presentation string, used with the localized plurals string
                 String v2 = String.format(cueResources.audioLocale, "%.2f", val);
-                res = cueResources.getQuantityString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, v2);
+                res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, v2);
             }
         } else {
             // Present distance in meters if less than 1km/1mi
