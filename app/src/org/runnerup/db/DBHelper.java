@@ -149,9 +149,9 @@ public class DBHelper extends SQLiteOpenHelper implements
             + "_id integer primary key autoincrement, "
             + DB.EXPORT.ACTIVITY + " integer not null, "
             + DB.EXPORT.ACCOUNT + " integer not null, "
-            + DB.EXPORT.STATUS + " text, "
+            + DB.EXPORT.STATUS + " text, " //status for external id
             + DB.EXPORT.EXTERNAL_ID + " text, "
-            + DB.EXPORT.EXTRA + " integer not null default 1"
+            + DB.EXPORT.EXTRA + " integer not null default 1" //DBVERSION update: remove
             + ");";
 
     private static final String CREATE_TABLE_AUDIO_SCHEMES = "create table "

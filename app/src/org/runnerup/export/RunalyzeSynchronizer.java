@@ -228,7 +228,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     public Status refreshToken() {
-        Status s = Status.OK;
+        Status s;
 
         try {
             final FormValues fv = new FormValues();
@@ -246,25 +246,20 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
+            JSONObject obj = SyncHelper.parse(conn, getName()+"Refresh");
 
-            if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-                InputStream in = new BufferedInputStream(conn.getInputStream());
-                parseAuthData(SyncHelper.parse(in));
-                conn.disconnect();
-
+            if (obj != null && responseCode >= HttpURLConnection.HTTP_OK &&
+                    responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
+                return parseAuthData(obj);
             } else {
-                InputStream in = conn.getErrorStream();
-                String msg = in == null ? "" : SyncHelper.readInputStream(in);
-                Log.v(getName(), "refresh code: " + responseCode + amsg + " " + msg);
-                conn.disconnect();
-
                 // token no longer valid (normally HTTP_UNAUTHORIZED)
                 s = Status.NEED_AUTH;
                 s.authMethod = AuthMethod.OAUTH2;
                 access_token = null;
             }
-
+            s = Status.ERROR;
             return s;
+
         } catch (IOException e) {
             s = Status.ERROR;
             s.ex = e;
@@ -272,8 +267,8 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             s = Status.ERROR;
             s.ex = e;
         }
-        s.ex.printStackTrace();
 
+        s.ex.printStackTrace();
         return s;
     }
 
@@ -324,20 +319,11 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             String amsg = conn.getResponseMessage();
             Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg);
 
-            JSONObject obj = null;
-            try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                obj = SyncHelper.parse(in);
-            } catch (IOException e) {
-                InputStream in = conn.getErrorStream();
-                String msg = in == null ? "" : SyncHelper.readInputStream(in);
-                Log.v(getName(), "error code: " + msg);
-            } finally {
-                conn.disconnect();
-            }
+            JSONObject obj = SyncHelper.parse(conn, getName());
 
             if (obj != null && responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
+                s.activityId = mID;
                 if (obj.has("activity_id")) {
                     // Note: duplicate will not set activity_id
                     s.externalId = noNullStr(obj.getString("activity_id"));
@@ -353,14 +339,15 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             Log.e(getName(),
                     "Error uploading, code: " +
                             responseCode + ", amsg: " + amsg + " " + error + ", json: " + (obj == null ? "" : obj));
-            s = Status.ERROR;
             if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // token no longer valid
                 access_token = null;
                 s = Status.NEED_AUTH;
                 s.authMethod = AuthMethod.OAUTH2;
             }
-            s.ex = new Exception(amsg + error);
+            s = Status.ERROR;
+            return s;
+
         } catch (IOException e) {
             s = Status.ERROR;
             s.ex = e;

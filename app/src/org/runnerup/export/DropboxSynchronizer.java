@@ -247,6 +247,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
             StringWriter writer = new StringWriter();
             TCX tcx = new TCX(db);
             tcx.export(mID, writer);
+
             HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
@@ -255,6 +256,8 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
             JSONObject parameters = new JSONObject();
             try {
                 parameters.put("path", file);
+                parameters.put("mode", "add");
+                parameters.put("autorename", true);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return Status.ERROR;
@@ -267,22 +270,13 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg+" "+parameters.toString());
+            Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg+" ");
 
-            JSONObject obj = null;
-            try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                obj = SyncHelper.parse(in);
-            } catch (IOException e) {
-                InputStream in = conn.getErrorStream();
-                String msg = in == null ? "" : SyncHelper.readInputStream(in);
-                Log.v(getName(), "error code: " + msg);
-            } finally {
-                conn.disconnect();
-            }
+            JSONObject obj = SyncHelper.parse(conn, getName());
 
             if (obj != null && responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
+                s.activityId = mID;
                 if (obj.has("id")) {
                     // Note: duplicate will not set activity_id
                     s.externalId = noNullStr(obj.getString("id"));
@@ -295,17 +289,17 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
             String error = obj != null && obj.has("error") ?
                     noNullStr(obj.getString("error")) :
                     "";
-            Log.e(getName(),
-                    "Error uploading, code: " +
+            Log.e(getName(),"Error uploading, code: " +
                             responseCode + ", amsg: " + amsg + " " + error + ", json: " + (obj == null ? "" : obj));
-            s = Status.ERROR;
             if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // token no longer valid
                 access_token = null;
                 s = Status.NEED_AUTH;
                 s.authMethod = AuthMethod.OAUTH2;
             }
-            s.ex = new Exception(amsg + error);
+            s = Status.ERROR;
+            return s;
+
         } catch (IOException e) {
             s = Status.ERROR;
             s.ex = e;
