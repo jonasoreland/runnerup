@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationIdSuffix rootProject.ext.applicationIdSuffix
-        minSdkVersion 20
+        minSdkVersion 23
         targetSdkVersion rootProject.ext.compileSdkVersion
         versionName rootProject.ext.versionName
         versionCode rootProject.ext.versionCode
