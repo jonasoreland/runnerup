@@ -106,7 +106,7 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
     @Override
     public void onBind(HashMap<String, Object> bindValues) {
         formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
-        this.isMetric = Formatter.getUseKilometers(context.getResources(), PreferenceManager.getDefaultSharedPreferences(context), null);
+        this.isMetric = Formatter.getUseMetric(context.getResources(), PreferenceManager.getDefaultSharedPreferences(context), null);
     }
 
     @Override

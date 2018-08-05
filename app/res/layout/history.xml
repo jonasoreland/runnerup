@@ -16,10 +16,20 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tab1_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:id="@+id/tab1_layout"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/feed_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:title="@string/History"
+        android:elevation="4dp"
+        tools:ignore="UnusedAttribute" />
 
     <ListView
         android:id="@+id/history_list"

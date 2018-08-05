@@ -8,4 +8,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="widget_margin">8dp</dimen>
     <dimen name="margin_for_fab">88dp</dimen>
     <dimen name="activity_margin">16dp</dimen>
+
+    <dimen name="fab_margin_44row">20dp</dimen>
+    <dimen name="fab_margin_68row">44dp</dimen>
 </resources>

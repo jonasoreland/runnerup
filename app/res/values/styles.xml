@@ -107,4 +107,9 @@
         <item name="android:textColor">@color/colorText</item>
     </style>
 
+    <style name="StatusText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/colorText</item>
+    </style>
+
 </resources>

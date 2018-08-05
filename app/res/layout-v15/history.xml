@@ -24,6 +24,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/feed_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:title="@string/History"
+        android:elevation="4dp"
+        tools:ignore="UnusedAttribute" />
+
     <ListView
         android:id="@+id/history_list"
         android:layout_width="match_parent"
