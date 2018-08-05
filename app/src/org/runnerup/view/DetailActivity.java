@@ -32,6 +32,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -714,7 +715,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     //Note: onClick set in reportlist_row.xml
     public void onClickAccountName(View arg0) {
         final String name = (String) arg0.getTag();
-        if (synchedExternalId.containsKey(name)) {
+        if (synchedExternalId.containsKey(name) && !TextUtils.isEmpty(synchedExternalId.get(name))) {
             String url = syncManager.getSynchronizerByName(name).getActivityUrl(synchedExternalId.get(name));
             if (url != null) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
