@@ -27,6 +27,7 @@ import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -408,14 +409,17 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
             int responseCode = conn.getResponseCode();
             String amsg = conn.getResponseMessage();
-            s.externalId = noNullStr(conn.getHeaderField("Location"));
+            String externalId = noNullStr(conn.getHeaderField("Location"));
             conn.disconnect();
             conn = null;
 
             if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
                 s = Status.OK;
                 s.activityId = mID;
-                s.externalIdStatus = ExternalIdStatus.OK;
+                if (!TextUtils.isEmpty(externalId)) {
+                    s.externalId = externalId;
+                    s.externalIdStatus = ExternalIdStatus.OK;
+                }
                 return s;
             }
             Log.e(getName(), "Error code: " + responseCode + ", amsg: " + amsg);
@@ -469,7 +473,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             }
         }
         String url;
-        if (userName == null) {
+        if (userName == null || extId == null) {
             url = null;
         } else {
             //Do not bother with fitnessActivitiesUrl
