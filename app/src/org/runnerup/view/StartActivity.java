@@ -836,10 +836,10 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     public String getGpsAccuracyString(float accuracy) {
         if (accuracy > 0) {
-            String accString = formatter.formatDoubleDistance(accuracy);
+            String accString = formatter.formatElevation(Formatter.Format.TXT_SHORT, accuracy);
             if (mTracker.getCurrentElevation() != null) {
                 return String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_elevation),
-                        accString, formatter.formatDoubleDistance(mTracker.getCurrentElevation()));
+                        accString, formatter.formatElevation(Formatter.Format.TXT_SHORT, mTracker.getCurrentElevation()));
             } else {
                 return String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_no_elevation),
                         accString);
