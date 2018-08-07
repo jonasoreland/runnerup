@@ -638,6 +638,10 @@ public class Tracker extends android.app.Service implements
         return mElapsedTimeMillis / 1000;
     }
 
+    public long getTimeMs() {
+        return mElapsedTimeMillis;
+    }
+
     public double getDistance() {
         return mElapsedDistance;
     }
