@@ -97,15 +97,11 @@ public class Tracker extends android.app.Service implements
             new TrackerReceiver(this));
     private TrackerWear trackerWear; // created if version is sufficient
     private TrackerPebble trackerPebble; // created if version is sufficient
-    /**
-     * Work-around for http://code.google.com/p/android/issues/detail?id=23937
-     */
+
     private boolean mBug23937Checked = false;
     private long mBug23937Delta = 0;
+    private long mSystemToGpsDiffTimeMillis = 0;
 
-    /**
-	 *
-	 */
     private long mLapId = 0;
     private long mActivityId = 0;
     private long mElapsedTimeMillis = 0;
@@ -120,16 +116,12 @@ public class Tracker extends android.app.Service implements
     private final ValueModel<TrackerState> state = new ValueModel<>(TrackerState.INIT);
     private int mLocationType = DB.LOCATION.TYPE_START;
 
-    /**
-     * Last location given by LocationManager
-     */
+    // Last location given by LocationManager
     private Location mLastLocation = null;
     //Second to last location - to get speed
     private Location mLast2Location = null;
 
-    /**
-     * Last location given by LocationManager when in state STARTED
-     */
+    // Last location given by LocationManager when in state STARTED
     private Location mActivityLastLocation = null;
 
     private SQLiteDatabase mDB = null;
@@ -662,31 +654,45 @@ public class Tracker extends android.app.Service implements
     }
 
     private void onLocationChangedImpl(Location arg0, boolean internal) {
-        long now = System.currentTimeMillis();
         if (!mBug23937Checked) {
+            long now = System.currentTimeMillis();
             long gpsTime = arg0.getTime();
-            if (gpsTime > now + 3 * 1000) {
-                mBug23937Delta = now - gpsTime;
+            // http://code.google.com/p/android/issues/detail?id=23937
+            // Some GPS chipset reported that the time was a day off
+            // The original Android issue is closed, probably a firmware issue
+            // This check is used for a similar problem
+            // System time is manually set, differs from GPS time
+            // The GPS time stamp should normally not need to be changed,
+            // but approx diff is needed to find if data is valid
+            mSystemToGpsDiffTimeMillis = now - gpsTime;
+            if (gpsTime > now + (24 * 3600 - 120) * 1000) {
+                mBug23937Delta = mSystemToGpsDiffTimeMillis;
+                mSystemToGpsDiffTimeMillis = 0;
             } else {
                 mBug23937Delta = 0;
             }
             mBug23937Checked = true;
-            Log.e(getClass().getName(), "Bug23937: gpsTime: " + gpsTime + " utcTime: " + now
-                    + " (diff: " + Math.abs(gpsTime - now) + ") => delta: " + mBug23937Delta);
+            Log.e(getClass().getName(), "Bug23937: gpsTime: " + gpsTime
+                    + " (diff to system: " + mSystemToGpsDiffTimeMillis + ") => delta: " + mBug23937Delta);
         }
         if (mBug23937Delta != 0) {
             arg0.setTime(arg0.getTime() + mBug23937Delta);
         }
 
         if (internal || state.get() == TrackerState.STARTED) {
-            Integer hrValue = getCurrentHRValue(now, MAX_HR_AGE);
+            Integer hrValue = getCurrentHRValue(arg0.getTime(), MAX_HR_AGE);
             Double eleValue = getCurrentElevation();
             Float cadValue = getCurrentCadence();
             Float temperatureValue = getCurrentTemperature();
             Float pressureValue = getCurrentPressure();
             if (mActivityLastLocation != null) {
-                double timeDiff = (double) (arg0.getTime() - mActivityLastLocation
-                        .getTime());
+                long timeDiff;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    timeDiff = (arg0.getElapsedRealtimeNanos() - mActivityLastLocation
+                            .getElapsedRealtimeNanos()) / 1000000;
+                } else {
+                    timeDiff = arg0.getTime() - mActivityLastLocation.getTime();
+                }
                 double distDiff = arg0.distanceTo(mActivityLastLocation);
                 if (timeDiff < 0) {
                     // time moved backward ??
@@ -702,8 +708,7 @@ public class Tracker extends android.app.Service implements
                 mElapsedDistance += distDiff;
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
-                    mHeartbeatMillis += timeDiff; // TODO handle loss of HRM
-                    // connection
+                    mHeartbeatMillis += timeDiff; // TODO handle loss of HRM connection
                     mMaxHR = Math.max(hrValue, mMaxHR);
                 }
             }
@@ -845,17 +850,15 @@ public class Tracker extends android.app.Service implements
 
     private Integer getCurrentHRValue(long now, long maxAge) {
         HRProvider hrProvider = trackerHRM.getHrProvider();
-        if (hrProvider == null)
-            return null;
-
-        if (now > hrProvider.getHRValueTimestamp() + maxAge)
+        if (hrProvider == null ||
+                now > hrProvider.getHRValueTimestamp() + maxAge)
             return null;
 
         return hrProvider.getHRValue();
     }
 
     public Integer getCurrentHRValue() {
-        return getCurrentHRValue(System.currentTimeMillis(), 3000);
+        return getCurrentHRValue(System.currentTimeMillis() - mSystemToGpsDiffTimeMillis, 3000);
     }
     public Float getCurrentCadence() {
         return trackerCadence.getValue();
@@ -871,7 +874,7 @@ public class Tracker extends android.app.Service implements
     }
 
     public Double getCurrentSpeed() {
-        return getCurrentSpeed(System.currentTimeMillis(), 3000);
+        return getCurrentSpeed(System.currentTimeMillis() - mSystemToGpsDiffTimeMillis, 3000);
     }
 
     private Double getCurrentSpeed(long now, long maxAge) {
