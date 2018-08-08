@@ -875,16 +875,24 @@ public class Tracker extends android.app.Service implements
     }
 
     private Double getCurrentSpeed(long now, long maxAge) {
-        if (mLastLocation == null)
+        if (mLastLocation == null ||
+                now > mLastLocation.getTime() + maxAge) {
             return null;
-        if (now > mLastLocation.getTime() + maxAge)
-            return null;
+        }
         double speed = mLastLocation.getSpeed();
-        if ((!mLastLocation.hasSpeed() || speed == 0.0f)
-                && mLastLocation != null && mLast2Location != null &&
-                mLastLocation.getTime() > mLast2Location.getTime() ) {
+        if (!mLastLocation.hasSpeed() || speed == 0.0f) {
             //Some Android (at least emulators) do not implement getSpeed() (even if hasSpeed() is true)
-            speed = mLastLocation.distanceTo(mLast2Location) * 1000 / (mLastLocation.getTime() - mLast2Location.getTime());
+            if (mLastLocation == null || mLast2Location == null ||
+                    mLastLocation.getTime() <= mLast2Location.getTime()) {
+                return null;
+            }
+            double d = mLastLocation.distanceTo(mLast2Location);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                speed = d * 1000000000 / (mLastLocation.getElapsedRealtimeNanos() -
+                        mLast2Location.getElapsedRealtimeNanos());
+            } else {
+                speed = d * 1000 / (mLastLocation.getTime() - mLast2Location.getTime());
+            }
         }
         return speed;
     }
