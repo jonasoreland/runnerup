@@ -1,19 +1,32 @@
+#Suppress warnings for proguard, for all irrelevant warnings
+
 -dontwarn com.dsi.ant.**
--dontwarn com.samsung.**
 -dontwarn com.vividsolutions.jts.awt.**
 -dontwarn android.support.**
 -dontwarn com.squareup.okhttp.**
 -dontnote android.net.http.*
+-dontnote com.google.android.gms.flags.impl.FlagProviderImpl
+-dontnote com.almeros.android.multitouch.gesturedetectors.RotateGestureDetector
+-dontnote com.google.gson.internal.UnsafeAllocator
+-dontnote com.google.protobuf.*
 -dontnote org.apache.commons.codec.**
 -dontnote org.apache.http.**
 -dontwarn sun.misc.Unsafe
 -dontwarn java.lang.invoke.**
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontnote com.jjoe64.graphview.GraphView
 #mapbox
-#okhttp related
+-dontnote com.mapbox.**
+#okhttp (mapbox) related
 -dontwarn okhttp3.**
+-dontnote okhttp3.**
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 -dontwarn org.conscrypt.**
 # A resource is loaded with a relative path so the package of this class must be preserved.
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+# All implemetations of internal interfaces do not use all methods
+-dontnote org.runnerup.view.StepButton
+-dontnote org.runnerup.widget.ClassicSpinner
+-dontnote org.runnerup.widget.TitleSpinner

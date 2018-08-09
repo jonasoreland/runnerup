@@ -31,7 +31,7 @@
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">ok, nedrans</string>
+  <string name="ok_rats">OK, nedrans</string>
   <!--other-->
     <string name="Type">Typ</string>
   <string name="active">aktiv</string>
@@ -112,7 +112,7 @@
   <string name="Age">Ålder</string>
     <string name="Synchronizing">Synkroniserar:</string>
   <string name="synchronizing_feed">synkroniserar flöde…</string>
-  <string name="OK">Ok</string>
+  <string name="OK">OK</string>
     <string name="Show_disabled_accounts">Visa inaktiverade konton</string>
   <string name="Clear_uploads">Rensa uppladdningar</string>
   <string name="Upload_missing_workouts">Ladda upp (saknade) träningspass</string>
@@ -141,7 +141,7 @@
   <string name="Edit_step">Redigera steg</string>
   <string name="Create_new_audio_cue_scheme">Skapa nytt schema för ljudmeddelande</string>
   <string name="Great">Kanon!</string>
-  <string name="OK_darn">Ok… typiskt!</string>
+  <string name="OK_darn">OK… typiskt!</string>
   <string name="Yes">Ja</string>
   <string name="Create">Skapa</string>
   <string name="Darn">Nedrans!</string>
@@ -298,11 +298,32 @@
   <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
   <string name="log_extended_gps_summary">Exportera enbart i GPX</string>
   <string name="log_extended_gps_title">Logga utökad GPS noggrannhetsdata</string>
-  <string name="use_step_sensor_title">Steg sensor</string>
+  <string name="use_step_sensor_title">Stegsensor</string>
   <string name="use_step_sensor_summary">Använd till kadens</string>
-  <string name="use_temperature_sensor">Temperatur sensor</string>
-  <string name="use_pressure_sensor_title">Tryck sensor</string>
+  <string name="use_temperature_sensor">Temperatursensor</string>
+  <string name="use_pressure_sensor_title">Trycksensor</string>
   <string name="use_pressure_sensor_summary">Använd barometer för höjd</string>
   <string name="adjust_barometer_altitude_from_gps">Justera barometerhöjd till GPS höjd</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
+    <string name="Wear_OS_Device">Wear OS enhet</string>
+  <string name="GPS_indicator">GPS: %1$d/%2$d</string>
+  <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
+  <string name="GPS_status_no_accuracy">GPS: %1$d/%2$d satelliter</string>
+  <string name="GPS_accuracy_elevation">nog. %1$s, höjd %2$s</string>
+  <string name="GPS_accuracy_no_elevation">noggrannhet %s</string>
+  <string name="GPS_level_poor">Dålig GPS</string>
+  <string name="GPS_level_acceptable">Acceptabel GPS</string>
+  <string name="GPS_level_good">Bra GPS</string>
+  <string name="accounts_category_connected">Hantera kopplingar</string>
+  <string name="accounts_category_unconnected">Koppla konto</string>
+  <string name="Hide_disabled_accounts">Dölj inaktiverade konton</string>
+  <string name="Lap_start">Varv start</string>
+  <string name="channel_notification_ongoing">RunnerUp GPS och aktivtets notifikationer</string>
+  <string name="GPS_permission_required">GPS behörighet krävs</string>
+  <string name="GPS_indicator_off">GPS av</string>
+  <string name="No_devices_connected">Inga enheter kopplade</string>
+  <string name="Current_cadence">Aktuell kadens</string>
+  <string name="Manual_activity_title">Lägg till manuell aktivitet</string>
+  <string name="Add_manual_entry">Lägg till manuell aktivitet</string>
+  <string name="repeat_times">Upprepa %1$dx</string>
 </resources>

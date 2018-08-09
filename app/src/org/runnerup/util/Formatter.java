@@ -557,8 +557,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 timeFormat.format(seconds_since_epoch * 1000);
     }
 
-    public String formatDoubleDistance(double meters) {
-        DecimalFormat df = new DecimalFormat("#.00");
+    /**
+     * Format "elevation" like distances
+     * @param target
+     * @param meters
+     * @return Formatted string with unit
+     */
+    public String formatElevation(Format target, double meters) {
+        // TODO add (plural) strings and handle Format, cues
+        DecimalFormat df = new DecimalFormat("#.0");
         if (metric) {
             return df.format(meters) + " m";
         } else {
@@ -578,7 +585,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE_SHORT:
                 return formatDistance(meters, false);
             case TXT:
-                return formatDistanceInKmOrMiles(getRoundedDistanceInKmOrMiles(meters));
+                return formatDistanceInKmOrMiles(meters);
             case TXT_SHORT:
                 return formatDistance(meters, true);
             case TXT_LONG:
@@ -592,8 +599,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return round(meters/base_meters, decimals);
     }
 
-    private String formatDistanceInKmOrMiles(double meters) {
-        return String.format(cueResources.defaultLocale, "%.2f", meters);
+    private String formatDistanceInKmOrMiles(long meters) {
+        return String.format(cueResources.defaultLocale, "%.2f", getRoundedDistanceInKmOrMiles(meters));
     }
 
     private String formatDistance(long meters, boolean txt) {
@@ -609,7 +616,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, v2);
             }
         } else {
-            // Present distance in meters if less than 1km/1mi
+            // Present distance in meters if less than 1km/1mi (no strings for feet)
             if (txt) {
                 res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
             }

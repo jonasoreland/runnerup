@@ -297,7 +297,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
         @Override
         public String preSetValue(String newValue) throws IllegalArgumentException {
-            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_audio_cues___))) {
+            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_audio_cues))) {
                 Intent i = new Intent(StartActivity.this, AudioCueSettingsActivity.class);
                 startActivity(i);
                 throw new IllegalArgumentException();
@@ -320,7 +320,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
         @Override
         public String preSetValue(String newValue) throws IllegalArgumentException {
-            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_workouts___))) {
+            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_workouts))) {
                 Intent i = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
                 startActivity(i);
                 throw new IllegalArgumentException();
@@ -836,10 +836,10 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     public String getGpsAccuracyString(float accuracy) {
         if (accuracy > 0) {
-            String accString = formatter.formatDoubleDistance(accuracy);
+            String accString = formatter.formatElevation(Formatter.Format.TXT_SHORT, accuracy);
             if (mTracker.getCurrentElevation() != null) {
                 return String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_elevation),
-                        accString, formatter.formatDoubleDistance(mTracker.getCurrentElevation()));
+                        accString, formatter.formatElevation(Formatter.Format.TXT_SHORT, mTracker.getCurrentElevation()));
             } else {
                 return String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_no_elevation),
                         accString);

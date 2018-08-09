@@ -79,7 +79,8 @@
                 android:background="#424242"
                 android:clickable="true"
                 android:focusable="true"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:ignore="UnusedAttribute">
 
                 <LinearLayout
                     android:id="@+id/status_frame"
@@ -161,7 +162,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:gravity="bottom|left"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        tools:ignore="UseCompoundDrawables">
 
                         <ImageView
                             android:id="@+id/gps_detail_indicator"
