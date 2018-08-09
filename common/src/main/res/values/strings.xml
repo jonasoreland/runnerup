@@ -245,6 +245,7 @@
   <string name="Current_heart_rate">Current heart rate</string>
   <string name="Current_heart_rate_zone">Current heart rate zone</string>
   <string name="Current_cadence">Current cadence</string>
+  <string name="Current">Current</string>
   <string name="Misc_cues">Misc cues</string>
   <string name="Target_coaching">Target coaching</string>
   <string name="Skip_event_audio_cues">Skip event audio cues</string>
