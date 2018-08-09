@@ -39,7 +39,7 @@
     <string name="cue_distance">cue_distance</string>
     <string name="cue_distance_intervall">cue_distance_intervall</string>
     <string name="cue_end_of_lap">cue_end_of_lap</string>
-    <string name="pref_autolap_started">pref_autolap_started</string>
+    <string name="pref_lap_started">pref_lap_started</string>
 
     <string name="cueinfo_total_distance">cueinfo_total_distance</string>
     <string name="cueinfo_total_time">cueinfo_total_time</string>
