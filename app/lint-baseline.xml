@@ -35,6 +35,17 @@
     </issue>
 
     <issue
+        id="GradleDependency"
+        message="A newer version of com.jjoe64:graphview than 4.2.1 is available: 4.2.2"
+        errorLine1="    froyoImplementation &quot;com.jjoe64:graphview:4.2.1&quot;"
+        errorLine2="    ^">
+        <location
+            file="build.gradle"
+            line="132"
+            column="5"/>
+    </issue>
+
+    <issue
         id="SpUsage"
         message="Should use &quot;`sp`&quot; instead of &quot;`dp`&quot; for text sizes"
         errorLine1="                android:textSize=&quot;20dp&quot;"

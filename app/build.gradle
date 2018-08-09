@@ -128,7 +128,8 @@ dependencies {
     latestImplementation ('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.1@aar'){
         transitive=true
     }
-    implementation 'com.jjoe64:graphview:4.2.2'
+    latestImplementation 'com.jjoe64:graphview:4.2.2'
+    froyoImplementation 'com.jjoe64:graphview:4.2.1'
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
