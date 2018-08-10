@@ -19,6 +19,7 @@ package org.runnerup.workout;
 import android.location.Location;
 
 import org.junit.Test;
+import org.runnerup.tracker.Tracker;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -38,12 +39,11 @@ public class AutoPauseTriggerTest {
         when(location.getTime()).thenReturn(1000L);
 
         Workout workout = mock(Workout.class);
+        workout.tracker = mock(Tracker.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
-        when(workout.getSpeed((Scope) any())).thenReturn(9d);
-        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
+        when(workout.tracker.getCurrentSpeed()).thenReturn(9d);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
-
         sut.onTick(workout);
 
         when(location.getTime()).thenReturn(3000L);
@@ -61,12 +61,11 @@ public class AutoPauseTriggerTest {
         when(location.getTime()).thenReturn(1000L);
 
         Workout workout = mock(Workout.class);
+        workout.tracker = mock(Tracker.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
-        when(workout.getSpeed((Scope) any())).thenReturn(11d);
-        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
+        when(workout.tracker.getCurrentSpeed()).thenReturn(11d);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
-
         sut.onTick(workout);
 
         when(location.getTime()).thenReturn(3000L);
@@ -84,19 +83,17 @@ public class AutoPauseTriggerTest {
         when(location.getTime()).thenReturn(1000L);
 
         Workout workout = mock(Workout.class);
+        workout.tracker = mock(Tracker.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
-        when(workout.getSpeed((Scope) any())).thenReturn(9d);
-        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
+        when(workout.tracker.getCurrentSpeed()).thenReturn(9d);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
-
         sut.onTick(workout);
 
         when(location.getTime()).thenReturn(3000L);
         sut.onTick(workout);
 
-        when(workout.getSpeed((Scope) any())).thenReturn(11d);
-        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
+        when(workout.tracker.getCurrentSpeed()).thenReturn(11d);
         when(location.getTime()).thenReturn(5000L);
         sut.onTick(workout);
 
@@ -112,18 +109,18 @@ public class AutoPauseTriggerTest {
         when(location.getTime()).thenReturn(1000L);
 
         Workout workout = mock(Workout.class);
+        workout.tracker = mock(Tracker.class);
         when(workout.getLastKnownLocation()).thenReturn(location);
-        when(workout.getSpeed((Scope) any())).thenReturn(9d);
-        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
+        when(workout.tracker.getCurrentSpeed()).thenReturn(9d);
 
         AutoPauseTrigger sut = new AutoPauseTrigger(autoPauseAfterSeconds, autoPauseMinSpeed);
+        sut.onTick(workout);
+        sut.onTick(workout);
 
-        sut.onTick(workout);
-        sut.onTick(workout);
-        when(workout.getSpeed((Scope) any())).thenReturn(11d);
-        when(workout.isEnabled((Dimension) any(), (Scope) any())).thenReturn(true);
+        when(workout.tracker.getCurrentSpeed()).thenReturn(11d);
         when(location.getTime()).thenReturn(5000L);
         sut.onTick(workout);
+
         verify(workout, never()).onPause(workout);
     }
 }
