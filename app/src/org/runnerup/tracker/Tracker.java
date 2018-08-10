@@ -96,6 +96,7 @@ public class Tracker extends android.app.Service implements
     private boolean mBug23937Checked = false;
     private long mBug23937Delta = 0;
     private long mSystemToGpsDiffTimeMillis = 0;
+    private boolean mCurrentSpeedFromGpsPoints = false;
 
     private long mLapId = 0;
     private long mActivityId = 0;
@@ -310,6 +311,7 @@ public class Tracker extends android.app.Service implements
         Resources res = getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean logGpxAccuracy = prefs.getBoolean(res.getString(R.string.pref_log_gpx_accuracy), false);
+        mCurrentSpeedFromGpsPoints = prefs.getBoolean(res.getString(R.string.pref_speed_from_gps_points), false);
 
         //Create an Activity instance
         ContentValues tmp = new ContentValues();
@@ -868,7 +870,7 @@ public class Tracker extends android.app.Service implements
             return null;
         }
         double speed = mLastLocation.getSpeed();
-        if (!mLastLocation.hasSpeed() || speed == 0.0f) {
+        if (!mLastLocation.hasSpeed() || speed == 0.0f || mCurrentSpeedFromGpsPoints) {
             //Some Android (at least emulators) do not implement getSpeed() (even if hasSpeed() is true)
             if (mLastLocation == null || mLast2Location == null ||
                     mLastLocation.getTime() <= mLast2Location.getTime()) {

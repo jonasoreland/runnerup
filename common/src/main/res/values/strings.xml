@@ -318,6 +318,7 @@
   <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
   <string name="log_extended_gps_summary">Export in GPX only</string>
   <string name="log_extended_gps_title">Log extended GPS accuracy data</string>
+  <string name="Current_speed_from_GPS_points">Current speed from GPS points</string>
   <string name="use_step_sensor_title">Step sensor</string>
   <string name="use_step_sensor_summary">Use for cadence</string>
   <string name="use_temperature_sensor">Temperature sensor</string>
