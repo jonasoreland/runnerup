@@ -79,7 +79,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         @SuppressWarnings("UnusedReturnValue")
         boolean end() {
             --depth;
-            if (depth == 0) {
+            if (depth == 0 && Workout.this.textToSpeech != null) {
                 set.clear();
                 try {
                     Workout.this.textToSpeech.emit();
