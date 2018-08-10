@@ -1,0 +1,5 @@
+#Suppress warnings for proguard, for all irrelevant warnings
+
+#PlayServices related?
+-dontnote com.google.protobuf.zz*
+-dontnote com.google.android.gms.dynamic.IObjectWrapper
