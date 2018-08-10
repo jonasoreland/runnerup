@@ -115,7 +115,7 @@ public class AudioFeedback extends Feedback {
     @Override
     public void emit(Workout w, Context ctx) {
         String msg = getCue(w, ctx);
-        if (msg != null) {
+        if (msg != null && textToSpeech != null) {
             textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
         }
     }
