@@ -105,6 +105,7 @@ public class Tracker extends android.app.Service implements
     private double mHeartbeats = 0;
     private double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
     private long mMaxHR = 0;
+    private Double mCurrentSpeed = 0.0;
 
     private TrackerState nextState;
     private final ValueModel<TrackerState> state = new ValueModel<>(TrackerState.INIT);
@@ -691,6 +692,15 @@ public class Tracker extends android.app.Service implements
                 }
                 mElapsedTimeMillis += timeDiff;
                 mElapsedDistance += distDiff;
+
+                float val = mLastLocation.getSpeed();
+                if (!mLastLocation.hasSpeed() || val == 0.0f || mCurrentSpeedFromGpsPoints) {
+                    val = (float)distDiff*1000.0f/timeDiff;
+                }
+                //Low pass filter
+                final float alpha = 0.4f;
+                mCurrentSpeed = val * alpha + (1 - alpha) * mCurrentSpeed;
+
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
                     mHeartbeatMillis += timeDiff; // TODO handle loss of HRM connection
@@ -861,30 +871,11 @@ public class Tracker extends android.app.Service implements
     }
 
     public Double getCurrentSpeed() {
-        return getCurrentSpeed(System.currentTimeMillis() - mSystemToGpsDiffTimeMillis, 3000);
-    }
-
-    private Double getCurrentSpeed(long now, long maxAge) {
         if (mLastLocation == null ||
-                now > mLastLocation.getTime() + maxAge) {
+                System.currentTimeMillis() - mSystemToGpsDiffTimeMillis > mLastLocation.getTime() + 3000) {
             return null;
         }
-        double speed = mLastLocation.getSpeed();
-        if (!mLastLocation.hasSpeed() || speed == 0.0f || mCurrentSpeedFromGpsPoints) {
-            //Some Android (at least emulators) do not implement getSpeed() (even if hasSpeed() is true)
-            if (mLastLocation == null || mLast2Location == null ||
-                    mLastLocation.getTime() <= mLast2Location.getTime()) {
-                return null;
-            }
-            double d = mLastLocation.distanceTo(mLast2Location);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                speed = d * 1000000000 / (mLastLocation.getElapsedRealtimeNanos() -
-                        mLast2Location.getElapsedRealtimeNanos());
-            } else {
-                speed = d * 1000 / (mLastLocation.getTime() - mLast2Location.getTime());
-            }
-        }
-        return speed;
+        return mCurrentSpeed;
     }
 
     public double getHeartbeats() {
