@@ -39,67 +39,73 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         return NAME;
     }
 
-    private SensorManager sensorManager = null;
+    private SensorManager mSensorManager = null;
 
     //For debug builds, use random if sensor is unavailable
     private static boolean isMockSensor = false;
 
     private boolean isSportEnabled = true;
-    //The sensor fires continuously, use the last available values (no smoothing)
     private boolean isStarted = true;
-    private Float latestVal = null;
-    private long latestTime = -1;
-    private Float prevVal = null;
-    private long prevTime = -1;
-    private Float currentCadence = null;
+    private Float mPrevVal = null;
+    private long mPrevTime = -1;
+    private Float mCurrentCadence = null;
 
     public Float getValue() {
-        if (isMockSensor) {
-            if (!isSportEnabled) { return null; }
-            if (latestVal == null) {latestVal = 0.0f;}
-            //if GPS update is every second, this is 0-120 rpm
-            latestVal += (int)((new Random()).nextFloat() * 4);
-            latestTime = SystemClock.elapsedRealtime()*1000000;
-        }
-        final long noDataNs = 5000 * 1000000L;
-        if (!isSportEnabled || latestTime < 0 || latestVal == null ||
-            prevTime == latestTime && SystemClock.elapsedRealtime()*1000000 - latestTime < noDataNs ) {
-            //No data in this point. Do not report 0 as the data just not is available yet but dont use last known as it may zero
-            //report 0 after a grace time
+        if (!isSportEnabled) {
             return null;
         }
-        Float val;
-        if (prevTime == latestTime || prevTime < 0 || prevVal == null) {
-            //TODO Should the currentCadence be adjusted too?
-            val = currentCadence;
-        } else {
-            val = 60 * (latestVal - prevVal) / 2 * 1000000000 / (latestTime - prevTime);
-        }
-        //"Consumed" values
-        prevVal = latestVal;
-        prevTime = latestTime;
-
-        if (currentCadence == null) {
-            currentCadence = val;
-        } else {
-            //Low pass filter
-            final float alpha = 0.4f;
-            currentCadence = val * alpha + (1 - alpha) * currentCadence;
+        if (isMockSensor) {
+            return (new Random()).nextFloat() * 120;
         }
 
-        return currentCadence;
+        if (mCurrentCadence == null) {
+            return null;
+        }
+
+        // If no data (assume no movement) report lower value
+        // Cut-off at 3s corresponds to 60/2/3 => 10 rpm (or 20 steps per minute)
+        final int cutOffTime = 3;
+        final long nanoSec = 1000000000L;
+        long now;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            now = SystemClock.elapsedRealtimeNanos();
+        } else {
+            now = SystemClock.elapsedRealtime() * nanoSec / 1000;
+        }
+        long timeDiff = now - mPrevTime;
+        Float res = mCurrentCadence;
+        if (timeDiff > cutOffTime*nanoSec) {
+            mCurrentCadence = null;
+            res = 0.0f;
+        } else if (timeDiff > nanoSec*(1+ 1.5*60/ mCurrentCadence /2)) {
+            // sensors update every sec in addition to time between updates
+            // Decrease reported value if no update in (just over) expected time
+            res = res * (1-(float)(timeDiff/cutOffTime)/nanoSec);
+        }
+
+        return res;
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.values != null && event.values.length > 0) {
-            if (!isStarted && (prevTime < 0 || event.timestamp - prevTime > 3000000000L)) {
-                //one period to a few seconds before start so first getValue() after start/resume (may) have data
-                prevTime = latestTime;
-                prevVal = latestVal;
+            float latestVal = event.values[0];
+            long latestTime = event.timestamp;
+            if (mPrevTime == latestTime || mPrevTime < 0 || mPrevVal == null || !isStarted) {
+                mCurrentCadence = null;
+            } else {
+                final long nanoSec = 1000000000L;
+                Float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / (latestTime - mPrevTime);
+                if (mCurrentCadence == null) {
+                    mCurrentCadence = val;
+                } else {
+                    //Low pass filter
+                    final float alpha = 0.4f;
+                    mCurrentCadence = val * alpha + (1 - alpha) * mCurrentCadence;
+                }
             }
-            latestVal = event.values[0];
-            latestTime = event.timestamp;
+            mPrevTime = latestTime;
+            mPrevVal = latestVal;
         }
     }
 
@@ -117,13 +123,13 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     private Sensor getSensor(final Context context) {
         Sensor sensor = null;
         if (Build.VERSION.SDK_INT >= 20) {
-            if (sensorManager == null) {
-                sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+            if (mSensorManager == null) {
+                mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
             }
             //noinspection InlinedApi
-            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
             if (sensor == null) {
-                sensorManager = null;
+                mSensorManager = null;
             }
         }
 
@@ -154,7 +160,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         } else {
             Sensor sensor = getSensor(context);
             if (sensor != null) {
-                sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
                 res = ResultCode.RESULT_OK;
             } else if (isMockSensor) {
                 res = ResultCode.RESULT_OK;
@@ -167,7 +173,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
     @Override
     public boolean isConnected() {
-        return sensorManager != null || isMockSensor;
+        return mSensorManager != null || isMockSensor;
     }
 
     @Override
@@ -185,8 +191,8 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         if (sport == Constants.DB.ACTIVITY.SPORT_BIKING) {
             //Not used, disconnect sensor so nothing is returned
             isSportEnabled = false;
-            latestVal = null;
-            sensorManager = null;
+            mPrevVal = null;
+            mSensorManager = null;
             isMockSensor = false;
         } else {
             isSportEnabled = true;
@@ -231,8 +237,8 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     @Override
     public ResultCode onEnd(Callback callback, Context context) {
         isStarted = false;
-        if (sensorManager != null) { sensorManager.unregisterListener(this); }
-        sensorManager = null;
+        if (mSensorManager != null) { mSensorManager.unregisterListener(this); }
+        mSensorManager = null;
         isMockSensor = false;
 
         return ResultCode.RESULT_OK;
