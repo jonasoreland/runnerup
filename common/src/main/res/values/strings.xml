@@ -173,8 +173,8 @@
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Use your headset to start/pause/resume RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">On the Interval tab, convert distance-based "Rest" steps to "Recovery" steps</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">On the Advanced tab, convert distance-based "Rest" steps to "Recovery" steps</string>
-  <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to SD card (e.g . before upgrading)</string>
-  <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from SD card (e.g. after upgrading)</string>
+  <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to storage</string>
+  <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from storage</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if having set target)</string>
   <string name="Keep_silent_when_workout_startpauseresumestop">Silent start/pause/resume/stop of workouts</string>
   <string name="Test_audio_cue">Test audio cue</string>
@@ -198,7 +198,7 @@
   <string name="Autopause_min_pace_minkm">Autopause min pace (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Convert rest on Interval tab</string>
   <string name="Convert_rest_on_Advanced_tab">Convert rest on Advanced tab</string>
-  <string name="Target_pace_moving_average_seconds">Target pace calculation frequency (s)</string>
+  <string name="Target_pace_moving_average_seconds">Target pace moving average seconds</string>
   <string name="Target_pace_grace_seconds">Target pace grace seconds</string>
   <string name="Autolap_during_intervals">Autolap during intervals</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Add countdown after step that ends with user press</string>
