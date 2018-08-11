@@ -284,7 +284,7 @@ public class GPX {
                                 }
                                 if (isSats) {
                                     mXML.startTag("", "sat");
-                                    String val = Float.toString(cLocation.getFloat(13));
+                                    String val = Float.toString(cLocation.getInt(13));
                                     mXML.text(val);
                                     mXML.endTag("", "sat");
                                 }

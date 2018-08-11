@@ -245,6 +245,7 @@
   <string name="Current_heart_rate">Current heart rate</string>
   <string name="Current_heart_rate_zone">Current heart rate zone</string>
   <string name="Current_cadence">Current cadence</string>
+  <string name="Current">Current</string>
   <string name="Misc_cues">Misc cues</string>
   <string name="Target_coaching">Target coaching</string>
   <string name="Skip_event_audio_cues">Skip event audio cues</string>
@@ -317,6 +318,7 @@
   <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
   <string name="log_extended_gps_summary">Export in GPX only</string>
   <string name="log_extended_gps_title">Log extended GPS accuracy data</string>
+  <string name="Current_speed_from_GPS_points">Current speed from GPS points</string>
   <string name="use_step_sensor_title">Step sensor</string>
   <string name="use_step_sensor_summary">Use for cadence</string>
   <string name="use_temperature_sensor">Temperature sensor</string>
@@ -325,5 +327,5 @@
   <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to GPS Elevation</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Use initial GPS elevation to average barometric elevation</string>
   <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
-  <string name="Lap_start">Autolap start</string>
+  <string name="Lap_start">Lap start</string>
 </resources>

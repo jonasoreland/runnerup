@@ -75,6 +75,7 @@ public class RunActivity extends Activity implements TickListener {
     private TextView intervalTime = null;
     private TextView intervalDistance = null;
     private TextView intervalPace = null;
+    private TextView currentPace = null;
     private TextView countdownView = null;
     private ListView workoutList = null;
     private View tableRowInterval = null;
@@ -83,6 +84,7 @@ public class RunActivity extends Activity implements TickListener {
     private TextView activityHr;
     private TextView lapHr;
     private TextView intervalHr;
+    private TextView currentHr;
     private TextView activityHeaderHr;
 
     class WorkoutRow {
@@ -124,6 +126,8 @@ public class RunActivity extends Activity implements TickListener {
         tableRowInterval = findViewById(R.id.table_row_interval);
         intervalPace = (TextView) findViewById(R.id.interval_pace);
         intervalHr = (TextView) findViewById(R.id.interval_hr);
+        currentPace = (TextView) findViewById(R.id.current_pace);
+        currentHr = (TextView) findViewById(R.id.current_hr);
         countdownView = (TextView) findViewById(R.id.countdown_text_view);
         workoutList = (ListView) findViewById(R.id.workout_list);
         WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
@@ -353,40 +357,51 @@ public class RunActivity extends Activity implements TickListener {
         activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(ad)));
         activityPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, ap));
 
-        double ahr = workout.getHeartRate(Scope.ACTIVITY);
         double ld = workout.getDistance(Scope.LAP);
         double lt = workout.getTime(Scope.LAP);
         double lp = workout.getPace(Scope.LAP);
         lapTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(lt)));
         lapDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(ld)));
         lapPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, lp));
-        double lhr = workout.getHeartRate(Scope.LAP);
+
         double id = workout.getDistance(Scope.STEP);
         double it = workout.getTime(Scope.STEP);
         double ip = workout.getPace(Scope.STEP);
         if (tableRowInterval != null && this.currentStep != null && !simpleWorkout
-                && this.currentStep.getIntensity() == Intensity.ACTIVE)
+                && this.currentStep.getIntensity() == Intensity.ACTIVE) {
             tableRowInterval.setVisibility(View.VISIBLE);
-        else
+            intervalTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(it)));
+            intervalDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(id)));
+            intervalPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, ip));
+        } else {
             tableRowInterval.setVisibility(View.GONE);
-        intervalTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(it)));
-        intervalDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(id)));
-        intervalPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, ip));
-        double ihr = workout.getHeartRate(Scope.STEP);
+        }
+
+        double cp = workout.getPace(Scope.CURRENT);
+        currentPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, cp));
+
         if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
+            double ahr = workout.getHeartRate(Scope.ACTIVITY);
+            double ihr = workout.getHeartRate(Scope.STEP);
+            double lhr = workout.getHeartRate(Scope.LAP);
+            double chr = workout.getHeartRate(Scope.CURRENT);
             lapHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, lhr));
             intervalHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, ihr));
+            currentHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, chr));
             activityHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, ahr));
             activityHr.setVisibility(View.VISIBLE);
             lapHr.setVisibility(View.VISIBLE);
             intervalHr.setVisibility(View.VISIBLE);
+            currentHr.setVisibility(View.VISIBLE);
             activityHeaderHr.setVisibility(View.VISIBLE);
         } else {
             activityHr.setVisibility(View.GONE);
             lapHr.setVisibility(View.GONE);
             intervalHr.setVisibility(View.GONE);
+            currentHr.setVisibility(View.GONE);
             activityHeaderHr.setVisibility(View.GONE);
         }
+
         Step curr = workout.getCurrentStep();
         if (curr != currentStep) {
             ((WorkoutAdapter) workoutList.getAdapter()).notifyDataSetChanged();

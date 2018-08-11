@@ -42,24 +42,27 @@ public class AutoPauseTrigger extends Trigger {
     }
 
     private void HandleAutoPause(Workout workout) {
-        Location lastLocation = workout.getLastKnownLocation();
-        double currentSpeed = workout.getSpeed(Scope.CURRENT);
-        if (!workout.isEnabled(Dimension.SPEED, Scope.CURRENT)) {
-            currentSpeed = 0;
+        Double currentSpeed = workout.tracker.getCurrentSpeed();
+        if (currentSpeed == null) {
+            return;
         }
-        if (currentSpeed < mAutoPauseMinSpeed && lastLocation != null) {
-            if (!mIsAutoPaused && mHasStopped
-                    && (lastLocation.getTime() - mStoppedMovingAt) > mAutoPauseAfterSeconds * 1000) {
-                mIsAutoPaused = true;
-                setPaused(workout, true);
-            } else if (!mHasStopped && !mIsAutoPaused) {
-                mHasStopped = true;
-                mStoppedMovingAt = lastLocation.getTime();
+        if (!mIsAutoPaused) {
+            Location lastLocation = workout.getLastKnownLocation();
+            if (currentSpeed < mAutoPauseMinSpeed && lastLocation != null) {
+                if (!mHasStopped) {
+                    mHasStopped = true;
+                    mStoppedMovingAt = lastLocation.getTime();
+                } else if ((lastLocation.getTime() - mStoppedMovingAt) > mAutoPauseAfterSeconds * 1000) {
+                    mIsAutoPaused = true;
+                    setPaused(workout, true);
+                }
             }
-        } else if (mIsAutoPaused && currentSpeed > mAutoPauseMinSpeed) {
-            mIsAutoPaused = false;
-            mHasStopped = false;
-            setPaused(workout, false);
+        } else {
+            if (currentSpeed > mAutoPauseMinSpeed) {
+                mIsAutoPaused = false;
+                mHasStopped = false;
+                setPaused(workout, false);
+            }
         }
     }
 

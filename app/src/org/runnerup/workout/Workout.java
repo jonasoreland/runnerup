@@ -321,7 +321,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public double getTime(Scope scope) {
         switch (scope) {
             case ACTIVITY:
-                return tracker.getTime();
+                return tracker.getTimeMs() / 1000.0d;
             case STEP:
             case LAP:
                 if (currentStep != null)
@@ -329,7 +329,8 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 //if (BuildConfig.DEBUG) { throw new AssertionError(); }
                 break;
             case CURRENT:
-                return System.currentTimeMillis() / 1000; // now
+                if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                return System.currentTimeMillis() / 1000.0d; // now, not to be used
         }
         return 0;
     }
