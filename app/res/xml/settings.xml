@@ -263,7 +263,7 @@
 
         <Preference
             android:key="@string/pref_cue_workouts"
-            android:title="@string/Manage_workouts"
+            android:title="@string/Manage_workouts_"
             android:summary="@string/Downloadeditremove_workouts">
             <intent
                 android:targetPackage="org.runnerup.alpha"

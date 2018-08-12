@@ -138,8 +138,10 @@
   <string name="Configure_heart_rate_zones">Configure heart rate zones</string>
   <string name="Clear_heart_rate_zone_settings">Clear heart rate zone settings</string>
   <string name="Manage_accounts">Manage accounts</string>
-  <string name="Manage_audio_cues">Manage audio cues…</string>
-  <string name="Manage_workouts">Manage workouts…</string>
+  <string name="Manage_audio_cues">Manage audio cues</string>
+  <string name="Manage_audio_cues_">Manage audio cues…</string>
+  <string name="Manage_workouts">Manage workouts</string>
+  <string name="Manage_workouts_">Manage workouts…</string>
   <string name="Settings">Settings</string>
   <string name="Whats_new">What\'s new</string>
   <string name="Rate_RunnerUp">Rate RunnerUp</string>
@@ -285,7 +287,7 @@
   <string name="Live">Live</string>
   <string name="Include_map_in_post">Include map in post</string>
   <string name="Clear_uploads_from_phone">Clear uploads (from phone)</string>
-  <string name="my_phone">my phone</string>
+  <string name="my_phone">My phone</string>
   <string name="Failed_to_import">Failed to import: </string>
   <string name="Import_workout">Import workout: </string>
   <string name="Saving_as">Saving as </string>

@@ -120,8 +120,8 @@
   <string name="Configure_heart_rate_zones">Configura zone BPM</string>
   <string name="Clear_heart_rate_zone_settings">Elimina impostazioni zona BPM</string>
   <string name="Manage_accounts">Gestisci account</string>
-  <string name="Manage_audio_cues">Gestisci riferimenti audio</string>
-  <string name="Manage_workouts">Gestisci allenamenti</string>
+  <string name="Manage_audio_cues_">Gestisci riferimenti audio</string>
+  <string name="Manage_workouts_">Gestisci allenamenti</string>
   <string name="Settings">Impostazioni</string>
   <string name="Whats_new">Novità</string>
   <string name="Rate_RunnerUp">Dai un voto a RunnerUp</string>

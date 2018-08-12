@@ -64,7 +64,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
         if (createNewItem)
             return inflater.getContext().getString(R.string.New_audio_scheme);
         else
-            return inflater.getContext().getString(R.string.Manage_audio_cues);
+            return inflater.getContext().getString(R.string.Manage_audio_cues_);
     }
 
     @Override

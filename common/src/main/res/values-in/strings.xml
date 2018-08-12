@@ -119,8 +119,8 @@
   <string name="Configure_heart_rate_zones">Pengaturan zona denyut jantung</string>
   <string name="Clear_heart_rate_zone_settings">Kosongkan setelan zona denyut jantung</string>
   <string name="Manage_accounts">Kelola akun</string>
-  <string name="Manage_audio_cues">Kelola isyarat suara</string>
-  <string name="Manage_workouts">Kelola latihan</string>
+  <string name="Manage_audio_cues_">Kelola isyarat suara</string>
+  <string name="Manage_workouts_">Kelola latihan</string>
   <string name="Settings">Setelan</string>
   <string name="Whats_new">Apa yang baru</string>
   <string name="Rate_RunnerUp">Menilai RunnerUp</string>

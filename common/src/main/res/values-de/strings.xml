@@ -123,8 +123,8 @@
   <string name="Configure_heart_rate_zones">Herzfrequenzzonen konfigurieren</string>
   <string name="Clear_heart_rate_zone_settings">Herzfrequenzzoneneinstellungen zurücksetzen</string>
   <string name="Manage_accounts">Benutzerkonten verwalten</string>
-  <string name="Manage_audio_cues">Audiohinweise verwalten</string>
-  <string name="Manage_workouts">Trainingseinheiten verwalten</string>
+  <string name="Manage_audio_cues_">Audiohinweise verwalten</string>
+  <string name="Manage_workouts_">Trainingseinheiten verwalten</string>
   <string name="Settings">Einstellungen</string>
   <string name="Whats_new">Was ist neu</string>
   <string name="Rate_RunnerUp">RunnerUp bewerten</string>

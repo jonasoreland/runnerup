@@ -124,8 +124,8 @@
   <string name="Configure_heart_rate_zones">Konfigurera pulszoner</string>
   <string name="Clear_heart_rate_zone_settings">Rensa inställningar för pulszon</string>
   <string name="Manage_accounts">Hantera konton</string>
-  <string name="Manage_audio_cues">Hantera ljudmeddelanden</string>
-  <string name="Manage_workouts">Hantera träningspass</string>
+  <string name="Manage_audio_cues_">Hantera ljudmeddelanden</string>
+  <string name="Manage_workouts_">Hantera träningspass</string>
   <string name="Settings">Inställningar</string>
   <string name="Whats_new">Nyheter</string>
   <string name="Rate_RunnerUp">Recensera RunnerUp</string>

@@ -118,8 +118,8 @@
   <string name="Configure_heart_rate_zones">Configura les zones de freqüència cardíaca</string>
   <string name="Clear_heart_rate_zone_settings">Suprimeix la configuració de zones de freqüència cardíaca</string>
   <string name="Manage_accounts">Gestió dels comptes</string>
-  <string name="Manage_audio_cues">Gestió de pistes d\'àudio</string>
-  <string name="Manage_workouts">Gestió d\'entrenaments</string>
+  <string name="Manage_audio_cues_">Gestió de pistes d\'àudio</string>
+  <string name="Manage_workouts_">Gestió d\'entrenaments</string>
   <string name="Settings">Configuració</string>
   <string name="Whats_new">Que hi ha de nou</string>
   <string name="Rate_RunnerUp">Puntueu el RunnerUp</string>

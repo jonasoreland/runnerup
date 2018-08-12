@@ -46,7 +46,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TwoRowListPrimary" />
+            android:textAppearance="@style/ListItem" />
 
         <TextView
             android:id="@+id/history_list_date"
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
-            android:textAppearance="@style/TwoRowListPrimary" />
+            android:textAppearance="@style/ListItem" />
     </LinearLayout>
 
     <LinearLayout
@@ -67,20 +67,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TwoRowListSecondary" />
+            android:textAppearance="@style/ListDescription" />
 
         <TextView
             android:id="@+id/history_list_pace"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TwoRowListSecondary" />
+            android:textAppearance="@style/ListDescription" />
 
         <TextView
             android:id="@+id/history_list_additional"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="@style/TwoRowListSecondary" />
+            android:textAppearance="@style/ListDescription" />
     </LinearLayout>
 </LinearLayout>

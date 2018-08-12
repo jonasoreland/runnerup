@@ -119,8 +119,8 @@
   <string name="Configure_heart_rate_zones">Ustaw strefy tętna</string>
   <string name="Clear_heart_rate_zone_settings">Wyczyść ustawienia stref tętna</string>
   <string name="Manage_accounts">Zarządzaj kontami</string>
-  <string name="Manage_audio_cues">Zarządzaj wskazówkami</string>
-  <string name="Manage_workouts">Zarządzaj treningami</string>
+  <string name="Manage_audio_cues_">Zarządzaj wskazówkami</string>
+  <string name="Manage_workouts_">Zarządzaj treningami</string>
   <string name="Settings">Ustawienia</string>
   <string name="Whats_new">Co nowego</string>
   <string name="Rate_RunnerUp">Oceń RunnerUp</string>

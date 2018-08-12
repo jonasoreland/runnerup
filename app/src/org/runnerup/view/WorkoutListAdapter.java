@@ -54,7 +54,7 @@ class WorkoutListAdapter extends BaseAdapter {
         if (position < workoutList.length)
             return workoutList[position];
 
-        return inflater.getContext().getString(R.string.Manage_workouts);
+        return inflater.getContext().getString(R.string.Manage_workouts_);
     }
 
     @Override

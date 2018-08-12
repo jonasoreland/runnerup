@@ -29,6 +29,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +60,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class RunActivity extends Activity implements TickListener {
+public class RunActivity extends AppCompatActivity implements TickListener {
     private Workout workout = null;
     private Tracker mTracker = null;
     private final Handler handler = new Handler();
