@@ -2,9 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.HRSettingsActivity" >
+    tools:context=".view.HRSettingsActivity">
 
     <LinearLayout
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         android:id="@+id/linear_layout0"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -13,20 +16,22 @@
 
         <TextView
             style="@style/RunHeader"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:gravity="start"
             android:text="@string/Device" />
 
         <TextView
             style="@style/RunHeader"
-            android:layout_marginEnd="3dp"
-            android:layout_marginRight="3dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:gravity="end"
             android:text="@string/Heart_rate" />
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:id="@+id/total"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -37,8 +42,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp" >
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp" >
 
             <TextView style="@style/RunHeader" />
         </LinearLayout>
@@ -51,16 +56,15 @@
             <TextView
                 android:id="@+id/hr_device"
                 style="@style/RunInfo"
-                android:layout_marginStart="5dp"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:gravity="start" />
 
             <TextView
                 android:id="@+id/hr_value"
                 style="@style/RunInfo"
-                android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
-                android:text="" />
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -70,6 +74,7 @@
         android:layout_height="fill_parent"
         android:layout_above="@+id/scan_button"
         android:layout_below="@+id/total"
+        android:layout_margin="8dp"
         android:weightSum="2" >
 
         <LinearLayout
@@ -84,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:layout_margin="10dp"
+            android:layout_margin="8dp"
             android:textSize="20sp"
             android:textStyle="bold" />
 

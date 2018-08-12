@@ -21,7 +21,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_margin="@dimen/activity_margin">
+    android:layout_marginTop="@dimen/activity_margin"
+    android:layout_marginBottom="@dimen/activity_margin"
+    android:layout_marginLeft="@dimen/activity_margin_short_horiz"
+    android:layout_marginRight="@dimen/activity_margin_short_horiz">
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manual_sport"
@@ -100,6 +103,8 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/manual_pace"
         android:layout_alignParentBottom="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:ems="10"
         android:gravity="top|start"
         android:inputType="textMultiLine"

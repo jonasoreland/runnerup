@@ -21,8 +21,8 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:paddingBottom="@dimen/margin_for_fab"
-    android:paddingLeft="@dimen/activity_margin"
-    android:paddingRight="@dimen/activity_margin"
+    android:paddingLeft="@dimen/activity_margin_short_horiz"
+    android:paddingRight="@dimen/activity_margin_short_horiz"
     android:paddingTop="@dimen/activity_margin"> <!--todo test if it scrolls on smaller screens-->
 
     <LinearLayout

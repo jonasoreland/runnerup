@@ -23,6 +23,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:layout_margin="@dimen/activity_margin"
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,6 +32,7 @@
 
         <TextView
             android:id="@+id/account_list_name"
+            style="@style/AccountListText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -46,6 +48,7 @@
     </LinearLayout>
 
    	<TableLayout
+        android:layout_margin="@dimen/activity_margin"
 		android:id="@+id/account_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,11 +57,10 @@
         <TableRow
             android:id="@+id/table_row1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        </TableRow>
+            android:layout_height="wrap_content" />
 
     </TableLayout>
-    
+
     <Button
         android:id="@+id/disconnect_account_button"
         style="@style/ButtonText"

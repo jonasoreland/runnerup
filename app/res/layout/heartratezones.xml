@@ -18,7 +18,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/activity_margin">
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/hrz_age"

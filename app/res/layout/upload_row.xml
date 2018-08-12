@@ -31,6 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_centerVertical="true" />
 
         <TextView
@@ -38,6 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_toEndOf="@+id/upload_list_start_time"
             android:layout_toRightOf="@+id/upload_list_start_time"
             android:layout_toStartOf="@+id/upload_list_check"
@@ -65,6 +69,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/time" />
 
         <TextView
@@ -73,6 +79,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/distance" />
 
         <TextView
