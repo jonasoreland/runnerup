@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.support.v7.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
@@ -31,9 +30,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -261,6 +260,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             case R.id.menu_disconnect_account:
                 disconnectButtonClick.onClick(null);
                 break;
+            case android.R.id.home:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }

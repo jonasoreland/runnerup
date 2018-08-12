@@ -145,6 +145,7 @@
 
         <activity
             android:name=".view.AccountActivity"
+            android:parentActivityName=".view.AccountListActivity"
             android:theme="@style/AppTheme"/>
 
         <activity android:name=".view.UploadActivity"/>
@@ -185,14 +186,19 @@
 
         <activity
             android:name=".export.oauth2client.OAuth2Activity"
+            android:parentActivityName=".view.AccountListActivity"
             android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".view.HRSettingsActivity"
+            android:label="@string/Heart_Rate_Monitor"
+            android:parentActivityName=".view.SettingsActivity"
             android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".view.HRZonesActivity"
+            android:label="@string/Heart_Rate_Zones"
+            android:parentActivityName=".view.SettingsActivity"
             android:theme="@style/AppTheme"/>
 
         <service android:name=".tracker.Tracker"/>
