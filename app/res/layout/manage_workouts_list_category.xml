@@ -33,10 +33,4 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
 
-    <ImageView
-        android:id="@+id/expand_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_expand_down_white_24dp"/>
-
 </LinearLayout>

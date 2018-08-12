@@ -44,7 +44,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -676,12 +675,10 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             TextView categoryText = convertView.findViewById(R.id.category_text);
             categoryText.setText(getProvider(groupPosition));
 
-            ImageView expandIcon = convertView.findViewById(R.id.expand_icon);
-
             if (isExpanded)
-                expandIcon.setImageResource(R.drawable.ic_expand_up_white_24dp);
+                categoryText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_up_white_24dp, 0);
             else
-                expandIcon.setImageResource(R.drawable.ic_expand_down_white_24dp);
+                categoryText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_down_white_24dp, 0);
 
             return convertView;
         }
