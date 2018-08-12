@@ -103,17 +103,14 @@
 
         </TableRow>
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right">
-
-            <CheckBox
-                android:id="@+id/showpass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/Show_password" />
-        </TableRow>
     </TableLayout>
+
+    <CheckBox
+        android:layout_marginTop="8dp"
+        android:id="@+id/showpass"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Show_password" />
 
 </LinearLayout>

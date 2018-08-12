@@ -111,10 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:layout_marginBottom="@dimen/activity_margin"
-                    android:layout_marginTop="@dimen/activity_margin"
-                    android:layout_marginLeft="@dimen/activity_margin_short_horiz"
-                    android:layout_marginRight="@dimen/activity_margin_short_horiz">
+                    android:layout_margin="@dimen/activity_margin">
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/summary_sport"
@@ -133,9 +130,7 @@
                         android:hint="@string/Notes_about_your_workout"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
-                        android:singleLine="false"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"/>
+                        android:singleLine="false"/>
 
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"
@@ -143,9 +138,7 @@
                         android:layout_height="match_parent"
                         android:background="@android:color/black"
                         android:orientation="vertical"
-                        android:visibility="gone"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp">
+                        android:visibility="gone">
 
                         <TextView
                             android:layout_width="wrap_content"
