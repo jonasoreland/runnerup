@@ -501,6 +501,7 @@ public class Tracker extends android.app.Service implements
             // save last know location as resume location
             internalOnLocationChanged(mActivityLastLocation);
         }
+        components.onResume();
     }
 
     public void reset() {
