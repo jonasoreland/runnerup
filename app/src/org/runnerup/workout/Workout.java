@@ -654,6 +654,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
 
         public double getSpeed(Scope scope) {
+            if (scope == Scope.CURRENT) {
+                scope = Scope.STEP;
+            }
             double d = getDistance(scope);
             double t = getTime(scope);
             if (t == 0)

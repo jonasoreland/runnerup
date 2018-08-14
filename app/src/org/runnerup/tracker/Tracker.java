@@ -834,7 +834,7 @@ public class Tracker extends android.app.Service implements
 
     public boolean isComponentConnected(String name) {
         TrackerComponent component = components.getComponent(name);
-        return (component == null) && component.isConnected();
+        return (component != null) && component.isConnected();
     }
 
     public HRProvider getHRProvider() {
