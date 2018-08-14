@@ -51,12 +51,13 @@ import java.util.Locale;
 public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Runalyze";
-    private static final String PUBLIC_URL = "https://runalyze.com";
     public static int ENABLED = BuildConfig.RUNALYZE_ENABLED;
+    private static final String BASE_URL = BuildConfig.RUNALYZE_ENABLED > 0 ? "https://runalyze.com" : "https://testing.runalyze.com";
+    private static final String PUBLIC_URL = BASE_URL;
 
-    private static final String UPLOAD_URL = "https://runalyze.com/api/v1/activities/uploads";
-    private static final String AUTH_URL = "https://runalyze.com/oauth/v2/auth";
-    private static final String TOKEN_URL = "https://runalyze.com/oauth/v2/token";
+    private static final String UPLOAD_URL = BASE_URL + "/api/v1/activities/uploads";
+    private static final String AUTH_URL = BASE_URL + "/oauth/v2/auth";
+    private static final String TOKEN_URL = BASE_URL + "/oauth/v2/token";
     private static final String REDIRECT_URI = "http://localhost:8080/runnerup/runalyze";
 
     private long id = 0;
