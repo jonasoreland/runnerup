@@ -41,6 +41,8 @@ import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -202,7 +204,7 @@ public class OAuth2Activity extends AppCompatActivity {
                     new AsyncTask<String, String, Integer>() {
                         @Override
                         protected Integer doInBackground(String... params) {
-                            int resultCode = Activity.RESULT_OK;
+                            int resultCode = Activity.RESULT_CANCELED;
                             HttpURLConnection conn = null;
 
                             try {
@@ -214,23 +216,34 @@ public class OAuth2Activity extends AppCompatActivity {
                                         "application/x-www-form-urlencoded");
                                 SyncHelper.postData(conn, fv);
                                 StringBuilder obj = new StringBuilder();
-                                BufferedReader in = new BufferedReader(new InputStreamReader(conn
-                                        .getInputStream()));
-                                char buf[] = new char[1024];
-                                int len;
-                                while ((len = in.read(buf)) != -1) {
-                                    obj.append(buf, 0, len);
-                                }
+                                int responseCode =conn.getResponseCode();
+                                String amsg = conn.getResponseMessage();
 
-                                res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
+                                try {
+                                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                                    char buf[] = new char[1024];
+                                    int len;
+                                    while ((len = in.read(buf)) != -1) {
+                                        obj.append(buf, 0, len);
+                                    }
+
+                                    res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
+                                    if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
+                                        resultCode = Activity.RESULT_OK;
+                                    }
+                                } catch (IOException e) {
+                                    InputStream inS = conn.getErrorStream();
+                                    String msg = inS == null ? "" : SyncHelper.readInputStream(inS);
+                                    Log.w("oath2", "Error stream: " +
+                                            responseCode + " " + amsg + "; " +msg);
+                                }
                             } catch (Exception ex) {
                                 ex.printStackTrace(System.err);
                                 res.putExtra("ex", ex.toString());
-                                resultCode = Activity.RESULT_CANCELED;
-                            }
-
-                            if (conn != null) {
-                                conn.disconnect();
+                            } finally {
+                                if (conn != null) {
+                                    conn.disconnect();
+                                }
                             }
 
                             return resultCode;
