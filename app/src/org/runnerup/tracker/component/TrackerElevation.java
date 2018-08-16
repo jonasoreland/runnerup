@@ -53,7 +53,6 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     private long minEleAverageCutoffTime = Long.MAX_VALUE;
     private GeoidAdjust mGeoidAdjust = null;
     private boolean mAltitudeFromGpsAverage = true;
-    @SuppressWarnings("unused")
     private boolean isStarted;
 
     public TrackerElevation(Tracker tracker, TrackerGPS trackerGPS, TrackerPressure trackerPressure){

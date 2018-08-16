@@ -671,50 +671,52 @@ public class Tracker extends android.app.Service implements
             arg0.setTime(arg0.getTime() + mBug23937Delta);
         }
 
-        if (internal || state.get() == TrackerState.STARTED) {
-            Integer hrValue = getCurrentHRValue(arg0.getTime(), MAX_HR_AGE);
-            Double eleValue = getCurrentElevation();
-            Float cadValue = getCurrentCadence();
-            Float temperatureValue = getCurrentTemperature();
-            Float pressureValue = getCurrentPressure();
-            if (mActivityLastLocation != null) {
-                long timeDiff;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    timeDiff = (arg0.getElapsedRealtimeNanos() - mActivityLastLocation
-                            .getElapsedRealtimeNanos()) / 1000000;
-                } else {
-                    timeDiff = arg0.getTime() - mActivityLastLocation.getTime();
-                }
-                double distDiff = arg0.distanceTo(mActivityLastLocation);
-                if (timeDiff < 0) {
-                    // time moved backward ??
-                    Log.e(getClass().getName(), "lastTime:       " + mActivityLastLocation.getTime());
-                    Log.e(getClass().getName(), "arg0.getTime(): " + arg0.getTime());
-                    Log.e(getClass().getName(), " => delta time: " + timeDiff);
-                    Log.e(getClass().getName(), " => delta dist: " + distDiff);
-                    // TODO investigate if this is known...only seems to happen
-                    // in emulator
-                    timeDiff = 0;
-                }
+        Integer hrValue = getCurrentHRValue(arg0.getTime(), MAX_HR_AGE);
+        Double eleValue = getCurrentElevation();
+        Float cadValue = getCurrentCadence();
+        Float temperatureValue = getCurrentTemperature();
+        Float pressureValue = getCurrentPressure();
+        if (mActivityLastLocation != null) {
+            long timeDiff;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                timeDiff = (arg0.getElapsedRealtimeNanos() - mActivityLastLocation
+                        .getElapsedRealtimeNanos()) / 1000000;
+            } else {
+                timeDiff = arg0.getTime() - mActivityLastLocation.getTime();
+            }
+            double distDiff = arg0.distanceTo(mActivityLastLocation);
+            if (timeDiff < 0) {
+                // time moved backward ??
+                Log.e(getClass().getName(), "lastTime:       " + mActivityLastLocation.getTime());
+                Log.e(getClass().getName(), "arg0.getTime(): " + arg0.getTime());
+                Log.e(getClass().getName(), " => delta time: " + timeDiff);
+                Log.e(getClass().getName(), " => delta dist: " + distDiff);
+                // TODO investigate if this is known...only seems to happen
+                // in emulator
+                timeDiff = 0;
+            }
+
+            float val = mLastLocation.getSpeed();
+            if (!mLastLocation.hasSpeed() || val == 0.0f || mCurrentSpeedFromGpsPoints) {
+                val = (float) distDiff * 1000.0f / timeDiff;
+            }
+            //Low pass filter
+            final float alpha = 0.4f;
+            mCurrentSpeed = val * alpha + (1 - alpha) * mCurrentSpeed;
+
+            if (internal || state.get() == TrackerState.STARTED) {
                 mElapsedTimeMillis += timeDiff;
                 mElapsedDistance += distDiff;
-
-                float val = mLastLocation.getSpeed();
-                if (!mLastLocation.hasSpeed() || val == 0.0f || mCurrentSpeedFromGpsPoints) {
-                    val = (float)distDiff*1000.0f/timeDiff;
-                }
-                //Low pass filter
-                final float alpha = 0.4f;
-                mCurrentSpeed = val * alpha + (1 - alpha) * mCurrentSpeed;
-
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
                     mHeartbeatMillis += timeDiff; // TODO handle loss of HRM connection
                     mMaxHR = Math.max(hrValue, mMaxHR);
                 }
             }
-            mActivityLastLocation = arg0;
+        }
+        mActivityLastLocation = arg0;
 
+        if (internal || state.get() == TrackerState.STARTED) {
             mDBWriter.onLocationChanged(arg0, eleValue, mElapsedTimeMillis, mElapsedDistance, hrValue, cadValue, temperatureValue, pressureValue);
 
             switch (mLocationType) {

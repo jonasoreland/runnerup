@@ -38,8 +38,6 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
     private static boolean isMockSensor = false;
 
     //The sensor fires continuously, use the last available values (no smoothing)
-    @SuppressWarnings("unused")
-    private boolean isStarted = true;
     private Float latestVal = null;
 
     public Float getValue() {
@@ -127,57 +125,11 @@ public class TrackerPressure extends DefaultTrackerComponent implements SensorEv
         return sensorManager != null || isMockSensor;
     }
 
-    @Override
-    public void onConnected() {
-    }
-
-    /*
-     * Called by Tracker before start
-     *   Component shall populate bindValues
-     *   with objects that will then be passed
-     *   to workout
-     */
-    //public void onBind(HashMap<String, Object> bindValues) {
-    //}
-
-    /**
-     * Called by Tracker when workout starts
-     */
-    @Override
-    public void onStart() {
-        isStarted = true;
-    }
-
-    /**
-     * Called by Tracker when workout is paused
-     */
-    @Override
-    public void onPause() {
-        isStarted = false;
-    }
-
-    /**
-     * Called by Tracker when workout is resumed
-     */
-    @Override
-    public void onResume() {
-        isStarted = true;
-    }
-
-    /**
-     * Called by Tracker when workout is complete
-     */
-    @Override
-    public void onComplete(boolean discarded) {
-        isStarted = false;
-    }
-
     /**
      * Called by tracked after workout has ended
      */
     @Override
     public ResultCode onEnd(Callback callback, Context context) {
-        isStarted = false;
         if (sensorManager != null) { sensorManager.unregisterListener(this); }
         sensorManager = null;
         isMockSensor = false;
