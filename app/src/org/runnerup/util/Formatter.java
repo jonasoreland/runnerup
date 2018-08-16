@@ -55,7 +55,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     public final static double km_meters = 1000.0;
     public final static double mi_meters = 1609.34;
-    public final static double meters_per_foot = 0.3048;
+    private final static double meters_per_foot = 0.3048;
 
     public enum Format {
         CUE,       // for text to speech
@@ -485,30 +485,30 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * Format Speed
      *
      * @param target
-     * @param seconds_per_meter
+     * @param meters_per_second
      * @return
      */
-    private String formatSpeed(Format target, double seconds_per_meter) {
+    private String formatSpeed(Format target, double meters_per_second) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
             case CUE_LONG:
-                return cueSpeed(seconds_per_meter);
+                return cueSpeed(meters_per_second);
             case TXT:
             case TXT_SHORT:
-                return txtSpeed(seconds_per_meter, false);
+                return txtSpeed(meters_per_second, false);
             case TXT_LONG:
-                return txtSpeed(seconds_per_meter, true);
+                return txtSpeed(meters_per_second, true);
         }
         return "";
     }
 
     /**
-     * @param meter_per_seconds
+     * @param meters_per_second
      * @return string suitable for printing according to settings
      */
-    private String txtSpeed(double meter_per_seconds, boolean includeUnit) {
-        double distance_per_hour = meter_per_seconds * 3600 / base_meters;
+    private String txtSpeed(double meters_per_second, boolean includeUnit) {
+        double distance_per_hour = meters_per_second * 3600 / base_meters;
         String str = String.format(cueResources.defaultLocale, "%.1f", distance_per_hour);
         if (!includeUnit)
             return str;
@@ -521,8 +521,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
     }
 
-    private String cueSpeed(double meter_per_seconds) {
-        double distance_per_hour = meter_per_seconds  * 3600 / base_meters;
+    private String cueSpeed(double meters_per_second) {
+        double distance_per_hour = meters_per_second  * 3600 / base_meters;
         String str = String.format(cueResources.audioLocale, "%.1f", distance_per_hour);
         return cueResources.getQuantityString(metric ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
                 (int)distance_per_hour, str);
