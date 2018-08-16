@@ -61,7 +61,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
             return null;
         }
 
-        // If no data (assume no movement) report lower value
+        // It can take seconds between sensor updates
         // Cut-off at 3s corresponds to 60/2/3 => 10 rpm (or 20 steps per minute)
         final int cutOffTime = 3;
         final long nanoSec = 1000000000L;
@@ -73,13 +73,9 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         }
         long timeDiff = now - mPrevTime;
         Float res = mCurrentCadence;
-        if (timeDiff > cutOffTime*nanoSec) {
+        if (timeDiff > cutOffTime * nanoSec) {
             mCurrentCadence = null;
             res = 0.0f;
-        } else if (timeDiff > nanoSec*(1+ 1.5*60/ mCurrentCadence /2)) {
-            // sensors update every sec in addition to time between updates
-            // Decrease reported value if no update in (just over) expected time
-            res = res * (1-(float)(timeDiff/cutOffTime)/nanoSec);
         }
 
         return res;
