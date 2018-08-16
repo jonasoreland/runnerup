@@ -174,10 +174,12 @@ android.applicationVariants.all {
         buildConfigField 'String', 'RUNALYZE_SECRET', props.CLIENT_SECRET
     }
     else {
+        // Demo, used to testing.runalyze.com
         buildConfigField 'int', 'RUNALYZE_ENABLED', "0"
-        buildConfigField 'String', 'RUNALYZE_ID', "null"
-        buildConfigField 'String', 'RUNALYZE_SECRET', "null"
+        buildConfigField 'String', 'RUNALYZE_ID', "\"8_2jx5jt9r39ic40ooc80c8c0884okgk0owsowg808c4csg8ko8g\""
+        buildConfigField 'String', 'RUNALYZE_SECRET', "\"1v7d6nwe1v9c8skok44g0gc8cc04cc0wwwo8swwgckoogwsww4\""
     }
+
     if (rootProject.file("dropbox.properties").exists()) {
         props.load(new FileInputStream(rootProject.file("dropbox.properties")))
         buildConfigField 'int', 'DROPBOX_ENABLED', "1"
