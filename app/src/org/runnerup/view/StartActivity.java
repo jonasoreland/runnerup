@@ -297,7 +297,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
         @Override
         public String preSetValue(String newValue) throws IllegalArgumentException {
-            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_audio_cues_))) {
+            if (newValue != null && newValue.contentEquals((String) adapter.getItem(adapter.getCount()-1))) {
                 Intent i = new Intent(StartActivity.this, AudioCueSettingsActivity.class);
                 startActivity(i);
                 throw new IllegalArgumentException();
@@ -320,7 +320,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
         @Override
         public String preSetValue(String newValue) throws IllegalArgumentException {
-            if (newValue != null && newValue.contentEquals(getString(R.string.Manage_workouts_))) {
+            if (newValue != null && newValue.contentEquals((String) adapter.getItem(adapter.getCount()-1))) {
                 Intent i = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
                 startActivity(i);
                 throw new IllegalArgumentException();

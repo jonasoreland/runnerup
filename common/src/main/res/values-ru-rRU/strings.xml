@@ -119,8 +119,8 @@
   <string name="Configure_heart_rate_zones">Настройка зон ЧСС</string>
   <string name="Clear_heart_rate_zone_settings">Очистить зоны ЧСС</string>
   <string name="Manage_accounts">Управление аккаунтами</string>
-  <string name="Manage_audio_cues_">Настройка звукового сопровождения</string>
-  <string name="Manage_workouts_">Управление тренировкой</string>
+  <string name="Manage_audio_cues">Настройка звукового сопровождения</string>
+  <string name="Manage_workouts">Управление тренировкой</string>
   <string name="Settings">Настройки</string>
   <string name="Whats_new">Что нового</string>
   <string name="Rate_RunnerUp">Оценить RunnerUp</string>

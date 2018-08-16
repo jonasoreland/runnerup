@@ -123,8 +123,8 @@
   <string name="Configure_heart_rate_zones">Podesi zone pulsa</string>
   <string name="Clear_heart_rate_zone_settings">Obriši postavke zona pulsa</string>
   <string name="Manage_accounts">Upravljanje računima</string>
-  <string name="Manage_audio_cues_">Upravljanje audio nampomenama</string>
-  <string name="Manage_workouts_">Upravljanje treninzima</string>
+  <string name="Manage_audio_cues">Upravljanje audio nampomenama</string>
+  <string name="Manage_workouts">Upravljanje treninzima</string>
   <string name="Settings">Postavke</string>
   <string name="Whats_new">Šta je novo</string>
   <string name="Rate_RunnerUp">Ocijeni RunnerUp</string>

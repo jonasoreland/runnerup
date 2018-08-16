@@ -123,8 +123,8 @@
   <string name="Configure_heart_rate_zones">Configurer les zones de fréq. cardiaque</string>
   <string name="Clear_heart_rate_zone_settings">Supprimer les paramètres de zone de fréq. cardiaque</string>
   <string name="Manage_accounts">Gérer les comptes</string>
-  <string name="Manage_audio_cues_">Gérer le suivi audio</string>
-  <string name="Manage_workouts_">Gérer les entraînements</string>
+  <string name="Manage_audio_cues">Gérer le suivi audio</string>
+  <string name="Manage_workouts">Gérer les entraînements</string>
   <string name="Settings">Paramètres</string>
   <string name="Whats_new">Quoi de neuf ?</string>
   <string name="Rate_RunnerUp">Noter RunnerUp</string>

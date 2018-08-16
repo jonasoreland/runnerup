@@ -123,8 +123,8 @@
   <string name="Configure_heart_rate_zones">Pulzus zónák testreszabása</string>
   <string name="Clear_heart_rate_zone_settings">Pulzus zóna beállítások törlése</string>
   <string name="Manage_accounts">Fiókok kezelése</string>
-  <string name="Manage_audio_cues_">Beszéd beállítása</string>
-  <string name="Manage_workouts_">Edzéstervek kezelése</string>
+  <string name="Manage_audio_cues">Beszéd beállítása</string>
+  <string name="Manage_workouts">Edzéstervek kezelése</string>
   <string name="Settings">Beállítások</string>
   <string name="Whats_new">Mi változott</string>
   <string name="Rate_RunnerUp">RunnerUp értékelése</string>

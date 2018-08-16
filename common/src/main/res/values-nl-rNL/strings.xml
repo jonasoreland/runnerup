@@ -118,8 +118,8 @@
   <string name="Configure_heart_rate_zones">Hartslagzones instellen</string>
   <string name="Clear_heart_rate_zone_settings">Hartslagzone instellingen verwijderen</string>
   <string name="Manage_accounts">Accounts beheren</string>
-  <string name="Manage_audio_cues_">Beheer auditieve signalen</string>
-  <string name="Manage_workouts_">Trainingen beheren</string>
+  <string name="Manage_audio_cues">Beheer auditieve signalen</string>
+  <string name="Manage_workouts">Trainingen beheren</string>
   <string name="Settings">Instellingen</string>
   <string name="Whats_new">Wat is nieuw</string>
   <string name="Rate_RunnerUp">RunnerUp beoordelen</string>

@@ -123,8 +123,8 @@
   <string name="Configure_heart_rate_zones">Sett opp hjerterytmesoner</string>
   <string name="Clear_heart_rate_zone_settings">Tøm innstillinger for hjerterytmesoner</string>
   <string name="Manage_accounts">Behandle kontoer</string>
-  <string name="Manage_audio_cues_">Behandle lydinstrukser</string>
-  <string name="Manage_workouts_">Behandle treningsøkter</string>
+  <string name="Manage_audio_cues">Behandle lydinstrukser</string>
+  <string name="Manage_workouts">Behandle treningsøkter</string>
   <string name="Settings">Innstillinger</string>
   <string name="Whats_new">Nyheter</string>
   <string name="Rate_RunnerUp">Bedøm RunnerUp</string>

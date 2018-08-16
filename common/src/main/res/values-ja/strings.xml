@@ -123,8 +123,8 @@
   <string name="Configure_heart_rate_zones">心拍数ゾーンを設定</string>
   <string name="Clear_heart_rate_zone_settings">心拍数ゾーンの設定をクリア</string>
   <string name="Manage_accounts">アカウントの管理</string>
-  <string name="Manage_audio_cues_">音声合図の管理</string>
-  <string name="Manage_workouts_">ワークアウトの管理</string>
+  <string name="Manage_audio_cues">音声合図の管理</string>
+  <string name="Manage_workouts">ワークアウトの管理</string>
   <string name="Settings">設定</string>
   <string name="Whats_new">新着情報</string>
   <string name="Rate_RunnerUp">RunnerUp を評価</string>

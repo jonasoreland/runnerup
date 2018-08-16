@@ -119,8 +119,8 @@
   <string name="Configure_heart_rate_zones">Konfigūruoti širdies ritmo zonas</string>
   <string name="Clear_heart_rate_zone_settings">Išvalyti širdies ritmo zonų nustatymus</string>
   <string name="Manage_accounts">Valdyti sąskaitas</string>
-  <string name="Manage_audio_cues_">Valdyti garsinius nurodymus</string>
-  <string name="Manage_workouts_">Valdyti treniruotes</string>
+  <string name="Manage_audio_cues">Valdyti garsinius nurodymus</string>
+  <string name="Manage_workouts">Valdyti treniruotes</string>
   <string name="Settings">Nustatymai</string>
   <string name="Whats_new">Kas naujo</string>
   <string name="Rate_RunnerUp">Įvertinti RunnerUp</string>
