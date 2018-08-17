@@ -122,7 +122,6 @@
   <string name="Recompute_activity">Regn ut aktivtet på ny</string>
   <string name="Configure_heart_rate_zones">Sett opp hjerterytmesoner</string>
   <string name="Clear_heart_rate_zone_settings">Tøm innstillinger for hjerterytmesoner</string>
-  <string name="Manage_accounts">Behandle kontoer</string>
   <string name="Manage_audio_cues">Behandle lydinstrukser</string>
   <string name="Manage_workouts">Behandle treningsøkter</string>
   <string name="Settings">Innstillinger</string>
@@ -131,7 +130,7 @@
   <string name="Enable_GPS">Skru på GPS</string>
   <string name="Waiting_for_GPS">Venter på GPS</string>
   <string name="Start_activity">Start aktivitet</string>
-  <string name="Clear_HR_settings">Tøm HR-innstillinger</string>
+    <string name="Clear_HR_settings">Tøm HR-innstillinger</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Hjerterytmemonitor støttes ikke på din enhet</string>
   <string name="Select_type_of_Bluetooth_device">Velg Blåtannsenhetstype</string>
   <string name="Scanning">Skanner</string>
@@ -237,7 +236,6 @@
   <string name="History">Historikk</string>
   <string name="Basic">Enkelt</string>
   <string name="Advanced">Avansert</string>
-  <string name="Manual">Manuell</string>
   <string name="Add_workout_notes">Legg til treningsøktnotater</string>
   <string name="Pruning_deleted_activities_from_database">Kutter ned på slettede aktiviteter fra databasen</string>
   <string name="Prune">Kutt ned</string>

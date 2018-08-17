@@ -118,8 +118,7 @@
   <string name="Recompute_activity">Przelicz aktywność</string>
   <string name="Configure_heart_rate_zones">Ustaw strefy tętna</string>
   <string name="Clear_heart_rate_zone_settings">Wyczyść ustawienia stref tętna</string>
-  <string name="Manage_accounts">Zarządzaj kontami</string>
-  <string name="Manage_audio_cues">Zarządzaj wskazówkami</string>
+    <string name="Manage_audio_cues">Zarządzaj wskazówkami</string>
   <string name="Manage_workouts">Zarządzaj treningami</string>
   <string name="Settings">Ustawienia</string>
   <string name="Whats_new">Co nowego</string>
@@ -127,7 +126,7 @@
   <string name="Enable_GPS">Włącz GPS</string>
   <string name="Waiting_for_GPS">Oczekuje na GPS</string>
   <string name="Start_activity">Rozpocznij</string>
-  <string name="Clear_HR_settings">Wyczyść ustawienia HRM</string>
+    <string name="Clear_HR_settings">Wyczyść ustawienia HRM</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">HRM nie jest obsługiwany przez twoje urządzenie</string>
   <string name="Select_type_of_Bluetooth_device">Wybierz rodzaj urządzenia Bluetooth</string>
   <string name="Scanning">Skanuje</string>
@@ -231,8 +230,7 @@
   <string name="History">Historia</string>
   <string name="Basic">Podstawowy</string>
   <string name="Advanced">Rozszerzony</string>
-  <string name="Manual">Ręczny</string>
-  <string name="Add_workout_notes">Dodaj notatki</string>
+    <string name="Add_workout_notes">Dodaj notatki</string>
   <string name="Pruning_deleted_activities_from_database">Usuwa zapisane aktywności z bazy danych</string>
   <string name="Prune">Wyczyść</string>
   <string name="Heartrate_zones_distribution">Rozkład stref tętna</string>

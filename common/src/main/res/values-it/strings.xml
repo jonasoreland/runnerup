@@ -119,8 +119,7 @@
   <string name="Recompute_activity">Ricalcola attività</string>
   <string name="Configure_heart_rate_zones">Configura zone BPM</string>
   <string name="Clear_heart_rate_zone_settings">Elimina impostazioni zona BPM</string>
-  <string name="Manage_accounts">Gestisci account</string>
-  <string name="Manage_audio_cues">Gestisci riferimenti audio</string>
+    <string name="Manage_audio_cues">Gestisci riferimenti audio</string>
   <string name="Manage_workouts">Gestisci allenamenti</string>
   <string name="Settings">Impostazioni</string>
   <string name="Whats_new">Novità</string>
@@ -128,7 +127,7 @@
   <string name="Enable_GPS">Attiva GPS</string>
   <string name="Waiting_for_GPS">In attesa di segnale GPS</string>
   <string name="Start_activity">Inizia attività</string>
-  <string name="Clear_HR_settings">Cancella impostazioni frequenza cardiaca</string>
+    <string name="Clear_HR_settings">Cancella impostazioni frequenza cardiaca</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitoraggio frequenza cardiaca non supportata per questo dispositivo</string>
   <string name="Select_type_of_Bluetooth_device">Seleziona tipo dispositivo Bluetooth</string>
   <string name="Scanning">Ricerca…</string>
@@ -233,8 +232,7 @@
   <string name="History">Cronologia</string>
   <string name="Basic">Semplice</string>
   <string name="Advanced">Avanzato</string>
-  <string name="Manual">Manuale</string>
-  <string name="Add_workout_notes">Aggiungi note allenamento</string>
+    <string name="Add_workout_notes">Aggiungi note allenamento</string>
   <string name="Pruning_deleted_activities_from_database">Scarta dal database le attività eliminate</string>
   <string name="Prune">Scarta</string>
   <string name="Heartrate_zones_distribution">Distribuzione zone BPM</string>

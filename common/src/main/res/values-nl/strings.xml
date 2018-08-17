@@ -118,8 +118,7 @@
   <string name="Recompute_activity">Activiteit herberekenen</string>
   <string name="Configure_heart_rate_zones">Hartslagzones instellen</string>
   <string name="Clear_heart_rate_zone_settings">Hartslagzone instellingen verwijderen</string>
-  <string name="Manage_accounts">Accounts beheren</string>
-  <string name="Manage_audio_cues">Beheer auditieve signalen</string>
+    <string name="Manage_audio_cues">Beheer auditieve signalen</string>
   <string name="Manage_workouts">Trainingen beheren</string>
   <string name="Settings">Instellingen</string>
   <string name="Whats_new">Wat is nieuw</string>
@@ -127,7 +126,7 @@
   <string name="Enable_GPS">GPS inschakelen</string>
   <string name="Waiting_for_GPS">Wachten op GPS signaal</string>
   <string name="Start_activity">Activiteit starten</string>
-  <string name="Clear_HR_settings">HR instellingen verwijderen</string>
+    <string name="Clear_HR_settings">HR instellingen verwijderen</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Hartslagmeter wordt niet ondersteund door uw toestel</string>
   <string name="Select_type_of_Bluetooth_device">Selecteer het type Bluetooth-apparaat</string>
   <string name="Scanning">Zoeken naar</string>
@@ -231,8 +230,7 @@
   <string name="History">Geschiedenis</string>
   <string name="Basic">Basis</string>
   <string name="Advanced">Geavanceerd</string>
-  <string name="Manual">Handmatig</string>
-  <string name="Add_workout_notes">Training notities toevoegen</string>
+    <string name="Add_workout_notes">Training notities toevoegen</string>
   <string name="Pruning_deleted_activities_from_database">Verwijderde activiteiten uit de database opschonen</string>
   <string name="Prune">Opschonen</string>
   <string name="Heartrate_zones_distribution">Distributie hartslagzones</string>

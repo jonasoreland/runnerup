@@ -78,7 +78,7 @@
   <string name="Laps">Voltas</string>
   <string name="Map">Mapa</string>
   <string name="Upload">Carregar</string>
-    <string name="Disconnect">Desconetar</string>
+  <string name="Disconnect">Desconetar</string>
   <string name="Resume">Reatar</string>
   <string name="Save_activity">Gravar atividade</string>
   <string name="Upload_activity">Carregar atividade</string>
@@ -86,7 +86,7 @@
   <string name="Finished">Acabado</string>
   <string name="Refresh">Renovar</string>
   <string name="Age">Idade</string>
-    <string name="OK">OK</string>
+  <string name="OK">OK</string>
   <string name="Edit_activity">Editar atividade</string>
   <string name="Share_activity">Partilhar atividade</string>
   <string name="Delete_activity">Apagar atividade</string>
@@ -94,7 +94,7 @@
   <string name="Enable_GPS">Activar GPS</string>
   <string name="Waiting_for_GPS">Esperando pelo GPS</string>
   <string name="Start_activity">Iniciar atividade</string>
-  <string name="Problem">Problema</string>
+    <string name="Problem">Problema</string>
   <string name="Great">Ótimo!</string>
   <string name="Yes">Sim</string>
   <string name="Create">Criar</string>
@@ -108,15 +108,14 @@
   <string name="Enable_RunnerUpLive">Ativar Live</string>
   <string name="Export">Exportar</string>
   <string name="Import">Importar</string>
-    <string name="About_RunnerUp">Sobre RunnerUp</string>
+  <string name="About_RunnerUp">Sobre RunnerUp</string>
   <string name="Lap_time">Tempo por volta</string>
   <string name="Lap_speed">Velocidade por volta</string>
   <string name="Current_speed">Velocidade atual</string>
   <string name="Start">Iniciar</string>
   <string name="History">História</string>
   <string name="Advanced">Avançado</string>
-  <string name="Manual">Manual</string>
-  <string name="Battery_level">Nível da bateria</string>
+    <string name="Battery_level">Nível da bateria</string>
   <string name="Searching_for_GPS">Procurando GPS</string>
   <string name="Do_not_show_again">Não mostrar outra vez</string>
   <string name="Waiting_for_phone" tools:ignore="UnusedResources">Esperando pelo telefone</string>

@@ -82,7 +82,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Graf</string>
   <string name="Upload">Nahrát</string>
-    <string name="Disconnect">Odpojit</string>
+  <string name="Disconnect">Odpojit</string>
   <string name="Resume">Obnovit</string>
   <string name="Save_activity">Uložit aktivitu</string>
   <string name="Upload_activity">Nahrát aktivitu</string>
