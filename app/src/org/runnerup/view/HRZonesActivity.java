@@ -138,6 +138,8 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
             case R.id.menu_hrzonessettings_clear:
                 clearHRSettings();
                 break;
+            case android.R.id.home:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }

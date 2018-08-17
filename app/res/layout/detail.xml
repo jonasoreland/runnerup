@@ -110,7 +110,8 @@
                     android:id="@+id/tab_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_margin="@dimen/activity_margin">
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/summary_sport"
@@ -129,7 +130,7 @@
                         android:hint="@string/Notes_about_your_workout"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
-                        android:singleLine="false" />
+                        android:singleLine="false"/>
 
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"
@@ -153,7 +154,8 @@
                     android:id="@+id/tab_lap"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:baselineAligned="false">
+                    android:baselineAligned="false"
+                    android:layout_margin="@dimen/activity_margin">
 
                     <ListView
                         android:id="@+id/laplist"
@@ -166,7 +168,8 @@
                     android:id="@+id/tab_upload"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:baselineAligned="false">
+                    android:baselineAligned="false"
+                    android:layout_margin="@dimen/activity_margin">
 
                     <ListView
                         android:id="@+id/report_list"
@@ -180,7 +183,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:weightSum="1" />
+                    android:weightSum="1"
+                    android:layout_margin="@dimen/activity_margin"/>
 
                 <include
                     android:id="@+id/tab_map"

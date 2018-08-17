@@ -19,7 +19,8 @@
     android:id="@+id/step_button"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_marginBottom="4dp"
+    android:layout_marginTop="4dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
     android:focusable="true"
@@ -32,7 +33,7 @@
         android:id="@+id/step_duration_value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1" />
 
@@ -48,6 +49,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginRight="22dp"
         android:layout_weight="2" />
 </LinearLayout>

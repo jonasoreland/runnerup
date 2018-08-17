@@ -145,11 +145,16 @@
 
         <activity
             android:name=".view.AccountActivity"
+            android:parentActivityName=".view.AccountListActivity"
             android:theme="@style/AppTheme"/>
 
         <activity android:name=".view.UploadActivity"/>
 
-        <activity android:name=".view.ManageWorkoutsActivity">
+        <activity
+            android:name=".view.ManageWorkoutsActivity"
+            android:label="@string/Manage_workouts"
+            android:parentActivityName=".view.MainLayout"
+            android:theme="@style/AppTheme">
             <intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.EDIT"/>
@@ -181,14 +186,19 @@
 
         <activity
             android:name=".export.oauth2client.OAuth2Activity"
+            android:parentActivityName=".view.AccountListActivity"
             android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".view.HRSettingsActivity"
+            android:label="@string/Heart_Rate_Monitor"
+            android:parentActivityName=".view.SettingsActivity"
             android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".view.HRZonesActivity"
+            android:label="@string/Heart_Rate_Zones"
+            android:parentActivityName=".view.SettingsActivity"
             android:theme="@style/AppTheme"/>
 
         <service android:name=".tracker.Tracker"/>

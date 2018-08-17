@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
@@ -61,10 +62,12 @@ class AudioSchemeListAdapter extends BaseAdapter {
         if (position < audioSchemes.size())
             return audioSchemes.get(position);
 
+        Context context = inflater.getContext();
+
         if (createNewItem)
-            return inflater.getContext().getString(R.string.New_audio_scheme);
+            return context.getString(R.string.New_audio_scheme);
         else
-            return inflater.getContext().getString(R.string.Manage_audio_cues);
+            return String.format(context.getString(R.string.dialog_ellipsis), context.getString(R.string.Manage_audio_cues));
     }
 
     @Override

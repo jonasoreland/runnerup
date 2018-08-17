@@ -17,7 +17,8 @@
   -->
 <resources>
      <color name="subsectionBg">#212121</color>
-     <color name="colorPrimary">#003366</color>
+     <color name="colorPrimaryDark">#003366</color>
+     <color name="colorPrimary">#004282</color>
      <color name="colorAccent">#53B1FC</color>
      <color name="colorText">#ffffff</color>
      <color name="colorTextSecondary">#b3ffffff</color>

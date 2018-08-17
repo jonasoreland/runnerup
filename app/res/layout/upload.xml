@@ -26,14 +26,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
+    android:layout_marginTop="@dimen/activity_margin"
+    android:layout_marginRight="@dimen/activity_margin"
+    android:layout_marginLeft="@dimen/activity_margin"
     android:gravity="center|center_horizontal|center_vertical">
 
     <TextView
       android:id="@+id/account_upload_list_name"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_marginStart="200dp"
-      android:layout_marginLeft="200dp"/>
+      style="@style/AccountListText"/>
 
     <ImageView
       android:id="@+id/account_upload_list_icon"
@@ -44,6 +46,7 @@
   </LinearLayout>
 
   <ListView
+      android:layout_margin="@dimen/activity_margin"
     android:id="@+id/upload_list"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"

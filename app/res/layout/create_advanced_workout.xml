@@ -3,10 +3,6 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="0dp"
-                android:paddingRight="0dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
                 tools:context="org.runnerup.view.CreateAdvancedWorkout">
 
   <org.runnerup.widget.TitleSpinner
@@ -15,14 +11,13 @@
     android:id="@+id/new_workout_spinner"
     android:text="@string/Workout"
     runnerup:type="spinner_txt"
-    android:orientation="horizontal">
-  </org.runnerup.widget.TitleSpinner>
+    android:orientation="horizontal" />
 
   <ListView
     android:id="@+id/new_advnced_workout_steps"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="5dp"
+    android:paddingTop="8dp"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     android:layout_below="@+id/new_workout_spinner"
     android:layout_above="@+id/button_table"/>

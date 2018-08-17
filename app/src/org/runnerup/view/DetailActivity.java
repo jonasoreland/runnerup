@@ -28,7 +28,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -262,8 +261,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                break;
+                return super.onOptionsItemSelected(item);
             case R.id.menu_delete_activity:
                 deleteButtonClick.onClick(null);
                 break;

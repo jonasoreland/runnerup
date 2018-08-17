@@ -19,14 +19,18 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dialog_padding_horiz"
+    android:paddingRight="@dimen/dialog_padding_horiz"
+    android:paddingBottom="@dimen/dialog_padding_vert"
+    android:paddingTop="@dimen/dialog_padding_vert">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/textViewAuthNotice"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="16dp" />
 
     <TableLayout
         android:layout_width="fill_parent"
@@ -40,6 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
                 android:text="@string/Website" />
 
             <EditText
@@ -60,6 +65,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
                 android:text="@string/Username" />
 
             <EditText
@@ -82,6 +88,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
                 android:text="@string/Password" />
 
             <EditText
@@ -95,17 +102,15 @@
                 tools:ignore="UnusedAttribute" />
 
         </TableRow>
+
     </TableLayout>
 
-    <TableRow
+    <CheckBox
+        android:layout_marginTop="8dp"
+        android:id="@+id/showpass"
+        android:layout_gravity="right"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <CheckBox
-            android:id="@+id/showpass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Show_password" />
-    </TableRow>
+        android:layout_height="wrap_content"
+        android:text="@string/Show_password" />
 
 </LinearLayout>

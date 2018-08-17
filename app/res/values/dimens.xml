@@ -11,4 +11,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
 
     <dimen name="fab_margin_44row">20dp</dimen>
     <dimen name="fab_margin_68row">44dp</dimen>
+    <dimen name="dialog_padding_horiz">24dp</dimen>
+    <dimen name="dialog_padding_vert">8dp</dimen>
 </resources>

@@ -16,55 +16,63 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/dialog_padding_vert"
+              android:paddingLeft="@dimen/dialog_padding_horiz"
+              android:paddingRight="@dimen/dialog_padding_horiz"
+              android:paddingTop="@dimen/dialog_padding_vert">
 
     <TextView
+        android:id="@+id/textViewAuthNotice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/textViewAuthNotice"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="16dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-        <TableRow
-            android:id="@+id/table_row1"
+    <TableRow
+        android:id="@+id/table_row1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:text="URL"
+            tools:ignore="HardcodedText"/>
+
+        <EditText
+            android:id="@+id/fileuri"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="URL"
+            android:inputType="textUri"
+            tools:ignore="HardcodedText"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="URL"
-                tools:ignore="HardcodedText" />
+    </TableRow>
 
-            <EditText
-                android:id="@+id/fileuri"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="textUri"
-                android:hint="URL"
-                tools:ignore="HardcodedText" />
-
-        </TableRow>
     <TableRow
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <CheckBox
             android:id="@+id/tcxformat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
             android:text="TCX"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"/>
+
         <CheckBox
             android:id="@+id/gpxformat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="GPX"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText"/>
     </TableRow>
 
 </LinearLayout>

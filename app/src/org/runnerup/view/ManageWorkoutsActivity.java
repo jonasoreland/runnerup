@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -32,8 +31,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -76,11 +76,11 @@ import java.util.HashSet;
 import java.util.List;
 
 
-public class ManageWorkoutsActivity extends Activity implements Constants {
+public class ManageWorkoutsActivity extends AppCompatActivity implements Constants {
 
     private SQLiteDatabase mDB = null;
 
-    private String PHONE_STRING = "my phone";
+    private String PHONE_STRING = "My phone";
     public final static String WORKOUT_NAME = "";
 
     private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<>();
@@ -99,7 +99,9 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
     private SyncManager syncManager = null;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,7 +164,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
             name = data.getLastPathSegment();
         } else if (ContentResolver.SCHEME_CONTENT.contentEquals(data.getScheme())) {
             String projection[] = {
-                MediaStore.MediaColumns.DISPLAY_NAME
+                    MediaStore.MediaColumns.DISPLAY_NAME
             };
             Cursor c = getContentResolver().query(data, projection, null, null, null);
             if (c != null) {
@@ -191,7 +193,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         final boolean exists = WorkoutSerializer.getFile(this, fileName).exists();
         final boolean selected[] = {
-            false
+                false
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -243,13 +245,13 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         if (exists) {
             String items[] = {
-                getString(R.string.Overwrite_existing)
+                    getString(R.string.Overwrite_existing)
             };
             builder.setMultiChoiceItems(items, selected,
                     new OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1,
-                                boolean arg2) {
+                                            boolean arg2) {
                             selected[arg1] = arg2;
                         }
                     });
@@ -316,7 +318,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         if (list != null) {
             for (String s : list) {
                 newlist.add(new SyncManager.WorkoutRef(PHONE_STRING, null,
-                                            s.substring(0, s.lastIndexOf('.')))
+                        s.substring(0, s.lastIndexOf('.')))
                 );
             }
         }
@@ -389,7 +391,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
     }
 
     ArrayList<SyncManager.WorkoutRef> filter(List<SyncManager.WorkoutRef> list,
-            Filter<SyncManager.WorkoutRef> f) {
+                                             Filter<SyncManager.WorkoutRef> f) {
         ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<>();
         return filter(list, newlist, f);
     }
@@ -488,7 +490,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
         }
 
         private boolean contains(ArrayList<WorkoutRef> local,
-                WorkoutRef selected) {
+                                 WorkoutRef selected) {
             for (WorkoutRef w : local) {
                 if (selected.workoutName.contentEquals(w.workoutName)) {
                     return true;
@@ -622,7 +624,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         @Override
         public View getChildView(int groupPosition, int childPosition,
-                boolean isLastChild, View view, ViewGroup parent) {
+                                 boolean isLastChild, View view, ViewGroup parent) {
 
             if (view == null || !(view instanceof LinearLayout)) {
                 LayoutInflater infalInflater = (LayoutInflater) context
@@ -632,13 +634,12 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             WorkoutRef workout = workouts.get(getProvider(groupPosition)).get(childPosition);
             RadioButton cb = (RadioButton) view.findViewById(R.id.download_workout_checkbox);
-            TextView tv = (TextView) view.findViewById(R.id.download_workout_name);
 
             cb.setTag(workout);
             cb.setChecked(currentlySelectedWorkout != null
                     && currentlySelectedWorkout.getTag() == workout);
             cb.setOnCheckedChangeListener(onWorkoutChecked);
-            tv.setText(workout.workoutName);
+            cb.setText(workout.workoutName);
             return view;
         }
 
@@ -664,18 +665,22 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded,
-                View convertView, ViewGroup parent) {
-            TextView view;
-            if (convertView != null && convertView instanceof TextView)
-                view = (TextView) convertView;
-            else
-                view = new TextView(context);
+                                 View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                LayoutInflater inflater = (LayoutInflater) context
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(R.layout.manage_workouts_list_category, parent, false);
+            }
 
-            view.setGravity(Gravity.CENTER_HORIZONTAL);
-            view.setText(getProvider(groupPosition));
-            view.setBackgroundResource(android.R.drawable.btn_default_small);
-            view.setTextAppearance(context, R.style.ButtonTextGrey);
-            return view;
+            TextView categoryText = convertView.findViewById(R.id.category_text);
+            categoryText.setText(getProvider(groupPosition));
+
+            if (isExpanded)
+                categoryText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_up_white_24dp, 0);
+            else
+                categoryText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_expand_down_white_24dp, 0);
+
+            return convertView;
         }
 
         @Override
@@ -708,8 +713,7 @@ public class ManageWorkoutsActivity extends Activity implements Constants {
 
             if (!syncManager.isConfigured(provider)) {
                 syncManager.connect(onSynchronizerConfiguredCallback, provider);
-            }
-            else {
+            } else {
                 onSynchronizerConfiguredCallback.run(provider, Synchronizer.Status.OK);
             }
         }
