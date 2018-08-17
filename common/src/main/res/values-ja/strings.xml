@@ -122,8 +122,7 @@
   <string name="Recompute_activity">アクティビティを再計算</string>
   <string name="Configure_heart_rate_zones">心拍数ゾーンを設定</string>
   <string name="Clear_heart_rate_zone_settings">心拍数ゾーンの設定をクリア</string>
-  <string name="Manage_accounts">アカウントの管理</string>
-  <string name="Manage_audio_cues">音声合図の管理</string>
+    <string name="Manage_audio_cues">音声合図の管理</string>
   <string name="Manage_workouts">ワークアウトの管理</string>
   <string name="Settings">設定</string>
   <string name="Whats_new">新着情報</string>
@@ -131,7 +130,7 @@
   <string name="Enable_GPS">GPS を有効にする</string>
   <string name="Waiting_for_GPS">GPS の待機中</string>
   <string name="Start_activity">アクティビティの開始</string>
-  <string name="Clear_HR_settings">心拍数設定をクリア</string>
+    <string name="Clear_HR_settings">心拍数設定をクリア</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">お使いのデバイスで心拍数モニタはサポートされていません</string>
   <string name="Select_type_of_Bluetooth_device">Bluetooth デバイスのタイプを選択してください</string>
   <string name="Scanning">スキャン中</string>
@@ -237,8 +236,7 @@
   <string name="History">履歴</string>
   <string name="Basic">基本</string>
   <string name="Advanced">高度</string>
-  <string name="Manual">手動</string>
-  <string name="Add_workout_notes">ワークアウトメモを追加</string>
+    <string name="Add_workout_notes">ワークアウトメモを追加</string>
   <string name="Pruning_deleted_activities_from_database">削除したアクティビティをデータベースから除去</string>
   <string name="Prune">除去</string>
   <string name="Heartrate_zones_distribution">心拍数ゾーン分布</string>

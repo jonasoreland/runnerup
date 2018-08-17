@@ -117,8 +117,7 @@
   <string name="Recompute_activity">Torna a calcular l\'activitat</string>
   <string name="Configure_heart_rate_zones">Configura les zones de freqüència cardíaca</string>
   <string name="Clear_heart_rate_zone_settings">Suprimeix la configuració de zones de freqüència cardíaca</string>
-  <string name="Manage_accounts">Gestió dels comptes</string>
-  <string name="Manage_audio_cues">Gestió de pistes d\'àudio</string>
+    <string name="Manage_audio_cues">Gestió de pistes d\'àudio</string>
   <string name="Manage_workouts">Gestió d\'entrenaments</string>
   <string name="Settings">Configuració</string>
   <string name="Whats_new">Que hi ha de nou</string>
@@ -126,7 +125,7 @@
   <string name="Enable_GPS">Activa el GPS</string>
   <string name="Waiting_for_GPS">S\'està esperant el GPS</string>
   <string name="Start_activity">Inicia l\'activitat</string>
-  <string name="Scanning">S\'està analitzant</string>
+    <string name="Scanning">S\'està analitzant</string>
     <string name="Problem">Error</string>
   <string name="Edit_step">Editar pas</string>
   <string name="Great">Enhorabona!</string>
@@ -171,8 +170,7 @@
   <string name="History">Historial</string>
   <string name="Basic">Bàsic</string>
   <string name="Advanced">Avançat</string>
-  <string name="Manual">Manual</string>
-  <string name="Battery_level">Nivell de la bateria</string>
+    <string name="Battery_level">Nivell de la bateria</string>
   <string name="Activity_ready">Activitat disponible</string>
   <string name="Ready_to_start_running">Preparat per començar a córrer!</string>
   <string name="Searching_for_GPS">S\'està cercant el GPS…</string>

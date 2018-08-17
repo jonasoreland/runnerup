@@ -26,7 +26,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">Tamam</string>
   <!--other-->
-    <string name="Type">Tip</string>
+  <string name="Type">Tip</string>
   <string name="recovery">toparlanma</string>
   <string name="warm_up">ısınma</string>
   <string name="cool_down">soğuma</string>
@@ -51,7 +51,7 @@
   <string name="Password">Şifre</string>
   <string name="Show_password">Şifreyi göster</string>
   <string name="Sex">Cinsiyet</string>
-    <string name="Disconnect">Bağlantıyı kes</string>
+  <string name="Disconnect">Bağlantıyı kes</string>
   <string name="Configure_accounts">Hesapları yapılandır</string>
   <string name="Refresh">Yenile</string>
   <string name="Age">Yaş</string>

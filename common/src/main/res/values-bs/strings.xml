@@ -122,8 +122,7 @@
   <string name="Recompute_activity">Preračunaj aktivnost</string>
   <string name="Configure_heart_rate_zones">Podesi zone pulsa</string>
   <string name="Clear_heart_rate_zone_settings">Obriši postavke zona pulsa</string>
-  <string name="Manage_accounts">Upravljanje računima</string>
-  <string name="Manage_audio_cues">Upravljanje audio nampomenama</string>
+    <string name="Manage_audio_cues">Upravljanje audio nampomenama</string>
   <string name="Manage_workouts">Upravljanje treninzima</string>
   <string name="Settings">Postavke</string>
   <string name="Whats_new">Šta je novo</string>
@@ -131,7 +130,7 @@
   <string name="Enable_GPS">Uključi GPS</string>
   <string name="Waiting_for_GPS">Čekanje na GPS</string>
   <string name="Start_activity">Počni aktivnost</string>
-  <string name="Clear_HR_settings">Očisti postavke pulsa</string>
+    <string name="Clear_HR_settings">Očisti postavke pulsa</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitoring pulsa nije podržan za vaš uređaj</string>
   <string name="Select_type_of_Bluetooth_device">Odaberi tip Bluetooth uređaja</string>
   <string name="Scanning">Skeniranje</string>
@@ -237,8 +236,7 @@
   <string name="History">Historija</string>
   <string name="Basic">Osnovno</string>
   <string name="Advanced">Napredno</string>
-  <string name="Manual">Ručno</string>
-  <string name="Add_workout_notes">Dodaj napomenu</string>
+    <string name="Add_workout_notes">Dodaj napomenu</string>
   <string name="Pruning_deleted_activities_from_database">Čišćenje obrisanih aktivnosti iz baze</string>
   <string name="Prune">Očisti</string>
   <string name="Heartrate_zones_distribution">Raspored zona pusla</string>

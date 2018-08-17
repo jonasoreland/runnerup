@@ -118,8 +118,7 @@
   <string name="Recompute_activity">Perskaičiuoti veiklą</string>
   <string name="Configure_heart_rate_zones">Konfigūruoti širdies ritmo zonas</string>
   <string name="Clear_heart_rate_zone_settings">Išvalyti širdies ritmo zonų nustatymus</string>
-  <string name="Manage_accounts">Valdyti sąskaitas</string>
-  <string name="Manage_audio_cues">Valdyti garsinius nurodymus</string>
+    <string name="Manage_audio_cues">Valdyti garsinius nurodymus</string>
   <string name="Manage_workouts">Valdyti treniruotes</string>
   <string name="Settings">Nustatymai</string>
   <string name="Whats_new">Kas naujo</string>
@@ -127,7 +126,7 @@
   <string name="Enable_GPS">Leisti GPS</string>
   <string name="Waiting_for_GPS">Laukia GPS</string>
   <string name="Start_activity">Pradėk veiklą</string>
-  <string name="Clear_HR_settings">Išvalyti ŠR nustatymus</string>
+    <string name="Clear_HR_settings">Išvalyti ŠR nustatymus</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Širdies ritmo stebėsena nepalaikoma Jūsų įrenginyje</string>
   <string name="Select_type_of_Bluetooth_device">Pasirinkti Bluetooth įrangos tipą</string>
   <string name="Scanning">Skenavimas</string>
@@ -231,8 +230,7 @@
   <string name="History">Istorija</string>
   <string name="Basic">Pagrindiniai</string>
   <string name="Advanced">Išplėstiniai</string>
-  <string name="Manual">Rankiniai</string>
-  <string name="Add_workout_notes">Pridėti treniruotės pastabas</string>
+    <string name="Add_workout_notes">Pridėti treniruotės pastabas</string>
   <string name="Pruning_deleted_activities_from_database">Išmesti ištrintas veiklas iš duoemnų bazės</string>
   <string name="Prune">Apvalyti</string>
   <string name="Heartrate_zones_distribution">Širdies ritmo zonų paskirstymas</string>

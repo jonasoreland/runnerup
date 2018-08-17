@@ -118,8 +118,7 @@
   <string name="Recompute_activity">Hitung ulang aktivitas</string>
   <string name="Configure_heart_rate_zones">Pengaturan zona denyut jantung</string>
   <string name="Clear_heart_rate_zone_settings">Kosongkan setelan zona denyut jantung</string>
-  <string name="Manage_accounts">Kelola akun</string>
-  <string name="Manage_audio_cues">Kelola isyarat suara</string>
+    <string name="Manage_audio_cues">Kelola isyarat suara</string>
   <string name="Manage_workouts">Kelola latihan</string>
   <string name="Settings">Setelan</string>
   <string name="Whats_new">Apa yang baru</string>
@@ -127,7 +126,7 @@
   <string name="Enable_GPS">Hidupkan GPS</string>
   <string name="Waiting_for_GPS">Menunggu GPS</string>
   <string name="Start_activity">Mulai aktivitas</string>
-  <string name="Clear_HR_settings">Kosongkan setelan DJ</string>
+    <string name="Clear_HR_settings">Kosongkan setelan DJ</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitor denyut jantung tidak didukung alat anda</string>
   <string name="Select_type_of_Bluetooth_device">Pilih tipe gawai Bluetooth</string>
   <string name="Scanning">Memindai</string>
@@ -231,8 +230,7 @@
   <string name="History">Sejarah</string>
   <string name="Basic">Dasar</string>
   <string name="Advanced">Mahir</string>
-  <string name="Manual">Manual</string>
-  <string name="Add_workout_notes">Tambahkan catatan latihan</string>
+    <string name="Add_workout_notes">Tambahkan catatan latihan</string>
   <string name="Pruning_deleted_activities_from_database">Pangkas aktivitas yang dihapus dari pangkalan data</string>
   <string name="Prune">Pangkas</string>
   <string name="Heartrate_zones_distribution">Distribusi zona denyut jantung</string>

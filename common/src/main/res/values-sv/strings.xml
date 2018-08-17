@@ -123,8 +123,7 @@
   <string name="Recompute_activity">Beräkna aktivitet igen</string>
   <string name="Configure_heart_rate_zones">Konfigurera pulszoner</string>
   <string name="Clear_heart_rate_zone_settings">Rensa inställningar för pulszon</string>
-  <string name="Manage_accounts">Hantera konton</string>
-  <string name="Manage_audio_cues">Hantera ljudmeddelanden</string>
+    <string name="Manage_audio_cues">Hantera ljudmeddelanden</string>
   <string name="Manage_workouts">Hantera träningspass</string>
   <string name="Settings">Inställningar</string>
   <string name="Whats_new">Nyheter</string>
@@ -132,7 +131,7 @@
   <string name="Enable_GPS">Slå på GPS</string>
   <string name="Waiting_for_GPS">Väntar på GPS</string>
   <string name="Start_activity">Starta aktivitet</string>
-  <string name="Clear_HR_settings">Rensa puls-inställningar</string>
+    <string name="Clear_HR_settings">Rensa puls-inställningar</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Pulsmätare stöds inte för din enhet</string>
   <string name="Select_type_of_Bluetooth_device">Välj typ av Bluetooth-enhet</string>
   <string name="Scanning">Skannar</string>
@@ -238,8 +237,7 @@
   <string name="History">Historik</string>
   <string name="Basic">Standard</string>
   <string name="Advanced">Avancerat</string>
-  <string name="Manual">Manuell</string>
-  <string name="Add_workout_notes">Lägg till noteringar</string>
+    <string name="Add_workout_notes">Lägg till noteringar</string>
   <string name="Pruning_deleted_activities_from_database">Radera borttagna aktiviteter från databasen</string>
   <string name="Prune">Radera</string>
   <string name="Heartrate_zones_distribution">Pulszon fördelning</string>
@@ -306,8 +304,7 @@
   <string name="adjust_barometer_altitude_from_gps">Justera barometerhöjd till GPS höjd</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
     <string name="Wear_OS_Device">Wear OS enhet</string>
-  <string name="GPS_indicator">GPS: %1$d/%2$d</string>
-  <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
+    <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
   <string name="GPS_status_no_accuracy">GPS: %1$d/%2$d satelliter</string>
   <string name="GPS_accuracy_elevation">nog. %1$s, höjd %2$s</string>
   <string name="GPS_accuracy_no_elevation">noggrannhet %s</string>
