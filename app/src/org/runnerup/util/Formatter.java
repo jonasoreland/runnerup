@@ -441,8 +441,14 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return string suitable for printing according to settings
      */
     private String txtPace(double seconds_per_meter, boolean includeUnit) {
-        long val = Math.round(base_meters * seconds_per_meter);
-        String str = DateUtils.formatElapsedTime(val);
+        String str;
+        final double txtStoppedPace = 60 * 60 / km_meters;
+        if (seconds_per_meter >= txtStoppedPace || seconds_per_meter == 0) {
+            str = "--:--";
+        } else {
+            long val = Math.round(base_meters * seconds_per_meter);
+            str = DateUtils.formatElapsedTime(val);
+        }
         if (!includeUnit)
             return str;
         else {
@@ -452,28 +458,23 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     private String cuePace(double seconds_per_meter) {
-        int seconds_per_unit = (int)Math.round(base_meters * seconds_per_meter);
-        int hours_per_unit = 0;
-        int minutes_per_unit = 0;
-        if (seconds_per_unit >= 3600) {
-            hours_per_unit = seconds_per_unit / 3600;
-            seconds_per_unit -= hours_per_unit * 3600;
+        // Cue cut-off for stopped is set to some minimal meaningful reportable pace
+        final double cueStoppedPace = 20 * 60 / km_meters;
+        if (seconds_per_meter >= cueStoppedPace || seconds_per_meter == 0) {
+            return cueResources.getString(R.string.cue_stopped);
         }
+        int seconds_per_unit = (int)Math.round(base_meters * seconds_per_meter);
+        int minutes_per_unit = 0;
         if (seconds_per_unit >= 60) {
             minutes_per_unit = seconds_per_unit / 60;
             seconds_per_unit -= minutes_per_unit * 60;
         }
         StringBuilder s = new StringBuilder();
-        if (hours_per_unit > 0) {
-            s.append(cueResources.getQuantityString(R.plurals.cue_hour, hours_per_unit, hours_per_unit));
-        }
         if (minutes_per_unit > 0) {
-            if (hours_per_unit > 0)
-                s.append(" ");
             s.append(cueResources.getQuantityString(R.plurals.cue_minute, minutes_per_unit, minutes_per_unit));
         }
         if (seconds_per_unit > 0) {
-            if (hours_per_unit > 0 || minutes_per_unit > 0)
+            if (minutes_per_unit > 0)
                 s.append(" ");
             s.append(cueResources.getQuantityString(R.plurals.cue_second, seconds_per_unit, seconds_per_unit));
         }
