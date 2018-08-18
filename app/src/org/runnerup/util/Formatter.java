@@ -662,11 +662,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                         resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
                 // Get a localized presentation string, used with the localized plurals string
-                String v2 = String.format(cueResources.audioLocale, "%.2f", val);
-                if (unitCue) {
-                    res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int) val, v2);
+                String val2;
+                if (val < 10) {
+                    val2 = String.format(cueResources.audioLocale, "%.2f", val);
                 } else {
-                    res = v2;
+                    val2 = String.format(cueResources.audioLocale, "%.1f", val);
+                }
+                if (unitCue) {
+                    res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int) val, val2);
+                } else {
+                    res = val2;
                 }
             }
         } else {
