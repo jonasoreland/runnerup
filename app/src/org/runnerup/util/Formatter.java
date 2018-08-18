@@ -445,23 +445,37 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * Format pace
-     * 
+     * Format pace from raw pace
+     * Most of RU handles pace separately instead of just storing speed and formatting
+     *
      * @param target
      * @param seconds_per_meter
      * @return
      */
     public String formatPace(Format target, double seconds_per_meter) {
+        Double meters_per_second = (seconds_per_meter == 0 || Double.isNaN(seconds_per_meter)) ?
+                null : 1/seconds_per_meter;
+        return formatPaceSpeed(target, meters_per_second);
+    }
+
+    /**
+     * Format pace from speed
+     *
+     * @param target
+     * @param meters_per_second speed in m/s
+     * @return
+     */
+    public String formatPaceSpeed(Format target, Double meters_per_second) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
             case CUE_LONG:
-                return cuePace(seconds_per_meter);
+                return cuePace(meters_per_second);
             case TXT:
             case TXT_SHORT:
-                return txtPace(seconds_per_meter, false);
+                return txtPace(meters_per_second, false);
             case TXT_LONG:
-                return txtPace(seconds_per_meter, true);
+                return txtPace(meters_per_second, true);
         }
         return "";
     }
@@ -475,16 +489,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
-     * @param seconds_per_meter
+     * @param meters_per_second
      * @return string suitable for printing according to settings
      */
-    private String txtPace(double seconds_per_meter, boolean includeUnit) {
+    private String txtPace(Double meters_per_second, boolean includeUnit) {
         String str;
-        final double txtStoppedPace = 60 * 60 / km_meters;
-        if (seconds_per_meter >= txtStoppedPace || seconds_per_meter == 0) {
+        final double txtStoppedPace = km_meters / 60 / 60;
+        if (meters_per_second == null || Double.isNaN(meters_per_second) || meters_per_second <= txtStoppedPace) {
             str = "--:--";
         } else {
-            long val = Math.round(base_meters * seconds_per_meter);
+            long val = Math.round(base_meters / meters_per_second);
             str = DateUtils.formatElapsedTime(val);
         }
         if (includeUnit) {
@@ -493,13 +507,13 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return str;
     }
 
-    private String cuePace(double seconds_per_meter) {
+    private String cuePace(Double meters_per_second) {
         // Cue cut-off for stopped is set to some minimal meaningful reportable pace
-        final double cueStoppedPace = 20 * 60 / km_meters;
-        if (seconds_per_meter >= cueStoppedPace || seconds_per_meter == 0) {
+        final double cueStoppedPace = km_meters / 20 / 60;
+        if (meters_per_second == null || Double.isNaN(meters_per_second) || meters_per_second <= cueStoppedPace) {
             return cueResources.getString(R.string.cue_stopped);
         }
-        int seconds_per_unit = (int) Math.round(base_meters * seconds_per_meter);
+        int seconds_per_unit = (int) Math.round(base_meters / meters_per_second);
         int minutes_per_unit = 0;
         if (seconds_per_unit >= 60) {
             minutes_per_unit = seconds_per_unit / 60;

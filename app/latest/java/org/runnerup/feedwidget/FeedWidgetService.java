@@ -114,10 +114,9 @@ public class FeedWidgetService extends RemoteViewsService {
                             p.append(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(distance)));
                         }
 
-                        if (distance != 0 && duration != 0) {
-                            double pace = duration / distance;
+                        if (duration != 0) {
                             p.append(", ");
-                            p.append(formatter.formatPace(Formatter.Format.TXT_LONG, pace));
+                            p.append(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, distance / duration));
                         }
                         if (p.length() > 0)
                             rv.setTextViewText(R.id.feed_widget_item_summary, p.toString());

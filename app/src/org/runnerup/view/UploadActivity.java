@@ -343,8 +343,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
                 viewHolder.tvTime.setText("");
             }
 
-            if (d != null && t != null && d != 0 && t != 0) {
-                viewHolder.tvPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
+            if (d != null && t != null && t != 0) {
+                viewHolder.tvPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, d / t));
             } else {
                 viewHolder.tvPace.setText("");
             }

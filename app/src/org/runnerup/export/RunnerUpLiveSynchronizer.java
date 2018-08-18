@@ -189,8 +189,8 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
                         Math.round(elapsedTimeMillis / 1000)));
         msgIntent.putExtra(
                 LiveService.PARAM_IN_PACE,
-                formatter.formatPace(Formatter.Format.TXT_SHORT, elapsedDistanceMeter > 0 ? elapsedTimeMillis
-                        / (1000 * elapsedDistanceMeter) : 0));
+                formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, elapsedTimeMillis == 0 ? null :
+                        elapsedDistanceMeter * 1000.0 / elapsedTimeMillis));
         msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
         msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
         msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);

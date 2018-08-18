@@ -451,10 +451,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             activityTime.setText("");
         }
 
-        if (d != 0 && t != 0) {
+        if (t != 0) {
             activityPace.setVisibility(View.VISIBLE);
             activityPaceSeparator.setVisibility(View.VISIBLE);
-            activityPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
+            activityPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, d / t));
         } else {
             activityPace.setVisibility(View.GONE);
             activityPaceSeparator.setVisibility(View.GONE);
@@ -539,8 +539,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position]
                     .getAsLong(DB.LAP.TIME) : 0;
             viewHolder.tv3.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
-            if (t != 0 && d != 0) {
-                viewHolder.tv4.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
+            if (t != 0) {
+                viewHolder.tv4.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, d/t));
             } else {
                 viewHolder.tv4.setText("");
             }
