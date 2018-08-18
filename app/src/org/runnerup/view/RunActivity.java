@@ -354,14 +354,14 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         double ad = workout.getDistance(Scope.ACTIVITY);
         double at = workout.getTime(Scope.ACTIVITY);
         double ap = workout.getPace(Scope.ACTIVITY);
-        activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(at)));
+        activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, Math.round(at)));
         activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(ad)));
         activityPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, ap));
 
         double ld = workout.getDistance(Scope.LAP);
         double lt = workout.getTime(Scope.LAP);
         double lp = workout.getPace(Scope.LAP);
-        lapTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(lt)));
+        lapTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, Math.round(lt)));
         lapDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(ld)));
         lapPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, lp));
 
@@ -371,7 +371,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         if (tableRowInterval != null && this.currentStep != null && !simpleWorkout
                 && this.currentStep.getIntensity() == Intensity.ACTIVE) {
             tableRowInterval.setVisibility(View.VISIBLE);
-            intervalTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_LONG, Math.round(it)));
+            intervalTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, Math.round(it)));
             intervalDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(id)));
             intervalPace.setText(formatter.formatPace(Formatter.Format.TXT_SHORT, ip));
         } else {
