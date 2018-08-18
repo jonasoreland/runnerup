@@ -168,7 +168,7 @@
             android:title="@string/Adjust_altitude" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="2000"
+            android:defaultValue="1000"
             android:inputType="number"
             android:key="@string/pref_pollInterval"
             android:persistent="true"
