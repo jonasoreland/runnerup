@@ -242,7 +242,8 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
             }
         }
             // Upload to default directory /Apps/RunnerUp
-            String file = String.format(Locale.getDefault(), "/RunnerUp_%04d_%s.tcx", mID, sport.TapiriikType());
+            String file = String.format(Locale.getDefault(), "/RunnerUp_%s_%04d_%s.tcx",
+                    android.os.Build.MODEL.replaceAll("\\s","_"), mID, sport.TapiriikType());
 
             StringWriter writer = new StringWriter();
             TCX tcx = new TCX(db);
