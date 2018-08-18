@@ -102,13 +102,13 @@ public class LapEntity extends AbstractEntity {
     /**
      * Distance of the lap
      */
-    public void setDistance(Float value) {
+    public void setDistance(Double value) {
         values().put(Constants.DB.LAP.DISTANCE, value);
     }
 
-    public Float getDistance() {
+    public Double getDistance() {
         if (values().containsKey(Constants.DB.LAP.DISTANCE)) {
-            return values().getAsFloat(Constants.DB.LAP.DISTANCE);
+            return values().getAsDouble(Constants.DB.LAP.DISTANCE);
         }
         return null;
     }
@@ -130,13 +130,13 @@ public class LapEntity extends AbstractEntity {
     /**
      * Planned distance of the lap
      */
-    public void setPlannedDistance(Float value) {
+    public void setPlannedDistance(Double value) {
         values().put(Constants.DB.LAP.PLANNED_DISTANCE, value);
     }
 
-    public Float getPlannedDistance() {
+    public Double getPlannedDistance() {
         if (values().containsKey(Constants.DB.LAP.PLANNED_DISTANCE)) {
-            return values().getAsFloat(Constants.DB.LAP.PLANNED_DISTANCE);
+            return values().getAsDouble(Constants.DB.LAP.PLANNED_DISTANCE);
         }
         return null;
     }
@@ -144,13 +144,13 @@ public class LapEntity extends AbstractEntity {
     /**
      * Planned pace of the lap
      */
-    public void setPlannedPace(Float value) {
+    public void setPlannedPace(Double value) {
         values().put(Constants.DB.LAP.PLANNED_PACE, value);
     }
 
-    public Float getPlannedPace() {
+    public Double getPlannedPace() {
         if (values().containsKey(Constants.DB.LAP.PLANNED_PACE)) {
-            return values().getAsFloat(Constants.DB.LAP.PLANNED_PACE);
+            return values().getAsDouble(Constants.DB.LAP.PLANNED_PACE);
         }
         return null;
     }
@@ -186,13 +186,13 @@ public class LapEntity extends AbstractEntity {
     /**
      * Avarage cadence of the lap
      */
-    public void setAvgCadence(Float value) {
+    public void setAvgCadence(Double value) {
         values().put(Constants.DB.LAP.AVG_CADENCE, value);
     }
 
-    public Float getAvgCadence() {
+    public Double getAvgCadence() {
         if (values().containsKey(Constants.DB.LAP.AVG_CADENCE)) {
-            return values().getAsFloat(Constants.DB.LAP.AVG_CADENCE);
+            return values().getAsDouble(Constants.DB.LAP.AVG_CADENCE);
         }
         return null;
     }

@@ -322,7 +322,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             viewHolder.activityID = getItemId(arg0);
             SyncActivityItem ai = allSyncActivities.get(arg0);
 
-            Float d = ai.getDistance();
+            Double d = ai.getDistance();
             Long t = ai.getDuration();
 
             if (ai.getStartTime() != null) {

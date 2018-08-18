@@ -187,7 +187,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             dateText.setText(formatter.formatDayOfMonth(curDate));
 
             // distance
-            Float d = ae.getDistance();
+            Double d = ae.getDistance();
             TextView distanceText = view.findViewById(R.id.history_list_distance);
             if (d != null) {
                 distanceText.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
@@ -205,43 +205,11 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             emblem.setImageDrawable(sportDrawable);
             distanceText.setTextColor(sportColor);
             additionalInfo.setTextColor(sportColor);
-
-            switch (s) {
-                case DB.ACTIVITY.SPORT_RUNNING: {
-                    Integer hr = ae.getAvgHr();
-                    if (hr != null) {
-                        additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
-                    } else {
-                        additionalInfo.setText(null);
-                    }
-                    break;
-                }
-                case DB.ACTIVITY.SPORT_BIKING: {
-                    Float cad = ae.getAvgCadence();
-                    if (cad != null) {
-                        additionalInfo.setText(formatter.formatCadence(Formatter.Format.TXT_SHORT, cad));
-                    } else {
-                        additionalInfo.setText(null);
-                    }
-                    break;
-                }
-                case DB.ACTIVITY.SPORT_OTHER: {
-                    additionalInfo.setText(null);
-                    break;
-                }
-                case DB.ACTIVITY.SPORT_ORIENTEERING: {
-                    Integer hr = ae.getAvgHr();
-                    if (hr != null) {
-                        additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
-                    } else {
-                        additionalInfo.setText(null);
-                    }
-                    break;
-                }
-                case DB.ACTIVITY.SPORT_WALKING: {
-                    additionalInfo.setText(null);
-                    break;
-                }
+            Integer hr = ae.getAvgHr();
+            if (hr != null) {
+                additionalInfo.setText(formatter.formatHeartRate(Formatter.Format.TXT_SHORT, hr));
+            } else {
+                additionalInfo.setText(null);
             }
 
             // duration

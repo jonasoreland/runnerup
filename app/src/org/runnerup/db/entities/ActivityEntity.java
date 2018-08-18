@@ -74,13 +74,13 @@ public class ActivityEntity extends AbstractEntity {
     /**
      * Distance of the activity
      */
-    public void setDistance(Float value) {
+    public void setDistance(Double value) {
         values().put(Constants.DB.ACTIVITY.DISTANCE, value);
     }
 
-    public Float getDistance() {
+    public Double getDistance() {
         if (values().containsKey(Constants.DB.ACTIVITY.DISTANCE)) {
-            return values().getAsFloat(Constants.DB.ACTIVITY.DISTANCE);
+            return values().getAsDouble(Constants.DB.ACTIVITY.DISTANCE);
         }
         return null;
     }
@@ -176,13 +176,13 @@ public class ActivityEntity extends AbstractEntity {
     /**
      * Avarage cadence of the activity
      */
-    public void setAvgCadence(Float value) {
+    public void setAvgCadence(Double value) {
         values().put(Constants.DB.ACTIVITY.AVG_CADENCE, value);
     }
 
-    public Float getAvgCadence() {
+    public Double getAvgCadence() {
         if (values().containsKey(Constants.DB.ACTIVITY.AVG_CADENCE)) {
-            return values().getAsFloat(Constants.DB.ACTIVITY.AVG_CADENCE);
+            return values().getAsDouble(Constants.DB.ACTIVITY.AVG_CADENCE);
         }
         return null;
     }

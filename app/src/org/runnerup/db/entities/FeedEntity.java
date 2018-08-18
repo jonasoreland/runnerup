@@ -126,13 +126,13 @@ public class FeedEntity extends AbstractEntity {
         return null;
     }
 
-    public void setDistance(Float value) {
+    public void setDistance(Double value) {
         values().put(Constants.DB.FEED.DISTANCE, value);
     }
 
-    public Float getDistance() {
+    public Double getDistance() {
         if (values().containsKey(Constants.DB.FEED.DISTANCE)) {
-            return values().getAsFloat(Constants.DB.FEED.DISTANCE);
+            return values().getAsDouble(Constants.DB.FEED.DISTANCE);
         }
         return null;
     }
