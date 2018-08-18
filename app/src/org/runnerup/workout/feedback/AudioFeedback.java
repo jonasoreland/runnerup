@@ -19,7 +19,9 @@ package org.runnerup.workout.feedback;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.widget.Toast;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Event;
@@ -116,6 +118,9 @@ public class AudioFeedback extends Feedback {
     public void emit(Workout w, Context ctx) {
         String msg = getCue(w, ctx);
         if (msg != null && textToSpeech != null) {
+            if (BuildConfig.DEBUG) {
+                Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
+            }
             textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
         }
     }

@@ -52,6 +52,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private boolean metric = true;
     private String base_unit = "km";
     private double base_meters = km_meters;
+    private boolean unitCue = false;
 
     public final static double km_meters = 1000.0;
     public final static double mi_meters = 1609.34;
@@ -78,6 +79,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         timeFormat = android.text.format.DateFormat.getTimeFormat(ctx);
         monthFormat = new SimpleDateFormat("MMM yyyy", cueResources.defaultLocale);
         dayOfMonthFormat = new SimpleDateFormat("E d", cueResources.defaultLocale);
+        unitCue = sharedPreferences.getBoolean(cueResources.getString(R.string.cueinfo_units), true);
         //hrZones = new HRZones(context);
 
         setUnit();
@@ -137,7 +139,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         Resources res = ctx.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         if (prefs.contains(res.getString(R.string.pref_audio_lang))) {
-            Log.e("Formatter", "Audio language: " +
+            Log.v("Formatter", "Audio language: " +
                     prefs.getString(res.getString(R.string.pref_audio_lang), null));
             return new Locale(prefs.getString(res.getString(R.string.pref_audio_lang), "en"));
         }
@@ -282,30 +284,52 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         int hours = 0;
         int minutes = 0;
         if (seconds >= 3600) {
-            hours = (int)(seconds / 3600);
+            hours = (int) (seconds / 3600);
             seconds -= hours * 3600;
         }
         if (seconds >= 60) {
-            minutes = (int)(seconds / 60);
+            minutes = (int) (seconds / 60);
             seconds -= minutes * 60;
         }
-        StringBuilder s = new StringBuilder();
-        if (hours > 0) {
-            includeDimension = true;
-            s.append(cueResources.getQuantityString(R.plurals.cue_hour, hours, hours));
-        }
-        if (minutes > 0) {
-            if (hours > 0)
-                s.append(" ");
-            includeDimension = true;
-            s.append(cueResources.getQuantityString(R.plurals.cue_minute, minutes, minutes));
-        }
-        if (seconds > 0) {
-            if (hours > 0 || minutes > 0)
-                s.append(" ");
 
-            if (includeDimension) {
-                s.append(cueResources.getQuantityString(R.plurals.cue_second, (int)seconds, (int)seconds));
+        StringBuilder s = new StringBuilder();
+        if (unitCue) {
+            if (hours > 0) {
+                includeDimension = true;
+                s.append(cueResources.getQuantityString(R.plurals.cue_hour, hours, hours));
+            }
+            if (minutes > 0) {
+                if (hours > 0)
+                    s.append(" ");
+
+                includeDimension = true;
+                s.append(cueResources.getQuantityString(R.plurals.cue_minute, minutes, minutes));
+            }
+            if (seconds > 0) {
+                if (hours > 0 || minutes > 0)
+                    s.append(" ");
+
+                if (includeDimension) {
+                    s.append(cueResources.getQuantityString(R.plurals.cue_second, (int) seconds, (int) seconds));
+                } else {
+                    s.append(seconds);
+                }
+            }
+        } else {
+            // HH:MM:SS would almost work except that some tts reports "time is HH MM SS"
+            // Always include minutes and seconds, two digits if there a higher number
+            if (hours > 0) {
+                String str = String.format(cueResources.audioLocale, "%02d", minutes);
+                s.append(hours)
+                        .append(" ")
+                        .append(str);
+            } else {
+                s.append(minutes);
+            }
+            s.append(" ");
+            if (minutes > 0) {
+                String str = String.format(cueResources.audioLocale, "%02d", seconds);
+                s.append(str);
             } else {
                 s.append(seconds);
             }
@@ -352,16 +376,20 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return
      */
     public String formatHeartRate(Format target, double heart_rate) {
-        int bpm = (int) Math.round(heart_rate);
+        int val2 = (int) Math.round(heart_rate);
         switch (target) {
             case CUE:
             case CUE_SHORT:
             case CUE_LONG:
-                return cueResources.getQuantityString(R.plurals.cue_bpm, bpm, bpm);
+                if (unitCue) {
+                    return cueResources.getQuantityString(R.plurals.cue_bpm, val2, val2);
+                } else {
+                    return Integer.toString(val2);
+                }
             case TXT:
             case TXT_SHORT:
             case TXT_LONG:
-                return Integer.toString(bpm);
+                return Integer.toString(val2);
         }
         return "";
     }
@@ -379,11 +407,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE:
             case CUE_SHORT:
             case CUE_LONG:
-                return cueResources.getQuantityString(R.plurals.cue_rpm, val2, val2);
+                if (unitCue) {
+                    return cueResources.getQuantityString(R.plurals.cue_rpm, val2, val2);
+                } else {
+                    return Integer.toString(val2);
+                }
             case TXT:
             case TXT_SHORT:
             case TXT_LONG:
-                return Integer.toString((int) val2);
+                return Integer.toString(val2);
         }
         return "";
     }
@@ -396,12 +428,18 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case TXT_LONG:
                 return Double.toString(Math.round(10.0 * hrZone) / 10.0);
             case CUE_SHORT:
-                return cueResources.getString(R.string.heart_rate_zone) + " "
-                        + Integer.toString((int) Math.floor(hrZone));
+                String s = Integer.toString((int) Math.floor(hrZone));
+                if (unitCue) {
+                    s = cueResources.getString(R.string.heart_rate_zone) + " " + s;
+                }
+                return s;
             case CUE:
             case CUE_LONG:
-                return cueResources.getString(R.string.heart_rate_zone) + " "
-                        + Double.toString(Math.floor(10.0 * hrZone) / 10.0);
+                s = Double.toString(Math.floor(10.0 * hrZone) / 10.0);
+                if (unitCue) {
+                    s = cueResources.getString(R.string.heart_rate_zone) + " " + s;
+                }
+                return s;
         }
         return "";
     }
@@ -449,12 +487,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             long val = Math.round(base_meters * seconds_per_meter);
             str = DateUtils.formatElapsedTime(val);
         }
-        if (!includeUnit)
-            return str;
-        else {
-            int res = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
-            return str + "/" + resources.getString(res);
+        if (includeUnit) {
+            str = str + "/" + resources.getString((metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
         }
+        return str;
     }
 
     private String cuePace(double seconds_per_meter) {
@@ -463,22 +499,30 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (seconds_per_meter >= cueStoppedPace || seconds_per_meter == 0) {
             return cueResources.getString(R.string.cue_stopped);
         }
-        int seconds_per_unit = (int)Math.round(base_meters * seconds_per_meter);
+        int seconds_per_unit = (int) Math.round(base_meters * seconds_per_meter);
         int minutes_per_unit = 0;
         if (seconds_per_unit >= 60) {
             minutes_per_unit = seconds_per_unit / 60;
             seconds_per_unit -= minutes_per_unit * 60;
         }
+
         StringBuilder s = new StringBuilder();
-        if (minutes_per_unit > 0) {
-            s.append(cueResources.getQuantityString(R.plurals.cue_minute, minutes_per_unit, minutes_per_unit));
+        if (unitCue) {
+            if (minutes_per_unit > 0) {
+                s.append(cueResources.getQuantityString(R.plurals.cue_minute, minutes_per_unit, minutes_per_unit));
+            }
+            if (seconds_per_unit > 0) {
+                if (minutes_per_unit > 0)
+                    s.append(" ");
+                s.append(cueResources.getQuantityString(R.plurals.cue_second, seconds_per_unit, seconds_per_unit));
+            }
+            s.append(" ").append(cueResources.getString(metric ? R.string.cue_perkilometer : R.string.cue_permile));
+        } else {
+            String secs = String.format(cueResources.audioLocale, "%02d", seconds_per_unit);
+            s.append(minutes_per_unit)
+                    .append(" ")
+                    .append(secs);
         }
-        if (seconds_per_unit > 0) {
-            if (minutes_per_unit > 0)
-                s.append(" ");
-            s.append(cueResources.getQuantityString(R.plurals.cue_second, seconds_per_unit, seconds_per_unit));
-        }
-        s.append(" ").append(cueResources.getString(metric? R.string.cue_perkilometer : R.string.cue_permile));
         return s.toString();
     }
 
@@ -495,6 +539,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE_SHORT:
             case CUE_LONG:
                 return cueSpeed(meters_per_second);
+
             case TXT:
             case TXT_SHORT:
                 return txtSpeed(meters_per_second, false);
@@ -525,8 +570,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     private String cueSpeed(double meters_per_second) {
         double distance_per_hour = meters_per_second  * 3600 / base_meters;
         String str = String.format(cueResources.audioLocale, "%.1f", distance_per_hour);
-        return cueResources.getQuantityString(metric ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
-                (int)distance_per_hour, str);
+        if (unitCue) {
+            return cueResources.getQuantityString(metric ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
+                    (int) distance_per_hour, str);
+        } else {
+            return str;
+        }
     }
 
     /**
@@ -614,7 +663,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             } else {
                 // Get a localized presentation string, used with the localized plurals string
                 String v2 = String.format(cueResources.audioLocale, "%.2f", val);
-                res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, v2);
+                if (unitCue) {
+                    res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int) val, v2);
+                } else {
+                    res = v2;
+                }
             }
         } else {
             // Present distance in meters if less than 1km/1mi (no strings for feet)
@@ -622,7 +675,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
             }
             else {
-                res = cueResources.getQuantityString(R.plurals.cue_meter, (int)meters, meters);
+                if (unitCue) {
+                    res = cueResources.getQuantityString(R.plurals.cue_meter, (int) meters, meters);
+                } else {
+                    res = Long.toString(meters);
+                }
             }
         }
         return res;

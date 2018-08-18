@@ -313,6 +313,7 @@
   <string name="cue_hrm_connection_restored">Restored connection to heart rate monitor</string>
   <string name="cue_hrm_connection_lost">Lost connection to heart rate monitor</string>
   <string name="HRM_connection_audio_cue">HRM connection triggered audio cue</string>
+  <string name="Audio_cue_unit">Include unit in audio cue</string>
   <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
   <string name="log_extended_gps_summary">Export in GPX only</string>
   <string name="log_extended_gps_title">Log extended GPS accuracy data</string>
