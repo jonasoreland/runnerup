@@ -110,7 +110,7 @@ public class Tracker extends android.app.Service implements
     private double mHeartbeats = 0;
     private double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
     private long mMaxHR = 0;
-    private Double mCurrentSpeed = 0.0;
+    private double mCurrentSpeed = 0.0;
 
     private TrackerState nextState;
     private final ValueModel<TrackerState> state = new ValueModel<>(TrackerState.INIT);
@@ -118,11 +118,8 @@ public class Tracker extends android.app.Service implements
 
     // Last location given by LocationManager
     private Location mLastLocation = null;
-    //Second to last location - to get speed
-    private Location mLast2Location = null;
-
     // Last location given by LocationManager when in state STARTED
-    private Location mActivityLastLocation = null;
+    private Location mLastLocationStarted = null;
 
     private SQLiteDatabase mDB = null;
     private PersistentGpsLoggerListener mDBWriter = null;
@@ -367,8 +364,7 @@ public class Tracker extends android.app.Service implements
         mHeartbeats = 0;
         mHeartbeatMillis = 0;
         mMaxHR = 0;
-        // TODO: check if mLastLocation is recent enough
-        mActivityLastLocation = null;
+        mLastLocationStarted = null;
 
         // New location update will be tagged with START
         setNextLocationType(DB.LOCATION.TYPE_START);
@@ -431,10 +427,8 @@ public class Tracker extends android.app.Service implements
         }
         state.set(TrackerState.PAUSED);
         setNextLocationType(DB.LOCATION.TYPE_PAUSE);
-        if (mActivityLastLocation != null) {
-            // This saves mLastLocation as a PAUSE location
-            internalOnLocationChanged(mActivityLastLocation);
-        }
+        // This saves a PAUSE location
+        internalOnLocationChanged(mLastLocationStarted);
 
         saveActivity();
         components.onPause();
@@ -457,20 +451,18 @@ public class Tracker extends android.app.Service implements
         }
         state.set(TrackerState.STOPPED);
         setNextLocationType(DB.LOCATION.TYPE_PAUSE);
-        if (mActivityLastLocation != null) {
-            // This saves mLastLocation as a PAUSE location
-            internalOnLocationChanged(mActivityLastLocation);
-        }
+        // This saves a PAUSE location
+        internalOnLocationChanged(mLastLocationStarted);
 
         saveActivity();
         components.onPause(); // TODO add new callback for this
     }
 
     private void internalOnLocationChanged(Location arg0) {
-        long save = mBug23937Delta;
-        mBug23937Delta = 0;
-        onLocationChangedImpl(arg0, true); // always save this location to db
-        mBug23937Delta = save;
+        // insert location, set internal time
+        if (arg0 != null) {
+            onLocationChangedImpl(arg0, true);
+        }
     }
 
     public void resume() {
@@ -493,14 +485,10 @@ public class Tracker extends android.app.Service implements
                 return;
         }
 
-        // TODO: check is mLastLocation is recent enough
-        mActivityLastLocation = mLastLocation;
         state.set(TrackerState.STARTED);
         setNextLocationType(DB.LOCATION.TYPE_RESUME);
-        if (mActivityLastLocation != null) {
-            // save last know location as resume location
-            internalOnLocationChanged(mActivityLastLocation);
-        }
+        // save a resume location
+        internalOnLocationChanged(mLastLocation);
         components.onResume();
     }
 
@@ -565,9 +553,7 @@ public class Tracker extends android.app.Service implements
         }
 
         setNextLocationType(DB.LOCATION.TYPE_END);
-        if (mActivityLastLocation != null) {
-            internalOnLocationChanged(mActivityLastLocation);
-        }
+        internalOnLocationChanged(mLastLocationStarted);
 
         if (save) {
             saveActivity();
@@ -646,67 +632,76 @@ public class Tracker extends android.app.Service implements
     }
 
     private void onLocationChangedImpl(Location arg0, boolean internal) {
-        if (!mBug23937Checked) {
-            long now = System.currentTimeMillis();
-            long gpsTime = arg0.getTime();
-            // http://code.google.com/p/android/issues/detail?id=23937
-            // Some GPS chipset reported that the time was a day off
-            // The original Android issue is closed, probably a firmware issue
-            // This check is used for a similar problem
-            // System time is manually set, differs from GPS time
-            // The GPS time stamp should normally not need to be changed,
-            // but approx diff is needed to find if data is valid
-            mSystemToGpsDiffTimeMillis = now - gpsTime;
-            if (gpsTime > now + (24 * 3600 - 120) * 1000) {
-                mBug23937Delta = mSystemToGpsDiffTimeMillis;
-                mSystemToGpsDiffTimeMillis = 0;
-            } else {
-                mBug23937Delta = 0;
+        if (internal) {
+            if (mBug23937Checked) {
+                // This point is inserted, set the correct time
+                arg0.setTime(System.currentTimeMillis() - mSystemToGpsDiffTimeMillis);
             }
-            mBug23937Checked = true;
-            Log.e(getClass().getName(), "Bug23937: gpsTime: " + gpsTime
-                    + " (diff to system: " + mSystemToGpsDiffTimeMillis + ") => delta: " + mBug23937Delta);
-        }
-        if (mBug23937Delta != 0) {
-            arg0.setTime(arg0.getTime() + mBug23937Delta);
+        } else {
+            if (!mBug23937Checked) {
+                long now = System.currentTimeMillis();
+                long gpsTime = arg0.getTime();
+                // http://code.google.com/p/android/issues/detail?id=23937
+                // Some GPS chipset reported that the time was a day off
+                // The original Android issue is closed, probably a firmware issue
+                // This check is used for a similar problem
+                // System time is manually set, differs from GPS time
+                // The GPS time stamp should normally not need to be changed,
+                // but approx diff is needed to find if data is valid
+                mSystemToGpsDiffTimeMillis = now - gpsTime;
+                if (gpsTime > now + (24 * 3600 - 120) * 1000) {
+                    mBug23937Delta = mSystemToGpsDiffTimeMillis;
+                    mSystemToGpsDiffTimeMillis = 0;
+                } else {
+                    mBug23937Delta = 0;
+                }
+                mBug23937Checked = true;
+                Log.e(getClass().getName(), "Bug23937: gpsTime: " + gpsTime
+                        + " (diff to system: " + mSystemToGpsDiffTimeMillis + ") => delta: " + mBug23937Delta);
+            }
+            if (mBug23937Delta != 0) {
+                arg0.setTime(arg0.getTime() + mBug23937Delta);
+            }
         }
 
-        Integer hrValue = getCurrentHRValue(arg0.getTime(), MAX_HR_AGE);
+        Integer hrValue = getCurrentHRValue(arg0.getTime() + mSystemToGpsDiffTimeMillis, MAX_HR_AGE);
         Double eleValue = getCurrentElevation();
         Float cadValue = getCurrentCadence();
         Float temperatureValue = getCurrentTemperature();
         Float pressureValue = getCurrentPressure();
-        if (mActivityLastLocation != null) {
+        if (mLastLocation != null) {
             long timeDiff;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                timeDiff = (arg0.getElapsedRealtimeNanos() - mActivityLastLocation
-                        .getElapsedRealtimeNanos()) / 1000000;
+                timeDiff = (arg0.getElapsedRealtimeNanos() -
+                        mLastLocation.getElapsedRealtimeNanos()) / 1000000;
             } else {
-                timeDiff = arg0.getTime() - mActivityLastLocation.getTime();
+                timeDiff = arg0.getTime() - mLastLocation.getTime();
             }
-            double distDiff = arg0.distanceTo(mActivityLastLocation);
+            double distDiff = arg0.distanceTo(mLastLocation);
             if (timeDiff < 0) {
-                // time moved backward ??
-                Log.e(getClass().getName(), "lastTime:       " + mActivityLastLocation.getTime());
-                Log.e(getClass().getName(), "arg0.getTime(): " + arg0.getTime());
+                // getTime() is UTC and not montonic, can go backward
+                Log.e(getClass().getName(), "lastTime:       " + mLastLocation.getTime());
                 Log.e(getClass().getName(), " => delta time: " + timeDiff);
                 Log.e(getClass().getName(), " => delta dist: " + distDiff);
-                // TODO investigate if this is known...only seems to happen
-                // in emulator
                 timeDiff = 0;
             }
 
-            float val = mLastLocation.getSpeed();
-            if (!mLastLocation.hasSpeed() || val == 0.0f || mCurrentSpeedFromGpsPoints) {
-                val = (float) distDiff * 1000.0f / timeDiff;
+            float val = arg0.getSpeed();
+            if (!arg0.hasSpeed() || val == 0.0f || mCurrentSpeedFromGpsPoints) {
+                // at least the emulator can return 0 speed with hasSpeed()
+                val = (timeDiff == 0) ? val : (float) (distDiff * 1000.0 / timeDiff);
             }
-            //Low pass filter
-            final float alpha = 0.4f;
-            mCurrentSpeed = val * alpha + (1 - alpha) * mCurrentSpeed;
+            if (timeDiff > 0) {
+                //Low pass filter
+                final float alpha = 0.4f;
+                mCurrentSpeed = val * alpha + (1 - alpha) * mCurrentSpeed;
 
+            }
             if (internal || state.get() == TrackerState.STARTED) {
                 mElapsedTimeMillis += timeDiff;
-                mElapsedDistance += distDiff;
+                if (!internal) {
+                    mElapsedDistance += distDiff;
+                }
                 if (hrValue != null) {
                     mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
                     mHeartbeatMillis += timeDiff; // TODO handle loss of HRM connection
@@ -714,7 +709,6 @@ public class Tracker extends android.app.Service implements
                 }
             }
         }
-        mActivityLastLocation = arg0;
 
         if (internal || state.get() == TrackerState.STARTED) {
             mDBWriter.onLocationChanged(arg0, eleValue, mElapsedTimeMillis, mElapsedDistance, hrValue, cadValue, temperatureValue, pressureValue);
@@ -739,8 +733,10 @@ public class Tracker extends android.app.Service implements
 
             notificationStateManager.displayNotificationState(activityOngoingState);
         }
-        mLast2Location = mLastLocation;
         mLastLocation = arg0;
+        if (state.get() == TrackerState.STARTED) {
+            mLastLocationStarted = arg0;
+        }
     }
 
     private void liveLog(int type) {
