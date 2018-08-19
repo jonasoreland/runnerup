@@ -32,13 +32,16 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.BuildConfig;
@@ -87,6 +90,9 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     private TextView intervalHr;
     private TextView currentHr;
     private TextView activityHeaderHr;
+    // A circular buffer for tap events
+    private long[] mTapArray= {0, 0, 0, 0};
+    private int mTapIndex = 0;
 
     class WorkoutRow {
         org.runnerup.workout.Step step = null;
@@ -98,8 +104,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     //private final ArrayList<BaseAdapter> adapters = new ArrayList<>(2);
     private boolean simpleWorkout;
 
-    /** Called when the activity is first created. */
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +112,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         formatter = new Formatter(this);
         //HRZones hrZones = new HRZones(this);
 
-        Button stopButton = (Button) findViewById(R.id.stop_button);
+        final Button stopButton = (Button) findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);
         pauseButton = (Button) findViewById(R.id.pause_button);
         pauseButton.setOnClickListener(pauseButtonClick);
@@ -134,6 +138,31 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
         workoutList.setAdapter(adapter);
 
+        TableLayout t = (TableLayout) findViewById(R.id.table_layout1);
+        t.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                // Detect tapping on the header
+                int action = event.getAction();
+                if (action == MotionEvent.ACTION_DOWN) {
+                    final int maxTapTime = 1000;
+                    long time = event.getEventTime();
+                    if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
+                        boolean enabled = !pauseButton.isEnabled();
+                        Toast.makeText(getApplicationContext(), "Fast tap detected, changing button state", Toast.LENGTH_SHORT).show();
+                        newLapButton.setEnabled(enabled);
+                        pauseButton.setEnabled(enabled);
+                        stopButton.setEnabled(enabled);
+                        for (int i = 0; i < mTapArray.length; i++) {
+                            mTapArray[i] = 0;
+                        }
+                    } else {
+                        mTapArray[mTapIndex] = time;
+                        mTapIndex = (mTapIndex + 1) % mTapArray.length;
+                    }
+                }
+                return false;
+            }
+        });
         bindGpsTracker();
     }
 
