@@ -52,9 +52,11 @@ import org.runnerup.tracker.component.TrackerElevation;
 import org.runnerup.tracker.component.TrackerGPS;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerPebble;
+import org.runnerup.tracker.component.TrackerReceiver;
 import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerTemperature;
 import org.runnerup.tracker.component.TrackerPressure;
+import org.runnerup.tracker.component.TrackerTTS;
 import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.tracker.filter.PersistentGpsLoggerListener;
 import org.runnerup.util.Formatter;
@@ -86,10 +88,13 @@ public class Tracker extends android.app.Service implements
     //Some trackers may select separate sensors depending on sport, handled in onBind()
     private final TrackerGPS trackerGPS = (TrackerGPS) components.addComponent(new TrackerGPS(this));
     private final TrackerHRM trackerHRM = (TrackerHRM) components.addComponent(new TrackerHRM());
+    TrackerTTS trackerTTS = (TrackerTTS) components.addComponent(new TrackerTTS());
     private final TrackerCadence trackerCadence = (TrackerCadence) components.addComponent(new TrackerCadence());
     private final TrackerTemperature trackerTemperature = (TrackerTemperature) components.addComponent(new TrackerTemperature());
     private final TrackerPressure trackerPressure = (TrackerPressure) components.addComponent(new TrackerPressure());
     private final TrackerElevation trackerElevation = (TrackerElevation) components.addComponent(new TrackerElevation(this, trackerGPS, trackerPressure));
+    TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(
+            new TrackerReceiver(this));
     private TrackerWear trackerWear; // created if version is sufficient
     private TrackerPebble trackerPebble; // created if version is sufficient
 
