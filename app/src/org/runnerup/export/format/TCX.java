@@ -156,18 +156,16 @@ public class TCX {
 
     private void exportLaps(long activityId, long startTime, Sport sport) throws IOException {
         String[] lColumns = {
-                DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
-                DB.LAP.INTENSITY
+                DB.LAP.LAP, DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.INTENSITY
         };
-
         Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, DB.LAP.DISTANCE + " > 0 and "
                 + DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
+
         String[] pColumns = {
                 DB.LOCATION.LAP, DB.LOCATION.TYPE,
                 DB.LOCATION.TIME, DB.LOCATION.DISTANCE,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE,
                 DB.LOCATION.HR, DB.LOCATION.CADENCE //, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE
-
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
@@ -189,16 +187,17 @@ public class TCX {
                     mXML.attribute("", "StartTime", formatTime(startTime));
                 }
                 mXML.startTag("", "TotalTimeSeconds");
-                mXML.text("" + cLap.getLong(2));
+                mXML.text("" + cLap.getLong(1));
                 mXML.endTag("", "TotalTimeSeconds");
                 mXML.startTag("", "DistanceMeters");
-                mXML.text("" + cLap.getDouble(1));
+                mXML.text("" + cLap.getDouble(2));
                 mXML.endTag("", "DistanceMeters");
                 mXML.startTag("", "Calories");
                 mXML.text("0");
                 mXML.endTag("", "Calories");
                 mXML.startTag("", "Intensity");
-                mXML.text("Active"); //TODO
+                long intensity = cLap.getLong(3);
+                mXML.text(intensity == DB.INTENSITY.ACTIVE ? "Active" : "Resting");
                 mXML.endTag("", "Intensity");
                 mXML.startTag("", "TriggerMethod");
                 mXML.text("Manual");//TODO
