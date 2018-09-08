@@ -213,9 +213,9 @@ public class TCX {
                     double last_longi = 0;
                     long last_time = 0;
                     while (pok && cLocation.getLong(0) == lap) {
-                        int lapType = cLocation.getInt(5);
+                        int locType = cLocation.getInt(1);
                         // Pauses handling
-                        if (last_time == 0 || lapType == DB.LOCATION.TYPE_RESUME) {
+                        if (last_time == 0 || locType == DB.LOCATION.TYPE_RESUME) {
                             if (last_time != 0) {
                                 mXML.endTag("", "Track");
                             }
