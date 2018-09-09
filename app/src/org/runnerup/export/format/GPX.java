@@ -34,13 +34,6 @@ import java.util.TimeZone;
 
 public class GPX {
 
-    enum RestLapMode {
-        EMPTY_TRKSEG,
-        START_STOP_TRKSEG
-    }
-
-    private final RestLapMode restLapMode = RestLapMode.START_STOP_TRKSEG;
-
     private SQLiteDatabase mDB = null;
     private KXmlSerializer mXML = null;
     private SimpleDateFormat simpleDateFormat = null;
@@ -170,7 +163,6 @@ public class GPX {
         boolean pok = cLocation.moveToFirst();
 
         while (lok) {
-            final boolean export_rest_laps = false;
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
                 long lap = cLap.getLong(0);
                 while (pok && cLocation.getLong(0) != lap) {
@@ -304,67 +296,6 @@ public class GPX {
                     }
                 }
                 mXML.endTag("", "trkseg");
-            } else //noinspection PointlessBooleanExpression,ConstantConditions
-                if (export_rest_laps && (cLap.getFloat(1) != 0 || cLap.getLong(2) != 0)) {
-                long lap = cLap.getLong(0);
-                if (restLapMode == RestLapMode.START_STOP_TRKSEG) {
-                    if (lap > 0 && !cLap.isLast()) {
-                        Cursor cStart = mDB.query(DB.LOCATION.TABLE, pColumns,
-                                DB.LOCATION.ACTIVITY + " = " + activityId + " and "
-                                        + DB.LOCATION.LAP + " = " + (lap - 1), null, null, null,
-                                "_id desc", "1");
-                        Cursor cEnd = mDB.query(DB.LOCATION.TABLE, pColumns,
-                                DB.LOCATION.ACTIVITY + " = " + activityId + " and "
-                                        + DB.LOCATION.LAP + " = " + (lap + 1), null, null, null,
-                                "_id asc", "1");
-
-                        if (cStart.moveToFirst() && cEnd.moveToFirst()) {
-                            mXML.startTag("", "trkseg");
-
-                            long time_0 = cStart.getLong(1);
-                            float lat_0 = cStart.getFloat(2);
-                            float longi_0 = cStart.getFloat(3);
-
-                            long time_1 = cEnd.getLong(1);
-                            float lat_1 = cEnd.getFloat(2);
-                            float longi_1 = cEnd.getFloat(3);
-
-                            mXML.startTag("", "trkpt");
-                            mXML.attribute("", "lon", Float.toString(longi_0));
-                            mXML.attribute("", "lat", Float.toString(lat_0));
-                            if (!cStart.isNull(4)) {
-                                mXML.startTag("", "ele");
-                                mXML.text("" + cStart.getLong(4));
-                                mXML.endTag("", "ele");
-                            }
-                            mXML.startTag("", "time");
-                            mXML.text(formatTime(time_0));
-                            mXML.endTag("", "time");
-                            mXML.endTag("", "trkpt");
-
-                            mXML.startTag("", "trkpt");
-                            mXML.attribute("", "lon", Float.toString(longi_1));
-                            mXML.attribute("", "lat", Float.toString(lat_1));
-                            if (!cEnd.isNull(4)) {
-                                mXML.startTag("", "ele");
-                                mXML.text("" + cEnd.getLong(4));
-                                mXML.endTag("", "ele");
-                            }
-                            mXML.startTag("", "time");
-                            mXML.text(formatTime(time_1));
-                            mXML.endTag("", "time");
-                            mXML.endTag("", "trkpt");
-
-                            mXML.endTag("", "trkseg");
-                        }
-
-                        cStart.close();
-                        cEnd.close();
-                    }
-                } else if (restLapMode == RestLapMode.EMPTY_TRKSEG) {
-                    mXML.startTag("", "trkseg");
-                    mXML.endTag("", "trkseg");
-                }
             }
 
             lok = cLap.moveToNext();
@@ -372,10 +303,4 @@ public class GPX {
         cLap.close();
         cLocation.close();
     }
-
-// --Commented out by Inspection START (2017-08-11 13:06):
-//    public String getNotes() {
-//        return notes;
-//    }
-// --Commented out by Inspection STOP (2017-08-11 13:06)
 }
