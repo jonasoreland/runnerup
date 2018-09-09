@@ -153,6 +153,14 @@ public interface HRProvider {
     long getHRValueTimestamp();
 
     /**
+     * Get the time for the sensor, comparable with other sources as getTime()
+     * differs for system vs GPS time
+     *
+     * @return the elapsed time sinc boot in nano sec for last received value
+     */
+    long getHRValueElapsedRealtime();
+
+    /**
      * @return the most recent heart rate data supplied by the device. If no device has
      *          been connected, this will be null
      */
