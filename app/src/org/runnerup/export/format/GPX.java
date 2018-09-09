@@ -144,10 +144,10 @@ public class GPX {
                 DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
                 DB.LAP.INTENSITY
         };
-
         Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, "( " + DB.LAP.DISTANCE + " > 0 or "
                 + DB.LAP.TIME + " > 0) and "
                 + DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
+
         String[] pColumns = {
                 DB.LOCATION.LAP, DB.LOCATION.TIME,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
@@ -168,6 +168,7 @@ public class GPX {
                 while (pok && cLocation.getLong(0) != lap) {
                     pok = cLocation.moveToNext();
                 }
+                boolean hasPoints = false;
                 mXML.startTag("", "trkseg");
                 if (pok && cLocation.getLong(0) == lap) {
                     long last_time = 0;
@@ -175,12 +176,25 @@ public class GPX {
                         // Ignore all other than GPS, GPX cannot handle pauses
                         int locType = cLocation.getInt(5);
                         long time = cLocation.getLong(1);
-                        if (locType == DB.LOCATION.TYPE_GPS && time > last_time) {
+                        if (locType != DB.LOCATION.TYPE_GPS) {
+                            if (mAccuracyExtensions) {
+                                if (hasPoints && locType == DB.LOCATION.TYPE_RESUME) {
+                                    // GPX has no standard for pauses, but segments are occasionally used,
+                                    // sometimes separate activities
+                                    mXML.endTag("", "trkseg");
+                                    mXML.startTag("", "trkseg");
+                                }
+                                mXML.comment(" State change: " + locType + " " + formatTime(time));
+                            }
+                        } else if (time > last_time) {
+                            hasPoints = true;
                             mXML.startTag("", "trkpt");
+
                             float lat = cLocation.getFloat(2);
                             float lon = cLocation.getFloat(3);
                             mXML.attribute("", "lon", Float.toString(lon));
                             mXML.attribute("", "lat", Float.toString(lat));
+
                             Float ele = null;
                             if (mAccuracyExtensions && !cLocation.isNull(14)) {
                                 //raw elevation
@@ -194,6 +208,7 @@ public class GPX {
                                 mXML.text("" + ele);
                                 mXML.endTag("", "ele");
                             }
+
                             mXML.startTag("", "time");
                             mXML.text(formatTime(time));
                             mXML.endTag("", "time");
@@ -211,12 +226,14 @@ public class GPX {
                                 boolean isSpeed = !cLocation.isNull(12) && mAccuracyExtensions;
                                 boolean isSats = !cLocation.isNull(13) && mAccuracyExtensions;
                                 boolean isAny = isCad || isTemp || isPres || isAccuracy || isBearing || isSpeed || isHr || isSats;
+
                                 if (isAny) {
                                     mXML.startTag("", "extensions");
                                     if (mGarminExt) {
                                         mXML.startTag("", "gpxtpx:TrackPointExtension");
                                     }
                                 }
+
                                 if (isHr) {
                                     //Same ns for Garmin/Cluetrust extensions
                                     mXML.startTag("", "gpxtpx:hr");
@@ -224,6 +241,7 @@ public class GPX {
                                     mXML.text(bpm);
                                     mXML.endTag("", "gpxtpx:hr");
                                 }
+
                                 if (isCad) {
                                     String ns;
                                     if (mGarminExt) {
@@ -237,6 +255,7 @@ public class GPX {
                                     mXML.text(val);
                                     mXML.endTag("", ns);
                                 }
+
                                 if (isTemp) {
                                     String ns;
                                     if (mGarminExt) {
@@ -249,6 +268,7 @@ public class GPX {
                                     mXML.text(val);
                                     mXML.endTag("", ns);
                                 }
+
                                 if (isPres) {
                                     //private extension, not recorded by default
                                     mXML.startTag("", "pressure");
@@ -256,24 +276,28 @@ public class GPX {
                                     mXML.text(val);
                                     mXML.endTag("", "pressure");
                                 }
+
                                 if (isAccuracy) {
                                     mXML.startTag("", "accuracy");
                                     String val = Float.toString(cLocation.getFloat(10));
                                     mXML.text(val);
                                     mXML.endTag("", "accuracy");
                                 }
+
                                 if (isBearing) {
                                     mXML.startTag("", "bearing");
                                     String val = Float.toString(cLocation.getFloat(11));
                                     mXML.text(val);
                                     mXML.endTag("", "bearing");
                                 }
+
                                 if (isSpeed) {
                                     mXML.startTag("", "speed");
                                     String val = Float.toString(cLocation.getFloat(12));
                                     mXML.text(val);
                                     mXML.endTag("", "speed");
                                 }
+
                                 if (isSats) {
                                     mXML.startTag("", "sat");
                                     String val = Integer.toString(cLocation.getInt(13));
