@@ -178,16 +178,16 @@ public class GPX {
                 }
                 mXML.startTag("", "trkseg");
                 if (pok && cLocation.getLong(0) == lap) {
-                    float last_lat = 0;
-                    float last_longi = 0;
                     long last_time = 0;
                     while (pok && cLocation.getLong(0) == lap) {
+                        // Ignore all other than GPS, GPX cannot handle pauses
+                        int locType = cLocation.getInt(5);
                         long time = cLocation.getLong(1);
-                        float lat = cLocation.getFloat(2);
-                        float longi = cLocation.getFloat(3);
-                        if (!(time == last_time && lat == last_lat && longi != last_longi)) {
+                        if (locType == DB.LOCATION.TYPE_GPS && time > last_time) {
                             mXML.startTag("", "trkpt");
-                            mXML.attribute("", "lon", Float.toString(longi));
+                            float lat = cLocation.getFloat(2);
+                            float lon = cLocation.getFloat(3);
+                            mXML.attribute("", "lon", Float.toString(lon));
                             mXML.attribute("", "lat", Float.toString(lat));
                             Float ele = null;
                             if (mAccuracyExtensions && !cLocation.isNull(14)) {
@@ -299,8 +299,6 @@ public class GPX {
 
                             mXML.endTag("", "trkpt");
                             last_time = time;
-                            last_lat = lat;
-                            last_longi = longi;
                         }
                         pok = cLocation.moveToNext();
                     }

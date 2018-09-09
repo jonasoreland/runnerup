@@ -205,7 +205,7 @@ public class TCX {
                 long maxHR = 0;
                 long sumHR = 0;
                 long cntHR = 0;
-                int cntTrackpoints = 0;
+                boolean hasTrackpoints = false;
 
                 if (pok && cLocation.getLong(0) == lap) {
                     double last_lat = 0;
@@ -213,24 +213,26 @@ public class TCX {
                     long last_time = 0;
                     while (pok && cLocation.getLong(0) == lap) {
                         int locType = cLocation.getInt(1);
-                        // Pauses handling
-                        if (last_time == 0 || locType == DB.LOCATION.TYPE_RESUME) {
-                            if (last_time != 0) {
-                                mXML.endTag("", "Track");
-                            }
+                        if (hasTrackpoints && locType == DB.LOCATION.TYPE_RESUME) {
+                            // Pauses handling
+                            mXML.endTag("", "Track");
                             mXML.startTag("", "Track");
                         }
                         long time = cLocation.getLong(2);
-                        double lat = cLocation.getDouble(4);
-                        double longi = cLocation.getDouble(5);
-                        if (time != last_time) {
-                            cntTrackpoints++;
+                        if (locType == DB.LOCATION.TYPE_GPS && time > last_time) {
+                            if (!hasTrackpoints) {
+                                mXML.startTag("", "Track");
+                            }
+                            hasTrackpoints = true;
 
                             mXML.startTag("", "Trackpoint");
                             mXML.startTag("", "Time");
                             mXML.text(formatTime(time));
                             mXML.endTag("", "Time");
+
                             mXML.startTag("", "Position");
+                            double lat = cLocation.getDouble(4);
+                            double longi = cLocation.getDouble(5);
                             mXML.startTag("", "LatitudeDegrees");
                             mXML.text("" + lat);
                             mXML.endTag("", "LatitudeDegrees");
@@ -238,6 +240,7 @@ public class TCX {
                             mXML.text("" + longi);
                             mXML.endTag("", "LongitudeDegrees");
                             mXML.endTag("", "Position");
+
                             if (!cLocation.isNull(6)) {
                                 mXML.startTag("", "AltitudeMeters");
                                 mXML.text("" + cLocation.getDouble(6));
@@ -251,7 +254,7 @@ public class TCX {
                                 float d[] = {
                                         0
                                 };
-                                if (!(last_lat == 0 && last_longi == 0)) {
+                                if (last_lat != 0 || last_longi != 0) {
                                     Location.distanceBetween(last_lat, last_longi,
                                             lat, longi, d);
                                 }
@@ -333,20 +336,18 @@ public class TCX {
                         }
                         pok = cLocation.moveToNext();
                     }
-                    mXML.endTag("", "Track");
                 }
                 // Digifit chokes if there isn't at least *1* trackpoint, but is
-                // ok
-                // even if it's empty.
-                if (cntTrackpoints == 0 && addGratuitousTrack) {
+                // ok even if it's empty.
+                if (!hasTrackpoints && addGratuitousTrack) {
                     mXML.startTag("", "Track");
                     mXML.startTag("", "Trackpoint");
                     mXML.startTag("", "Time");
                     mXML.text(formatTime(startTime));
                     mXML.endTag("", "Time");
                     mXML.endTag("", "Trackpoint");
-                    mXML.endTag("", "Track");
                 }
+                mXML.endTag("", "Track");
 
                 if (cntHR > 0) {
                     mXML.startTag("", "AverageHeartRateBpm");
