@@ -641,7 +641,7 @@ public class Tracker extends android.app.Service implements
             if (!mBug23937Checked) {
                 long now = System.currentTimeMillis();
                 long gpsTime = arg0.getTime();
-                // http://code.google.com/p/android/issues/detail?id=23937
+                // https://issuetracker.google.com/issues/36938211
                 // Some GPS chipset reported that the time was a day off
                 // The original Android issue is closed, probably a firmware issue
                 // This check is used for a similar problem
@@ -679,7 +679,7 @@ public class Tracker extends android.app.Service implements
             }
             double distDiff = arg0.distanceTo(mLastLocation);
             if (timeDiff < 0) {
-                // getTime() is UTC and not montonic, can go backward
+                // getTime() is UTC and not monotonic, can go backward
                 Log.e(getClass().getName(), "lastTime:       " + mLastLocation.getTime());
                 Log.e(getClass().getName(), " => delta time: " + timeDiff);
                 Log.e(getClass().getName(), " => delta dist: " + distDiff);
@@ -691,8 +691,8 @@ public class Tracker extends android.app.Service implements
                 // at least the emulator can return 0 speed with hasSpeed()
                 val = (timeDiff == 0) ? val : (float) (distDiff * 1000.0 / timeDiff);
             }
-            if (timeDiff > 0) {
-                //Low pass filter
+            if (!internal && timeDiff > 0) {
+                //Low pass filter, maintain also when paused
                 final float alpha = 0.4f;
                 mCurrentSpeed = val * alpha + (1 - alpha) * mCurrentSpeed;
 
