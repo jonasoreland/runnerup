@@ -733,9 +733,12 @@ public class Tracker extends android.app.Service implements
 
             notificationStateManager.displayNotificationState(activityOngoingState);
         }
-        mLastLocation = arg0;
-        if (state.get() == TrackerState.STARTED) {
-            mLastLocationStarted = arg0;
+
+        if (!internal) {
+            mLastLocation = arg0;
+            if (state.get() == TrackerState.STARTED) {
+                mLastLocationStarted = arg0;
+            }
         }
     }
 
