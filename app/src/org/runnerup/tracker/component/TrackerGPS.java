@@ -161,7 +161,6 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
                 location = new Location(mLastLocation);
                 mLastLocation = null;
             }
-            location.setTime(System.currentTimeMillis());
             switch (tracker.getState()) {
                 case INIT:
                 case CLEANUP:
