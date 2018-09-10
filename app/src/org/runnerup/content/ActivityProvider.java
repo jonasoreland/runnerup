@@ -53,7 +53,7 @@ import java.util.List;
 public class ActivityProvider extends ContentProvider {
 
     // The authority is the symbolic name for the provider class
-    public static final String AUTHORITY = "org.runnerup.activity.provider";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".activity.provider";
     @SuppressWarnings("WeakerAccess")
     public static final String GPX_MIME = "application/gpx+xml";
     @SuppressWarnings("WeakerAccess")

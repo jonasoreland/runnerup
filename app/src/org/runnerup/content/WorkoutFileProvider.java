@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.workout.WorkoutSerializer;
 
 import java.io.File;
@@ -34,7 +35,7 @@ import java.io.FileNotFoundException;
 public class WorkoutFileProvider extends ContentProvider {
 
     // The authority is the symbolic name for the provider class
-    public static final String AUTHORITY = "org.runnerup.workout.file.provider";
+    public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".workout.file.provider";
     public static final String MIME = "application/vnd.garmin.workout+json";
 
     // UriMatcher used to match against incoming requests

@@ -91,7 +91,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
-            android:name="org.runnerup.view.FeedActivity"
+            android:name=".view.FeedActivity"
             android:label="@string/feed"
             android:theme="@style/AppTheme.NoActionBar"/>
 
@@ -175,12 +175,14 @@
         <provider
             android:name=".content.WorkoutFileProvider"
             android:authorities="${applicationId}.workout.file.provider"
+            android:exported="false"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider"/>
 
         <provider
             android:name=".content.ActivityProvider"
             android:authorities="${applicationId}.activity.provider"
+            android:exported="false"
             android:grantUriPermissions="true"
             tools:ignore="ExportedContentProvider"/>
 
