@@ -362,8 +362,8 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
                     stravaError = noNullStr(obj.getString("error"));
                 }
 
-                if (responseCode == HttpURLConnection.HTTP_CREATED && obj != null && obj.getLong("id") > 0 &&
-                        stravaError == null) {
+                if (responseCode <= HttpURLConnection.HTTP_CREATED && obj != null && obj.getLong("id") > 0 &&
+                        noNullStr(obj.getString("activity_id")) != null && stravaError == null) {
                     Log.v(getName(), "extid code: " + obj);
                     String extId = noNullStr(obj.getString("activity_id"));
                     if (extId != null) {

@@ -122,7 +122,7 @@ public class WorkoutBuilder {
                 autoPauseMinSpeed = 1000 / (autoPauseMinPace * 60);
         } catch (NumberFormatException e) {
         }
-        val = prefs.getString(res.getString(R.string.pref_autopause_afterseconds), "15");
+        val = prefs.getString(res.getString(R.string.pref_autopause_afterseconds), "5");
         try {
             autoPauseAfterSeconds = Float.parseFloat(val);
         } catch (NumberFormatException e) {

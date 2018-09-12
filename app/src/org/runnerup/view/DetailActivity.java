@@ -435,26 +435,26 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             long st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
             setTitle(formatter.formatDateTime(st));
         }
-        float d = 0;
+        double d = 0;
         if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
-            d = tmp.getAsFloat(DB.ACTIVITY.DISTANCE);
+            d = tmp.getAsDouble(DB.ACTIVITY.DISTANCE);
             activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, (long) d));
         } else {
             activityDistance.setText("");
         }
 
-        float t = 0;
+        long t = 0;
         if (tmp.containsKey(DB.ACTIVITY.TIME)) {
-            t = tmp.getAsFloat(DB.ACTIVITY.TIME);
-            activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, (long) t));
+            t = tmp.getAsInteger(DB.ACTIVITY.TIME);
+            activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
         } else {
             activityTime.setText("");
         }
 
-        if (d != 0 && t != 0) {
+        if (t != 0) {
             activityPace.setVisibility(View.VISIBLE);
             activityPaceSeparator.setVisibility(View.VISIBLE);
-            activityPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
+            activityPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, d / t));
         } else {
             activityPace.setVisibility(View.GONE);
             activityPaceSeparator.setVisibility(View.GONE);
@@ -533,14 +533,14 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
             }
             viewHolder.tv1.setText(laps[position].getAsString("_id"));
-            float d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position]
-                    .getAsFloat(DB.LAP.DISTANCE) : 0;
+            double d = laps[position].containsKey(DB.LAP.DISTANCE) ? laps[position]
+                    .getAsDouble(DB.LAP.DISTANCE) : 0;
             viewHolder.tv2.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, (long) d));
             long t = laps[position].containsKey(DB.LAP.TIME) ? laps[position]
                     .getAsLong(DB.LAP.TIME) : 0;
             viewHolder.tv3.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
-            if (t != 0 && d != 0) {
-                viewHolder.tv4.setText(formatter.formatPace(Formatter.Format.TXT_LONG, t / d));
+            if (t != 0) {
+                viewHolder.tv4.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, d/t));
             } else {
                 viewHolder.tv4.setText("");
             }

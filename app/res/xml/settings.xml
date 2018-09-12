@@ -130,7 +130,7 @@
             android:title="@string/Autopause"/>
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="15"
+            android:defaultValue="5"
             android:dependency="@string/pref_autopause_active"
             android:inputType="number"
             android:key="@string/pref_autopause_afterseconds"
@@ -168,7 +168,7 @@
             android:title="@string/Adjust_altitude" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="2000"
+            android:defaultValue="1000"
             android:inputType="number"
             android:key="@string/pref_pollInterval"
             android:persistent="true"

@@ -45,7 +45,6 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     private static boolean isMockSensor = false;
 
     private boolean isSportEnabled = true;
-    private boolean isStarted = true;
     private Float mPrevVal = null;
     private long mPrevTime = -1;
     private Float mCurrentCadence = null;
@@ -62,7 +61,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
             return null;
         }
 
-        // If no data (assume no movement) report lower value
+        // It can take seconds between sensor updates
         // Cut-off at 3s corresponds to 60/2/3 => 10 rpm (or 20 steps per minute)
         final int cutOffTime = 3;
         final long nanoSec = 1000000000L;
@@ -74,13 +73,9 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         }
         long timeDiff = now - mPrevTime;
         Float res = mCurrentCadence;
-        if (timeDiff > cutOffTime*nanoSec) {
+        if (timeDiff > cutOffTime * nanoSec) {
             mCurrentCadence = null;
             res = 0.0f;
-        } else if (timeDiff > nanoSec*(1+ 1.5*60/ mCurrentCadence /2)) {
-            // sensors update every sec in addition to time between updates
-            // Decrease reported value if no update in (just over) expected time
-            res = res * (1-(float)(timeDiff/cutOffTime)/nanoSec);
         }
 
         return res;
@@ -91,7 +86,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         if (event.values != null && event.values.length > 0) {
             float latestVal = event.values[0];
             long latestTime = event.timestamp;
-            if (mPrevTime == latestTime || mPrevTime < 0 || mPrevVal == null || !isStarted) {
+            if (mPrevTime == latestTime || mPrevTime < 0 || mPrevVal == null) {
                 mCurrentCadence = null;
             } else {
                 final long nanoSec = 1000000000L;
@@ -176,10 +171,6 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         return mSensorManager != null || isMockSensor;
     }
 
-    @Override
-    public void onConnected() {
-    }
-
     /**
      * Called by Tracker before start
      *   Component shall populate bindValues
@@ -200,43 +191,10 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     }
 
     /**
-     * Called by Tracker when workout starts
-     */
-    @Override
-    public void onStart() {
-        isStarted = true;
-    }
-
-    /**
-     * Called by Tracker when workout is paused
-     */
-    @Override
-    public void onPause() {
-        isStarted = false;
-    }
-
-    /**
-     * Called by Tracker when workout is resumed
-     */
-    @Override
-    public void onResume() {
-        isStarted = true;
-    }
-
-    /**
-     * Called by Tracker when workout is complete
-     */
-    @Override
-    public void onComplete(boolean discarded) {
-        isStarted = false;
-    }
-
-    /**
      * Called by tracked after workout has ended
      */
     @Override
     public ResultCode onEnd(Callback callback, Context context) {
-        isStarted = false;
         if (mSensorManager != null) { mSensorManager.unregisterListener(this); }
         mSensorManager = null;
         isMockSensor = false;

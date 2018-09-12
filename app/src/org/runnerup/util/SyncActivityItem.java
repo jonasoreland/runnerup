@@ -9,7 +9,7 @@ public class SyncActivityItem {
     private Long duration;
     private Long startTime; // in seconds since epoch
     private String uri;
-    private Float distance;
+    private Double distance;
     private Integer sport;
 
     private Boolean skipFlag;
@@ -91,11 +91,11 @@ public class SyncActivityItem {
         return uri;
     }
 
-    public void setDistance(Float distance) {
+    public void setDistance(Double distance) {
         this.distance = distance;
     }
 
-    public Float getDistance() {
+    public Double getDistance() {
         return distance;
     }
 

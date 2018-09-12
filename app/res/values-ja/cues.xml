@@ -56,6 +56,9 @@
   <plurals name="cue_bpm">
     <item quantity="other">%d bpm</item>
   </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="other">%d rpm</item>
+  </plurals>
   <string name="cue_activity_paused">アクティビティを一時停止しました</string>
   <string name="cue_activity_resumed">アクティビティを再開しました</string>
   <string name="cue_activity_stopped">アクティビティを停止しました</string>

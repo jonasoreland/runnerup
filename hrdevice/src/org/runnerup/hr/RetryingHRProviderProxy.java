@@ -263,6 +263,11 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     }
 
     @Override
+    public long getHRValueElapsedRealtime() {
+        return provider.getHRValueElapsedRealtime();
+    }
+
+    @Override
     public HRData getHRData() {
         return provider.getHRData();
     }

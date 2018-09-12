@@ -121,12 +121,11 @@ public class ManualActivity extends AppCompatActivity {
         Log.e(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
         double dist = SafeParse.parseDouble(distance, 0); // convert to meters
         long seconds = SafeParse.parseSeconds(duration, 0);
-        if (dist == 0 || seconds == 0) {
+        if (seconds == 0) {
             manualPace.setVisibility(View.GONE);
             return;
         }
-        double pace = seconds / dist;
-        manualPace.setValue(formatter.formatPace(Formatter.Format.TXT_SHORT, pace));
+        manualPace.setValue(formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, dist/seconds));
         manualPace.setVisibility(View.VISIBLE);
     }
 

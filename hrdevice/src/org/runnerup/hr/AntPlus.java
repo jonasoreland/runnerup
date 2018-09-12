@@ -19,7 +19,9 @@ package org.runnerup.hr;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
+import android.os.SystemClock;
 
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
@@ -51,6 +53,7 @@ public class AntPlus extends BtHRBase {
     private final Context context;
     private int hrValue;
     private long hrTimestamp;
+    private long hrElapsedRealtime = 0;
 
     private HRDeviceRef connectRef = null;
 
@@ -268,6 +271,12 @@ public class AntPlus extends BtHRBase {
 
             hrValue = arg2;
             hrTimestamp = System.currentTimeMillis();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
+            } else {
+                final int NANO_IN_MILLI = 1000000;
+                hrElapsedRealtime = SystemClock.elapsedRealtime() * NANO_IN_MILLI;
+            }
 
             if (mIsConnecting) {
                 reportConnected(true);
@@ -386,6 +395,11 @@ public class AntPlus extends BtHRBase {
     @Override
     public long getHRValueTimestamp() {
         return hrTimestamp;
+    }
+
+    @Override
+    public long getHRValueElapsedRealtime() {
+        return this.hrElapsedRealtime;
     }
 
     @Override

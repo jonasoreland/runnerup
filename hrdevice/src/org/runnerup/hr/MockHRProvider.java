@@ -3,7 +3,9 @@ package org.runnerup.hr;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
+import android.os.SystemClock;
 
 
 public class MockHRProvider implements HRProvider {
@@ -112,6 +114,12 @@ public class MockHRProvider implements HRProvider {
         public void run() {
             hrValue = (int) (150 + 40 * Math.random());
             hrTimestamp = System.currentTimeMillis();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
+            } else {
+                final int NANO_IN_MILLI = 1000000;
+                hrElapsedRealtime = SystemClock.elapsedRealtime() * NANO_IN_MILLI;
+            }
             if (mIsConnected) {
                 hrClientHandler.postDelayed(hrUpdate, 750);
             }
@@ -126,6 +134,7 @@ public class MockHRProvider implements HRProvider {
 
     private int hrValue = 0;
     private long hrTimestamp = 0;
+    private long hrElapsedRealtime = 0;
 
     @Override
     public int getHRValue() {
@@ -135,6 +144,11 @@ public class MockHRProvider implements HRProvider {
     @Override
     public long getHRValueTimestamp() {
         return hrTimestamp;
+    }
+
+    @Override
+    public long getHRValueElapsedRealtime() {
+        return this.hrElapsedRealtime;
     }
 
     @Override

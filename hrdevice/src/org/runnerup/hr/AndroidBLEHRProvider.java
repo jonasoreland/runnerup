@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.SystemClock;
 
 import java.util.HashSet;
 import java.util.List;
@@ -82,6 +83,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private BluetoothDevice btDevice = null;
     private int hrValue = 0;
     private long hrTimestamp = 0;
+    private long hrElapsedRealtime = 0;
     private int batteryLevel = -1;
     private boolean hasBatteryService = false;
 
@@ -187,6 +189,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 }
 
                 hrTimestamp = System.currentTimeMillis();
+                hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
 
                 if (mIsConnecting) {
                     reportConnected(true);
@@ -690,6 +693,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     @Override
     public long getHRValueTimestamp() {
         return this.hrTimestamp;
+    }
+
+    @Override
+    public long getHRValueElapsedRealtime() {
+        return this.hrElapsedRealtime;
     }
 
     @Override

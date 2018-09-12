@@ -271,9 +271,8 @@ public class FeedActivity extends AppCompatActivity implements Constants {
                 }
 
                 // pace
-                if (distance != 0 && duration != 0) {
-                    double pace = duration / distance;
-                    tvPace.setText(formatter.formatPace(Formatter.Format.TXT_LONG, pace));
+                if (duration != 0) {
+                    tvPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, distance/duration));
                 }
 
                 // notes

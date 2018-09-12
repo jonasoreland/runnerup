@@ -9,7 +9,7 @@
 <p>First alpha release for 2.0. This build appears as a separate application and should be possible to use in parallel to the standard Play build.
 
 <p>The major feature in 2.0 is a refreshed user interface using material design. This also includes an updated app icon.
-<p>The first 2.0 release still supports Android from Froyo. This is likely the last release for older releases, development is expected to target 5.0.
+<p>The first 2.0 release still supports Android from Froyo. This is likely the last release for older Android releases, development is expected to target 5.0 or at least 4.2 further on.
 
 <p>Note: The database format is slightly changed in 2.0. There is however an experimental 1.58.1 on GitHub that should allow usage of the 2.0 database if reverting to 1.58 for some reason.
 
@@ -24,7 +24,7 @@
     <li>#716 Autopause would not trigger if system time was off</li>
     <li>#716 Present current pace and hr in run activity</li>
     <li>#716 Configurable current pace from GPS speed (as reported) or GPS points (from point time/distance)</li>
-    <li>#722 Smoothing of current pace</li>
+    <li>#722 Smoothing of current pace, this improves autopause and target pace (the latter to smaller extent)</li>
     <li>#723 Improved smoothing of cadence</li>
     <li>#695 Strava synchronizer now uploads .tcx files, to allow export of laps. (uploads are compressed too)</li>
     <li>#618 direct links to uploaded activities in detail activity for Strava and Endomondo</li>
@@ -33,7 +33,10 @@
     <li>#705 Possibility to disable "lap started" audio cue</li>
     <li>#699 Workouts: Share/Import did not work</li>
     <li>#691 Autolap: Trigger at most likely point rather than always after the limit</li>
-    <li>#689 Audio cues for distance were not correct in some locales.</li>
+    <li>#689 Audio cues for distance were not correct in some locales</li>
+    <li>#730 Audio cues units are optional</li>
+    <li>#730 Audio cues distances are limited to 3 digits</li>
+    <li>#730 Audio cues for pace reported as "stopped" if pace < 20 min/km</li>
     <li>#658 Android 8 support: Notification channels, autofill hints and foreground services.
     <li>#651 Implementing heart rate display on Pebble</li>
     <li>#673 Adjust default values to more sensible values</li>

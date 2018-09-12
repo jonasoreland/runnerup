@@ -179,7 +179,7 @@ public class RunKeeper {
             newActivity.setComment(response.getString("notes"));
         }
         newActivity.setTime((long) Float.parseFloat(response.getString("duration")));
-        newActivity.setDistance(Float.parseFloat(response.getString("total_distance")));
+        newActivity.setDistance(Double.parseDouble(response.getString("total_distance")));
 
         String startTime = response.getString("start_time");
         SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);
@@ -264,7 +264,7 @@ public class RunKeeper {
                 float speed = meters / (float)TimeUnit.MILLISECONDS.toSeconds(time);
                 BigDecimal s = new BigDecimal(speed);
                 s = s.setScale(2, BigDecimal.ROUND_UP);
-                lv.setSpeed(s.floatValue());
+                lv.setSpeed(s.doubleValue());
             }
 
             // create lap if distance greater than configured lap distance
@@ -272,7 +272,7 @@ public class RunKeeper {
             if (Float.valueOf(dist) >= unitMeters * laps.size()) {
                 LapEntity newLap = new LapEntity();
                 newLap.setLap(laps.size());
-                newLap.setDistance(Float.valueOf(dist));
+                newLap.setDistance(Double.valueOf(dist));
                 newLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()));
                 newLap.setActivityId(newActivity.getId());
                 laps.add(newLap);

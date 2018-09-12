@@ -258,13 +258,13 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Accuracy of the location
      */
-    private void setAccuracy(Float value) {
+    private void setAccuracy(Double value) {
         values().put(Constants.DB.LOCATION.ACCURANCY, value);
     }
 
-    public Float getAccuracy() {
+    public Double getAccuracy() {
         if (values().containsKey(Constants.DB.LOCATION.ACCURANCY)) {
-            return values().getAsFloat(Constants.DB.LOCATION.ACCURANCY);
+            return values().getAsDouble(Constants.DB.LOCATION.ACCURANCY);
         }
         return null;
     }
@@ -314,13 +314,13 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Speed of the location
      */
-    public void setSpeed(Float value) {
+    public void setSpeed(Double value) {
         values().put(Constants.DB.LOCATION.SPEED, value);
     }
 
-    public Float getSpeed() {
+    public Double getSpeed() {
         if (values().containsKey(Constants.DB.LOCATION.SPEED)) {
-            return values().getAsFloat(Constants.DB.LOCATION.SPEED);
+            return values().getAsDouble(Constants.DB.LOCATION.SPEED);
         }
         return null;
     }
@@ -328,13 +328,13 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Bearing of the location
      */
-    private void setBearing(Float value) {
+    private void setBearing(Double value) {
         values().put(Constants.DB.LOCATION.BEARING, value);
     }
 
-    public Float getBearing() {
+    public Double getBearing() {
         if (values().containsKey(Constants.DB.LOCATION.BEARING)) {
-            return values().getAsFloat(Constants.DB.LOCATION.BEARING);
+            return values().getAsDouble(Constants.DB.LOCATION.BEARING);
         }
         return null;
     }
@@ -356,13 +356,13 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Cadence at the location
      */
-    private void setCadence(Float value) {
+    private void setCadence(Double value) {
         values().put(Constants.DB.LOCATION.CADENCE, value);
     }
 
-    public Float getCadence() {
+    public Double getCadence() {
         if (values().containsKey(Constants.DB.LOCATION.CADENCE)) {
-            return values().getAsFloat(Constants.DB.LOCATION.CADENCE);
+            return values().getAsDouble(Constants.DB.LOCATION.CADENCE);
         }
         return null;
     }
@@ -370,13 +370,13 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Temperature at the location
      */
-    public void setTemperature(Float value) {
+    public void setTemperature(Double value) {
         values().put(Constants.DB.LOCATION.TEMPERATURE, value);
     }
 
-    public Float getTemperature() {
+    public Double getTemperature() {
         if (values().containsKey(Constants.DB.LOCATION.TEMPERATURE)) {
-            return values().getAsFloat(Constants.DB.LOCATION.TEMPERATURE);
+            return values().getAsDouble(Constants.DB.LOCATION.TEMPERATURE);
         }
         return null;
     }
@@ -384,13 +384,13 @@ public class LocationEntity extends AbstractEntity {
     /**
      * Pressure at the location
      */
-    public void setPressure(Float value) {
+    public void setPressure(Double value) {
         values().put(Constants.DB.LOCATION.PRESSURE, value);
     }
 
-    public Float getPressure() {
+    public Double getPressure() {
         if (values().containsKey(Constants.DB.LOCATION.PRESSURE)) {
-            return values().getAsFloat(Constants.DB.LOCATION.PRESSURE);
+            return values().getAsDouble(Constants.DB.LOCATION.PRESSURE);
         }
         return null;
     }

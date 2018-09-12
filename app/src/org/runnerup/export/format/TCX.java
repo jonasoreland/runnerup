@@ -156,18 +156,16 @@ public class TCX {
 
     private void exportLaps(long activityId, long startTime, Sport sport) throws IOException {
         String[] lColumns = {
-                DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
-                DB.LAP.INTENSITY
+                DB.LAP.LAP, DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.INTENSITY
         };
-
         Cursor cLap = mDB.query(DB.LAP.TABLE, lColumns, DB.LAP.DISTANCE + " > 0 and "
                 + DB.LAP.ACTIVITY + " = " + activityId, null, null, null, null);
+
         String[] pColumns = {
                 DB.LOCATION.LAP, DB.LOCATION.TYPE,
                 DB.LOCATION.TIME, DB.LOCATION.DISTANCE,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE,
                 DB.LOCATION.HR, DB.LOCATION.CADENCE //, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE
-
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
@@ -175,7 +173,7 @@ public class TCX {
         boolean lok = cLap.moveToFirst();
         boolean pok = cLocation.moveToFirst();
 
-        float totalDistance = 0;
+        double totalDistance = 0;
         while (lok) {
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
                 long lap = cLap.getLong(0);
@@ -189,49 +187,52 @@ public class TCX {
                     mXML.attribute("", "StartTime", formatTime(startTime));
                 }
                 mXML.startTag("", "TotalTimeSeconds");
-                mXML.text("" + cLap.getLong(2));
+                mXML.text("" + cLap.getLong(1));
                 mXML.endTag("", "TotalTimeSeconds");
                 mXML.startTag("", "DistanceMeters");
-                mXML.text("" + cLap.getFloat(1));
+                mXML.text("" + cLap.getDouble(2));
                 mXML.endTag("", "DistanceMeters");
                 mXML.startTag("", "Calories");
                 mXML.text("0");
                 mXML.endTag("", "Calories");
                 mXML.startTag("", "Intensity");
-                mXML.text("Active");
+                long intensity = cLap.getLong(3);
+                mXML.text(intensity == DB.INTENSITY.ACTIVE ? "Active" : "Resting");
                 mXML.endTag("", "Intensity");
                 mXML.startTag("", "TriggerMethod");
                 mXML.text("Manual");//TODO
                 mXML.endTag("", "TriggerMethod");
-                int maxHR = 0;
+                long maxHR = 0;
                 long sumHR = 0;
                 long cntHR = 0;
-                int cntTrackpoints = 0;
+                boolean hasTrackpoints = false;
 
                 if (pok && cLocation.getLong(0) == lap) {
-                    float last_lat = 0;
-                    float last_longi = 0;
+                    double last_lat = 0;
+                    double last_longi = 0;
                     long last_time = 0;
                     while (pok && cLocation.getLong(0) == lap) {
-                        int lapType = cLocation.getInt(5);
-                        // Pauses handling
-                        if (last_time == 0 || lapType == DB.LOCATION.TYPE_RESUME) {
-                            if (last_time != 0) {
-                                mXML.endTag("", "Track");
-                            }
+                        int locType = cLocation.getInt(1);
+                        if (hasTrackpoints && locType == DB.LOCATION.TYPE_RESUME) {
+                            // Pauses handling
+                            mXML.endTag("", "Track");
                             mXML.startTag("", "Track");
                         }
                         long time = cLocation.getLong(2);
-                        float lat = cLocation.getFloat(4);
-                        float longi = cLocation.getFloat(5);
-                        if (time != last_time) {
-                            cntTrackpoints++;
+                        if (locType == DB.LOCATION.TYPE_GPS && time > last_time) {
+                            if (!hasTrackpoints) {
+                                mXML.startTag("", "Track");
+                            }
+                            hasTrackpoints = true;
 
                             mXML.startTag("", "Trackpoint");
                             mXML.startTag("", "Time");
                             mXML.text(formatTime(time));
                             mXML.endTag("", "Time");
+
                             mXML.startTag("", "Position");
+                            double lat = cLocation.getDouble(4);
+                            double longi = cLocation.getDouble(5);
                             mXML.startTag("", "LatitudeDegrees");
                             mXML.text("" + lat);
                             mXML.endTag("", "LatitudeDegrees");
@@ -239,20 +240,21 @@ public class TCX {
                             mXML.text("" + longi);
                             mXML.endTag("", "LongitudeDegrees");
                             mXML.endTag("", "Position");
+
                             if (!cLocation.isNull(6)) {
                                 mXML.startTag("", "AltitudeMeters");
-                                mXML.text("" + cLocation.getLong(6));
+                                mXML.text("" + cLocation.getDouble(6));
                                 mXML.endTag("", "AltitudeMeters");
                             }
                             if (!cLocation.isNull(3)) {
-                                totalDistance = cLocation.getFloat(3);
+                                totalDistance = cLocation.getDouble(3);
                             } else {
                                 // Only for older activities, also increases distance when pausing
                                 // Most importers do not use this info anyway
                                 float d[] = {
                                         0
                                 };
-                                if (!(last_lat == 0 && last_longi == 0)) {
+                                if (last_lat != 0 || last_longi != 0) {
                                     Location.distanceBetween(last_lat, last_longi,
                                             lat, longi, d);
                                 }
@@ -262,7 +264,7 @@ public class TCX {
                             mXML.text("" + totalDistance);
                             mXML.endTag("", "DistanceMeters");
                             if (!cLocation.isNull(7)) {
-                                int hr = cLocation.getInt(7);
+                                long hr = cLocation.getInt(7);
                                 if (hr > 0) {
                                     maxHR = hr > maxHR ? hr : maxHR;
                                     sumHR += hr;
@@ -270,7 +272,7 @@ public class TCX {
 
                                     mXML.startTag("", "HeartRateBpm");
                                     mXML.startTag("", "Value");
-                                    String bpm = Integer.toString(hr);
+                                    String bpm = Long.toString(hr);
                                     mXML.text(bpm);
                                     mXML.endTag("", "Value");
                                     mXML.endTag("", "HeartRateBpm");
@@ -334,20 +336,18 @@ public class TCX {
                         }
                         pok = cLocation.moveToNext();
                     }
-                    mXML.endTag("", "Track");
                 }
                 // Digifit chokes if there isn't at least *1* trackpoint, but is
-                // ok
-                // even if it's empty.
-                if (cntTrackpoints == 0 && addGratuitousTrack) {
+                // ok even if it's empty.
+                if (!hasTrackpoints && addGratuitousTrack) {
                     mXML.startTag("", "Track");
                     mXML.startTag("", "Trackpoint");
                     mXML.startTag("", "Time");
                     mXML.text(formatTime(startTime));
                     mXML.endTag("", "Time");
                     mXML.endTag("", "Trackpoint");
-                    mXML.endTag("", "Track");
                 }
+                mXML.endTag("", "Track");
 
                 if (cntHR > 0) {
                     mXML.startTag("", "AverageHeartRateBpm");
@@ -358,7 +358,7 @@ public class TCX {
 
                     mXML.startTag("", "MaximumHeartRateBpm");
                     mXML.startTag("", "Value");
-                    mXML.text(Integer.toString(maxHR));
+                    mXML.text(Long.toString(maxHR));
                     mXML.endTag("", "Value");
                     mXML.endTag("", "MaximumHeartRateBpm");
                 }
