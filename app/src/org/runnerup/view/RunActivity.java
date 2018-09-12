@@ -23,12 +23,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -138,17 +141,20 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
         workoutList.setAdapter(adapter);
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final Resources res = this.getResources();
+        final Boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+
         TableLayout t = (TableLayout) findViewById(R.id.table_layout1);
         t.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 // Detect tapping on the header
                 int action = event.getAction();
-                if (action == MotionEvent.ACTION_DOWN) {
+                if (active && action == MotionEvent.ACTION_DOWN) {
                     final int maxTapTime = 1000;
                     long time = event.getEventTime();
                     if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
                         boolean enabled = !pauseButton.isEnabled();
-                        Toast.makeText(getApplicationContext(), "Fast tap detected, changing button state", Toast.LENGTH_SHORT).show();
                         newLapButton.setEnabled(enabled);
                         pauseButton.setEnabled(enabled);
                         stopButton.setEnabled(enabled);
@@ -156,6 +162,9 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                             mTapArray[i] = 0;
                         }
                     } else {
+                        if (mTapIndex == 0) {
+                            Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
+                        }
                         mTapArray[mTapIndex] = time;
                         mTapIndex = (mTapIndex + 1) % mTapArray.length;
                     }
