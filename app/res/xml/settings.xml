@@ -75,6 +75,13 @@
             android:summary="@string/Use_your_headset_to_startpauseresume_RunnerUp" />
 
         <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_lock_run"
+            android:title="@string/Lock_activity_buttons"
+            android:summary="@string/Lock_activity_buttons_message" />
+
+        <CheckBoxPreference
             android:defaultValue="true"
             android:persistent="true"
             android:key="@string/pref_use_cadence_step_sensor"

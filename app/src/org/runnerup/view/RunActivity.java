@@ -23,22 +23,28 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.BuildConfig;
@@ -87,6 +93,9 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     private TextView intervalHr;
     private TextView currentHr;
     private TextView activityHeaderHr;
+    // A circular buffer for tap events
+    private long[] mTapArray= {0, 0, 0, 0};
+    private int mTapIndex = 0;
 
     class WorkoutRow {
         org.runnerup.workout.Step step = null;
@@ -98,8 +107,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     //private final ArrayList<BaseAdapter> adapters = new ArrayList<>(2);
     private boolean simpleWorkout;
 
-    /** Called when the activity is first created. */
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +115,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         formatter = new Formatter(this);
         //HRZones hrZones = new HRZones(this);
 
-        Button stopButton = (Button) findViewById(R.id.stop_button);
+        final Button stopButton = (Button) findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);
         pauseButton = (Button) findViewById(R.id.pause_button);
         pauseButton.setOnClickListener(pauseButtonClick);
@@ -134,6 +141,37 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
         workoutList.setAdapter(adapter);
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final Resources res = this.getResources();
+        final Boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+
+        TableLayout t = (TableLayout) findViewById(R.id.table_layout1);
+        t.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                // Detect tapping on the header
+                int action = event.getAction();
+                if (active && action == MotionEvent.ACTION_DOWN) {
+                    final int maxTapTime = 1000;
+                    long time = event.getEventTime();
+                    if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
+                        boolean enabled = !pauseButton.isEnabled();
+                        newLapButton.setEnabled(enabled);
+                        pauseButton.setEnabled(enabled);
+                        stopButton.setEnabled(enabled);
+                        for (int i = 0; i < mTapArray.length; i++) {
+                            mTapArray[i] = 0;
+                        }
+                    } else {
+                        if (mTapIndex == 0) {
+                            Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
+                        }
+                        mTapArray[mTapIndex] = time;
+                        mTapIndex = (mTapIndex + 1) % mTapArray.length;
+                    }
+                }
+                return false;
+            }
+        });
         bindGpsTracker();
     }
 

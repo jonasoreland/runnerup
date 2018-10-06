@@ -327,4 +327,7 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Use the initial GPS elevation to average out the barometric elevation</string>
   <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
   <string name="Lap_start">Lap start</string>
+  <string name="Lock_activity_buttons">Lock activity buttons</string>
+  <string name="Lock_activity_buttons_message">Lock activity buttons by fast clicking the header</string>
+
 </resources>
