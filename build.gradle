@@ -19,7 +19,7 @@ project.ext {
     //minSdkVersion differs between modules
     buildToolsVersion = '28.0.2' //Update Travis manually
     compileSdkVersion = 27 //Update Travis manually
-    targetSdkVersion = 27
+    targetSdkVersion = 28
 
     supportLibrary = '27.1.1'
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
