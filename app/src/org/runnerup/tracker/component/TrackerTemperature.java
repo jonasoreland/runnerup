@@ -52,10 +52,14 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if(event.values!=null && event.values.length>0) {
-            final float alpha = 0.3f;
-            latestVal = event.values[0] * alpha + (1 - alpha) * latestVal;
-            //latestTime = event.timestamp;
+        if (event.values != null && event.values.length > 0) {
+            if (latestVal == null) {
+                latestVal = event.values[0];
+            } else {
+                final float alpha = 0.3f;
+                latestVal = event.values[0] * alpha + (1 - alpha) * latestVal;
+                //latestTime = event.timestamp;
+            }
         }
     }
 
