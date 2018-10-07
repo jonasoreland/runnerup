@@ -17,6 +17,7 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_manual"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -103,6 +104,7 @@
         android:ems="10"
         android:gravity="top|start"
         android:inputType="textMultiLine"
-        android:hint="@string/Add_workout_notes" />
+        android:hint="@string/Add_workout_notes"
+        tools:ignore="AutoFill" />
 
 </RelativeLayout>

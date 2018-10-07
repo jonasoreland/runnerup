@@ -11,7 +11,6 @@ def doExtractStringFromManifest(name) {
 }
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     dexOptions {
@@ -47,13 +46,15 @@ android {
         latest {
             dimension "all"
             minSdkVersion 15
-            targetSdkVersion rootProject.ext.compileSdkVersion
+            compileSdkVersion rootProject.ext.compileSdkVersion
+            targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
             versionCode 14000000 + rootProject.ext.versionCode
         }
         froyo {
             dimension "all"
             minSdkVersion 8
+            compileSdkVersion rootProject.ext.compileSdkVersion
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
             versionCode 8000000 + rootProject.ext.versionCode

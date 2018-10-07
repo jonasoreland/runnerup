@@ -811,7 +811,7 @@ public class Tracker extends android.app.Service implements
             PowerManager pm = (PowerManager) this
                     .getSystemService(Context.POWER_SERVICE);
             mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                    "RunnerUp");
+                    "RunnerUp:wakeLock");
             if (mWakeLock != null) {
                 //Set a timeout, this is before activity is started
                 mWakeLock.acquire(300000);

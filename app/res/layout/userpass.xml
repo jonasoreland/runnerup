@@ -53,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textUri"
-                android:hint="@string/Website" />
+                android:hint="@string/Website"
+                tools:ignore="AutoFill" />
 
         </TableRow>
 
@@ -74,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textEmailAddress"
-                android:autofillHints="AUTOFILL_HINT_USERNAME"
+                android:autofillHints="emailAddress"
                 android:hint="@string/Username"
                 tools:ignore="UnusedAttribute" />
 
@@ -97,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textPassword"
-                android:autofillHints="AUTOFILL_HINT_PASSWORD"
+                android:autofillHints="password"
                 android:hint="@string/Password"
                 tools:ignore="UnusedAttribute" />
 

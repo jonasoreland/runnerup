@@ -51,7 +51,7 @@
             android:layout_weight="1"
             android:hint="URL"
             android:inputType="textUri"
-            tools:ignore="HardcodedText"/>
+            tools:ignore="HardcodedText,AutoFill"/>
 
     </TableRow>
 

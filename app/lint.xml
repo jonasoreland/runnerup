@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <issue id="all">
-        <ignore path="../ANT-Android-SDKs/**" />
-    </issue>
-
     <!-- promote to error, must be handled -->
     <issue id="InlinedApi" severity="fatal" />
     <issue id="InconsistentArrays" severity="fatal" />
@@ -60,8 +56,6 @@
     <issue id="ObsoleteSdkInt" severity="ignore">
         <ignore regexp=".*-r14$" />
     </issue>
-    <!-- used by library? -->
-    <issue id="LogNotTimber" severity="ignore"/>
     <!-- SuppressLint has no effect in gradle plugin 3.0.0, bug? -->
     <issue id="ClickableViewAccessibility" severity="ignore">
         <ignore path="**/NumberPicker.java" />
@@ -69,7 +63,6 @@
     <!-- Ignored since minimum version less than 17 requires both left/right and start/end -->
     <issue id="RtlHardcoded" severity="ignore"/>
     <!-- used by library? -->
-    <!--issue id="LogNotTimber" severity="ignore"/-->
     <issue id="ObsoleteLintCustomCheck" severity="ignore">
         <ignore regexp="timber.*" />
     </issue>
