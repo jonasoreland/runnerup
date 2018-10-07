@@ -17,29 +17,36 @@
       ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
       -->
 
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tab1_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<merge android:id="@+id/tab1_layout"
+       xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto"
+       xmlns:tools="http://schemas.android.com/tools"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/feed_actionbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:title="@string/History"
-        android:elevation="4dp"
-        tools:ignore="UnusedAttribute" />
-
-    <ListView
-        android:id="@+id/history_list"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/margin_for_fab"
-        android:scrollbarStyle="outsideOverlay" />
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/feed_actionbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            app:title="@string/History"
+            tools:ignore="UnusedAttribute"/>
+
+        <ListView
+            android:id="@+id/history_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/margin_for_fab"
+            android:scrollbarStyle="outsideOverlay"/>
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/history_add"
@@ -52,6 +59,6 @@
         app:backgroundTint="@color/colorPrimaryFab"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_white_24dp"
-        tools:ignore="UnusedAttribute" />
+        tools:ignore="UnusedAttribute"/>
 
 </merge>
