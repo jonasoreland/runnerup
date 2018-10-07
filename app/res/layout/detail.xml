@@ -130,7 +130,8 @@
                         android:hint="@string/Notes_about_your_workout"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
-                        android:singleLine="false"/>
+                        android:singleLine="false"
+                        tools:ignore="AutoFill" />
 
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"

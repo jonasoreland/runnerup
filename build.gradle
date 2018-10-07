@@ -10,6 +10,7 @@ buildscript {
 
 repositories {
     google()
+    jcenter()
 }
 
 project.ext {
@@ -18,10 +19,10 @@ project.ext {
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '28.0.2' //Update Travis manually
-    compileSdkVersion = 27 //Update Travis manually
+    compileSdkVersion = 28 //Update Travis manually
     targetSdkVersion = 28
 
-    supportLibrary = '27.1.1'
+    supportLibrary = '28.0.0'
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
     googlePlayServicesVersion = '11.0.4'
     googleWearVersion = '2.3.0'

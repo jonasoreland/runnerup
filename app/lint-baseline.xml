@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="4" by="lint 3.1.3">
+<issues format="4" by="lint 3.2.0" client="gradle" variant="latestRelease" version="3.2.0">
+
+    <issue
+        id="GradleCompatible"
+        message="All com.android.support libraries must use the exact same version specification (mixing versions can lead to runtime crashes). Found versions 28.0.0, 27.1.1. Examples include `com.android.support:animated-vector-drawable:28.0.0` and `com.android.support:support-media-compat:27.1.1`">
+        <location
+            file="build.gradle"/>
+    </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.android.support:design than 24.1.0 is available: 27.1.1"
+        message="A newer version of com.android.support:design than 24.1.0 is available: 28.0.0"
         errorLine1="    latestImplementation &quot;com.android.support:design:${rootProject.ext.supportLibrary}&quot;"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="120"
+            line="121"
             column="5"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 15.0.1"
+        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 16.0.1"
         errorLine1="    latestImplementation &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -30,18 +37,18 @@
         errorLine2="    ^">
         <location
             file="build.gradle"
-            line="127"
+            line="129"
             column="5"/>
     </issue>
 
     <issue
         id="GradleDependency"
         message="A newer version of com.jjoe64:graphview than 4.2.1 is available: 4.2.2"
-        errorLine1="    froyoImplementation &quot;com.jjoe64:graphview:4.2.1&quot;"
-        errorLine2="    ^">
+        errorLine1="    froyoImplementation &apos;com.jjoe64:graphview:4.2.1&apos;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="132"
+            line="133"
             column="5"/>
     </issue>
 
@@ -57,6 +64,17 @@
     </issue>
 
     <issue
+        id="UseSparseArrays"
+        message="Use `new android.support.v4.util.LongSparseArray(...)` instead for better performance"
+        errorLine1="    private final Map&lt;Long, Synchronizer> synchronizersById = new HashMap&lt;>();"
+        errorLine2="                                                              ~~~~~~~~~~~~~~~">
+        <location
+            file="src\org\runnerup\export\SyncManager.java"
+            line="91"
+            column="63"/>
+    </issue>
+
+    <issue
         id="IconDuplicates"
         message="The following unrelated icon files have identical contents: title_spinner_pressed.9.png, title_spinner_selected.9.png">
         <location
@@ -69,22 +87,22 @@
         id="ContentDescription"
         message="Missing `contentDescription` attribute on image"
         errorLine1="        &lt;ImageView"
-        errorLine2="        ^">
+        errorLine2="         ~~~~~~~~~">
         <location
             file="res\layout\history_row.xml"
             line="38"
-            column="9"/>
+            column="10"/>
     </issue>
 
     <issue
         id="ContentDescription"
         message="Missing `contentDescription` attribute on image"
         errorLine1="    &lt;ImageView"
-        errorLine2="    ^">
+        errorLine2="     ~~~~~~~~~">
         <location
             file="res\layout\step_button.xml"
-            line="39"
-            column="5"/>
+            line="40"
+            column="6"/>
     </issue>
 
 </issues>
