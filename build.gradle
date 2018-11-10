@@ -18,7 +18,7 @@ project.ext {
     //Note that Android Studio does not know about the 'ext' module and will warn
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
-    buildToolsVersion = '28.0.2' //Update Travis manually
+    buildToolsVersion = '28.0.3' //Update Travis manually
     compileSdkVersion = 28 //Update Travis manually
     targetSdkVersion = 28
 
