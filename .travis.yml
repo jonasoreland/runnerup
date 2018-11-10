@@ -1,39 +1,36 @@
-#dist: trusty #Force trusty for git-lfs (default from 2017-09)
-
+env:
+  global:
+  - ANDROID_API=28
+  - ANDROID_BUILD_TOOLS=28.0.2
+  - ADB_INSTALL_TIMEOUT=5
 language: android
-
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 before_cache:
-  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
-  - rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -f $HOME/.gradle/caches/*/classAnalysis/cache.properties.lock
+- rm -f $HOME/.gradle/caches/*/jarSnapshots/cache.properties.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 android:
-    components:
-        - tools #latest for "builtin" sdk tools (24.4.1 in Android-25)
-        #To update SDK Tools to latest, another update is required
-        #- tools #latest, 26.0.2 as of 2017-07-30
-        - platform-tools #latest, 26.0.0 as of 2017-07-30
-        - build-tools-28.0.2
-        - android-28
-        - extra-android-m2repository
-        - extra-google-m2repository
-        - extra-google-google_play_services
-
+  components:
+  - tools #latest for "builtin" sdk tools (24.4.1 in Android-25)
+  #To update SDK Tools to latest, another update is required
+  #- tools #latest, 26.1.1 as of 2018-10-07
+  #- platform-tools #latest, 28.0.1 as of 2018-10-07
+  - build-tools-$ANDROID_BUILD_TOOLS
+  - android-$ANDROID_API
+  - extra-android-m2repository
+  - extra-google-m2repository
+  - extra-google-google_play_services
 notifications:
   email: false
-
 script:
-    - ./gradlew wear:lintRelease
-    - ./gradlew assembleLatestRelease
-    - ./gradlew lintLatestRelease
-    - ./gradlew assembleFroyoRelease lintFroyoRelease
-    - ./gradlew test
+- ./gradlew wear:lintRelease
+- ./gradlew assembleLatestRelease
+- ./gradlew lintLatestRelease
+- ./gradlew assembleFroyoRelease lintFroyoRelease
+- ./gradlew test
