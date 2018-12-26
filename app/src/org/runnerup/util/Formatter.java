@@ -321,7 +321,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             if (hours > 0) {
                 String str = String.format(cueResources.audioLocale, "%02d", minutes);
                 s.append(hours)
-                        .append(" ")
+                        // Add extra delay as well as avoid interpreting "01 05 58" as "January 5th 58"
+                        .append("\n")
                         .append(str);
             } else {
                 s.append(minutes);
