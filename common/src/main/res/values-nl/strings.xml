@@ -89,7 +89,7 @@
   <string name="High_pace">Hoge tempo</string>
   <string name="Sex">Geslacht</string>
   <string name="upload">upload</string>
-  <string name="feed">feed</string>
+  <string name="feed">Feed</string>
   <string name="Notes">Notities</string>
   <string name="Laps">Rondes</string>
   <string name="Map">Kaart</string>
@@ -227,7 +227,7 @@
   <string name="Push">Druk</string>
   <string name="Android_text_to_speech_settings">Android tekst naar spraak instellingen</string>
   <string name="Start">Start</string>
-  <string name="History">Geschiedenis</string>
+  <string name="History">Historie</string>
   <string name="Basic">Basis</string>
   <string name="Advanced">Geavanceerd</string>
     <string name="Add_workout_notes">Training notities toevoegen</string>
