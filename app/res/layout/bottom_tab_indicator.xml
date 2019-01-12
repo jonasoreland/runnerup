@@ -10,19 +10,19 @@
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_marginTop="6dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         tools:ignore="ContentDescription"/>
 
-    <TextView
+    <!--TextView
         android:id="@+id/title"
         style="@style/BottomNavigationTabText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"/-->
 
 </RelativeLayout>
