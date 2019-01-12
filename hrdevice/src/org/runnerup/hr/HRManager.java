@@ -96,9 +96,11 @@ public class HRManager {
             return new Bt20Base.PolarHRM(ctx);
         }
 
-        if (checkAntPlusLibrary()) {
+        if (src.contentEquals(AntPlus.NAME)) {
+            if (!checkAntPlusLibrary())
+                return null;
             HRProvider hrprov = createProviderByReflection(AntPlusLib, ctx);
-            if (src.contentEquals(hrprov.getProviderName())) {
+            if (hrprov != null && src.contentEquals(hrprov.getProviderName())) {
                 return hrprov;
             }
         }
@@ -149,7 +151,10 @@ public class HRManager {
         }
 
         if (checkAntPlusLibrary()) {
-            providers.add(createProviderByReflection(AntPlusLib, ctx));
+            HRProvider hrprov = createProviderByReflection(AntPlusLib, ctx);
+            if (hrprov != null) {
+                providers.add(hrprov);
+            }
         }
 
         if (mock) {
