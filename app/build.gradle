@@ -69,7 +69,7 @@ android {
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
-        resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "it", "ja", "lt", "nb", "nl", "pl", "pt", "ru", "sv", "tr"
+        resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "it", "ja", "lt", "nb", "nl", "pl", "pt", "ru", "sv", "tr", "zh"
     }
 
     signingConfigs {
