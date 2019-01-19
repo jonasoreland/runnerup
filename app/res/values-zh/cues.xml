@@ -1,70 +1,69 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-    ~
-    ~  This program is free software: you can redistribute it and/or modify
-    ~  it under the terms of the GNU General Public License as published by
-    ~  the Free Software Foundation, either version 3 of the License, or
-    ~  (at your option) any later version.
-    ~
-    ~  This program is distributed in the hope that it will be useful,
-    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ~  GNU General Public License for more details.
-    ~
-    ~  You should have received a copy of the GNU General Public License
-    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-    <string name="cue_activity">运动</string>
-    <string name="cue_interval">间隔</string>
-    <string name="cue_end_of_lap">分段完成</string>
-    <string name="cue_lap">分段</string>
-    <string name="cue_warmup">热身</string>
-    <string name="cue_cooldown">缓和</string>
-    <string name="cue_current">当前</string>
-    <string name="cue_perkilometer">每公里</string>
-    <string name="cue_permile">每英里</string>
-    <string name="cue_started">开始</string>
-    <string name="cue_paused">暂停</string>
-    <string name="cue_resumed">恢复</string>
-    <string name="cue_stopped">停止</string>
-    <string name="cue_completed">完成</string>
-    <string name="cue_speedup">加速</string>
-    <string name="cue_slowdown">放慢速度</string>
-   <plurals name="cue_hour">
-        <item quantity="other">%d 小时</item>
-    </plurals>
-    <plurals name="cue_minute">
-        <item quantity="other">%d 分钟</item>
-    </plurals>
-    <plurals name="cue_second">
-        <item quantity="other">%d 秒</item>
-    </plurals>
-    <plurals name="cue_meter">
-        <item quantity="other">%d 米</item>
-    </plurals>
-    <plurals name="cue_kilometer">
-        <item quantity="other">%s 公里</item>
-    </plurals>
-    <plurals name="cue_mile">
-        <item quantity="other">%s 英里</item>
-    </plurals>
-    <plurals name="cue_kilometers_per_hour">
-        <item quantity="other">%s 公里每小时</item>
-    </plurals>
-    <plurals name="cue_miles_per_hour">
-        <item quantity="other">%s 英里每小时</item>
-    </plurals>
-    <plurals name="cue_bpm">
-        <item quantity="other">%d bpm</item>
-    </plurals>
-    <plurals name="cue_rpm">
-        <item quantity="other">%d rpm</item>
-    </plurals>
-    <string name="cue_activity_paused">运动暂停</string>
-    <string name="cue_activity_resumed">运动恢复</string>
-    <string name="cue_activity_stopped">运动停止</string>
-    <string name="cue_lap_started">分段开始</string>
-    <string name="cue_lap_completed">分段完成</string>
-    <string name="cue_warmup_started">热身开始</string>
-    <string name="cue_cooldown_started">缓和开始</string>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">运动</string>
+  <string name="cue_interval">间隔</string>
+  <string name="cue_lap">分段</string>
+  <string name="cue_warmup">热身</string>
+  <string name="cue_cooldown">缓和</string>
+  <string name="cue_current">当前</string>
+  <string name="cue_perkilometer">每公里</string>
+  <string name="cue_permile">每英里</string>
+  <string name="cue_started">开始</string>
+  <string name="cue_paused">暂停</string>
+  <string name="cue_resumed">恢复</string>
+  <string name="cue_stopped">停止</string>
+  <string name="cue_completed">完成</string>
+  <string name="cue_speedup">加速</string>
+  <string name="cue_slowdown">放慢速度</string>
+  <plurals name="cue_hour">
+    <item quantity="other">%d 小时</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="other">%d 分钟</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="other">%d 秒</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="other">%d 米</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="other">%s 公里</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="other">%s 英里</item>
+  </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="other">%s 公里每小时</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="other">%s 英里每小时</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="other">%d bpm</item>
+  </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="other">%d rpm</item>
+  </plurals>
+  <string name="cue_activity_paused">运动暂停</string>
+  <string name="cue_activity_resumed">运动恢复</string>
+  <string name="cue_activity_stopped">运动停止</string>
+  <string name="cue_lap_started">分段开始</string>
+  <string name="cue_lap_completed">分段完成</string>
+  <string name="cue_warmup_started">热身开始</string>
+  <string name="cue_cooldown_started">缓和开始</string>
 </resources>
