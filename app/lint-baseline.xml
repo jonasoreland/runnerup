@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="4" by="lint 3.2.0" client="gradle" variant="latestRelease" version="3.2.0">
+<issues format="5" by="lint 3.3.0" client="gradle" variant="froyoRelease" version="3.3.0">
 
     <issue
         id="GradleCompatible"
@@ -27,17 +27,6 @@
         <location
             file="build.gradle"
             line="125"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="GradleDependency"
-        message="A newer version of com.mapbox.mapboxsdk:mapbox-android-sdk than 5.1.1 is available: 6.0.1"
-        errorLine1="    latestImplementation (&apos;com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.1@aar&apos;){"
-        errorLine2="    ^">
-        <location
-            file="build.gradle"
-            line="129"
             column="5"/>
     </issue>
 
@@ -72,6 +61,121 @@
             file="src\org\runnerup\export\SyncManager.java"
             line="91"
             column="63"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.dimen.widget_margin` appears to be unused"
+        errorLine1="    &lt;dimen name=&quot;widget_margin&quot;>8dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res\values\dimens.xml"
+            line="8"
+            column="12"/>
+        <location
+            file="res\values-v14\dimens.xml"
+            line="8"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.feed_widget` appears to be unused"
+        errorLine1="&lt;RelativeLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="res\layout-v14\feed_widget.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.feed_widget_item` appears to be unused"
+        errorLine1="&lt;GridLayout"
+        errorLine2="^">
+        <location
+            file="res\layout-v14\feed_widget_item.xml"
+            line="18"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.feed_widget_preview` appears to be unused">
+        <location
+            file="res\drawable-nodpi\feed_widget_preview.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.xml.feed_widget_provider_info` appears to be unused"
+        errorLine1="&lt;appwidget-provider xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="res\xml-v14\feed_widget_provider_info.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_feed_avatar_white_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="res\drawable\ic_feed_avatar_white_24dp.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_feed_widget` appears to be unused">
+        <location
+            file="res\drawable-mdpi\ic_feed_widget.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_icon_runnerup30x30` appears to be unused">
+        <location
+            file="res\drawable-nodpi\ic_icon_runnerup30x30.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_map_marker_end` appears to be unused">
+        <location
+            file="res\drawable-xxhdpi\ic_map_marker_end.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_map_marker_lap` appears to be unused">
+        <location
+            file="res\drawable-xxhdpi\ic_map_marker_lap.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_map_marker_pause` appears to be unused">
+        <location
+            file="res\drawable-xxhdpi\ic_map_marker_pause.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_map_marker_resume` appears to be unused">
+        <location
+            file="res\drawable-xxhdpi\ic_map_marker_resume.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_map_marker_start` appears to be unused">
+        <location
+            file="res\drawable-xxhdpi\ic_map_marker_start.png"/>
     </issue>
 
     <issue
