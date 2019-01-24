@@ -145,7 +145,9 @@ public class OAuth2Activity extends AppCompatActivity {
                     mSpinner.show();
             }
 
-            @SuppressLint("StaticFieldLeak")
+
+            // TODO: Fix "WrongThread"
+            @SuppressLint({"StaticFieldLeak", "WrongThread"})
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
