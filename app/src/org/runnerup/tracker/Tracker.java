@@ -101,15 +101,15 @@ public class Tracker extends android.app.Service implements
 
     private boolean mBug23937Checked = false;
     private long mBug23937Delta = 0;
-    private long mSystemToGpsDiffTimeMillis = 0;
+    private long mSystemToGpsDiffTimeNanos = 0;
     private boolean mCurrentSpeedFromGpsPoints = false;
 
     private long mLapId = 0;
     private long mActivityId = 0;
-    private long mElapsedTimeMillis = 0;
+    private long mElapsedTimeNanos = 0;
     private double mElapsedDistance = 0;
     private double mHeartbeats = 0;
-    private double mHeartbeatMillis = 0; // since we might loose HRM connectivity...
+    private double mHeartbeatNanos = 0; // since we might loose HRM connectivity...
     private long mMaxHR = 0;
     private double mCurrentSpeed = 0.0;
 
@@ -356,10 +356,10 @@ public class Tracker extends android.app.Service implements
         // Let components know we're starting
         components.onStart();
 
-        mElapsedTimeMillis = 0;
+        mElapsedTimeNanos = 0;
         mElapsedDistance = 0;
         mHeartbeats = 0;
-        mHeartbeatMillis = 0;
+        mHeartbeatNanos = 0;
         mMaxHR = 0;
         mLastLocationStarted = null;
 
@@ -571,14 +571,13 @@ public class Tracker extends android.app.Service implements
 
     private void saveActivity() {
         ContentValues tmp = new ContentValues();
-        if (mHeartbeatMillis > 0) {
-            long avgHR = Math.round((60 * 1000 * mHeartbeats) / mHeartbeatMillis); // BPM
+        if (mHeartbeatNanos > 0) {
+            long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / (double)mHeartbeatNanos); // BPM
             tmp.put(Constants.DB.ACTIVITY.AVG_HR, avgHR);
         }
         if (mMaxHR > 0)
             tmp.put(Constants.DB.ACTIVITY.MAX_HR, mMaxHR);
-        tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
-        tmp.put(Constants.DB.ACTIVITY.TIME, getTime()); // time should be updated last for conditionalRecompute
+
         if (TrackerPressure.isAvailable(this)) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             boolean enabled = prefs.getBoolean(this.getString(org.runnerup.R.string.pref_use_pressure_sensor), false);
@@ -587,6 +586,9 @@ public class Tracker extends android.app.Service implements
                 tmp.put(DB.ACTIVITY.META_DATA, DB.ACTIVITY.WITH_BAROMETER);
             }
         }
+
+        tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+        tmp.put(Constants.DB.ACTIVITY.TIME, Math.round(getTimeMs()/1000.0d)); // time should be updated last for conditionalRecompute
 
         String key[] = {
                 Long.toString(mActivityId)
@@ -601,12 +603,12 @@ public class Tracker extends android.app.Service implements
         mLocationType = newType;
     }
 
-    public long getTime() {
-        return mElapsedTimeMillis / 1000;
-    }
+    //public long getTime() {
+    //    return getTimeMs() / 1000;
+    //}
 
     public long getTimeMs() {
-        return mElapsedTimeMillis;
+        return mElapsedTimeNanos / NANO_IN_MILLI;
     }
 
     public double getDistance() {
@@ -632,11 +634,25 @@ public class Tracker extends android.app.Service implements
         if (internal) {
             if (mBug23937Checked) {
                 // This point is inserted, adjust the time to GPS sensor time
-                arg0.setTime(System.currentTimeMillis() - mSystemToGpsDiffTimeMillis);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    long now = System.nanoTime();
+                    arg0.setElapsedRealtimeNanos(now - mSystemToGpsDiffTimeNanos);
+                } else {
+                    long now = System.currentTimeMillis();
+                    arg0.setTime(now - mSystemToGpsDiffTimeNanos/NANO_IN_MILLI);
+                }
             }
         } else {
-            long now = System.currentTimeMillis();
-            long gpsTime = arg0.getTime();
+            long gpsDiffTime;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                long now = System.nanoTime();
+                long gpsTime = arg0.getElapsedRealtimeNanos();
+                gpsDiffTime = now - gpsTime;
+            } else {
+                long now = System.currentTimeMillis();
+                long gpsTime = arg0.getTime();
+                gpsDiffTime = (now - gpsTime) * NANO_IN_MILLI;
+            }
             // https://issuetracker.google.com/issues/36938211
             // Some GPS chipset reported that the time was a day off
             // The original Android issue is closed, probably a firmware issue
@@ -645,22 +661,21 @@ public class Tracker extends android.app.Service implements
             // The GPS time stamp should normally not need to be changed,
             // but approx diff is needed to find if data is valid
 
-            long gpsDiffTime = now - gpsTime;
-            if (!mBug23937Checked && gpsDiffTime < -(24 * 3600 - 120) * 1000 &&
+            if (!mBug23937Checked && gpsDiffTime < -(24 * 3600 - 120) * 1000 * NANO_IN_MILLI &&
                     Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 mBug23937Delta = gpsDiffTime;
-                mSystemToGpsDiffTimeMillis = 0;
+                mSystemToGpsDiffTimeNanos = 0;
             } else {
                 mBug23937Delta = 0;
                 if (Math.abs(gpsDiffTime) > 500 || Math.abs(gpsDiffTime) > 100 && !mBug23937Checked) {
                     // offset can drift over time too
                     // The sensor event is not handled directly, this time is behind
-                    mSystemToGpsDiffTimeMillis = gpsDiffTime;
+                    mSystemToGpsDiffTimeNanos = gpsDiffTime;
                 }
             }
             if (!mBug23937Checked) {
-                Log.e(getClass().getName(), "Bug23937: gpsTime: " + gpsTime
-                        + " (diff to system: " + mSystemToGpsDiffTimeMillis + ") => delta: " + mBug23937Delta);
+                Log.e(getClass().getName(), "Bug23937: "
+                        + " (diff to system: " + mSystemToGpsDiffTimeNanos + ") => delta: " + mBug23937Delta);
             }
             mBug23937Checked = true;
 
@@ -674,7 +689,7 @@ public class Tracker extends android.app.Service implements
             hrValue = getCurrentHRValueElapsed(arg0.getElapsedRealtimeNanos(), MAX_HR_AGE);
         } else {
             // adjust GPS sensor time to system time
-            hrValue = getCurrentHRValue(arg0.getTime() + mSystemToGpsDiffTimeMillis, MAX_HR_AGE);
+            hrValue = getCurrentHRValue(arg0.getTime() + mSystemToGpsDiffTimeNanos/NANO_IN_MILLI, MAX_HR_AGE);
         }
         Double eleValue = getCurrentElevation();
         Float cadValue = getCurrentCadence();
@@ -683,49 +698,48 @@ public class Tracker extends android.app.Service implements
 
         if (mLastLocation != null) {
             double distDiff = arg0.distanceTo(mLastLocation);
-            long timeDiff;
+            long timeDiffNanos;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                timeDiff = (arg0.getElapsedRealtimeNanos() - mLastLocation.getElapsedRealtimeNanos())
-                        / NANO_IN_MILLI;
+                timeDiffNanos = (arg0.getElapsedRealtimeNanos() - mLastLocation.getElapsedRealtimeNanos());
             } else {
-                timeDiff = arg0.getTime() - mLastLocation.getTime();
-                if (timeDiff < 0) {
+                timeDiffNanos = (arg0.getTime() - mLastLocation.getTime()) * NANO_IN_MILLI;
+                if (timeDiffNanos < 0) {
                     // getTime() is UTC and not monotonic, can go backwards
                     Log.e(getClass().getName(), "lastTime:       " + mLastLocation.getTime());
-                    Log.e(getClass().getName(), " => delta time: " + timeDiff);
+                    Log.e(getClass().getName(), " => delta time: " + timeDiffNanos);
                     Log.e(getClass().getName(), " => delta dist: " + distDiff);
-                    timeDiff = 0;
+                    timeDiffNanos = 0;
                 }
             }
 
-            float val = arg0.getSpeed();
-            if (!arg0.hasSpeed() || val == 0.0f || mCurrentSpeedFromGpsPoints) {
+            float speed = arg0.getSpeed();
+            if (!arg0.hasSpeed() || speed == 0.0f || mCurrentSpeedFromGpsPoints) {
                 // at least the emulator can return 0 speed with hasSpeed()
-                val = (timeDiff == 0) ? val : (float) (distDiff * 1000.0 / timeDiff);
+                speed = (timeDiffNanos == 0) ? speed : (float) (distDiff * 1000 * NANO_IN_MILLI / (float)timeDiffNanos);
             }
 
-            if (!internal && timeDiff > 0) {
+            if (!internal && timeDiffNanos > 0) {
                 //Low pass filter, maintain also when paused
                 final float alpha = 0.4f;
-                mCurrentSpeed = val * alpha + (1 - alpha) * mCurrentSpeed;
+                mCurrentSpeed = speed * alpha + (1 - alpha) * mCurrentSpeed;
 
             }
 
             if (internal || state.get() == TrackerState.STARTED) {
-                mElapsedTimeMillis += timeDiff;
+                mElapsedTimeNanos += timeDiffNanos;
                 if (!internal) {
                     mElapsedDistance += distDiff;
                 }
                 if (hrValue != null) {
-                    mHeartbeats += (hrValue * timeDiff) / (60 * 1000);
-                    mHeartbeatMillis += timeDiff; // TODO handle loss of HRM connection
+                    mHeartbeats += (hrValue * timeDiffNanos) / (double)(60 * 1000 * NANO_IN_MILLI);
+                    mHeartbeatNanos += timeDiffNanos; // TODO handle loss of HRM connection
                     mMaxHR = Math.max(hrValue, mMaxHR);
                 }
             }
-        }
+         }
 
         if (internal || state.get() == TrackerState.STARTED) {
-            mDBWriter.onLocationChanged(arg0, eleValue, mElapsedTimeMillis, mElapsedDistance, hrValue, cadValue, temperatureValue, pressureValue);
+            mDBWriter.onLocationChanged(arg0, eleValue, getTimeMs(), mElapsedDistance, hrValue, cadValue, temperatureValue, pressureValue);
 
             switch (mLocationType) {
                 case DB.LOCATION.TYPE_START:
@@ -937,7 +951,7 @@ public class Tracker extends android.app.Service implements
                 return null;
             }
         } else {
-            if (System.currentTimeMillis() - mLastLocation.getTime() - mSystemToGpsDiffTimeMillis >
+            if (System.currentTimeMillis() - mLastLocation.getTime() - mSystemToGpsDiffTimeNanos / NANO_IN_MILLI >
                     MAX_HR_AGE) {
                 return null;
             }
