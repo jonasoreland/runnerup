@@ -301,9 +301,8 @@ public class SpinnerPresenter {
 
                     private String getValue(TimePicker dp) {
                         Calendar c = Calendar.getInstance();
-                        c.set(Calendar.HOUR, dp.getCurrentHour());
-                        c.set(Calendar.MINUTE, dp.getCurrentMinute());
-                        DateFormat df = android.text.format.DateFormat.getTimeFormat(context);
+                        c.set(2000,01,01, dp.getCurrentHour(), dp.getCurrentMinute());
+                        DateFormat df = android.text.format.DateFormat.getTimeFormat(mContext);
                         return df.format(c.getTime());
                     }
                 });
@@ -532,10 +531,11 @@ public class SpinnerPresenter {
             mCurrValue = 0;
         } else if (mType == Type.TS_DURATIONPICKER) {
             mCurrValue = SafeParse.parseSeconds(value, 0);
-        } else {
+        } else if (mType != Type.TS_TIMEPICKER) {
             mCurrValue = (long) SafeParse.parseDouble(value, 0);
         }
         if (mType == Type.TS_DISTANCEPICKER && !TextUtils.isEmpty(value)) {
+            // Should be replaced with Formatter
             mSpin.setViewText(String.format("%s %s", value, mContext.getResources().getString(R.string.metrics_distance_m)));
         } else {
             mSpin.setViewText(value);
