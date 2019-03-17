@@ -50,8 +50,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
     public static final String NAME = "Dropbox";
     private static final String PUBLIC_URL = "https://dropbox.com";
-    // TODO replace when production status: BuildConfig.DROPBOX_ENABLED;
-    public static int ENABLED = 0;
+    public static int ENABLED = BuildConfig.DROPBOX_ENABLED;
 
     private static final String UPLOAD_URL = "https://content.dropboxapi.com/2/files/upload";
     private static final String AUTH_URL = "https://www.dropbox.com/oauth2/authorize";
