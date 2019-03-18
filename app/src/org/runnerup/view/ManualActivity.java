@@ -41,6 +41,7 @@ import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 @TargetApi(Build.VERSION_CODES.FROYO)
@@ -196,7 +197,11 @@ public class ManualActivity extends AppCompatActivity {
             DateFormat df = android.text.format.DateFormat.getTimeFormat(ManualActivity.this);
             try {
                 Date d = df.parse(time.toString());
-                start_time += d.getTime() / 1000;
+                // date has no timezine/dst info, must compensate
+                Calendar c = Calendar.getInstance();
+                c.setTime(d);
+                c.add(Calendar.MILLISECOND, c.getTimeZone().getOffset((new Date()).getTime()));
+                start_time += c.getTime().getTime() / 1000;
             } catch (ParseException e) {
             }
         }
