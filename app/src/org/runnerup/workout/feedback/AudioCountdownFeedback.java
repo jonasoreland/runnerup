@@ -32,8 +32,8 @@ import java.util.HashMap;
 public class AudioCountdownFeedback extends Feedback {
 
     boolean emitScope = false;
-    private Scope scope = Scope.STEP;
-    private Dimension dimension = Dimension.TIME;
+    private Scope scope;
+    private Dimension dimension;
     private RUTextToSpeech textToSpeech;
     private Formatter formatter;
 

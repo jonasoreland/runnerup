@@ -38,7 +38,7 @@ public class AudioFeedback extends Feedback {
     private int msgId = 0;
     private String msgTxt = null;
     private Event event = Event.STARTED;
-    Scope scope = Scope.ACTIVITY;
+    Scope scope = null;
     Dimension dimension = Dimension.DISTANCE;
     private Intensity intensity = null;
     RUTextToSpeech textToSpeech;
@@ -46,7 +46,6 @@ public class AudioFeedback extends Feedback {
 
     public AudioFeedback(int msgId) {
         super();
-        this.scope = null;
         this.msgId = msgId;
     }
 
