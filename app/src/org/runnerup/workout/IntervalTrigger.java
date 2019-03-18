@@ -48,11 +48,11 @@ public class IntervalTrigger extends Trigger {
             while (next <= now) {
                 next += interval;
             }
-            int count = 0; //endless
-            if (/*count != 0 &&*/ (next > (first + interval * (count - 1)))) {
-                // no more occurrences
-                next = 0;
-            }
+            //int count = 0; //endless
+            //if (count != 0 && (next > (first + interval * (count - 1)))) {
+            //    // no more occurrences
+            //    next = 0;
+            //}
         }
         if (next == 0) {
             for (Feedback f : triggerAction) {
