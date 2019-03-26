@@ -32,8 +32,8 @@ import java.util.HashMap;
 
 public class CountdownFeedback extends Feedback {
 
-    private Scope scope = Scope.STEP;
-    private Dimension dimension = Dimension.TIME;
+    private Scope scope;
+    private Dimension dimension;
     private TextView textView = null;
     private Formatter formatter;
 
