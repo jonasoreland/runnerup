@@ -13,9 +13,8 @@
 -dontnote com.google.android.gms.dynamic.IObjectWrapper
 
 #AntPlus optional - created by reflection
--keep class org.runnerup.hr.AntPlus
--keepclassmembers class org.runnerup.hr.AntPlus{
- public *(android.content.Context);
+-keep class org.runnerup.hr.AntPlus {
+  AntPlus(android.content.Context);
 }
 
 ############################
