@@ -184,7 +184,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             }
 
             TextView dateText = view.findViewById(R.id.history_list_date);
-            dateText.setText(formatter.formatDayOfMonth(curDate));
+            dateText.setText(formatter.formatDateTime(ae.getStartTime()));
 
             // distance
             Double d = ae.getDistance();
