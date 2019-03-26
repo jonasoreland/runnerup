@@ -175,6 +175,8 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 R.array.sportEntries, R.layout.actionbar_spinner);
         adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
         sportSpinner.setAdapter(adapter);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        sportSpinner.setViewSelection(prefs.getInt(getResources().getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
 
         startButton = findViewById(R.id.start_button);
         startButton.setOnClickListener(startButtonClick);
