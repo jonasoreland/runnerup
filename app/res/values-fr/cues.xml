@@ -65,6 +65,10 @@
     <item quantity="one">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d rpm</item>
+    <item quantity="other">%d rpm</item>
+  </plurals>
   <string name="cue_activity_paused">activité en pause</string>
   <string name="cue_activity_resumed">activité reprise</string>
   <string name="cue_activity_stopped">activité stoppée</string>
