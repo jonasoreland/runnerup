@@ -37,7 +37,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -171,18 +173,23 @@ public class MainLayout extends TabActivity
         handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath() + "/..");
 
         // if we were called from an intent-filter because user opened "runnerup.db.export", load it
+        final String filePath;
         final Uri data = getIntent().getData();
         if (data != null) {
-            if (SettingsActivity.requestReadStoragePermissions(MainLayout.this)) {
-                String filePath;
-                if ("content".equals(data.getScheme())) {
-                    Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
-                    cursor.moveToFirst();
-                    filePath = cursor.getString(0);
-                    cursor.close();
-                } else {
-                    filePath = data.getPath();
-                }
+            if ("content".equals(data.getScheme())) {
+                Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
+                cursor.moveToFirst();
+                filePath = cursor.getString(0);
+                cursor.close();
+            } else {
+                filePath = data.getPath();
+            }
+        } else {
+            filePath = null;
+        }
+
+        if (filePath != null) {
+            if (requestReadStoragePermissions(MainLayout.this)) {
                 Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
                 DBHelper.importDatabase(MainLayout.this, filePath);
             } else {
@@ -351,16 +358,52 @@ public class MainLayout extends TabActivity
         }
     }
 
+    private static boolean requestReadStoragePermissions(final Activity activity) {
+        boolean ret = true;
+        if (Build.VERSION.SDK_INT >= 16 &&
+                ContextCompat.checkSelfPermission(activity,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+            ret = false;
+
+            //Request permission (not using shouldShowRequestPermissionRationale())
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_READ_EXTERNAL_STORAGE);
+            String s = "Requesting read permission";
+            Log.i(activity.getClass().getSimpleName(), s);
+        }
+        return ret;
+    }
+
     /**
      * Id to identify a permission request.
      */
     private static final int REQUEST_LOCATION = 1000;
+    private static final int REQUEST_READ_EXTERNAL_STORAGE = 2000;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 2001;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
 
-        if (requestCode == REQUEST_LOCATION) {
+        if (requestCode == REQUEST_READ_EXTERNAL_STORAGE || requestCode == REQUEST_WRITE_EXTERNAL_STORAGE) {
+            // Check if the only required permission has been granted (could react on the response)
+            //noinspection StatementWithEmptyBody
+            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //OK, could redo request here
+            } else {
+                String s = (requestCode == REQUEST_READ_EXTERNAL_STORAGE ? "READ" : "WRITE")
+                        + " permission was NOT granted";
+                if (grantResults.length >= 1) {
+                    s += grantResults[0];
+                }
+
+                Log.i(getClass().getSimpleName(), s);
+                //Toast.makeText(SettingsActivity.this, s, Toast.LENGTH_SHORT).show();
+            }
+
+        } else if (requestCode == REQUEST_LOCATION) {
             // Check if the only required permission has been granted (could react on the response)
             if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 String s = "Permission response OK: " + grantResults.length;
