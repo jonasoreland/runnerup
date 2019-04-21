@@ -119,18 +119,12 @@ public class SettingsActivity extends PreferenceActivity
                 != PackageManager.PERMISSION_GRANTED) {
             ret = false;
 
-            //noinspection StatementWithEmptyBody
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                //The caller informs the user, no toast or SnackBar
-            } else {
-                //Request permission - not working from Settings.Activity
-                //ActivityCompat.requestPermissions(activity,
-                //        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                //        REQUEST_READ_EXTERNAL_STORAGE);
-                String s = "Read permission is NOT granted";
-                Log.i(activity.getClass().getSimpleName(), s);
-            }
+            //Request permission - not working from Settings.Activity
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_READ_EXTERNAL_STORAGE);
+            String s = "Requesting read permission";
+            Log.i(activity.getClass().getSimpleName(), s);
         }
         return ret;
     }
@@ -142,18 +136,13 @@ public class SettingsActivity extends PreferenceActivity
                 != PackageManager.PERMISSION_GRANTED) {
             ret = false;
 
-            //noinspection StatementWithEmptyBody
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                //The caller informs the user, no toast or SnackBar
-            } else {
-                 //Request permission - not working from Settings.Activity
-                 //ActivityCompat.requestPermissions(activity,
-                 //        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                 //        REQUEST_WRITE_EXTERNAL_STORAGE);
-                String s = "Write permission is NOT granted";
-                Log.i(activity.getClass().getSimpleName(), s);
-            }
+            //Request permission (not using shouldShowRequestPermissionRationale())
+            // not working from Settings.Activity
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_EXTERNAL_STORAGE);
+            String s = "Requesting write permission";
+            Log.i(activity.getClass().getSimpleName(), s);
         }
         return ret;
     }
@@ -192,32 +181,25 @@ public class SettingsActivity extends PreferenceActivity
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-            String dstdir = Environment.getExternalStorageDirectory().getPath();
-            builder.setTitle("Export runnerup.db to " + dstdir);
-            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-
-            };
-            if(requestWriteStoragePermissions(SettingsActivity.this)) {
-                String from = DBHelper.getDbPath(getApplicationContext());
+            if (requestWriteStoragePermissions(SettingsActivity.this)) {
+                String dstdir = Environment.getExternalStorageDirectory().getPath();
                 String to = dstdir + "/runnerup.db.export";
-                try {
-                    int cnt = FileUtil.copyFile(to, from);
-                    builder.setMessage("Copied " + cnt + " bytes");
-                    builder.setPositiveButton(getString(R.string.Great), listener);
-                } catch (IOException e) {
-                    builder.setMessage("Exception: " + e.toString());
-                    builder.setNegativeButton(getString(R.string.Darn), listener);
-                }
+                DBHelper.exportDatabase(SettingsActivity.this, to);
+
             } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+
+                };
+                builder.setTitle("Export runnerup.db");
                 builder.setMessage("Storage permission not granted in Android settings");
                 builder.setNegativeButton(getString(R.string.Darn), listener);
+                builder.show();
             }
-            builder.show();
             return false;
         }
     };

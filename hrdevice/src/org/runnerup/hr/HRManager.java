@@ -21,8 +21,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,30 +36,37 @@ import java.util.List;
 
 public class HRManager {
 
-    // AntPlus module may be disabled when building, only available in a few phones
-    private static final String AntPlusLib = "org.runnerup.hr.AntPlus";
-    private static boolean checkAntPlusLibrary() {
-        if (BuildConfig.ANTPLUS_ENABLED) {
-            try {
-                Class.forName(AntPlusLib);
-                Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
-                Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
-                Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
-                Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
-                return true;
-            } catch (Exception e) {
-            }
-        }
-        return false;
-    }
+    static class AntPlusProxy {
+        // AntPlus module may be disabled when building, only available in a few phones
+        private static final String Lib = "org.runnerup.hr.AntPlus";
+        static final String Name = "AntPlus";
 
-    private static HRProvider createProviderByReflection(String clazz, Context ctx) {
-        try {
-            Class<?> classDefinition = Class.forName(clazz);
-            Constructor<?> cons = classDefinition.getConstructor(Context.class);
-            return (HRProvider) cons.newInstance(ctx);
-        } catch(Exception e) {
-            return null;
+        static boolean checkAntPlusLibrary(Context ctx) {
+            if (BuildConfig.ANTPLUS_ENABLED) {
+                try {
+                    Class<?> clazz = Class.forName(Lib);
+                    Method method = clazz.getDeclaredMethod("checkLibrary", Context.class);
+                    boolean res = (boolean) method.invoke(null, ctx);
+                    return res;
+                } catch (Exception e) {
+                    Log.d(Lib, Name + "Library is not loaded "+e);
+                }
+            }
+            return false;
+        }
+
+        static HRProvider createProviderByReflection(Context ctx, boolean experimental) {
+            try {
+                Class<?> classDefinition = Class.forName(Lib);
+                Constructor<?> cons = classDefinition.getConstructor(Context.class);
+                HRProvider ap = (HRProvider) cons.newInstance(ctx);
+                if (!ap.isEnabled()) {
+                    return null;
+                }
+                return ap;
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 
@@ -85,21 +94,23 @@ public class HRManager {
                 return null;
             return new AndroidBLEHRProvider(ctx);
         }
+
         if (src.contentEquals(Bt20Base.ZephyrHRM.NAME)) {
             if (!Bt20Base.checkLibrary(ctx))
                 return null;
             return new Bt20Base.ZephyrHRM(ctx);
         }
+
         if (src.contentEquals(Bt20Base.PolarHRM.NAME)) {
             if (!Bt20Base.checkLibrary(ctx))
                 return null;
             return new Bt20Base.PolarHRM(ctx);
         }
 
-        if (src.contentEquals(AntPlus.NAME)) {
-            if (!checkAntPlusLibrary())
+        if (src.contentEquals(AntPlusProxy.Name)) {
+            if (!AntPlusProxy.checkAntPlusLibrary(ctx))
                 return null;
-            HRProvider hrprov = createProviderByReflection(AntPlusLib, ctx);
+            HRProvider hrprov = AntPlusProxy.createProviderByReflection(ctx, true);
             if (hrprov != null && src.contentEquals(hrprov.getProviderName())) {
                 return hrprov;
             }
@@ -150,8 +161,8 @@ public class HRManager {
             providers.add(new Bt20Base.StHRMv1(ctx));
         }
 
-        if (checkAntPlusLibrary()) {
-            HRProvider hrprov = createProviderByReflection(AntPlusLib, ctx);
+        if (AntPlusProxy.checkAntPlusLibrary(ctx)) {
+            HRProvider hrprov = AntPlusProxy.createProviderByReflection(ctx, experimental);
             if (hrprov != null) {
                 providers.add(hrprov);
             }

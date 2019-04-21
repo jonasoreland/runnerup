@@ -12,9 +12,12 @@
 -dontnote com.google.protobuf.zz*
 -dontnote com.google.android.gms.dynamic.IObjectWrapper
 
-#AntPlus optional - created by reflection
+#AntPlus is optional - used by reflection
 -keep class org.runnerup.hr.AntPlus {
-  AntPlus(android.content.Context);
+  *;
+}
+-keepclassmembers class org.runnerup.hr.AntPlus {
+    *;
 }
 
 ############################

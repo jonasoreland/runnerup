@@ -602,20 +602,40 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static String getDbPath(Context ctx) {
-        return ctx.getFilesDir().getPath() + "/../databases/runnerup.db";
+        return ctx.getFilesDir().getPath() + "/../databases/" + DBNAME;
     }
 
     public static void importDatabase(Context ctx, String from) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setTitle("Import runnerup.db from " + from);
+        builder.setTitle("Import " + DBNAME + " from " + from);
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
-
         };
         String to = getDbPath(ctx);
+        try {
+            int cnt = FileUtil.copyFile(to, from);
+            builder.setMessage("Copied " + cnt + " bytes");
+            builder.setPositiveButton(ctx.getString(R.string.Great), listener);
+        } catch (IOException e) {
+            builder.setMessage("Exception: " + e.toString());
+            builder.setNegativeButton(ctx.getString(R.string.Darn), listener);
+        }
+        builder.show();
+    }
+
+    public static void exportDatabase(Context ctx, String to) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setTitle("Export " + DBNAME + " to " + to);
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        };
+        String from = getDbPath(ctx);
         try {
             int cnt = FileUtil.copyFile(to, from);
             builder.setMessage("Copied " + cnt + " bytes");

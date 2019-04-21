@@ -28,6 +28,7 @@ import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceive
 import com.dsi.ant.plugins.antplus.pcc.defines.DeviceState;
 import com.dsi.ant.plugins.antplus.pcc.defines.EventFlag;
 import com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult;
+import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IDeviceStateChangeReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPluginPcc.IPluginAccessResultReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AsyncScanController;
@@ -47,7 +48,7 @@ import java.util.HashSet;
 
 public class AntPlus extends BtHRBase {
 
-    static final String NAME = "AntPlus";
+    private static final String NAME = "AntPlus";
     private static final String DISPLAY_NAME = "ANT+";
 
     private final Context context;
@@ -57,7 +58,6 @@ public class AntPlus extends BtHRBase {
 
     private HRDeviceRef connectRef = null;
 
-    AntPlusHeartRatePcc hrPcc = null;
     private AsyncScanController<AntPlusHeartRatePcc> hrScanCtrl = null;
 
     private boolean mIsScanning = false;
@@ -96,6 +96,20 @@ public class AntPlus extends BtHRBase {
         if (client != null) {
             client.onCloseResult(true);
         }
+    }
+
+    public static boolean checkLibrary(Context ctx) {
+        try {
+            // A few required libs
+            Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
+            Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
+            Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
+            Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
+
+            // The system libraries must be installed
+            return AntPluginPcc.getInstalledPluginsVersionNumber(ctx) >= 0;
+        } catch(Exception e){}
+        return false;
     }
 
     @Override
@@ -416,7 +430,7 @@ public class AntPlus extends BtHRBase {
         return -1;
     }
 
-    /** it seems ANT+ requires Bluetooth too */
+    // ANT+ requires Bluetooth too, as well as that system libs are loaded
 
     @Override
     public boolean isEnabled() {
