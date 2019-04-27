@@ -606,6 +606,11 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static void importDatabase(Context ctx, String from) {
+        final DBHelper mDBHelper = DBHelper.getHelper(ctx);
+        final SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        db.close();
+        mDBHelper.close();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setTitle("Import " + DBNAME + " from " + from);
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
