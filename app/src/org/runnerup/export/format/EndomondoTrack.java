@@ -94,7 +94,10 @@ public class EndomondoTrack {
                 DB.LOCATION.LONGITUDE, // 3
                 DB.LOCATION.ALTITUDE, // 4
                 DB.LOCATION.TYPE, // 5
-                DB.LOCATION.HR // 6
+                DB.LOCATION.HR, // 6
+                DB.LOCATION.DISTANCE, // 7
+                DB.LOCATION.SPEED, // 8
+                DB.LOCATION.CADENCE // 9
         };
 
         final Cursor c = mDB.query(DB.LOCATION.TABLE, pColumns, DB.LOCATION.ACTIVITY
@@ -108,8 +111,12 @@ public class EndomondoTrack {
                     Location l = new Location("Dill");
                     l.setLatitude(c.getDouble(2));
                     l.setLongitude(c.getDouble(3));
-                    if (lastLoc != null) {
-                        distance += l.distanceTo(lastLoc);
+                    if (!c.isNull(7)) {
+                        distance = c.getDouble(7);
+                    } else {
+                        if (lastLoc != null) {
+                            distance += l.distanceTo(lastLoc);
+                        }
                     }
                     lastLoc = l;
 
@@ -117,10 +124,12 @@ public class EndomondoTrack {
                     // # type (2=start, 3=end, 0=pause, 1=resume);
                     // # latitude;
                     // # longitude;
-                    // #;
-                    // #;
+                    // # distance;
+                    // # speed;
                     // # alt;
                     // # hr;
+                    // # cadence
+                    // # power
 
                     writer.write(simpleDateFormat.format(new Date(c.getLong(1))));
                     final int type = c.getInt(5);
@@ -145,22 +154,40 @@ public class EndomondoTrack {
                     }
                     writer.write(Double.toString(c.getDouble(2)));
                     writer.write(';');
+                    
                     writer.write(Double.toString(c.getDouble(3)));
                     writer.write(';');
+                    
                     writer.write(Double.toString(distance / 1000)); // in km
                     writer.write(';');
-                    // unknown
+
+                    // speed
+                    if (!c.isNull(8)) {
+                        writer.write(Double.toString(c.getDouble(8)));
+                    }
                     writer.write(';');
+
                     // alt
                     if (!c.isNull(4)) {
                         writer.write(Double.toString(c.getDouble(4)));
                     }
                     writer.write(';');
+
                     // hr
                     if (!c.isNull(6)) {
                         writer.write(Integer.toString(c.getInt(6)));
                     }
                     writer.write(';');
+
+                    // cadence
+                    if (!c.isNull(9)) {
+                        writer.write(Integer.toString(c.getInt(9)));
+                    }
+                    writer.write(';');
+
+                    // power
+                    writer.write(';');
+
                     writer.append('\n');
                 } while (c.moveToNext());
             }
