@@ -32,6 +32,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
+import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
@@ -62,14 +63,16 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     private static String CLIENT_ID = null;
     private static String CLIENT_SECRET = null;
 
-    private static final String AUTH_URL = "https://www.strava.com/oauth/authorize";
-    private static final String TOKEN_URL = "https://www.strava.com/oauth/token";
+    private static final String AUTH_URL = PUBLIC_URL + "/oauth/authorize";
+    private static final String TOKEN_URL = PUBLIC_URL + "/oauth/token";
     private static final String REDIRECT_URI = "https://localhost:8080/runnerup/strava";
 
-    private static final String REST_URL = "https://www.strava.com/api/v3/uploads";
+    private static final String UPLOAD_URL = PUBLIC_URL + "/api/v3/uploads";
 
     private long id = 0;
     private String access_token = null;
+    private String refresh_token = null;
+    private long access_expire = -1;
 
     StravaSynchronizer(SyncManager syncManager) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
@@ -105,7 +108,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     @Override
     public String getAuthExtra() {
-        return "scope=write";
+        return "scope=activity:write";
     }
 
     @Override
@@ -147,7 +150,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         if (authConfig != null) {
             try {
                 JSONObject tmp = new JSONObject(authConfig);
-                access_token = tmp.optString("access_token", null);
+                parseAuthData(tmp);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -159,7 +162,9 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
         try {
+            tmp.put("refresh_token", refresh_token);
             tmp.put("access_token", access_token);
+            tmp.put("access_expire", access_expire);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -176,13 +181,33 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
             try {
-                access_token = new JSONObject(authConfig).getString("access_token");
-                return Status.OK;
+                String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
+                JSONObject obj = new JSONObject(authConfig);
+                return parseAuthData(obj);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+        return Status.ERROR;
+    }
+
+    private Status parseAuthData(JSONObject obj) {
+        try {
+            if (obj.has("refresh_token")) {
+                refresh_token = obj.getString("refresh_token");
+            }
+            access_token = obj.getString("access_token");
+            if (obj.has("access_expire")) {
+                access_expire = obj.getInt("access_expire");
+            }
+            else if (obj.has("expires_at")) {
+                access_expire = obj.getInt("expires_at");
+            }
+            return Status.OK;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         return Status.ERROR;
     }
@@ -197,14 +222,72 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         access_token = null;
     }
 
+
     @Override
     public Status connect() {
-        Status s = Status.NEED_AUTH;
-        s.authMethod = AuthMethod.OAUTH2;
-        if (access_token == null)
+        Status s = Status.OK;
+
+        if (getClientId() == null || getClientSecret() == null) {
+            //Not configured in this build
+            s = Status.INCORRECT_USAGE;
+        }
+        else if (refresh_token == null) {
+            s = Status.NEED_AUTH;
+            s.authMethod = AuthMethod.OAUTH2;
+        }
+        else if (access_token == null || access_expire - 3600 < System.currentTimeMillis() / 1000) {
+            // Token times out within an hour
+            s = Status.NEED_REFRESH;
+            s.authMethod = AuthMethod.OAUTH2;
+        }
+
+        //Log.v(getName(), "connect: " +s+ " "+refresh_token+" "+access_token+ " " + access_expire);
+        return s;
+    }
+
+    public Status refreshToken() {
+        Status s;
+
+        try {
+            final FormValues fv = new FormValues();
+            fv.put(OAuth2Activity.OAuth2ServerCredentials.CLIENT_ID, getClientId());
+            fv.put(OAuth2Activity.OAuth2ServerCredentials.CLIENT_SECRET, getClientSecret());
+            fv.put("grant_type", "refresh_token");
+            fv.put("refresh_token", refresh_token);
+
+            URL url = new URL(getTokenUrl());
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod(RequestMethod.POST.name());
+            conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            SyncHelper.postData(conn, fv);
+
+            int responseCode = conn.getResponseCode();
+            String amsg = conn.getResponseMessage();
+            JSONObject obj = SyncHelper.parse(conn, getName()+"Refresh");
+
+            if (obj != null && responseCode >= HttpURLConnection.HTTP_OK &&
+                    responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
+                return parseAuthData(obj);
+            } else {
+                // token no longer valid (normally HTTP_UNAUTHORIZED)
+                s = Status.NEED_AUTH;
+                s.authMethod = AuthMethod.OAUTH2;
+                access_token = null;
+            }
+            s = Status.ERROR;
             return s;
 
-        return Synchronizer.Status.OK;
+        } catch (IOException e) {
+            s = Status.ERROR;
+            s.ex = e;
+        } catch (JSONException e) {
+            s = Status.ERROR;
+            s.ex = e;
+        }
+
+        s.ex.printStackTrace();
+        return s;
     }
 
     private String stravaActivityType(int sportId) {
@@ -264,7 +347,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             tcx.export(mID, writer);
             ActivityDbInfo dbInfo = getStravaType(db, mID);
 
-            HttpURLConnection conn = (HttpURLConnection) new URL(REST_URL).openConnection();
+            HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod(RequestMethod.POST.name());
             conn.setRequestProperty("Authorization", "Bearer " + access_token);
@@ -349,7 +432,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                 }
-                HttpURLConnection conn = (HttpURLConnection) new URL(REST_URL + "/" + uploadStatus.externalId).openConnection();
+                HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL + "/" + uploadStatus.externalId).openConnection();
                 conn.setRequestMethod(RequestMethod.GET.name());
                 conn.setRequestProperty("Authorization", "Bearer " + access_token);
 
