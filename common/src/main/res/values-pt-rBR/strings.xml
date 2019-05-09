@@ -33,13 +33,14 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, ratos</string>
   <!--other-->
-    <string name="Type">Tipo</string>
+  <string name="Type">Tipo</string>
   <string name="active">ativo</string>
   <string name="rest">descanso</string>
   <string name="recovery">recuperação</string>
   <string name="warm_up">aquecimento</string>
   <string name="cool_down">desaquecimento</string>
   <string name="repeat">repita</string>
+  <string name="repeat_times">Repetir %1$dx</string>
   <string name="time">tempo</string>
   <string name="distance">distância</string>
   <string name="Distance">Distância</string>
@@ -77,7 +78,16 @@
   <string name="Rest_type">Tipo de descanso</string>
   <string name="Repetitions">Repetições</string>
   <string name="Date">Data</string>
+  <string name="No_devices_connected">Nenhum dispositivo conectado</string>
   <string name="GPS_satellites">Satélites GPS</string>
+  <string name="GPS_indicator_off">GPS desligado</string>
+  <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
+  <string name="GPS_status_no_accuracy">GPS: %1$d/%2$d satélites</string>
+  <string name="GPS_accuracy_elevation">acc. %1$s, elev. %2$s</string>
+  <string name="GPS_accuracy_no_elevation">precisão %s</string>
+  <string name="GPS_level_poor">GPS fraco</string>
+  <string name="GPS_level_acceptable">GPS razoável</string>
+  <string name="GPS_level_good">GPS bom</string>
   <string name="Start_GPS">Iniciar GPS</string>
   <string name="Duration">Duração</string>
   <string name="Cancel">Cancelar</string>
@@ -99,7 +109,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Gráfico</string>
   <string name="Upload">Enviar</string>
-    <string name="Disconnect">Desconectar</string>
+  <string name="Disconnect">Desconectar</string>
   <string name="Resume">Recomeçar</string>
   <string name="Save_activity">Guardar atividade</string>
   <string name="Upload_activity">Enviar atividade</string>
@@ -110,10 +120,14 @@
   <string name="Configure_accounts">Configurar contas</string>
   <string name="Refresh">Atualizar</string>
   <string name="Age">Idade</string>
-    <string name="Synchronizing">Sincronismo:</string>
+  <string name="Synchronizing">Sincronismo:</string>
   <string name="synchronizing_feed">sincronizando feed..</string>
   <string name="OK">OK</string>
-    <string name="Clear_uploads">Apagar envios</string>
+  <string name="accounts_category_connected">Gerenciar conexões</string>
+  <string name="accounts_category_unconnected">Conectar uma conta</string>
+  <string name="Show_disabled_accounts">Exibir contas desativadas</string>
+  <string name="Hide_disabled_accounts">Ocultar contas desativadas</string>
+  <string name="Clear_uploads">Apagar envios</string>
   <string name="Upload_missing_workouts">Enviar exercícios (ausentes)</string>
   <string name="Disconnect_account">Desconectar conta</string>
   <string name="Edit_activity">Editar atividade</string>
@@ -122,7 +136,7 @@
   <string name="Recompute_activity">Recalcular atividade</string>
   <string name="Configure_heart_rate_zones">Configurar zonas de frequência cardíaca</string>
   <string name="Clear_heart_rate_zone_settings">Apagar configurações da zona de frequência cardíaca</string>
-    <string name="Manage_audio_cues">Gerenciar avisos de áudio</string>
+  <string name="Manage_audio_cues">Gerenciar avisos de áudio</string>
   <string name="Manage_workouts">Gerenciar exercícios</string>
   <string name="Settings">Configurações</string>
   <string name="Whats_new">O que há de novo</string>
@@ -130,12 +144,13 @@
   <string name="Enable_GPS">Ativar GPS</string>
   <string name="Waiting_for_GPS">Esperando o GPS</string>
   <string name="Start_activity">Iniciar atividade</string>
-    <string name="Clear_HR_settings">Apagar configurações de FC</string>
+  <string name="Wear_OS_Device">Dispositivo vestível</string>
+  <string name="Clear_HR_settings">Apagar configurações de FC</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">O monitor de frequência cardíaca não é suportado pelo seu dispositivo</string>
   <string name="Select_type_of_Bluetooth_device">Selecionar o tipo de dispositivo Bluetooth</string>
   <string name="Scanning">Escaneando</string>
   <string name="Failed_to_load_workout">Falhar ao carregar exercício!!</string>
-    <string name="Problem">Problema</string>
+  <string name="Problem">Problema</string>
   <string name="Edit_step">Editar passo</string>
   <string name="Create_new_audio_cue_scheme">Criar novo esquema de aviso de audio</string>
   <string name="Great">Excelente!</string>
@@ -149,7 +164,7 @@
   <string name="Loading">Carregando…</string>
   <string name="Saving">Guardar</string>
   <string name="Cancellingplease_wait">Cancelando… por favor, espere</string>
-    <string name="Are_you_sure">Você tem certeza?</string>
+  <string name="Are_you_sure">Você tem certeza?</string>
   <string name="Configure_audio_cues">Configurar avisos de áudio</string>
   <string name="Downloadeditremove_workouts">Baixar/editar/remover exercícios</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Anotações, você precisa se conectar à conta também</string>
@@ -196,7 +211,7 @@
   <string name="Experimental_HRM_devices">Experim. - Dispos. HRM</string>
   <string name="Experimental_features">Recursos experimentais</string>
   <string name="Mock_HRM_devices">Dispos. HRM simulados</string>
-    <string name="About_RunnerUp">Sobre o RunnerUp</string>
+  <string name="About_RunnerUp">Sobre o RunnerUp</string>
   <string name="Triggers">Acionadores</string>
   <string name="Time_triggered_audio_cue">Aviso acionado pelo tempo</string>
   <string name="Cue_interval_s">Intervalo do aviso (s)</string>
@@ -227,6 +242,8 @@
   <string name="Current_speed">Velocidade atual</string>
   <string name="Current_heart_rate">Frequência cardíada atual</string>
   <string name="Current_heart_rate_zone">Zona da frequência cardíaca atual</string>
+  <string name="Current_cadence">Cadência atual</string>
+  <string name="Current">Atual</string>
   <string name="Misc_cues">Avisos diversos</string>
   <string name="Target_coaching">Meta de treinamento</string>
   <string name="Skip_event_audio_cues">Pular avisos de áudio de evento</string>
@@ -236,7 +253,9 @@
   <string name="History">Histórico</string>
   <string name="Basic">Básico</string>
   <string name="Advanced">Avançado</string>
-    <string name="Add_workout_notes">Adicionar anotações do exercício</string>
+  <string name="Manual_activity_title">Adicionar entrada manual</string>
+  <string name="Add_manual_entry">Adicionar entrada manual</string>
+  <string name="Add_workout_notes">Adicionar anotações do exercício</string>
   <string name="Pruning_deleted_activities_from_database">Suprimir atividades excluídas do banco de dados</string>
   <string name="Prune">Suprimir</string>
   <string name="Heartrate_zones_distribution">Distribuição das zonas de frequência cardíaca</string>
@@ -276,6 +295,7 @@
   <string name="HinHere_is_a_workout_I_think_you_might_like">Olá\nAqui está um exercício que eu acho que você pode gostar.</string>
   <string name="Share_workout">Compartilhar exercício…</string>
   <string name="New_audio_scheme">Novo esquema de áudio</string>
+  <string name="GPS_permission_required">Permissão de GPS requerida</string>
   <string name="Default">Padrão</string>
   <string name="Notes_about_your_workout">Anotações sobre seu exercício</string>
   <string name="Downloading_from_1s">Baixando de %1$s</string>
@@ -295,6 +315,7 @@
   <string name="latest_feed_click_to_refresh">Últimos feeds (clique para atualizar)</string>
   <string name="log_extended_gps_summary">Exportar apenas em GPX</string>
   <string name="log_extended_gps_title">Registrar dados de precisão estendidos do GPS</string>
+  <string name="Current_speed_from_GPS_points">Velocidade atual a partir dos pontos GPS</string>
   <string name="use_step_sensor_title">Sensor de passo</string>
   <string name="use_step_sensor_summary">Usar para cadência</string>
   <string name="use_temperature_sensor">Sensor de temperatura</string>
@@ -302,4 +323,6 @@
   <string name="use_pressure_sensor_summary">Usar o barômetro para calcular a elevação</string>
   <string name="adjust_barometer_altitude_from_gps">Ajustar a altitude do barômetro para a elevação do GPS</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Usar a elevação inicial do GPS para a elevação barométrica média</string>
+  <string name="channel_notification_ongoing">RunnerUp GPS e notificações da atividade</string>
+  <string name="Lap_start">Início da volta</string>
 </resources>
