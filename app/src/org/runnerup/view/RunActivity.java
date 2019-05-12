@@ -155,7 +155,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                     long time = event.getEventTime();
                     if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
                         boolean enabled = !pauseButton.isEnabled();
-                        newLapButton.setEnabled(enabled);
                         pauseButton.setEnabled(enabled);
                         stopButton.setEnabled(enabled);
                         for (int i = 0; i < mTapArray.length; i++) {
@@ -231,11 +230,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
         if (simpleWorkout) {
             newLapButton.setOnClickListener(newLapButtonClick);
-            newLapButton.setText(getString(R.string.New_lap));
         } else {
             newLapButton.setOnClickListener(nextStepButtonClick);
-            newLapButton.setText(getString(R.string.Next_lap));
         }
+        newLapButton.setText(getString(R.string.New_lap));
     }
 
     private void populateWorkoutList() {
