@@ -460,7 +460,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, MapMyRunSynchronizer.NAME, 0);
         insertAccount(arg0, NikePlusSynchronizer.NAME, 0);
         insertAccount(arg0, EndomondoSynchronizer.NAME, 1);
-        insertAccount(arg0, RunningAHEADSynchronizer.NAME, 1);
+        insertAccount(arg0, RunningAHEADSynchronizer.NAME, 0);
         insertAccount(arg0, DigifitSynchronizer.NAME, 0);
         insertAccount(arg0, StravaSynchronizer.NAME, 1);
         insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
