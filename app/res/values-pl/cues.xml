@@ -83,6 +83,12 @@
     <item quantity="many">%d uderzeń na minutę</item>
     <item quantity="other">%d uderzeń na minutę</item>
   </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%dobr/min</item>
+    <item quantity="few">%dobr/min</item>
+    <item quantity="many">%dobr/min</item>
+    <item quantity="other">%dobr/min</item>
+  </plurals>
   <string name="cue_activity_paused">Trening wstrzymany</string>
   <string name="cue_activity_resumed">Trening wznowiony</string>
   <string name="cue_activity_stopped">Trening zatrzymany</string>
