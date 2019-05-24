@@ -32,7 +32,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">gerai, draugužiai</string>
   <!--other-->
-    <string name="Type">Tipas</string>
+  <string name="Type">Tipas</string>
   <string name="active">aktyvus</string>
   <string name="rest">poilsis</string>
   <string name="recovery">atsistatymas</string>
@@ -95,7 +95,7 @@
   <string name="Map">Žemėlapis</string>
   <string name="Graph">Diagrama</string>
   <string name="Upload">Įkelti</string>
-    <string name="Disconnect">Atsijungti</string>
+  <string name="Disconnect">Atsijungti</string>
   <string name="Resume">Tęsti</string>
   <string name="Save_activity">Išsaugoti veiklą</string>
   <string name="Upload_activity">Įkelti veiklą</string>
@@ -106,10 +106,10 @@
   <string name="Configure_accounts">Konfigūruoti sąskaitas</string>
   <string name="Refresh">Atnaujinti</string>
   <string name="Age">Amžius</string>
-    <string name="Synchronizing">Sinchronizavimas</string>
+  <string name="Synchronizing">Sinchronizavimas</string>
   <string name="synchronizing_feed">sinchronizuoja kanalą…</string>
   <string name="OK">Gerai</string>
-    <string name="Clear_uploads">Išvalyti įkėlimus</string>
+  <string name="Clear_uploads">Išvalyti įkėlimus</string>
   <string name="Upload_missing_workouts">Įkelti (trūkstamas) treniruotes</string>
   <string name="Disconnect_account">Atjungti sąskaitą</string>
   <string name="Edit_activity">Redaguoti veiklą</string>
@@ -118,7 +118,7 @@
   <string name="Recompute_activity">Perskaičiuoti veiklą</string>
   <string name="Configure_heart_rate_zones">Konfigūruoti širdies ritmo zonas</string>
   <string name="Clear_heart_rate_zone_settings">Išvalyti širdies ritmo zonų nustatymus</string>
-    <string name="Manage_audio_cues">Valdyti garsinius nurodymus</string>
+  <string name="Manage_audio_cues">Valdyti garsinius nurodymus</string>
   <string name="Manage_workouts">Valdyti treniruotes</string>
   <string name="Settings">Nustatymai</string>
   <string name="Whats_new">Kas naujo</string>
@@ -126,12 +126,12 @@
   <string name="Enable_GPS">Leisti GPS</string>
   <string name="Waiting_for_GPS">Laukia GPS</string>
   <string name="Start_activity">Pradėk veiklą</string>
-    <string name="Clear_HR_settings">Išvalyti ŠR nustatymus</string>
+  <string name="Clear_HR_settings">Išvalyti ŠR nustatymus</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Širdies ritmo stebėsena nepalaikoma Jūsų įrenginyje</string>
   <string name="Select_type_of_Bluetooth_device">Pasirinkti Bluetooth įrangos tipą</string>
   <string name="Scanning">Skenavimas</string>
   <string name="Failed_to_load_workout">Nepavyko įkelti treniruotės!!</string>
-    <string name="Problem">Problema</string>
+  <string name="Problem">Problema</string>
   <string name="Edit_step">Redaguoti intervalą</string>
   <string name="Create_new_audio_cue_scheme">Sukurti naują garsinių nurodymų schemą</string>
   <string name="Great">Puiku!</string>
@@ -145,7 +145,7 @@
   <string name="Loading">Kraunasi…</string>
   <string name="Saving">Išsaugoja</string>
   <string name="Cancellingplease_wait">Nutraukiama…palaukite</string>
-    <string name="Are_you_sure">Ar tikrai?</string>
+  <string name="Are_you_sure">Ar tikrai?</string>
   <string name="Configure_audio_cues">Konfigūruoti garsinius nurodymus</string>
   <string name="Downloadeditremove_workouts">Atsisiųsti/redaguoti/ištrinti treniruotes</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Atmink, turi prisijungti ir prie sąskaitos</string>
@@ -190,7 +190,7 @@
   <string name="Experimental_HRM_devices">Eksperimentiniai pulsometrai</string>
   <string name="Experimental_features">Eksperimentinės funkcijos</string>
   <string name="Mock_HRM_devices">Fiktyvūs pulsometrai</string>
-    <string name="About_RunnerUp">Apie RunnerUp</string>
+  <string name="About_RunnerUp">Apie RunnerUp</string>
   <string name="Triggers">Leistukai</string>
   <string name="Time_triggered_audio_cue">Laiko garsinis nurodymas</string>
   <string name="Cue_interval_s">Nurodymo intervalas (s)</string>
@@ -230,7 +230,7 @@
   <string name="History">Istorija</string>
   <string name="Basic">Pagrindiniai</string>
   <string name="Advanced">Išplėstiniai</string>
-    <string name="Add_workout_notes">Pridėti treniruotės pastabas</string>
+  <string name="Add_workout_notes">Pridėti treniruotės pastabas</string>
   <string name="Pruning_deleted_activities_from_database">Išmesti ištrintas veiklas iš duoemnų bazės</string>
   <string name="Prune">Apvalyti</string>
   <string name="Heartrate_zones_distribution">Širdies ritmo zonų paskirstymas</string>

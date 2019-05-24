@@ -94,7 +94,7 @@
   <string name="Enable_GPS">Activar GPS</string>
   <string name="Waiting_for_GPS">Esperando pelo GPS</string>
   <string name="Start_activity">Iniciar atividade</string>
-    <string name="Problem">Problema</string>
+  <string name="Problem">Problema</string>
   <string name="Great">Ótimo!</string>
   <string name="Yes">Sim</string>
   <string name="Create">Criar</string>
@@ -115,7 +115,7 @@
   <string name="Start">Iniciar</string>
   <string name="History">História</string>
   <string name="Advanced">Avançado</string>
-    <string name="Battery_level">Nível da bateria</string>
+  <string name="Battery_level">Nível da bateria</string>
   <string name="Searching_for_GPS">Procurando GPS</string>
   <string name="Do_not_show_again">Não mostrar outra vez</string>
   <string name="Waiting_for_phone" tools:ignore="UnusedResources">Esperando pelo telefone</string>

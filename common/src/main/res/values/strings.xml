@@ -27,8 +27,8 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
   <string name="Target_pace_HHMMSS">Target pace</string>
-  <!-- strings with argument to provide -->
-  <!-- first argument is a date, second a time, for instance: "Yesterday at 13:32" -->
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s at %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK, rats</string>

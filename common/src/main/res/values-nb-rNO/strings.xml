@@ -33,7 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, fillern</string>
   <!--other-->
-    <string name="Type">Type</string>
+  <string name="Type">Type</string>
   <string name="active">aktiv</string>
   <string name="rest">hvile</string>
   <string name="recovery">restitusjon</string>
@@ -99,7 +99,7 @@
   <string name="Map">Kart</string>
   <string name="Graph">Graf</string>
   <string name="Upload">Last opp</string>
-    <string name="Disconnect">Koble fra</string>
+  <string name="Disconnect">Koble fra</string>
   <string name="Resume">Gjenoppta</string>
   <string name="Save_activity">Lagre aktivitet</string>
   <string name="Upload_activity">Last opp aktivitet</string>
@@ -110,10 +110,10 @@
   <string name="Configure_accounts">Sett opp kontoer</string>
   <string name="Refresh">Gjenoppfrisk</string>
   <string name="Age">Alder</string>
-    <string name="Synchronizing">Synkroniserer:</string>
+  <string name="Synchronizing">Synkroniserer:</string>
   <string name="synchronizing_feed">synkroniseringsstrøm…</string>
   <string name="OK">OK</string>
-    <string name="Clear_uploads">Tøm opplastinger</string>
+  <string name="Clear_uploads">Tøm opplastinger</string>
   <string name="Upload_missing_workouts">Last opp (manglende) treningsøkter</string>
   <string name="Disconnect_account">Koble fra konto</string>
   <string name="Edit_activity">Rediger aktivitet</string>
@@ -130,12 +130,12 @@
   <string name="Enable_GPS">Skru på GPS</string>
   <string name="Waiting_for_GPS">Venter på GPS</string>
   <string name="Start_activity">Start aktivitet</string>
-    <string name="Clear_HR_settings">Tøm HR-innstillinger</string>
+  <string name="Clear_HR_settings">Tøm HR-innstillinger</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Hjerterytmemonitor støttes ikke på din enhet</string>
   <string name="Select_type_of_Bluetooth_device">Velg Blåtannsenhetstype</string>
   <string name="Scanning">Skanner</string>
   <string name="Failed_to_load_workout">Kunne ikke laste inn treningsøkt!</string>
-    <string name="Problem">Problem</string>
+  <string name="Problem">Problem</string>
   <string name="Edit_step">Rediger steg</string>
   <string name="Create_new_audio_cue_scheme">Lag nytt opplegg for lydinstrukser</string>
   <string name="Great">Flott!</string>
@@ -149,7 +149,7 @@
   <string name="Loading">Laster…</string>
   <string name="Saving">Lagrer</string>
   <string name="Cancellingplease_wait">Avbryter… vent</string>
-    <string name="Are_you_sure">Er du sikker?</string>
+  <string name="Are_you_sure">Er du sikker?</string>
   <string name="Configure_audio_cues">Sett opp lydinstrukser</string>
   <string name="Downloadeditremove_workouts">Last ned/rediger/fjern treningsøkter</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Merk, du må koble til kontoen også</string>
@@ -196,7 +196,7 @@
   <string name="Experimental_HRM_devices">Eksperimentelle HRM-enheter</string>
   <string name="Experimental_features">Eksperimentelle funksjoner</string>
   <string name="Mock_HRM_devices">Falske HRM-enheter</string>
-    <string name="About_RunnerUp">Om RunnerUp</string>
+  <string name="About_RunnerUp">Om RunnerUp</string>
   <string name="Triggers">Utløsere</string>
   <string name="Time_triggered_audio_cue">Tidsutløst lydinstruks</string>
   <string name="Cue_interval_s">Igangsettingsintervall (s)</string>

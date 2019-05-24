@@ -32,7 +32,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, rats</string>
   <!--other-->
-    <string name="Type">Tipe</string>
+  <string name="Type">Tipe</string>
   <string name="active">aktif</string>
   <string name="rest">istirahat</string>
   <string name="recovery">pemulihan</string>
@@ -95,7 +95,7 @@
   <string name="Map">Peta</string>
   <string name="Graph">Grafik</string>
   <string name="Upload">Unggah</string>
-    <string name="Disconnect">Lepaskan</string>
+  <string name="Disconnect">Lepaskan</string>
   <string name="Resume">Lanjutkan</string>
   <string name="Save_activity">Simpan aktivitas</string>
   <string name="Upload_activity">Unggah aktivitas</string>
@@ -106,10 +106,10 @@
   <string name="Configure_accounts">Pengaturan akun</string>
   <string name="Refresh">Segarkan</string>
   <string name="Age">Umur</string>
-    <string name="Synchronizing">Menyinkronkan:</string>
+  <string name="Synchronizing">Menyinkronkan:</string>
   <string name="synchronizing_feed">menyingkronkan umpan…</string>
   <string name="OK">OK</string>
-    <string name="Clear_uploads">Kosongkan unggahan</string>
+  <string name="Clear_uploads">Kosongkan unggahan</string>
   <string name="Upload_missing_workouts">Unggah latihan (yang belum ada)</string>
   <string name="Disconnect_account">Putuskan akun</string>
   <string name="Edit_activity">Edit aktivitas</string>
@@ -118,7 +118,7 @@
   <string name="Recompute_activity">Hitung ulang aktivitas</string>
   <string name="Configure_heart_rate_zones">Pengaturan zona denyut jantung</string>
   <string name="Clear_heart_rate_zone_settings">Kosongkan setelan zona denyut jantung</string>
-    <string name="Manage_audio_cues">Kelola isyarat suara</string>
+  <string name="Manage_audio_cues">Kelola isyarat suara</string>
   <string name="Manage_workouts">Kelola latihan</string>
   <string name="Settings">Setelan</string>
   <string name="Whats_new">Apa yang baru</string>
@@ -126,12 +126,12 @@
   <string name="Enable_GPS">Hidupkan GPS</string>
   <string name="Waiting_for_GPS">Menunggu GPS</string>
   <string name="Start_activity">Mulai aktivitas</string>
-    <string name="Clear_HR_settings">Kosongkan setelan DJ</string>
+  <string name="Clear_HR_settings">Kosongkan setelan DJ</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitor denyut jantung tidak didukung alat anda</string>
   <string name="Select_type_of_Bluetooth_device">Pilih tipe gawai Bluetooth</string>
   <string name="Scanning">Memindai</string>
   <string name="Failed_to_load_workout">Gagal mengunggah latihan!</string>
-    <string name="Problem">Masalah</string>
+  <string name="Problem">Masalah</string>
   <string name="Edit_step">Edit langkah</string>
   <string name="Create_new_audio_cue_scheme">Buat skema isyarat suara baru</string>
   <string name="Great">Hebat!</string>
@@ -145,7 +145,7 @@
   <string name="Loading">Memuat…</string>
   <string name="Saving">Menyimpan</string>
   <string name="Cancellingplease_wait">Membatalkan…harap tunggu</string>
-    <string name="Are_you_sure">Anda yakin?</string>
+  <string name="Are_you_sure">Anda yakin?</string>
   <string name="Configure_audio_cues">Pengaturan isyarat suara</string>
   <string name="Downloadeditremove_workouts">Unduh/edit/hapus latihan</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Catatan, anda perlu terhubung dengan akun</string>
@@ -190,7 +190,7 @@
   <string name="Experimental_HRM_devices">Gawai MDJ eksperimental</string>
   <string name="Experimental_features">Fitur eksperimental</string>
   <string name="Mock_HRM_devices">Tirukan peranti MDJ</string>
-    <string name="About_RunnerUp">Tentang RunnerUp</string>
+  <string name="About_RunnerUp">Tentang RunnerUp</string>
   <string name="Triggers">Picu</string>
   <string name="Time_triggered_audio_cue">Isyarat suara dipicu waktu</string>
   <string name="Cue_interval_s">Interval isyarat</string>
@@ -230,7 +230,7 @@
   <string name="History">Sejarah</string>
   <string name="Basic">Dasar</string>
   <string name="Advanced">Mahir</string>
-    <string name="Add_workout_notes">Tambahkan catatan latihan</string>
+  <string name="Add_workout_notes">Tambahkan catatan latihan</string>
   <string name="Pruning_deleted_activities_from_database">Pangkas aktivitas yang dihapus dari pangkalan data</string>
   <string name="Prune">Pangkas</string>
   <string name="Heartrate_zones_distribution">Distribusi zona denyut jantung</string>
