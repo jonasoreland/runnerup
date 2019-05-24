@@ -29,10 +29,11 @@
   <string name="Target_pace_HHMMSS">Целевой темп</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s в %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ОК</string>
   <!--other-->
-    <string name="Type">Тип</string>
+  <string name="Type">Тип</string>
   <string name="active">Движение</string>
   <string name="rest">отдых</string>
   <string name="recovery">восстановление</string>
@@ -45,6 +46,9 @@
   <string name="speed">скорость</string>
   <string name="pace">Темп</string>
   <string name="heart_rate_zone">Зона</string>
+  <string name="cadence">Каденс</string>
+  <string name="temperature">Температура</string>
+  <string name="pressure">Давление</string>
   <string name="Zone">Зоны ЧСС</string>
   <string name="Device">Устройство</string>
   <string name="Start_hour">Начальный час</string>
@@ -95,7 +99,7 @@
   <string name="Map">Карта</string>
   <string name="Graph">График</string>
   <string name="Upload">Выгрузить</string>
-    <string name="Disconnect">Отключиться</string>
+  <string name="Disconnect">Отключиться</string>
   <string name="Resume">Вернуться</string>
   <string name="Save_activity">Сохранить</string>
   <string name="Upload_activity">Выгрузить</string>
@@ -106,10 +110,10 @@
   <string name="Configure_accounts">Настройка фитнес аккаунтов</string>
   <string name="Refresh">Обновить</string>
   <string name="Age">Возраст</string>
-    <string name="Synchronizing">Синхронизация:</string>
+  <string name="Synchronizing">Синхронизация:</string>
   <string name="synchronizing_feed">синхронизируем фитнес аккаунты…</string>
   <string name="OK">ОК</string>
-    <string name="Clear_uploads">Очистить загруженные</string>
+  <string name="Clear_uploads">Очистить загруженные</string>
   <string name="Upload_missing_workouts">Выгрузить недостающие тренировки</string>
   <string name="Disconnect_account">Отключить аккаунт</string>
   <string name="Edit_activity">Редактировать</string>
@@ -118,7 +122,7 @@
   <string name="Recompute_activity">Пересчитать</string>
   <string name="Configure_heart_rate_zones">Настройка зон ЧСС</string>
   <string name="Clear_heart_rate_zone_settings">Очистить зоны ЧСС</string>
-    <string name="Manage_audio_cues">Настройка звукового сопровождения</string>
+  <string name="Manage_audio_cues">Настройка звукового сопровождения</string>
   <string name="Manage_workouts">Управление тренировкой</string>
   <string name="Settings">Настройки</string>
   <string name="Whats_new">Что нового</string>
@@ -126,12 +130,12 @@
   <string name="Enable_GPS">Включить GPS</string>
   <string name="Waiting_for_GPS">Ожидание GPS</string>
   <string name="Start_activity">Старт</string>
-    <string name="Clear_HR_settings">Восстановить настройки ЧСС</string>
+  <string name="Clear_HR_settings">Восстановить настройки ЧСС</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Датчик HRM не поддерживается твоим устройством</string>
   <string name="Select_type_of_Bluetooth_device">Выбор типа устройства Bluetooth</string>
   <string name="Scanning">Поиск</string>
   <string name="Failed_to_load_workout">Не удалось загрузить тренировку!!!</string>
-    <string name="Problem">Проблемы</string>
+  <string name="Problem">Проблемы</string>
   <string name="Edit_step">Редактирование интервала</string>
   <string name="Create_new_audio_cue_scheme">Создать голосовую схему</string>
   <string name="Great">Круто!</string>
@@ -145,7 +149,7 @@
   <string name="Loading">Загрузка…</string>
   <string name="Saving">Сохранение</string>
   <string name="Cancellingplease_wait">Отмена… подождите</string>
-    <string name="Are_you_sure">Уверен?</string>
+  <string name="Are_you_sure">Уверен?</string>
   <string name="Configure_audio_cues">Настройка голосового сопровождения</string>
   <string name="Downloadeditremove_workouts">Загрузка/редактирование/удаление тренировки</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Внимание, так же требуется подключиться к фитнес аккаунту</string>
@@ -171,6 +175,7 @@
   <string name="Unit_preference">Единицы измерений</string>
   <string name="Auto_start_GPS">Автоматически включать GPS</string>
   <string name="Advanced_options">Продвинутые настройки</string>
+  <string name="Mapbox_default_style">Стиль карты (Mapbox)</string>
   <string name="RunnerUp_live_address">RunnerUp live адрес сервера</string>
   <string name="Autopause_after_s">Автопауза - после N секунд (с) </string>
   <string name="Autopause_min_pace_minkm">Автопауза - минимальный темп (минут/км)</string>
@@ -185,12 +190,13 @@
   <string name="Smooth_pace_filters">Настройки сглаживания (с)</string>
   <string name="Poll_interval_ms">Интервал опроса (миллисекунд)</string>
   <string name="Poll_distance_m">Дистанция опроса (м)</string>
+  <string name="Adjust_altitude">Высота по GPS модели (EGM96)</string>
   <string name="Export">Экспорт</string>
   <string name="Import">Импорт</string>
   <string name="Experimental_HRM_devices">Тестовые HRM датчики</string>
   <string name="Experimental_features">Экспериментальные возможности</string>
   <string name="Mock_HRM_devices">Имитировать датчик HRM</string>
-    <string name="About_RunnerUp">О RunnerUp</string>
+  <string name="About_RunnerUp">О RunnerUp</string>
   <string name="Triggers">Получать информацию через интервалы:</string>
   <string name="Time_triggered_audio_cue">По времени</string>
   <string name="Cue_interval_s">Каждые N секунд (с)</string>
@@ -230,7 +236,7 @@
   <string name="History">Архив</string>
   <string name="Basic">Базовая</string>
   <string name="Advanced">Продвинутая</string>
-    <string name="Add_workout_notes">Добавить примечание</string>
+  <string name="Add_workout_notes">Добавить примечание</string>
   <string name="Pruning_deleted_activities_from_database">Очистить базу данных от ранее выгруженных записей</string>
   <string name="Prune">Очистка базы</string>
   <string name="Heartrate_zones_distribution">Распределение тренировки по зонам ЧСС  </string>
@@ -276,5 +282,21 @@
   <string name="Uploading_to_1s">Выгрузка в %1$s</string>
   <string name="Loading_activities">Загрузка данных</string>
   <string name="Fetching_activities_from_1s">Извлечение данных из %1$s</string>
+  <string name="No_feed_to_show">Нет данных для отображения</string>
+  <string name="Unused_currently">Устаревшие</string>
   <string name="Unknown">Неизвестно</string>
+  <string name="RunningFreeOnlinePasswordNotice">Примечание: Используй пароль \"secret key\" на SportTracks перед добавлением и синхронизацией</string>
+  <string name="Recording">Настройка записи движения</string>
+  <string name="Sensors">Настройка датчиков</string>
+  <string name="Maintenance">Управление базой данных</string>
+  <string name="cue_hrm_connection_restored">Подключение к HRM восстановлено.</string>
+  <string name="cue_hrm_connection_lost">Соединение с HRM потеряно.</string>
+  <string name="HRM_connection_audio_cue">HRM подключение вызывало голосовую схему</string>
+  <string name="latest_feed_click_to_refresh">Крайняя выгрузка (нажмите для обновления)</string>
+  <string name="log_extended_gps_summary">Выгрузка в GPX формате</string>
+  <string name="log_extended_gps_title">Лог данных GPS улучшенной точности</string>
+  <string name="use_step_sensor_title">Датчик шага</string>
+  <string name="use_step_sensor_summary">Частота шагов в минуту (каденс)</string>
+  <string name="use_temperature_sensor">Датчик температуры</string>
+  <string name="use_pressure_sensor_title">Датчик давления</string>
 </resources>

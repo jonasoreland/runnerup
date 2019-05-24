@@ -33,7 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, bueno, vale</string>
   <!--other-->
-    <string name="Type">Tipo</string>
+  <string name="Type">Tipo</string>
   <string name="active">activo</string>
   <string name="rest">descanso</string>
   <string name="recovery">recuperación</string>
@@ -99,7 +99,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Gráfico</string>
   <string name="Upload">Cargar</string>
-    <string name="Disconnect">Desconectar</string>
+  <string name="Disconnect">Desconectar</string>
   <string name="Resume">Reiniciar</string>
   <string name="Save_activity">Guardar actividad</string>
   <string name="Upload_activity">Subir actividad</string>
@@ -110,10 +110,10 @@
   <string name="Configure_accounts">Configurar cuentas</string>
   <string name="Refresh">Actualizar</string>
   <string name="Age">Edad</string>
-    <string name="Synchronizing">Sincronizando:</string>
+  <string name="Synchronizing">Sincronizando:</string>
   <string name="synchronizing_feed">sincronizando fuente…</string>
   <string name="OK">OK</string>
-    <string name="Clear_uploads">Limpiar subidas</string>
+  <string name="Clear_uploads">Limpiar subidas</string>
   <string name="Upload_missing_workouts">Subida (sin) actividades</string>
   <string name="Disconnect_account">Desconectar cuentas</string>
   <string name="Edit_activity">Editar acitvidad</string>
@@ -122,19 +122,20 @@
   <string name="Recompute_activity">Recalcular actividad</string>
   <string name="Configure_heart_rate_zones">Configurar zona de frecuencia cardíaca</string>
   <string name="Clear_heart_rate_zone_settings">Limpiar configuración de zona de frecuencia cardíaca</string>
-    <string name="Manage_audio_cues">Administrar indicaciones de audio</string>
+  <string name="Manage_audio_cues">Administrar indicaciones de audio</string>
   <string name="Manage_workouts">Gestionar actividades</string>
   <string name="Settings">Configuración</string>
   <string name="Whats_new">Novedades</string>
   <string name="Rate_RunnerUp">Puntúa RunnerUp</string>
   <string name="Enable_GPS">Habilitar GPS</string>
   <string name="Waiting_for_GPS">Esperando a señal GPS</string>
-    <string name="Clear_HR_settings">Limpiar preferencias de ritmo cardiaco</string>
+  <string name="Start_activity">Comenzar actividad</string>
+  <string name="Clear_HR_settings">Limpiar preferencias de ritmo cardiaco</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitor de ritmo cardiaco no soportado por tu dispositivo</string>
   <string name="Select_type_of_Bluetooth_device">Seleccione el tipo de dispositivo Bluetooth</string>
   <string name="Scanning">Buscando</string>
   <string name="Failed_to_load_workout">¡Error al cargar la actividad!</string>
-    <string name="Problem">Problema</string>
+  <string name="Problem">Problema</string>
   <string name="Edit_step">Editar paso</string>
   <string name="Create_new_audio_cue_scheme">Crear un nuevo plan de indicaciones de audio</string>
   <string name="Great">¡Genial!</string>
@@ -148,7 +149,7 @@
   <string name="Loading">Cargando…</string>
   <string name="Saving">Guardando</string>
   <string name="Cancellingplease_wait">Cancelando… por favor, espere</string>
-    <string name="Are_you_sure">¿Estas seguro?</string>
+  <string name="Are_you_sure">¿Estas seguro?</string>
   <string name="Configure_audio_cues">Configurar indicaciones de audio</string>
   <string name="Downloadeditremove_workouts">Descargar/editar/eliminar actividades</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Nota: tienes que conectar la cuenta también</string>
@@ -195,7 +196,7 @@
   <string name="Experimental_HRM_devices">Dispositivos HRM experimentales</string>
   <string name="Experimental_features">Características experimentales</string>
   <string name="Mock_HRM_devices">Simular dispositivos </string>
-    <string name="About_RunnerUp">Acerca de RunnerUp</string>
+  <string name="About_RunnerUp">Acerca de RunnerUp</string>
   <string name="Triggers">Disparadores</string>
   <string name="Time_triggered_audio_cue">Indicación de audio disparada por tiempo</string>
   <string name="Cue_interval_s">Intervalo(s) de indicaciones</string>
@@ -235,7 +236,7 @@
   <string name="History">Histórico</string>
   <string name="Basic">Básico</string>
   <string name="Advanced">Avanzado</string>
-    <string name="Add_workout_notes">Añadir notas al entremamiento</string>
+  <string name="Add_workout_notes">Añadir notas al entremamiento</string>
   <string name="Pruning_deleted_activities_from_database">Podar las actividades borradas de la base de datos</string>
   <string name="Prune">Podar</string>
   <string name="Heartrate_zones_distribution">Distribución de zonas de frecuencia cardiaca</string>
