@@ -103,7 +103,7 @@
   <string name="High_pace">Rythme max.</string>
   <string name="Sex">Sexe</string>
   <string name="upload">envoyer</string>
-  <string name="feed">actualités</string>
+  <string name="feed">Actualités</string>
   <string name="Notes">Notes</string>
   <string name="Laps">Tours</string>
   <string name="Map">Carte</string>
@@ -142,7 +142,7 @@
   <string name="Whats_new">Quoi de neuf ?</string>
   <string name="Rate_RunnerUp">Noter RunnerUp</string>
   <string name="Enable_GPS">Activer le GPS</string>
-  <string name="Waiting_for_GPS">En attente du GPS</string>
+  <string name="Waiting_for_GPS">En attente du GPS...</string>
   <string name="Start_activity">Démarrer la séance</string>
   <string name="Wear_OS_Device">Porter appareil OS</string>
   <string name="Clear_HR_settings">Supprimer les paramètres FC</string>
@@ -179,7 +179,7 @@
   <string name="Accounts">Comptes</string>
   <string name="Audio_cues">Suivi audio</string>
   <string name="Heart_Rate_Monitor">Cardiofréquencemètre </string>
-  <string name="Heart_Rate_Zones">Zones de Fréq. Cardiaque</string>
+  <string name="Heart_Rate_Zones">Zones de fréq. cardiaque</string>
   <string name="Autolap">Tour automatique</string>
   <string name="Autolap_m">Tour automatique (m)</string>
   <string name="Autopause">Pause automatique</string>
@@ -282,7 +282,7 @@
   <string name="Live">Actualités</string>
   <string name="Include_map_in_post">Inclure la carte dans la publication</string>
   <string name="Clear_uploads_from_phone">Supprimer les uploads (du téléphone)</string>
-  <string name="my_phone">mon téléphone</string>
+  <string name="my_phone">Mon téléphone</string>
   <string name="Failed_to_import">Impossible d\'importer :</string>
   <string name="Import_workout">Importation de l\'entraînement :</string>
   <string name="Saving_as">Sauvegarder comme</string>
@@ -312,6 +312,7 @@
   <string name="cue_hrm_connection_restored">Connexion au moniteur de fréquence cardiaque rétablie</string>
   <string name="cue_hrm_connection_lost">Connexion au moniteur de fréquence cardiaque perdue</string>
   <string name="HRM_connection_audio_cue">Signal sonore déclenché à la connexion au cardiofréquencemètre</string>
+  <string name="Audio_cue_unit">Inclure l\'unité dans le suivi audio</string>
   <string name="latest_feed_click_to_refresh">Dernier flux (cliquez pour rafraîchir)</string>
   <string name="log_extended_gps_summary">Exporter en GPX uniquement</string>
   <string name="log_extended_gps_title">Enregistrer les données GPS complètes</string>
@@ -325,4 +326,6 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Utiliser l\'altitude initiale du signal GPS pour obtenir une élévation barométrique moyenne</string>
   <string name="channel_notification_ongoing">RunnerUp GPS et notifications d\'activité</string>
   <string name="Lap_start">Début du tour</string>
+  <string name="Lock_activity_buttons">Verrouiller les boutons d\'activité</string>
+  <string name="Lock_activity_buttons_message">Verrouiller les boutons d\'activité d\'un clic rapide sur l\'entête</string>
 </resources>

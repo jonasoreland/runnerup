@@ -312,6 +312,7 @@
   <string name="cue_hrm_connection_restored">Återfått koppling till pulsmätare</string>
   <string name="cue_hrm_connection_lost">Tappat koppling till pulsmätare</string>
   <string name="HRM_connection_audio_cue">Meddelande triggat av koppling till pulsmätare</string>
+  <string name="Audio_cue_unit">Inkludera enhet i meddelanden</string>
   <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
   <string name="log_extended_gps_summary">Exportera enbart i GPX</string>
   <string name="log_extended_gps_title">Logga utökad GPS noggrannhetsdata</string>
@@ -325,4 +326,6 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
   <string name="channel_notification_ongoing">RunnerUp GPS och aktivtets notifikationer</string>
   <string name="Lap_start">Varv start</string>
+  <string name="Lock_activity_buttons">Lås aktivitetsknappar</string>
+  <string name="Lock_activity_buttons_message">Lås aktivitetsknappar genom att knacka snabbt på toppfälten</string>
 </resources>

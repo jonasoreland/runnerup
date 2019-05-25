@@ -312,6 +312,7 @@
   <string name="cue_hrm_connection_restored">Verbinding met hartslagmonitor hersteld</string>
   <string name="cue_hrm_connection_lost">Verbinding met hartslagmonitor verbroken</string>
   <string name="HRM_connection_audio_cue">HRM-verbinding triggerde een auditief signaal</string>
+  <string name="Audio_cue_unit">Eenheid opnemen in auditief signaal</string>
   <string name="latest_feed_click_to_refresh">Recente feed (druk om te verversen)</string>
   <string name="log_extended_gps_summary">Alleen in GPX exporteren</string>
   <string name="log_extended_gps_title">Uitgebreide GPS-nauwkeurigheidsgegeven loggen</string>
@@ -325,4 +326,6 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Gebruik de initiële GPS-stijging om het barometergemiddelde in te stellen</string>
   <string name="channel_notification_ongoing">RunnerUp GPS- en activiteitsmeldingen</string>
   <string name="Lap_start">Ronde starten</string>
+  <string name="Lock_activity_buttons">Activiteitsknoppen vergrendelen</string>
+  <string name="Lock_activity_buttons_message">Activiteitsknoppen vergrendelen door snel op de koptekst te drukken</string>
 </resources>
