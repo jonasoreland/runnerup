@@ -33,7 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ok, sorcetti</string>
   <!--other-->
-    <string name="Type">Tipo</string>
+  <string name="Type">Tipo</string>
   <string name="active">attivo</string>
   <string name="rest">riposo</string>
   <string name="recovery">recupero</string>
@@ -46,6 +46,9 @@
   <string name="speed">velocità</string>
   <string name="pace">ritmo</string>
   <string name="heart_rate_zone">zona bpm</string>
+  <string name="cadence">cadenza</string>
+  <string name="temperature">temperatura</string>
+  <string name="pressure">pressione</string>
   <string name="Zone">Zona</string>
   <string name="Device">Dispositivo</string>
   <string name="Start_hour">Ora di inizio</string>
@@ -96,7 +99,7 @@
   <string name="Map">Mappa</string>
   <string name="Graph">Grafico</string>
   <string name="Upload">Carica</string>
-    <string name="Disconnect">Disconnetti</string>
+  <string name="Disconnect">Disconnetti</string>
   <string name="Resume">Riprendi</string>
   <string name="Save_activity">Salva attività</string>
   <string name="Upload_activity">Carica attività</string>
@@ -107,10 +110,10 @@
   <string name="Configure_accounts">Configura account</string>
   <string name="Refresh">Aggiorna</string>
   <string name="Age">Età</string>
-    <string name="Synchronizing">Sincronizzando:</string>
+  <string name="Synchronizing">Sincronizzando:</string>
   <string name="synchronizing_feed">sincronizzando feed…</string>
   <string name="OK">OK</string>
-    <string name="Clear_uploads">Svuota caricamenti</string>
+  <string name="Clear_uploads">Svuota caricamenti</string>
   <string name="Upload_missing_workouts">Carica allenamenti (mancanti)</string>
   <string name="Disconnect_account">Disconnetti account</string>
   <string name="Edit_activity">Modifica attività</string>
@@ -119,7 +122,7 @@
   <string name="Recompute_activity">Ricalcola attività</string>
   <string name="Configure_heart_rate_zones">Configura zone BPM</string>
   <string name="Clear_heart_rate_zone_settings">Elimina impostazioni zona BPM</string>
-    <string name="Manage_audio_cues">Gestisci riferimenti audio</string>
+  <string name="Manage_audio_cues">Gestisci riferimenti audio</string>
   <string name="Manage_workouts">Gestisci allenamenti</string>
   <string name="Settings">Impostazioni</string>
   <string name="Whats_new">Novità</string>
@@ -127,12 +130,12 @@
   <string name="Enable_GPS">Attiva GPS</string>
   <string name="Waiting_for_GPS">In attesa di segnale GPS</string>
   <string name="Start_activity">Inizia attività</string>
-    <string name="Clear_HR_settings">Cancella impostazioni frequenza cardiaca</string>
+  <string name="Clear_HR_settings">Cancella impostazioni frequenza cardiaca</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitoraggio frequenza cardiaca non supportata per questo dispositivo</string>
   <string name="Select_type_of_Bluetooth_device">Seleziona tipo dispositivo Bluetooth</string>
   <string name="Scanning">Ricerca…</string>
   <string name="Failed_to_load_workout">Caricamento allenamento fallito!!</string>
-    <string name="Problem">Problema</string>
+  <string name="Problem">Problema</string>
   <string name="Edit_step">Modifica passo</string>
   <string name="Create_new_audio_cue_scheme">Crea nuovo schema riferimenti audio</string>
   <string name="Great">Grande!</string>
@@ -146,7 +149,7 @@
   <string name="Loading">Caricamento…</string>
   <string name="Saving">Salvando…</string>
   <string name="Cancellingplease_wait">Cancellando…prego attendere</string>
-    <string name="Are_you_sure">Ne sei sicuro?</string>
+  <string name="Are_you_sure">Ne sei sicuro?</string>
   <string name="Configure_audio_cues">Configura riferimenti audio</string>
   <string name="Downloadeditremove_workouts">Scarica/modifica/rimuovi allenamenti</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Attento, devi anche connettere l\'account</string>
@@ -172,6 +175,7 @@
   <string name="Unit_preference">Preferenza unità di misura</string>
   <string name="Auto_start_GPS">Avvia GPS automaticamente</string>
   <string name="Advanced_options">Opzioni avanzate</string>
+  <string name="Mapbox_default_style">Stile del Mapbox</string>
   <string name="RunnerUp_live_address">Indirizzo RunnerUpLive</string>
   <string name="Autopause_after_s">Pausa automatica dopo (s)</string>
   <string name="Autopause_min_pace_minkm">Autopausa al di sotto del passo minimo (min/km)</string>
@@ -192,7 +196,7 @@
   <string name="Experimental_HRM_devices">Dispositivi HRM sperimentali</string>
   <string name="Experimental_features">Funzionalità sperimentali</string>
   <string name="Mock_HRM_devices">Dispositivi HRM \"fantoccio\"</string>
-    <string name="About_RunnerUp">Info su RunnerUp</string>
+  <string name="About_RunnerUp">Info su RunnerUp</string>
   <string name="Triggers">Eventi</string>
   <string name="Time_triggered_audio_cue">Riferimento audio attivato per tempo</string>
   <string name="Cue_interval_s">Intervallo riferimento (m)</string>
@@ -232,7 +236,7 @@
   <string name="History">Cronologia</string>
   <string name="Basic">Semplice</string>
   <string name="Advanced">Avanzato</string>
-    <string name="Add_workout_notes">Aggiungi note allenamento</string>
+  <string name="Add_workout_notes">Aggiungi note allenamento</string>
   <string name="Pruning_deleted_activities_from_database">Scarta dal database le attività eliminate</string>
   <string name="Prune">Scarta</string>
   <string name="Heartrate_zones_distribution">Distribuzione zone BPM</string>
@@ -284,5 +288,14 @@
   <string name="Recording">Registrazione in corso</string>
   <string name="Sensors">Sensori</string>
   <string name="Maintenance">Manutenzione</string>
+  <string name="cue_hrm_connection_restored">Connessione per il controllo del battito cardiaco ristabilita </string>
+  <string name="cue_hrm_connection_lost">Connessione per il controllo del battito cardiaco interrotta</string>
+  <string name="HRM_connection_audio_cue">Allarme generato dal controllo del battito cardiaco</string>
   <string name="latest_feed_click_to_refresh">Ultimo feed (click per aggiornare)</string>
+  <string name="log_extended_gps_summary">Esposta solo in GPX</string>
+  <string name="log_extended_gps_title">Log dell\'accuratezza del GPS</string>
+  <string name="use_step_sensor_title">Sensore dei passi</string>
+  <string name="use_step_sensor_summary">Usa per cadenza</string>
+  <string name="use_temperature_sensor">Sensore della temperatura</string>
+  <string name="use_pressure_sensor_title">Sensore della pressione</string>
 </resources>

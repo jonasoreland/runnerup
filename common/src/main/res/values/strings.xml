@@ -27,8 +27,8 @@
   <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
   <string name="Target_pace_HHMMSS">Target pace</string>
-  <!-- strings with argument to provide -->
-  <!-- first argument is a date, second a time, for instance: "Yesterday at 13:32" -->
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s at %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK, rats</string>
@@ -170,8 +170,8 @@
   <string name="Downloadeditremove_workouts">Download/edit/remove workouts</string>
   <string name="Note_you_need_to_connect_to_the_account_too">You need to connect to a RunnerUp Live account</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Use your headset to start/pause/resume RunnerUp</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">On the Interval tab, convert distance-based "Rest" steps to "Recovery" steps</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">On the Advanced tab, convert distance-based "Rest" steps to "Recovery" steps</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">On the Interval tab, convert distance-based \"Rest\" steps to \"Recovery\" steps</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">On the Advanced tab, convert distance-based \"Rest\" steps to \"Recovery\" steps</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to storage</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from storage</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if having set target)</string>
@@ -306,7 +306,7 @@
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Unused currently.</string>
   <string name="Unknown">Unknown</string>
-  <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add > Sync Training > SportTracks.</string>
+  <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Maintenance</string>

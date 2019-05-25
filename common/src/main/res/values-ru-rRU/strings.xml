@@ -32,7 +32,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">ОК</string>
   <!--other-->
-    <string name="Type">Тип</string>
+  <string name="Type">Тип</string>
   <string name="active">Движение</string>
   <string name="rest">отдых</string>
   <string name="recovery">восстановление</string>
@@ -95,7 +95,7 @@
   <string name="Map">Карта</string>
   <string name="Graph">График</string>
   <string name="Upload">Выгрузить</string>
-    <string name="Disconnect">Отключиться</string>
+  <string name="Disconnect">Отключиться</string>
   <string name="Resume">Вернуться</string>
   <string name="Save_activity">Сохранить</string>
   <string name="Upload_activity">Выгрузить</string>
@@ -106,10 +106,10 @@
   <string name="Configure_accounts">Настройка фитнес аккаунтов</string>
   <string name="Refresh">Обновить</string>
   <string name="Age">Возраст</string>
-    <string name="Synchronizing">Синхронизация:</string>
+  <string name="Synchronizing">Синхронизация:</string>
   <string name="synchronizing_feed">синхронизируем фитнес аккаунты…</string>
   <string name="OK">ОК</string>
-    <string name="Clear_uploads">Очистить загруженные</string>
+  <string name="Clear_uploads">Очистить загруженные</string>
   <string name="Upload_missing_workouts">Выгрузить недостающие тренировки</string>
   <string name="Disconnect_account">Отключить аккаунт</string>
   <string name="Edit_activity">Редактировать</string>
@@ -118,7 +118,7 @@
   <string name="Recompute_activity">Пересчитать</string>
   <string name="Configure_heart_rate_zones">Настройка зон ЧСС</string>
   <string name="Clear_heart_rate_zone_settings">Очистить зоны ЧСС</string>
-    <string name="Manage_audio_cues">Настройка звукового сопровождения</string>
+  <string name="Manage_audio_cues">Настройка звукового сопровождения</string>
   <string name="Manage_workouts">Управление тренировкой</string>
   <string name="Settings">Настройки</string>
   <string name="Whats_new">Что нового</string>
@@ -126,12 +126,12 @@
   <string name="Enable_GPS">Включить GPS</string>
   <string name="Waiting_for_GPS">Ожидание GPS</string>
   <string name="Start_activity">Старт</string>
-    <string name="Clear_HR_settings">Восстановить настройки ЧСС</string>
+  <string name="Clear_HR_settings">Восстановить настройки ЧСС</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Датчик HRM не поддерживается твоим устройством</string>
   <string name="Select_type_of_Bluetooth_device">Выбор типа устройства Bluetooth</string>
   <string name="Scanning">Поиск</string>
   <string name="Failed_to_load_workout">Не удалось загрузить тренировку!!!</string>
-    <string name="Problem">Проблемы</string>
+  <string name="Problem">Проблемы</string>
   <string name="Edit_step">Редактирование интервала</string>
   <string name="Create_new_audio_cue_scheme">Создать голосовую схему</string>
   <string name="Great">Круто!</string>
@@ -145,7 +145,7 @@
   <string name="Loading">Загрузка…</string>
   <string name="Saving">Сохранение</string>
   <string name="Cancellingplease_wait">Отмена… подождите</string>
-    <string name="Are_you_sure">Уверен?</string>
+  <string name="Are_you_sure">Уверен?</string>
   <string name="Configure_audio_cues">Настройка голосового сопровождения</string>
   <string name="Downloadeditremove_workouts">Загрузка/редактирование/удаление тренировки</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Внимание, так же требуется подключиться к фитнес аккаунту</string>
@@ -190,7 +190,7 @@
   <string name="Experimental_HRM_devices">Тестовые HRM датчики</string>
   <string name="Experimental_features">Экспериментальные возможности</string>
   <string name="Mock_HRM_devices">Имитировать датчик HRM</string>
-    <string name="About_RunnerUp">О RunnerUp</string>
+  <string name="About_RunnerUp">О RunnerUp</string>
   <string name="Triggers">Получать информацию через интервалы:</string>
   <string name="Time_triggered_audio_cue">По времени</string>
   <string name="Cue_interval_s">Каждые N секунд (с)</string>
@@ -230,7 +230,7 @@
   <string name="History">Архив</string>
   <string name="Basic">Базовая</string>
   <string name="Advanced">Продвинутая</string>
-    <string name="Add_workout_notes">Добавить примечание</string>
+  <string name="Add_workout_notes">Добавить примечание</string>
   <string name="Pruning_deleted_activities_from_database">Очистить базу данных от ранее выгруженных записей</string>
   <string name="Prune">Очистка базы</string>
   <string name="Heartrate_zones_distribution">Распределение тренировки по зонам ЧСС  </string>

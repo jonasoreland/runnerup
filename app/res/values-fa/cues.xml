@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">فعالیت</string>
+  <string name="cue_interval">فاصله</string>
+  <string name="cue_lap">دور</string>
+  <string name="cue_warmup">گرم کردن</string>
+  <string name="cue_cooldown">سرد شدن</string>
+  <string name="cue_current">جریان</string>
+  <string name="cue_perkilometer">در کیلومتر</string>
+  <string name="cue_permile">در مایل</string>
+  <string name="cue_started">شروع شده</string>
+  <string name="cue_paused">متوقف شده</string>
+  <string name="cue_resumed">ادامه داده شده</string>
+  <string name="cue_stopped">ایستاده شده</string>
+  <string name="cue_completed">تمام شده</string>
+  <string name="cue_speedup">افزایش سرعت</string>
+  <string name="cue_slowdown">کاهش سرعت</string>
+  <plurals name="cue_hour">
+    <item quantity="one">%d ساعت</item>
+    <item quantity="other">%d ساعت</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">%d دقیقه</item>
+    <item quantity="other">%d دقیقه</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">%d ثانیه</item>
+    <item quantity="other">%d ثانیه</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">%d متر</item>
+    <item quantity="other">%d متر</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">%s کیلومتر</item>
+    <item quantity="other">%s کیلومتر</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">%s مایل</item>
+    <item quantity="other">%s مایل</item>
+  </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s کیلومتر در ساعت</item>
+    <item quantity="other">%s کیلومتر در ساعت</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s مایل در ساعت</item>
+    <item quantity="other">%s مایل در ساعت</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">%dتپش در دقیقه</item>
+    <item quantity="other">%d تپش بر دقیقه</item>
+  </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d آر.پی.ام</item>
+    <item quantity="other">%d آر.پی.ام</item>
+  </plurals>
+  <string name="cue_activity_paused">فعالیت متوقف شده است</string>
+  <string name="cue_activity_resumed">فعالیت ادامه داده شد</string>
+  <string name="cue_activity_stopped">فعالیت ایستاده شد</string>
+  <string name="cue_lap_started">دور شروع شد</string>
+  <string name="cue_lap_completed">دور تمام شد</string>
+  <string name="cue_warmup_started">گرم کردن شروع شد</string>
+  <string name="cue_cooldown_started">سرد کردن شروع شد</string>
+</resources>

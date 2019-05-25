@@ -33,13 +33,14 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK, nedrans</string>
   <!--other-->
-    <string name="Type">Typ</string>
+  <string name="Type">Typ</string>
   <string name="active">aktiv</string>
   <string name="rest">vila</string>
   <string name="recovery">återhämtning</string>
   <string name="warm_up">uppvärmning</string>
   <string name="cool_down">nedvarvning</string>
   <string name="repeat">upprepning</string>
+  <string name="repeat_times">Upprepa %1$dx</string>
   <string name="time">tid</string>
   <string name="distance">distans</string>
   <string name="Distance">Distans</string>
@@ -77,7 +78,16 @@
   <string name="Rest_type">Vilotyp</string>
   <string name="Repetitions">Upprepningar</string>
   <string name="Date">Datum</string>
+  <string name="No_devices_connected">Inga enheter kopplade</string>
   <string name="GPS_satellites">GPS satelliter</string>
+  <string name="GPS_indicator_off">GPS av</string>
+  <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
+  <string name="GPS_status_no_accuracy">GPS: %1$d/%2$d satelliter</string>
+  <string name="GPS_accuracy_elevation">nog. %1$s, höjd %2$s</string>
+  <string name="GPS_accuracy_no_elevation">noggrannhet %s</string>
+  <string name="GPS_level_poor">Dålig GPS</string>
+  <string name="GPS_level_acceptable">Acceptabel GPS</string>
+  <string name="GPS_level_good">Bra GPS</string>
   <string name="Start_GPS">Starta GPS</string>
   <string name="Duration">Varaktighet</string>
   <string name="Cancel">Avbryt</string>
@@ -99,7 +109,7 @@
   <string name="Map">Karta</string>
   <string name="Graph">Diagram</string>
   <string name="Upload">Ladda upp</string>
-    <string name="Disconnect">Koppla ifrån</string>
+  <string name="Disconnect">Koppla ifrån</string>
   <string name="Resume">Återuppta</string>
   <string name="Save_activity">Spara aktivitet</string>
   <string name="Upload_activity">Ladda upp aktivitet</string>
@@ -113,7 +123,10 @@
   <string name="Synchronizing">Synkroniserar:</string>
   <string name="synchronizing_feed">synkroniserar flöde…</string>
   <string name="OK">OK</string>
+  <string name="accounts_category_connected">Hantera kopplingar</string>
+  <string name="accounts_category_unconnected">Koppla konto</string>
   <string name="Show_disabled_accounts">Visa inaktiverade konton</string>
+  <string name="Hide_disabled_accounts">Dölj inaktiverade konton</string>
   <string name="Clear_uploads">Rensa uppladdningar</string>
   <string name="Upload_missing_workouts">Ladda upp (saknade) träningspass</string>
   <string name="Disconnect_account">Koppla ifrån konto</string>
@@ -131,6 +144,7 @@
   <string name="Enable_GPS">Slå på GPS</string>
   <string name="Waiting_for_GPS">Väntar på GPS</string>
   <string name="Start_activity">Starta aktivitet</string>
+  <string name="Wear_OS_Device">Wear OS enhet</string>
   <string name="Clear_HR_settings">Rensa puls-inställningar</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Pulsmätare stöds inte för din enhet</string>
   <string name="Select_type_of_Bluetooth_device">Välj typ av Bluetooth-enhet</string>
@@ -228,6 +242,8 @@
   <string name="Current_speed">Aktuell hastighet</string>
   <string name="Current_heart_rate">Aktuell puls</string>
   <string name="Current_heart_rate_zone">Aktuell pulszon</string>
+  <string name="Current_cadence">Aktuell kadens</string>
+  <string name="Current">Aktuell</string>
   <string name="Misc_cues">Övriga meddelanden</string>
   <string name="Target_coaching">Mål-coachning</string>
   <string name="Skip_event_audio_cues">Skippa ljudmeddelanden</string>
@@ -237,6 +253,8 @@
   <string name="History">Historik</string>
   <string name="Basic">Standard</string>
   <string name="Advanced">Avancerat</string>
+  <string name="Manual_activity_title">Lägg till manuell aktivitet</string>
+  <string name="Add_manual_entry">Lägg till manuell aktivitet</string>
   <string name="Add_workout_notes">Lägg till noteringar</string>
   <string name="Pruning_deleted_activities_from_database">Radera borttagna aktiviteter från databasen</string>
   <string name="Prune">Radera</string>
@@ -277,6 +295,7 @@
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hej\nHär är ett träningspass jag tror du skulle gilla.</string>
   <string name="Share_workout">Dela träningspass…</string>
   <string name="New_audio_scheme">Nytt ljudschema</string>
+  <string name="GPS_permission_required">GPS behörighet krävs</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om ditt träningspass</string>
   <string name="Downloading_from_1s">Laddar ner från %1$s</string>
@@ -293,9 +312,11 @@
   <string name="cue_hrm_connection_restored">Återfått koppling till pulsmätare</string>
   <string name="cue_hrm_connection_lost">Tappat koppling till pulsmätare</string>
   <string name="HRM_connection_audio_cue">Meddelande triggat av koppling till pulsmätare</string>
+  <string name="Audio_cue_unit">Inkludera enhet i meddelanden</string>
   <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
   <string name="log_extended_gps_summary">Exportera enbart i GPX</string>
   <string name="log_extended_gps_title">Logga utökad GPS noggrannhetsdata</string>
+  <string name="Current_speed_from_GPS_points">Aktuell fart från GPS punkter</string>
   <string name="use_step_sensor_title">Stegsensor</string>
   <string name="use_step_sensor_summary">Använd till kadens</string>
   <string name="use_temperature_sensor">Temperatursensor</string>
@@ -303,27 +324,8 @@
   <string name="use_pressure_sensor_summary">Använd barometer för höjd</string>
   <string name="adjust_barometer_altitude_from_gps">Justera barometerhöjd till GPS höjd</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
-  <string name="Wear_OS_Device">Wear OS enhet</string>
-  <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
-  <string name="GPS_status_no_accuracy">GPS: %1$d/%2$d satelliter</string>
-  <string name="GPS_accuracy_elevation">nog. %1$s, höjd %2$s</string>
-  <string name="GPS_accuracy_no_elevation">noggrannhet %s</string>
-  <string name="GPS_level_poor">Dålig GPS</string>
-  <string name="GPS_level_acceptable">Acceptabel GPS</string>
-  <string name="GPS_level_good">Bra GPS</string>
-  <string name="accounts_category_connected">Hantera kopplingar</string>
-  <string name="accounts_category_unconnected">Koppla konto</string>
-  <string name="Hide_disabled_accounts">Dölj inaktiverade konton</string>
-  <string name="Lap_start">Varv start</string>
   <string name="channel_notification_ongoing">RunnerUp GPS och aktivtets notifikationer</string>
-  <string name="GPS_permission_required">GPS behörighet krävs</string>
-  <string name="GPS_indicator_off">GPS av</string>
-  <string name="No_devices_connected">Inga enheter kopplade</string>
-  <string name="Current_cadence">Aktuell kadens</string>
-  <string name="Manual_activity_title">Lägg till manuell aktivitet</string>
-  <string name="Add_manual_entry">Lägg till manuell aktivitet</string>
-  <string name="repeat_times">Upprepa %1$dx</string>
-  <string name="Current">Aktuell</string>
-  <string name="Current_speed_from_GPS_points">Aktuell fart från GPS punkter</string>
-  <string name="Audio_cue_unit">Inkludera enhet i meddelanden</string>
+  <string name="Lap_start">Varv start</string>
+  <string name="Lock_activity_buttons">Lås aktivitetsknappar</string>
+  <string name="Lock_activity_buttons_message">Lås aktivitetsknappar genom att knacka snabbt på toppfälten</string>
 </resources>

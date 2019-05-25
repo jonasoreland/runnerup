@@ -312,6 +312,7 @@
   <string name="cue_hrm_connection_restored">心拍数モニターへの接続を回復しました</string>
   <string name="cue_hrm_connection_lost">心拍数モニターへの接続がなくなりました</string>
   <string name="HRM_connection_audio_cue">心拍数モニター接続でトリガーされる音声合図</string>
+  <string name="Audio_cue_unit">音声の合図に単位を含める</string>
   <string name="latest_feed_click_to_refresh">最新フィード (クリックするとリフレッシュ)</string>
   <string name="log_extended_gps_summary">GPX でのみエクスポート</string>
   <string name="log_extended_gps_title">拡張 GPS 精度データを記録する</string>
@@ -325,4 +326,6 @@
   <string name="adjust_barometer_elevation_from_gps_summary">最初の GPS 高度を使用して気圧計の高度を平均化する</string>
   <string name="channel_notification_ongoing">RunnerUp GPS とアクティビティ通知</string>
   <string name="Lap_start">ラップ開始</string>
+  <string name="Lock_activity_buttons">アクティビティボタンをロックする</string>
+  <string name="Lock_activity_buttons_message">ヘッダーを早くクリックするとアクティビティボタンをロックします</string>
 </resources>

@@ -42,7 +42,7 @@
     <item>Pace</item>
     <item>Heartrate zone</item>
   </string-array>
-  <!-- Note: keep in same order as DB.ACCOUNT.SPORT_ -->
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Running</item>
     <item>Biking</item>

@@ -32,7 +32,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK, rats</string>
   <!--other-->
-    <string name="Type">Type</string>
+  <string name="Type">Type</string>
   <string name="active">actief</string>
   <string name="rest">rust</string>
   <string name="recovery">herstel</string>
@@ -94,7 +94,7 @@
   <string name="Map">Kaart</string>
   <string name="Graph">Grafiek</string>
   <string name="Upload">Upload</string>
-    <string name="Disconnect">Verbinding verbreken</string>
+  <string name="Disconnect">Verbinding verbreken</string>
   <string name="Resume">Doorgaan</string>
   <string name="Save_activity">Activiteit opslaan</string>
   <string name="Upload_activity">Activiteit uploaden</string>
@@ -105,10 +105,10 @@
   <string name="Configure_accounts">Accounts configureren</string>
   <string name="Refresh">Veversen</string>
   <string name="Age">Leeftijd</string>
-    <string name="Synchronizing">Synchroniseren:</string>
+  <string name="Synchronizing">Synchroniseren:</string>
   <string name="synchronizing_feed">synchroniseren van de feed…</string>
   <string name="OK">OK</string>
-    <string name="Clear_uploads">Uploads wissen</string>
+  <string name="Clear_uploads">Uploads wissen</string>
   <string name="Upload_missing_workouts">Upload (ontbrekende) trainingen</string>
   <string name="Disconnect_account">Account ontkoppelen</string>
   <string name="Edit_activity">Activiteit bewerken</string>
@@ -117,7 +117,7 @@
   <string name="Recompute_activity">Activiteit herberekenen</string>
   <string name="Configure_heart_rate_zones">Hartslagzones instellen</string>
   <string name="Clear_heart_rate_zone_settings">Hartslagzone instellingen verwijderen</string>
-    <string name="Manage_audio_cues">Beheer auditieve signalen</string>
+  <string name="Manage_audio_cues">Beheer auditieve signalen</string>
   <string name="Manage_workouts">Trainingen beheren</string>
   <string name="Settings">Instellingen</string>
   <string name="Whats_new">Wat is nieuw</string>
@@ -125,12 +125,12 @@
   <string name="Enable_GPS">GPS inschakelen</string>
   <string name="Waiting_for_GPS">Wachten op GPS signaal</string>
   <string name="Start_activity">Activiteit starten</string>
-    <string name="Clear_HR_settings">HR instellingen verwijderen</string>
+  <string name="Clear_HR_settings">HR instellingen verwijderen</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Hartslagmeter wordt niet ondersteund door uw toestel</string>
   <string name="Select_type_of_Bluetooth_device">Selecteer het type Bluetooth-apparaat</string>
   <string name="Scanning">Zoeken naar</string>
   <string name="Failed_to_load_workout">De training kon niet geladen worden!!</string>
-    <string name="Problem">Probleem</string>
+  <string name="Problem">Probleem</string>
   <string name="Edit_step">Stap bewerken</string>
   <string name="Create_new_audio_cue_scheme">Nieuwe auditieve signaal schema aanmaken</string>
   <string name="Great">Geweldig!</string>
@@ -144,7 +144,7 @@
   <string name="Loading">Laden…</string>
   <string name="Saving">Opslaan</string>
   <string name="Cancellingplease_wait">Annuleren…even geduld aub</string>
-    <string name="Are_you_sure">Weet u het zeker?</string>
+  <string name="Are_you_sure">Weet u het zeker?</string>
   <string name="Configure_audio_cues">Auditieve signalen instellen</string>
   <string name="Downloadeditremove_workouts">Downloaden/bewerken/verwijderen trainingen</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Let op, u moet ook verbinding maken met uw account</string>
@@ -188,7 +188,7 @@
   <string name="Import">Importeer</string>
   <string name="Experimental_HRM_devices">Experimentele HRM apparaten</string>
   <string name="Mock_HRM_devices">Onechte HRM apparaten</string>
-    <string name="About_RunnerUp">Over RunnerUp</string>
+  <string name="About_RunnerUp">Over RunnerUp</string>
   <string name="Triggers">Triggers</string>
   <string name="Time_triggered_audio_cue">Tijd getriggerde auditieve signaal</string>
   <string name="Cue_interval_s">Signaal interval (s)</string>
@@ -221,7 +221,7 @@
   <string name="History">Historie</string>
   <string name="Basic">Basis</string>
   <string name="Advanced">Geavanceerd</string>
-    <string name="Add_workout_notes">Training notities toevoegen</string>
+  <string name="Add_workout_notes">Training notities toevoegen</string>
   <string name="Pruning_deleted_activities_from_database">Verwijderde activiteiten uit de database opschonen</string>
   <string name="Prune">Opschonen</string>
   <string name="Heartrate_zones_distribution">Distributie hartslagzones</string>

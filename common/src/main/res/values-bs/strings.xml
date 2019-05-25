@@ -33,7 +33,7 @@
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">OK, miševi</string>
   <!--other-->
-    <string name="Type">Tip</string>
+  <string name="Type">Tip</string>
   <string name="active">aktivan</string>
   <string name="rest">odmor</string>
   <string name="recovery">oporavak</string>
@@ -99,7 +99,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Grafik</string>
   <string name="Upload">Upload</string>
-    <string name="Disconnect">Diskonektuj</string>
+  <string name="Disconnect">Diskonektuj</string>
   <string name="Resume">Nastavi</string>
   <string name="Save_activity">Snimi aktivnost</string>
   <string name="Upload_activity">Upload aktivnosti</string>
@@ -110,10 +110,10 @@
   <string name="Configure_accounts">Konfiguriši račune</string>
   <string name="Refresh">Osvježi</string>
   <string name="Age">Godine</string>
-    <string name="Synchronizing">Sinhronizacija:</string>
+  <string name="Synchronizing">Sinhronizacija:</string>
   <string name="synchronizing_feed">sinhronizacija vrijesti…</string>
   <string name="OK">OK</string>
-    <string name="Clear_uploads">Očisti uploade</string>
+  <string name="Clear_uploads">Očisti uploade</string>
   <string name="Upload_missing_workouts">Upload treninga (koji nedostaju)</string>
   <string name="Disconnect_account">Otkači račun</string>
   <string name="Edit_activity">Izmijeni aktivnost</string>
@@ -122,7 +122,7 @@
   <string name="Recompute_activity">Preračunaj aktivnost</string>
   <string name="Configure_heart_rate_zones">Podesi zone pulsa</string>
   <string name="Clear_heart_rate_zone_settings">Obriši postavke zona pulsa</string>
-    <string name="Manage_audio_cues">Upravljanje audio nampomenama</string>
+  <string name="Manage_audio_cues">Upravljanje audio nampomenama</string>
   <string name="Manage_workouts">Upravljanje treninzima</string>
   <string name="Settings">Postavke</string>
   <string name="Whats_new">Šta je novo</string>
@@ -130,12 +130,12 @@
   <string name="Enable_GPS">Uključi GPS</string>
   <string name="Waiting_for_GPS">Čekanje na GPS</string>
   <string name="Start_activity">Počni aktivnost</string>
-    <string name="Clear_HR_settings">Očisti postavke pulsa</string>
+  <string name="Clear_HR_settings">Očisti postavke pulsa</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Monitoring pulsa nije podržan za vaš uređaj</string>
   <string name="Select_type_of_Bluetooth_device">Odaberi tip Bluetooth uređaja</string>
   <string name="Scanning">Skeniranje</string>
   <string name="Failed_to_load_workout">Greška učitavanja treninga!!</string>
-    <string name="Problem">Problem</string>
+  <string name="Problem">Problem</string>
   <string name="Edit_step">Promijeni korak</string>
   <string name="Create_new_audio_cue_scheme">Napravi novu šemu audio napomena</string>
   <string name="Great">Sjajno!</string>
@@ -149,7 +149,7 @@
   <string name="Loading">Učitavanje…</string>
   <string name="Saving">Snimanje</string>
   <string name="Cancellingplease_wait">Otkazivanje… molim sačekajte</string>
-    <string name="Are_you_sure">Jeste li sigurni?</string>
+  <string name="Are_you_sure">Jeste li sigurni?</string>
   <string name="Configure_audio_cues">Podesi audio napomene</string>
   <string name="Downloadeditremove_workouts">Skidanje/uređivanje/brisanje treninga</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Napomena, potrebno je da se konektujete na račun</string>
@@ -196,7 +196,7 @@
   <string name="Experimental_HRM_devices">Eksperimentalni uređaji za mjerenje pulsa</string>
   <string name="Experimental_features">Eksperimentalne funkcije</string>
   <string name="Mock_HRM_devices">Simuliraj uređaj za mjerenje pulsa</string>
-    <string name="About_RunnerUp">O RunnerUp</string>
+  <string name="About_RunnerUp">O RunnerUp</string>
   <string name="Triggers">Okidači</string>
   <string name="Time_triggered_audio_cue">Vremenski okidane audio napomene</string>
   <string name="Cue_interval_s">Interval napomena (s)</string>
@@ -236,7 +236,7 @@
   <string name="History">Historija</string>
   <string name="Basic">Osnovno</string>
   <string name="Advanced">Napredno</string>
-    <string name="Add_workout_notes">Dodaj napomenu</string>
+  <string name="Add_workout_notes">Dodaj napomenu</string>
   <string name="Pruning_deleted_activities_from_database">Čišćenje obrisanih aktivnosti iz baze</string>
   <string name="Prune">Očisti</string>
   <string name="Heartrate_zones_distribution">Raspored zona pusla</string>

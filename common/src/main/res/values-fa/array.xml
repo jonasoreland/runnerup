@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string-array name="unitEntries">
+    <item>مایل</item>
+    <item>کیلومتر</item>
+  </string-array>
+  <string-array name="unitValues">
+    <item>مایل</item>
+    <item>کیلومتر</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>گرم کردن</item>
+    <item>فعال</item>
+    <item>استراحت</item>
+    <item>ریکاوری</item>
+    <item>سرد کردن</item>
+  </string-array>
+  <string-array name="duration_types">
+    <item>تا زمانی که فشار داده شود</item>
+    <item>زمان</item>
+    <item>مسافت</item>
+  </string-array>
+  <string-array name="target_types">
+    <item>هیچکدام</item>
+    <item>سرعت</item>
+    <item>محدوده ضربان قلب</item>
+  </string-array>
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>دویدن</item>
+    <item>دوچرخه سواری</item>
+    <item>باقی</item>
+    <item>جهت‌یابی</item>
+    <item>قدم زدن</item>
+  </string-array>
+  <string-array name="types">
+    <item>زمان</item>
+    <item>مسافت</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>مرد</item>
+    <item>زن</item>
+  </string-array>
+</resources>

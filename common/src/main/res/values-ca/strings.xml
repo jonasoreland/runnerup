@@ -32,7 +32,7 @@
   <string name="formatting_date_at_time">%1$s a %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <!--other-->
-    <string name="Type">Tipus</string>
+  <string name="Type">Tipus</string>
   <string name="active">actiu</string>
   <string name="rest">descans</string>
   <string name="recovery">recuperació</string>
@@ -53,6 +53,7 @@
   <string name="Start_hour">Hora d\'inici</string>
   <string name="Heart_rate">Ritme cardíac</string>
   <string name="Pace">Ritme</string>
+  <string name="Scan">Analitza</string>
   <string name="Connect">Connecta</string>
   <string name="Connecting">Connectant</string>
   <string name="Download">Baixa</string>
@@ -96,7 +97,7 @@
   <string name="Map">Mapa</string>
   <string name="Graph">Gràfic</string>
   <string name="Upload">Penja</string>
-    <string name="Disconnect">Desconnecta</string>
+  <string name="Disconnect">Desconnecta</string>
   <string name="Resume">Continua</string>
   <string name="Save_activity">Desa l\'activitat</string>
   <string name="Upload_activity">Penja l\'activitat</string>
@@ -107,9 +108,10 @@
   <string name="Configure_accounts">Configura els comptes</string>
   <string name="Refresh">Actualitza</string>
   <string name="Age">Edat</string>
-    <string name="Synchronizing">Sincronitzant:</string>
+  <string name="Synchronizing">Sincronitzant:</string>
+  <string name="synchronizing_feed">S\'està sincronitzant les notícies...</string>
   <string name="OK">D\'acord</string>
-    <string name="Clear_uploads">Neteja els enviaments</string>
+  <string name="Clear_uploads">Neteja els enviaments</string>
   <string name="Disconnect_account">Desconnecta el compte</string>
   <string name="Edit_activity">Edita l\'activitat</string>
   <string name="Share_activity">Comparteix l\'activitat</string>
@@ -117,7 +119,7 @@
   <string name="Recompute_activity">Torna a calcular l\'activitat</string>
   <string name="Configure_heart_rate_zones">Configura les zones de freqüència cardíaca</string>
   <string name="Clear_heart_rate_zone_settings">Suprimeix la configuració de zones de freqüència cardíaca</string>
-    <string name="Manage_audio_cues">Gestió de pistes d\'àudio</string>
+  <string name="Manage_audio_cues">Gestió de pistes d\'àudio</string>
   <string name="Manage_workouts">Gestió d\'entrenaments</string>
   <string name="Settings">Configuració</string>
   <string name="Whats_new">Que hi ha de nou</string>
@@ -125,17 +127,18 @@
   <string name="Enable_GPS">Activa el GPS</string>
   <string name="Waiting_for_GPS">S\'està esperant el GPS</string>
   <string name="Start_activity">Inicia l\'activitat</string>
-    <string name="Scanning">S\'està analitzant</string>
-    <string name="Problem">Error</string>
+  <string name="Scanning">S\'està analitzant</string>
+  <string name="Problem">Error</string>
   <string name="Edit_step">Editar pas</string>
   <string name="Great">Enhorabona!</string>
   <string name="Yes">Sí</string>
   <string name="Create">Crea</string>
+  <string name="Dismiss">Omet</string>
   <string name="No">No</string>
   <string name="Loading">S\'està carregant…</string>
   <string name="Saving">Desant</string>
   <string name="Cancellingplease_wait">S\'està cancel·lant…</string>
-    <string name="Are_you_sure">N\'esteu segur?</string>
+  <string name="Are_you_sure">N\'esteu segur?</string>
   <string name="Downloadeditremove_workouts">Baixa/edita/suprimeix els progressos</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporta la base de dades a la SD</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importa la base de dades des de la SD</string>
@@ -151,7 +154,7 @@
   <string name="Advanced_options">Opcions avançades</string>
   <string name="Export">Exporta</string>
   <string name="Import">Importa</string>
-    <string name="About_RunnerUp">Quant al RunnerUp</string>
+  <string name="About_RunnerUp">Quant al RunnerUp</string>
   <string name="Total_distance">Distància total</string>
   <string name="Total_time">Temps total</string>
   <string name="Total_speed">Velocitat total</string>
@@ -170,7 +173,7 @@
   <string name="History">Historial</string>
   <string name="Basic">Bàsic</string>
   <string name="Advanced">Avançat</string>
-    <string name="Battery_level">Nivell de la bateria</string>
+  <string name="Battery_level">Nivell de la bateria</string>
   <string name="Activity_ready">Activitat disponible</string>
   <string name="Ready_to_start_running">Preparat per començar a córrer!</string>
   <string name="Searching_for_GPS">S\'està cercant el GPS…</string>
