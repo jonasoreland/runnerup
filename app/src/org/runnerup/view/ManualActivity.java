@@ -44,7 +44,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class ManualActivity extends AppCompatActivity {
 
     TitleSpinner manualSport = null;
