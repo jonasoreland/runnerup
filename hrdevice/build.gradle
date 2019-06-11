@@ -24,7 +24,7 @@ android {
         }
     }
     defaultConfig {
-        minSdkVersion 8
+        minSdkVersion 15
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName = version

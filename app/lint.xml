@@ -63,6 +63,7 @@
     <!-- Ignored since minimum version less than 17 requires both left/right and start/end -->
     <issue id="RtlHardcoded" severity="ignore"/>
     <!-- used by library? -->
+    <issue id="LogNotTimber" severity="ignore"/>
     <issue id="ObsoleteLintCustomCheck" severity="ignore">
         <ignore regexp="timber.*" />
     </issue>
