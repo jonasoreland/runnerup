@@ -25,7 +25,6 @@ import android.util.AttributeSet;
 import android.widget.AdapterView;
 import android.widget.SpinnerAdapter;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class ClassicSpinner extends AppCompatSpinner implements SpinnerInterface {
     SpinnerPresenter mPresenter;
 

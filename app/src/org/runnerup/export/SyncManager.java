@@ -20,6 +20,7 @@ package org.runnerup.export;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -88,7 +89,7 @@ public class SyncManager {
     private Activity mActivity = null;
     private Context mContext = null;
     private final Map<String, Synchronizer> synchronizers = new HashMap<>();
-    private final Map<Long, Synchronizer> synchronizersById = new HashMap<>();
+    private final LongSparseArray<Synchronizer> synchronizersById = new LongSparseArray<>();
 
     private ProgressDialog mSpinner = null;
 

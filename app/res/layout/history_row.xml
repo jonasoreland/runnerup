@@ -39,7 +39,8 @@
             android:id="@+id/history_list_emblem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp" />
+            android:layout_marginRight="8dp"
+            android:contentDescription="@string/Sport"/>
 
         <TextView
             android:id="@+id/history_list_distance"

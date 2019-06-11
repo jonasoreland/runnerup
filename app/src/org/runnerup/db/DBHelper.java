@@ -58,7 +58,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@TargetApi(Build.VERSION_CODES.FROYO)
 public class DBHelper extends SQLiteOpenHelper implements
         Constants {
 

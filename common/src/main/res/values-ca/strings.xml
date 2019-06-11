@@ -77,6 +77,10 @@
   <string name="Repetitions">Repeticions</string>
   <string name="Date">Data</string>
   <string name="GPS_satellites">Satèl·lits GPS</string>
+  <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
+  <string name="GPS_level_poor">GPS deficient</string>
+  <string name="GPS_level_acceptable">GPS aceptable</string>
+  <string name="GPS_level_good">GPS correcte</string>
   <string name="Start_GPS">Habilita el GPS</string>
   <string name="Duration">Duració</string>
   <string name="Cancel">Cancel·la</string>
@@ -111,6 +115,9 @@
   <string name="Synchronizing">Sincronitzant:</string>
   <string name="synchronizing_feed">S\'està sincronitzant les notícies...</string>
   <string name="OK">D\'acord</string>
+  <string name="accounts_category_connected">Administra les connexions</string>
+  <string name="Show_disabled_accounts">Mostra els comptes inhabilitats</string>
+  <string name="Hide_disabled_accounts">Amaga els comptes inhabilitats</string>
   <string name="Clear_uploads">Neteja els enviaments</string>
   <string name="Disconnect_account">Desconnecta el compte</string>
   <string name="Edit_activity">Edita l\'activitat</string>
