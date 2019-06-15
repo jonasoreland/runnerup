@@ -15,10 +15,9 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.runnerup">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="com.mapbox.mapboxsdk, com.jjoe64.graphview" />
+    <uses-sdk tools:overrideLibrary="com.mapbox.mapboxsdk, com.jjoe64.graphview, android.support.graphics.drawable.animated" />
 
     <application
         android:label="@string/app_name"

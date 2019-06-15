@@ -114,7 +114,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.MainLayout"/>
+                android:value="org.runnerup.view.MainLayout"/>
         </activity>
 
         <activity
@@ -130,7 +130,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.MainLayout"/>
+                android:value="org.runnerup.view.MainLayout"/>
         </activity>
 
         <activity
@@ -141,13 +141,18 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.MainLayout"/>
+                android:value="org.runnerup.view.MainLayout"/>
         </activity>
 
         <activity
             android:name=".view.AccountActivity"
             android:parentActivityName=".view.AccountListActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.runnerup.view.AccountListActivity"/>
+        </activity>
 
         <activity android:name=".view.UploadActivity"/>
 
@@ -156,6 +161,10 @@
             android:label="@string/Manage_workouts"
             android:parentActivityName=".view.MainLayout"
             android:theme="@style/AppTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.runnerup.view.MainLayout"/>
             <intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.EDIT"/>
@@ -190,19 +199,34 @@
         <activity
             android:name=".export.oauth2client.OAuth2Activity"
             android:parentActivityName=".view.AccountListActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.runnerup.view.AccountListActivity"/>
+        </activity>
 
         <activity
             android:name=".view.HRSettingsActivity"
             android:label="@string/Heart_Rate_Monitor"
             android:parentActivityName=".view.SettingsActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.runnerup.view.SettingsActivity"/>
+        </activity>
 
         <activity
             android:name=".view.HRZonesActivity"
             android:label="@string/Heart_Rate_Zones"
             android:parentActivityName=".view.SettingsActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.runnerup.view.SettingsActivity"/>
+        </activity>
 
         <service android:name=".tracker.Tracker"/>
         <service android:name=".export.RunnerUpLiveSynchronizer$LiveService"/>
