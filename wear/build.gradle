@@ -6,7 +6,6 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationIdSuffix rootProject.ext.applicationIdSuffix
         minSdkVersion 23
         targetSdkVersion rootProject.ext.compileSdkVersion
         versionName rootProject.ext.versionName

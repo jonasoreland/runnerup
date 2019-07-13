@@ -41,7 +41,7 @@
             android:key="cue_configure_hr"
             android:title="@string/Heart_Rate_Monitor">
             <intent
-                android:targetPackage="org.runnerup.alpha"
+                android:targetPackage="org.runnerup"
                 android:targetClass="org.runnerup.view.HRSettingsActivity" />
         </Preference>
 
@@ -49,7 +49,7 @@
             android:key="@string/cue_configure_hrzones"
             android:title="@string/Heart_Rate_Zones">
             <intent
-                android:targetPackage="org.runnerup.alpha"
+                android:targetPackage="org.runnerup"
                 android:targetClass="org.runnerup.view.HRZonesActivity" />
         </Preference>
 
@@ -244,7 +244,7 @@
             android:title="@string/Accounts"
             android:summary="@string/Configure_accounts">
             <intent
-                android:targetPackage="org.runnerup.alpha"
+                android:targetPackage="org.runnerup"
                 android:targetClass="org.runnerup.view.AccountListActivity" />
     </Preference>
 
@@ -260,7 +260,7 @@
         android:title="@string/Audio_cues"
         android:summary="@string/Configure_audio_cues">
         <intent
-            android:targetPackage="org.runnerup.alpha"
+            android:targetPackage="org.runnerup"
             android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
     </Preference>
 
@@ -273,7 +273,7 @@
             android:title="@string/Manage_workouts"
             android:summary="@string/Downloadeditremove_workouts">
             <intent
-                android:targetPackage="org.runnerup.alpha"
+                android:targetPackage="org.runnerup"
                 android:targetClass="org.runnerup.view.ManageWorkoutsActivity" />
         </Preference>
 

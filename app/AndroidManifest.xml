@@ -114,7 +114,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.MainLayout"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <activity
@@ -130,7 +130,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.MainLayout"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <activity
@@ -141,7 +141,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.MainLayout"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <activity
@@ -151,7 +151,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.AccountListActivity"/>
+                android:value=".view.AccountListActivity"/>
         </activity>
 
         <activity android:name=".view.UploadActivity"/>
@@ -164,7 +164,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.MainLayout"/>
+                android:value=".view.MainLayout"/>
             <intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.EDIT"/>
@@ -203,7 +203,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.AccountListActivity"/>
+                android:value=".view.AccountListActivity"/>
         </activity>
 
         <activity
@@ -214,7 +214,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.SettingsActivity"/>
+                android:value=".view.SettingsActivity"/>
         </activity>
 
         <activity
@@ -225,7 +225,7 @@
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.runnerup.view.SettingsActivity"/>
+                android:value=".view.SettingsActivity"/>
         </activity>
 
         <service android:name=".tracker.Tracker"/>

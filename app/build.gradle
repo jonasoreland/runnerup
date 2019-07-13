@@ -77,7 +77,6 @@ android {
     }
 
     defaultConfig {
-        applicationIdSuffix rootProject.ext.applicationIdSuffix
         applicationId = doExtractStringFromManifest("package")
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
@@ -91,6 +90,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
         release {
             minifyEnabled true
             shrinkResources true
