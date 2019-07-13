@@ -14,7 +14,7 @@
     <item>Aktiivinen</item>
     <item>Lepo</item>
     <item>Palautuminen</item>
-    <item>Viilentyminen</item>
+    <item>Jäähdyttely</item>
   </string-array>
   <string-array name="duration_types">
     <item>Kunnes painettu</item>
