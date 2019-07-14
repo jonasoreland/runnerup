@@ -30,10 +30,8 @@ project.ext {
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
-    versionName = '2.0.0.6'
+    versionName = '2.0.0.7'
     versionCode = 200
-    //Set a specific name to this app. Also need to be changed in settings.xml
-    applicationIdSuffix = ".alpha"
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set
