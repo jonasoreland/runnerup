@@ -19,18 +19,19 @@ project.ext {
     //Some settings may differ for 'froyo' release
     //minSdkVersion differs between modules
     buildToolsVersion = '29.0.1' //Update Travis manually
-    compileSdkVersion = 28 //Update Travis manually
-    targetSdkVersion = 28
+    compileSdkVersion = 24 //Update Travis manually
+    targetSdkVersion = 24
 
-    supportLibrary = '28.0.0'
+    // Values unused in the build but used in Gradle
+    //supportLibrary = '24.1.0'
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
-    googlePlayServicesVersion = '11.0.4'
-    googleWearVersion = '2.3.0'
+    //googlePlayServicesVersion = '11.0.4'
+    //googleWearVersion = '2.3.0'
 
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
-    versionName = '2.0.0.9'
+    versionName = '2.0.0.9-froyo'
     versionCode = 202
 
     travisBuild = System.getenv("TRAVIS") == "true"

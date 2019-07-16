@@ -30,30 +30,11 @@ android {
             manifest.srcFile 'froyo/AndroidManifest.xml'
             java.srcDirs = ['froyo/java','free/java']
         }
-        latest {
-            manifest.srcFile 'latest/AndroidManifest.xml'
-            java.srcDirs = ['latest/java']
-            if (rootProject.ext.allowNonFree) {
-                java.srcDirs += ['play/java']
-            } else {
-                java.srcDirs += ['free/java']
-            }
-            res.srcDirs = ['latest/res']
-            assets.srcDirs = ['latest/assets']
-        }
         test.setRoot('test')
     }
 
     flavorDimensions "all"
     productFlavors {
-        latest {
-            dimension "all"
-            minSdkVersion 15
-            compileSdkVersion rootProject.ext.compileSdkVersion
-            targetSdkVersion rootProject.ext.targetSdkVersion
-            versionName rootProject.ext.versionName
-            versionCode 14000000 + rootProject.ext.versionCode
-        }
         froyo {
             dimension "all"
             minSdkVersion 8
@@ -136,20 +117,8 @@ repositories {
 dependencies {
     implementation project(':common')
     implementation project(':hrdevice')
-    if (rootProject.ext.allowNonFree) {
-        latestWearApp project(':wear')
-    }
-
-    latestImplementation "com.android.support:design:${rootProject.ext.supportLibrary}"
-    //Lint bug: https://issuetracker.google.com/issues/231321
-    //noinspection GradleDependency
     froyoImplementation 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
 
-    latestImplementation "com.android.support:cardview-v7:${rootProject.ext.supportLibrary}"
-    latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
-    latestImplementation 'com.getpebble:pebblekit:4.0.1'
-    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.8.1'
-    latestImplementation 'com.jjoe64:graphview:4.2.2'
     froyoImplementation 'com.jjoe64:graphview:4.2.1'
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
@@ -184,7 +153,7 @@ android.applicationVariants.all {
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
     }
     else {
-        // Demo key
+        // Invalid token, no map
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '"pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw"'
     }
 

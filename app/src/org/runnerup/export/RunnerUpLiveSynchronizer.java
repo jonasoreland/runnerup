@@ -194,11 +194,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
         msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
         msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);
-        if (Build.VERSION.SDK_INT >= 26) {
-            context.startForegroundService(msgIntent);
-        } else {
-            context.startService(msgIntent);
-        }
+        context.startService(msgIntent);
     }
 
     public static class LiveService extends IntentService {

@@ -16,5 +16,5 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="mapboxDefaultStyle">mapbox://styles/mapbox/outdoors-v9</string>
+    <string name="mapboxDefaultStyle">mapbox://styles/mapbox/outdoors-v11</string>
 </resources>
