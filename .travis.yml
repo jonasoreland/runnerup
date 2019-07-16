@@ -1,6 +1,6 @@
 env:
   global:
-  - ANDROID_API=28
+  - ANDROID_API=24
   - ANDROID_BUILD_TOOLS=29.0.1
   - ADB_INSTALL_TIMEOUT=5
 language: android
@@ -24,13 +24,9 @@ android:
   - build-tools-$ANDROID_BUILD_TOOLS
   - android-$ANDROID_API
   - extra-android-m2repository
-  - extra-google-m2repository
-  - extra-google-google_play_services
 notifications:
   email: false
 script:
-- ./gradlew wear:lintRelease
-- ./gradlew assembleLatestRelease
-- ./gradlew lintLatestRelease
-- ./gradlew assembleFroyoRelease lintFroyoRelease
+- ./gradlew lintFroyoRelease
+- ./gradlew assembleFroyoRelease
 - ./gradlew test

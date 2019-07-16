@@ -105,7 +105,7 @@
     <string name="pref_pace_graph_smoothing">pref_pace_graph_smoothing</string>
     <string name="pref_pace_graph_smoothing_filters">pref_pace_graph_smoothing_filters</string>
 
-    <string name="pref_mapbox_default_style">pref_mapbox_default_style</string>
+    <string name="pref_mapbox_default_style">pref_mapbox_default_style2</string>
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
 

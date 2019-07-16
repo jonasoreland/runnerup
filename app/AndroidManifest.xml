@@ -44,7 +44,6 @@
 
     <application
         android:allowBackup="true"
-        android:appCategory="maps"
         android:extractNativeLibs="false"
         android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
