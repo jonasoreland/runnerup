@@ -28,10 +28,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-
 import org.runnerup.R;
+import org.runnerup.util.GoogleApiHelper;
 
 
 public class AboutPreference extends DialogPreference {
@@ -46,19 +44,13 @@ public class AboutPreference extends DialogPreference {
         init(context);
     }
 
-    public static boolean isGooglePlayServicesAvailable(Context context) {
-        boolean res = false;
-        try {
-            res = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
-        } catch (Exception e) {}
-        return res;
-    }
-
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
             try {
-                Uri uri = Uri.parse("market://details?id=" + this.getContext().getPackageName());
+                // Use the play application id also for debug (not this.getContext().getPackageName())
+                String applicationId = "org.runnerup";
+                Uri uri = Uri.parse("market://details?id=" + applicationId);
                 this.getContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -81,11 +73,11 @@ public class AboutPreference extends DialogPreference {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        if (isGooglePlayServicesAvailable(context)) {
-            setNegativeButtonText(context.getString(R.string.OK));
+        setNegativeButtonText(context.getString(R.string.OK));
+        if (GoogleApiHelper.isGooglePlayServicesAvailable(context)) {
             setPositiveButtonText(context.getString(R.string.Rate_RunnerUp));
         } else {
-            setNegativeButtonText(null);
+            setPositiveButtonText(null);
         }
         setDialogLayoutResource(R.layout.whatsnew);
     }

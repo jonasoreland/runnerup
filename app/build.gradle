@@ -28,11 +28,16 @@ android {
 
         froyo {
             manifest.srcFile 'froyo/AndroidManifest.xml'
-            java.srcDirs = ['froyo/java']
+            java.srcDirs = ['froyo/java','free/java']
         }
         latest {
             manifest.srcFile 'latest/AndroidManifest.xml'
             java.srcDirs = ['latest/java']
+            if (rootProject.ext.allowNonFree) {
+                java.srcDirs += ['play/java']
+            } else {
+                java.srcDirs += ['free/java']
+            }
             res.srcDirs = ['latest/res']
             assets.srcDirs = ['latest/assets']
         }
@@ -73,6 +78,14 @@ android {
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
         resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "it", "ja", "lt", "nb", "nl", "pl", "pt", "ru", "sv", "tr"
+
+        if (rootProject.ext.allowNonFree) {
+            applicationIdSuffix ""
+        } else {
+            // Separate applicationId for the free version
+            applicationIdSuffix ".free"
+            versionNameSuffix "-free"
+        }
     }
 
     signingConfigs {
@@ -83,19 +96,20 @@ android {
 
     buildTypes {
         debug {
-            // Set the applicationId separate for the debug build so it can be installed separately
+            // Set a separate applicationId for the debug build so it can be installed with release builds
             // The applicationId is also used in some xml files (android:targetPackage)
             // The packageId (in the manifest) is never changed
             applicationIdSuffix ".debug"
-            resValue "string", "applicationIdFull", "org.runnerup${applicationIdSuffix}"
-            versionNameSuffix '-debug'
+            resValue "string", "applicationIdFull", "${defaultConfig.applicationId}${defaultConfig.applicationIdSuffix}${applicationIdSuffix}"
+            versionNameSuffix "-debug"
         }
         release {
-            minifyEnabled true
-            shrinkResources true
+            applicationIdSuffix ""
+            minifyEnabled rootProject.ext.allowNonFree
+            shrinkResources rootProject.ext.allowNonFree
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
             signingConfig signingConfigs.release
-            resValue "string", "applicationIdFull", "org.runnerup"
+            resValue "string", "applicationIdFull", "${defaultConfig.applicationId}${defaultConfig.applicationIdSuffix}"
         }
     }
 
@@ -122,7 +136,9 @@ repositories {
 dependencies {
     implementation project(':common')
     implementation project(':hrdevice')
-    latestWearApp project(':wear')
+    if (rootProject.ext.allowNonFree) {
+        latestWearApp project(':wear')
+    }
 
     latestImplementation "com.android.support:design:${rootProject.ext.supportLibrary}"
     //Lint bug: https://issuetracker.google.com/issues/231321
