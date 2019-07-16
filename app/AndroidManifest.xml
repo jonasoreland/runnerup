@@ -109,12 +109,12 @@
         <activity
             android:name=".view.DetailActivity"
             android:configChanges="orientation|screenSize|uiMode"
-            android:parentActivityName=".view.MainLayout"
+            android:parentActivityName=".view.HistoryActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.MainLayout"/>
+                android:value=".view.HistoryActivity"/>
         </activity>
 
         <activity
