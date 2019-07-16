@@ -73,10 +73,10 @@ public class StepButton extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.step_button, this);
         formatter = new Formatter(context);
-        mLayout = findViewById(R.id.step_button);
-        mIntensityIcon = findViewById(R.id.step_icon);
-        mDurationValue = findViewById(R.id.step_duration_value);
-        mGoalValue = findViewById(R.id.step_goal_value);
+        mLayout = (ViewGroup)findViewById(R.id.step_button);
+        mIntensityIcon = (ImageView)findViewById(R.id.step_icon);
+        mDurationValue = (TextView)findViewById(R.id.step_duration_value);
+        mGoalValue = (TextView)findViewById(R.id.step_goal_value);
     }
 
     @Override

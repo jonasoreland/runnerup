@@ -176,12 +176,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
             view.setTag(synchronizer);
 
-            TextView sectionTitle = view.findViewById(R.id.section_title);
-            ImageView accountIcon = view.findViewById(R.id.account_list_icon);
-            TextView accountIconText = view.findViewById(R.id.account_list_icon_text);
-            TextView accountNameText = view.findViewById(R.id.account_list_name);
-            SwitchCompat accountUploadBox = view.findViewById(R.id.account_list_upload);
-            SwitchCompat accountFeedBox = view.findViewById(R.id.account_list_feed);
+            TextView sectionTitle = (TextView)view.findViewById(R.id.section_title);
+            ImageView accountIcon = (ImageView)view.findViewById(R.id.account_list_icon);
+            TextView accountIconText = (TextView)view.findViewById(R.id.account_list_icon_text);
+            TextView accountNameText = (TextView)view.findViewById(R.id.account_list_name);
+            SwitchCompat accountUploadBox = (SwitchCompat)view.findViewById(R.id.account_list_upload);
+            SwitchCompat accountFeedBox = (SwitchCompat)view.findViewById(R.id.account_list_feed);
 
             // category name
             int curPosition = cursor.getPosition();

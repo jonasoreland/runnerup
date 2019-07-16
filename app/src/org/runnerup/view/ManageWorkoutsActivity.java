@@ -672,7 +672,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 convertView = inflater.inflate(R.layout.manage_workouts_list_category, parent, false);
             }
 
-            TextView categoryText = convertView.findViewById(R.id.category_text);
+            TextView categoryText = (TextView)convertView.findViewById(R.id.category_text);
             categoryText.setText(getProvider(groupPosition));
 
             if (isExpanded)
