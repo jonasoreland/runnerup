@@ -43,10 +43,10 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.title_spinner, this);
 
-        mLayout = findViewById(R.id.title_spinner);
-        mLabel = findViewById(R.id.title);
-        mValue = findViewById(R.id.value);
-        mSpinner = findViewById(R.id.spinner);
+        mLayout = (LinearLayout)findViewById(R.id.title_spinner);
+        mLabel = (TextView)findViewById(R.id.title);
+        mValue = (TextView)findViewById(R.id.value);
+        mSpinner = (Spinner)findViewById(R.id.spinner);
 
         mPresenter = new SpinnerPresenter(context, attrs, this);
     }

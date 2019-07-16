@@ -88,6 +88,7 @@ android {
             // The packageId (in the manifest) is never changed
             applicationIdSuffix ".debug"
             resValue "string", "applicationIdFull", "org.runnerup${applicationIdSuffix}"
+            versionNameSuffix '-debug'
         }
         release {
             minifyEnabled true
