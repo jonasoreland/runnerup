@@ -71,12 +71,6 @@ public class SettingsActivity extends PreferenceActivity
             btn.setOnPreferenceClickListener(onPruneClick);
         }
 
-        //Geoid correction is not included in Froyo
-        if (BuildConfig.FLAVOR.equals("froyo")) {
-            getPreferenceManager().findPreference(res.getString(R.string.pref_altitude_adjust)).setEnabled(false);
-            getPreferenceScreen().removePreference(getPreferenceManager().findPreference("map_preferencescreen"));
-            getPreferenceScreen().removePreference(getPreferenceManager().findPreference("graph_preferencescreen"));
-        }
 
         if (!hasHR(this)) {
             getPreferenceManager().findPreference(res.getString(R.string.cue_configure_hrzones)).setEnabled(false);
@@ -113,7 +107,7 @@ public class SettingsActivity extends PreferenceActivity
     @SuppressLint("InlinedApi")
     public static boolean requestReadStoragePermissions(final Activity activity) {
         boolean ret = true;
-        if (Build.VERSION.SDK_INT >= 16 &&
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
                 ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {

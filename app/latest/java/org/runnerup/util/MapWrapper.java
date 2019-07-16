@@ -227,8 +227,7 @@ public class MapWrapper implements Constants {
         @Override
         protected void onPostExecute(Route route) {
 
-            if (route != null && map != null &&
-                    android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (route != null && map != null) {
 
                 if (route.path.size() > 1) {
 

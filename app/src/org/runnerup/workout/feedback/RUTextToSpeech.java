@@ -215,29 +215,20 @@ class UtteranceCompletion {
     @SuppressWarnings("deprecation")
     public static void setUtteranceCompletedListener(
             TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {
-        if (Build.VERSION.SDK_INT < 15) {
-            tts.setOnUtteranceCompletedListener(new android.speech.tts.TextToSpeech.OnUtteranceCompletedListener() {
-                        @Override
-                        public void onUtteranceCompleted(String utteranceId) {
-                            ruTextToSpeech.utteranceCompleted(utteranceId);
-                        }
-                    });
-        } else {
-            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                @Override
-                public void onDone(String utteranceId) {
-                    ruTextToSpeech.utteranceCompleted(utteranceId);
-                }
+        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+            @Override
+            public void onDone(String utteranceId) {
+                ruTextToSpeech.utteranceCompleted(utteranceId);
+            }
 
-                @Override
-                public void onError(String utteranceId) {
-                    ruTextToSpeech.utteranceCompleted(utteranceId);
-                }
+            @Override
+            public void onError(String utteranceId) {
+                ruTextToSpeech.utteranceCompleted(utteranceId);
+            }
 
-                @Override
-                public void onStart(String utteranceId) {
-                }
-            });
-        }
+            @Override
+            public void onStart(String utteranceId) {
+            }
+        });
     }
 }

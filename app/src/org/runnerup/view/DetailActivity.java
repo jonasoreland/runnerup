@@ -193,22 +193,21 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
-        if (!BuildConfig.FLAVOR.equals("froyo")) {
-            tabSpec = th.newTabSpec("map");
-            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
-            tabSpec.setContent(R.id.tab_map);
-            th.addTab(tabSpec);
-        }
-        if (Build.VERSION.SDK_INT > 8) {
-            tabSpec = th.newTabSpec("graph");
-            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
-            tabSpec.setContent(R.id.tab_graph);
-            th.addTab(tabSpec);
-            LinearLayout graphTab = (LinearLayout) findViewById(R.id.tab_graph);
-            LinearLayout hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
-            //noinspection UnusedAssignment
-            GraphWrapper graphWrapper = new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
-        }
+        tabSpec = th.newTabSpec("map");
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
+        tabSpec.setContent(R.id.tab_map);
+        th.addTab(tabSpec);
+
+        tabSpec = th.newTabSpec("graph");
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
+        tabSpec.setContent(R.id.tab_graph);
+        th.addTab(tabSpec);
+
+        LinearLayout graphTab = (LinearLayout) findViewById(R.id.tab_graph);
+        LinearLayout hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
+        //noinspection UnusedAssignment
+        GraphWrapper graphWrapper = new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
+
         tabSpec = th.newTabSpec("share");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Upload)));
         tabSpec.setContent(R.id.tab_upload);

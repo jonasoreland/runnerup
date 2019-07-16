@@ -360,7 +360,7 @@ public class MainLayout extends TabActivity
 
     private static boolean requestReadStoragePermissions(final Activity activity) {
         boolean ret = true;
-        if (Build.VERSION.SDK_INT >= 16 &&
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
                 ContextCompat.checkSelfPermission(activity,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
