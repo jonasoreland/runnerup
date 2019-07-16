@@ -133,7 +133,11 @@ dependencies {
     //noinspection GradleDependency
     latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
-    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.8.1'
+    // MapBox uses telemetry, without Play there may be exceptions from mapbox: just ignore
+    //latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
+    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.1.0'
+    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
+    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-scalebar-v8:0.1.0'
     latestImplementation 'com.jjoe64:graphview:4.2.2'
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
@@ -168,7 +172,7 @@ android.applicationVariants.all {
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
     }
     else {
-        // Demo key
+        // Invalid token, no map
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '"pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw"'
     }
 

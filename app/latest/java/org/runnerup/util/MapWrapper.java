@@ -22,28 +22,31 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
+import com.mapbox.mapboxsdk.plugins.annotation.LineManager;
+import com.mapbox.mapboxsdk.plugins.annotation.LineOptions;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
+import com.mapbox.pluginscalebar.ScaleBarOptions;
+import com.mapbox.pluginscalebar.ScaleBarPlugin;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.Icon;
-import com.mapbox.mapboxsdk.annotations.IconFactory;
-import com.mapbox.mapboxsdk.annotations.MarkerViewOptions;
-import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.style.layers.Property;
+import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.mapbox.mapboxsdk.utils.ColorUtils;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
@@ -58,8 +61,9 @@ import static org.runnerup.util.Formatter.Format.TXT_SHORT;
 
 public class MapWrapper implements Constants {
 
-    private MapView mapView = null;
-    private MapboxMap map;
+    private MapView mapView;
+    private LineManager lineManager;
+    private SymbolManager symbolManager;
 
     private long mID = 0;
     private SQLiteDatabase mDB = null;
@@ -78,36 +82,26 @@ public class MapWrapper implements Constants {
         Mapbox.getInstance(context, BuildConfig.MAPBOX_ACCESS_TOKEN);
     }
 
-    private void setStyle() {
-        if (map != null) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            Resources res = context.getResources();
-            String val = prefs.getString(res.getString(R.string.pref_mapbox_default_style), "");
-
-            if (TextUtils.isEmpty(val)) {
-                //The preferences should prevent from setting an empty value for display reasons
-                //However, that handling is not so easy
-                //(MapBox seem to handle no style set OK though).
-                val = res.getString(R.string.mapboxDefaultStyle);
-            }
-            map.setStyleUrl(val);
-        }
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(MapboxMap mapboxMap) {
-                map = mapboxMap;
-                setStyle();
-                new LoadRoute().execute(new LoadParam(context, mDB, mID));
-            }
-        });
+        mapView.getMapAsync(mapboxMap -> {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    Resources res = context.getResources();
+                    String val = prefs.getString(res.getString(R.string.pref_mapbox_default_style),
+                            res.getString(R.string.mapboxDefaultStyle));
+
+                    Style.Builder style = new Style.Builder().fromUri(val);
+                    mapboxMap.setStyle(style, mapStyle -> {
+                        lineManager = new LineManager(mapView, mapboxMap, mapStyle);
+                        symbolManager = new SymbolManager(mapView, mapboxMap, mapStyle);
+                        // Map is set up and the style has loaded
+                        new LoadRoute().execute(new LoadParam(context, mDB, mID, mapboxMap));
+                    });
+                }
+        );
     }
 
     public void onResume() {
-        setStyle();
         mapView.onResume();
     }
 
@@ -132,24 +126,39 @@ public class MapWrapper implements Constants {
     }
 
     public void onDestroy() {
+        if (lineManager != null) {
+            lineManager.onDestroy();
+        }
+        if (symbolManager != null) {
+            symbolManager.onDestroy();
+        }
         mapView.onDestroy();
     }
 
     class Route {
+        Route(Context context, MapboxMap map) {
+            this.context = context;
+            this.map = map;
+        }
+
         final List<LatLng> path = new ArrayList<>(10);
-        final ArrayList<MarkerViewOptions> markers = new ArrayList<>(10);
+        final ArrayList<SymbolOptions> markers = new ArrayList<>(10);
+        final Context context;
+        final MapboxMap map;
     }
 
     private class LoadParam {
-        LoadParam(Context context, SQLiteDatabase mDB, long mID) {
+        LoadParam(Context context, SQLiteDatabase mDB, long mID, MapboxMap map) {
             this.context = context;
             this.mDB = mDB;
             this.mID = mID;
+            this.map = map;
         }
 
         final Context context;
         final SQLiteDatabase mDB;
         final long mID;
+        final MapboxMap map;
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -157,68 +166,67 @@ public class MapWrapper implements Constants {
         @Override
         protected Route doInBackground(LoadParam... params) {
 
-            Route route = new Route();
+            Route route = new Route(params[0].context, params[0].map);
             LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(params[0].mDB, params[0].mID);
-            IconFactory iconFactory = IconFactory.getInstance(params[0].context);
-
             int lastLap = 0;
             for (LocationEntity loc : ll) {
                 LatLng point = new LatLng(loc.getLatitude(), loc.getLongitude());
                 route.path.add(point);
-                int type = loc.getType();
-                MarkerViewOptions m;
-                String title = "";
-                Integer iconId = null;
+
+                Integer type;
                 //Start/end markers are not set in db, special handling
                 if (route.markers.isEmpty()) {
                     type = DB.LOCATION.TYPE_START;
-                }
-                switch (type) {
-                    case DB.LOCATION.TYPE_START:
-                        iconId = R.drawable.ic_map_marker_start;
-                        title = context.getResources().getString(R.string.Start);
-                        break;
-                    case DB.LOCATION.TYPE_END:
-                        iconId = R.drawable.ic_map_marker_end;
-                        title = context.getResources().getString(R.string.Stop);
-                        break;
-                    case DB.LOCATION.TYPE_PAUSE:
-                        iconId = R.drawable.ic_map_marker_pause;
-                        title = context.getResources().getString(R.string.Pause);
-                        break;
-                    case DB.LOCATION.TYPE_RESUME:
-                        iconId = R.drawable.ic_map_marker_resume;
-                        title = context.getResources().getString(R.string.Resume);
-                        break;
-                    case DB.LOCATION.TYPE_GPS:
-                        break;
+                } else {
+                    type = loc.getType();
                 }
 
-                if (lastLap != loc.getLap()) {
-                    if (lastLap >= 0) {
-                        title = context.getString(R.string.cue_lap) + " " + loc.getLap();
-                    }
-                    iconId = R.drawable.ic_map_marker_lap;
+                String iconImage;
+                if (type != DB.LOCATION.TYPE_START && lastLap != loc.getLap()) {
                     lastLap = loc.getLap();
+                    iconImage = "lap";
+                } else if (type == DB.LOCATION.TYPE_START ||
+                        type == DB.LOCATION.TYPE_END ||
+                        type == DB.LOCATION.TYPE_PAUSE ||
+                        type == DB.LOCATION.TYPE_RESUME) {
+                    iconImage = ((Integer) type).toString();
+                } else {
+                    iconImage = null;
                 }
-                if (iconId != null) {
-                    String snippet = formatter.formatDistance(TXT_SHORT, loc.getDistance().longValue()) + " " +
-                            formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed() / 1000.0));
-                    Icon icon = iconFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),iconId));
-                    m = new MarkerViewOptions().title(title).position(point).snippet(snippet).icon(icon).anchor(0.5f, 86f / 96f);
 
+                if (iconImage != null) {
+                    // TBD Implement Info popup with the info instead, using the annotaion plugin (currently no examples)
+                    String info;
                     if (type == DB.LOCATION.TYPE_START) {
-                        m.snippet(null);
+                        info = null;
+                    } else {
+                        info = (iconImage.equals("lap") ? "#" + loc.getLap() + "\n": "") +
+                                formatter.formatDistance(TXT_SHORT, loc.getDistance().longValue()) + "\n" +
+                                formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed() / 1000.0));
                     }
+
+                    SymbolOptions m = new SymbolOptions()
+                            .withLatLng(point)
+                            .withIconImage(iconImage)
+                            .withIconAnchor(Property.ICON_ANCHOR_BOTTOM)
+                            .withTextField(info)
+                            .withTextAnchor(Property.TEXT_ANCHOR_TOP);
                     route.markers.add(m);
                 }
             }
             ll.close();
-            //Track is ended with a pause, replace with end
+
+            //Track is normally ended with a pause not always followed by an end
+            // Ignore the pause
             if (!route.markers.isEmpty()) {
-                MarkerViewOptions m = route.markers.get(route.markers.size() - 1);
-                Icon icon = iconFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_map_marker_end));
-                m.title(context.getResources().getString(R.string.Stop)).icon(icon);
+                SymbolOptions m = route.markers.get(route.markers.size() - 2);
+                SymbolOptions me = route.markers.get(route.markers.size() - 1);
+                if (m.getIconImage().equals(((Integer) DB.LOCATION.TYPE_PAUSE).toString() )&&
+                        me.getIconImage().equals(((Integer) DB.LOCATION.TYPE_END).toString())) {
+                    route.markers.remove(route.markers.size() - 2);
+                } else if (me.getIconImage().equals(((Integer) DB.LOCATION.TYPE_PAUSE).toString() )) {
+                    me.withIconImage(((Integer) DB.LOCATION.TYPE_END).toString());
+                }
             }
             return route;
         }
@@ -227,22 +235,24 @@ public class MapWrapper implements Constants {
         @Override
         protected void onPostExecute(Route route) {
 
-            if (route != null && map != null) {
+            if (route != null && route.map != null) {
+
+                ScaleBarPlugin scaleBarPlugin = new ScaleBarPlugin(mapView, route.map);
+
+                scaleBarPlugin.create(new ScaleBarOptions(route.context));
 
                 if (route.path.size() > 1) {
-
-                    LatLng[] pointsArray = new LatLng[route.path.size()];
-                    route.path.toArray(pointsArray);
-                    map.addPolyline(new PolylineOptions()
-                            .add(pointsArray)
-                            .color(Color.RED)
-                            .width(3));
-                    Log.v(getClass().getName(), "Added polyline");
+                    LineOptions lineOptions = new LineOptions()
+                            .withLatLngs(route.path)
+                            .withLineColor(ColorUtils.colorToRgbaString(Color.RED))
+                            .withLineWidth(3.0f);
+                    lineManager.create(lineOptions);
+                    Log.v(getClass().getName(), "Added line");
 
                     final LatLngBounds box =
                             new LatLngBounds.Builder().includes(route.path).build();
                     final CameraUpdate initialCameraPosition = CameraUpdateFactory.newLatLngBounds(box, 50);
-                    map.moveCamera(initialCameraPosition);
+                    route.map.moveCamera(initialCameraPosition);
 
                     //Since MapBox 4.2.0-beta.3 moving the camera in onMapReady is not working if map is not visible
                     //The proper solution is a redesign using fragments, see https://github.com/mapbox/mapbox-gl-native/issues/6855#event-841575956
@@ -253,8 +263,8 @@ public class MapWrapper implements Constants {
                                 // We check which build version we are using.
                                 @Override
                                 public void onGlobalLayout() {
-                                    if (map.getCameraPosition().target.getLatitude() != 0 ||
-                                            map.getCameraPosition().target.getLongitude() != 0) {
+                                    if (route.map.getCameraPosition().target.getLatitude() != 0 ||
+                                            route.map.getCameraPosition().target.getLongitude() != 0) {
                                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                                             mapView.getViewTreeObserver()
                                                     .removeGlobalOnLayoutListener(this);
@@ -263,16 +273,34 @@ public class MapWrapper implements Constants {
                                                     .removeOnGlobalLayoutListener(this);
                                         }
                                     } else {
-                                        map.moveCamera(initialCameraPosition);
+                                        route.map.moveCamera(initialCameraPosition);
                                     }
                                 }
                             }
                     );
                 }
 
+                // Images id from text
+                route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_START).toString(),
+                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_start)),
+                        false);
+                route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_END).toString(),
+                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_end)),
+                        false);
+                route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_PAUSE).toString(),
+                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_pause)),
+                        false);
+                route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_RESUME).toString(),
+                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_resume)),
+                        false);
+                route.map.getStyle().addImage("lap",
+                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_lap)),
+                        false);
+
+                symbolManager.setIconAllowOverlap(true);
                 if (route.markers.size() > 0) {
-                    for (MarkerViewOptions m : route.markers) {
-                        map.addMarker(m);
+                    for (SymbolOptions m : route.markers) {
+                        symbolManager.create(m);
                     }
                 }
                 Log.v(getClass().getName(), "Added " + route.markers.size() + " markers");
