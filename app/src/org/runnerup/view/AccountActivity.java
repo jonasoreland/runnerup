@@ -352,7 +352,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 final Resources res = getResources();
 
                 prefs.edit().putString(res.getString(R.string.pref_runneruplive_serveradress),
-                        mRunnerUpLiveApiAddress.getText().toString()).commit();
+                        mRunnerUpLiveApiAddress.getText().toString()).apply();
                 mRunnerUpLiveApiAddress = null;
             }
             finish();

@@ -274,7 +274,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     private void launchMain(String fileName) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), fileName).commit();
+        pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), fileName).apply();
 
         Intent intent = new Intent(this, MainLayout.class);
         intent.putExtra("mode", StartActivity.TAB_ADVANCED);
@@ -536,7 +536,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         f.delete();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         if (selected.workoutName.contentEquals(pref.getString(getResources().getString(R.string.pref_advanced_workout), ""))) {
-            pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), "").commit();
+            pref.edit().putString(getResources().getString(R.string.pref_advanced_workout), "").apply();
         }
         currentlySelectedWorkout = null;
         listLocal();

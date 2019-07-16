@@ -502,7 +502,7 @@ public class SpinnerPresenter {
             return;
         Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
         pref.putInt(mKey, value);
-        pref.commit();
+        pref.apply();
     }
 
     void setValue(String value) {
@@ -552,7 +552,7 @@ public class SpinnerPresenter {
             return;
         Editor pref = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
         pref.putString(mKey, value);
-        pref.commit();
+        pref.apply();
     }
 
     private int find(SpinnerAdapter adapter, String value) {
@@ -610,7 +610,7 @@ public class SpinnerPresenter {
 
     void clear() {
         if (mKey != null) {
-            PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove(mKey).commit();
+            PreferenceManager.getDefaultSharedPreferences(mContext).edit().remove(mKey).apply();
         }
     }
 

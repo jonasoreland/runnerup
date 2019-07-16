@@ -527,7 +527,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         int batteryLevelHighThreshold = SafeParse.parseInt(prefs.getString(getString(
                 R.string.pref_battery_level_high_threshold), "75"), 75);
         if ((batteryLevel > batteryLevelHighThreshold) && (prefs.contains(pref_key))) {
-            prefs.edit().remove(pref_key).commit();
+            prefs.edit().remove(pref_key).apply();
             return;
         }
 
@@ -554,7 +554,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         prompt.setPositiveButton(getResources().getText(R.string.OK), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (dontShowAgain.isChecked()) {
-                    prefs.edit().putBoolean(pref_key, true).commit();
+                    prefs.edit().putBoolean(pref_key, true).apply();
                 }
             }
         });

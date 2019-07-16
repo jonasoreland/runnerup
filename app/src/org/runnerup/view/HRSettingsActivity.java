@@ -207,7 +207,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                     key = R.string.pref_bt_mock;
                 }
                 editor.putBoolean(res.getString(key), isChecked);
-                editor.commit();
+                editor.apply();
                 providers = HRManager.getHRProviderList(this);
                 return true;
         }
@@ -478,7 +478,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         ed.putString(res.getString(R.string.pref_bt_name), btName);
         ed.putString(res.getString(R.string.pref_bt_address), btAddress);
         ed.putString(res.getString(R.string.pref_bt_provider), hrProvider.getProviderName());
-        ed.commit();
+        ed.apply();
     }
 
     private void doClear() {
@@ -488,7 +488,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         ed.remove(res.getString(R.string.pref_bt_name));
         ed.remove(res.getString(R.string.pref_bt_address));
         ed.remove(res.getString(R.string.pref_bt_provider));
-        ed.commit();
+        ed.apply();
     }
 
     private CharSequence getName() {
