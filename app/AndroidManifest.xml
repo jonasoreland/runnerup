@@ -125,12 +125,12 @@
         <activity
             android:name=".view.ManualActivity"
             android:label="@string/Manual_activity_title"
-            android:parentActivityName=".view.MainLayout"
+            android:parentActivityName=".view.HistoryActivity"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.MainLayout"/>
+                android:value=".view.HistoryActivity"/>
         </activity>
 
         <activity
