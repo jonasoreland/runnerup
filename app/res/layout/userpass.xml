@@ -75,7 +75,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textEmailAddress"
-                android:autofillHints="emailAddress"
                 android:hint="@string/Username"
                 tools:ignore="UnusedAttribute" />
 
@@ -98,7 +97,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textPassword"
-                android:autofillHints="password"
                 android:hint="@string/Password"
                 tools:ignore="UnusedAttribute" />
 
