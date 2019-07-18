@@ -5,8 +5,6 @@
     <issue id="InconsistentArrays" severity="fatal" />
 
     <!-- Libraries depend on older support libraries, must be replaced. -->
-    <!-- Some bugs with the warning, https://issuetracker.google.com/issues/37131435, check manually with ./gradlew app:dependencies -->
-    <issue id="GradleCompatible" severity="warning" />
 
     <!-- Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though -->
     <issue id="RestrictedApi" severity="warning" />
@@ -16,12 +14,6 @@
 
     <!-- icon with all densities are not included - don't bother -->
     <issue id="IconMissingDensityFolder" severity="ignore" />
-
-    <!-- apply() is supported from SDK 9, but min version is 8 -->
-    <issue id="ApplySharedPref" severity="ignore" />
-
-    <!-- Support lib > 25.0.1 _sometimes_ raises this issue. Should be fixed though -->
-    <issue id="RestrictedApi" severity="warning" />
 
     <issue id="ResourceType">
         <ignore path="src/org/runnerup/view/MainLayout.java" />
@@ -63,6 +55,7 @@
     <!-- Ignored since minimum version less than 17 requires both left/right and start/end -->
     <issue id="RtlHardcoded" severity="ignore"/>
     <!-- used by library? -->
+    <!--issue id="LogNotTimber" severity="ignore"/-->
     <issue id="ObsoleteLintCustomCheck" severity="ignore">
         <ignore regexp="timber.*" />
     </issue>

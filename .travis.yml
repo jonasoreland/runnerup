@@ -32,5 +32,4 @@ script:
 - ./gradlew wear:lintRelease
 - ./gradlew assembleLatestRelease
 - ./gradlew lintLatestRelease
-- ./gradlew assembleFroyoRelease lintFroyoRelease
 - ./gradlew test

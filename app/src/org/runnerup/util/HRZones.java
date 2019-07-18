@@ -122,12 +122,12 @@ public class HRZones {
         for (int i = 0; i < zones.length; i++)
             zones[i] = vals.get(i);
 
-        prefs.edit().putString(key, SafeParse.storeIntList(zones)).commit();
+        prefs.edit().putString(key, SafeParse.storeIntList(zones)).apply();
     }
 
     public void clear() {
         zones = null;
-        prefs.edit().remove(key).commit();
+        prefs.edit().remove(key).apply();
     }
 
     /**

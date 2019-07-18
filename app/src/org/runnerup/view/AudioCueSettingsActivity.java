@@ -227,7 +227,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     private void deleteAudioScheme() {
         delete = true;
-        getPreferenceManager().getSharedPreferences().edit().clear().commit();
+        getPreferenceManager().getSharedPreferences().edit().clear().apply();
         /*
          * Can only delete file in "next" activity...cause on destory on this,
          * will save file...
@@ -272,12 +272,12 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             String newValue = (String) adapter.getItem(newValueId);
             PreferenceManager prefMgr = getPreferenceManager();
             if (newValue.contentEquals(DEFAULT)) {
-                prefMgr.getSharedPreferences().edit().commit();
+                prefMgr.getSharedPreferences().edit().apply();
                 switchTo(null);
             } else if (newValue.contentEquals(getString(R.string.New_audio_scheme))) {
                 createNewAudioSchemeDialog();
             } else {
-                prefMgr.getSharedPreferences().edit().commit();
+                prefMgr.getSharedPreferences().edit().apply();
                 updateSortOrder(newValue);
                 switchTo(newValue);
             }
@@ -360,7 +360,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 Preference a = getPreferenceManager().findPreference(res.getString(s));
                 if (a != null) {
                     a.getEditor().putBoolean(res.getString(s), false);
-                    a.getEditor().commit();
+                    a.getEditor().apply();
                 }
             }
 
@@ -368,7 +368,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 Preference a = getPreferenceManager().findPreference(res.getString(s));
                 if (a != null) {
                     a.getEditor().putBoolean(res.getString(s), true);
-                    a.getEditor().commit();
+                    a.getEditor().apply();
                 }
             }
             return false;

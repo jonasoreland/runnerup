@@ -4,12 +4,12 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.SupportWrapper;
 import org.runnerup.view.RunActivity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.WorkoutInfo;
@@ -27,21 +27,24 @@ public class OngoingState implements NotificationState {
         this.context = context;
 
         String chanId = NotificationStateManager.getChannelId(context);
-        builder = SupportWrapper.Builder(context, chanId);
+
         Intent i = new Intent(context, RunActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         i.putExtra(Constants.Intents.FROM_NOTIFICATION, true);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
+        builder = new NotificationCompat.Builder(context, chanId);
         builder.setTicker(context.getString(R.string.RunnerUp_activity_started));
         builder.setContentIntent(pi);
         builder.setContentTitle(context.getString(R.string.Activity_ongoing));
         builder.setSmallIcon(R.drawable.ic_stat_notify);
         builder.setOngoing(true);
         builder.setOnlyAlertOnce(true);
-        org.runnerup.util.NotificationCompat.setLocalOnly(builder);
-        org.runnerup.util.NotificationCompat.setVisibility(builder);
-        org.runnerup.util.NotificationCompat.setCategory(builder);
+        builder.setLocalOnly(true);
+        if (Build.VERSION.SDK_INT >= 21) {
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            builder.setCategory(Notification.CATEGORY_SERVICE);
+        }
     }
 
     @Override

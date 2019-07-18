@@ -25,11 +25,6 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
-
-        froyo {
-            manifest.srcFile 'froyo/AndroidManifest.xml'
-            java.srcDirs = ['froyo/java','free/java']
-        }
         latest {
             manifest.srcFile 'latest/AndroidManifest.xml'
             java.srcDirs = ['latest/java']
@@ -53,14 +48,6 @@ android {
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
             versionCode 14000000 + rootProject.ext.versionCode
-        }
-        froyo {
-            dimension "all"
-            minSdkVersion 8
-            compileSdkVersion rootProject.ext.compileSdkVersion
-            targetSdkVersion rootProject.ext.targetSdkVersion
-            versionName rootProject.ext.versionName
-            versionCode 8000000 + rootProject.ext.versionCode
         }
     }
 
@@ -140,17 +127,14 @@ dependencies {
         latestWearApp project(':wear')
     }
 
+    //noinspection GradleCompatible
     latestImplementation "com.android.support:design:${rootProject.ext.supportLibrary}"
-    //Lint bug: https://issuetracker.google.com/issues/231321
-    //noinspection GradleDependency
-    froyoImplementation 'com.android.support:design:24.1.0' //SDK <10 dropped in 24.2
-
     latestImplementation "com.android.support:cardview-v7:${rootProject.ext.supportLibrary}"
+    //noinspection GradleDependency
     latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
     latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:6.8.1'
     latestImplementation 'com.jjoe64:graphview:4.2.2'
-    froyoImplementation 'com.jjoe64:graphview:4.2.1'
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"

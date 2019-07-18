@@ -66,45 +66,44 @@ public class GraphWrapper implements Constants {
         this.hrzonesBarLayout = hrzonesBarLayout;
         this.formatter = formatter;
 
-        if (Build.VERSION.SDK_INT > 8) {
-            new LoadGraph().execute(new LoadParam(context, mDB, mID));
+        new LoadGraph().execute(new LoadParam(context, mDB, mID));
 
-            graphView = new GraphView(context);
-            graphView.setTitle(context.getString(R.string.Pace));
-            graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                @Override
-                public String formatLabel(double value, boolean isValueX) {
-                    if (isValueX) {
-                        return formatter.formatDistance(Formatter.Format.TXT, (long) value);
-                    } else {
-                        return formatter.formatPace(Formatter.Format.TXT_SHORT, value);
-                    }
+        graphView = new GraphView(context);
+        graphView.setTitle(context.getString(R.string.Pace));
+        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    return formatter.formatDistance(Formatter.Format.TXT, (long) value);
+                } else {
+                    return formatter.formatPace(Formatter.Format.TXT_SHORT, value);
                 }
-            });
-            graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getPaceUnit());
-            graphView.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
-            //enable zoom
-            graphView.getViewport().setScalable(true);
-            graphView.getViewport().setScrollable(true);
+            }
+        });
+        graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getPaceUnit());
+        graphView.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
+        //enable zoom
+        graphView.getViewport().setScalable(true);
+        graphView.getViewport().setScrollable(true);
 
-            graphView2 = new GraphView(context);
-            graphView2.setTitle(context.getString(R.string.Heart_rate));
-            graphView2.getGridLabelRenderer().setVerticalAxisTitle("bpm");
-            graphView2.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
-            graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-                @Override
-                public String formatLabel(double value, boolean isValueX) {
-                    if (isValueX) {
-                        return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
-                    } else {
-                        return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
-                    }
+        graphView2 = new GraphView(context);
+        graphView2.setTitle(context.getString(R.string.Heart_rate));
+        graphView2.getGridLabelRenderer().setVerticalAxisTitle("bpm");
+        graphView2.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
+        graphView2.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
+                } else {
+                    return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
                 }
-            });
-            graphView2.getViewport().setScalable(true);
-            graphView2.getViewport().setScrollable(true);
-        }
-         hrzonesBar = new HRZonesBar(context);
+            }
+        });
+        graphView2.getViewport().setScalable(true);
+        graphView2.getViewport().setScrollable(true);
+
+        hrzonesBar = new HRZonesBar(context);
     }
 
      class GraphProducer {
@@ -571,26 +570,24 @@ public class GraphWrapper implements Constants {
         @Override
         protected void onPostExecute(GraphProducer graphData) {
 
-            if (Build.VERSION.SDK_INT > 8) {
-                graphData.complete(graphView);
-                if (!graphData.HasHRInfo()) {
-                    graphTab.addView(graphView);
-                } else {
-                    graphTab.addView(graphView,
-                            new LayoutParams(
-                                    LayoutParams.MATCH_PARENT, 0, 0.5f));
+            graphData.complete(graphView);
+            if (!graphData.HasHRInfo()) {
+                graphTab.addView(graphView);
+            } else {
+                graphTab.addView(graphView,
+                        new LayoutParams(
+                                LayoutParams.MATCH_PARENT, 0, 0.5f));
 
-                    graphTab.addView(graphView2,
-                            new LayoutParams(
-                                    LayoutParams.MATCH_PARENT, 0, 0.5f));
-                }
+                graphTab.addView(graphView2,
+                        new LayoutParams(
+                                LayoutParams.MATCH_PARENT, 0, 0.5f));
+            }
 
-                if (graphData.HasHRZHist()) {
-                    hrzonesBarLayout.setVisibility(View.VISIBLE);
-                    hrzonesBarLayout.addView(hrzonesBar);
-                } else {
-                    hrzonesBarLayout.setVisibility(View.GONE);
-                }
+            if (graphData.HasHRZHist()) {
+                hrzonesBarLayout.setVisibility(View.VISIBLE);
+                hrzonesBarLayout.addView(hrzonesBar);
+            } else {
+                hrzonesBarLayout.setVisibility(View.GONE);
             }
         }
     }

@@ -120,10 +120,10 @@ public class MainLayout extends TabActivity
             editor.putString(getResources().getString(R.string.pref_autolap),
                     Double.toString(km ? Formatter.km_meters : Formatter.mi_meters));
         }
-        editor.commit();
+        editor.apply();
 
         // clear basicTargetType between application startup/shutdown
-        pref.edit().remove(getString(R.string.pref_basic_target_type)).commit();
+        pref.edit().remove(getString(R.string.pref_basic_target_type)).apply();
 
         Log.e(getClass().getName(), "app-version: " + versionCode + ", upgradeState: " + upgradeState
                 + ", km: " + km);
@@ -135,7 +135,7 @@ public class MainLayout extends TabActivity
                 String v = pref.getString(res.getString(R.string.pref_mute), "no");
                 editor.putBoolean(res.getString(R.string.pref_mute_bool), v.equalsIgnoreCase("yes"));
                 editor.remove(res.getString(R.string.pref_mute));
-                editor.commit();
+                editor.apply();
             }
         } catch (Exception e) {
         }
@@ -252,7 +252,7 @@ public class MainLayout extends TabActivity
                         continue;
                     }
 
-                    pref.edit().putBoolean(key, true).commit();
+                    pref.edit().putBoolean(key, true).apply();
 
                     Log.v(getClass().getName(), "Copying: " + dst);
                     InputStream input = null;
@@ -360,7 +360,7 @@ public class MainLayout extends TabActivity
 
     private static boolean requestReadStoragePermissions(final Activity activity) {
         boolean ret = true;
-        if (Build.VERSION.SDK_INT >= 16 &&
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
                 ContextCompat.checkSelfPermission(activity,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {

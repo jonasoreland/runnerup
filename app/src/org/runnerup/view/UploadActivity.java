@@ -368,7 +368,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
             if (syncMode.equals(SyncManager.SyncMode.UPLOAD)) {
                 view.setOnClickListener(onActivityClick);
-            } else if (Build.VERSION.SDK_INT < 15 || view.hasOnClickListeners()) {
+            } else if (view.hasOnClickListeners()) {
                 view.setOnClickListener(null);
             }
 

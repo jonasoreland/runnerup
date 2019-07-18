@@ -80,10 +80,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
         if (sensorManager == null) {
             sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         }
-        if (Build.VERSION.SDK_INT >= 14) {
-            //noinspection InlinedApi
-            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        }
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         if (sensor == null) {
             //noinspection deprecation
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
