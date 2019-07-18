@@ -37,9 +37,12 @@ project.ext {
     // allows for -Dpre-dex=false to be set
     preDexEnabled = "true" == System.getProperty("pre-dex", "true")
 
+    // F-Droid builds only allow free software (wear dir deleted at builds)
+    allowNonFree = !project.hasProperty('org.runnerup.free') && rootProject.file("wear").exists()
+
     // Note: AntPlus may have to be downloaded explicitly due to licensing
     antPlusLib = "ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar"
-    if (project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLib).exists()) {
+    if (!allowNonFree || project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLib).exists()) {
         antPlusLib = ""
     }
 }
