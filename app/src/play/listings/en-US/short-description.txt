@@ -1,0 +1,2 @@
+RunnerUp, an open source run tracker with advanced workout and audio cues.
+Track your running with RunnerUp using the GPS in your Android phone.

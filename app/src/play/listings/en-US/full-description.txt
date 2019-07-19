@@ -1,0 +1,25 @@
+No ads, no in-app purchases, everything free.
+No user registration and/or tracking*.
+
+Track your sport activities with RunnerUp using the GPS in your Android phone:
+
+* See detailed stats around your pace, distance and time
+* Get stats and progress with built-in highly configurable audio cues
+* Run free runs with target pace or target heart rate zone
+* Easily configure and run effective interval workouts modeled after Garmin
+* Share your favorite workouts with friends (using email)
+* Heart rate monitor: Bluetooth SMART (BLE) and ANT+ (as well as PolarWearLink and Zephyr)
+* Configure and use heart rate zones
+* WearOS app
+* Pebble support
+
+Upload your activities to a variety of running sites with a single click:
+
+* Strava
+* Runalyze
+* Endomondo
+* RunKeeper
+* RunningAHEAD
+* Dropbox
+
+Note: MapBox enables tracking by default (when using the map to view activities). This can be disabled from the MapBox logo on the lower left corner of the map.
