@@ -29,7 +29,7 @@ project.ext {
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
-    versionName = '2.0.1.3'
+    versionName = '2.0.1.4'
     versionCode = 203
 
     travisBuild = System.getenv("TRAVIS") == "true"

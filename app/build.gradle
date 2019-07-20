@@ -169,27 +169,36 @@ android.applicationVariants.all {
     if (rootProject.file("mapbox.properties").exists()) {
         // https://www.mapbox.com/account/
         props.load(new FileInputStream(rootProject.file("mapbox.properties")))
+        buildConfigField 'int', 'MAPBOX_ENABLED', "1"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
     }
     else {
-        // Invalid token, no map
-        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '"pk.eyJ1IjoiY3FucXJkIiwiYSI6ImJmYjcxNDkyZjJiNzllMzYxYjA0NjA1YTI0Mzg4ODA4In0.N9lbcSp06JqIpFSP5X44Fw"'
+        buildConfigField 'int', 'MAPBOX_ENABLED', "0"
+        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
     }
 
     if (rootProject.file("runalyze.properties").exists()) {
+        // Contact Runalyze team at https://forum.runalyze.com/
         props.load(new FileInputStream(rootProject.file("runalyze.properties")))
         buildConfigField 'int', 'RUNALYZE_ENABLED', "1"
         buildConfigField 'String', 'RUNALYZE_ID', props.CLIENT_ID
         buildConfigField 'String', 'RUNALYZE_SECRET', props.CLIENT_SECRET
     }
     else {
-        // Demo, used to testing.runalyze.com
+        // Demo, connect to testing.runalyze.com
         buildConfigField 'int', 'RUNALYZE_ENABLED', "0"
-        buildConfigField 'String', 'RUNALYZE_ID', "\"8_2jx5jt9r39ic40ooc80c8c0884okgk0owsowg808c4csg8ko8g\""
-        buildConfigField 'String', 'RUNALYZE_SECRET', "\"1v7d6nwe1v9c8skok44g0gc8cc04cc0wwwo8swwgckoogwsww4\""
+        buildConfigField 'String', 'RUNALYZE_ID', '"8_2jx5jt9r39ic40ooc80c8c0884okgk0owsowg808c4csg8ko8g"'
+        buildConfigField 'String', 'RUNALYZE_SECRET', '"1v7d6nwe1v9c8skok44g0gc8cc04cc0wwwo8swwgckoogwsww4"'
     }
 
     if (rootProject.file("dropbox.properties").exists()) {
+        // Create an app at https://www.dropbox.com/developers/apps/
+        // Dropbox API, App folder -> create app
+        // Enable additional users, Redirect URI:http://localhost:8080/runnerup/dropbox, Disallow implicit grant
+        // Set branding icon
+        // Create dropbox.properties with two lines:
+        //   CLIENT_ID="replace_dropbox_id"
+        //   CLIENT_SECRET="replace_dropbox_secret"
         props.load(new FileInputStream(rootProject.file("dropbox.properties")))
         buildConfigField 'int', 'DROPBOX_ENABLED', "1"
         buildConfigField 'String', 'DROPBOX_ID', props.CLIENT_ID

@@ -123,9 +123,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MapWrapper.start(this);
-        setContentView(R.layout.detail);
-
+        if (BuildConfig.MAPBOX_ENABLED > 0) {
+            MapWrapper.start(this);
+            setContentView(R.layout.detail);
+        } else {
+            // No MapBox key, load without mapview, do not set mapWrapper
+            setContentView(R.layout.detail_nomap);
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.actionbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -161,9 +165,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         sport = (TitleSpinner) findViewById(R.id.summary_sport);
         notes = (EditText) findViewById(R.id.notes_text);
 
-        MapView mapView = (MapView) findViewById(R.id.mapview);
-        mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
-        mapWrapper.onCreate(savedInstanceState);
+        if (BuildConfig.MAPBOX_ENABLED > 0) {
+            MapView mapView = (MapView) findViewById(R.id.mapview);
+            mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
+            mapWrapper.onCreate(savedInstanceState);
+        }
 
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
@@ -193,10 +199,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
-        tabSpec = th.newTabSpec("map");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
-        tabSpec.setContent(R.id.tab_map);
-        th.addTab(tabSpec);
+        if (BuildConfig.MAPBOX_ENABLED > 0) {
+            tabSpec = th.newTabSpec("map");
+            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
+            tabSpec.setContent(R.id.tab_map);
+            th.addTab(tabSpec);
+        }
 
         tabSpec = th.newTabSpec("graph");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
@@ -285,37 +293,49 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onResume() {
         super.onResume();
-        mapWrapper.onResume();
+        if(mapWrapper != null) {
+            mapWrapper.onResume();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mapWrapper.onStart();
+        if(mapWrapper != null) {
+            mapWrapper.onStart();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mapWrapper.onStop();
+        if(mapWrapper != null) {
+            mapWrapper.onStop();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mapWrapper.onPause();
+        if(mapWrapper != null) {
+            mapWrapper.onPause();
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapWrapper.onSaveInstanceState(outState);
+        if(mapWrapper != null) {
+            mapWrapper.onSaveInstanceState(outState);
+        }
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapWrapper.onLowMemory();
+        if(mapWrapper != null) {
+            mapWrapper.onLowMemory();
+        }
     }
 
     @Override
@@ -323,7 +343,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         super.onDestroy();
         DBHelper.closeDB(mDB);
         syncManager.close();
-        mapWrapper.onDestroy();
+        if(mapWrapper != null) {
+            mapWrapper.onDestroy();
+        }
     }
 
     private void requery() {
