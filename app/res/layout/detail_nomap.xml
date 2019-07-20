@@ -165,12 +165,6 @@
                         android:layout_weight="1" />
                 </LinearLayout>
 
-                <include
-                    android:id="@+id/tab_map"
-                    layout="@layout/map_area"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
                 <LinearLayout
                     android:id="@+id/tab_graph"
                     android:layout_width="match_parent"
