@@ -67,6 +67,7 @@ import java.util.concurrent.TimeUnit;
 public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchronizer, OAuth2Server {
 
     public static final String NAME = "RunKeeper";
+    public static final int ENABLED = 0;
     private static final String PUBLIC_URL = "https://runkeeper.com";
     private Context context = null;
     /**
