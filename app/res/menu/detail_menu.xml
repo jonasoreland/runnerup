@@ -33,6 +33,11 @@
         android:title="@string/Recompute_activity"/>
 
     <item
+        android:id="@+id/menu_simplify_path"
+        android:orderInCategory="100"
+        android:title="@string/path_simplification_menu"/>
+
+    <item
         android:id="@+id/menu_delete_activity"
         android:orderInCategory="100"
         android:title="@string/Delete_activity"/>

@@ -66,4 +66,13 @@
     <item>Male</item>
     <item>Female</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Radial-Distance (fast)</item>
+    <item>Ramer-Douglas-Peucker (high quality)</item>
+  </string-array>
+  <string-array name="path_simplification_algorithm_values" translatable="false">
+    <item>radial_distance</item>
+    <item>ramer_douglas_peucker</item>
+  </string-array>
 </resources>

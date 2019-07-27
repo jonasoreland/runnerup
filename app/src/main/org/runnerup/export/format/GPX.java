@@ -19,14 +19,17 @@ package org.runnerup.export.format;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.util.KXmlSerializer;
 import org.runnerup.workout.Sport;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -34,22 +37,29 @@ import java.util.TimeZone;
 
 public class GPX {
 
-    private SQLiteDatabase mDB = null;
-    private KXmlSerializer mXML = null;
-    private SimpleDateFormat simpleDateFormat = null;
+    private SQLiteDatabase mDB;
+    private KXmlSerializer mXML;
+    private SimpleDateFormat simpleDateFormat;
     final private boolean mGarminExt; //Also Cluetrust
     private final boolean mAccuracyExtensions;
+    private PathSimplifier simplifier;
 
     public GPX(SQLiteDatabase mDB) {
-        this(mDB, true, false);
+        this(mDB, true, false, null);
     }
 
-    public GPX(SQLiteDatabase mDB, boolean garminExt, boolean accuracyExtensions) {
+    public GPX(SQLiteDatabase mDB, boolean garminExt, boolean accuracyExtensions, PathSimplifier simplifier) {
         this.mDB = mDB;
+        mXML = new KXmlSerializer();
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         this.mGarminExt = garminExt;
         this.mAccuracyExtensions = accuracyExtensions;
+        this.simplifier = simplifier;
+    }
+
+    public GPX(SQLiteDatabase mDB, boolean garminExt, boolean accuracyExtensions) {
+        this(mDB, garminExt, accuracyExtensions, null);
     }
 
     private String formatTime(long time) {
@@ -73,7 +83,6 @@ public class GPX {
 
         long startTime = cursor.getLong(2); // epoch
         try {
-            mXML = new KXmlSerializer();
             mXML.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
             mXML.setOutput(writer);
             mXML.startDocument("UTF-8", true);
@@ -154,13 +163,19 @@ public class GPX {
                 DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE,
                 DB.LOCATION.HR, DB.LOCATION.CADENCE, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE,
                 DB.LOCATION.ACCURANCY, DB.LOCATION.BEARING, DB.LOCATION.SPEED,
-                DB.LOCATION.SATELLITES, DB.LOCATION.GPS_ALTITUDE
+                DB.LOCATION.SATELLITES, DB.LOCATION.GPS_ALTITUDE,
+                DB.PRIMARY_KEY
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
                 null);
         boolean lok = cLap.moveToFirst();
         boolean pok = cLocation.moveToFirst();
+
+        // simplify path, if this option is selected by the user
+        ArrayList<Integer> ignoreIDs = simplifier != null ?
+                simplifier.getNoisyLocationIDs(mDB, activityId) :
+                new ArrayList<>();
 
         while (lok) {
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
@@ -186,7 +201,10 @@ public class GPX {
                                 }
                                 mXML.comment(" State change: " + locType + " " + formatTime(time));
                             }
-                        } else if (time > last_time) {
+                        } else if (time > last_time &&
+                                // ignore IDs that have been marked unnecessary by path simplification
+                                // reduces resolution of the exported path
+                                ! ignoreIDs.contains(cLocation.getInt(15))) {
                             hasPoints = true;
                             mXML.startTag("", "trkpt");
 

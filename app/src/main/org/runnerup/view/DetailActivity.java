@@ -59,6 +59,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
@@ -259,7 +260,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -293,6 +293,26 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             dialog.dismiss();
                         });
                 builderRecompute.show();
+                break;
+
+            case R.id.menu_simplify_path:
+                final AlertDialog.Builder builderSimplify = new AlertDialog.Builder(this)
+                        .setTitle(R.string.path_simplification_menu)
+                        .setMessage(getString(R.string.Are_you_sure))
+                        .setPositiveButton(getString(R.string.Yes), (dialog, which) -> {
+                            dialog.dismiss();
+                            PathSimplifier simplifier = new PathSimplifier(this);
+                            ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
+                            ActivityCleaner.deleteLocations(mDB, ids);
+                            new ActivityCleaner().recompute(mDB, mID);
+                            requery();
+                            fillHeaderData();
+                            finish();
+                        })
+                        .setNegativeButton(getString(R.string.No),(dialog, which) -> {
+                            dialog.dismiss();
+                        });
+                builderSimplify.show();
                 break;
 
             case R.id.menu_share_activity:

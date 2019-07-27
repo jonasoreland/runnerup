@@ -106,6 +106,11 @@
     <string name="pref_pace_graph_smoothing">pref_pace_graph_smoothing</string>
     <string name="pref_pace_graph_smoothing_filters">pref_pace_graph_smoothing_filters</string>
 
+    <string name="pref_path_simplification_save">pref_path_simplification_save</string>
+    <string name="pref_path_simplification_export_gpx">pref_path_simplification_export_gpx</string>
+    <string name="pref_path_simplification_tolerance">pref_path_simplification_tolerance</string>
+    <string name="pref_path_simplification_algorithm">pref_path_simplification_algorithm</string>
+
     <string name="pref_mapbox_default_style">pref_mapbox_default_style2</string>
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
