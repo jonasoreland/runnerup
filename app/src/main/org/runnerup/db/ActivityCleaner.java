@@ -21,7 +21,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.text.TextUtils;
 import android.util.Log;
+
+import com.goebl.simplify.PointExtractor;
+import com.goebl.simplify.Simplify;
 
 import org.runnerup.common.util.Constants;
 
@@ -272,5 +276,97 @@ public class ActivityCleaner implements Constants {
         }
         c.close();
         return cnt;
+    }
+
+    /**
+     * Wrapper needed by simplifyPath to use Location as 2D point.
+     * Extracts (lat,long) from the Location class needed by com.goebl.simplify.simplify for (x,y).
+     *
+     * The functions return a multiple of the lat/long values to avoid deltas < 1 between points.
+     *
+     * https://github.com/hgoebl/simplify-java
+     */
+    private static PointExtractor<Location> locationPointExtractor = new PointExtractor<Location>() {
+        @Override
+        public double getX(Location point) {
+            return point.getLatitude() * 1e6;
+        }
+
+        @Override
+        public double getY(Location point) {
+            return point.getLongitude() * 1e6;
+        }
+    };
+
+    /**
+     * Simplifies the path of an activity,
+     * i.e., deletes locations below a specific tolerance to reduce the resolution.
+     *
+     * We use only 2D because we cannot mix degrees (lat,long) with meters (altitude),
+     * regarding the tolerance of simplify.
+     * Conversion of lat and long to meters is not necessary to simplify the path.
+     *
+     * https://github.com/hgoebl/simplify-java
+     *
+     * @param db Database.
+     * @param activityId ID of the activity to simplify.
+     * @param toleranceMeters Squared tolerance in meters.
+     */
+    public static void simplifyPath(SQLiteDatabase db, long activityId, double toleranceMeters) {
+        // columns to query from the database, table "LOCATION"
+        String[] pColumns = {
+                "_id", DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE
+        };
+
+        // get table from database
+        Cursor c = db.query(DB.LOCATION.TABLE, pColumns,
+                DB.LOCATION.ACTIVITY + " = " + activityId,
+                null, null, null, DB.LOCATION.TIME);
+
+        // data base rows to lists
+        ArrayList<Location> locations = new ArrayList<>();  /** List of the activity's locations (lat,long). */
+        if (c.moveToFirst()) {
+            do {
+                // save ID of the location entry (row ID) as provider
+                Location l = new Location(String.format("%d", c.getInt(0)));
+                // get point data
+                l.setLatitude(c.getDouble(1));
+                l.setLongitude(c.getDouble(2));
+                locations.add(l);
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        // squared tolerance in meters has to be transformed to tolerance in degrees
+        // get meters per degree with android.location.Location.distanceTo
+        Location zeroDegrees = new Location("Dill poh");
+        zeroDegrees.setLatitude(0);
+        zeroDegrees.setLongitude(0);
+        Location oneDegrees = new Location(zeroDegrees);
+        oneDegrees.setLatitude(1);
+        // tolerance in meters / meters per degree
+        double toleranceDeg = toleranceMeters / zeroDegrees.distanceTo(oneDegrees);
+
+        // create an instance of the simplifier (empty array needed by List.toArray)
+        Location[] sampleArray = new Location[0];
+        Simplify<Location> simplify = new Simplify<Location>(sampleArray, locationPointExtractor);
+        // removes unnecessary intermediate points (note this does not change lat/long values!)
+        Location[] simplifiedLocations = simplify.simplify(locations.toArray(sampleArray),
+                toleranceDeg*1e6, false);
+
+        // remove the locations (skipped by simplify) from the database
+        ArrayList<String> ids = new ArrayList<>();  // IDs of all the activity's locations
+        ArrayList<String> simplifiedIDs = new ArrayList<>();  // IDs to remove from location table
+        for (Location l: locations) {
+            ids.add(l.getProvider());
+        }
+        for (Location l: simplifiedLocations) {
+            simplifiedIDs.add(l.getProvider());
+        }
+        ids.removeAll(simplifiedIDs); // keep IDs to remove from table
+        String strIDs = TextUtils.join(",", ids);
+        db.execSQL("delete from " + DB.LOCATION.TABLE
+                + " where _id in (" + strIDs + ")"
+                + " and " + DB.LOCATION.TYPE + " = " + DB.LOCATION.TYPE_GPS);
     }
 }
