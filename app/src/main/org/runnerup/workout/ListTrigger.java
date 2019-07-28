@@ -22,42 +22,40 @@ import java.util.ArrayList;
 
 public class ListTrigger extends Trigger {
 
-    boolean remaining = false;
-    Scope scope = Scope.ACTIVITY;
-    Dimension dimension = Dimension.TIME;
+    private Scope scope;
+    private Dimension dimension;
 
-    private int pos = Integer.MAX_VALUE;
-    ArrayList<Double> triggerTimes = new ArrayList<>();
+    private int pos;
+    private ArrayList<Double> triggerTimes;
+
+    ListTrigger(Dimension d, Scope s, ArrayList<Double> triggerTimes){
+        this.dimension = d;
+        this.scope = s;
+
+        if (triggerTimes == null) {
+            triggerTimes = new ArrayList<>();
+        }
+        this.triggerTimes = triggerTimes;
+        pos = 0;
+    }
 
     @Override
     public boolean onTick(Workout w) {
-        if (pos < triggerTimes.size()) {
-            if (!remaining) {
-                double now = w.get(scope, dimension);
-                if (now >= triggerTimes.get(pos)) {
-                    fire(w);
-                    scheduleNext(w, now);
-                }
-            } else {
-                double now = w.getRemaining(scope, dimension);
-                if (now <= triggerTimes.get(pos)) {
-                    fire(w);
-                    scheduleNext(w, now);
-                }
-            }
+        // add a bit of margin, NOTE: less than 0.5s
+        // For distance 4:00 /km is just over 4 m/s
+        final double margin = dimension == Dimension.TIME ? 0.4d : 2d;
+
+        double now = w.getRemaining(scope, dimension) - margin;
+        if (pos < triggerTimes.size() && now <= triggerTimes.get(pos)) {
+            scheduleNext(w, now);
+            fire(w);
         }
         return false;
     }
 
     private void scheduleNext(Workout w, double now) {
-        if (!remaining) {
-            while (pos < triggerTimes.size() && now >= triggerTimes.get(pos)) {
-                pos++;
-            }
-        } else {
-            while (pos < triggerTimes.size() && now <= triggerTimes.get(pos)) {
-                pos++;
-            }
+        while (pos < triggerTimes.size() && now <= triggerTimes.get(pos)) {
+            pos++;
         }
 
         if (pos >= triggerTimes.size()) {

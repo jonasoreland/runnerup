@@ -31,7 +31,6 @@ import java.util.HashMap;
 
 public class AudioCountdownFeedback extends Feedback {
 
-    boolean emitScope = false;
     private Scope scope;
     private Dimension dimension;
     private RUTextToSpeech textToSpeech;
@@ -58,10 +57,7 @@ public class AudioCountdownFeedback extends Feedback {
 
         AudioCountdownFeedback other = (AudioCountdownFeedback) _other;
 
-        if (scope != other.scope)
-            return false;
-
-        return dimension == other.dimension;
+        return scope == other.scope && dimension == other.dimension;
     }
 
     @Override
