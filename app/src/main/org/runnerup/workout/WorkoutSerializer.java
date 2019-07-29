@@ -433,11 +433,10 @@ public class WorkoutSerializer {
                 break;
             }
             case RESTING:
-                if (!convertRestToRecovery || duration.first != Dimension.DISTANCE ||
-                        duration.second == null) {
-                    js.step = Step.createPauseStep(duration.first, duration.second);
-                    break;
-                }
+                boolean rest = !convertRestToRecovery || duration.first != Dimension.DISTANCE ||
+                        duration.second == null;
+                js.step = Step.createRestStep(duration.first, duration.second, !rest);
+                break;
             case ACTIVE:
             case WARMUP:
             case COOLDOWN:
@@ -467,7 +466,7 @@ public class WorkoutSerializer {
         File fin = getFile(ctx, name);
         Log.e("WorkoutSerializer", "reading " + fin.getPath());
         final boolean convertRestToRecovery = prefs.getBoolean(ctx.getResources().getString(
-                R.string.pref_convert_advanced_distance_rest_to_recovery), false);
+                R.string.pref_convert_advanced_distance_rest_to_recovery), true);
 
         Workout w = readJSON(new FileReader(fin), convertRestToRecovery);
         w.sport = prefs.getInt(ctx.getResources().getString(R.string.pref_sport), Constants.DB.ACTIVITY.SPORT_RUNNING);

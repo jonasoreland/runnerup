@@ -285,7 +285,7 @@
             android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:persistent="true"
             android:key="@string/pref_convert_advanced_distance_rest_to_recovery"
             android:title="@string/Convert_rest_on_Advanced_tab"

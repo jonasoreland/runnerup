@@ -56,14 +56,15 @@ public class WorkoutBuilder {
 
         if (prefs.getBoolean(res.getString(R.string.pref_countdown_active), false))
         {
-            long val = 0;
+            long val;
             String vals = prefs.getString(res.getString(R.string.pref_countdown_time), "0");
             try {
                 val = Long.parseLong(vals);
             } catch (NumberFormatException e) {
+                val = 0;
             }
             if (val > 0) {
-                Step step = Step.createPauseStep(Dimension.TIME, val);
+                Step step = Step.createRestStep(Dimension.TIME, val, false);
                 w.steps.add(step);
             }
         }
@@ -152,18 +153,18 @@ public class WorkoutBuilder {
             w.steps.add(step);
         }
 
-        int repetitions = (int) SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_repetitions), "1"),
+        int repetitions = (int) SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_repetitions), "8"),
                 1);
 
-        int intervalType = prefs.getInt(res.getString(R.string.pref_interval_type), 0);
+        int intervalType = prefs.getInt(res.getString(R.string.pref_interval_type), 1); // Distance
         long intervalTime = SafeParse.parseSeconds(prefs.getString(res.getString(R.string.pref_interval_time), "00:04:00"),
                 4 * 60);
-        double intevalDistance = SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_distance), "1000"),
+        double intervalDistance = SafeParse.parseDouble(prefs.getString(res.getString(R.string.pref_interval_distance), "1000"),
                 1000);
-        int intervalRestType = prefs.getInt(res.getString(R.string.pref_interval_rest_type), 0);
+        int intervalRestType = prefs.getInt(res.getString(R.string.pref_interval_rest_type), 0); // Time
         long intervalRestTime = SafeParse.parseSeconds(
                 prefs.getString(res.getString(R.string.pref_interval_rest_time), "00:01:00"), 60);
-        double intevalRestDistance = SafeParse.parseDouble(
+        double intervalRestDistance = SafeParse.parseDouble(
                 prefs.getString(res.getString(R.string.pref_interval_rest_distance), "200"), 200);
 
         RepeatStep repeat = new RepeatStep();
@@ -177,30 +178,21 @@ public class WorkoutBuilder {
                     break;
                 case 1: // Distance
                     step.durationType = Dimension.DISTANCE;
-                    step.durationValue = intevalDistance;
+                    step.durationValue = intervalDistance;
                     break;
             }
             repeat.steps.add(step);
 
-            //if (true) {
             Step rest = null;
             switch (intervalRestType) {
                 case 0: // Time
-                    rest = Step.createPauseStep(Dimension.TIME, intervalRestTime);
+                    rest = Step.createRestStep(Dimension.TIME, intervalRestTime, convertRestToRecovery);
                     break;
                 case 1: // Distance
-                    if (!convertRestToRecovery) {
-                        rest = Step.createPauseStep(Dimension.DISTANCE, intevalRestDistance);
-                    } else {
-                        rest = new Step();
-                        rest.intensity = Intensity.RECOVERY;
-                        rest.durationType = Dimension.DISTANCE;
-                        rest.durationValue = intevalRestDistance;
-                    }
+                    rest = Step.createRestStep(Dimension.DISTANCE, intervalRestDistance, convertRestToRecovery);
                     break;
             }
             repeat.steps.add(rest);
-            //}
         }
         w.steps.add(repeat);
 
@@ -591,7 +583,7 @@ public class WorkoutBuilder {
                     case COOLDOWN:
                     case REPEAT:
                     default:
-                            s.step.setAutolap(0); // reset
+                        s.step.setAutolap(0); // reset
                         break;
                 }
             }
@@ -604,7 +596,9 @@ public class WorkoutBuilder {
          */
         if (prefs.getBoolean(res.getString(R.string.pref_step_countdown_active), true))
         {
-            long val = 15; // default 15s
+            final boolean convertRestToRecovery = prefs.getBoolean(res.getString(
+                    R.string.pref_convert_interval_distance_rest_to_recovery), true);
+            long val = 15; // default
             String vals = prefs.getString(res.getString(R.string.pref_step_countdown_time), "15");
             try {
                 val = Long.parseLong(vals);
@@ -614,9 +608,7 @@ public class WorkoutBuilder {
                 StepListEntry stepArr[] = new StepListEntry[steps.size()];
                 steps.toArray(stepArr);
                 for (int i = 0; i < stepArr.length; i++) {
-                    // Step prev = i == 0 ? null : stepArr[i-1];
                     Step step = stepArr[i].step;
-                    Step next = i + 1 == stepArr.length ? null : stepArr[i + 1].step;
 
                     if (step.durationType != null)
                         continue;
@@ -624,13 +616,14 @@ public class WorkoutBuilder {
                     if (step.intensity == Intensity.REPEAT || step.intensity == Intensity.RESTING)
                         continue;
 
-                    if (next == null)
+                    if (i + 1 >= stepArr.length)
                         continue;
+                    Step next = stepArr[i + 1].step;
 
                     if (next.durationType == Dimension.TIME && next.intensity == Intensity.RESTING)
                         continue;
 
-                    Step s = Step.createPauseStep(Dimension.TIME, val);
+                    Step s = Step.createRestStep(Dimension.TIME, val, convertRestToRecovery);
                     if (stepArr[i].parent == null) {
                         w.steps.add(i + 1, s);
                         Log.e("WorkoutBuilder", "Added step at index: " + (i + 1));

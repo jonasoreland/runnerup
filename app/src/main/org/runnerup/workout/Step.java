@@ -440,14 +440,14 @@ public class Step implements TickComponent {
         return 0;
     }
 
-    public static Step createPauseStep(Dimension dim, double duration) {
+    static Step createRestStep(Dimension dim, double duration, boolean recovery) {
         Step step;
-        if (dim == null || dim == Dimension.TIME)
+        if (!recovery && (dim == null || dim == Dimension.TIME))
             step = new PauseStep();
         else
             step = new Step();
 
-        step.intensity = Intensity.RESTING;
+        step.intensity = recovery ? Intensity.RECOVERY : Intensity.RESTING;
         step.durationType = dim;
         step.durationValue = duration;
         return step;
