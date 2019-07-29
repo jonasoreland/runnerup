@@ -268,14 +268,20 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
             if (obj != null && responseCode >= HttpURLConnection.HTTP_OK &&
                     responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-                return parseAuthData(obj);
+                s = parseAuthData(obj);
             } else {
                 // token no longer valid (normally HTTP_UNAUTHORIZED)
                 s = Status.NEED_AUTH;
                 s.authMethod = AuthMethod.OAUTH2;
                 access_token = null;
+
+                String error = obj != null && obj.has("error") ?
+                        noNullStr(obj.getString("error")) :
+                        "";
+                Log.d(getName(),
+                        "Error uploading, code: " +
+                                responseCode + ", amsg: " + amsg + " " + error + ", json: " + (obj == null ? "" : obj));
             }
-            s = Status.ERROR;
             return s;
 
         } catch (IOException e) {
