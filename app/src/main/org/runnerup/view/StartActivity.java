@@ -28,6 +28,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -439,7 +440,8 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         intentFilter.addAction(Constants.Intents.START_WORKOUT);
         registerReceiver(startEventBroadcastReceiver, intentFilter);
 
-        if (StartActivityHeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(this)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP &&
+                StartActivityHeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(this)) {
             headsetRegistered = true;
             StartActivityHeadsetButtonReceiver.registerHeadsetListener(this);
         }
