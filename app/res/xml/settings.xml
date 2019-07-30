@@ -119,11 +119,11 @@
             android:defaultValue="true"
             android:key="@string/pref_autolap_active"
             android:persistent="true"
-            android:title="@string/Autolap" />
+            android:title="@string/Autolap"
+            android:summary="@string/Autolap_basic_summary" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="1000"
-            android:dependency="@string/pref_autolap_active"
             android:inputType="number"
             android:key="@string/pref_autolap"
             android:persistent="true"
@@ -158,7 +158,8 @@
             android:defaultValue="false"
             android:persistent="true"
             android:key="@string/pref_countdown_active"
-            android:title="@string/Activity_countdown" />
+            android:title="@string/Activity_countdown"
+            android:summary="@string/Activity_countdown_summary" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="15"
@@ -309,13 +310,15 @@
             android:defaultValue="true"
             android:persistent="true"
             android:key="@string/pref_step_autolap_active"
-            android:title="@string/Autolap_during_intervals" />
+            android:title="@string/Autolap_during_intervals"
+            android:summary="@string/Autolap_during_intervals_summary" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:persistent="true"
             android:key="@string/pref_step_countdown_active"
-            android:title="@string/Add_countdown_after_step_that_ends_with_user_press" />
+            android:title="@string/Add_countdown_after_step_that_ends_with_user_press"
+            android:summary="@string/Add_countdown_after_step_that_ends_with_user_press_summary" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="15"

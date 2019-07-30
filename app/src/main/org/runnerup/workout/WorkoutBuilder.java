@@ -46,6 +46,8 @@ import java.util.List;
 public class WorkoutBuilder {
 
     /**
+     * Create a basic workout from settings
+     *
      * @return workout based on SharedPreferences
      */
     public static Workout createDefaultWorkout(Resources res, SharedPreferences prefs,
@@ -69,17 +71,8 @@ public class WorkoutBuilder {
             }
         }
 
+        // Add an active step
         Step step = new Step();
-        if (prefs.getBoolean(res.getString(R.string.pref_autolap_active), false)) {
-            double val = 0;
-            String vals = prefs.getString(res.getString(R.string.pref_autolap), "1000");
-            try {
-                val = Double.parseDouble(vals);
-            } catch (NumberFormatException e) {
-            }
-            step.setAutolap(val);
-        }
-
         addAutoPauseTrigger(res, step, prefs);
         w.steps.add(step);
 
@@ -104,9 +97,7 @@ public class WorkoutBuilder {
                 }
             }
         }
-        /*
-         *
-         */
+
         return w;
     }
 
@@ -134,6 +125,13 @@ public class WorkoutBuilder {
         step.triggers.add(tr);
     }
 
+    /**
+     * Create an interval workout, for the Interval tab
+     *
+     * @param res
+     * @param prefs
+     * @return
+     */
     public static Workout createDefaultIntervalWorkout(Resources res, SharedPreferences prefs) {
         Workout w = new Workout();
         w.sport = prefs.getInt(res.getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING);
@@ -232,114 +230,127 @@ public class WorkoutBuilder {
     }
 
     public static void addAudioCuesToWorkout(Resources res, Workout w, SharedPreferences prefs) {
-        final boolean mute = prefs.getBoolean(res.getString(R.string.pref_mute_bool), false);
-        w.setMute(mute);
+        final boolean muteMusic = prefs.getBoolean(res.getString(R.string.pref_mute_bool), false);
+        w.setMute(muteMusic);
         addAudioCuesToWorkout(res, w.steps, prefs);
     }
 
+    /**
+     * Add audio cues to the steps
+     * Called recursively for Repeat steps
+     * @param res
+     * @param steps
+     * @param prefs
+     */
     private static void addAudioCuesToWorkout(Resources res, ArrayList<Step> steps,
                                               SharedPreferences prefs) {
         final boolean skip_startstop_cue = prefs.getBoolean(
                 res.getString(R.string.cueinfo_skip_startstop), false);
-        ArrayList<Trigger> triggers = createDefaultTriggers(res, prefs);
-        boolean silent = triggers.size() == 0;
-        final boolean coaching = prefs.getBoolean(res.getString(R.string.cueinfo_target_coaching),
-                true);
-        if (silent && coaching) {
-            for (Step s : steps) {
-                if (s.getTargetType() != null) {
-                    silent = false;
-                    break;
-                }
+        final boolean isLapStartedCue = prefs.getBoolean(res.getString(R.string.pref_lap_started), true);
+
+        Step[] stepArr = new Step[steps.size()];
+        steps.toArray(stepArr);
+        for (int i = 0; i < stepArr.length; i++) {
+            Step step = stepArr[i];
+            Step next = i + 1 == stepArr.length ? null : stepArr[i + 1];
+
+            if (step.getIntensity() == Intensity.REPEAT) {
+                addAudioCuesToWorkout(res, ((RepeatStep) step).steps, prefs);
+                continue;
             }
-        }
 
-        addPauseStopResumeTriggers(res, triggers, prefs);
-        if (!silent)
-        {
-            EventTrigger ev = new EventTrigger();
-            ev.event = Event.STARTED;
-            ev.scope = Scope.STEP;
-            ev.maxCounter = 1;
-            ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
-            triggers.add(ev);
+            if (step.getIntensity() != Intensity.RESTING) {
+                // Periodic distance/time and end of lap/step
+                // Some suppressions for each intensity for related lap started/completed
+                // endOfLap is related to the autolap
+                boolean endOfLap = step.getIntensity() == Intensity.ACTIVE ||
+                        step.getAutolap() > 0;
+                ArrayList<Trigger> defaultTriggers = createDefaultTriggers(res, prefs, endOfLap);
 
-            if (prefs.getBoolean(res.getString(R.string.pref_lap_started), false)) {
-                EventTrigger ev2 = new EventTrigger(); // for autolap
-                ev2.event = Event.STARTED;
-                ev2.scope = Scope.LAP;
-                ev2.skipCounter = 1; // skip above
-                ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
-                triggers.add(ev2);
+                step.triggers.addAll(defaultTriggers);
+            }
+
+            if (!skip_startstop_cue) {
+                addPauseStopResumeTriggers(step.triggers);
             }
 
             if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
                 HRMStateTrigger hrmState = new HRMStateTrigger();
                 hrmState.triggerAction.add(new HRMStateChangeFeedback(hrmState));
-                triggers.add(hrmState);
+                step.triggers.add(hrmState);
             }
-        }
 
-        Step stepArr[] = new Step[steps.size()];
-        steps.toArray(stepArr);
-        for (int i = 0; i < stepArr.length; i++) {
-            // Step prev = i == 0 ? null : stepArr[i-1];
-            Step step = stepArr[i];
-            Step next = i + 1 == stepArr.length ? null : stepArr[i + 1];
+            if (step.durationType != null) {
+                // GUI countdown
+                IntervalTrigger trigger = new IntervalTrigger();
+                trigger.dimension = step.durationType;
+                trigger.first = 1;
+                trigger.interval = 1;
+                trigger.scope = Scope.STEP;
+                trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
+                step.triggers.add(trigger);
+
+                // Audio feedback
+                createAudioCountdown(step);
+            }
+
+            final boolean coaching = prefs.getBoolean(res.getString(R.string.cueinfo_target_coaching),true);
+            if (coaching && step.getTargetType() != null) {
+                final Range range = step.getTargetValue();
+                final int averageSeconds = SafeParse.parseInt(prefs.getString(
+                        res.getString(R.string.pref_target_pace_moving_average_seconds), "20"), 20);
+                final int graceSeconds = SafeParse.parseInt(
+                        prefs.getString(res.getString(R.string.pref_target_pace_grace_seconds), "30"),
+                        30);
+
+                TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds,
+                        graceSeconds);
+                tr.scope = Scope.STEP;
+                tr.range = range;
+                tr.triggerAction.add(new CoachFeedback(tr));
+                step.triggers.add(tr);
+            }
+
             switch (step.getIntensity()) {
-                case REPEAT:
-                    addAudioCuesToWorkout(res, ((RepeatStep) step).steps, prefs);
-                    break;
                 case ACTIVE:
-                    step.triggers.addAll(triggers);
-                    if (!silent && (next == null || next.getIntensity() != step.getIntensity()))
-                    {
+                    if (isLapStartedCue) {
                         EventTrigger ev = new EventTrigger();
-                        ev.event = Event.COMPLETED;
+                        ev.event = Event.STARTED;
                         ev.scope = Scope.STEP;
-                        ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_completed));
-                        ev.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
+                        ev.maxCounter = 1;
+                        ev.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
                         step.triggers.add(ev);
 
-                        Trigger elt = hasEndOfLapTrigger(triggers);
-                        if (elt != null) {
-                            /* Add feedback after "end of lap" */
-                            ev.triggerAction.addAll(elt.triggerAction);
-                            /* suppress empty STEP COMPLETED */
-                            ev.triggerSuppression.add(EndOfLapSuppression.EmptyLapSuppression);
+                        EventTrigger ev2 = new EventTrigger(); // for autolap
+                        ev2.event = Event.STARTED;
+                        ev2.scope = Scope.LAP;
+                        ev2.skipCounter = 1; // skip above
+                        ev2.triggerAction.add(new AudioFeedback(R.string.cue_lap_started));
+                        step.triggers.add(ev2);
 
-                            /* And suppress last end of lap trigger */
-                            elt.triggerSuppression.add(EndOfLapSuppression.EndOfLapSuppression);
+                        if (next == null || next.getIntensity() != step.getIntensity()) {
+                            EventTrigger ev3 = new EventTrigger();
+                            ev3.event = Event.COMPLETED;
+                            ev3.scope = Scope.STEP;
+                            ev3.triggerAction.add(new AudioFeedback(R.string.cue_lap_completed));
+
+                            // Add after "end of lap" default audio cue
+                            Trigger elt = hasEndOfLapTrigger(step.triggers);
+                            if (elt != null) {
+                                ev3.triggerAction.addAll(elt.triggerAction);
+                                /* suppress empty STEP COMPLETED */
+                                ev3.triggerSuppression.add(EndOfLapSuppression.EmptyLapSuppression);
+                                /* And suppress last end of lap trigger */
+                                elt.triggerSuppression.add(EndOfLapSuppression.EndOfLapSuppression);
+                            }
+                            step.triggers.add(ev3);
                         }
                     }
-                    // {
-                    // Log.e("WorkoutBuilder", "triggers: ");
-                    // for (Trigger t : step.triggers) {
-                    // System.err.print(t + " ");
-                    // }
-                    // Log.e("WorkoutBuilder", "");
-                    // }
-
                     break;
-                case RECOVERY:
-                case RESTING: {
-                    if (step.durationType != null) {
-                        IntervalTrigger trigger = new IntervalTrigger();
-                        trigger.dimension = step.durationType;
-                        trigger.first = 1;
-                        trigger.interval = 1;
-                        trigger.scope = Scope.STEP;
-                        trigger.triggerAction.add(new CountdownFeedback(Scope.STEP, step.durationType));
-                        step.triggers.add(trigger);
-                    }
-                    addPauseStopResumeTriggers(res, step.triggers, prefs);
 
-                    break;
-                }
                 case WARMUP:
                 case COOLDOWN:
-                    addPauseStopResumeTriggers(res, step.triggers, prefs);
-                    if (!skip_startstop_cue) {
+                    if (isLapStartedCue) {
                         EventTrigger ev = new EventTrigger();
                         ev.event = Event.STARTED;
                         ev.scope = Scope.STEP;
@@ -348,28 +359,14 @@ public class WorkoutBuilder {
                         step.triggers.add(ev);
                     }
                     break;
+
+                case RECOVERY:
+                case RESTING:
+                    // No action
+                    break;
             }
 
-            if (!silent && step.getIntensity() != Intensity.REPEAT) {
-                createAudioCountdown(step);
-            }
             checkDuplicateTriggers(step);
-
-            if (coaching && step.getTargetType() != null) {
-                Range range = step.getTargetValue();
-                int averageSeconds = SafeParse.parseInt(prefs.getString(
-                        res.getString(R.string.pref_target_pace_moving_average_seconds), "20"), 20);
-                int graceSeconds = SafeParse.parseInt(
-                        prefs.getString(res.getString(R.string.pref_target_pace_grace_seconds), "30"),
-                        30);
-                TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds,
-                        graceSeconds);
-                tr.scope = Scope.STEP;
-                tr.range = range;
-                tr.triggerAction.add(new CoachFeedback(Scope.ACTIVITY, step.getTargetType(), range,
-                        tr));
-                step.triggers.add(tr);
-            }
         }
     }
 
@@ -430,7 +427,16 @@ public class WorkoutBuilder {
         }
     }
 
-    private static ArrayList<Trigger> createDefaultTriggers(Resources res, SharedPreferences prefs) {
+    /**
+     * Add the default triggers, with the configurable feedback (activity/lap etc time/distance etc):
+     *  * periodic time/distance
+     *  * end of lap
+     *
+     * @param res
+     * @param prefs
+     * @return
+     */
+    private static ArrayList<Trigger> createDefaultTriggers(Resources res, SharedPreferences prefs, boolean endOfLap) {
         ArrayList<Feedback> feedback = new ArrayList<>();
         ArrayList<Trigger> triggers = new ArrayList<>();
 
@@ -468,7 +474,7 @@ public class WorkoutBuilder {
             }
         }
 
-        if (prefs.getBoolean(res.getString(R.string.cue_end_of_lap), false)) {
+        if (endOfLap && prefs.getBoolean(res.getString(R.string.cue_end_of_lap), false)) {
             EventTrigger ev = new EventTrigger();
             ev.event = Event.COMPLETED;
             ev.scope = Scope.LAP;
@@ -553,38 +559,35 @@ public class WorkoutBuilder {
         step.triggers.add(trigger);
     }
 
+    /**
+     * Add autolap, autopause and countdown to workouts
+     * @param res
+     * @param prefs
+     * @param w
+     */
     public static void prepareWorkout(Resources res, SharedPreferences prefs, Workout w) {
         List<StepListEntry> steps = w.getStepList();
         boolean basic = w.getWorkoutType() == Constants.WORKOUT_TYPE.BASIC;
 
-        /*
-         * Add/remove autolap
-         */
-        boolean autolap = prefs.getBoolean(res.getString(R.string.pref_autolap_active), false);
-        if (!basic) {
-            autolap = prefs.getBoolean(res.getString(R.string.pref_step_autolap_active), autolap);
-        }
+        // autolap
+        boolean autolap = basic ?
+                prefs.getBoolean(res.getString(R.string.pref_autolap_active), false) :
+                prefs.getBoolean(res.getString(R.string.pref_step_autolap_active), false);
         if (autolap) {
-            double val = 0;
+            double val;
             String vals = prefs.getString(res.getString(R.string.pref_autolap), "1000");
             try {
                 val = Double.parseDouble(vals);
             } catch (NumberFormatException e) {
+                val = 0;
             }
-            Log.i("WorkoutBuilder", "setAutolap(" + val + ")");
+            Log.d("WorkoutBuilder", "setAutolap(" + val + ")");
             for (StepListEntry s : steps) {
-                switch (s.step.getIntensity()) {
-                    case ACTIVE:
-                        s.step.setAutolap(val);
-                        break;
-                    case RECOVERY:
-                    case RESTING:
-                    case WARMUP:
-                    case COOLDOWN:
-                    case REPEAT:
-                    default:
-                        s.step.setAutolap(0); // reset
-                        break;
+                if (basic ||
+                        s.step.getIntensity() == Intensity.ACTIVE ||
+                        // Also set on the last in the flat list
+                        s == steps.get(steps.size() - 1)) {
+                    s.step.setAutolap(val);
                 }
             }
         }
@@ -605,33 +608,31 @@ public class WorkoutBuilder {
             } catch (NumberFormatException e) {
             }
             if (val > 0) {
-                StepListEntry stepArr[] = new StepListEntry[steps.size()];
+                StepListEntry[] stepArr = new StepListEntry[steps.size()];
                 steps.toArray(stepArr);
                 for (int i = 0; i < stepArr.length; i++) {
                     Step step = stepArr[i].step;
 
-                    if (step.durationType != null)
+                    if (step.durationType != null ||
+                     step.intensity == Intensity.REPEAT ||
+                            step.intensity == Intensity.RESTING ||
+                            i + 1 >= stepArr.length)
                         continue;
 
-                    if (step.intensity == Intensity.REPEAT || step.intensity == Intensity.RESTING)
-                        continue;
-
-                    if (i + 1 >= stepArr.length)
-                        continue;
                     Step next = stepArr[i + 1].step;
 
-                    if (next.durationType == Dimension.TIME && next.intensity == Intensity.RESTING)
+                    if (next.intensity == Intensity.RESTING)
                         continue;
 
                     Step s = Step.createRestStep(Dimension.TIME, val, convertRestToRecovery);
                     if (stepArr[i].parent == null) {
                         w.steps.add(i + 1, s);
-                        Log.e("WorkoutBuilder", "Added step at index: " + (i + 1));
+                        Log.d("WorkoutBuilder", "Added step at index: " + (i + 1));
                     } else {
                         RepeatStep rs = (RepeatStep) stepArr[i].parent;
                         int idx = rs.steps.indexOf(step);
                         rs.steps.add(idx, s);
-                        Log.e("WorkoutBuilder", "Added step at index: " + (i + 1) + " repeat index: "
+                        Log.d("WorkoutBuilder", "Added step at index: " + (i + 1) + " repeat index: "
                                 + (idx + 1));
                     }
                 }
