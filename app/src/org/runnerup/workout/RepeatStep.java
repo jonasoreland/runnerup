@@ -24,7 +24,7 @@ import java.util.List;
 
 public class RepeatStep extends Step {
 
-    int repeatCount = 0;
+    int repeatCount = 8;
 
     public ArrayList<Step> getSteps() {
         return steps;

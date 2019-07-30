@@ -164,6 +164,8 @@ public class StepButton extends LinearLayout {
         public void onClick(View v) {
             final NumberPicker numberPicker = new NumberPicker(mContext, null);
             numberPicker.setOrientation(VERTICAL);
+            numberPicker.setDigits(4);
+            numberPicker.setRange(0, 9999, true);
             numberPicker.setValue(step.getRepeatCount());
 
             AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
