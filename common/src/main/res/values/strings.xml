@@ -184,6 +184,7 @@
   <string name="Autolap">Autolap</string>
   <string name="Autolap_m">Autolap (m)</string>
   <string name="Autopause">Autopause</string>
+  <string name="Autopause_summary">Autopause in basic workouts as well as \"Warmup\" and "Cooldown\" steps</string>
   <string name="Enable_RunnerUpLive">Enable RunnerUp Live</string>
   <string name="Headset_key_startstop">Headset key start/stop</string>
   <string name="Activity_countdown">Countdown to activity start</string>

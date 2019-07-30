@@ -73,7 +73,6 @@ public class WorkoutBuilder {
 
         // Add an active step
         Step step = new Step();
-        addAutoPauseTrigger(res, step, prefs);
         w.steps.add(step);
 
         if (target == Dimension.PACE) {
@@ -147,7 +146,6 @@ public class WorkoutBuilder {
             Step step = new Step();
             step.intensity = Intensity.WARMUP;
             step.durationType = null;
-            addAutoPauseTrigger(res, step, prefs);
             w.steps.add(step);
         }
 
@@ -199,7 +197,6 @@ public class WorkoutBuilder {
             Step step = new Step();
             step.intensity = Intensity.COOLDOWN;
             step.durationType = null;
-            addAutoPauseTrigger(res, step, prefs);
             w.steps.add(step);
         }
 
@@ -492,32 +489,29 @@ public class WorkoutBuilder {
         return triggers;
     }
 
-    private static void addPauseStopResumeTriggers(Resources res, ArrayList<Trigger> list,
-                                                   SharedPreferences prefs) {
-        if (!prefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false)) {
-            {
-                EventTrigger p = new EventTrigger();
-                p.event = Event.PAUSED;
-                p.scope = Scope.STEP;
-                p.triggerAction.add(new AudioFeedback(R.string.cue_activity_paused));
-                list.add(p);
-            }
+    private static void addPauseStopResumeTriggers(ArrayList<Trigger> list) {
+        {
+            EventTrigger p = new EventTrigger();
+            p.event = Event.PAUSED;
+            p.scope = Scope.STEP;
+            p.triggerAction.add(new AudioFeedback(R.string.cue_activity_paused));
+            list.add(p);
+        }
 
-            {
-                EventTrigger r = new EventTrigger();
-                r.event = Event.RESUMED;
-                r.scope = Scope.STEP;
-                r.triggerAction.add(new AudioFeedback(R.string.cue_activity_resumed));
-                list.add(r);
-            }
+        {
+            EventTrigger r = new EventTrigger();
+            r.event = Event.RESUMED;
+            r.scope = Scope.STEP;
+            r.triggerAction.add(new AudioFeedback(R.string.cue_activity_resumed));
+            list.add(r);
+        }
 
-            {
-                EventTrigger ev = new EventTrigger();
-                ev.event = Event.STOPPED;
-                ev.scope = Scope.STEP;
-                ev.triggerAction.add(new AudioFeedback(R.string.cue_activity_stopped));
-                list.add(ev);
-            }
+        {
+            EventTrigger ev = new EventTrigger();
+            ev.event = Event.STOPPED;
+            ev.scope = Scope.STEP;
+            ev.triggerAction.add(new AudioFeedback(R.string.cue_activity_stopped));
+            list.add(ev);
         }
     }
 
@@ -589,6 +583,26 @@ public class WorkoutBuilder {
                         s == steps.get(steps.size() - 1)) {
                     s.step.setAutolap(val);
                 }
+            }
+        }
+
+        // Autopause
+        for (StepListEntry s : steps) {
+            if (basic) {
+                addAutoPauseTrigger(res, s.step, prefs);
+                continue;
+            }
+            switch (s.step.getIntensity()) {
+                case WARMUP:
+                case COOLDOWN:
+                    addAutoPauseTrigger(res, s.step, prefs);
+                    break;
+                case ACTIVE:
+                case RECOVERY:
+                case RESTING:
+                case REPEAT:
+                default:
+                    break;
             }
         }
 

@@ -183,6 +183,7 @@
   <string name="Autolap">Autovarv</string>
   <string name="Autolap_m">Autovarv (m)</string>
   <string name="Autopause">Autopaus</string>
+  <string name="Autopause_summary">Autopaus i standard pass samt \"Uppvärmning\" och \"Nedvarvning\" steg</string>
   <string name="Enable_RunnerUpLive">Aktivera Live</string>
   <string name="Headset_key_startstop">Hörlursknapp start/stopp</string>
   <string name="Activity_countdown">Nedräkning till aktivitet start</string>

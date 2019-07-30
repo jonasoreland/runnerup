@@ -134,7 +134,8 @@
             android:defaultValue="false"
             android:key="@string/pref_autopause_active"
             android:persistent="true"
-            android:title="@string/Autopause"/>
+            android:title="@string/Autopause"
+            android:summary="@string/Autopause_summary"/>
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="5"
