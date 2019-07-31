@@ -492,15 +492,15 @@ public class TrackerWear extends DefaultTrackerComponent
             sendLocalBroadcast(Intents.NEW_LAP);
         } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
             /* send broadcast to StartActivity */
-            Intent startBroadcastIntent = new Intent();
-            startBroadcastIntent.setAction(Intents.START_WORKOUT);
+            Intent startBroadcastIntent = new Intent()
+                    .setAction(Intents.START_WORKOUT);
             context.sendBroadcast(startBroadcastIntent);
         }
     }
 
     private void sendLocalBroadcast(String action) {
-        Intent intent = new Intent();
-        intent.setAction(action);
+        Intent intent = new Intent()
+                .setAction(action);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

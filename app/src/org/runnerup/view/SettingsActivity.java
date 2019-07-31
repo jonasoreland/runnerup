@@ -181,7 +181,6 @@ public class SettingsActivity extends PreferenceActivity
                 DBHelper.exportDatabase(SettingsActivity.this, to);
 
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
                 DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -189,9 +188,10 @@ public class SettingsActivity extends PreferenceActivity
                     }
 
                 };
-                builder.setTitle("Export runnerup.db");
-                builder.setMessage("Storage permission not granted in Android settings");
-                builder.setNegativeButton(getString(R.string.Darn), listener);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("Export runnerup.db")
+                        .setMessage("Storage permission not granted in Android settings")
+                        .setNegativeButton(getString(R.string.Darn), listener);
                 builder.show();
             }
             return false;
@@ -207,7 +207,6 @@ public class SettingsActivity extends PreferenceActivity
                 String from = srcdir + "/runnerup.db.export";
                 DBHelper.importDatabase(SettingsActivity.this, from);
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
                 DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -215,9 +214,10 @@ public class SettingsActivity extends PreferenceActivity
                     }
 
                 };
-                builder.setTitle("Import runnerup.db");
-                builder.setMessage("Storage permission not granted in Android settings");
-                builder.setNegativeButton(getString(R.string.Darn), listener);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("Import runnerup.db")
+                        .setMessage("Storage permission not granted in Android settings")
+                        .setNegativeButton(getString(R.string.Darn), listener);
                 builder.show();
             }
             return false;

@@ -25,20 +25,20 @@ public class GpsSearchingState implements NotificationState {
         this.gpsInformation = gpsInformation;
 
         String chanId = NotificationStateManager.getChannelId(context);
-        Intent i = new Intent(context, MainLayout.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        i.putExtra(Constants.Intents.FROM_NOTIFICATION, true);
+        Intent i = new Intent(context, MainLayout.class)
+                .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                .putExtra(Constants.Intents.FROM_NOTIFICATION, true);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
-        builder = new NotificationCompat.Builder(context, chanId);
-        builder.setContentIntent(pi);
-        builder.setContentTitle(context.getString(R.string.Searching_for_GPS));
-        builder.setSmallIcon(R.drawable.ic_stat_notify);
-        builder.setOnlyAlertOnce(true);
-        builder.setLocalOnly(true);
+        builder = new NotificationCompat.Builder(context, chanId)
+                .setContentIntent(pi)
+                .setContentTitle(context.getString(R.string.Searching_for_GPS))
+                .setSmallIcon(R.drawable.ic_stat_notify)
+                .setOnlyAlertOnce(true)
+                .setLocalOnly(true);
         if (Build.VERSION.SDK_INT >= 21) {
-            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
-            builder.setCategory(Notification.CATEGORY_SERVICE);
+            builder.setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setCategory(Notification.CATEGORY_SERVICE);
         }
     }
 

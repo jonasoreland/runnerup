@@ -270,17 +270,16 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         @Override
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(
-                    AccountActivity.this);
-            builder.setTitle(getString(R.string.Clear_uploads));
-            builder.setMessage(getResources().getString(R.string.Clear_uploads_from_phone));
-            builder.setPositiveButton(getString(R.string.OK),
+                    AccountActivity.this)
+                    .setTitle(getString(R.string.Clear_uploads))
+                    .setMessage(getResources().getString(R.string.Clear_uploads_from_phone))
+                    .setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             syncManager.clearUploadsByName(callback, mSynchronizerName);
                         }
-                    });
-
-            builder.setNegativeButton(getString(R.string.Cancel),
+                    })
+                    .setNegativeButton(getString(R.string.Cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -368,24 +367,24 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 true
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(
-                    AccountActivity.this);
-            builder.setTitle(getString(R.string.Disconnect_account));
-            builder.setPositiveButton(getString(R.string.OK),
+                    AccountActivity.this)
+                    .setTitle(getString(R.string.Disconnect_account))
+                    .setPositiveButton(getString(R.string.OK),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             syncManager.disableSynchronizer(disconnectCallback, mSynchronizerName,
                                     selected[0]);
                         }
-                    });
-            builder.setNegativeButton(getString(R.string.Cancel),
+                    })
+                    .setNegativeButton(getString(R.string.Cancel),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
                             dialog.dismiss();
                         }
 
-                    });
-            builder.setMultiChoiceItems(items, selected,
+                    })
+                    .setMultiChoiceItems(items, selected,
                     new OnMultiChoiceClickListener() {
                         @Override
                         public void onClick(DialogInterface arg0, int arg1,

@@ -130,8 +130,8 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent();
-                    intent.setAction("com.android.settings.TTS_SETTINGS");
+                    Intent intent = new Intent()
+                            .setAction("com.android.settings.TTS_SETTINGS");
                     startActivity(intent);
                     return false;
                 }
@@ -197,16 +197,16 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             createNewAudioSchemeDialog();
             return true;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.Are_you_sure));
-        builder.setPositiveButton(getString(R.string.Yes),
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         deleteAudioScheme();
                     }
-                });
-        builder.setNegativeButton(getString(R.string.No),
+                })
+                .setNegativeButton(getString(R.string.No),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -311,12 +311,12 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
     }
 
     private void createNewAudioSchemeDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.Create_new_audio_cue_scheme));
-        // Get the layout inflater
         final EditText editText = new EditText(this);
-        builder.setView(editText);
-        builder.setPositiveButton(getString(R.string.Create), new OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.Create_new_audio_cue_scheme))
+        // Get the layout inflater
+        .setView(editText)
+        .setPositiveButton(getString(R.string.Create), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String scheme = editText.getText().toString();
@@ -326,14 +326,13 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                     switchTo(scheme);
                 }
             }
-        });
-        builder.setNegativeButton(getString(R.string.Cancel), new OnClickListener() {
+        })
+        .setNegativeButton(getString(R.string.Cancel), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
         });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
+        builder.show();
     }
 
     private final OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {

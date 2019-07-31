@@ -205,8 +205,8 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         StringBuilder buf = new StringBuilder();
         for (String cookie : cookies) {
             if (!first)
-                buf.append("; ");
-            buf.append(cookie.split(";", 2)[0]);
+                buf.append("; ")
+                        .append(cookie.split(";", 2)[0]);
             first = false;
         }
         conn.addRequestProperty("Cookie", buf.toString());

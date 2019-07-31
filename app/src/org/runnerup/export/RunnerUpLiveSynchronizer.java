@@ -174,26 +174,26 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         long elapsedDistanceMeter = Math.round(workoutInfo.getDistance(Scope.ACTIVITY));
         long elapsedTimeMillis = Math.round(workoutInfo.getTime(Scope.ACTIVITY));
 
-        Intent msgIntent = new Intent(context, LiveService.class);
         Location location = workoutInfo.getLastKnownLocation();
 
-        msgIntent.putExtra(LiveService.PARAM_IN_LAT, location.getLatitude());
-        msgIntent.putExtra(LiveService.PARAM_IN_LONG, location.getLongitude());
-        msgIntent.putExtra(LiveService.PARAM_IN_ALTITUDE, location.getAltitude());
-        msgIntent.putExtra(LiveService.PARAM_IN_TYPE, externalType);
-        msgIntent.putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, formatter
-                .formatDistance(Formatter.Format.TXT_LONG, elapsedDistanceMeter));
-        msgIntent.putExtra(
+        Intent msgIntent = new Intent(context, LiveService.class)
+                .putExtra(LiveService.PARAM_IN_LAT, location.getLatitude())
+                .putExtra(LiveService.PARAM_IN_LONG, location.getLongitude())
+                .putExtra(LiveService.PARAM_IN_ALTITUDE, location.getAltitude())
+                .putExtra(LiveService.PARAM_IN_TYPE, externalType)
+                .putExtra(LiveService.PARAM_IN_ELAPSED_DISTANCE, formatter
+                .formatDistance(Formatter.Format.TXT_LONG, elapsedDistanceMeter))
+                .putExtra(
                 LiveService.PARAM_IN_ELAPSED_TIME,
                 formatter.formatElapsedTime(Formatter.Format.TXT_LONG,
-                        Math.round(elapsedTimeMillis / 1000)));
-        msgIntent.putExtra(
+                        Math.round(elapsedTimeMillis / 1000)))
+                .putExtra(
                 LiveService.PARAM_IN_PACE,
                 formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, elapsedTimeMillis == 0 ? null :
-                        elapsedDistanceMeter * 1000.0 / elapsedTimeMillis));
-        msgIntent.putExtra(LiveService.PARAM_IN_USERNAME, username);
-        msgIntent.putExtra(LiveService.PARAM_IN_PASSWORD, password);
-        msgIntent.putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);
+                        elapsedDistanceMeter * 1000.0 / elapsedTimeMillis))
+                .putExtra(LiveService.PARAM_IN_USERNAME, username)
+                .putExtra(LiveService.PARAM_IN_PASSWORD, password)
+                .putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);
         if (Build.VERSION.SDK_INT >= 26) {
             context.startForegroundService(msgIntent);
         } else {

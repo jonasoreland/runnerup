@@ -175,10 +175,9 @@ public class OAuth2Activity extends AppCompatActivity {
 
                     if (e != null) {
                         Log.e(getClass().getName(), "e: " + e);
-                        Intent res = new Intent();
-                        res.putExtra("error", e);
-                        OAuth2Activity.this.setResult(Activity.RESULT_CANCELED,
-                                res);
+                        Intent res = new Intent()
+                                .putExtra("error", e);
+                        OAuth2Activity.this.setResult(Activity.RESULT_CANCELED, res);
                         OAuth2Activity.this.finish();
                         return;
                     }
@@ -200,8 +199,8 @@ public class OAuth2Activity extends AppCompatActivity {
                     fv.put("redirect_uri", b.getString(OAuth2ServerCredentials.REDIRECT_URI));
                     fv.put("code", code);
 
-                    final Intent res = new Intent();
-                    res.putExtra("url", token_url);
+                    final Intent res = new Intent()
+                            .putExtra("url", token_url);
 
                     new AsyncTask<String, String, Integer>() {
                         @Override
@@ -279,7 +278,6 @@ public class OAuth2Activity extends AppCompatActivity {
     }
 
     public static Intent getIntent(Activity activity, OAuth2Server server) {
-        Intent args = new Intent(activity, OAuth2Activity.class);
         Bundle b = new Bundle();
         b.putString(OAuth2ServerCredentials.CLIENT_ID, server.getClientId());
         b.putString(OAuth2ServerCredentials.CLIENT_SECRET,
@@ -292,7 +290,9 @@ public class OAuth2Activity extends AppCompatActivity {
         if (extra != null) {
             b.putString(OAuth2ServerCredentials.AUTH_EXTRA, extra);
         }
-        args.putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
+
+        Intent args = new Intent(activity, OAuth2Activity.class)
+                .putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
         return args;
     }
 }

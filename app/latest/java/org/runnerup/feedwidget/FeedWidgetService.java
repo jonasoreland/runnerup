@@ -68,8 +68,8 @@ public class FeedWidgetService extends RemoteViewsService {
                 RemoteViews rv = null;
 
                 ContentValues tmp = data.getList().get(position);
-                Intent fillInIntent= new Intent();
                 if (FeedList.isActivity(tmp)) {
+                    Intent fillInIntent = new Intent();
                     rv = new RemoteViews(getPackageName(), R.layout.feed_widget_item);
                     rv.setOnClickFillInIntent(R.id.feed_widget_item, fillInIntent);
                     String src = getSynchronizerName(tmp.getAsLong(Constants.DB.FEED.ACCOUNT_ID));

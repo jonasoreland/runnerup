@@ -94,9 +94,9 @@ public class FeedWidgetProvider extends AppWidgetProvider {
 
             // on any other click (including on any item of the list), we will retrieve latest feed
             // and update widget with it
-            Intent updateIntent = new Intent();
-            updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            updateIntent.putExtra("reload_feed", true);
+            Intent updateIntent = new Intent()
+                    .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                    .putExtra("reload_feed", true);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context, 0, updateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(R.id.widget_layout, pendingIntent);

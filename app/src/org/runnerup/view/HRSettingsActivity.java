@@ -243,16 +243,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void clearHRSettings() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.Clear_HR_settings));
-        builder.setMessage(getString(R.string.Are_you_sure));
-        builder.setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.Clear_HR_settings))
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 doClear();
             }
-        });
+        })
 
-        builder.setNegativeButton(getString(R.string.Cancel),
+                .setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
@@ -303,15 +303,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void notSupported() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device));
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         };
-        builder.setNegativeButton(getString(R.string.ok_rats), listener);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device))
+                .setNegativeButton(getString(R.string.ok_rats), listener);
         builder.show();
     }
 
@@ -365,15 +366,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             items[i] = providers.get(i).getProviderName();
             itemNames[i] = providers.get(i).getName();
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.Select_type_of_Bluetooth_device));
-        builder.setPositiveButton(getString(R.string.OK),
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.Select_type_of_Bluetooth_device))
+                .setPositiveButton(getString(R.string.OK),
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
                         open();
                     }
-                });
-        builder.setNegativeButton(getString(R.string.Cancel),
+                })
+                .setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mIsScanning = false;
@@ -382,8 +384,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                         dialog.dismiss();
                     }
 
-                });
-        builder.setSingleChoiceItems(itemNames, -1,
+                })
+                .setSingleChoiceItems(itemNames, -1,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
@@ -400,9 +402,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         updateView();
         deviceAdapter.deviceList.clear();
         hrProvider.startScan();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.Scanning));
-        builder.setPositiveButton(getString(R.string.Connect),
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.Scanning))
+                .setPositiveButton(getString(R.string.Connect),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         log(hrProvider.getProviderName() + ".stopScan()");
@@ -410,6 +413,26 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                         connect();
                         updateView();
                         dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.Cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        log(hrProvider.getProviderName() + ".stopScan()");
+                        hrProvider.stopScan();
+                        load();
+                        open();
+                        dialog.dismiss();
+                        updateView();
+                    }
+                })
+                .setSingleChoiceItems(deviceAdapter, -1,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        HRDeviceRef hrDevice = deviceAdapter.deviceList.get(arg1);
+                        btAddress = hrDevice.getAddress();
+                        btName = hrDevice.getName();
                     }
                 });
         if (hrProvider.isBondingDevice()) {
@@ -423,27 +446,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 }
             });
         }
-        builder.setNegativeButton(getString(R.string.Cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        log(hrProvider.getProviderName() + ".stopScan()");
-                        hrProvider.stopScan();
-                        load();
-                        open();
-                        dialog.dismiss();
-                        updateView();
-                    }
-                });
-
-        builder.setSingleChoiceItems(deviceAdapter, -1,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        HRDeviceRef hrDevice = deviceAdapter.deviceList.get(arg1);
-                        btAddress = hrDevice.getAddress();
-                        btName = hrDevice.getName();
-                    }
-                });
         builder.show();
     }
 
@@ -474,20 +476,20 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private void save() {
         Resources res = getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Editor ed = prefs.edit();
-        ed.putString(res.getString(R.string.pref_bt_name), btName);
-        ed.putString(res.getString(R.string.pref_bt_address), btAddress);
-        ed.putString(res.getString(R.string.pref_bt_provider), hrProvider.getProviderName());
+        Editor ed = prefs.edit()
+                .putString(res.getString(R.string.pref_bt_name), btName)
+                .putString(res.getString(R.string.pref_bt_address), btAddress)
+                .putString(res.getString(R.string.pref_bt_provider), hrProvider.getProviderName());
         ed.apply();
     }
 
     private void doClear() {
         Resources res = getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Editor ed = prefs.edit();
-        ed.remove(res.getString(R.string.pref_bt_name));
-        ed.remove(res.getString(R.string.pref_bt_address));
-        ed.remove(res.getString(R.string.pref_bt_provider));
+        Editor ed = prefs.edit()
+                .remove(res.getString(R.string.pref_bt_name))
+                .remove(res.getString(R.string.pref_bt_address))
+                .remove(res.getString(R.string.pref_bt_provider));
         ed.apply();
     }
 

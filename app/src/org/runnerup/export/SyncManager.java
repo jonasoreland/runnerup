@@ -361,9 +361,6 @@ public class SyncManager {
     }
 
     private void askUsernamePassword(final Synchronizer sync, final AuthMethod authMethod) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(sync.getName());
-
         final View view = View.inflate(mActivity, R.layout.userpass, null);
         final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
         final TextView tv1 = (TextView) view.findViewById(R.id.username);
@@ -399,48 +396,50 @@ public class SyncManager {
             rowUrl.setVisibility(View.GONE);
         }
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(view);
-        builder.setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    //noinspection ConstantConditions
-                    authConfig.put("username", tv1.getText());
-                    authConfig.put("password", tv2.getText());
-                    if (authMethod == AuthMethod.USER_PASS_URL) {
-                        authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity)
+                .setTitle(sync.getName())
+
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                .setView(view)
+                .setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            //noinspection ConstantConditions
+                            authConfig.put("username", tv1.getText());
+                            authConfig.put("password", tv2.getText());
+                            if (authMethod == AuthMethod.USER_PASS_URL) {
+                                authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        testUserPass(sync, authConfig);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                testUserPass(sync, authConfig);
-            }
-        });
-        builder.setNeutralButton("Skip", new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                handleAuthComplete(sync, Status.SKIP);
-            }
-        });
-        builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                handleAuthComplete(sync, Status.SKIP);
-            }
-        });
-        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                    handleAuthComplete(sync, Status.CANCEL);
-                }
-                return false;
-            }
-        });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
+                })
+                .setNeutralButton("Skip", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handleAuthComplete(sync, Status.SKIP);
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handleAuthComplete(sync, Status.SKIP);
+                    }
+                })
+                .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                        if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                            handleAuthComplete(sync, Status.CANCEL);
+                        }
+                        return false;
+                    }
+                });
+        builder.show();
     }
 
 
@@ -473,9 +472,6 @@ public class SyncManager {
     }
 
     private void askFileUrl(final Synchronizer sync) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(sync.getName());
-
         final View view = View.inflate(mActivity, R.layout.filepermission, null);
         final TextView tv1 = (TextView) view.findViewById(R.id.fileuri);
         final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
@@ -502,47 +498,50 @@ public class SyncManager {
             tvAuthNotice.setVisibility(View.GONE);
         }
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(view);
-        builder.setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //Set default values
-                String format = "";
-                if (cbtcx.isChecked()) {
-                    format = "tcx,";
-                }
-                if (cbgpx.isChecked()) {
-                    format += "gpx,";
-                }
-                
-                ContentValues tmp = new ContentValues();
-                tmp.put(DB.ACCOUNT.FORMAT, format);
-                tmp.put(DB.ACCOUNT.URL, tv1.getText().toString());
-                ContentValues config = new ContentValues();
-                config.put("_id", sync.getId());
-                config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
-                sync.init(config);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity)
+                .setTitle(sync.getName())
 
-                handleAuthComplete(sync, sync.connect());
-            }
-        });
-        builder.setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                handleAuthComplete(sync, Status.SKIP);
-            }
-        });
-        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                    handleAuthComplete(sync, Status.CANCEL);
-                }
-                return false;
-            }
-        });
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                .setView(view)
+                .setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Set default values
+                        String format = "";
+                        if (cbtcx.isChecked()) {
+                            format = "tcx,";
+                        }
+                        if (cbgpx.isChecked()) {
+                            format += "gpx,";
+                        }
+
+                        ContentValues tmp = new ContentValues();
+                        tmp.put(DB.ACCOUNT.FORMAT, format);
+                        tmp.put(DB.ACCOUNT.URL, tv1.getText().toString());
+                        ContentValues config = new ContentValues();
+                        config.put("_id", sync.getId());
+                        config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
+                        sync.init(config);
+
+                        handleAuthComplete(sync, sync.connect());
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        handleAuthComplete(sync, Status.SKIP);
+                    }
+                })
+                .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                        if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                            handleAuthComplete(sync, Status.CANCEL);
+                        }
+                        return false;
+                    }
+                });
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
