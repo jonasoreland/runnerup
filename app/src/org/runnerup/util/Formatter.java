@@ -671,7 +671,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     private String formatDistance(long meters, boolean txt) {
         String res;
-        if (meters >= base_meters) {
+        if (meters >= base_meters * 0.99) {
             double val = getRoundedDistanceInKmOrMiles(meters);
             if (txt) {
                 res = String.format(cueResources.defaultLocale, "%.2f %s", val,
@@ -691,7 +691,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 }
             }
         } else {
-            // Present distance in meters if less than 1km/1mi (no strings for feet)
+            // Present distance in meters if less than 0.99 km or mi (no strings for feet)
             if (txt) {
                 res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
             }
