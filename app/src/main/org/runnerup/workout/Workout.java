@@ -219,6 +219,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
         emitFeedback();
         paused = true;
+        tracker.displayNotificationState();
     }
 
     public void onNewLap() {
@@ -254,6 +255,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
         emitFeedback();
         paused = false;
+        tracker.displayNotificationState();
     }
 
     public void onComplete(Scope s, Workout w) {

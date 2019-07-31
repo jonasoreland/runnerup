@@ -12,6 +12,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
 import org.runnerup.workout.Scope;
+import org.runnerup.workout.Sport;
 import org.runnerup.workout.WorkoutInfo;
 
 
@@ -33,14 +34,27 @@ public class OngoingState implements NotificationState {
                 .putExtra(Constants.Intents.FROM_NOTIFICATION, true);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
+        Intent lapIntent = new Intent()
+                .setAction(Constants.Intents.NEW_LAP);
+        PendingIntent pendingLap = PendingIntent.getBroadcast(
+                context, 0, lapIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent pauseIntent = new Intent()
+                .setAction(Constants.Intents.PAUSE_RESUME);
+        PendingIntent pendingPause = PendingIntent.getBroadcast(
+                context, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         builder = new NotificationCompat.Builder(context, chanId)
                 .setTicker(context.getString(R.string.RunnerUp_activity_started))
                 .setContentIntent(pi)
-                .setContentTitle(context.getString(R.string.Activity_ongoing))
+                .setContentTitle(Sport.textOf(context.getResources(), workoutInfo.getSport()))
                 .setSmallIcon(R.drawable.ic_stat_notify)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
-                .setLocalOnly(true);
+                .setLocalOnly(true)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .addAction(R.drawable.ic_av_newlap, context.getString(R.string.Lap), pendingLap)
+                .addAction(R.drawable.ic_av_pause, context.getString(R.string.Pause), pendingPause);
         if (Build.VERSION.SDK_INT >= 21) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setCategory(Notification.CATEGORY_SERVICE);
@@ -62,14 +76,14 @@ public class OngoingState implements NotificationState {
                 context.getString(R.string.pace), pace);
         builder.setContentText(content);
 
-        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle(builder);
-        bigTextStyle.setBigContentTitle(context.getString(R.string.Activity_ongoing));
-        bigTextStyle.bigText(String.format("%s: %s,\n%s: %s\n%s: %s",
-                context.getString(R.string.distance), distance,
-                context.getString(R.string.time), time,
-                context.getString(R.string.pace), pace));
-        builder.setStyle(bigTextStyle);
-
-        return builder.build();
+        Notification n = builder.build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (workoutInfo.isPaused()) {
+                n.actions[1] = new Notification.Action(R.drawable.ic_av_play_arrow, context.getString(R.string.Resume), n.actions[1].actionIntent);
+            } else {
+                n.actions[1] = new Notification.Action(R.drawable.ic_av_pause, context.getString(R.string.Pause), n.actions[1].actionIntent);
+            }
+        }
+        return n;
     }
 }

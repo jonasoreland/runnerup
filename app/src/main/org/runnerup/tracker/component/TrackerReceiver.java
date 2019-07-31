@@ -21,11 +21,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.workout.Workout;
-
 
 public class TrackerReceiver extends DefaultTrackerComponent {
 
@@ -111,12 +111,13 @@ public class TrackerReceiver extends DefaultTrackerComponent {
         } else if (Constants.Intents.NEW_LAP.contentEquals(action)) {
             workout.onNewLapOrNextStep();
         } else if (Constants.Intents.PAUSE_WORKOUT.contentEquals(action)) {
-            if (workout.isPaused())
-                return;
-            workout.onPause(workout);
+            if (!workout.isPaused())
+                workout.onPause(workout);
         } else if (Constants.Intents.RESUME_WORKOUT.contentEquals(action)) {
             if (workout.isPaused())
                 workout.onResume(workout);
+        } else {
+            Log.d(getClass().getName(), "onReceive: unhandled action: " + action );
         }
     }
 
@@ -131,7 +132,6 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
         {
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(Constants.Intents.NEW_LAP);
             intentFilter.addAction(Constants.Intents.PAUSE_WORKOUT);
             intentFilter.addAction(Constants.Intents.RESUME_WORKOUT);
             LocalBroadcastManager.getInstance(context).registerReceiver(

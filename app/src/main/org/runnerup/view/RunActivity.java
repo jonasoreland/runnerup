@@ -204,12 +204,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             return;
         }
 
-        if (mTracker.getWorkout() == null) {
+        workout = mTracker.getWorkout();
+        if (workout == null) {
             // should not happen
             return;
         }
-
-        workout = mTracker.getWorkout();
 
         {
             /*
@@ -234,6 +233,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             newLapButton.setOnClickListener(nextStepButtonClick);
         }
         newLapButton.setText(getString(R.string.New_lap));
+        mTracker.displayNotificationState();
     }
 
     private void populateWorkoutList() {
