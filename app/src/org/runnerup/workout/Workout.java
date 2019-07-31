@@ -190,6 +190,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onNextStep() {
+        if (currentStep == null) {
+            // There is no current step
+            return;
+        }
         currentStep.onComplete(Scope.LAP, this);
         currentStep.onComplete(Scope.STEP, this);
 

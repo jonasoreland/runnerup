@@ -317,20 +317,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             }
         } else {
             // HH:MM:SS would almost work except that some tts reports "time is HH MM SS"
-            // Always include minutes and seconds, two digits if there a higher number
+            // Always two digits if there a higher number
             if (hours > 0) {
                 String str = String.format(cueResources.audioLocale, "%02d", minutes);
+                String sec = String.format(cueResources.audioLocale, "%02d", seconds);
                 s.append(hours)
                         // Add extra delay as well as avoid interpreting "01 05 58" as "January 5th 58"
                         .append("\n")
-                        .append(str);
-            } else {
-                s.append(minutes);
-            }
-            s.append(" ");
-            if (minutes > 0) {
-                String str = String.format(cueResources.audioLocale, "%02d", seconds);
-                s.append(str);
+                        .append(str)
+                        .append(" ")
+                        .append(sec);
+            } else if (minutes > 0) {
+                String sec = String.format(cueResources.audioLocale, "%02d", seconds);
+                s.append(minutes)
+                        .append(" ")
+                        .append(sec);
             } else {
                 s.append(seconds);
             }
@@ -670,7 +671,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
     private String formatDistance(long meters, boolean txt) {
         String res;
-        if (meters >= base_meters) {
+        if (meters >= base_meters * 0.99) {
             double val = getRoundedDistanceInKmOrMiles(meters);
             if (txt) {
                 res = String.format(cueResources.defaultLocale, "%.2f %s", val,
@@ -690,7 +691,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 }
             }
         } else {
-            // Present distance in meters if less than 1km/1mi (no strings for feet)
+            // Present distance in meters if less than 0.99 km or mi (no strings for feet)
             if (txt) {
                 res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
             }
