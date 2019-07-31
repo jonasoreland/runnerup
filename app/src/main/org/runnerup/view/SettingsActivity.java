@@ -82,6 +82,10 @@ public class SettingsActivity extends PreferenceActivity
             //pref.setSummary(null);
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Preference pref = findPreference(this.getString(R.string.pref_keystartstop_active));
+            pref.setEnabled(false);
+        }
         if (!TrackerCadence.isAvailable(this)) {
             Preference pref = findPreference(this.getString(R.string.pref_use_cadence_step_sensor));
             pref.setEnabled(false);
