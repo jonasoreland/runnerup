@@ -168,16 +168,16 @@ public class StepButton extends LinearLayout {
             numberPicker.setRange(0, 9999, true);
             numberPicker.setValue(step.getRepeatCount());
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-            alert.setTitle(getResources().getString(R.string.repeat));
-
             final LinearLayout layout = new LinearLayout(mContext);
             layout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT));
             layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
             layout.addView(numberPicker);
-            alert.setView(layout);
-            alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
+                    .setTitle(getResources().getString(R.string.repeat))
+                    .setView(layout)
+                    .setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     step.setRepeatCount(numberPicker.getValue());
                     dialog.dismiss();
@@ -186,15 +186,13 @@ public class StepButton extends LinearLayout {
                         mOnChangedListener.run();
                     }
                 }
-            });
-
-            alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+            })
+                    .setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
                 }
             });
-            AlertDialog dialog = alert.create();
-            dialog.show();
+            alert.show();
         }
     };
 
@@ -202,16 +200,16 @@ public class StepButton extends LinearLayout {
 
         @Override
         public void onClick(View v) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-            alert.setTitle(getResources().getString(R.string.Edit_step));
-
             final LayoutInflater inflater = LayoutInflater.from(mContext);
             @SuppressLint("InflateParams") final View layout = inflater.inflate(
                     R.layout.step_dialog, null);
 
             final Runnable save = setupEditStep(inflater, layout);
-            alert.setView(layout);
-            alert.setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
+                    .setTitle(getResources().getString(R.string.Edit_step))
+                    .setView(layout)
+                    .setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     save.run();
                     dialog.dismiss();
@@ -220,14 +218,13 @@ public class StepButton extends LinearLayout {
                         mOnChangedListener.run();
                     }
                 }
-            });
-            alert.setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+            })
+                    .setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     dialog.dismiss();
                 }
             });
-            AlertDialog dialog = alert.create();
-            dialog.show();
+            alert.show();
         }
     };
 

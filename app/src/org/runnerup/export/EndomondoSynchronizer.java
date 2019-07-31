@@ -262,17 +262,17 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             String workoutId = deviceId + "-" + Long.toString(mID);
             Log.e(getName(), "workoutId: " + workoutId);
 
-            StringBuilder url = new StringBuilder();
-            url.append(UPLOAD_URL).append("?authToken=").append(authToken);
-            url.append("&workoutId=").append(workoutId);
-            url.append("&sport=").append(summary.sport);
-            url.append("&duration=").append(summary.duration);
-            url.append("&distance=").append(summary.distance);
+            StringBuilder url = new StringBuilder()
+                    .append(UPLOAD_URL).append("?authToken=").append(authToken)
+                    .append("&workoutId=").append(workoutId)
+                    .append("&sport=").append(summary.sport)
+                    .append("&duration=").append(summary.duration)
+                    .append("&distance=").append(summary.distance);
             if (summary.hr != null) {
                 url.append("&heartRateAvg=").append(summary.hr.toString());
             }
-            url.append("&gzip=true");
-            url.append("&extendedResponse=true");
+            url.append("&gzip=true")
+                    .append("&extendedResponse=true");
 
             conn = (HttpURLConnection) new URL(url.toString()).openConnection();
             conn.setDoOutput(true);
@@ -337,9 +337,9 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        StringBuilder url = new StringBuilder();
-        url.append(FEED_URL).append("?authToken=").append(authToken);
-        url.append("&maxResults=25");
+        StringBuilder url = new StringBuilder()
+                .append(FEED_URL).append("?authToken=").append(authToken)
+                .append("&maxResults=25");
 
         HttpURLConnection conn;
         Exception ex;

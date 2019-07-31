@@ -298,20 +298,20 @@ public class MainLayout extends TabActivity
     };
 
     private void whatsNew() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = (WebView) view.findViewById(R.id.web_view1);
-        builder.setTitle(getString(R.string.Whats_new));
-        builder.setView(view);
-        builder.setPositiveButton(getString(R.string.Rate_RunnerUp), new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.Whats_new))
+                .setView(view)
+                .setPositiveButton(getString(R.string.Rate_RunnerUp), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 onRateClick.onClick(null);
             }
 
-        });
-        builder.setNegativeButton(getString(R.string.Dismiss), new DialogInterface.OnClickListener() {
+        })
+                .setNegativeButton(getString(R.string.Dismiss), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

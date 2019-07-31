@@ -541,24 +541,22 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
             return;
         }
 
-        AlertDialog.Builder prompt = new AlertDialog.Builder(this);
         final CheckBox dontShowAgain = new CheckBox(this);
         dontShowAgain.setText(getResources().getText(R.string.Do_not_show_again));
-        prompt.setView(dontShowAgain);
 
-        prompt.setCancelable(false);
-        prompt.setMessage(getResources().getText(R.string.Low_HRM_battery_level)
-                + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%");
-        prompt.setTitle(getResources().getText(R.string.Warning));
-
-        prompt.setPositiveButton(getResources().getText(R.string.OK), new DialogInterface.OnClickListener() {
+        AlertDialog.Builder prompt = new AlertDialog.Builder(this)
+                .setView(dontShowAgain)
+                .setCancelable(false)
+                .setMessage(getResources().getText(R.string.Low_HRM_battery_level)
+                + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%")
+                .setTitle(getResources().getText(R.string.Warning))
+                .setPositiveButton(getResources().getText(R.string.OK), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (dontShowAgain.isChecked()) {
                     prefs.edit().putBoolean(pref_key, true).apply();
                 }
             }
         });
-
         prompt.show();
     }
 
@@ -576,8 +574,8 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     private Workout prepareWorkout() {
         Context ctx = getApplicationContext();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-        SharedPreferences audioPref = null;
-        Workout w = null;
+        SharedPreferences audioPref;
+        Workout w;
 
         if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
             audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
@@ -596,6 +594,9 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
             w = advancedWorkout;
             w.sport = pref.getInt(getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING);
             w.setWorkoutType(Constants.WORKOUT_TYPE.ADVANCED);
+        } else {
+            w = null;
+            audioPref = null;
         }
         WorkoutBuilder.prepareWorkout(getResources(), pref, w,
                 TAB_BASIC.contentEquals(tabHost.getCurrentTabTag()));
@@ -1086,10 +1087,10 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 try {
                     WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
                 } catch (Exception ex) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-                    builder.setTitle(getString(R.string.Failed_to_load_workout));
-                    builder.setMessage("" + ex.toString());
-                    builder.setPositiveButton(getString(R.string.OK),
+                    AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
+                            .setTitle(getString(R.string.Failed_to_load_workout))
+                            .setMessage("" + ex.toString())
+                            .setPositiveButton(getString(R.string.OK),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();

@@ -62,8 +62,8 @@ public class HeadsetButtonReceiver extends BroadcastReceiver {
             KeyEvent event = intent
                     .getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             if (KeyEvent.ACTION_DOWN == event.getAction()) {
-                Intent startBroadcastIntent = new Intent();
-                startBroadcastIntent.setAction(Constants.Intents.PAUSE_RESUME);
+                Intent startBroadcastIntent = new Intent()
+                        .setAction(Constants.Intents.PAUSE_RESUME);
                 context.sendBroadcast(startBroadcastIntent);
             }
         }

@@ -79,10 +79,11 @@ public class SafeParse {
     }
 
     public static String storeIntList(int list[]) {
-        StringBuilder buf = new StringBuilder();
-        buf.append(Integer.toString(list[0]));
+        StringBuilder buf = new StringBuilder()
+                .append(Integer.toString(list[0]));
         for (int i = 1; i < list.length; i++) {
-            buf.append(',').append(Integer.toString(list[i]));
+            buf.append(',')
+                    .append(Integer.toString(list[i]));
         }
         return buf.toString();
     }

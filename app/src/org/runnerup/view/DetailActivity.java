@@ -706,18 +706,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         @Override
         public boolean onLongClick(View arg0) {
             final String name = (String) arg0.getTag();
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
-            builder.setTitle("Clear upload for " + name);
-            builder.setMessage(getString(R.string.Are_you_sure));
-            builder.setPositiveButton(getString(R.string.Yes),
+            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                    .setTitle("Clear upload for " + name)
+                    .setMessage(getString(R.string.Are_you_sure))
+                    .setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             syncManager.clearUpload(name, mID);
                             requery();
                         }
-                    });
-            builder.setNegativeButton(getString(R.string.No),
+                    })
+                    .setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -765,18 +765,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private final OnClickListener discardButtonClick = new OnClickListener() {
         public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this);
-            builder.setTitle(getString(R.string.Discard_activity));
-            builder.setMessage(getString(R.string.Are_you_sure));
-            builder.setPositiveButton(getString(R.string.Yes),
+            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                    .setTitle(getString(R.string.Discard_activity))
+                    .setMessage(getString(R.string.Are_you_sure))
+                    .setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_CANCELED);
                             DetailActivity.this.finish();
                         }
-                    });
-            builder.setNegativeButton(getString(R.string.No),
+                    })
+                    .setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -846,11 +846,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private final OnClickListener deleteButtonClick = new OnClickListener() {
         public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(
-                    DetailActivity.this);
-            builder.setTitle(getString(R.string.Delete_activity));
-            builder.setMessage(getString(R.string.Are_you_sure));
-            builder.setPositiveButton(getString(R.string.Yes),
+            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                    .setTitle(getString(R.string.Delete_activity))
+                    .setMessage(getString(R.string.Are_you_sure))
+                    .setPositiveButton(getString(R.string.Yes),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             DBHelper.deleteActivity(mDB, mID);
@@ -858,8 +857,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             DetailActivity.this.setResult(RESULT_OK);
                             DetailActivity.this.finish();
                         }
-                    });
-            builder.setNegativeButton(getString(R.string.No),
+                    })
+                    .setNegativeButton(getString(R.string.No),
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             // Do nothing but close the dialog
@@ -886,9 +885,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         final CharSequence items[] = {
                 "gpx", "tcx" /* "nike+xml" */
         };
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.Share_activity));
-        builder.setPositiveButton(getString(R.string.OK),
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.Share_activity))
+                .setPositiveButton(getString(R.string.OK),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int w) {
                         if (which[0] == -1) {
@@ -913,16 +912,16 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
                         context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
                     }
-                });
-        builder.setNegativeButton(getString(R.string.Cancel),
+                })
+                .setNegativeButton(getString(R.string.Cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog
                         dialog.dismiss();
                     }
 
-                });
-        builder.setSingleChoiceItems(items, which[0], new DialogInterface.OnClickListener() {
+                })
+                .setSingleChoiceItems(items, which[0], new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int w) {
                 which[0] = w;

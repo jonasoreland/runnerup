@@ -147,32 +147,30 @@ public class SpinnerPresenter {
         mSpin.setViewOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mLabel);
-
                 edit.setText(mSpin.getViewValueText());
                 edit.setInputType(mInputType);
                 final LinearLayout layout = createLayout(context);
                 layout.addView(edit);
-                alert.setView(layout);
-                alert.setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                        .setTitle(mLabel)
+                        .setView(layout)
+                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(edit.getText().toString());
                         dialog.dismiss();
                         layout.removeView(edit);
                         onClose(true);
                     }
-                });
-                alert.setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+                })
+                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(edit);
                         onClose(false);
                     }
                 });
-                AlertDialog dialog = alert.create();
-                dialog.show();
+                alert.show();
             }
         });
     }
@@ -236,14 +234,13 @@ public class SpinnerPresenter {
         mSpin.setViewOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mLabel);
-
                 final LinearLayout layout = createLayout(context);
                 layout.addView(datePicker);
-                alert.setView(layout);
-                alert.setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                        .setTitle(mLabel)
+                        .setView(layout)
+                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(datePicker));
                         dialog.dismiss();
@@ -257,16 +254,15 @@ public class SpinnerPresenter {
                         DateFormat df = android.text.format.DateFormat.getDateFormat(context);
                         return df.format(c.getTime());
                     }
-                });
-                alert.setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+                })
+                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(datePicker);
                         onClose(false);
                     }
                 });
-                AlertDialog dialog = alert.create();
-                dialog.show();
+                alert.show();
             }
         });
     }
@@ -283,15 +279,14 @@ public class SpinnerPresenter {
         mSpin.setViewOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mLabel);
-
                 timePicker.setIs24HourView(true);
                 final LinearLayout layout = createLayout(context);
                 layout.addView(timePicker);
-                alert.setView(layout);
-                alert.setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                        .setTitle(mLabel)
+                        .setView(layout)
+                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(timePicker));
                         dialog.dismiss();
@@ -305,16 +300,15 @@ public class SpinnerPresenter {
                         DateFormat df = android.text.format.DateFormat.getTimeFormat(mContext);
                         return df.format(c.getTime());
                     }
-                });
-                alert.setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+                })
+                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(timePicker);
                         onClose(false);
                     }
                 });
-                AlertDialog dialog = alert.create();
-                dialog.show();
+                alert.show();
             }
         });
     }
@@ -326,16 +320,15 @@ public class SpinnerPresenter {
         mSpin.setViewOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mLabel);
-
                 final DurationPicker picker = new DurationPicker(context, attrs);
                 picker.setEpochTime(mCurrValue);
                 final LinearLayout layout = createLayout(context);
                 layout.addView(picker);
-                alert.setView(layout);
-                alert.setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                        .setTitle(mLabel)
+                        .setView(layout)
+                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getPickerValue());
                         dialog.dismiss();
@@ -346,16 +339,15 @@ public class SpinnerPresenter {
                     private String getPickerValue() {
                         return DateUtils.formatElapsedTime(picker.getEpochTime());
                     }
-                });
-                alert.setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+                })
+                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(picker);
                         onClose(false);
                     }
                 });
-                AlertDialog dialog = alert.create();
-                dialog.show();
+                alert.show();
             }
         });
     }
@@ -369,16 +361,15 @@ public class SpinnerPresenter {
         mSpin.setViewOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mLabel);
-
                 distancePicker.setDistance(mCurrValue);
 
                 final LinearLayout layout = createLayout(context);
                 layout.addView(distancePicker);
-                alert.setView(layout);
-                alert.setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                        .setTitle(mLabel)
+                        .setView(layout)
+                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(distancePicker));
                         dialog.dismiss();
@@ -389,16 +380,15 @@ public class SpinnerPresenter {
                     private String getValue(DistancePicker dp) {
                         return Long.toString(dp.getDistance());
                     }
-                });
-                alert.setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+                })
+                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(distancePicker);
                         onClose(false);
                     }
                 });
-                AlertDialog dialog = alert.create();
-                dialog.show();
+                alert.show();
             }
         });
     }
@@ -412,16 +402,15 @@ public class SpinnerPresenter {
         mSpin.setViewOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-
-                alert.setTitle(mLabel);
-
                 numberPicker.setValue((int) mCurrValue);
 
                 final LinearLayout layout = createLayout(context);
                 layout.addView(numberPicker);
-                alert.setView(layout);
-                alert.setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                        .setTitle(mLabel)
+                        .setView(layout)
+                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         setValue(getValue(numberPicker));
                         dialog.dismiss();
@@ -432,16 +421,15 @@ public class SpinnerPresenter {
                     private String getValue(NumberPicker dp) {
                         return Integer.toString(dp.getValue());
                     }
-                });
-                alert.setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
+                })
+                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         dialog.dismiss();
                         layout.removeView(numberPicker);
                         onClose(false);
                     }
                 });
-                AlertDialog dialog = alert.create();
-                dialog.show();
+                alert.show();
             }
         });
     }

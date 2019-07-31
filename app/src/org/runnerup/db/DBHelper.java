@@ -610,43 +610,45 @@ public class DBHelper extends SQLiteOpenHelper implements
         db.close();
         mDBHelper.close();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setTitle("Import " + DBNAME + " from " + from);
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         };
-        String to = getDbPath(ctx);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx)
+                .setTitle("Import " + DBNAME + " from " + from);
         try {
+            String to = getDbPath(ctx);
             int cnt = FileUtil.copyFile(to, from);
-            builder.setMessage("Copied " + cnt + " bytes");
-            builder.setPositiveButton(ctx.getString(R.string.Great), listener);
+            builder.setMessage("Copied " + cnt + " bytes")
+                    .setPositiveButton(ctx.getString(R.string.Great), listener);
         } catch (IOException e) {
-            builder.setMessage("Exception: " + e.toString());
-            builder.setNegativeButton(ctx.getString(R.string.Darn), listener);
+            builder.setMessage("Exception: " + e.toString())
+                    .setNegativeButton(ctx.getString(R.string.Darn), listener);
         }
         builder.show();
     }
 
     public static void exportDatabase(Context ctx, String to) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-        builder.setTitle("Export " + DBNAME + " to " + to);
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         };
-        String from = getDbPath(ctx);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx)
+                .setTitle("Export " + DBNAME + " to " + to);
         try {
+            String from = getDbPath(ctx);
             int cnt = FileUtil.copyFile(to, from);
-            builder.setMessage("Copied " + cnt + " bytes");
-            builder.setPositiveButton(ctx.getString(R.string.Great), listener);
+            builder.setMessage("Copied " + cnt + " bytes")
+                    .setPositiveButton(ctx.getString(R.string.Great), listener);
         } catch (IOException e) {
-            builder.setMessage("Exception: " + e.toString());
-            builder.setNegativeButton(ctx.getString(R.string.Darn), listener);
+            builder.setMessage("Exception: " + e.toString())
+                    .setNegativeButton(ctx.getString(R.string.Darn), listener);
         }
         builder.show();
     }
