@@ -62,16 +62,16 @@ android {
     }
 
     defaultConfig {
-        applicationId = "org.runnerup"
+        // Set a separate applicationId to allow variant installations
+        // The applicationId is also used in some xml files (android:targetPackage)
+        // The packageId (in the manifest) is never changed
+        // See also applicationIdFull in common/build.gradle, must be in sync
+        applicationId = rootProject.ext.applicationIdBase
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
         resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "it", "ja", "lt", "nb", "nl", "pl", "pt", "ru", "sv", "tr"
 
-        if (rootProject.ext.allowNonFree) {
-            applicationIdSuffix ""
-        } else {
-            // Separate applicationId for the free version
-            applicationIdSuffix ".free"
+        if (!rootProject.ext.allowNonFree) {
             versionNameSuffix "-free"
         }
     }
@@ -84,20 +84,17 @@ android {
 
     buildTypes {
         debug {
-            // Set a separate applicationId for the debug build so it can be installed with release builds
-            // The applicationId is also used in some xml files (android:targetPackage)
-            // The packageId (in the manifest) is never changed
+            // Separate the debug build, sync with common/build.gradle
             applicationIdSuffix ".debug"
             versionNameSuffix "-${getGitHash()}"
-            resValue "string", "applicationIdFull", "${defaultConfig.applicationId}${defaultConfig.applicationIdSuffix}${applicationIdSuffix}"
         }
         release {
             applicationIdSuffix ""
+
             minifyEnabled rootProject.ext.allowNonFree
             shrinkResources rootProject.ext.allowNonFree
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
             signingConfig signingConfigs.release
-            resValue "string", "applicationIdFull", "${defaultConfig.applicationId}${defaultConfig.applicationIdSuffix}"
         }
     }
 

@@ -124,6 +124,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     private void registerReceivers() {
         {
             IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Constants.Intents.NEW_LAP);
             intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
             context.registerReceiver(mBroadcastReceiver, intentFilter);
         }

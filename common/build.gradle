@@ -9,13 +9,24 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName '1.0'
+        // Default, needed by test
+        buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationIdBase + '"')
     }
     buildTypes {
-        release {
-            minifyEnabled false
+        buildTypes {
+            debug {
+                // The applicationId for the Android app (needed in Wear app)
+                // This must be unique to allow Notification button intents to work independently
+                buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationIdBase + '.debug"')
+                resValue "string", "applicationIdFull", rootProject.ext.applicationIdBase + ".debug"
+            }
+            release {
+                buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationIdBase + '"')
+                resValue "string", "applicationIdFull", rootProject.ext.applicationIdBase
+
+                minifyEnabled false
+            }
         }
-    }
-    productFlavors {
     }
     lintOptions {
         warning 'MissingTranslation'

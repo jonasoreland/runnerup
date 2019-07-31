@@ -44,4 +44,13 @@ project.ext {
     if (!allowNonFree || project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLib).exists()) {
         antPlusLib = ""
     }
+
+    // ApplicationId (possibly with a .debug suffix) shared Android and Wear
+    // Separate Id allows simultaneous installation
+    if (rootProject.ext.allowNonFree) {
+        applicationIdBase = "org.runnerup"
+    } else {
+        // Separate applicationId for the free version
+        applicationIdBase = "org.runnerup.free"
+    }
 }
