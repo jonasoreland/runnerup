@@ -115,6 +115,54 @@
         android:title="@string/Recording"
         android:key="recording_preferencescreen">
 
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="1000"
+            android:inputType="number"
+            android:key="@string/pref_pollInterval"
+            android:persistent="true"
+            android:title="@string/Poll_interval_ms" />
+
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="0"
+            android:inputType="number"
+            android:key="@string/pref_pollDistance"
+            android:persistent="true"
+            android:title="@string/Poll_distance_m" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_speed_from_gps_points"
+            android:persistent="true"
+            android:title="@string/Current_speed_from_GPS_points"/>
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_altitude_adjust"
+            android:title="@string/Adjust_altitude" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_log_gpx_accuracy"
+            android:title="@string/log_extended_gps_title"
+            android:summary="@string/log_extended_gps_summary" />
+
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:key="workout_preferencescreen"
+        android:title="@string/Workout">
+
+        <Preference
+            android:key="@string/pref_cue_workouts"
+            android:title="@string/Manage_workouts"
+            android:summary="@string/Downloadeditremove_workouts">
+            <intent
+                android:targetPackage="@string/applicationIdFull"
+                android:targetClass="org.runnerup.view.ManageWorkoutsActivity" />
+        </Preference>
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_autolap_active"
@@ -129,6 +177,13 @@
             android:persistent="true"
             android:title="@string/Autolap_m"
             android:enabled="true" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_step_autolap_active"
+            android:title="@string/Autolap_during_intervals"
+            android:summary="@string/Autolap_during_intervals_summary" />
 
         <CheckBoxPreference
             android:defaultValue="false"
@@ -173,37 +228,65 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:persistent="true"
-            android:key="@string/pref_altitude_adjust"
-            android:title="@string/Adjust_altitude" />
+            android:key="@string/pref_step_countdown_active"
+            android:title="@string/Add_countdown_after_step_that_ends_with_user_press"
+            android:summary="@string/Add_countdown_after_step_that_ends_with_user_press_summary" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="1000"
+            android:defaultValue="15"
+            android:dependency="@string/pref_step_countdown_active"
             android:inputType="number"
-            android:key="@string/pref_pollInterval"
+            android:key="@string/pref_step_countdown_time"
             android:persistent="true"
-            android:title="@string/Poll_interval_ms" />
+            android:title="@string/Step_countdown_time_s" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_convert_interval_distance_rest_to_recovery"
+            android:title="@string/Convert_rest_on_Interval_tab"
+            android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_convert_advanced_distance_rest_to_recovery"
+            android:title="@string/Convert_rest_on_Advanced_tab"
+            android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab" />
 
         <org.runnerup.widget.TextPreference
-            android:defaultValue="0"
             android:inputType="number"
-            android:key="@string/pref_pollDistance"
+            android:defaultValue="20"
+            android:key="@string/pref_target_pace_moving_average_seconds"
             android:persistent="true"
-            android:title="@string/Poll_distance_m" />
+            android:title="@string/Target_pace_moving_average_seconds" />
 
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/pref_speed_from_gps_points"
+        <org.runnerup.widget.TextPreference
+            android:inputType="number"
+            android:defaultValue="30"
+            android:key="@string/pref_target_pace_grace_seconds"
             android:persistent="true"
-            android:title="@string/Current_speed_from_GPS_points"/>
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:persistent="true"
-            android:key="@string/pref_log_gpx_accuracy"
-            android:title="@string/log_extended_gps_title"
-            android:summary="@string/log_extended_gps_summary" />
+            android:title="@string/Target_pace_grace_seconds" />
 
     </PreferenceScreen>
+
+    <Preference
+        android:key="@string/pref_cue_audiocues"
+        android:title="@string/Audio_cues"
+        android:summary="@string/Configure_audio_cues">
+        <intent
+            android:targetPackage="@string/applicationIdFull"
+            android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
+    </Preference>
+
+    <Preference
+        android:key="@string/pref_cue_accounts"
+        android:title="@string/Accounts"
+        android:summary="@string/Configure_accounts">
+        <intent
+            android:targetPackage="@string/applicationIdFull"
+            android:targetClass="org.runnerup.view.AccountListActivity" />
+    </Preference>
 
     <PreferenceScreen
             android:key="map_preferencescreen"
@@ -241,95 +324,12 @@
         </PreferenceCategory>
     </PreferenceScreen>
 
-    <Preference
-            android:key="@string/pref_cue_accounts"
-            android:title="@string/Accounts"
-            android:summary="@string/Configure_accounts">
-            <intent
-                android:targetPackage="@string/applicationIdFull"
-                android:targetClass="org.runnerup.view.AccountListActivity" />
-    </Preference>
-
     <!--CheckBoxPreference
         android:defaultValue="false"
         android:key="@string/pref_runneruplive_active"
         android:persistent="true"
         android:title="@string/Enable_RunnerUpLive"
         android:summary="@string/Note_you_need_to_connect_to_the_account_too" /-->
-
-    <Preference
-        android:key="@string/pref_cue_audiocues"
-        android:title="@string/Audio_cues"
-        android:summary="@string/Configure_audio_cues">
-        <intent
-            android:targetPackage="@string/applicationIdFull"
-            android:targetClass="org.runnerup.view.AudioCueSettingsActivity" />
-    </Preference>
-
-    <PreferenceScreen
-        android:key="workout_preferencescreen"
-        android:title="@string/Workout">
-
-        <Preference
-            android:key="@string/pref_cue_workouts"
-            android:title="@string/Manage_workouts"
-            android:summary="@string/Downloadeditremove_workouts">
-            <intent
-                android:targetPackage="@string/applicationIdFull"
-                android:targetClass="org.runnerup.view.ManageWorkoutsActivity" />
-        </Preference>
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:persistent="true"
-            android:key="@string/pref_convert_interval_distance_rest_to_recovery"
-            android:title="@string/Convert_rest_on_Interval_tab"
-            android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:persistent="true"
-            android:key="@string/pref_convert_advanced_distance_rest_to_recovery"
-            android:title="@string/Convert_rest_on_Advanced_tab"
-            android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab" />
-
-        <org.runnerup.widget.TextPreference
-            android:inputType="number"
-            android:defaultValue="20"
-            android:key="@string/pref_target_pace_moving_average_seconds"
-            android:persistent="true"
-            android:title="@string/Target_pace_moving_average_seconds" />
-
-        <org.runnerup.widget.TextPreference
-            android:inputType="number"
-            android:defaultValue="30"
-            android:key="@string/pref_target_pace_grace_seconds"
-            android:persistent="true"
-            android:title="@string/Target_pace_grace_seconds" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:persistent="true"
-            android:key="@string/pref_step_autolap_active"
-            android:title="@string/Autolap_during_intervals"
-            android:summary="@string/Autolap_during_intervals_summary" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:persistent="true"
-            android:key="@string/pref_step_countdown_active"
-            android:title="@string/Add_countdown_after_step_that_ends_with_user_press"
-            android:summary="@string/Add_countdown_after_step_that_ends_with_user_press_summary" />
-
-        <org.runnerup.widget.TextPreference
-            android:defaultValue="15"
-            android:dependency="@string/pref_step_countdown_active"
-            android:inputType="number"
-            android:key="@string/pref_step_countdown_time"
-            android:persistent="true"
-            android:title="@string/Step_countdown_time_s" />
-
-    </PreferenceScreen>
 
     <PreferenceScreen
         android:key="advanced_preferencescreen"
