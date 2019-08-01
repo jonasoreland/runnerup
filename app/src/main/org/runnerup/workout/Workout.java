@@ -232,10 +232,15 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onNewLapOrNextStep() {
-        if (!isLastStep()) {
-            onNextStep();
-        } else {
+        if (currentStep == null ||
+                isLastStep() && (
+                        // Basic workout but not warmup
+                        this.workoutType == Constants.WORKOUT_TYPE.BASIC ||
+                                // Last step where not keypress
+                                currentStep.getDurationType() != null)) {
             onNewLap();
+        } else {
+            onNextStep();
         }
     }
 

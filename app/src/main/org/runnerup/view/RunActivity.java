@@ -227,11 +227,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                 workoutRows.size() == 2
                         && workoutRows.get(0).step.getIntensity() == Intensity.RESTING;
 
-        if (simpleWorkout) {
-            newLapButton.setOnClickListener(newLapButtonClick);
-        } else {
-            newLapButton.setOnClickListener(nextStepButtonClick);
-        }
+        newLapButton.setOnClickListener(newLapButtonClick);
         newLapButton.setText(getString(R.string.New_lap));
         mTracker.displayNotificationState();
     }
@@ -375,13 +371,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     private final OnClickListener newLapButtonClick = new OnClickListener() {
         public void onClick(View v) {
-            workout.onNewLap();
-        }
-    };
-
-    private final OnClickListener nextStepButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            workout.onNextStep();
+            workout.onNewLapOrNextStep();
         }
     };
 
@@ -444,10 +434,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             ((WorkoutAdapter) workoutList.getAdapter()).notifyDataSetChanged();
             currentStep = curr;
             workoutList.setSelection(getPosition(workoutRows, currentStep));
-            if (!simpleWorkout && workout.isLastStep())
-            {
-                newLapButton.setEnabled(false);
-            }
         }
     }
 
