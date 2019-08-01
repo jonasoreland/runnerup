@@ -24,7 +24,7 @@ import java.util.List;
 
 public class RepeatStep extends Step {
 
-    int repeatCount = 8;
+    int repeatCount = 0;
 
     public ArrayList<Step> getSteps() {
         return steps;
@@ -87,7 +87,9 @@ public class RepeatStep extends Step {
 
     @Override
     public void onStart(Scope what, Workout s) {
-        steps.get(currentStep).onStart(what, s);
+        if (steps.size() > currentStep) {
+            steps.get(currentStep).onStart(what, s);
+        }
     }
 
     @Override
@@ -102,22 +104,34 @@ public class RepeatStep extends Step {
 
     @Override
     public boolean onTick(Workout w) {
-        return currentRepeat >= repeatCount || steps.get(currentStep).onTick(w);
+        return currentStep >= steps.size() || currentRepeat >= repeatCount || steps.get(currentStep).onTick(w);
     }
 
+    /**
+     * Return true when the step cannot be increased within this repeat step
+     * @param w
+     * @return
+     */
     @Override
     public boolean onNextStep(Workout w) {
-        if (steps.get(currentStep).onNextStep(w)) {
-            currentStep++;
-            if (currentStep >= steps.size()) {
-                currentStep = 0;
-                currentRepeat++;
-                if (currentRepeat >= repeatCount) {
-                    return true;
-                }
-                for (Step s : steps) {
-                    s.onRepeat(currentRepeat, repeatCount);
-                }
+        if (steps.size() <= currentStep) {
+            // Incorrect handling or repeat 0, move to next
+            return true;
+        }
+        if (!steps.get(currentStep).onNextStep(w)) {
+            // current step is another repeat step
+            return false;
+        }
+
+        currentStep++;
+        if (currentStep >= steps.size()) {
+            currentStep = 0;
+            currentRepeat++;
+            if (currentRepeat >= repeatCount) {
+                return true;
+            }
+            for (Step s : steps) {
+                s.onRepeat(currentRepeat, repeatCount);
             }
         }
         return false;
@@ -130,7 +144,9 @@ public class RepeatStep extends Step {
 
     @Override
     public void onComplete(Scope scope, Workout s) {
-        steps.get(currentStep).onComplete(scope, s);
+        if (steps.size() > currentStep) {
+            steps.get(currentStep).onComplete(scope, s);
+        }
     }
 
     @Override
@@ -182,10 +198,13 @@ public class RepeatStep extends Step {
 
     @Override
     public boolean isLastStep() {
-        if (currentRepeat >= repeatCount)
-            return true;
-        if (currentStep + 1 < steps.size())
+        if (currentRepeat + 1 < repeatCount) {
             return false;
+        }
+        if (currentStep >= steps.size()) {
+            return true;
+        }
+
         return steps.get(currentStep).isLastStep();
     }
 

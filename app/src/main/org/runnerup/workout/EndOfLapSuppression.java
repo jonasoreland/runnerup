@@ -119,7 +119,7 @@ public class EndOfLapSuppression extends TriggerSuppression {
             return false;
 
         Step s = w.getCurrentStep();
-        if (s.getDurationType() == null)
+        if (s == null || s.getDurationType() == null)
             return false;
 
         switch (s.getDurationType()) {

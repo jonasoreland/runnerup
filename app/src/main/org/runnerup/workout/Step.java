@@ -37,7 +37,8 @@ public class Step implements TickComponent {
     Intensity intensity = Intensity.ACTIVE;
 
     /**
-     * Duration
+     * DurationType
+     * Dimension.TIME, Dimension.DISTANCE, null (keypress)
      */
     Dimension durationType = null;
     double durationValue = 0;
