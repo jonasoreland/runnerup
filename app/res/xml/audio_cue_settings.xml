@@ -33,7 +33,8 @@
 		android:defaultValue="false"
 		android:persistent="true"
 		android:key="@string/cue_time"
-		android:title="@string/Time_triggered_audio_cue" />
+		android:title="@string/Time_triggered_audio_cue"
+		android:summary="@string/Time_triggered_audio_cue_summary" />
 
 	<org.runnerup.widget.TextPreference
 		android:dependency="cue_time"
@@ -47,7 +48,8 @@
 		android:defaultValue="false"
 		android:persistent="true"
 		android:key="@string/cue_distance"
-		android:title="@string/Distance_triggered_audio_cue" />
+		android:title="@string/Distance_triggered_audio_cue"
+		android:summary="@string/Distance_triggered_audio_cue_summary" />
 
 	<org.runnerup.widget.TextPreference
 		android:dependency="@string/cue_distance"
@@ -61,7 +63,8 @@
 		android:defaultValue="true"
 		android:persistent="true"
 		android:key="@string/cue_end_of_lap"
-		android:title="@string/End_of_lap_audio_cue" />
+		android:title="@string/End_of_lap_audio_cue"
+		android:summary="@string/End_of_lap_audio_cue_summary" />
 
 	<CheckBoxPreference
 		android:dependency="@string/cue_end_of_lap"
@@ -224,6 +227,24 @@
 			android:title="@string/Skip_event_audio_cues"
 			android:summary="@string/Keep_silent_when_workout_startpauseresumestop"
 			/>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_lap_started"
+            android:title="@string/Lap_start"
+            android:summary="@string/Lap_start_summary" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/pref_cue_hrm_connection"
+            android:title="@string/HRM_connection_audio_cue" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:persistent="true"
+            android:key="@string/pref_mute_bool"
+            android:title="@string/Mute_music_during_audio_cues" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/Test_audio_cue">

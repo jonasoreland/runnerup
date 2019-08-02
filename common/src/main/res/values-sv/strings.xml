@@ -334,6 +334,7 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
   <string name="channel_notification_ongoing">RunnerUp GPS och aktivtets notifikationer</string>
   <string name="Lap_start">Varv start</string>
+  <string name="Lap_start_summary">Meddelande vid start av varv och \"Aktiv\", \"Uppvärmning\" och \"Nedvarvning\" steg</string>
   <string name="Lock_activity_buttons">Lås aktivitetsknappar</string>
   <string name="Lock_activity_buttons_message">Lås aktivitetsknappar genom att knacka snabbt på toppfälten</string>
 </resources>
