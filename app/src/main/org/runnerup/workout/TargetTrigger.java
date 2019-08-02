@@ -138,6 +138,12 @@ public class TargetTrigger extends Trigger {
         cntMeasures++;
     }
 
+    public Dimension getDimension() { return dimension; }
+
+    public Scope getScope() { return scope; }
+
+    public Range getRange() { return range; }
+
     public double getValue() {
         if (cntMeasures == lastValCnt)
             return lastVal;

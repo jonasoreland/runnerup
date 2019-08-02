@@ -36,9 +36,9 @@ public class CoachFeedback extends AudioFeedback {
     private Range range = null;
     private TargetTrigger trigger = null;
 
-    public CoachFeedback(Scope scope, Dimension dimension, Range range, TargetTrigger trigger) {
-        super(scope, dimension);
-        this.range = range;
+    public CoachFeedback(TargetTrigger trigger) {
+        super(Scope.CURRENT, trigger.getDimension());
+        this.range = trigger.getRange();
         this.trigger = trigger;
 
         if (dimension == Dimension.PACE) {
