@@ -114,6 +114,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         adapter = new WorkoutAccountListAdapter(this);
         ExpandableListView list = (ExpandableListView) findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
+
         downloadButton = (Button) findViewById(R.id.download_workout_button);
         downloadButton.setOnClickListener(downloadButtonClick);
         // No download provider currently exists
@@ -130,6 +131,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         requery();
         listLocal();
+        list.expandGroup(0);
 
         Uri data = getIntent().getData();
         if (data != null) {
