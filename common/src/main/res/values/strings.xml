@@ -199,8 +199,8 @@
   <string name="Autopause_min_pace_minkm">Autopause min pace (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Interval rest steps</string>
   <string name="Convert_rest_on_Advanced_tab">Workout rest steps</string>
-  <string name="Target_pace_moving_average_seconds">Target pace moving average seconds</string>
-  <string name="Target_pace_grace_seconds">Target pace grace seconds</string>
+  <string name="Target_pace_moving_average_seconds">Target feedback moving average (s)</string>
+  <string name="Target_pace_grace_seconds">Target feedback grace period (s)</string>
   <string name="Autolap_during_intervals">Autolap in workouts</string>
   <string name="Autolap_basic_summary">Autolap in basic workouts</string>
   <string name="Autolap_during_intervals_summary">Autolap in last step and \"Active\" steps</string>

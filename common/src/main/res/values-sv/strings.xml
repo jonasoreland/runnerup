@@ -198,8 +198,8 @@
   <string name="Autopause_min_pace_minkm">Autopaus tempo (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Interval vilosteg</string>
   <string name="Convert_rest_on_Advanced_tab">Vilosteg i pass</string>
-  <string name="Target_pace_moving_average_seconds">Måltempo flytande medelvärde (s)</string>
-  <string name="Target_pace_grace_seconds">Måltempo anståndstid</string>
+  <string name="Target_pace_moving_average_seconds">Målåterkoppling flytande medelvärde (s)</string>
+  <string name="Target_pace_grace_seconds">Målåterkoppling anståndstid (s)</string>
   <string name="Autolap_during_intervals">Autovarv i pass</string>
   <string name="Autolap_basic_summary">Autovarv i standard pass</string>
   <string name="Autolap_during_intervals_summary">Autovarv i sista steget samt \"Aktiv\" steg</string>

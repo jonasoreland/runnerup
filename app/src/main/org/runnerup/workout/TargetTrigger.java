@@ -121,6 +121,7 @@ public class TargetTrigger extends Trigger {
                 double cmp = range.compare(avg);
                 // Log.e(getName(), " => avg: " + avg + " => cmp: " + cmp);
                 if (cmp == 0) {
+                    graceCount = minGraceCount;
                     return false;
                 }
                 fire(w);
