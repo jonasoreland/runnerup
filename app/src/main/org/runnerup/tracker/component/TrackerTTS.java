@@ -71,9 +71,4 @@ public class TrackerTTS extends DefaultTrackerComponent {
         }
         return ResultCode.RESULT_OK;
     }
-
-    RUTextToSpeech getTTS(SharedPreferences prefs) {
-        final boolean mute = prefs.getBoolean(context.getString(R.string.pref_mute_bool), false);
-        return new RUTextToSpeech(tts, mute, context);
-    }
 }

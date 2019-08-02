@@ -174,7 +174,7 @@
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportera databas till sdkort (t.ex. före uppgradering)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importera databas från sdkort (t.ex. efter uppgradering)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach för att hjälpa dig nå målet (om mål är satt)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Tyst när träningspass startas/pausas/återupptas/stoppas</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Skippa meddelande att träningspass startas/pausas/återupptas/stoppas</string>
   <string name="Test_audio_cue">Testa ljudmeddelande</string>
   <string name="Accounts">Konton</string>
   <string name="Audio_cues">Ljudmeddelanden</string>
@@ -227,7 +227,7 @@
   <string name="End_of_lap_audio_cue">Varvslut</string>
   <string name="End_of_lap_audio_cue_summary">Autovarvslut samt slut på \"Aktiv\" steg</string>
   <string name="Mute_music_during_audio_cues">Tysta musik under ljudmeddelanden</string>
-  <string name="Cue_information">Information i ljudmeddelanden:</string>
+  <string name="Cue_information">Information i ljudmeddelanden</string>
   <string name="Total_distance">Total distans</string>
   <string name="Total_time">Total tid</string>
   <string name="Total_speed">Total hastighet</string>

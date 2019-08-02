@@ -175,7 +175,7 @@
   <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to storage</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from storage</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if having set target)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Silent start/pause/resume/stop of workouts</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Suppress cue for start/pause/resume/stop</string>
   <string name="Test_audio_cue">Test audio cue</string>
   <string name="Accounts">Accounts</string>
   <string name="Audio_cues">Audio cues</string>

@@ -128,7 +128,7 @@ public class MainLayout extends TabActivity
         Log.e(getClass().getName(), "app-version: " + versionCode + ", upgradeState: " + upgradeState
                 + ", km: " + km);
 
-        // convert pref_mute to pref_mute_bool
+        // Migration in 1.56: convert pref_mute to pref_mute_bool
         Resources res = getResources();
         try {
             if (pref.contains(res.getString(R.string.pref_mute))) {

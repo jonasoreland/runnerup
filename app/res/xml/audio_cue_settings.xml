@@ -35,7 +35,6 @@
 		android:key="@string/cue_time"
 		android:title="@string/Time_triggered_audio_cue"
 		android:summary="@string/Time_triggered_audio_cue_summary" />
-
 	<org.runnerup.widget.TextPreference
 		android:dependency="cue_time"
 		android:defaultValue="120"
@@ -50,7 +49,6 @@
 		android:key="@string/cue_distance"
 		android:title="@string/Distance_triggered_audio_cue"
 		android:summary="@string/Distance_triggered_audio_cue_summary" />
-
 	<org.runnerup.widget.TextPreference
 		android:dependency="@string/cue_distance"
 		android:defaultValue="1000"
@@ -66,33 +64,14 @@
 		android:title="@string/End_of_lap_audio_cue"
 		android:summary="@string/End_of_lap_audio_cue_summary" />
 
-	<CheckBoxPreference
-		android:dependency="@string/cue_end_of_lap"
-		android:defaultValue="true"
-		android:persistent="true"
-		android:key="@string/pref_lap_started"
-		android:title="@string/Lap_start" />
-
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:persistent="true"
-		android:key="@string/pref_mute_bool"
-		android:title="@string/Mute_music_during_audio_cues" />
-
-	<CheckBoxPreference
-		android:defaultValue="true"
-		android:persistent="true"
-		android:key="@string/pref_cue_hrm_connection"
-		android:title="@string/HRM_connection_audio_cue" />
-
-	<CheckBoxPreference
-		android:defaultValue="true"
-		android:persistent="true"
-		android:key="@string/cueinfo_units"
-		android:title="@string/Audio_cue_unit" />
-
 	<PreferenceCategory android:key="cueinfo" android:title="@string/Cue_information">
-		<CheckBoxPreference
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:persistent="true"
+            android:key="@string/cueinfo_units"
+            android:title="@string/Audio_cue_unit" />
+
+        <CheckBoxPreference
 			android:defaultValue="false"
 			android:persistent="true"
 			android:key="@string/cueinfo_total_distance"
@@ -220,7 +199,8 @@
 			android:title="@string/Target_coaching"
 			android:summary="@string/Coach_to_help_you_reach_target_if_having_set_target"
 			/>
-		<CheckBoxPreference
+
+        <CheckBoxPreference
 			android:defaultValue="false"
 			android:persistent="true"
 			android:key="@string/cueinfo_skip_startstop"
