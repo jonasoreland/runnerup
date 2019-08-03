@@ -87,6 +87,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private int batteryLevel = -1;
     private boolean hasBatteryService = false;
 
+    private long mPrevHrTimestampNotZero = 0;
+
     private boolean mIsScanning = false;
     private boolean mIsConnected = false;
     private boolean mIsConnecting = false;
@@ -170,26 +172,39 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     return;
                 }
 
+                int val;
                 if (isHeartRateInUINT16(arg0.getValue()[0])) {
-                    hrValue = arg0.getIntValue(
+                    val = arg0.getIntValue(
                             BluetoothGattCharacteristic.FORMAT_UINT16, 1);
                 } else {
-                    hrValue = arg0.getIntValue(
+                    val = arg0.getIntValue(
                             BluetoothGattCharacteristic.FORMAT_UINT8, 1);
-                }
-
-                if (hrValue == 0) {
-                    if (mIsConnecting) {
-                        reportConnectFailed("got hrValue = 0 => reportConnectFailed");
-                        return;
-                    }
-                    log("got hrValue == 0 => disconnecting");
-                    reportDisconnected();
-                    return;
                 }
 
                 hrTimestamp = System.currentTimeMillis();
                 hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
+
+                if (val == 0) {
+                    // Some HR straps (low quality?) report 0 when it cannot read HR but still have connection
+                    // (especially first value, so it never connects)
+                    // Previously this was considered as an indication that the strap was disconnected
+                    // This keeps this behavior, reporting old value until timeout.
+                    // Discussion in PR #477
+                    final long mMaxHrTimestampNotZero = 60 * 1000;
+                    if (mPrevHrTimestampNotZero > 0 &&
+                            hrTimestamp - mPrevHrTimestampNotZero > mMaxHrTimestampNotZero) {
+                        if (mIsConnecting) {
+                            reportConnectFailed("got hrValue = 0 => reportConnectFailed");
+                            return;
+                        }
+                        log("got hrValue == 0 => disconnecting");
+                        reportDisconnected();
+                        return;
+                    }
+                } else {
+                    hrValue = val;
+                    mPrevHrTimestampNotZero = hrTimestamp;
+                }
 
                 if (mIsConnecting) {
                     reportConnected(true);
@@ -260,7 +275,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                         return;
                     } else {
                         boolean res = btGatt.connect();
-                        log("disconnect while connecting => btGatt.connect() => "
+                        log("reconnect while connecting => btGatt.connect() => "
                                         + res);
                         return;
                     }
