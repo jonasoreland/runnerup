@@ -12,7 +12,7 @@ public class HRMStateChangeFeedback extends AudioFeedback {
         super(0);
     }
 
-    protected String getCue(Workout w, Context ctx) {
+    String getCue(Workout w, Context ctx) {
         return (ctx.getResources().getString((w.getHeartRate(Scope.CURRENT) == 0)
                 ? R.string.cue_hrm_connection_lost
                 : R.string.cue_hrm_connection_restored));
