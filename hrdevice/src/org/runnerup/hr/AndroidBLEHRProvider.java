@@ -124,12 +124,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         if (btAdapter == null) {
             btAdapter = BluetoothAdapter.getDefaultAdapter();
         }
-        if (btAdapter == null) {
-            hrClient.onOpenResult(false);
-            return;
-        }
 
-        hrClient.onOpenResult(true);
+        hrClient.onOpenResult(btAdapter != null);
     }
 
     @Override
@@ -142,10 +138,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             btGatt = null;
         }
 
-        if (btAdapter == null) {
-            btAdapter = null;
-        }
-
+        btAdapter = null;
+        btDevice = null;
         hrClient = null;
         hrClientHandler = null;
     }
@@ -295,7 +289,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     reportDisconnected();
                     return;
                 }
-                log("onConnectionStateChange => WHAT TO DO??");
+                log("onConnectionStateChange => Already connected?");
             } catch (Exception e) {
                 log("onConnectionStateChange => " + e);
                 reportConnectFailed("Exception in onConnectionStateChange: " + e);
@@ -459,6 +453,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         return mIsScanning;
     }
 
+    // Using a derecated API - change in API 21 (Marshmallow)
     private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi,
@@ -475,6 +470,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 stopScan();
 
                 if (CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN) {
+                    // Android 4.3
                     log("CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN");
                     hrClientHandler.post(new Runnable() {
                         @Override
@@ -526,6 +522,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         mIsScanning = true;
         mScanDevices.clear();
         if (AVOID_SCAN_WITH_UUID)
+            // Android 4.3
             btAdapter.startLeScan(mLeScanCallback);
         else
             btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
@@ -558,13 +555,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             return;
         }
 
-        BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(
-                ref.deviceAddress);
+        BluetoothDevice dev = btAdapter.getRemoteDevice(ref.deviceAddress);
 
-        if (mIsConnected)
-            return;
-
-        if (mIsConnecting)
+        if (mIsConnected || mIsConnecting)
             return;
 
         mIsConnecting = true;
@@ -617,20 +610,17 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     @Override
     public void disconnect() {
-        if (btGatt == null)
-            return;
-
-        if (btDevice == null) {
+        if (btGatt == null || btDevice == null) {
             return;
         }
 
-        boolean isConnected = mIsConnected;
         if (!mIsConnecting && !mIsConnected)
             return;
 
         if (mIsDisconnecting)
             return;
 
+        boolean isConnected = mIsConnected;
         mIsConnected = false;
         mIsConnecting = false;
         mIsDisconnecting = true;
