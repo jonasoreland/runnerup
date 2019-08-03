@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.SafeParse;
 
@@ -468,7 +469,10 @@ public class WorkoutSerializer {
         final boolean convertRestToRecovery = prefs.getBoolean(ctx.getResources().getString(
                 R.string.pref_convert_advanced_distance_rest_to_recovery), false);
 
-        return readJSON(new FileReader(fin), convertRestToRecovery);
+        Workout w = readJSON(new FileReader(fin), convertRestToRecovery);
+        w.sport = prefs.getInt(ctx.getResources().getString(R.string.pref_sport), Constants.DB.ACTIVITY.SPORT_RUNNING);
+        w.setWorkoutType(Constants.WORKOUT_TYPE.ADVANCED);
+        return w;
     }
 
     public static void writeFile(Context ctx, String name, Workout workout) throws IOException,
