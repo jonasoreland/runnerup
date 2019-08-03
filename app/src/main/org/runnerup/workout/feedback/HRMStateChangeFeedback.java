@@ -9,11 +9,12 @@ import org.runnerup.workout.Workout;
 
 public class HRMStateChangeFeedback extends AudioFeedback {
     public HRMStateChangeFeedback(HRMStateTrigger trigger) {
-        super(0);
+        // Set temporary id, overridden in getCue()
+        super(R.string.cue_hrm_connection_lost);
     }
 
     String getCue(Workout w, Context ctx) {
-        return (ctx.getResources().getString((w.getHeartRate(Scope.CURRENT) == 0)
+        return (formatter.getCueString((w.getHeartRate(Scope.CURRENT) == 0)
                 ? R.string.cue_hrm_connection_lost
                 : R.string.cue_hrm_connection_restored));
     }
