@@ -19,14 +19,6 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent" >
 
-	<!-- Doesn't work yet :-(
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:persistent="false"
-                android:key="cue_silence"
-                android:title="Silence"
-                android:summary="Clear all cues"/>
-    -->
 	<PreferenceCategory android:title="@string/Triggers" />
 
 	<CheckBoxPreference
