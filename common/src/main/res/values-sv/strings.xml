@@ -169,8 +169,8 @@
   <string name="Downloadeditremove_workouts">Ladda ned/redigera/ta bort träningspass</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Obs, du måste ansluta till kontot också</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Använd dina lurar för att starta/pausa/återuppta RunnerUp</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">För Interval-tabben och nedräkningssteg, använd \"Återhämting\" för \"Vila\" (paus) steg</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Använd \"Återhämting\" för \"Vila\" (paus) steg för träningspass</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">För Interval-tabben, använd \"Återhämting\" för \"Vila\" (paus) steg</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">För inlagda nedräkningssteg, använd \"Återhämting\" för \"Vila\" (paus) steg</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportera databas till sdkort (t.ex. före uppgradering)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importera databas från sdkort (t.ex. efter uppgradering)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach för att hjälpa dig nå målet (om mål är satt)</string>
@@ -197,7 +197,7 @@
   <string name="Autopause_after_s">Autopausa efter (s)</string>
   <string name="Autopause_min_pace_minkm">Autopaus tempo (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Interval vilosteg</string>
-  <string name="Convert_rest_on_Advanced_tab">Vilosteg i pass</string>
+  <string name="Convert_rest_on_Advanced_tab">Återhämtning i nedräkningssteg</string>
   <string name="Target_pace_moving_average_seconds">Målåterkoppling flytande medelvärde (s)</string>
   <string name="Target_pace_grace_seconds">Målåterkoppling anståndstid (s)</string>
   <string name="Autolap_during_intervals">Autovarv i pass</string>

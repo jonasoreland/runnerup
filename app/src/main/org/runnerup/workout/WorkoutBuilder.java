@@ -614,7 +614,7 @@ public class WorkoutBuilder {
         if (prefs.getBoolean(res.getString(R.string.pref_step_countdown_active), true))
         {
             final boolean convertRestToRecovery = prefs.getBoolean(res.getString(
-                    R.string.pref_convert_interval_distance_rest_to_recovery), true);
+                    R.string.pref_convert_advanced_distance_rest_to_recovery), true);
             long val = 15; // default
             String vals = prefs.getString(res.getString(R.string.pref_step_countdown_time), "15");
             try {

@@ -186,9 +186,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         if (is == null) {
             throw new Exception("Failed to get input stream");
         }
-        final boolean convertRestToRecovery = true; // we just test to import, value of this doesnt matter
-        Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)),
-                convertRestToRecovery);
+        Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)));
         is.close();
         if (w == null)
             throw new Exception("Failed to parse content");
