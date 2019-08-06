@@ -297,6 +297,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private void close() {
         if (hrProvider != null) {
             log(hrProvider.getProviderName() + ".close()");
+            hrProvider.disconnect();
             hrProvider.close();
             hrProvider = null;
         }
@@ -366,12 +367,19 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             items[i] = providers.get(i).getProviderName();
             itemNames[i] = providers.get(i).getName();
         }
-
+        
+        hrProvider = null;
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Select_type_of_Bluetooth_device))
                 .setPositiveButton(getString(R.string.OK),
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
+                        if (hrProvider == null && items.length > 0) {
+                            // Select the first in the list
+                            hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
+                                    items[0].toString());
+                        }
+                        log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
                         open();
                     }
                 })
@@ -379,13 +387,14 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mIsScanning = false;
+                        hrProvider = null;
                         load();
                         open();
                         dialog.dismiss();
                     }
 
                 })
-                .setSingleChoiceItems(itemNames, -1,
+                .setSingleChoiceItems(itemNames, 0,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
@@ -458,6 +467,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         if (hrProvider.isConnecting() || hrProvider.isConnected()) {
             log(hrProvider.getProviderName() + ".disconnect()");
             hrProvider.disconnect();
+            hrProvider.close();
             updateView();
             return;
         }

@@ -87,6 +87,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private int batteryLevel = -1;
     private boolean hasBatteryService = false;
 
+    private long mPrevHrTimestampNotZero = 0;
+
     private boolean mIsScanning = false;
     private boolean mIsConnected = false;
     private boolean mIsConnecting = false;
@@ -122,12 +124,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         if (btAdapter == null) {
             btAdapter = BluetoothAdapter.getDefaultAdapter();
         }
-        if (btAdapter == null) {
-            hrClient.onOpenResult(false);
-            return;
-        }
 
-        hrClient.onOpenResult(true);
+        hrClient.onOpenResult(btAdapter != null);
     }
 
     @Override
@@ -140,10 +138,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             btGatt = null;
         }
 
-        if (btAdapter == null) {
-            btAdapter = null;
-        }
-
+        btAdapter = null;
+        btDevice = null;
         hrClient = null;
         hrClientHandler = null;
     }
@@ -170,26 +166,39 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     return;
                 }
 
+                int val;
                 if (isHeartRateInUINT16(arg0.getValue()[0])) {
-                    hrValue = arg0.getIntValue(
+                    val = arg0.getIntValue(
                             BluetoothGattCharacteristic.FORMAT_UINT16, 1);
                 } else {
-                    hrValue = arg0.getIntValue(
+                    val = arg0.getIntValue(
                             BluetoothGattCharacteristic.FORMAT_UINT8, 1);
-                }
-
-                if (hrValue == 0) {
-                    if (mIsConnecting) {
-                        reportConnectFailed("got hrValue = 0 => reportConnectFailed");
-                        return;
-                    }
-                    log("got hrValue == 0 => disconnecting");
-                    reportDisconnected();
-                    return;
                 }
 
                 hrTimestamp = System.currentTimeMillis();
                 hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
+
+                if (val == 0) {
+                    // Some HR straps (low quality?) report 0 when it cannot read HR but still have connection
+                    // (especially first value, so it never connects)
+                    // Previously this was considered as an indication that the strap was disconnected
+                    // This keeps this behavior, reporting old value until timeout.
+                    // Discussion in PR #477
+                    final long mMaxHrTimestampNotZero = 60 * 1000;
+                    if (mPrevHrTimestampNotZero > 0 &&
+                            hrTimestamp - mPrevHrTimestampNotZero > mMaxHrTimestampNotZero) {
+                        if (mIsConnecting) {
+                            reportConnectFailed("got hrValue = 0 => reportConnectFailed");
+                            return;
+                        }
+                        log("got hrValue == 0 => disconnecting");
+                        reportDisconnected();
+                        return;
+                    }
+                } else {
+                    hrValue = val;
+                    mPrevHrTimestampNotZero = hrTimestamp;
+                }
 
                 if (mIsConnecting) {
                     reportConnected(true);
@@ -260,7 +269,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                         return;
                     } else {
                         boolean res = btGatt.connect();
-                        log("disconnect while connecting => btGatt.connect() => "
+                        log("reconnect while connecting => btGatt.connect() => "
                                         + res);
                         return;
                     }
@@ -280,7 +289,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     reportDisconnected();
                     return;
                 }
-                log("onConnectionStateChange => WHAT TO DO??");
+                log("onConnectionStateChange => Already connected?");
             } catch (Exception e) {
                 log("onConnectionStateChange => " + e);
                 reportConnectFailed("Exception in onConnectionStateChange: " + e);
@@ -444,6 +453,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         return mIsScanning;
     }
 
+    // Using a derecated API - change in API 21 (Marshmallow)
     private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi,
@@ -460,6 +470,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 stopScan();
 
                 if (CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN) {
+                    // Android 4.3
                     log("CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN");
                     hrClientHandler.post(new Runnable() {
                         @Override
@@ -511,6 +522,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         mIsScanning = true;
         mScanDevices.clear();
         if (AVOID_SCAN_WITH_UUID)
+            // Android 4.3
             btAdapter.startLeScan(mLeScanCallback);
         else
             btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
@@ -543,13 +555,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             return;
         }
 
-        BluetoothDevice dev = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(
-                ref.deviceAddress);
+        BluetoothDevice dev = btAdapter.getRemoteDevice(ref.deviceAddress);
 
-        if (mIsConnected)
-            return;
-
-        if (mIsConnecting)
+        if (mIsConnected || mIsConnecting)
             return;
 
         mIsConnecting = true;
@@ -602,20 +610,17 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     @Override
     public void disconnect() {
-        if (btGatt == null)
-            return;
-
-        if (btDevice == null) {
+        if (btGatt == null || btDevice == null) {
             return;
         }
 
-        boolean isConnected = mIsConnected;
         if (!mIsConnecting && !mIsConnected)
             return;
 
         if (mIsDisconnecting)
             return;
 
+        boolean isConnected = mIsConnected;
         mIsConnected = false;
         mIsConnecting = false;
         mIsDisconnecting = true;
