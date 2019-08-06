@@ -1,6 +1,13 @@
 apply plugin: 'com.android.application'
 
-import java.util.regex.Pattern
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
 
 android {
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -81,8 +88,8 @@ android {
             // The applicationId is also used in some xml files (android:targetPackage)
             // The packageId (in the manifest) is never changed
             applicationIdSuffix ".debug"
+            versionNameSuffix "-${getGitHash()}"
             resValue "string", "applicationIdFull", "${defaultConfig.applicationId}${defaultConfig.applicationIdSuffix}${applicationIdSuffix}"
-            versionNameSuffix "-debug"
         }
         release {
             applicationIdSuffix ""
