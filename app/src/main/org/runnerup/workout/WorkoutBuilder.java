@@ -25,6 +25,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
@@ -51,6 +52,7 @@ public class WorkoutBuilder {
                                                Dimension target) {
         Workout w = new Workout();
         w.sport = prefs.getInt(res.getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING);
+        w.setWorkoutType(Constants.WORKOUT_TYPE.BASIC);
 
         if (prefs.getBoolean(res.getString(R.string.pref_countdown_active), false))
         {
@@ -134,6 +136,8 @@ public class WorkoutBuilder {
     public static Workout createDefaultIntervalWorkout(Resources res, SharedPreferences prefs) {
         Workout w = new Workout();
         w.sport = prefs.getInt(res.getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING);
+        w.setWorkoutType(Constants.WORKOUT_TYPE.INTERVAL);
+
         final boolean warmup = true;
         final boolean cooldown = true;
         final boolean convertRestToRecovery = prefs.getBoolean(res.getString(
@@ -595,9 +599,9 @@ public class WorkoutBuilder {
         step.triggers.add(ev);
     }
 
-    public static void prepareWorkout(Resources res, SharedPreferences prefs, Workout w,
-                                      boolean basic) {
+    public static void prepareWorkout(Resources res, SharedPreferences prefs, Workout w) {
         List<StepListEntry> steps = w.getStepList();
+        boolean basic = w.getWorkoutType() == Constants.WORKOUT_TYPE.BASIC;
 
         /*
          * Add/remove autolap

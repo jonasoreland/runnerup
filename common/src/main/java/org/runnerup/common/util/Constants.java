@@ -17,6 +17,8 @@
 
 package org.runnerup.common.util;
 
+import org.runnerup.common.BuildConfig;
+
 public interface Constants {
 
     String LOG = "org.runnerup";
@@ -187,12 +189,14 @@ public interface Constants {
     }
 
     interface Intents {
-        String PAUSE_RESUME = "org.runnerup.PAUSE_RESUME";
-        String NEW_LAP = "org.runnerup.NEW_LAP";
-        String FROM_NOTIFICATION = "org.runnerup.FROM_NOTIFICATION";
-        String START_WORKOUT = "org.runnerup.START_WORKOUT";
-        String PAUSE_WORKOUT = "org.runnerup.PAUSE_WORKOUT";
-        String RESUME_WORKOUT = "org.runnerup.RESUME_WORKOUT";
+        String PAUSE_RESUME = BuildConfig.applicationIdFull + ".PAUSE_RESUME";
+        String NEW_LAP = BuildConfig.applicationIdFull + ".NEW_LAP";
+        String FROM_NOTIFICATION = BuildConfig.applicationIdFull + ".FROM_NOTIFICATION";
+        String START_ACTIVITY = BuildConfig.applicationIdFull + ".START_WORKOUT";
+        // Used from Wear
+        String START_WORKOUT = BuildConfig.applicationIdFull + ".START_WORKOUT";
+        String PAUSE_WORKOUT = BuildConfig.applicationIdFull + ".PAUSE_WORKOUT";
+        String RESUME_WORKOUT = BuildConfig.applicationIdFull + ".RESUME_WORKOUT";
     }
 
     interface TRACKER_STATE {

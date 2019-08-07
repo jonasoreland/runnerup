@@ -23,13 +23,20 @@ public class GpsBoundState implements NotificationState {
                 .putExtra(Constants.Intents.FROM_NOTIFICATION, true);
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
 
+        Intent startIntent = new Intent()
+                .setAction(Constants.Intents.START_ACTIVITY);
+        PendingIntent pendingStart = PendingIntent.getBroadcast(
+                context, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, chanId)
                 .setContentIntent(pi)
                 .setContentTitle(context.getString(R.string.Activity_ready))
                 .setContentText(context.getString(R.string.Ready_to_start_running))
                 .setSmallIcon(R.drawable.ic_stat_notify)
                 .setOnlyAlertOnce(true)
-                .setLocalOnly(true);
+                .setLocalOnly(true)
+                .addAction(R.drawable.ic_av_play_arrow, context.getString(R.string.Start),
+                        pendingStart);
         if (Build.VERSION.SDK_INT >= 21) {
             builder.setVisibility(Notification.VISIBILITY_PUBLIC)
                     .setCategory(Notification.CATEGORY_SERVICE);

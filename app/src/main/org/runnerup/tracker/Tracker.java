@@ -431,6 +431,13 @@ public class Tracker extends android.app.Service implements
         components.onPause();
     }
 
+    /**
+     * Refresh the ongoing notification from the workout
+     */
+    public void displayNotificationState() {
+        notificationStateManager.displayNotificationState(activityOngoingState);
+    }
+
     public void stop() {
         switch (state.get()) {
             case INIT:

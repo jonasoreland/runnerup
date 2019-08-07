@@ -219,6 +219,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
         emitFeedback();
         paused = true;
+        tracker.displayNotificationState();
     }
 
     public void onNewLap() {
@@ -231,10 +232,15 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onNewLapOrNextStep() {
-        if (!isLastStep()) {
-            onNextStep();
-        } else {
+        if (currentStep == null ||
+                isLastStep() && (
+                        // Basic workout but not warmup
+                        this.workoutType == Constants.WORKOUT_TYPE.BASIC ||
+                                // Last step where not keypress
+                                currentStep.getDurationType() != null)) {
             onNewLap();
+        } else {
+            onNextStep();
         }
     }
 
@@ -254,6 +260,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
         emitFeedback();
         paused = false;
+        tracker.displayNotificationState();
     }
 
     public void onComplete(Scope s, Workout w) {
