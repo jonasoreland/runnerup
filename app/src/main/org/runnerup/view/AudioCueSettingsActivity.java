@@ -94,13 +94,6 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             btn.setOnPreferenceClickListener(onTestCueinfoClick);
         }
 
-        {
-            Preference btn = findPreference("cue_silence");
-            if (btn != null) {
-                btn.setOnPreferenceClickListener(this.onSilenceClick);
-            }
-        }
-
         HRZones hrZones = new HRZones(this);
         boolean hasHR = SettingsActivity.hasHR(this);
         boolean hasHRZones = hrZones.isConfigured();
@@ -334,46 +327,6 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         });
         builder.show();
     }
-
-    private final OnPreferenceClickListener onSilenceClick = new OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            Resources res = getResources();
-            int clearList[] = {
-                    R.string.cueinfo_total_distance,
-                    R.string.cueinfo_total_time,
-                    R.string.cueinfo_total_speed,
-                    R.string.cueinfo_total_pace,
-                    R.string.cueinfo_lap_distance,
-                    R.string.cueinfo_lap_time,
-                    R.string.cueinfo_lap_speed,
-                    R.string.cueinfo_lap_pace,
-                    R.string.cueinfo_target_coaching
-            };
-
-            int setList[] = {
-                    R.string.cueinfo_skip_startstop
-            };
-
-            for (int s : clearList) {
-                Preference a = getPreferenceManager().findPreference(res.getString(s));
-                if (a != null) {
-                    a.getEditor().putBoolean(res.getString(s), false);
-                    a.getEditor().apply();
-                }
-            }
-
-            for (int s : setList) {
-                Preference a = getPreferenceManager().findPreference(res.getString(s));
-                if (a != null) {
-                    a.getEditor().putBoolean(res.getString(s), true);
-                    a.getEditor().apply();
-                }
-            }
-            return false;
-        }
-
-    };
 
     private final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 

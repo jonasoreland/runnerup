@@ -37,7 +37,8 @@ public class Step implements TickComponent {
     Intensity intensity = Intensity.ACTIVE;
 
     /**
-     * Duration
+     * DurationType
+     * Dimension.TIME, Dimension.DISTANCE, null (keypress)
      */
     Dimension durationType = null;
     double durationValue = 0;
@@ -140,16 +141,16 @@ public class Step implements TickComponent {
     }
 
     /**
-     * @return the autolap
+     * @return the autolap distance (may be set in workouts too)
      */
-    public double getAutolap() {
+    double getAutolap() {
         return autolap;
     }
 
     /**
      * @param val the autolap to set
      */
-    public void setAutolap(double val) {
+    void setAutolap(double val) {
         this.autolap = val;
     }
 
@@ -285,7 +286,8 @@ public class Step implements TickComponent {
     }
 
     private double mPrevTickLapDistance = 0;
-    private double mPrevTickLapTime = 0;
+    private double mPrevTickStepDistance = 0;
+    private double mPrevTickStepTime = 0;
     /**
      * @return true if finished
      */
@@ -298,32 +300,63 @@ public class Step implements TickComponent {
             t.onTick(s);
         }
 
-        if (this.autolap > 0) {
-            double lapDistance = s.getDistance(Scope.LAP);
-            double lapTime = s.getTime(Scope.LAP);
-            if (lapDistance >= this.autolap ||
-                    // autolap if this point is closer to the limit then next point
-                    // (assuming the time/speed is is the same to next tick, but this should even out)
-                    mPrevTickLapDistance > 0 && lapTime > mPrevTickLapTime &&
-                    (lapDistance + (lapDistance - mPrevTickLapDistance)/2) >= this.autolap) {
-                s.onNewLap();
-                lapDistance = 0;
-            }
-            mPrevTickLapDistance = lapDistance;
-            mPrevTickLapTime = lapTime;
+        return false;
+    }
+
+    private boolean exceedDistance(double distance, double prevDistance, double refDist, double time) {
+        return distance >= refDist ||
+                // autolap if this point is closer to the limit then next point
+                // (assuming the time/speed is is the same to next tick, but this should even out)
+                prevDistance > 0 && time > mPrevTickStepTime &&
+                        (distance + (distance - prevDistance) / 2) >= refDist;
+    }
+
+    private boolean checkFinished(Workout s) {
+        if (this.getAutolap() == 0 && durationType == null) {
+            return false;
         }
+
+        boolean newStep = false;
+        boolean newLap = false;
+        double time = s.getTime(Scope.STEP);
+
+        // Special handling for distance targets to end on (likely) closest
+        if (durationType == Dimension.DISTANCE) {
+            double distance = s.get(Scope.STEP, durationType);
+            double lapDist = this.durationValue;
+            if (exceedDistance(distance, mPrevTickStepDistance, lapDist, time)) {
+                newStep = true;
+            }
+            mPrevTickStepDistance = distance;
+        } else if (durationType == Dimension.TIME) {
+            double diff = (time - mPrevTickStepTime) / 2;
+            mPrevTickStepTime = time;
+            // This point is more likely than next
+            newStep = s.get(Scope.STEP, durationType) + diff >= this.durationValue;
+        }
+
+        if (!newStep && this.getAutolap() > 0) {
+            double distance = s.getDistance(Scope.LAP);
+            double lapDist = getAutolap();
+            if (exceedDistance(distance, mPrevTickLapDistance, lapDist, time)) {
+                newLap = true;
+            }
+            mPrevTickLapDistance = distance;
+        }
+        mPrevTickStepTime = time;
+
+        if (newStep) {
+            return true;
+        }
+        if (newLap) {
+            s.onNewLap();
+        }
+
         return false;
     }
 
     public boolean onNextStep(Workout w) {
         return true; // move to next step
-    }
-
-    private boolean checkFinished(Workout s) {
-        if (durationType == null)
-            return false;
-
-        return s.get(Scope.STEP, durationType) >= this.durationValue;
     }
 
     @Override
@@ -407,14 +440,14 @@ public class Step implements TickComponent {
         return 0;
     }
 
-    public static Step createPauseStep(Dimension dim, double duration) {
+    static Step createRestStep(Dimension dim, double duration, boolean recovery) {
         Step step;
-        if (dim == null || dim == Dimension.TIME)
+        if (!recovery && (dim == null || dim == Dimension.TIME))
             step = new PauseStep();
         else
             step = new Step();
 
-        step.intensity = Intensity.RESTING;
+        step.intensity = recovery ? Intensity.RECOVERY : Intensity.RESTING;
         step.durationType = dim;
         step.durationValue = duration;
         return step;

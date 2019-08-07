@@ -191,12 +191,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     public void onNextStep() {
         if (currentStep == null) {
-            // There is no current step
             return;
         }
         currentStep.onComplete(Scope.LAP, this);
         currentStep.onComplete(Scope.STEP, this);
 
+        // Increase the step counter unless this is a repeat step not yet finished
         if (currentStep.onNextStep(this))
             currentStepNo++;
 
@@ -205,6 +205,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             currentStep.onStart(Scope.STEP, this);
             currentStep.onStart(Scope.LAP, this);
         } else {
+            // End the workout
             currentStep.onComplete(Scope.ACTIVITY, this);
             setCurrentStep(null);
             tracker.stop();
@@ -245,7 +246,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onStop(Workout w) {
-
         initFeedback();
         if (currentStep != null) {
             currentStep.onStop(this);
@@ -288,6 +288,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     @Override
     public double get(Scope scope, Dimension d) {
+        if (d == null) {
+            return 0;
+        }
         switch (d) {
             case DISTANCE:
                 return getDistance(scope);
@@ -566,16 +569,15 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
     }
 
-    //public int getStepCount() {
-    //    return steps.size();
-    //}
-
     public boolean isLastStep() {
+        if (currentStepNo >= steps.size())
+            // Incorrect workout
+            return true;
+
         if (currentStepNo + 1 < steps.size())
             return false;
-        if (currentStepNo < steps.size())
-            return steps.get(currentStepNo).isLastStep();
-        return true;
+
+        return steps.get(currentStepNo).isLastStep();
     }
 
     /**

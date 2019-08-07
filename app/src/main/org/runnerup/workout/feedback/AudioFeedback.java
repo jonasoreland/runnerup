@@ -35,31 +35,32 @@ import java.util.HashMap;
 
 public class AudioFeedback extends Feedback {
 
-    private int msgId = 0;
+    private int msgId;
     private String msgTxt = null;
-    private Event event = Event.STARTED;
-    Scope scope = null;
-    Dimension dimension = Dimension.DISTANCE;
-    private Intensity intensity = null;
+    final private Event event = null;
+    Scope scope;
+    Dimension dimension;
+    private Intensity intensity;
     RUTextToSpeech textToSpeech;
     Formatter formatter;
 
     public AudioFeedback(int msgId) {
         super();
         this.msgId = msgId;
+        scope = null;
+        this.dimension = null;
+        this.intensity = null;
+        // The trigger should have Event.STARTED
     }
 
     public AudioFeedback(Scope scope) {
-        super();
-        this.scope = scope;
-        this.event = null;
-        this.dimension = null;
+        this(scope, null);
     }
 
     public AudioFeedback(Scope scope, Dimension dimension) {
         super();
+        this.msgId = -1;
         this.scope = scope;
-        this.event = null;
         this.dimension = dimension;
     }
 
@@ -78,20 +79,19 @@ public class AudioFeedback extends Feedback {
             return false;
 
         AudioFeedback other = (AudioFeedback) _other;
-        if (this.scope != other.scope)
-            return false;
 
-        if (this.event != other.event)
-            return false;
-
-        return this.dimension == other.dimension;
+        return this.msgId == other.msgId &&
+                //this.event == other.event &&
+                this.scope == other.scope &&
+                this.dimension == other.dimension;
     }
 
     public Scope getScope() { return scope; }
 
-    private String getCue(Workout w, Context ctx) {
+    // Allow override
+    String getCue(Workout w, Context ctx) {
         String msg = null;
-        if (msgId != 0) {
+        if (msgId > 0) {
             if (msgTxt == null) {
                 msgTxt = formatter.getCueString(msgId);
             }

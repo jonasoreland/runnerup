@@ -73,7 +73,7 @@ public class WorkoutSerializer {
         Step step;
     }
 
-    public static Workout readJSON(Reader in, boolean convertRestToRecovery) throws JSONException {
+    public static Workout readJSON(Reader in) throws JSONException {
         JSONObject obj = SyncHelper.parse(in);
         obj = obj.getJSONObject("com.garmin.connect.workout.json.UserWorkoutJson");
         Workout w = new Workout();
@@ -83,7 +83,7 @@ public class WorkoutSerializer {
         ArrayList<jsonstep> list = new ArrayList<>(4);
         while ((step = steps.optJSONObject(stepNo)) != null)
         {
-            jsonstep js = parseStep(step, convertRestToRecovery);
+            jsonstep js = parseStep(step);
             list.add(js);
             stepNo++;
         }
@@ -417,7 +417,7 @@ public class WorkoutSerializer {
         }
     }
 
-    private static jsonstep parseStep(JSONObject obj, boolean convertRestToRecovery) throws JSONException {
+    private static jsonstep parseStep(JSONObject obj) throws JSONException {
         jsonstep js = new jsonstep();
         js.order = obj.getInt("stepOrder");
         js.group = getInt(obj, "groupId");
@@ -433,11 +433,9 @@ public class WorkoutSerializer {
                 break;
             }
             case RESTING:
-                if (!convertRestToRecovery || duration.first != Dimension.DISTANCE ||
-                        duration.second == null) {
-                    js.step = Step.createPauseStep(duration.first, duration.second);
-                    break;
-                }
+                boolean rest = duration.first != Dimension.DISTANCE || duration.second == null;
+                js.step = Step.createRestStep(duration.first, duration.second, !rest);
+                break;
             case ACTIVE:
             case WARMUP:
             case COOLDOWN:
@@ -466,10 +464,8 @@ public class WorkoutSerializer {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         File fin = getFile(ctx, name);
         Log.e("WorkoutSerializer", "reading " + fin.getPath());
-        final boolean convertRestToRecovery = prefs.getBoolean(ctx.getResources().getString(
-                R.string.pref_convert_advanced_distance_rest_to_recovery), false);
 
-        Workout w = readJSON(new FileReader(fin), convertRestToRecovery);
+        Workout w = readJSON(new FileReader(fin));
         w.sport = prefs.getInt(ctx.getResources().getString(R.string.pref_sport), Constants.DB.ACTIVITY.SPORT_RUNNING);
         w.setWorkoutType(Constants.WORKOUT_TYPE.ADVANCED);
         return w;

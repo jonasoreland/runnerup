@@ -312,7 +312,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
                 feedAdapter.notifyDataSetChanged();
             } else {
                 String synchronizerName = (String) data;
-                feedProgressLabel.setText(String.format(Locale.getDefault(), "%s %s", getString(R.string.Synchronizing), synchronizerName)); //TODO parameter
+                feedProgressLabel.setText(String.format(Locale.getDefault(), "%s: %s", getString(R.string.Synchronizing), synchronizerName)); //TODO parameter
             }
         }
     }

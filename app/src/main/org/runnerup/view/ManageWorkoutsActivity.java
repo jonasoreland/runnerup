@@ -114,6 +114,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         adapter = new WorkoutAccountListAdapter(this);
         ExpandableListView list = (ExpandableListView) findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
+
         downloadButton = (Button) findViewById(R.id.download_workout_button);
         downloadButton.setOnClickListener(downloadButtonClick);
         // No download provider currently exists
@@ -130,6 +131,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         requery();
         listLocal();
+        list.expandGroup(0);
 
         Uri data = getIntent().getData();
         if (data != null) {
@@ -143,7 +145,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             } catch (Exception e) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this)
                         .setTitle(getString(R.string.Problem))
-                        .setMessage(getString(R.string.Failed_to_import) + " " + fileName)
+                        .setMessage(getString(R.string.Failed_to_import) + ": " + fileName)
                         .setPositiveButton(getString(R.string.OK_darn),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -184,9 +186,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         if (is == null) {
             throw new Exception("Failed to get input stream");
         }
-        final boolean convertRestToRecovery = true; // we just test to import, value of this doesnt matter
-        Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)),
-                convertRestToRecovery);
+        Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)));
         is.close();
         if (w == null)
             throw new Exception("Failed to parse content");
@@ -197,7 +197,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Import_workout) + " " + fileName)
+                .setTitle(getString(R.string.Import_workout) + ": " + fileName)
                 .setPositiveButton(getString(R.string.Yes),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -578,7 +578,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
 
-            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.RunnerUp_workout) + " " + name);
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.RunnerUp_workout) + ": " + name);
             intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.HinHere_is_a_workout_I_think_you_might_like));
 
             intent.setType(WorkoutFileProvider.MIME);

@@ -41,7 +41,7 @@
         <org.runnerup.widget.TitleSpinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="5"
+            android:defaultValue="8"
             android:inputType="number"
             android:key="@string/pref_interval_repetitions"
             android:prompt="@string/Type"
@@ -53,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/types"
+            android:defaultValue="1"
             android:key="@string/pref_interval_type"
             android:prompt="@string/Type"
             android:text="@string/Interval_type" />

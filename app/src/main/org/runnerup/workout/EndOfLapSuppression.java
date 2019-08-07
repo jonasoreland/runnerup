@@ -91,20 +91,22 @@ public class EndOfLapSuppression extends TriggerSuppression {
 
     private boolean suppressInterval(Trigger trigger, Workout w) {
 
-        if (!(trigger instanceof IntervalTrigger))
+        if (!(trigger instanceof IntervalTrigger)) {
             return false;
+        }
 
         IntervalTrigger it = (IntervalTrigger) trigger;
-        if (it.dimension == Dimension.DISTANCE) {
-            double distance = w.getDistance(Scope.LAP);
-            if (Math.abs(distance - lapDuration) > lapDistanceLimit)
-                return false;
+        if (it.dimension != Dimension.DISTANCE) {
+            return false;
+        }
 
+        double distance = w.getDistance(Scope.LAP);
+        if ((distance - lapDuration) == lapDistanceLimit) {
             Log.e(getClass().getName(), "suppressing trigger! distance: " + distance + ", lapDistance: "
                     + lapDuration);
-
             return true;
         }
+        
         return false;
     }
 
@@ -119,7 +121,7 @@ public class EndOfLapSuppression extends TriggerSuppression {
             return false;
 
         Step s = w.getCurrentStep();
-        if (s.getDurationType() == null)
+        if (s == null || s.getDurationType() == null)
             return false;
 
         switch (s.getDurationType()) {

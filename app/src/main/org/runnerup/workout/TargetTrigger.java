@@ -121,6 +121,7 @@ public class TargetTrigger extends Trigger {
                 double cmp = range.compare(avg);
                 // Log.e(getName(), " => avg: " + avg + " => cmp: " + cmp);
                 if (cmp == 0) {
+                    graceCount = minGraceCount;
                     return false;
                 }
                 fire(w);
@@ -137,6 +138,12 @@ public class TargetTrigger extends Trigger {
         measure[pos] = val_now;
         cntMeasures++;
     }
+
+    public Dimension getDimension() { return dimension; }
+
+    public Scope getScope() { return scope; }
+
+    public Range getRange() { return range; }
 
     public double getValue() {
         if (cntMeasures == lastValCnt)
