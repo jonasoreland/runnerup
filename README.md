@@ -5,37 +5,37 @@ RunnerUp
 
 [![Build Status](https://travis-ci.org/jonasoreland/runnerup.svg?branch=master)](https://travis-ci.org/jonasoreland/runnerup)
 
-An open source run tracker for Android.
-
-Inspiration Garmin 410, RunKeeper and Everywhere Run.
+Track your sport activities with RunnerUp using the GPS in your Android phone.
 
 ## Features
 
-* GPL.
-* Support Heart Rate sensors for Bluetooth LE, ANT+ and a few other protocols as well as phone internal sensors like step sensor and barometer.
-* Highly configurable audio cues.
-* Automatic upload, download and feed updates from various providers including Endomondo, RunKeeper, RunningAHEAD, Strava ([see here for details](SYNCHRONIZERS.md)).
-* Interval wizard (ala Garmin 410).
-* Mediocre GUI.
-* Messy code (my first android project even and first Java project in +10 years).
-* Great ideas for future features.
-* Support Android 2.2 and later but versions earlier than Android 4.0.3 do not include graphs, maps and elevation GeoId correction.
+* See detailed stats around your pace, distance and time
+* Get stats and progress with built-in highly configurable audio cues
+* Run free runs with target pace or target heart rate zone
+* Easily configure and run effective interval workouts modeled after Garmin
+* Automatic upload to various providers including Endomondo, RunKeeper and Strava, some also support download and feed updates ([see here for details](SYNCHRONIZERS.md)).
+* Share your favorite workouts with friends (using email)
+* Heart rate monitor: Bluetooth SMART (BLE) and ANT+ (as well as PolarWearLink and Zephyr)
+* Configure and use heart rate zones
+* Phone internal sensors like step sensor and barometer.
+* WearOS app
+* Pebble support
 
 ## Release
-Releases can be downloaded either:
 
 * [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
-* [Play beta](https://plus.google.com/communities/112040124647770742805).
-* [GitHub](https://github.com/jonasoreland/runnerup/releases). (Not all versions.)
+* [GitHub](https://github.com/jonasoreland/runnerup/releases). (RunnerUp 2.x versions including beta and release candidates.)
 
 <!--
-* [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup). (Only the 4.0.3 and later versions)
+* [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup.free). This version does not contain some features due to licensing, see the F-Droid description.
 
-[![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup)
+[![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup.free)
 -->
-Join the [G+ beta release group](https://plus.google.com/communities/112040124647770742805?cfem=1) for release candidates.
+Join the beta program in Play for release candidates or monitor releases on GitHub.
 
-Note: RunnerUp used to be available on [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup), but it has been removed as the app has support for the closed source ANT+ sensors.
+Note: RunnerUp used to be available on [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup.free), but it has been removed as the app has support for the closed source ANT+ sensors. A request to add (without non-free software) is pending.
+
+The current 2.x release support Android 4.0 and later. The Play release also supports Android 2.2, 2.3, but due to lack of test devices, RunnerUp cannot support Android 2.x. The "Froyo" version do not include graphs, maps and elevation GeoId correction.
 
 ## User information
 
