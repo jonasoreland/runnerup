@@ -540,10 +540,11 @@ public class WorkoutBuilder {
                 return;
         }
 
-        // Remove all values in list longer than the step
+        // Remove all values in list close to the step
         while (list.size() > 0 && step.getDurationValue() < list.get(0) * 1.1d) {
             list.remove(0);
         }
+        list.add(0, step.getDurationValue());
 
         // create a list trigger for the values
         ListTrigger trigger = new ListTrigger(step.getDurationType(), Scope.STEP, list);
