@@ -72,12 +72,12 @@ public class CoachFeedback extends AudioFeedback {
         int cmp = sign * range.compare(val);
         String msg = "";
         if (cmp < 0) {
-            msg = " " + ctx.getResources().getString(R.string.cue_speedup);
+            msg = " " + formatter.getCueString(R.string.cue_speedup);
         } else if (cmp > 0) {
-            msg = " " + ctx.getResources().getString(R.string.cue_slowdown);
+            msg = " " + formatter.getCueString(R.string.cue_slowdown);
         }
         if (!"".contentEquals(msg) && textToSpeech != null) {
-            textToSpeech.speak(ctx.getResources().getString(scope.getCueId())
+            textToSpeech.speak(formatter.getCueString(scope.getCueId())
                     + " "
                     + formatter.format(Formatter.Format.CUE_LONG, dimension, val)
                     + msg,
