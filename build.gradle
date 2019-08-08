@@ -29,6 +29,7 @@ project.ext {
     junitVersion = '4.12'
     mockitoVersion = '2.3.7'
 
+    //The tag for the release must be identical for F-Droid
     versionName = '2.0.2.0'
     versionCode = 203
 
