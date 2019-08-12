@@ -58,4 +58,20 @@
     <item>Male</item>
     <item>Female</item>
   </string-array>
+  <string-array name="path_simplification_when_titles">
+    <item>On save</item>
+    <item>On export</item>
+  </string-array>
+  <string-array name="path_simplification_when_values">
+    <item>save</item>
+    <item>export</item>
+  </string-array>
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Radial-Distance (fast)</item>
+    <item>Ramer-Douglas-Peucker (high quality)</item>
+  </string-array>
+  <string-array name="path_simplification_algorithm_values">
+    <item>radial_distance</item>
+    <item>ramer_douglas_peucker</item>
+  </string-array>
 </resources>

@@ -323,6 +323,47 @@
                 android:inputType="none"
                 android:title="@string/Smooth_pace_filters" />
         </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="@string/path_simplification"
+            android:title="@string/path_simplification">
+            <SwitchPreference
+                android:defaultValue="false"
+                android:persistent="true"
+                android:key="@string/pref_path_simplification_enable"
+                android:title="@string/path_simplification_enable"
+                android:summary="@string/path_simplification_info" />
+
+            <ListPreference
+                android:key="@string/pref_path_simplification_when"
+                android:dependency="@string/pref_path_simplification_enable"
+                android:defaultValue="export"
+                android:persistent="true"
+                android:title="@string/path_simplification_when"
+                android:entries="@array/path_simplification_when_titles"
+                android:entryValues="@array/path_simplification_when_values"
+                android:summary="@string/path_simplification_when_info" />
+
+            <org.runnerup.widget.TextPreference
+                android:defaultValue="3"
+                android:dependency="@string/pref_path_simplification_enable"
+                android:key="@string/pref_path_simplification_tolerance"
+                android:persistent="true"
+                android:inputType="number"
+                android:title="@string/path_simplification_tolerance"
+                android:summary="the higher the tolerance, the smoother the path; however, this might reduce the length of the path (curves instead of sharp edges)"/>
+
+            <ListPreference
+                android:key="@string/pref_path_simplification_algorithm"
+                android:dependency="@string/pref_path_simplification_enable"
+                android:defaultValue="ramer_douglas_peucker"
+                android:persistent="true"
+                android:title="@string/path_simplification_algorithm"
+                android:entries="@array/path_simplification_algorithm_titles"
+                android:entryValues="@array/path_simplification_algorithm_values"
+                android:summary="@string/path_simplification_algorithm_info" />
+        </PreferenceCategory>
+
     </PreferenceScreen>
 
     <!--CheckBoxPreference
