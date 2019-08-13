@@ -18,15 +18,20 @@
 package org.runnerup.db;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.goebl.simplify.PointExtractor;
 import com.goebl.simplify.Simplify;
 
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 
 import java.util.ArrayList;
@@ -299,6 +304,60 @@ public class ActivityCleaner implements Constants {
     };
 
     /**
+     * Returns true if path simplification is enabled and allowed for the given 'when'.
+     *
+     * @param when Indicates when the simplification shall be performed (e.g., on save).
+     * @param context
+     * @return True if the simplification is enabled for the given 'when'.
+     */
+    public static boolean simplifyPathIsEnabledFor(String when, Context context) {
+        Resources res = context.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        boolean enabled = prefs.getBoolean(
+                res.getString(R.string.pref_path_simplification_enable), false);
+        String when_allowed = prefs.getString(
+                res.getString(R.string.pref_path_simplification_when), "export");
+
+        return enabled && when.matches(when_allowed);
+    }
+
+    /**
+     * Returns the tolerance in meters (user setting) for path simplification.
+     *
+     * The higher the tolerance, the smoother the path.
+     * Note, if too big, the total distance might be reduced and won't match the reality.
+     *
+     * @param context
+     * @return Tolerance in meters.
+     */
+    public static double simplifyPathGetTolerance(Context context) {
+        Resources res = context.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        double tolerance = (double) Float.parseFloat(prefs.getString(
+                res.getString(R.string.pref_path_simplification_tolerance), "3"));
+
+        return tolerance;
+    }
+
+    /**
+     * Returns the name of the algorithm (user setting) for path simplification.
+     *
+     * @param context
+     * @return Name of the algorithm to use.
+     */
+    public static String simplifyPathGetAlgorithm(Context context) {
+        Resources res = context.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String algorithm = prefs.getString(
+                res.getString(R.string.pref_path_simplification_algorithm), "ramer_douglas_peucker");
+
+        return algorithm;
+    }
+
+    /**
      * Simplifies the path of an activity,
      * i.e., deletes locations below a specific tolerance to reduce the resolution.
      *
@@ -311,8 +370,9 @@ public class ActivityCleaner implements Constants {
      * @param db Database.
      * @param activityId ID of the activity to simplify.
      * @param toleranceMeters Squared tolerance in meters.
+     * @param algorithm Name of the algorithm to use for simplification.
      */
-    public static void simplifyPath(SQLiteDatabase db, long activityId, double toleranceMeters) {
+    public static void simplifyPath(SQLiteDatabase db, long activityId, double toleranceMeters, String algorithm) {
         // columns to query from the database, table "LOCATION"
         String[] pColumns = {
                 "_id", DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE
@@ -347,12 +407,15 @@ public class ActivityCleaner implements Constants {
         // tolerance in meters / meters per degree
         double toleranceDeg = toleranceMeters / zeroDegrees.distanceTo(oneDegrees);
 
+        // convert algorithm to option for simplify object
+        boolean highestQuality = algorithm.matches("ramer_douglas_peucker");
+
         // create an instance of the simplifier (empty array needed by List.toArray)
         Location[] sampleArray = new Location[0];
         Simplify<Location> simplify = new Simplify<Location>(sampleArray, locationPointExtractor);
         // removes unnecessary intermediate points (note this does not change lat/long values!)
         Location[] simplifiedLocations = simplify.simplify(locations.toArray(sampleArray),
-                toleranceDeg*1e6, false);
+                toleranceDeg*1e6, highestQuality);
 
         // remove the locations (skipped by simplify) from the database
         ArrayList<String> ids = new ArrayList<>();  // IDs of all the activity's locations

@@ -573,6 +573,9 @@ public class Tracker extends android.app.Service implements
             liveLog(DB.LOCATION.TYPE_DISCARD);
         }
 
+
+        try {
+            if (ActivityCleaner.simplifyPathIsEnabledFor("save", this)) {
         // TEST: copy DB entries for this activity and simplify locations
         // create another Activity instance
         ContentValues tmp = new ContentValues();
@@ -619,9 +622,11 @@ public class Tracker extends android.app.Service implements
                 + " from " + DB.LOCATION.TABLE
                 + " where " + DB.LOCATION.ACTIVITY + " = " + mActivityId);
 
-        try {
-            // simplify locations (reduce resolution of the activity's path)
-            ActivityCleaner.simplifyPath(mDB, newID, 3);
+                double tolerance = ActivityCleaner.simplifyPathGetTolerance(this);
+                String algorithm = ActivityCleaner.simplifyPathGetAlgorithm(this);
+                // simplify locations (reduce resolution of the activity's path)
+                ActivityCleaner.simplifyPath(mDB, newID, tolerance, algorithm);
+            }
         } catch (Exception e) {
             Log.e(getClass().getName(), e.getMessage());
         }
