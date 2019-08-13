@@ -21,12 +21,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.util.KXmlSerializer;
 import org.runnerup.workout.Sport;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -39,6 +41,7 @@ public class GPX {
     private SimpleDateFormat simpleDateFormat = null;
     final private boolean mGarminExt; //Also Cluetrust
     private final boolean mAccuracyExtensions;
+    private PathSimplifier simplifier = null;
 
     public GPX(SQLiteDatabase mDB) {
         this(mDB, true, false);
@@ -50,6 +53,11 @@ public class GPX {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         this.mGarminExt = garminExt;
         this.mAccuracyExtensions = accuracyExtensions;
+    }
+
+    public GPX(SQLiteDatabase mDB, boolean garminExt, boolean accuracyExtensions, PathSimplifier simplifier) {
+        this(mDB, garminExt, accuracyExtensions);
+        this.simplifier = simplifier;
     }
 
     private String formatTime(long time) {
@@ -154,13 +162,20 @@ public class GPX {
                 DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE,
                 DB.LOCATION.HR, DB.LOCATION.CADENCE, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE,
                 DB.LOCATION.ACCURANCY, DB.LOCATION.BEARING, DB.LOCATION.SPEED,
-                DB.LOCATION.SATELLITES, DB.LOCATION.GPS_ALTITUDE
+                DB.LOCATION.SATELLITES, DB.LOCATION.GPS_ALTITUDE,
+                "_id"
         };
         Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
                 DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
                 null);
         boolean lok = cLap.moveToFirst();
         boolean pok = cLocation.moveToFirst();
+
+        // simplify path, if this option is selected by the user
+        ArrayList<Integer> ignoreIDs = new ArrayList<>();
+        if (simplifier != null) {
+            ignoreIDs = simplifier.getNoisyLocationIDs(mDB, activityId, "export");
+        }
 
         while (lok) {
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
@@ -173,6 +188,13 @@ public class GPX {
                 if (pok && cLocation.getLong(0) == lap) {
                     long last_time = 0;
                     while (pok && cLocation.getLong(0) == lap) {
+                        // ignore IDs that have been marked unnecessary by path simplification
+                        // reduces resolution of the exported path
+                        if(ignoreIDs.contains(cLocation.getInt(15))) {
+                            pok = cLocation.moveToNext();
+                            continue;
+                        }
+
                         // Ignore all other than GPS, GPX cannot handle pauses
                         int locType = cLocation.getInt(5);
                         long time = cLocation.getLong(1);

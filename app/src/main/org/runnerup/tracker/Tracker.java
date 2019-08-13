@@ -42,6 +42,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
@@ -575,7 +576,8 @@ public class Tracker extends android.app.Service implements
 
 
         try {
-            if (ActivityCleaner.simplifyPathIsEnabledFor("save", this)) {
+            PathSimplifier simplifier = new PathSimplifier(this);
+            if (simplifier.isEnabledFor("save")) {
         // TEST: copy DB entries for this activity and simplify locations
         // create another Activity instance
         ContentValues tmp = new ContentValues();
@@ -622,10 +624,8 @@ public class Tracker extends android.app.Service implements
                 + " from " + DB.LOCATION.TABLE
                 + " where " + DB.LOCATION.ACTIVITY + " = " + mActivityId);
 
-                double tolerance = ActivityCleaner.simplifyPathGetTolerance(this);
-                String algorithm = ActivityCleaner.simplifyPathGetAlgorithm(this);
-                // simplify locations (reduce resolution of the activity's path)
-                ActivityCleaner.simplifyPath(mDB, newID, tolerance, algorithm);
+                ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, newID, "save");
+                ActivityCleaner.deleteLocations(mDB, ids);
             }
         } catch (Exception e) {
             Log.e(getClass().getName(), e.getMessage());

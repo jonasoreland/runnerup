@@ -33,6 +33,7 @@ import android.util.Pair;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.GoogleStaticMap;

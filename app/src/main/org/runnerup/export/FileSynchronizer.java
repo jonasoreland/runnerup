@@ -18,6 +18,7 @@
 package org.runnerup.export;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -29,6 +30,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
 import org.runnerup.workout.Sport;
@@ -49,8 +51,13 @@ public class FileSynchronizer extends DefaultSynchronizer {
     private long id = 0;
     private String mPath;
     private String mFormat;
+    private PathSimplifier simplifier = null;
 
-    FileSynchronizer() {
+    FileSynchronizer() {}
+
+    FileSynchronizer(Context context) {
+        this();
+        this.simplifier = new PathSimplifier(context, true);
     }
 
     @Override
@@ -177,7 +184,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 s.externalIdStatus = ExternalIdStatus.NONE; //Not working yet
             }
             if (mFormat.contains("gpx")) {
-                GPX gpx = new GPX(db, true, true);
+                GPX gpx = new GPX(db, true, true, simplifier);
                 File file = new File(fileBase + "gpx");
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 gpx.export(mID, new OutputStreamWriter(out));
