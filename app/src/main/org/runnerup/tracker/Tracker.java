@@ -574,57 +574,11 @@ public class Tracker extends android.app.Service implements
             liveLog(DB.LOCATION.TYPE_DISCARD);
         }
 
-
+        // path simplification (reduce resolution of location entries in database)
         try {
             PathSimplifier simplifier = new PathSimplifier(this);
             if (simplifier.isEnabledFor("save")) {
-        // TEST: copy DB entries for this activity and simplify locations
-        // create another Activity instance
-        ContentValues tmp = new ContentValues();
-        tmp.put(DB.ACTIVITY.SPORT, workout.getSport());
-        Long newID = mDB.insert(DB.ACTIVITY.TABLE, "nullColumnHack", tmp);
-        // copy laps of the original activity
-        mDB.execSQL("insert into " + DB.LAP.TABLE + "("
-                + DB.LAP.ACTIVITY + ", "
-                + DB.LAP.LAP + ", "
-                + DB.LAP.INTENSITY + ", "
-                + DB.LAP.TIME + ", "
-                + DB.LAP.DISTANCE + ", "
-                + DB.LAP.AVG_HR + ")"
-                + " select " + newID + ", "
-                + DB.LAP.LAP + ", "
-                + DB.LAP.INTENSITY + ", "
-                + DB.LAP.TIME + ", "
-                + DB.LAP.DISTANCE + ", "
-                + DB.LAP.AVG_HR
-                + " from " + DB.LAP.TABLE
-                + " where " + DB.LAP.ACTIVITY + " = " + mActivityId);
-        // copy locations of the original activity
-        mDB.execSQL("insert into " + DB.LOCATION.TABLE + "("
-                + DB.LOCATION.ACTIVITY + ", "
-                + DB.LOCATION.LAP + ", "
-                + DB.LOCATION.TYPE + ", "
-                + DB.LOCATION.TIME + ", "
-                + DB.LOCATION.LONGITUDE + ", "
-                + DB.LOCATION.LATITUDE + ", "
-                + DB.LOCATION.ALTITUDE + ", "
-                + DB.LOCATION.ELAPSED + ", "
-                + DB.LOCATION.DISTANCE + ", "
-                + DB.LOCATION.ACCURANCY + ")"
-                + " select " + newID + ", "
-                + DB.LOCATION.LAP + ", "
-                + DB.LOCATION.TYPE + ", "
-                + DB.LOCATION.TIME + ", "
-                + DB.LOCATION.LONGITUDE + ", "
-                + DB.LOCATION.LATITUDE + ", "
-                + DB.LOCATION.ALTITUDE + ", "
-                + DB.LOCATION.ELAPSED + ", "
-                + DB.LOCATION.DISTANCE + ", "
-                + DB.LOCATION.ACCURANCY
-                + " from " + DB.LOCATION.TABLE
-                + " where " + DB.LOCATION.ACTIVITY + " = " + mActivityId);
-
-                ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, newID, "save");
+                ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mActivityId, "save");
                 ActivityCleaner.deleteLocations(mDB, ids);
             }
         } catch (Exception e) {
