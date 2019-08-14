@@ -76,7 +76,7 @@ public class PathSimplifier {
                 res.getString(R.string.pref_path_simplification_enable), false);
         this.when_allowed = prefs.getString(
                 res.getString(R.string.pref_path_simplification_when), "export");
-        this.tolerance = (double) Float.parseFloat(prefs.getString(
+        this.tolerance = Double.parseDouble(prefs.getString(
                 res.getString(R.string.pref_path_simplification_tolerance), "3"));
         String algorithm = prefs.getString(
                 res.getString(R.string.pref_path_simplification_algorithm), "ramer_douglas_peucker");

@@ -338,7 +338,7 @@
   <string name="Lap_start_summary">Cue for start of laps and \"Active\", \"Warmup\" and \"Cooldown\" steps</string>
   <string name="Lock_activity_buttons">Lock activity buttons</string>
   <string name="Lock_activity_buttons_message">Lock activity buttons by fast clicking the header</string>
-  <string name="path_simplification">Path Simplification</string>
+  <string name="path_simplification">Path simplification</string>
   <string name="path_simplification_info">Reduce the resolution of the path (logged locations over time). Smooths the path and decreases the size of an activity in the database or an exported file.</string>
   <string name="path_simplification_enable">Simplify logged path</string>
   <string name="path_simplification_when">When to simplify</string>
