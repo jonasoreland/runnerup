@@ -271,12 +271,6 @@ public class WorkoutBuilder {
                 addPauseStopResumeTriggers(step.triggers);
             }
 
-            if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
-                HRMStateTrigger hrmState = new HRMStateTrigger();
-                hrmState.triggerAction.add(new HRMStateChangeFeedback(hrmState));
-                step.triggers.add(hrmState);
-            }
-
             if (step.durationType != null) {
                 // GUI countdown
                 IntervalTrigger trigger = new IntervalTrigger();
@@ -289,23 +283,6 @@ public class WorkoutBuilder {
 
                 // Audio feedback
                 createAudioCountdown(step);
-            }
-
-            final boolean coaching = prefs.getBoolean(res.getString(R.string.cueinfo_target_coaching),true);
-            if (coaching && step.getTargetType() != null) {
-                final Range range = step.getTargetValue();
-                final int averageSeconds = SafeParse.parseInt(prefs.getString(
-                        res.getString(R.string.pref_target_pace_moving_average_seconds), "20"), 20);
-                final int graceSeconds = SafeParse.parseInt(
-                        prefs.getString(res.getString(R.string.pref_target_pace_grace_seconds), "30"),
-                        30);
-
-                TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds,
-                        graceSeconds);
-                tr.scope = Scope.STEP;
-                tr.range = range;
-                tr.triggerAction.add(new CoachFeedback(tr));
-                step.triggers.add(tr);
             }
 
             switch (step.getIntensity()) {
@@ -361,6 +338,28 @@ public class WorkoutBuilder {
                 case RESTING:
                     // No action
                     break;
+            }
+
+            if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
+                HRMStateTrigger hrmState = new HRMStateTrigger();
+                hrmState.triggerAction.add(new HRMStateChangeFeedback(hrmState));
+                step.triggers.add(hrmState);
+            }
+
+            final boolean coaching = prefs.getBoolean(res.getString(R.string.cueinfo_target_coaching),true);
+            if (coaching && step.getTargetType() != null) {
+                final Range range = step.getTargetValue();
+                final int averageSeconds = SafeParse.parseInt(prefs.getString(
+                        res.getString(R.string.pref_target_pace_moving_average_seconds), "20"), 20);
+                final int graceSeconds = SafeParse.parseInt(
+                        prefs.getString(res.getString(R.string.pref_target_pace_grace_seconds), "30"),
+                        30);
+
+                TargetTrigger tr = new TargetTrigger(step.getTargetType(), averageSeconds, graceSeconds);
+                tr.scope = Scope.STEP;
+                tr.range = range;
+                tr.triggerAction.add(new CoachFeedback(tr));
+                step.triggers.add(tr);
             }
 
             checkDuplicateTriggers(step);
@@ -541,10 +540,11 @@ public class WorkoutBuilder {
                 return;
         }
 
-        // Remove all values in list longer than the step
-        while (list.size() > 0 && step.getDurationValue() > list.get(0) * 1.1d) {
+        // Remove all values in list close to the step
+        while (list.size() > 0 && step.getDurationValue() < list.get(0) * 1.1d) {
             list.remove(0);
         }
+        list.add(0, step.getDurationValue());
 
         // create a list trigger for the values
         ListTrigger trigger = new ListTrigger(step.getDurationType(), Scope.STEP, list);
