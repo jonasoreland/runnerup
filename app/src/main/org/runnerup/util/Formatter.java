@@ -29,7 +29,9 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.SpeedUnit;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -221,6 +223,26 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 editor.putString(key, "km");
         }
         return true;
+    }
+
+    /**
+     * Gets the user's preferred Speedunit
+     *
+     * @param context Context element to access configuration
+     * @return Configured Speed Unit (falls back to pace, if the configured value is invalid)
+     */
+    public static SpeedUnit getPreferredSpeedUnit(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        // use either pace or speed according to the user's preference
+        String speedUnit = prefs.getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        assert speedUnit != null;   // may not happen
+        switch(speedUnit){
+            case Constants.SPEED_UNIT.SPEED:
+                return SpeedUnit.SPEED;
+            case Constants.SPEED_UNIT.PACE:
+            default:
+                return SpeedUnit.PACE;
+        }
     }
 
     public double getUnitMeters() {
@@ -461,6 +483,27 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
+     * Returns either a formatted value in minutes per kilometer or kilometer per hour
+     * depending on the user's preference
+     *
+     * @param target the target format [cue or txt] and length
+     * @param meters_per_second speed in m/s
+     * @return ready to speak or display value
+     */
+    public String formatVelocityByPreferredUnit(Format target, Double meters_per_second) {
+        // use either pace or speed according to the user's preference
+        String paceTextUnit = this.sharedPreferences
+                .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        // avoid stored null to cause jumping into the distance per time branch and default to pace
+        paceTextUnit = paceTextUnit != null ? paceTextUnit : SpeedUnit.PACE.getValue();
+        if(paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+            return this.formatPaceSpeed(target, meters_per_second);
+        }else {
+            return this.formatSpeed(target, meters_per_second);
+        }
+    }
+
+    /**
      * Format pace from speed
      *
      * @param target
@@ -485,9 +528,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     /**
      * @return pace unit string
      */
-    public String getPaceUnit() {//Resources resources, SharedPreferences sharedPreferences) {
+    String getVelocityUnit(Context context) {//Resources resources, SharedPreferences sharedPreferences) {
         int du = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
-        return resources.getString(R.string.metrics_elapsed_min) + "/" + resources.getString(du);
+        switch(getPreferredSpeedUnit(context)){
+            case SPEED:
+                return resources.getString(du) + "/" + resources.getString(R.string.metrics_elapsed_h);
+            case PACE:
+            default:
+                return resources.getString(R.string.metrics_elapsed_min) + "/" + resources.getString(du);
+        }
     }
 
     /**

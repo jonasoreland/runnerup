@@ -186,6 +186,12 @@ public interface Constants {
 
             int FEED_TYPE_EVENT_DATE_HEADER = 0;
         }
+
+    }
+
+    interface SPEED_UNIT {
+        String PACE = "pace";
+        String SPEED = "speed";
     }
 
     interface Intents {

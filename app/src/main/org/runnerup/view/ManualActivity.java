@@ -17,11 +17,9 @@
 
 package org.runnerup.view;
 
-import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -125,7 +123,7 @@ public class ManualActivity extends AppCompatActivity {
             manualPace.setVisibility(View.GONE);
             return;
         }
-        manualPace.setValue(formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, dist/seconds));
+        manualPace.setValue(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dist/seconds));
         manualPace.setVisibility(View.VISIBLE);
     }
 
