@@ -70,7 +70,7 @@ public class GraphWrapper implements Constants {
         new LoadGraph().execute(new LoadParam(context, mDB, mID));
 
         graphView = new GraphView(context);
-        graphView.setTitle(context.getString(R.string.Velocity));
+        graphView.setTitle(formatter.formatVelocityLabel());
         graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
             @Override
             public String formatLabel(double value, boolean isValueX) {
@@ -455,7 +455,7 @@ public class GraphWrapper implements Constants {
                             graphView.getContext().getString(R.string.Distance),
                             formatter.formatDistance(Formatter.Format.TXT_SHORT,
                             (long) dataPoint.getX()),
-                            graphView.getContext().getString(R.string.Velocity),
+                            formatter.formatVelocityLabel(),
                             formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dataPoint.getY()),
                             formatter.getVelocityUnit(graphView.getContext())
                     );

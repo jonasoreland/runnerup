@@ -114,6 +114,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         setContentView(R.layout.run);
         formatter = new Formatter(this);
         //HRZones hrZones = new HRZones(this);
+        TextView velocity = (TextView)findViewById(R.id.velocity_label);
+        velocity.setText(formatter.formatVelocityLabel());
 
         final Button stopButton = (Button) findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);

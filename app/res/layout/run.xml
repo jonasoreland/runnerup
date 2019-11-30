@@ -44,8 +44,9 @@
 
             <TextView
                 style="@style/RunHeader"
+                android:id="@+id/velocity_label"
                 android:gravity="end"
-                android:text="@string/Velocity" />
+                android:text="@string/Pace" />
 
             <TextView
                 android:id="@+id/activity_header_hr"

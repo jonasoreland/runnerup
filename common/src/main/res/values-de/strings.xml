@@ -322,5 +322,4 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Anfängliche GPS-Höhe zum Ausmitteln der barometrischen Höhe verwenden</string>
   <string name="channel_notification_ongoing">RunnerUp GPS- und Aktivitätsbenachrichtigungen</string>
   <string name="Lap_start">Rundenstart</string>
-    <string name="Velocity">Geschwindigkeit</string>
 </resources>

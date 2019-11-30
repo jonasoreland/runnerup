@@ -488,18 +488,30 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      *
      * @param target the target format [cue or txt] and length
      * @param meters_per_second speed in m/s
-     * @return ready to speak or display value
+     * @return display value
      */
     public String formatVelocityByPreferredUnit(Format target, Double meters_per_second) {
-        // use either pace or speed according to the user's preference
         String paceTextUnit = this.sharedPreferences
                 .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
-        // avoid stored null to cause jumping into the distance per time branch and default to pace
-        paceTextUnit = paceTextUnit != null ? paceTextUnit : SpeedUnit.PACE.getValue();
         if(paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
             return this.formatPaceSpeed(target, meters_per_second);
-        }else {
+        } else {
             return this.formatSpeed(target, meters_per_second);
+        }
+    }
+
+    /**
+     * Returns a label for Pace or Speed depending on the user's preference
+     *
+     * @return value
+     */
+    public String formatVelocityLabel() {
+        String paceTextUnit = this.sharedPreferences
+                .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+            return this.context.getString(R.string.Pace);
+        } else {
+            return this.context.getString(R.string.Speed);
         }
     }
 

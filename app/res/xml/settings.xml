@@ -34,7 +34,7 @@
                 android:key="@string/pref_speedunit"
                 android:persistent="true"
                 android:title="@string/Speed_unit_preference"
-                android:defaultValue="@string/setting_default_speedunit"
+                android:defaultValue="pace"
                 android:entries="@array/speedUnitEntries"
                 android:entryValues="@array/speedUnitValues" />
 

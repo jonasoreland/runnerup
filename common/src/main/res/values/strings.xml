@@ -192,7 +192,6 @@
   <string name="Countdown_time_s">Countdown time (s)</string>
   <string name="Unit_preference_title">Unit Preferences</string>
   <string name="Unit_preference">Distance unit preference</string>
-  <string name="Speed_unit_preference">Speed unit preference</string>
   <string name="Auto_start_GPS">Autostart GPS</string>
   <string name="Advanced_options">Advanced options</string>
   <string name="Mapbox_default_style">Mapbox style</string>
@@ -340,7 +339,6 @@
   <string name="Lap_start_summary">Cue for start of laps and \"Active\", \"Warmup\" and \"Cooldown\" steps</string>
   <string name="Lock_activity_buttons">Lock activity buttons</string>
   <string name="Lock_activity_buttons_message">Lock activity buttons by fast clicking the header</string>
-  <string name="Velocity">Velocity</string>
-  <string name="setting_default_speedunit" translatable="false">pace</string>
-
+  <string name="Speed">Speed</string>
+  <string name="Speed_unit_preference">Speed unit</string>
 </resources>
