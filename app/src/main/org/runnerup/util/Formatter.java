@@ -565,7 +565,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             str = DateUtils.formatElapsedTime(val);
         }
         if (includeUnit) {
-            str = str + "/" + resources.getString((metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
+            str = str + " /" + resources.getString((metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
         }
         return str;
     }
@@ -638,6 +638,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         else {
             int res = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
             return str +
+                    " " +
                     resources.getString(res) +
                     "/" +
                     resources.getString(R.string.metrics_elapsed_h);
@@ -649,7 +650,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         String str = String.format(cueResources.audioLocale, "%.1f", distance_per_hour);
         if (unitCue) {
             return cueResources.getQuantityString(metric ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
-                    (int) distance_per_hour, str);
+                    (int)distance_per_hour, str);
         } else {
             return str;
         }
@@ -746,7 +747,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                     val2 = String.format(cueResources.audioLocale, "%.1f", val);
                 }
                 if (unitCue) {
-                    res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int) val, val2);
+                    res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, val2);
                 } else {
                     res = val2;
                 }
