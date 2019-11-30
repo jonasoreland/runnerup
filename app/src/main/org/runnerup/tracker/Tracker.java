@@ -733,8 +733,8 @@ public class Tracker extends android.app.Service implements
             }
 
             if (internal || state.get() == TrackerState.STARTED) {
-                mElapsedTimeNanos += timeDiffNanos;
                 if (!internal) {
+                    mElapsedTimeNanos += timeDiffNanos;
                     mElapsedDistance += distDiff;
                 }
                 if (hrValue != null) {
