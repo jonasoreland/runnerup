@@ -43,6 +43,7 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.view.HRZonesBar;
+import org.runnerup.workout.SpeedUnit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,18 +70,18 @@ public class GraphWrapper implements Constants {
         new LoadGraph().execute(new LoadParam(context, mDB, mID));
 
         graphView = new GraphView(context);
-        graphView.setTitle(context.getString(R.string.Pace));
+        graphView.setTitle(formatter.formatVelocityLabel());
         graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
             @Override
             public String formatLabel(double value, boolean isValueX) {
                 if (isValueX) {
                     return formatter.formatDistance(Formatter.Format.TXT, (long) value);
                 } else {
-                    return formatter.formatPace(Formatter.Format.TXT_SHORT, value);
+                    return formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, value);
                 }
             }
         });
-        graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getPaceUnit());
+        graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getVelocityUnit(context));
         graphView.getGridLabelRenderer().setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
         //enable zoom
         graphView.getViewport().setScalable(true);
@@ -121,15 +122,17 @@ public class GraphWrapper implements Constants {
 
         double tot_avg_hr = 0;
 
-        double avg_pace = 0;
-        double min_pace = Double.MAX_VALUE;
-        double max_pace = Double.MIN_VALUE;
-        List<DataPoint> paceList = null;
+        double avg_velocity = 0;
+        double min_velocity = Double.MAX_VALUE;
+        double max_velocity = Double.MIN_VALUE;
+        List<DataPoint> velocityList = null;
         List<DataPoint> hrList = null;
 
         boolean showHR = false;
         boolean showHRZhist = false;
         HRZones hrCalc = null;
+
+        SpeedUnit preferred_speedunit;
 
         public GraphProducer(Context context, int noPoints) {
             final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
@@ -144,7 +147,7 @@ public class GraphWrapper implements Constants {
                 graphAverageSeconds = GRAPH_AVERAGE_SECONDS;
                 this.interval = GRAPH_INTERVAL_SECONDS;
             }
-            this.paceList = new ArrayList<>();
+            this.velocityList = new ArrayList<>();
             this.time = new double[graphAverageSeconds];
             this.distance = new double[graphAverageSeconds];
 
@@ -162,6 +165,7 @@ public class GraphWrapper implements Constants {
                 }
                 showHRZhist = true;
             }
+            this.preferred_speedunit = Formatter.getPreferredSpeedUnit(context);
 
             clearSmooth(0);
         }
@@ -221,45 +225,55 @@ public class GraphWrapper implements Constants {
             double avg_dist = sum_distance;
             double avg_hr = calculateAverageHr(hr);
             {
-                double max_pace[] = {
+                double max_velocity[] = {
                         0, 0, 0
                 };
-                double min_pace[] = {
+                double min_velocity[] = {
                         Double.MAX_VALUE, 0, 0
                 };
                 for (int i = 0; i < this.time.length; i++) {
-                    double pace = this.time[i] / this.distance[i];
-                    if (pace > max_pace[0]) {
-                        max_pace[0] = pace;
-                        max_pace[1] = this.time[i];
-                        max_pace[2] = this.distance[i];
+                    double velocity = this.time[i] / this.distance[i];
+                    if (velocity > max_velocity[0]) {
+                        max_velocity[0] = velocity;
+                        max_velocity[1] = this.time[i];
+                        max_velocity[2] = this.distance[i];
                     }
-                    if (pace < min_pace[0]) {
-                        min_pace[0] = pace;
-                        min_pace[1] = this.time[i];
-                        min_pace[2] = this.distance[i];
+                    if (velocity < min_velocity[0]) {
+                        min_velocity[0] = velocity;
+                        min_velocity[1] = this.time[i];
+                        min_velocity[2] = this.distance[i];
                     }
                 }
-                //avg_time -= (max_pace[1] + min_pace[1]);
-                //avg_dist -= (max_pace[2] + min_pace[2]);
+                //avg_time -= (max_velocity[1] + min_velocity[1]);
+                //avg_dist -= (max_velocity[2] + min_velocity[2]);
             }
 
-            if (avg_dist > 0) {
-                double pace = avg_time / avg_dist / 1000.0;
-                if (first) {
-                    paceList.add(new DataPoint(0, pace));
-                    hrList.add(new DataPoint(0, Math.round(avg_hr)));
-                    first = false;
-                }
-                paceList.add(new DataPoint(tot_distance, pace));
-                hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
-                acc_time = 0;
-
-                tot_avg_hr += avg_hr;
-                avg_pace += pace;
-                min_pace = Math.min(min_pace, pace);
-                max_pace = Math.max(max_pace, pace);
+            double velocity = 0.0;
+            switch (this.preferred_speedunit) {
+                case PACE:
+                    if (avg_dist > 0) {
+                        velocity = avg_time / avg_dist / 1000.0;
+                    }
+                    break;
+                case SPEED:
+                    if (avg_time > 0) {
+                        velocity = avg_dist / avg_time * 1000.0;
+                    }
+                    break;
             }
+            if (first) {
+                velocityList.add(new DataPoint(0, velocity));
+                hrList.add(new DataPoint(0, Math.round(avg_hr)));
+                first = false;
+            }
+            velocityList.add(new DataPoint(tot_distance, velocity));
+            hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
+            acc_time = 0;
+
+            tot_avg_hr += avg_hr;
+            avg_velocity += velocity;
+            min_velocity = Math.min(min_velocity, velocity);
+            max_velocity = Math.max(max_velocity, velocity);
         }
 
         class GraphFilter {
@@ -267,11 +281,11 @@ public class GraphWrapper implements Constants {
             double data[] = null;
             final List<DataPoint> source;
 
-            GraphFilter(List<DataPoint> paceList) {
-                source = paceList;
-                data = new double[paceList.size()];
-                for (int i = 0; i < paceList.size(); i++)
-                    data[i] = paceList.get(i).getY();
+            GraphFilter(List<DataPoint> velocityList) {
+                source = velocityList;
+                data = new double[velocityList.size()];
+                for (int i = 0; i < velocityList.size(); i++)
+                    data[i] = velocityList.get(i).getY();
             }
 
             void complete() {
@@ -309,7 +323,7 @@ public class GraphWrapper implements Constants {
                     double newY = sum / windowLen;
                     data[i] = newY;
                     sum -= window[0];
-                    shiftLeft(window, (i + mid) < data.length ? data[i + mid] : avg_pace);
+                    shiftLeft(window, (i + mid) < data.length ? data[i + mid] : avg_velocity);
                     sum += window[last];
                 }
             }
@@ -331,7 +345,7 @@ public class GraphWrapper implements Constants {
                     System.arraycopy(window, 0, sort, 0, windowLen);
                     Arrays.sort(sort);
                     data[i] = sort[mid];
-                    shiftLeft(window, (i + mid) < data.length ? data[i + mid] : avg_pace);
+                    shiftLeft(window, (i + mid) < data.length ? data[i + mid] : avg_velocity);
                 }
             }
 
@@ -352,7 +366,7 @@ public class GraphWrapper implements Constants {
                             * window[2] + 12 * window[3] - 3 * window[4]) / 35;
                     data[i] = newY;
                     shiftLeft(window,
-                            (i + mid) < data.length ? data[i + mid] : avg_pace);
+                            (i + mid) < data.length ? data[i + mid] : avg_velocity);
                 }
             }
 
@@ -374,7 +388,7 @@ public class GraphWrapper implements Constants {
                             * window[5] - 2 * window[6]) / 21;
                     data[i] = newY;
                     shiftLeft(window,
-                            (i + mid) < data.length ? data[i + mid] : avg_pace);
+                            (i + mid) < data.length ? data[i + mid] : avg_velocity);
                 }
             }
 
@@ -385,13 +399,13 @@ public class GraphWrapper implements Constants {
         }
 
         public void complete(final GraphView graphView) {
-            avg_pace /= paceList.size();
-            Log.e(getClass().getName(), "graph: " + paceList.size() + " points");
+            avg_velocity /= velocityList.size();
+            Log.e(getClass().getName(), "graph: " + velocityList.size() + " points");
 
             boolean smoothData = PreferenceManager.getDefaultSharedPreferences(graphView.getContext())
                     .getBoolean(graphView.getContext().getResources().getString(R.string.pref_pace_graph_smoothing), true);
-            if (paceList.size() > 0 && smoothData) {
-                GraphFilter f = new GraphFilter(paceList);
+            if (velocityList.size() > 0 && smoothData) {
+                GraphFilter f = new GraphFilter(velocityList);
                 final String defaultFilterList = graphView.getContext().getResources().getString(R.string.mm31kz513sg5);
                 final String filterList = PreferenceManager.getDefaultSharedPreferences(
                         graphView.getContext()).getString(
@@ -430,15 +444,21 @@ public class GraphWrapper implements Constants {
                 f.complete();
             }
             LineGraphSeries<DataPoint> graphViewData = new LineGraphSeries<>(
-                    paceList.toArray(new DataPoint[paceList.size()]));
+                    velocityList.toArray(new DataPoint[velocityList.size()]));
             graphView.addSeries(graphViewData); // data
             graphView.getViewport().setMinX(graphView.getViewport().getMinX(true));
             graphView.getViewport().setMaxX(graphView.getViewport().getMaxX(true));
             graphViewData.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
                 public void onTap(Series series, DataPointInterface dataPoint) {
-                    String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
-                            graphView.getContext().getString(R.string.Pace) + ": " + formatter.formatPace(Formatter.Format.TXT_SHORT, dataPoint.getY());
+                    String msg = String.format("%s: %s\n%s: %s %s",
+                            graphView.getContext().getString(R.string.Distance),
+                            formatter.formatDistance(Formatter.Format.TXT_SHORT,
+                            (long) dataPoint.getX()),
+                            formatter.formatVelocityLabel(),
+                            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dataPoint.getY()),
+                            formatter.getVelocityUnit(graphView.getContext())
+                    );
                     Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
                 }
             });

@@ -114,6 +114,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         setContentView(R.layout.run);
         formatter = new Formatter(this);
         //HRZones hrZones = new HRZones(this);
+        TextView velocity = (TextView)findViewById(R.id.velocity_label);
+        velocity.setText(formatter.formatVelocityLabel());
 
         final Button stopButton = (Button) findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);
@@ -382,14 +384,14 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             double ap = workout.getSpeed(Scope.ACTIVITY);
             activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, Math.round(at)));
             activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, Math.round(ad)));
-            activityPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, ap));
+            activityPace.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, ap));
 
             double ld = workout.getDistance(Scope.LAP);
             double lt = workout.getTime(Scope.LAP);
             double lp = workout.getSpeed(Scope.LAP);
             lapTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, Math.round(lt)));
             lapDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(ld)));
-            lapPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, lp));
+            lapPace.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, lp));
 
             if (tableRowInterval != null && this.currentStep != null &&
                     workout.getWorkoutType() != Constants.WORKOUT_TYPE.BASIC &&
@@ -401,14 +403,14 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                 tableRowInterval.setVisibility(View.VISIBLE);
                 intervalTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, Math.round(it)));
                 intervalDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, Math.round(id)));
-                intervalPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, ip));
+                intervalPace.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, ip));
             } else {
                 // Do not show Interval Step row if no reason
                 tableRowInterval.setVisibility(View.GONE);
             }
 
             double cp = workout.getSpeed(Scope.CURRENT);
-            currentPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT, cp));
+            currentPace.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, cp));
 
             if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
                 double ahr = workout.getHeartRate(Scope.ACTIVITY);

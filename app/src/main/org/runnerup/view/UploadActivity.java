@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -344,7 +343,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             }
 
             if (d != null && t != null && t != 0) {
-                viewHolder.tvPace.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, d / t));
+                viewHolder.tvPace.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / t));
             } else {
                 viewHolder.tvPace.setText("");
             }

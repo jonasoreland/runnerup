@@ -29,7 +29,9 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.SpeedUnit;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -221,6 +223,26 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 editor.putString(key, "km");
         }
         return true;
+    }
+
+    /**
+     * Gets the user's preferred Speedunit
+     *
+     * @param context Context element to access configuration
+     * @return Configured Speed Unit (falls back to pace, if the configured value is invalid)
+     */
+    public static SpeedUnit getPreferredSpeedUnit(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        // use either pace or speed according to the user's preference
+        String speedUnit = prefs.getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        assert speedUnit != null;   // may not happen
+        switch(speedUnit){
+            case Constants.SPEED_UNIT.SPEED:
+                return SpeedUnit.SPEED;
+            case Constants.SPEED_UNIT.PACE:
+            default:
+                return SpeedUnit.PACE;
+        }
     }
 
     public double getUnitMeters() {
@@ -461,6 +483,39 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     /**
+     * Returns either a formatted value in minutes per kilometer or kilometer per hour
+     * depending on the user's preference
+     *
+     * @param target the target format [cue or txt] and length
+     * @param meters_per_second speed in m/s
+     * @return display value
+     */
+    public String formatVelocityByPreferredUnit(Format target, Double meters_per_second) {
+        String paceTextUnit = this.sharedPreferences
+                .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        if(paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+            return this.formatPaceSpeed(target, meters_per_second);
+        } else {
+            return this.formatSpeed(target, meters_per_second);
+        }
+    }
+
+    /**
+     * Returns a label for Pace or Speed depending on the user's preference
+     *
+     * @return value
+     */
+    public String formatVelocityLabel() {
+        String paceTextUnit = this.sharedPreferences
+                .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+            return this.context.getString(R.string.Pace);
+        } else {
+            return this.context.getString(R.string.Speed);
+        }
+    }
+
+    /**
      * Format pace from speed
      *
      * @param target
@@ -485,9 +540,15 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     /**
      * @return pace unit string
      */
-    public String getPaceUnit() {//Resources resources, SharedPreferences sharedPreferences) {
+    String getVelocityUnit(Context context) {//Resources resources, SharedPreferences sharedPreferences) {
         int du = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
-        return resources.getString(R.string.metrics_elapsed_min) + "/" + resources.getString(du);
+        switch(getPreferredSpeedUnit(context)){
+            case SPEED:
+                return resources.getString(du) + "/" + resources.getString(R.string.metrics_elapsed_h);
+            case PACE:
+            default:
+                return resources.getString(R.string.metrics_elapsed_min) + "/" + resources.getString(du);
+        }
     }
 
     /**
@@ -504,7 +565,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             str = DateUtils.formatElapsedTime(val);
         }
         if (includeUnit) {
-            str = str + "/" + resources.getString((metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
+            str = str + " /" + resources.getString((metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
         }
         return str;
     }
@@ -577,6 +638,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         else {
             int res = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
             return str +
+                    " " +
                     resources.getString(res) +
                     "/" +
                     resources.getString(R.string.metrics_elapsed_h);
@@ -588,7 +650,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         String str = String.format(cueResources.audioLocale, "%.1f", distance_per_hour);
         if (unitCue) {
             return cueResources.getQuantityString(metric ? R.plurals.cue_kilometers_per_hour : R.plurals.cue_miles_per_hour,
-                    (int) distance_per_hour, str);
+                    (int)distance_per_hour, str);
         } else {
             return str;
         }
@@ -685,7 +747,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                     val2 = String.format(cueResources.audioLocale, "%.1f", val);
                 }
                 if (unitCue) {
-                    res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int) val, val2);
+                    res = cueResources.getQuantityString(metric ? R.plurals.cue_kilometer : R.plurals.cue_mile, (int)val, val2);
                 } else {
                     res = val2;
                 }

@@ -19,13 +19,26 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
+    <PreferenceScreen
+        android:title="@string/Unit_preference_title"
+        android:key="units_preferencescreen">
 
-    <ListPreference
-        android:key="@string/pref_unit"
-        android:persistent="true"
-        android:title="@string/Unit_preference"
-        android:entries="@array/unitEntries"
-        android:entryValues="@array/unitValues" />
+        <ListPreference
+                android:key="@string/pref_unit"
+                android:persistent="true"
+                android:title="@string/Unit_preference"
+                android:entries="@array/unitEntries"
+                android:entryValues="@array/unitValues" />
+
+        <ListPreference
+                android:key="@string/pref_speedunit"
+                android:persistent="true"
+                android:title="@string/Speed_unit_preference"
+                android:defaultValue="pace"
+                android:entries="@array/speedUnitEntries"
+                android:entryValues="@array/speedUnitValues" />
+
+    </PreferenceScreen>
 
     <PreferenceScreen
         android:title="@string/Sensors"

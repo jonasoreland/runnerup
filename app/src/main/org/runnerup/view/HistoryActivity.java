@@ -223,11 +223,11 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
 
             // pace
             TextView paceText = (TextView)view.findViewById(R.id.history_list_pace);
+            String paceTextContents = "";
             if (d != null && dur != null && dur != 0) {
-                paceText.setText(formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, d / dur));
-            } else {
-                paceText.setText("");
+                paceTextContents = formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / dur);
             }
+            paceText.setText(paceTextContents);
         }
 
         @Override

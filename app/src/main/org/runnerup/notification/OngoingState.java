@@ -67,7 +67,7 @@ public class OngoingState implements NotificationState {
                 Math.round(workoutInfo.getDistance(Scope.ACTIVITY)));
         String time = formatter.formatElapsedTime(Formatter.Format.TXT_LONG,
                 Math.round(workoutInfo.getTime(Scope.ACTIVITY)));
-        String pace = formatter.formatPaceSpeed(Formatter.Format.TXT_SHORT,
+        String pace = formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT,
                 workoutInfo.getSpeed(Scope.ACTIVITY));
 
         String content = String.format("%s: %s %s: %s %s: %s",

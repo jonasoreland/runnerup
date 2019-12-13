@@ -21,6 +21,7 @@
     <string name="pref_countdown_active">pref_countdown_active</string>
     <string name="pref_countdown_time">pref_countdown_time</string>
     <string name="pref_unit">pref_unit</string>
+    <string name="pref_speedunit">pref_speedunit</string>
     <string name="pref_startgps">pref_startgps</string>
     <string name="pref_pollInterval">pref_pollInterval</string>
     <string name="pref_pollDistance">pref_pollDistance</string>
