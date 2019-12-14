@@ -2,7 +2,6 @@ RunnerUp
 ========
 
 [![Join the chat at https://gitter.im/jonasoreland/runnerup](https://badges.gitter.im/jonasoreland/runnerup.svg)](https://gitter.im/jonasoreland/runnerup?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [![Build Status](https://travis-ci.org/jonasoreland/runnerup.svg?branch=master)](https://travis-ci.org/jonasoreland/runnerup)
 
 Track your sport activities with RunnerUp using the GPS in your Android phone.
@@ -25,15 +24,9 @@ Track your sport activities with RunnerUp using the GPS in your Android phone.
 
 * [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
 * [GitHub](https://github.com/jonasoreland/runnerup/releases). (RunnerUp 2.x versions including beta and release candidates.)
+* [F-Droid](https://f-droid.org/packages/org.runnerup.free/). This version does not contain some features due to licensing, see the F-Droid description.
 
-<!--
-* [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup.free). This version does not contain some features due to licensing, see the F-Droid description.
-
-[![Get it on F-Droid](get_it_on_f-droid.png?raw=true)](https://f-droid.org/repository/browse/?fdid=org.runnerup.free)
--->
 Join the beta program in Play for release candidates or monitor releases on GitHub.
-
-Note: RunnerUp used to be available on [F-Droid](https://f-droid.org/repository/browse/?fdid=org.runnerup.free), but it has been removed as the app has support for the closed source ANT+ sensors. A request to add (without non-free software) is pending.
 
 The current 2.x release support Android 4.0 and later. The Play release also supports Android 2.2, 2.3, but due to lack of test devices, RunnerUp cannot support Android 2.x. The "Froyo" version do not include graphs, maps and elevation GeoId correction.
 
