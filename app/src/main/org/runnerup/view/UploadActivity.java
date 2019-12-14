@@ -43,6 +43,7 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
+import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
@@ -183,12 +184,18 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
             Cursor c = mDB.query(DB.ACTIVITY.TABLE, from,
                     " deleted == 0 AND " + w, args,
-                    null, null, "_id desc", "100");
+                    null, null, "_id desc", null);
             allSyncActivities.clear();
+            int i = 0;
+            final int maxUpload = 10;
             if (c.moveToFirst()) {
                 do {
                     ActivityEntity ac = new ActivityEntity(c);
                     SyncActivityItem ai = new SyncActivityItem(ac);
+                    // Limit default to upload, except for local
+                    if (!mSynchronizerName.contentEquals(FileSynchronizer.NAME) && i++ >= maxUpload) {
+                        ai.setSkipFlag(true);
+                    }
                     allSyncActivities.add(ai);
                 } while (c.moveToNext());
             }
@@ -461,9 +468,14 @@ public class UploadActivity extends AppCompatActivity implements Constants {
     private final OnClickListener setAllButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            for (SyncActivityItem tmp : allSyncActivities) {
-                if (tmp.isRelevantForSynch(syncMode)) {
-                    tmp.setSkipFlag(Boolean.FALSE);
+            int i = 0;
+            final int maxUpload = 30;
+            for (SyncActivityItem ai : allSyncActivities) {
+                if (ai.isRelevantForSynch(syncMode)) {
+                    // Limit uploads by default, to not overload services (even if action is not all)
+                    Boolean upload = mSynchronizerName.contentEquals(FileSynchronizer.NAME) ||
+                            i++ < maxUpload;
+                    ai.setSkipFlag(!upload);
                 }
             }
             updateSyncCount();
