@@ -169,9 +169,12 @@
   <string name="Downloadeditremove_workouts">Trainingen downloaden/bewerken/verwijderen</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Je moet een RunnerUp Live-account koppelen</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gebruik je headset om RunnerUp te starten/pauzeren/hervatten</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Omzetten rust-stap met type afstand tot herstel-stap voor Interval-tabblad</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Omzetten rust-stap met type afstand tot herstel-stap voor Geavanceerde-tabblad</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Databank exporteren naar externe opslag</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Databank importeren uit externe opslag</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach om je te helpen je doel te bereiken (indien ingesteld)</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Stil blijven wanneer de training start/pauzeert/hervat/stopt</string>
   <string name="Test_audio_cue">Auditief signaal testen</string>
   <string name="Accounts">Accounts</string>
   <string name="Audio_cues">Auditieve signalen</string>
@@ -182,6 +185,7 @@
   <string name="Autopause">Automatisch pauzeren</string>
   <string name="Enable_RunnerUpLive">RunnerUp Live inschakelen</string>
   <string name="Headset_key_startstop">Headset-toets start/stop</string>
+  <string name="Activity_countdown">Aftellen naar activiteit</string>
   <string name="Countdown_time_s">Afteltijd (s)</string>
   <string name="Unit_preference">Eenheidsvoorkeur</string>
   <string name="Auto_start_GPS">GPS automatisch starten</string>
@@ -191,6 +195,9 @@
   <string name="Autopause_after_s">Automatisch pauzeren na (s)</string>
   <string name="Autopause_min_pace_minkm">Automatische pauze min tempo na (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Intervalruststappen</string>
+  <string name="Convert_rest_on_Advanced_tab">Omzetten rust op Geavanceerde tabblad</string>
+  <string name="Target_pace_moving_average_seconds">Doeltempo voortschrijdend gemiddelde in seconden</string>
+  <string name="Target_pace_grace_seconds">Doeltempo sierlijkheid in seconden</string>
   <string name="Autolap_during_intervals">Automatische ronde in trainingen</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Aftellen na indrukken toets</string>
   <string name="Step_countdown_time_s">Aftellen tot staptijd (s)</string>
