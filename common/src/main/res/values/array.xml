@@ -20,7 +20,7 @@
     <item>Miles</item>
     <item>Kilometers</item>
   </string-array>
-  <string-array name="unitValues">
+  <string-array name="unitValues" translatable="false">
     <item>mi</item>
     <item>km</item>
   </string-array>
@@ -28,7 +28,7 @@
     <item>Pace</item>
     <item>Speed</item>
   </string-array>
-  <string-array name="speedUnitValues">
+  <string-array name="speedUnitValues" translatable="false">
     <item>pace</item>
     <item>speed</item>
   </string-array>

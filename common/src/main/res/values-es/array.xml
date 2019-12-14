@@ -4,10 +4,6 @@
     <item>Millas</item>
     <item>Kilómetros</item>
   </string-array>
-  <string-array name="unitValues">
-    <item>mi</item>
-    <item>km</item>
-  </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>Calentamiento</item>

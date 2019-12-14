@@ -4,10 +4,6 @@
     <item>مایل</item>
     <item>کیلومتر</item>
   </string-array>
-  <string-array name="unitValues">
-    <item>مایل</item>
-    <item>کیلومتر</item>
-  </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>گرم کردن</item>

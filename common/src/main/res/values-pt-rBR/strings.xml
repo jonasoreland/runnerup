@@ -120,7 +120,7 @@
   <string name="Configure_accounts">Configurar contas</string>
   <string name="Refresh">Atualizar</string>
   <string name="Age">Idade</string>
-  <string name="Synchronizing">Sincronismo:</string>
+  <string name="Synchronizing">Sincronizando</string>
   <string name="synchronizing_feed">sincronizando feed..</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Gerenciar conexões</string>
