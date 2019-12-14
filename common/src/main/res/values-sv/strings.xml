@@ -189,7 +189,8 @@
   <string name="Activity_countdown">Nedräkning till aktivitet start</string>
   <string name="Activity_countdown_summary">Lägg till nedräkning till aktivitetsstart för standard pass</string>
   <string name="Countdown_time_s">Nedräkningstid (s)</string>
-  <string name="Unit_preference">Måttenhet</string>
+  <string name="Unit_preference">Distansenhet</string>
+  <string name="Unit_preference_title">Måttenheter</string>
   <string name="Auto_start_GPS">Autostarta GPS</string>
   <string name="Advanced_options">Avancerade inställningar</string>
   <string name="Mapbox_default_style">Mapbox stil</string>
