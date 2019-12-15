@@ -4,6 +4,10 @@
     <item>マイル</item>
     <item>キロメートル</item>
   </string-array>
+  <string-array name="speedUnitEntries">
+    <item>ペース</item>
+    <item>スピード</item>
+  </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>ウォームアップ</item>

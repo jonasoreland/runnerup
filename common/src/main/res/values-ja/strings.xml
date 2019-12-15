@@ -189,7 +189,8 @@
   <string name="Activity_countdown">アクティビティ開始のカウントダウン</string>
   <string name="Activity_countdown_summary">基本ワークアウトのアクティビティ開始へのカウントダウンを追加します</string>
   <string name="Countdown_time_s">カウントダウン時間 (s)</string>
-  <string name="Unit_preference">単位設定</string>
+  <string name="Unit_preference_title">単位設定</string>
+  <string name="Unit_preference">距離単位設定</string>
   <string name="Auto_start_GPS">GPS 自動開始</string>
   <string name="Advanced_options">高度なオプション</string>
   <string name="Mapbox_default_style">Mapbox スタイル</string>
@@ -337,4 +338,6 @@
   <string name="Lap_start_summary">ラップの開始と \"アクティブ\"、\"ウォームアップ\"、\"クールダウン\" ステップの音を鳴らします</string>
   <string name="Lock_activity_buttons">アクティビティボタンをロックする</string>
   <string name="Lock_activity_buttons_message">ヘッダーを早くクリックするとアクティビティボタンをロックします</string>
+  <string name="Speed">スピード</string>
+  <string name="Speed_unit_preference">スピード単位</string>
 </resources>
