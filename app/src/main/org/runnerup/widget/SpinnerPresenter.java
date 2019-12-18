@@ -149,6 +149,10 @@ public class SpinnerPresenter {
             public void onClick(View v) {
                 edit.setText(mSpin.getViewValueText());
                 edit.setInputType(mInputType);
+                if(edit.getParent() != null) {
+                    ((LinearLayout)edit.getParent()).removeView(edit);
+                }
+
                 final LinearLayout layout = createLayout(context);
                 layout.addView(edit);
 
@@ -234,6 +238,10 @@ public class SpinnerPresenter {
         mSpin.setViewOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(datePicker.getParent() != null) {
+                    ((LinearLayout)datePicker.getParent()).removeView(datePicker);
+                }
+
                 final LinearLayout layout = createLayout(context);
                 layout.addView(datePicker);
 
@@ -280,6 +288,10 @@ public class SpinnerPresenter {
             @Override
             public void onClick(View v) {
                 timePicker.setIs24HourView(true);
+                if(timePicker.getParent() != null) {
+                    ((LinearLayout)timePicker.getParent()).removeView(timePicker);
+                }
+
                 final LinearLayout layout = createLayout(context);
                 layout.addView(timePicker);
 
@@ -322,6 +334,10 @@ public class SpinnerPresenter {
             public void onClick(View v) {
                 final DurationPicker picker = new DurationPicker(context, attrs);
                 picker.setEpochTime(mCurrValue);
+                if(picker.getParent() != null) {
+                    ((LinearLayout)picker.getParent()).removeView(picker);
+                }
+
                 final LinearLayout layout = createLayout(context);
                 layout.addView(picker);
 
@@ -362,6 +378,9 @@ public class SpinnerPresenter {
             @Override
             public void onClick(View v) {
                 distancePicker.setDistance(mCurrValue);
+                if(distancePicker.getParent() != null) {
+                    ((LinearLayout)distancePicker.getParent()).removeView(distancePicker);
+                }
 
                 final LinearLayout layout = createLayout(context);
                 layout.addView(distancePicker);
@@ -403,6 +422,9 @@ public class SpinnerPresenter {
             @Override
             public void onClick(View v) {
                 numberPicker.setValue((int) mCurrValue);
+                if(numberPicker.getParent() != null) {
+                    ((LinearLayout)numberPicker.getParent()).removeView(numberPicker);
+                }
 
                 final LinearLayout layout = createLayout(context);
                 layout.addView(numberPicker);
