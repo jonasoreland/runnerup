@@ -198,7 +198,7 @@ public class LocationEntity extends AbstractEntity {
     }
 
     /**
-     * The moment in time when the location point was recorded
+     * The time in ms (since epoch) for the location point
      */
     public void setTime(Long value) {
         values().put(Constants.DB.LOCATION.TIME, value);

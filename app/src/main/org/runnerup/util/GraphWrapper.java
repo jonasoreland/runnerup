@@ -188,6 +188,7 @@ public class GraphWrapper implements Constants {
         }
 
         void addObservation(double delta_time, double delta_distance, double tot_distance, LocationEntity loc) {
+            // delta_time is in ms, dist in m
             if (delta_time < 500)
                 return;
 
@@ -224,46 +225,18 @@ public class GraphWrapper implements Constants {
             double avg_time = sum_time;
             double avg_dist = sum_distance;
             double avg_hr = calculateAverageHr(hr);
-            {
-                double max_velocity[] = {
-                        0, 0, 0
-                };
-                double min_velocity[] = {
-                        Double.MAX_VALUE, 0, 0
-                };
-                for (int i = 0; i < this.time.length; i++) {
-                    double velocity = this.time[i] / this.distance[i];
-                    if (velocity > max_velocity[0]) {
-                        max_velocity[0] = velocity;
-                        max_velocity[1] = this.time[i];
-                        max_velocity[2] = this.distance[i];
-                    }
-                    if (velocity < min_velocity[0]) {
-                        min_velocity[0] = velocity;
-                        min_velocity[1] = this.time[i];
-                        min_velocity[2] = this.distance[i];
-                    }
-                }
-                //avg_time -= (max_velocity[1] + min_velocity[1]);
-                //avg_dist -= (max_velocity[2] + min_velocity[2]);
-            }
 
-            double velocity = 0.0;
-            switch (this.preferred_speedunit) {
-                case PACE:
-                    if (avg_dist > 0) {
-                        velocity = avg_time / avg_dist / 1000.0;
-                    }
-                    break;
-                case SPEED:
-                    if (avg_time > 0) {
-                        velocity = avg_dist / avg_time * 1000.0;
-                    }
-                    break;
+            double velocity = avg_time == 0 ? 0.0 : avg_dist * 1000.0 / avg_time ;
+            final double paceLimit = 1000.0 / 60.0 / 15.0;
+            if (this.preferred_speedunit == SpeedUnit.PACE) {
+                // Avoid presenting very slow pace (easier than to handle manual y axis scaling)
+                velocity = Math.max(velocity, paceLimit);
             }
             if (first) {
-                velocityList.add(new DataPoint(0, velocity));
-                hrList.add(new DataPoint(0, Math.round(avg_hr)));
+                if(tot_distance > 0) {
+                    velocityList.add(new DataPoint(0, velocity));
+                    hrList.add(new DataPoint(0, Math.round(avg_hr)));
+                }
                 first = false;
             }
             velocityList.add(new DataPoint(tot_distance, velocity));
@@ -559,21 +532,19 @@ public class GraphWrapper implements Constants {
             int lastLap = -1;
             Double tot_distance = 0.0;
             for (LocationEntity loc : ll) {
-                Long time = loc.getTime();
+                Long time = loc.getElapsed();
                 time = time != null ? time : lastTime;
                 Integer lap = loc.getLap();
                 lap = lap != null ? lap : 0;
-                tot_distance = loc.getDistance();
-                tot_distance = tot_distance != null ? tot_distance : lastDistance;
+                tot_distance = tot_distance != null ? loc.getDistance() : lastDistance;
 
                 if (lap != lastLap) {
                     graphData.clearSmooth(tot_distance);
                     lastLap = lap;
                 }
-                if (lastTime > 0) {
-                    graphData.addObservation(time - lastTime, tot_distance - lastDistance,
+
+                graphData.addObservation(time - lastTime, tot_distance - lastDistance,
                             tot_distance, loc);
-                }
                 lastTime = time;
                 lastDistance = tot_distance;
 
