@@ -75,7 +75,7 @@ public class GraphWrapper implements Constants {
             @Override
             public String formatLabel(double value, boolean isValueX) {
                 if (isValueX) {
-                    return formatter.formatDistance(Formatter.Format.TXT, (long) value);
+                    return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
                 } else {
                     return formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, value);
                 }
