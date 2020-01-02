@@ -459,7 +459,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         double d = 0;
         if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
             d = tmp.getAsDouble(DB.ACTIVITY.DISTANCE);
-            activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_LONG, (long) d));
+            activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) d));
         } else {
             activityDistance.setText("");
         }
