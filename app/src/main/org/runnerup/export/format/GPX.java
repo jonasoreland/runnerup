@@ -19,7 +19,6 @@ package org.runnerup.export.format;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathSimplifier;
@@ -176,7 +175,12 @@ public class GPX {
         ArrayList<Integer> ignoreIDs = simplifier != null ?
                 simplifier.getNoisyLocationIDs(mDB, activityId) :
                 new ArrayList<>();
+        // Tracks with time gaps may show as unconnected, mostly the same as this setting
+        final boolean useTrkSeg = (simplifier == null);
 
+        if (!useTrkSeg) {
+            mXML.startTag("", "trkseg");
+        }
         while (lok) {
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
                 long lap = cLap.getLong(0);
@@ -184,7 +188,9 @@ public class GPX {
                     pok = cLocation.moveToNext();
                 }
                 boolean hasPoints = false;
-                mXML.startTag("", "trkseg");
+                if (useTrkSeg) {
+                    mXML.startTag("", "trkseg");
+                }
                 if (pok && cLocation.getLong(0) == lap) {
                     long last_time = 0;
                     while (pok && cLocation.getLong(0) == lap) {
@@ -337,10 +343,15 @@ public class GPX {
                         pok = cLocation.moveToNext();
                     }
                 }
-                mXML.endTag("", "trkseg");
+                if (useTrkSeg) {
+                    mXML.endTag("", "trkseg");
+                }
             }
 
             lok = cLap.moveToNext();
+        }
+        if (!useTrkSeg) {
+            mXML.endTag("", "trkseg");
         }
         cLap.close();
         cLocation.close();
