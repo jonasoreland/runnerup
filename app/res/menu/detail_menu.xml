@@ -18,22 +18,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menu_share_activity"
+        android:orderInCategory="100"
+        android:title="@string/Share_activity"/>
+
+    <item
         android:id="@+id/menu_edit_activity"
         android:orderInCategory="100"
         android:title="@string/Edit_activity"/>
 
     <item
-        android:id="@+id/menu_share_activity"
+        android:id="@+id/menu_recompute_activity"
         android:orderInCategory="100"
-        android:title="@string/Share_activity"/>
-    
+        android:title="@string/Recompute_activity"/>
+
     <item
         android:id="@+id/menu_delete_activity"
         android:orderInCategory="100"
         android:title="@string/Delete_activity"/>
-    <item
-        android:id="@+id/menu_recompute_activity"
-        android:orderInCategory="100"
-        android:title="@string/Recompute_activity"
-        android:enabled="false"/>
 </menu>
