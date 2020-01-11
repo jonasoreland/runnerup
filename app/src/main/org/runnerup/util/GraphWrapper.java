@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -103,6 +104,14 @@ public class GraphWrapper implements Constants {
         });
         graphView2.getViewport().setScalable(true);
         graphView2.getViewport().setScrollable(true);
+
+        // Get maximum of heart rate and use 110% for y axis
+        HRZones hrZones = new HRZones(context);
+        HRZoneCalculator hrZoneCalculator = new HRZoneCalculator(context);
+        int zoneCount = hrZoneCalculator.getZoneCount();
+        Pair<Integer, Integer> values = hrZones.getHRValues(zoneCount);
+        graphView2.getViewport().setMaxY(values.second*1.1);
+        graphView2.getViewport().setYAxisBoundsManual(true);
 
         hrzonesBar = new HRZonesBar(context);
     }
