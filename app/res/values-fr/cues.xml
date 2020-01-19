@@ -25,10 +25,10 @@
   <string name="cue_started">démarré</string>
   <string name="cue_paused">en pause</string>
   <string name="cue_resumed">repris</string>
-  <string name="cue_stopped">stoppé</string>
+  <string name="cue_stopped">arrêté</string>
   <string name="cue_completed">terminé</string>
-  <string name="cue_speedup">accélérer !</string>
-  <string name="cue_slowdown">ralentir !</string>
+  <string name="cue_speedup">accélérez !</string>
+  <string name="cue_slowdown">ralentissez !</string>
   <plurals name="cue_hour">
     <item quantity="one">%d heure</item>
     <item quantity="other">%d heures</item>
@@ -71,7 +71,7 @@
   </plurals>
   <string name="cue_activity_paused">activité en pause</string>
   <string name="cue_activity_resumed">activité reprise</string>
-  <string name="cue_activity_stopped">activité stoppée</string>
+  <string name="cue_activity_stopped">activité arrêtée</string>
   <string name="cue_lap_started">tour démarré</string>
   <string name="cue_lap_completed">tour terminé</string>
   <string name="cue_warmup_started">échauffement démarré</string>
