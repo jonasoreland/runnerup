@@ -38,4 +38,5 @@
     <item>Hombre</item>
     <item>Mujer</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

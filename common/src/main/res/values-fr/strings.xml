@@ -335,7 +335,7 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Utiliser l\'altitude initiale du signal GPS pour obtenir une élévation barométrique moyenne</string>
   <string name="channel_notification_ongoing">RunnerUp GPS et notifications d\'activité</string>
   <string name="Lap_start">Début du tour</string>
-  <string name="Lap_start_summary">Suivi audio pour chaque tour et étape \"Active\", \"Echauffement\" et \"Récupération\"</string>
+  <string name="Lap_start_summary">Suivi audio pour chaque tour et étape \"Active\", \"Échauffement\" et \"Récupération\"</string>
   <string name="Lock_activity_buttons">Verrouiller les boutons d\'activité</string>
   <string name="Lock_activity_buttons_message">Verrouiller les boutons d\'activité d\'un clic rapide sur l\'entête</string>
   <string name="Speed">Vitesse</string>

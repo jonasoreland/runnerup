@@ -38,4 +38,5 @@
     <item>Masculino</item>
     <item>Feminino</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

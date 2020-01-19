@@ -42,4 +42,5 @@
     <item>Männlich</item>
     <item>Weiblich</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

@@ -20,4 +20,5 @@
     <item>Orienteering</item>
     <item>Walking</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

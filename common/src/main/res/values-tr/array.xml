@@ -10,4 +10,5 @@
     <item>Erkek</item>
     <item>Kadın</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

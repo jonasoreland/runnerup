@@ -42,4 +42,5 @@
     <item>男性</item>
     <item>女性</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>
