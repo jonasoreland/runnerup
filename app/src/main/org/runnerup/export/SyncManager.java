@@ -212,7 +212,7 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
             synchronizer = new RunningFreeOnlineSynchronizer();
         } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
-            synchronizer = new FileSynchronizer();
+            synchronizer = new FileSynchronizer(mContext);
         } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
             synchronizer = new RunalyzeSynchronizer();
         } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {

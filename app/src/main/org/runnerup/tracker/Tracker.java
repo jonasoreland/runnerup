@@ -40,7 +40,9 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
@@ -562,6 +564,18 @@ public class Tracker extends android.app.Service implements
         if (save) {
             saveActivity();
             liveLog(DB.LOCATION.TYPE_END);
+
+            // path simplification (reduce resolution of location entries in database)
+            try {
+                if (PathSimplifier.isEnabledForSave(this)) {
+                    PathSimplifier simplifier = new PathSimplifier(this);
+                    ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mActivityId);
+                    ActivityCleaner.deleteLocations(mDB, ids);
+                    (new ActivityCleaner()).recompute(mDB, mActivityId);
+                }
+            } catch (Exception e) {
+                Log.e(getClass().getName(), "Failed to simplify path: " + e.getMessage());
+            }
         } else {
             ContentValues tmp = new ContentValues();
             tmp.put("deleted", 1);
@@ -571,6 +585,7 @@ public class Tracker extends android.app.Service implements
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
             liveLog(DB.LOCATION.TYPE_DISCARD);
         }
+
         components.onComplete(!save);
         notificationStateManager.cancelNotification();
         reset();

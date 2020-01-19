@@ -33,6 +33,7 @@ import android.util.Pair;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.GoogleStaticMap;
@@ -158,8 +159,11 @@ public class ActivityProvider extends ContentProvider {
                     } else if (res == GPX) {
                         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
                         //The data must exist if log, use the log option as a possibility to "deactivate" too
-                        boolean enabled = prefs.getBoolean(this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy), false);
-                        GPX gpx = new GPX(mDB, true, enabled);
+                        boolean extraData = prefs.getBoolean(this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy), false);
+                        PathSimplifier simplifier = PathSimplifier.isEnabledForExportGpx(getContext()) ?
+                                new PathSimplifier(getContext(), true) :
+                                null;
+                        GPX gpx = new GPX(mDB, true, extraData, simplifier);
                         gpx.export(activityId, new OutputStreamWriter(out.second));
                         Log.e(getClass().getName(), "export gpx");
                     } else if (res == NIKE) {

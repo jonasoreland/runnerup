@@ -59,6 +59,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
@@ -109,7 +110,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private TitleSpinner sport = null;
     private EditText notes = null;
-    private MenuItem recomputeMenuItem = null;
 
     private MapWrapper mapWrapper = null;
 
@@ -243,8 +243,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             saveButton.setVisibility(View.GONE);
         WidgetUtil.setEditable(notes, value);
         sport.setEnabled(value);
-        if (recomputeMenuItem != null)
-            recomputeMenuItem.setEnabled(value);
     }
 
     private void setUploadVisibility() {
@@ -255,12 +253,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             uploadButton.setVisibility(View.GONE);
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mode == MODE_DETAILS) {
-            getMenuInflater().inflate(R.menu.detail_menu, menu);
-            recomputeMenuItem = menu.findItem(R.id.menu_recompute_activity);
-        }
+        getMenuInflater().inflate(R.menu.detail_menu, menu);
         return true;
     }
 
@@ -269,9 +265,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         switch (item.getItemId()) {
             case android.R.id.home:
                 return super.onOptionsItemSelected(item);
+
             case R.id.menu_delete_activity:
                 deleteButtonClick.onClick(null);
                 break;
+
             case R.id.menu_edit_activity:
                 if (!edit) {
                     setEdit(true);
@@ -279,10 +277,44 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     requery();
                 }
                 break;
+
             case R.id.menu_recompute_activity:
-                new ActivityCleaner().recompute(mDB, mID);
-                requery();
+                final AlertDialog.Builder builderRecompute = new AlertDialog.Builder(this)
+                        .setTitle(R.string.Recompute_activity)
+                        .setMessage(getString(R.string.Are_you_sure))
+                        .setPositiveButton(getString(R.string.Yes), (dialog, which) -> {
+                            dialog.dismiss();
+                            new ActivityCleaner().recompute(mDB, mID);
+                            requery();
+                            fillHeaderData();
+                            finish();
+                        })
+                        .setNegativeButton(getString(R.string.No),(dialog, which) -> {
+                            dialog.dismiss();
+                        });
+                builderRecompute.show();
                 break;
+
+            case R.id.menu_simplify_path:
+                final AlertDialog.Builder builderSimplify = new AlertDialog.Builder(this)
+                        .setTitle(R.string.path_simplification_menu)
+                        .setMessage(getString(R.string.Are_you_sure))
+                        .setPositiveButton(getString(R.string.Yes), (dialog, which) -> {
+                            dialog.dismiss();
+                            PathSimplifier simplifier = new PathSimplifier(this);
+                            ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
+                            ActivityCleaner.deleteLocations(mDB, ids);
+                            new ActivityCleaner().recompute(mDB, mID);
+                            requery();
+                            fillHeaderData();
+                            finish();
+                        })
+                        .setNegativeButton(getString(R.string.No),(dialog, which) -> {
+                            dialog.dismiss();
+                        });
+                builderSimplify.show();
+                break;
+
             case R.id.menu_share_activity:
                 shareActivity();
                 break;

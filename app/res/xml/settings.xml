@@ -161,6 +161,45 @@
             android:title="@string/log_extended_gps_title"
             android:summary="@string/log_extended_gps_summary" />
 
+        <PreferenceCategory
+            android:key="@string/path_simplification"
+            android:title="@string/path_simplification">
+
+            <Preference
+                android:summary="@string/path_simplification_info" />
+
+            <CheckBoxPreference
+                android:key="@string/pref_path_simplification_save"
+                android:defaultValue="false"
+                android:persistent="true"
+                android:title="@string/path_simplification_save"
+                android:summary="@string/path_simplification_save_info" />
+
+            <CheckBoxPreference
+                android:key="@string/pref_path_simplification_export_gpx"
+                android:defaultValue="false"
+                android:persistent="true"
+                android:title="@string/path_simplification_export_gpx"
+                android:summary="@string/path_simplification_export_gpx_info" />
+
+            <org.runnerup.widget.TextPreference
+                android:key="@string/pref_path_simplification_tolerance"
+                android:defaultValue="3"
+                android:persistent="true"
+                android:inputType="number"
+                android:title="@string/path_simplification_tolerance"
+                android:summary="the higher the tolerance, the smoother the path; however, this might reduce the length of the path (curves instead of sharp edges)"/>
+
+            <ListPreference
+                android:key="@string/pref_path_simplification_algorithm"
+                android:defaultValue="ramer_douglas_peucker"
+                android:persistent="true"
+                android:title="@string/path_simplification_algorithm"
+                android:entries="@array/path_simplification_algorithm_titles"
+                android:entryValues="@array/path_simplification_algorithm_values"
+                android:summary="@string/path_simplification_algorithm_info" />
+        </PreferenceCategory>
+
     </PreferenceScreen>
 
     <PreferenceScreen
