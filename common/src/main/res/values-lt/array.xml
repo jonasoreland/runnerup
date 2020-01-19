@@ -38,4 +38,5 @@
     <item>Vyras</item>
     <item>Moteris</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

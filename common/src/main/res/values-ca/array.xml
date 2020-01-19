@@ -33,4 +33,5 @@
     <item>Home</item>
     <item>Dona</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

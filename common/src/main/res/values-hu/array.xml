@@ -38,4 +38,5 @@
     <item>Férfi</item>
     <item>Nő</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>
