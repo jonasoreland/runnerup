@@ -70,8 +70,8 @@ public interface Synchronizer {
         LIVE, // live feed of activity
         SKIP_MAP, // skip map in upload
         ACTIVITY_LIST, //list recorded activities
-        GET_ACTIVITY //download recorded activity
-
+        GET_ACTIVITY, //download recorded activity
+        FILE_FORMAT // upload as file in different possible formats
     }
 
     /**

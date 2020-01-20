@@ -55,24 +55,4 @@
 
     </TableRow>
 
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <CheckBox
-            android:id="@+id/tcxformat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:text="TCX"
-            tools:ignore="HardcodedText"/>
-
-        <CheckBox
-            android:id="@+id/gpxformat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GPX"
-            tools:ignore="HardcodedText"/>
-    </TableRow>
-
 </LinearLayout>

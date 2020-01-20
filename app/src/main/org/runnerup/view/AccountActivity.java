@@ -46,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -57,6 +58,7 @@ import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.widget.WidgetUtil;
+import org.runnerup.workout.FileFormats;
 
 import java.util.ArrayList;
 
@@ -67,6 +69,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     private final ArrayList<Cursor> mCursors = new ArrayList<>();
 
     private long flags;
+    private FileFormats format;
     private SyncManager syncManager = null;
     private EditText mRunnerUpLiveApiAddress = null;
 
@@ -132,7 +135,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
         String[] from = new String[]{
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.FLAGS, DB.ACCOUNT.AUTH_CONFIG
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG
         };
 
         String args[] = {
@@ -147,6 +150,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 ContentValues tmp = DBHelper.get(c);
                 synchronizer = syncManager.add(tmp);
                 flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
+                format = new FileFormats(tmp.getAsString(DB.ACCOUNT.FORMAT));
                 if (synchronizer == null) {
                     return;
                 }
@@ -202,6 +206,18 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             } else {
                 Button btn = (Button) findViewById(R.id.account_upload_button);
                 btn.setVisibility(View.GONE);
+            }
+
+            if (synchronizer.checkSupport(Synchronizer.Feature.FILE_FORMAT)) {
+                // Add file format checkboxes
+                addRow(getResources().getString(R.string.File_format), null);
+                for (FileFormats.Format f: FileFormats.ALL_FORMATS) {
+                    CheckBox cb = new CheckBox(this);
+                    cb.setChecked(format.contains(f));
+                    cb.setTag(f);
+                    cb.setOnCheckedChangeListener(sendCBChecked);
+                    addRow(f.getName(), cb);
+                }
             }
 
             if (synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
@@ -325,17 +341,35 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             ContentValues tmp = new ContentValues();
-            int flag = (Integer) buttonView.getTag();
-            switch (flag) {
-                case DB.ACCOUNT.FLAG_UPLOAD:
-                case DB.ACCOUNT.FLAG_FEED:
-                case DB.ACCOUNT.FLAG_LIVE:
-                    flags = Bitfield.set(flags, flag, isChecked);
-                    break;
-                case DB.ACCOUNT.FLAG_SKIP_MAP:
-                    flags = Bitfield.set(flags, flag, !isChecked);
+            Object flag = buttonView.getTag();
+            if (flag instanceof FileFormats.Format) {
+                if (isChecked) {
+                    format.add((FileFormats.Format) flag);
+                } else {
+                    format.remove((FileFormats.Format) flag);
+                    // At least one format needed
+                    if (TextUtils.isEmpty(format.toString())) {
+                        // Recheck unchecked format
+                        format.add((FileFormats.Format) flag);
+                        buttonView.setChecked(true);
+                        Toast.makeText(getApplicationContext(),
+                                getResources().getString(R.string.File_need_one_format),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+                tmp.put(DB.ACCOUNT.FORMAT, format.toString());
+            } else {
+                switch ((int) flag) {
+                    case DB.ACCOUNT.FLAG_UPLOAD:
+                    case DB.ACCOUNT.FLAG_FEED:
+                    case DB.ACCOUNT.FLAG_LIVE:
+                        flags = Bitfield.set(flags, (Integer) flag, isChecked);
+                        break;
+                    case DB.ACCOUNT.FLAG_SKIP_MAP:
+                        flags = Bitfield.set(flags, (Integer) flag, !isChecked);
+                }
+                tmp.put(DB.ACCOUNT.FLAGS, flags);
             }
-            tmp.put(DB.ACCOUNT.FLAGS, flags);
             String args[] = {
                     mSynchronizerName
             };
