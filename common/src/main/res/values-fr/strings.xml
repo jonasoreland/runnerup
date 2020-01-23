@@ -340,4 +340,14 @@
   <string name="Lock_activity_buttons_message">Verrouiller les boutons d\'activité d\'un clic rapide sur l\'entête</string>
   <string name="Speed">Vitesse</string>
   <string name="Speed_unit_preference">Unité de vitesse</string>
+  <string name="path_simplification">Simplification des traces GPS</string>
+  <string name="path_simplification_info">Réduit la résolution des traces GPS (enregistrement des positions au fil du temps). Lisse la trace et réduit le poids d\'une activité dans la base de données ou dans un fichier exporté.</string>
+  <string name="path_simplification_save">Simplifier lors de l\'enregistrement de l\'activité</string>
+  <string name="path_simplification_save_info">Simplifie la trace GPS lors de son enregistrement en base de données</string>
+  <string name="path_simplification_export_gpx">Simplifier lors de l\'export GPX</string>
+  <string name="path_simplification_export_gpx_info">Simplifie la trace GPS lors de l\'export en fichier GPX</string>
+  <string name="path_simplification_tolerance">Tolérance en mètres</string>
+  <string name="path_simplification_algorithm">Algorithme</string>
+  <string name="path_simplification_algorithm_info">Choisissez entre rapidité et haute qualité de la simplification de la trace</string>
+  <string name="path_simplification_menu">Simplifier la trace</string>
 </resources>
