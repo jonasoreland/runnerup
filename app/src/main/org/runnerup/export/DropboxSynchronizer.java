@@ -17,6 +17,7 @@
 package org.runnerup.export;
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,17 +29,17 @@ import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.workout.FileFormats;
 import org.runnerup.workout.Sport;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
@@ -59,11 +60,16 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
     private long id = 0;
     private String access_token = null;
+    private FileFormats mFormat;
+    private PathSimplifier simplifier = null;
 
-    DropboxSynchronizer() {
+    DropboxSynchronizer(Context context) {
         if (ENABLED == 0) {
             Log.w(NAME, "No client id configured in this build");
         }
+        this.simplifier = PathSimplifier.isEnabledForExportGpx(context) ?
+                new PathSimplifier(context, true) :
+                null;
     }
 
     @Override
@@ -129,6 +135,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
         if (authConfig != null) {
             try {
+                mFormat = new FileFormats(config.getAsString(DB.ACCOUNT.FORMAT));
                 JSONObject tmp = new JSONObject(authConfig);
                 parseAuthData(tmp);
             } catch (Exception e) {
@@ -216,6 +223,73 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         return desc;
     }
 
+    // upload a single file
+    private Status uploadFile(SQLiteDatabase db, final long mID, Sport sport,
+                              StringWriter writer, String fileExt)
+            throws IOException, JSONException {
+
+        Status s;
+
+        // Upload to default directory /Apps/RunnerUp
+        String file = String.format(Locale.getDefault(), "/RunnerUp_%s_%04d_%s.%s",
+                android.os.Build.MODEL.replaceAll("\\s","_"), mID, sport.TapiriikType(),
+                fileExt);
+
+        HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod(RequestMethod.POST.name());
+        conn.addRequestProperty("Content-Type", "application/octet-stream");
+        conn.setRequestProperty("Authorization", "Bearer " + access_token);
+        JSONObject parameters = new JSONObject();
+        try {
+            parameters.put("path", file);
+            parameters.put("mode", "add");
+            parameters.put("autorename", true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return Status.ERROR;
+        }
+        conn.addRequestProperty("Dropbox-API-Arg", parameters.toString());
+        OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+        out.write(writer.getBuffer().toString().getBytes());
+        out.flush();
+        out.close();
+
+        int responseCode = conn.getResponseCode();
+        String amsg = conn.getResponseMessage();
+        Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg+" ");
+
+        JSONObject obj = SyncHelper.parse(conn, getName());
+
+        if (obj != null && responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
+            s = Status.OK;
+            s.activityId = mID;
+            if (obj.has("id")) {
+                // Note: duplicate will not set activity_id
+                s.externalId = noNullStr(obj.getString("id"));
+                if (s.externalId != null) {
+                    s.externalIdStatus = ExternalIdStatus.OK;
+                }
+            }
+            return s;
+        }
+        String error = obj != null && obj.has("error") ?
+                noNullStr(obj.getString("error")) :
+                "";
+        Log.e(getName(),"Error uploading, code: " +
+                responseCode + ", amsg: " + amsg + " " + error + ", json: " + (obj == null ? "" : obj));
+        if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            // token no longer valid
+            access_token = null;
+            s = Status.NEED_AUTH;
+            s.authMethod = AuthMethod.OAUTH2;
+        } else {
+            s = Status.ERROR;
+        }
+
+        return s;
+    }
+
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s = connect();
@@ -225,96 +299,50 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
         Sport sport = Sport.RUNNING;
         try {
-            String[] columns = {
-                Constants.DB.ACTIVITY.SPORT
-        };
-        Cursor c = null;
-        try {
-            c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
-                    null, null, null, null);
-            if (c.moveToFirst()) {
-                sport = Sport.valueOf(c.getInt(0));
+
+            String[] columns = { Constants.DB.ACTIVITY.SPORT };
+            Cursor c = null;
+            try {
+                c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
+                        null, null, null, null);
+                if (c.moveToFirst()) {
+                    sport = Sport.valueOf(c.getInt(0));
+                }
+            } finally {
+                if (c != null) {
+                    c.close();
+                }
             }
-        } finally {
-            if (c != null) {
-                c.close();
-            }
-        }
-            // Upload to default directory /Apps/RunnerUp
-            String file = String.format(Locale.getDefault(), "/RunnerUp_%s_%04d_%s.tcx",
-                    android.os.Build.MODEL.replaceAll("\\s","_"), mID, sport.TapiriikType());
 
             StringWriter writer = new StringWriter();
-            TCX tcx = new TCX(db);
-            tcx.export(mID, writer);
-
-            HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod(RequestMethod.POST.name());
-            conn.addRequestProperty("Content-Type", "application/octet-stream");
-            conn.setRequestProperty("Authorization", "Bearer " + access_token);
-            JSONObject parameters = new JSONObject();
-            try {
-                parameters.put("path", file);
-                parameters.put("mode", "add");
-                parameters.put("autorename", true);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return Status.ERROR;
+            if (mFormat.contains(FileFormats.TCX)) {
+                TCX tcx = new TCX(db);
+                tcx.export(mID, writer);
+                s = uploadFile(db, mID, sport, writer, FileFormats.TCX.getValue());
             }
-            conn.addRequestProperty("Dropbox-API-Arg", parameters.toString());
-            OutputStream out = new BufferedOutputStream(conn.getOutputStream());
-            out.write(writer.getBuffer().toString().getBytes());
-            out.flush();
-            out.close();
-
-            int responseCode = conn.getResponseCode();
-            String amsg = conn.getResponseMessage();
-            Log.v(getName(), "code: " + responseCode + ", amsg: " + amsg+" ");
-
-            JSONObject obj = SyncHelper.parse(conn, getName());
-
-            if (obj != null && responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-                s = Status.OK;
-                s.activityId = mID;
-                if (obj.has("id")) {
-                    // Note: duplicate will not set activity_id
-                    s.externalId = noNullStr(obj.getString("id"));
-                    if (s.externalId != null) {
-                        s.externalIdStatus = ExternalIdStatus.OK;
-                    }
-                }
-                return s;
+            if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
+                GPX gpx = new GPX(db, true, true, simplifier);
+                gpx.export(mID, writer);
+                s = uploadFile(db, mID, sport, writer, FileFormats.GPX.getValue());
             }
-            String error = obj != null && obj.has("error") ?
-                    noNullStr(obj.getString("error")) :
-                    "";
-            Log.e(getName(),"Error uploading, code: " +
-                            responseCode + ", amsg: " + amsg + " " + error + ", json: " + (obj == null ? "" : obj));
-            if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                // token no longer valid
-                access_token = null;
-                s = Status.NEED_AUTH;
-                s.authMethod = AuthMethod.OAUTH2;
-            }
-            s = Status.ERROR;
-            return s;
 
-        } catch (IOException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (JSONException e) {
+        } catch (Exception e) {
+            Log.e(getName(),"Error uploading, exception: ", e);
             s = Status.ERROR;
             s.ex = e;
         }
-
-        s.ex.printStackTrace();
         return s;
     }
 
     @Override
     public boolean checkSupport(Feature f) {
-        return f == Feature.UPLOAD;
+        switch (f) {
+            case UPLOAD:
+            case FILE_FORMAT:
+                return true;
+            default:
+                return false;
+        }
     }
 }
 

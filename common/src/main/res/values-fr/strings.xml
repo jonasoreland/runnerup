@@ -350,4 +350,6 @@
   <string name="path_simplification_algorithm">Algorithme</string>
   <string name="path_simplification_algorithm_info">Choisissez entre rapidité et haute qualité de la simplification de la trace</string>
   <string name="path_simplification_menu">Simplifier la trace</string>
+  <string name="File_format">Fichier(s) au format:</string>
+  <string name="File_need_one_format">Sélectionnez au moins un format !</string>
 </resources>

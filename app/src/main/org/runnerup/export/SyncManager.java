@@ -216,7 +216,7 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
             synchronizer = new RunalyzeSynchronizer();
         } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {
-            synchronizer = new DropboxSynchronizer();
+            synchronizer = new DropboxSynchronizer(mContext);
         } else {
             Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);;
         }
@@ -476,10 +476,6 @@ public class SyncManager {
         final TextView tv1 = (TextView) view.findViewById(R.id.fileuri);
         final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
 
-        final CheckBox cbtcx = (CheckBox) view.findViewById(R.id.tcxformat);
-        final CheckBox cbgpx = (CheckBox) view.findViewById(R.id.gpxformat);
-        cbtcx.setChecked(true);
-
         String path;
         if (Build.VERSION.SDK_INT >= 19) {
             //noinspection InlinedApi
@@ -508,16 +504,8 @@ public class SyncManager {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //Set default values
-                        String format = "";
-                        if (cbtcx.isChecked()) {
-                            format = "tcx,";
-                        }
-                        if (cbgpx.isChecked()) {
-                            format += "gpx,";
-                        }
 
                         ContentValues tmp = new ContentValues();
-                        tmp.put(DB.ACCOUNT.FORMAT, format);
                         tmp.put(DB.ACCOUNT.URL, tv1.getText().toString());
                         ContentValues config = new ContentValues();
                         config.put("_id", sync.getId());
