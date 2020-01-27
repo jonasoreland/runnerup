@@ -176,20 +176,15 @@ public class GPX {
                 simplifier.getNoisyLocationIDs(mDB, activityId) :
                 new ArrayList<>();
         // Tracks with time gaps may show as unconnected, mostly the same as this setting
-        final boolean useTrkSeg = (simplifier == null);
+        final boolean useLapTrkSeg = (simplifier == null);
 
-        if (!useTrkSeg) {
-            mXML.startTag("", "trkseg");
-        }
+        // number of GPS points in current track segment
+        int segmentPoints = 0;
         while (lok) {
             if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
                 long lap = cLap.getLong(0);
                 while (pok && cLocation.getLong(0) != lap) {
                     pok = cLocation.moveToNext();
-                }
-                boolean hasPoints = false;
-                if (useTrkSeg) {
-                    mXML.startTag("", "trkseg");
                 }
                 if (pok && cLocation.getLong(0) == lap) {
                     long last_time = 0;
@@ -199,11 +194,11 @@ public class GPX {
                         long time = cLocation.getLong(1);
                         if (locType != DB.LOCATION.TYPE_GPS) {
                             if (mAccuracyExtensions) {
-                                if (hasPoints && locType == DB.LOCATION.TYPE_RESUME) {
+                                if (segmentPoints >= 2 && locType == DB.LOCATION.TYPE_RESUME) {
                                     // GPX has no standard for pauses, but segments are occasionally used,
                                     // sometimes separate activities
                                     mXML.endTag("", "trkseg");
-                                    mXML.startTag("", "trkseg");
+                                    segmentPoints = 0;
                                 }
                                 mXML.comment(" State change: " + locType + " " + formatTime(time));
                             }
@@ -211,7 +206,11 @@ public class GPX {
                                 // ignore IDs that have been marked unnecessary by path simplification
                                 // reduces resolution of the exported path
                                 ! ignoreIDs.contains(cLocation.getInt(15))) {
-                            hasPoints = true;
+                            if (segmentPoints == 0) {
+                                mXML.startTag("", "trkseg");
+                            }
+                            segmentPoints++;
+                            
                             mXML.startTag("", "trkpt");
 
                             float lat = cLocation.getFloat(2);
@@ -343,14 +342,16 @@ public class GPX {
                         pok = cLocation.moveToNext();
                     }
                 }
-                if (useTrkSeg) {
+                if (useLapTrkSeg && segmentPoints >= 2) {
+                    // "merge" segments with less than two points
                     mXML.endTag("", "trkseg");
+                    segmentPoints = 0;
                 }
             }
 
             lok = cLap.moveToNext();
         }
-        if (!useTrkSeg) {
+        if (segmentPoints > 0) {
             mXML.endTag("", "trkseg");
         }
         cLap.close();
