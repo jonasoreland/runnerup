@@ -48,10 +48,10 @@ project.ext {
 
     // ApplicationId (possibly with a .debug suffix) shared Android and Wear
     // Separate Id allows simultaneous installation
-    if (rootProject.ext.allowNonFree) {
-        applicationIdBase = "org.runnerup"
+    if (!rootProject.ext.allowNonFree) {
+        // Separate applicationId for the free version (must be first)
+        applicationId = "org.runnerup.free"
     } else {
-        // Separate applicationId for the free version
-        applicationIdBase = "org.runnerup.free"
+        applicationId = "org.runnerup"
     }
 }

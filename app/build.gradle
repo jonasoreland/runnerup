@@ -66,7 +66,7 @@ android {
         // The applicationId is also used in some xml files (android:targetPackage)
         // The packageId (in the manifest) is never changed
         // See also applicationIdFull in common/build.gradle, must be in sync
-        applicationId = rootProject.ext.applicationIdBase
+        applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
         resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "it", "ja", "lt", "nb", "nl", "pl", "pt", "ru", "sv", "tr"
