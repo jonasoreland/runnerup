@@ -30,7 +30,7 @@ project.ext {
     mockitoVersion = '2.3.7'
 
     //The tag for the release must be identical for F-Droid
-    versionName = "2.0.5.1"
+    versionName = '2.0.5.1'
     versionCode = 208
 
     travisBuild = System.getenv("TRAVIS") == "true"
