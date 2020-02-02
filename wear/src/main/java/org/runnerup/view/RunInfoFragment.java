@@ -17,7 +17,6 @@
 package org.runnerup.view;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
@@ -27,6 +26,8 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;

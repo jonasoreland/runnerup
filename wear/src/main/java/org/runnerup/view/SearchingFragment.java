@@ -16,7 +16,6 @@
  */
 package org.runnerup.view;
 
-import android.app.Fragment;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +23,8 @@ import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import org.runnerup.R;
 

@@ -19,9 +19,6 @@ package org.runnerup.export;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import androidx.collection.LongSparseArray;
-import androidx.appcompat.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -36,8 +33,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -49,6 +44,12 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.LongSparseArray;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,7 +88,7 @@ public class SyncManager {
     public static final long ERROR_ACTIVITY_ID = -1L;
 
     private SQLiteDatabase mDB = null;
-    private Activity mActivity = null;
+    private AppCompatActivity mActivity = null;
     private Context mContext = null;
     private final Map<String, Synchronizer> synchronizers = new HashMap<>();
     private final LongSparseArray<Synchronizer> synchronizersById = new LongSparseArray<>();
@@ -114,7 +115,7 @@ public class SyncManager {
         void run(String synchronizerName, Synchronizer.Status status);
     }
 
-    private void init(Activity activity, Context context, ProgressDialog spinner) {
+    private void init(AppCompatActivity activity, Context context, ProgressDialog spinner) {
         this.mActivity = activity;
         this.mContext = context;
         mDB = DBHelper.getWritableDatabase(context);
@@ -122,7 +123,7 @@ public class SyncManager {
         mSpinner.setCancelable(false);
         simplifier = PathSimplifier.getPathSimplifierForExport(context);
     }
-    public SyncManager(Activity activity) {
+    public SyncManager(AppCompatActivity activity) {
         init(activity, activity, new ProgressDialog(activity));
     }
 
@@ -539,7 +540,7 @@ public class SyncManager {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    private boolean checkStoragePermissions(final Activity activity) {
+    private boolean checkStoragePermissions(final AppCompatActivity activity) {
         boolean result = true;
         String[] requiredPerms;
         if (Build.VERSION.SDK_INT >= 16) {

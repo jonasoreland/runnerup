@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -33,6 +32,8 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -277,7 +278,7 @@ public class OAuth2Activity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public static Intent getIntent(Activity activity, OAuth2Server server) {
+    public static Intent getIntent(AppCompatActivity activity, OAuth2Server server) {
         Bundle b = new Bundle();
         b.putString(OAuth2ServerCredentials.CLIENT_ID, server.getClientId());
         b.putString(OAuth2ServerCredentials.CLIENT_SECRET,

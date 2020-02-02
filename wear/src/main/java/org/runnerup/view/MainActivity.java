@@ -17,8 +17,6 @@
 package org.runnerup.view;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -32,12 +30,16 @@ import android.support.wearable.view.FragmentGridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
 import android.widget.LinearLayout;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
+
 import java.util.ArrayList;
 
 public class MainActivity extends Activity implements Constants, ValueModel.ChangeListener<TrackerState> {
@@ -58,7 +60,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pager = (GridViewPager) findViewById(R.id.pager);
-        FragmentGridPagerAdapter pageAdapter = new PagerAdapter(getFragmentManager());
+        FragmentGridPagerAdapter pageAdapter = new PagerAdapter(getSupportFragmentManager());
         pager.setAdapter(pageAdapter);
 
         LinearLayout verticalDotsPageIndicator = (LinearLayout) findViewById(R.id.vert_page_indicator);

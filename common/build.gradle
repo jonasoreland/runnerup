@@ -44,4 +44,5 @@ dependencies {
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
+    implementation 'com.android.support:appcompat-v7'
 }

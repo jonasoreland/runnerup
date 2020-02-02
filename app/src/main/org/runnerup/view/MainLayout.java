@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Service;
 import android.app.TabActivity;
 import android.content.ContentValues;
@@ -40,11 +39,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +47,14 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -319,7 +321,7 @@ public class MainLayout extends TabActivity
         wv.loadUrl("file:///android_asset/changes.html");
     }
 
-    private static void requestGpsPermissions(final Activity activity, final View view) {
+    private static void requestGpsPermissions(final AppCompatActivity activity, final View view) {
         String[] requiredPerms = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
         List<String> defaultPerms = new ArrayList<>();
         List<String> shouldPerms = new ArrayList<>();
@@ -356,7 +358,7 @@ public class MainLayout extends TabActivity
         }
     }
 
-    private static boolean requestReadStoragePermissions(final Activity activity) {
+    private static boolean requestReadStoragePermissions(final AppCompatActivity activity) {
         boolean ret = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
                 ContextCompat.checkSelfPermission(activity,
