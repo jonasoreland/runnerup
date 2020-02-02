@@ -912,6 +912,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         registerStartEventListener();
 
         if (data != null) {

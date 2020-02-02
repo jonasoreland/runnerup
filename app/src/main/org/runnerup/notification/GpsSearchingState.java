@@ -37,8 +37,8 @@ public class GpsSearchingState implements NotificationState {
                 .setOnlyAlertOnce(true)
                 .setLocalOnly(true);
         if (Build.VERSION.SDK_INT >= 21) {
-            builder.setVisibility(Notification.VISIBILITY_PUBLIC)
-                    .setCategory(Notification.CATEGORY_SERVICE);
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setCategory(NotificationCompat.CATEGORY_SERVICE);
         }
     }
 

@@ -17,8 +17,9 @@
 
 package org.runnerup.hr;
 
-import android.app.Activity;
 import android.os.Handler;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * {@link HRProvider}'s provide an interface to a wireless connectivity module (Bluetooth, ANT+ etc)
@@ -68,14 +69,14 @@ public interface HRProvider {
 
     /**
      * Presents the user if the settings screen to enable the provider's protocol. When this is done,
-     * 'activity' will have {@link Activity#onActivityResult(int, int, android.content.Intent)} called
+     * 'activity' will have {@link AppCompatActivity#onActivityResult(int, int, android.content.Intent)} called
      *
-     * @param activity The {@link Activity} currently being displayed to the user
+     * @param activity The {@link AppCompatActivity} currently being displayed to the user
      * @param requestCode An arbitrary code that will be given to
-     *                  {@link Activity#onActivityResult(int, int, android.content.Intent)}
+     *                  {@link AppCompatActivity#onActivityResult(int, int, android.content.Intent)}
      * @return true if the intent was sent
      */
-    boolean startEnableIntent(Activity activity, int requestCode);
+    boolean startEnableIntent(AppCompatActivity activity, int requestCode);
 
     /**
      * Initialises the wireless module, allowing device scanning/connection

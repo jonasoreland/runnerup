@@ -19,7 +19,6 @@ package org.runnerup.hr;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -28,6 +27,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,12 +57,12 @@ public abstract class Bt20Base extends BtHRBase {
         return false;
     }
 
-    public boolean startEnableIntent(Activity activity, int requestCode) {
+    public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
         return startEnableIntentImpl(activity, requestCode);
     }
 
     @SuppressWarnings("SameReturnValue")
-    public static boolean startEnableIntentImpl(Activity activity, int requestCode) {
+    public static boolean startEnableIntentImpl(AppCompatActivity activity, int requestCode) {
         activity.startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
                 requestCode);
         return true;

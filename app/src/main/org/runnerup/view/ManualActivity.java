@@ -105,6 +105,7 @@ public class ManualActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {//todo is this log needed?
+        super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
             if (data.getStringExtra("url") != null)
                 Log.e(getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));

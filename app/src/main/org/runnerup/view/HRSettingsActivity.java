@@ -216,6 +216,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) {
             if (!hrProvider.isEnabled()) {
                 log("Bluetooth not enabled!");

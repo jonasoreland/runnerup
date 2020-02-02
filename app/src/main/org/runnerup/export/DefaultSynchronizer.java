@@ -17,12 +17,13 @@
 
 package org.runnerup.export;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -87,7 +88,8 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return null;
     }
 
-    public Intent getAuthIntent(Activity a) {
+    @Override
+    public Intent getAuthIntent(AppCompatActivity a) {
         return null;
     }
 

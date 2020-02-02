@@ -1,11 +1,12 @@
 
 package org.runnerup.hr;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 
 public class MockHRProvider implements HRProvider {
@@ -176,7 +177,7 @@ public class MockHRProvider implements HRProvider {
     }
 
     @Override
-    public boolean startEnableIntent(Activity activity, int requestCode) {
+    public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
         return false;
     }
 }
