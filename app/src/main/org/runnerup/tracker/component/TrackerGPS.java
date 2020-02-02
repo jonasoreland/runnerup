@@ -24,7 +24,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import org.runnerup.R;
 import org.runnerup.tracker.GpsStatus;

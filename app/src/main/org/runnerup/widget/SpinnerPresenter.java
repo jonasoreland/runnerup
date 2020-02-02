@@ -23,7 +23,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;

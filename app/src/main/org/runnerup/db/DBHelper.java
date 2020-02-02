@@ -17,6 +17,7 @@
 
 package org.runnerup.db;
 
+import androidx.appcompat.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,7 +26,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import org.json.JSONException;

@@ -23,7 +23,7 @@
               android:orientation="vertical"
               tools:context=".view.StartActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/start_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
             android:key="@string/pref_sport"
             android:spinnerMode="dropdown"/>
 
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <TabHost
         android:id="@+id/tabhost_start"

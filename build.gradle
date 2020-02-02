@@ -21,7 +21,6 @@ project.ext {
     compileSdkVersion = 28 //Update Travis manually
     targetSdkVersion = 28
 
-    supportLibrary = '28.0.0'
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
     googlePlayServicesVersion = '11.0.4'
     googleWearVersion = '2.3.0'
