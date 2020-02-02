@@ -169,6 +169,7 @@
   <string name="Downloadeditremove_workouts">Trainingseinheiten herunterladen/bearbeiten/löschen</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Sie müssen eine Verbindung zu einem RunnerUp Live-Konto herstellen</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Verwende Dein Headset um RunnerUp zu starten/pausieren/fortzusetzen</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Verwenden Sie auf der Registerkarte \"Intervall\" \"Wiederherstellung\" anstelle von \"Ruhe\" (Pause) </string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Datenbank auf Speicher exportieren</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Datenbank von Speicher importieren</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coachen, um Ziel zu erreichen (falls Ziel gesetzt)</string>
@@ -183,7 +184,8 @@
   <string name="Autopause">Pausenautomatik</string>
   <string name="Enable_RunnerUpLive">RunnerUp Live aktivieren</string>
   <string name="Headset_key_startstop">Headset Taste start/stop</string>
-  <string name="Activity_countdown">Aktivität Countdown</string>
+  <string name="Activity_countdown">Countdown bis zum Beginn der Aktivität </string>
+  <string name="Activity_countdown_summary">Countdown bis zum Beginn der Aktivität </string>
   <string name="Countdown_time_s">Countdown-Zeit (s)</string>
   <string name="Unit_preference_title">Maßeinheiten</string>
   <string name="Unit_preference">Distanz Maßeinheit</string>
