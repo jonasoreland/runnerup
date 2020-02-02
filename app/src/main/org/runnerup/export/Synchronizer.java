@@ -23,6 +23,8 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.SyncActivityItem;
 
@@ -109,7 +111,7 @@ public interface Synchronizer {
     /**
 	 *
 	 */
-    Intent getAuthIntent(Activity activity);
+    Intent getAuthIntent(AppCompatActivity activity);
 
     /**
      * Is synchronizer configured
