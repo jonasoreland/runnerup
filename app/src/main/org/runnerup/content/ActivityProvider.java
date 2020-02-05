@@ -161,7 +161,7 @@ public class ActivityProvider extends ContentProvider {
                         //The data must exist if log, use the log option as a possibility to "deactivate" too
                         boolean extraData = prefs.getBoolean(this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy), false);
                         PathSimplifier simplifier = PathSimplifier.isEnabledForExportGpx(getContext()) ?
-                                new PathSimplifier(getContext(), true) :
+                                new PathSimplifier(getContext()) :
                                 null;
                         GPX gpx = new GPX(mDB, true, extraData, simplifier);
                         gpx.export(activityId, new OutputStreamWriter(out.second));

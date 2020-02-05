@@ -8,40 +8,34 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.preference.PreferenceManager;
 
-import com.goebl.simplify.Simplify;
 import com.goebl.simplify.PointExtractor;
+import com.goebl.simplify.Simplify;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Wrapper for com.goebl.simplify.Simplify.
  */
 public class PathSimplifier {
-    /** Simplifies a polyline. */
-    private Simplify<Location> simplifier;
-
-    /** Indicates if simplification is enabled. */
-    private boolean enabled;
-    /** Indicates when the simplification is performed (e.g., on export). */
-    private boolean enabled_save;
-    private boolean enabled_export_gpx;
     /**
-     * Tolerance in meters for path simplification.
+     * Tolerance in degrees for path simplification.
      *
      * The higher the tolerance, the smoother the path.
      * Note, if too big, the total distance might be reduced and won't match the reality.
      */
-    private double tolerance;
+    private double toleranceDeg;
     /** High quality (true) or fast (false) simplification. */
     private boolean high_quality;
 
+    /** Distance in meters between two degrees of latitude at equator,
+     * as computed by android.location.Location.distanceTo()  */
+    private static final double ONE_DEGREE = 110574.390625;
     /** Multiplier to avoid deltas < 1 between points. */
-    private static final double multiplier = 1e6;
-    /** Indicates which types of locations shall be used for path simplificaiton. */
-    private boolean gps_type_only;
+    private static final double MULTIPLIER = 1e6;
 
     /**
      * Wrapper needed by simplifyPath to use Location as 2D point.
@@ -54,12 +48,12 @@ public class PathSimplifier {
     private static PointExtractor<Location> locationPointExtractor = new PointExtractor<Location>() {
         @Override
         public double getX(Location point) {
-            return point.getLatitude() * PathSimplifier.multiplier;
+            return point.getLatitude() * PathSimplifier.MULTIPLIER;
         }
 
         @Override
         public double getY(Location point) {
-            return point.getLongitude() * PathSimplifier.multiplier;
+            return point.getLongitude() * PathSimplifier.MULTIPLIER;
         }
     };
 
@@ -73,29 +67,27 @@ public class PathSimplifier {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         // get user settings
-        this.tolerance = Double.parseDouble(prefs.getString(
-                res.getString(R.string.pref_path_simplification_tolerance), "3"));
+
+        // tolerance in meters (default to 3)
+        double tolerance;
+        try {
+            tolerance = Double.parseDouble(prefs.getString(
+                    res.getString(R.string.pref_path_simplification_tolerance), "3"));
+        } catch (Exception ex) {
+            tolerance = 3;
+        }
+        // squared tolerance in meters has to be transformed to tolerance in degrees
+        this.toleranceDeg = tolerance / ONE_DEGREE;
+
+        String high_quality_setting = res.getStringArray(R.array.path_simplification_algorithm_values)[1];
         String algorithm = prefs.getString(
-                res.getString(R.string.pref_path_simplification_algorithm), "ramer_douglas_peucker");
-
+                res.getString(R.string.pref_path_simplification_algorithm),
+                high_quality_setting);
         // convert algorithm to parameter for simplify method
-        this.high_quality = algorithm.matches("ramer_douglas_peucker");
-
-        // simplify path given all locations
-        this.gps_type_only = false;
+        this.high_quality = high_quality_setting.equals(algorithm);
     }
 
-    /**
-     * Initialization, given the type of location to simplify.
-     * @param context Context used to extract parameters for path simplification.
-     * @param gps_type_only If true, then other location types than GPS are ignored for simplification.
-     */
-    public PathSimplifier(Context context, boolean gps_type_only) {
-        this(context);
-        this.gps_type_only = gps_type_only;
-    }
-
-    /** Returns true, if simplification is enabled and can be performed at given 'when'. */
+    /** Returns true if simplification should be applied when completion and saving an activity. */
     public static boolean isEnabledForSave(Context context) {
         Resources res = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -104,6 +96,7 @@ public class PathSimplifier {
                 res.getString(R.string.pref_path_simplification_save), false);
     }
 
+    /** Returns true if simplification should be applied when exporting an activity in GPX format. */
     public static boolean isEnabledForExportGpx(Context context) {
         Resources res = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -113,9 +106,11 @@ public class PathSimplifier {
     }
 
     /**
-     * Returns the IDs (list of strings) of the location entries
-     * that would simplify the path of an activity,
-     * i.e., reduce the path's resolution.
+     * Returns the IDs (as a list of strings) of the location entries
+     * that would simplify the path of an activity, i.e., reduce the path's resolution.
+     * Simplification is applied within each activity segment. A segment is a set of locations
+     * between START/RESUME and PAUSE/END locations. Only GPS locations are considered
+     * for simplification, other locations are preserved.
      *
      * We use only 2D because we cannot mix degrees (lat,long) with meters (altitude),
      * regarding the tolerance of simplify.
@@ -127,62 +122,64 @@ public class PathSimplifier {
      * @param activityId ID of the activity to simplify.
      */
     public ArrayList<String> getNoisyLocationIDsAsStrings(SQLiteDatabase db, long activityId) {
-        // columns to query from the database, table "LOCATION"
+
+        // columns to query from the "LOCATION" table in database
         String[] pColumns = {
-                "_id", Constants.DB.LOCATION.LATITUDE, Constants.DB.LOCATION.LONGITUDE
+                "_id", Constants.DB.LOCATION.LATITUDE, Constants.DB.LOCATION.LONGITUDE,
+                Constants.DB.LOCATION.TYPE
         };
 
-        // optional constraint to extract GPS type locations only
-        String constraint = "";
-        if (gps_type_only)
-            constraint = " and " + Constants.DB.LOCATION.TYPE + " = " + Constants.DB.LOCATION.TYPE_GPS;
 
         // get table from database
         Cursor c = db.query(Constants.DB.LOCATION.TABLE, pColumns,
-                Constants.DB.LOCATION.ACTIVITY + " = " + activityId + constraint,
+                Constants.DB.LOCATION.ACTIVITY + " = " + activityId,
                 null, null, null, Constants.DB.LOCATION.TIME);
 
-        // data base rows to lists
-        ArrayList<Location> locations = new ArrayList<>();  /** List of the activity's locations (lat,long). */
+        // List of a segment activity's locations (lat,long).
+        ArrayList<Location> locations = new ArrayList<>();
+        // IDs of the full activity's locations
+        ArrayList<String> ids = new ArrayList<>();
+        // Location IDs to remove from the activity
+        ArrayList<String> simplifiedIDs = new ArrayList<>();
+
         if (c.moveToFirst()) {
             do {
-                // save ID of the location entry (row ID) as provider
-                Location l = new Location(String.format("%d", c.getInt(0)));
-                // get point data
+                int lstate = c.getInt(3);
+                // save ID of the location entry
+                Location l = new Location(String.format(Locale.US, "%d", c.getInt(0)));
+                // get location's coordinates
                 l.setLatitude(c.getDouble(1));
                 l.setLongitude(c.getDouble(2));
-                locations.add(l);
+                // Only TYPE_GPS locations are considered for simplification
+                if (lstate == Constants.DB.LOCATION.TYPE_GPS) {
+                    ids.add(l.getProvider());
+                    locations.add(l);
+                }
+
+                if ((lstate == Constants.DB.LOCATION.TYPE_PAUSE)
+                    || (lstate == Constants.DB.LOCATION.TYPE_END)) {
+                    // this is the end of a segment
+
+                    // No need to simplify segments with less than 3 GPS locations
+                    if (locations.size() > 2) {
+                        // simplify current segment
+                        Location[] simplifiedLocations = simplifySegment(locations);
+                        // store locations to keep
+                        for (Location sl : simplifiedLocations) {
+                            simplifiedIDs.add(sl.getProvider());
+                        }
+                    }
+
+                    // start new segment
+                    locations = new ArrayList<>();
+                }
+
             } while (c.moveToNext());
         }
         c.close();
 
-        // squared tolerance in meters has to be transformed to tolerance in degrees
-        // get meters per 1° with android.location.Location.distanceTo
-        Location zeroDegrees = new Location("null island"); // 0°N 0°E
-        zeroDegrees.setLatitude(0);
-        zeroDegrees.setLongitude(0);
-        Location oneDegrees = new Location(zeroDegrees); // 1°N 0°E
-        oneDegrees.setLatitude(1);
-        // tolerance in meters / meters per degree
-        double toleranceDeg = this.tolerance / zeroDegrees.distanceTo(oneDegrees);
-
-        // create an instance of the simplifier (empty array needed by List.toArray)
-        Location[] sampleArray = new Location[0];
-        Simplify<Location> simplify = new Simplify<Location>(sampleArray, locationPointExtractor);
-        // removes unnecessary intermediate points (note this does not change lat/long values!)
-        Location[] simplifiedLocations = simplify.simplify(locations.toArray(sampleArray),
-                toleranceDeg*this.multiplier, this.high_quality);
-
-        // remove the locations (skipped by simplify) from the database
-        ArrayList<String> ids = new ArrayList<>();  // IDs of all the activity's locations
-        ArrayList<String> simplifiedIDs = new ArrayList<>();  // IDs to remove from location table
-        for (Location l: locations) {
-            ids.add(l.getProvider());
-        }
-        for (Location l: simplifiedLocations) {
-            simplifiedIDs.add(l.getProvider());
-        }
-        ids.removeAll(simplifiedIDs); // IDs to delete or ignore
+        // remove the locations to keep in the simplified path
+        ids.removeAll(simplifiedIDs);
 
         return ids;
     }
@@ -194,7 +191,6 @@ public class PathSimplifier {
      *
      * @param db Database.
      * @param activityId ID of the activity to simplify.
-     * @param when The current point in the application (e.g., "save" or "export").
      */
     public ArrayList<Integer> getNoisyLocationIDs(SQLiteDatabase db, long activityId) {
         ArrayList<String> strIDs = getNoisyLocationIDsAsStrings(db, activityId);
@@ -205,5 +201,22 @@ public class PathSimplifier {
             ids.add(Integer.parseInt(str));
 
         return ids;
+    }
+
+    /**
+     * Simplifies a segment of an activity
+     *
+     * @param locations a subset of the activity locations that ends with a location
+     *                 of TYPE_PAUSE or TYPE_END type
+     * @return the locations of the simplified path segment
+     */
+    private Location[] simplifySegment(ArrayList<Location> locations) {
+
+        // create an instance of the simplifier (empty array needed by List.toArray)
+        Location[] sampleArray = new Location[0];
+        Simplify<Location> simplify = new Simplify<>(sampleArray, locationPointExtractor);
+        // removes unnecessary intermediate points (note this does not change lat/long values!)
+        return simplify.simplify(locations.toArray(sampleArray),
+                toleranceDeg * MULTIPLIER, this.high_quality);
     }
 }
