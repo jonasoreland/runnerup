@@ -68,7 +68,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
             Log.w(NAME, "No client id configured in this build");
         }
         this.simplifier = PathSimplifier.isEnabledForExportGpx(context) ?
-                new PathSimplifier(context, true) :
+                new PathSimplifier(context) :
                 null;
     }
 

@@ -59,7 +59,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
     FileSynchronizer(Context context) {
         this();
         this.simplifier = PathSimplifier.isEnabledForExportGpx(context) ?
-                new PathSimplifier(context, true) :
+                new PathSimplifier(context) :
                 null;
     }
 
