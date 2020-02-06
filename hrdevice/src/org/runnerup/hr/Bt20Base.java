@@ -29,6 +29,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -61,7 +63,7 @@ public abstract class Bt20Base extends BtHRBase {
     }
 
     @SuppressWarnings("SameReturnValue")
-    public static boolean startEnableIntentImpl(Activity activity, int requestCode) {
+    public static boolean startEnableIntentImpl(AppCompatActivity activity, int requestCode) {
         activity.startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
                 requestCode);
         return true;
