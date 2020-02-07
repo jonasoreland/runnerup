@@ -26,7 +26,7 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src/main']
-            if (rootProject.ext.allowNonFree) {
+            if (rootProject.ext.allowNonFree && rootProject.ext.enableWear) {
                 java.srcDirs += ['src/play']
             } else {
                 java.srcDirs += ['src/free']
@@ -117,15 +117,17 @@ repositories {
 dependencies {
     implementation project(':common')
     implementation project(':hrdevice')
-    if (rootProject.ext.allowNonFree) {
+    if (rootProject.ext.enableWear) {
         latestWearApp project(':wear')
     }
 
     //noinspection GradleCompatible
     latestImplementation "com.android.support:design:${rootProject.ext.supportLibrary}"
     latestImplementation "com.android.support:cardview-v7:${rootProject.ext.supportLibrary}"
-    //noinspection GradleDependency
-    latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    if (rootProject.ext.enableWear) {
+        //noinspection GradleDependency
+        latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    }
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
     // MapBox uses telemetry, without Play there may be exceptions from mapbox: just ignore
     //latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"

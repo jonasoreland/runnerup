@@ -29,7 +29,7 @@ android:
 notifications:
   email: false
 script:
-- ./gradlew wear:lintRelease
+#- ./gradlew wear:lintRelease
 - ./gradlew assembleLatestRelease
 - ./gradlew lintLatestRelease
-- ./gradlew test
+- ./gradlew app:test
