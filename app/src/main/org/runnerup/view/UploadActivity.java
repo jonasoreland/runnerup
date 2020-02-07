@@ -484,6 +484,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         fillData();
     }
 }

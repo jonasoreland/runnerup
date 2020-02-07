@@ -313,6 +313,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (workout == null) {
             // "should not happen"
             finish();
