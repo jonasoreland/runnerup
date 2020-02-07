@@ -30,8 +30,9 @@ project.ext {
     mockitoVersion = '2.3.7'
 
     //The tag for the release must be identical for F-Droid
-    versionName = '2.0.6.4'
+    versionName = '2.0.6.14'
     versionCode = 214
+    latestBaseVersionCode = 14000000
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set
@@ -39,6 +40,7 @@ project.ext {
 
     // F-Droid builds only allow free software (wear dir deleted at builds)
     allowNonFree = !project.hasProperty('org.runnerup.free') && rootProject.file("wear").exists()
+    enableWear = allowNonFree
 
     // Note: AntPlus may have to be downloaded explicitly due to licensing
     antPlusLib = "ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-8-0.aar"

@@ -30,6 +30,6 @@ notifications:
   email: false
 script:
 - ./gradlew wear:lintRelease
-- ./gradlew assembleLatestRelease
-- ./gradlew lintLatestRelease
-- ./gradlew test
+- ./gradlew app:lintLatestRelease
+- ./gradlew app:assembleLatestRelease
+- ./gradlew app:test

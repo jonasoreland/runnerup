@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="5" by="lint 3.3.0" client="gradle" variant="release" version="3.3.0">
+<issues format="5" by="lint 4.0.1" client="gradle" variant="all" version="4.0.1">
 
     <issue
         id="GradleCompatible"
@@ -10,23 +10,23 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.google.android.support:wearable than 2.3.0 is available: 2.4.0"
+        message="A newer version of com.google.android.support:wearable than 2.3.0 is available: 2.7.0"
         errorLine1="    implementation &quot;com.google.android.support:wearable:${rootProject.ext.googleWearVersion}&quot;"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="58"
+            line="57"
             column="5"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 16.0.1"
+        message="A newer version of com.google.android.gms:play-services-wearable than 11.0.4 is available: 17.0.0"
         errorLine1="    implementation &quot;com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}&quot;"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="59"
+            line="58"
             column="5"/>
     </issue>
 
