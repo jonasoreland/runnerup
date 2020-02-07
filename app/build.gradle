@@ -122,7 +122,7 @@ dependencies {
     }
 
     //noinspection GradleCompatible
-    latestImplementation "com.google.android.material:material:1.0.0"
+    latestImplementation "com.google.android.material:material:1.1.0"
     latestImplementation "androidx.cardview:cardview:1.0.0"
     if (rootProject.ext.enableWear) {
         //noinspection GradleDependency
