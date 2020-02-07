@@ -33,6 +33,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -112,7 +114,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         return Bt20Base.isEnabledImpl();
     }
 
-    public boolean startEnableIntent(Activity activity, int requestCode) {
+    public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
         return Bt20Base.startEnableIntentImpl(activity, requestCode);
     }
 

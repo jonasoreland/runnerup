@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * Created by jonas on 11/9/14.
  *
@@ -107,7 +109,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     }
 
     @Override
-    public boolean startEnableIntent(Activity activity, int requestCode) {
+    public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
         return provider.startEnableIntent(activity, requestCode);
     }
 

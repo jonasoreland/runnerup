@@ -19,6 +19,7 @@ package org.runnerup.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -120,7 +121,7 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     @SuppressLint("InlinedApi")
-    public static boolean requestReadStoragePermissions(final AppCompatActivity activity) {
+    public static boolean requestReadStoragePermissions(final Activity activity) {
         boolean ret = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
                 ContextCompat.checkSelfPermission(activity,
@@ -138,7 +139,7 @@ public class SettingsActivity extends PreferenceActivity
         return ret;
     }
 
-    private static boolean requestWriteStoragePermissions(final AppCompatActivity activity) {
+    private static boolean requestWriteStoragePermissions(final Activity activity) {
         boolean ret = true;
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)

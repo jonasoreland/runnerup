@@ -58,7 +58,7 @@ public abstract class Bt20Base extends BtHRBase {
         return false;
     }
 
-    public boolean startEnableIntent(Activity activity, int requestCode) {
+    public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
         return startEnableIntentImpl(activity, requestCode);
     }
 

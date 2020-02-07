@@ -20,6 +20,8 @@ package org.runnerup.hr;
 import android.app.Activity;
 import android.os.Handler;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 /**
  * {@link HRProvider}'s provide an interface to a wireless connectivity module (Bluetooth, ANT+ etc)
  * and any heart rate devices than can be connected through them
@@ -75,7 +77,7 @@ public interface HRProvider {
      *                  {@link Activity#onActivityResult(int, int, android.content.Intent)}
      * @return true if the intent was sent
      */
-    boolean startEnableIntent(Activity activity, int requestCode);
+    boolean startEnableIntent(AppCompatActivity activity, int requestCode);
 
     /**
      * Initialises the wireless module, allowing device scanning/connection
