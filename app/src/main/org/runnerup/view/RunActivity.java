@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -319,7 +318,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             finish();
             return;
         }
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == AppCompatActivity.RESULT_OK) {
             /*
              * they saved
              */
@@ -327,7 +326,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             workout.onSave();
             mTracker = null;
             finish();
-        } else if (resultCode == Activity.RESULT_CANCELED) {
+        } else if (resultCode == AppCompatActivity.RESULT_CANCELED) {
             /*
              * they discarded
              */
@@ -335,7 +334,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             workout.onDiscard();
             mTracker = null;
             finish();
-        } else if (resultCode == Activity.RESULT_FIRST_USER) {
+        } else if (resultCode == AppCompatActivity.RESULT_FIRST_USER) {
             startTimer();
             if (requestCode == 0) {
                 workout.onResume(workout);

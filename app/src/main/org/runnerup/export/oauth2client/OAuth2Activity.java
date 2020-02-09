@@ -18,7 +18,6 @@
 package org.runnerup.export.oauth2client;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -178,7 +177,7 @@ public class OAuth2Activity extends AppCompatActivity {
                         Log.e(getClass().getName(), "e: " + e);
                         Intent res = new Intent()
                                 .putExtra("error", e);
-                        OAuth2Activity.this.setResult(Activity.RESULT_CANCELED, res);
+                        OAuth2Activity.this.setResult(AppCompatActivity.RESULT_CANCELED, res);
                         OAuth2Activity.this.finish();
                         return;
                     }
@@ -206,7 +205,7 @@ public class OAuth2Activity extends AppCompatActivity {
                     new AsyncTask<String, String, Integer>() {
                         @Override
                         protected Integer doInBackground(String... params) {
-                            int resultCode = Activity.RESULT_CANCELED;
+                            int resultCode = AppCompatActivity.RESULT_CANCELED;
                             HttpURLConnection conn = null;
 
                             try {
@@ -231,7 +230,7 @@ public class OAuth2Activity extends AppCompatActivity {
 
                                     res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
                                     if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-                                        resultCode = Activity.RESULT_OK;
+                                        resultCode = AppCompatActivity.RESULT_OK;
                                     }
                                 } catch (IOException e) {
                                     InputStream inS = conn.getErrorStream();

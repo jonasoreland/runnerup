@@ -18,7 +18,6 @@
 package org.runnerup.export;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -228,7 +227,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == AppCompatActivity.RESULT_OK) {
             String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
             try {
                 JSONObject obj = new JSONObject(authConfig);

@@ -17,7 +17,6 @@
 
 package org.runnerup.hr;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;

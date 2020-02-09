@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.runnerup.export;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -168,7 +167,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == AppCompatActivity.RESULT_OK) {
             try {
                 String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
                 JSONObject obj = new JSONObject(authConfig);

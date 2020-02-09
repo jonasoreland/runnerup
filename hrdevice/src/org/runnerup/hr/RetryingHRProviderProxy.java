@@ -1,6 +1,5 @@
 package org.runnerup.hr;
 
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 

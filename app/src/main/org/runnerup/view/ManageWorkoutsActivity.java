@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -573,7 +572,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             if (currentlySelectedWorkout == null)
                 return;
 
-            final Activity context = ManageWorkoutsActivity.this;
+            final AppCompatActivity context = ManageWorkoutsActivity.this;
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
