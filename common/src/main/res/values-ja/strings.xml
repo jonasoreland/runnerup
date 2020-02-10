@@ -346,8 +346,10 @@
   <string name="path_simplification_save_info">保存時にデータベース内のGPS経路を単純化します</string>
   <string name="path_simplification_export_gpx">GPXのエクスポート時に単純化</string>
   <string name="path_simplification_export_gpx_info">GPXへのエクスポート時にGPS経路を単純化します</string>
-  <string name="path_simplification_tolerance">公差（メートル単位）</string>
+  <string name="path_simplification_tolerance">公差（m）</string>
   <string name="path_simplification_algorithm">アルゴリズム</string>
   <string name="path_simplification_algorithm_info">高速または高品質の経路簡素化を選択</string>
   <string name="path_simplification_menu">経路を単純化する</string>
+  <string name="File_format">アップロードファイル:</string>
+  <string name="File_need_one_format">少なくとも形式が１つ必要です!</string>
 </resources>
