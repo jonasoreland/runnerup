@@ -45,6 +45,8 @@
   <string name="speed">скорость</string>
   <string name="pace">Темп</string>
   <string name="heart_rate_zone">Зона</string>
+  <string name="temperature">температура</string>
+  <string name="pressure">давление</string>
   <string name="Zone">Зоны ЧСС</string>
   <string name="Device">Устройство</string>
   <string name="Start_hour">Начальный час</string>
@@ -73,6 +75,7 @@
   <string name="Rest_type">Тип отдыха</string>
   <string name="Repetitions">Повторения</string>
   <string name="Date">Дата</string>
+  <string name="No_devices_connected">Нет подключенных устройств</string>
   <string name="GPS_satellites">Спутники GPS, ГЛОНАСС</string>
   <string name="Start_GPS">Старт GPS</string>
   <string name="Duration">Подолжительность</string>
@@ -109,6 +112,8 @@
   <string name="Synchronizing">Синхронизация:</string>
   <string name="synchronizing_feed">синхронизируем фитнес аккаунты…</string>
   <string name="OK">ОК</string>
+  <string name="Show_disabled_accounts">Показать отключенные аккаунты</string>
+  <string name="Hide_disabled_accounts">Скрыть отключенные аккаунты</string>
   <string name="Clear_uploads">Очистить загруженные</string>
   <string name="Upload_missing_workouts">Выгрузить недостающие тренировки</string>
   <string name="Disconnect_account">Отключить аккаунт</string>
@@ -166,7 +171,7 @@
   <string name="Autopause">Авто пауза</string>
   <string name="Enable_RunnerUpLive">Включить RunnerUpLive</string>
   <string name="Headset_key_startstop">Кнопка гарнитуры старт/стоп</string>
-  <string name="Activity_countdown">Отсчёт до начала тренировки</string>
+  <string name="Activity_countdown">Обратный отсчет до начала активности</string>
   <string name="Countdown_time_s">Отсчитывать время ©</string>
   <string name="Unit_preference">Единицы измерений</string>
   <string name="Auto_start_GPS">Автоматически включать GPS</string>
@@ -179,7 +184,7 @@
   <string name="Target_pace_moving_average_seconds">Целевой темп скользящих средних секунд</string>
   <string name="Target_pace_grace_seconds">Держать показатели темпа</string>
   <string name="Autolap_during_intervals">Завершать круг в промежутках интервалов</string>
-  <string name="Add_countdown_after_step_that_ends_with_user_press">Добавить обратный отсчёт перед стартом</string>
+  <string name="Add_countdown_after_step_that_ends_with_user_press">Обратный отсчет после нажатия клавиши</string>
   <string name="Step_countdown_time_s">Время обратного отсчёта (с)</string>
   <string name="Smooth_pace_graph">Сгладить график темпа</string>
   <string name="Smooth_pace_filters">Настройки сглаживания (с)</string>
@@ -221,6 +226,7 @@
   <string name="Current_speed">Текущая скорость</string>
   <string name="Current_heart_rate">Текущий пульс</string>
   <string name="Current_heart_rate_zone">Текущая зона ЧСС</string>
+  <string name="Current">Текущий</string>
   <string name="Misc_cues">Прочие голосовые команды</string>
   <string name="Target_coaching">Тренировка по показателям</string>
   <string name="Skip_event_audio_cues">Не озвучивать паузу</string>
@@ -277,4 +283,8 @@
   <string name="Loading_activities">Загрузка данных</string>
   <string name="Fetching_activities_from_1s">Извлечение данных из %1$s</string>
   <string name="Unknown">Неизвестно</string>
+  <string name="Lap_start">Начало круга</string>
+  <string name="Speed">Скорость</string>
+  <string name="File_format">Загрузить файл(ы) как:</string>
+  <string name="File_need_one_format">Нужен хотя бы один формат!</string>
 </resources>
