@@ -342,11 +342,7 @@
   <string name="Speed_unit_preference">Hastighetsenhet</string>
   <string name="path_simplification">GPS-spår förenkling</string>
   <string name="path_simplification_info">Reducera upplösning för GPS-spår (antalet punkter). Jämnar ut GPS-spår och minskar storleken för aktiviteten i databasen eller i export.</string>
-  <string name="path_simplification_save">Förenkla då aktivitet sparas</string>
-  <string name="path_simplification_save_info">Förenkla GPS-spår i databas då aktivitet sparas</string>
-  <string name="path_simplification_export_gpx">Förenkla vid GPX export</string>
-  <string name="path_simplification_export_gpx_info">Förenkla GPS-spår vid GPX export</string>
-  <string name="path_simplification_tolerance">Tolerans (m)</string>
+    <string name="path_simplification_tolerance">Tolerans (m)</string>
   <string name="path_simplification_algorithm">Algoritm</string>
   <string name="path_simplification_algorithm_info">Välj snabb eller hög kvalitet GPS-spår förenkling</string>
   <string name="path_simplification_menu">Förenkla GPS-spår</string>

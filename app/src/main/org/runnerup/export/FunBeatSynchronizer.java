@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.Part;
@@ -75,6 +76,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
     private String password = null;
     private String loginID = null;
     private String loginSecretHashed = null;
+    private PathSimplifier simplifier;
 
     private static final SparseArray<Sport> funbeat2sportMap = new SparseArray<>();
     //private static final Map<Sport, Integer> sport2funbeatMap = new HashMap<>();
@@ -93,7 +95,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
         //}
     }
 
-    FunBeatSynchronizer(SyncManager syncManager) {
+    FunBeatSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (APP_ID == null || APP_SECRET == null) {
             try {
                 final JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -103,6 +105,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
                 ex.printStackTrace();
             }
         }
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -340,7 +343,7 @@ public class FunBeatSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        TCX tcx = new TCX(db);
+        TCX tcx = new TCX(db, simplifier);
         HttpURLConnection conn;
         Exception ex;
         try {

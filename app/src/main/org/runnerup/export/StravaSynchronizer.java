@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -73,8 +74,9 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     private String access_token = null;
     private String refresh_token = null;
     private long access_expire = -1;
+    private PathSimplifier simplifier;
 
-    StravaSynchronizer(SyncManager syncManager) {
+    StravaSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
                 JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -84,6 +86,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
                 ex.printStackTrace();
             }
         }
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -348,7 +351,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         }
 
         try {
-            TCX tcx = new TCX(db);
+            TCX tcx = new TCX(db, simplifier);
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer);
             ActivityDbInfo dbInfo = getStravaType(db, mID);

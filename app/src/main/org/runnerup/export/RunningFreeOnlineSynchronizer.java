@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.KXmlSerializer;
 import org.w3c.dom.Document;
@@ -51,6 +52,11 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
     private String username = null;
     private String secretKey  = null;
     private boolean isConnected = false;
+    private PathSimplifier simplifier;
+
+    public RunningFreeOnlineSynchronizer(PathSimplifier simplifier) {
+        this.simplifier = simplifier;
+    }
 
     public String getName() {
         return NAME;
@@ -204,7 +210,7 @@ public class RunningFreeOnlineSynchronizer extends DefaultSynchronizer {
         Exception exception = null;
         HttpURLConnection conn = null;
         try {
-            TCX tcx = new TCX(db);
+            TCX tcx = new TCX(db, simplifier);
             StringWriter writer = new StringWriter();
             tcx.exportWithSport(mID, writer);
             byte[] gzippedTcx = gzip(writer.toString());

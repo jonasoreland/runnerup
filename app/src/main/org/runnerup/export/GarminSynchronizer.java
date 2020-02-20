@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.Part;
@@ -81,6 +82,11 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     private String username = null;
     private String password = null;
     private boolean isConnected = false;
+    private PathSimplifier simplifier;
+
+    public GarminSynchronizer(PathSimplifier simplifier) {
+        this.simplifier = simplifier;
+    }
 
     @Override
     public long getId() {
@@ -422,7 +428,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        TCX tcx = new TCX(db);
+        TCX tcx = new TCX(db, simplifier);
         HttpURLConnection conn;
         Exception ex;
         try {

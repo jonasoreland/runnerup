@@ -43,5 +43,4 @@
     <item>Kvinna</item>
   </string-array>
   <!--Note: keep in same order as DB-->
-  <string-array name="path_simplification_algorithm_titles"/>
 </resources>

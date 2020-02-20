@@ -52,15 +52,13 @@ public class FileSynchronizer extends DefaultSynchronizer {
     private long id = 0;
     private String mPath;
     private FileFormats mFormat;
-    private PathSimplifier simplifier = null;
+    private PathSimplifier simplifier;
 
     FileSynchronizer() {}
 
-    FileSynchronizer(Context context) {
+    FileSynchronizer(Context context, PathSimplifier simplifier) {
         this();
-        this.simplifier = PathSimplifier.isEnabledForExportGpx(context) ?
-                new PathSimplifier(context) :
-                null;
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -176,7 +174,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                     String.format(Locale.getDefault(), "RunnerUp_%04d_%s.", mID, sport.TapiriikType());
             
             if (mFormat.contains(FileFormats.TCX)) {
-                TCX tcx = new TCX(db);
+                TCX tcx = new TCX(db, simplifier);
                 File file = new File(fileBase + FileFormats.TCX.getValue());
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 tcx.export(mID, new OutputStreamWriter(out));

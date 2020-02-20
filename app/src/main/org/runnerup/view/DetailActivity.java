@@ -32,6 +32,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -732,6 +733,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 Long.toString(mID)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
+
+        // path simplification (reduce resolution of location entries in database)
+        try {
+            PathSimplifier simplifier = PathSimplifier.getPathSimplifierForSave(this);
+            if (simplifier != null) {
+                ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
+                ActivityCleaner.deleteLocations(mDB, ids);
+                (new ActivityCleaner()).recompute(mDB, mID);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Failed to simplify path: " + e.getMessage());
+        }
     }
 
     private final OnLongClickListener clearUploadClick = new OnLongClickListener() {

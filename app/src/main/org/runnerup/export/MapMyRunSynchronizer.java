@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
@@ -61,6 +62,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     private String md5pass = null;
     private String user_id = null;
     private String user_key = null;
+    private PathSimplifier simplifier;
 
     private static final SparseArray<Sport> mapmyrun2sportMap = new SparseArray<>();
     private static final Map<Sport, Integer> sport2mapmyrunMap = new HashMap<>();
@@ -75,7 +77,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         }
     }
 
-    MapMyRunSynchronizer(SyncManager syncManager) {
+    MapMyRunSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (CONSUMER_KEY == null) {
             try {
                 JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -84,6 +86,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 ex.printStackTrace();
             }
         }
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -241,7 +244,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        TCX tcx = new TCX(db);
+        TCX tcx = new TCX(db, simplifier);
         HttpURLConnection conn;
         Exception ex;
         try {

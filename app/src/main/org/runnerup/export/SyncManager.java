@@ -56,6 +56,7 @@ import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.Synchronizer.AuthMethod;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.feed.FeedList;
@@ -90,6 +91,7 @@ public class SyncManager {
     private Context mContext = null;
     private final Map<String, Synchronizer> synchronizers = new HashMap<>();
     private final LongSparseArray<Synchronizer> synchronizersById = new LongSparseArray<>();
+    PathSimplifier simplifier;
 
     private ProgressDialog mSpinner = null;
 
@@ -118,6 +120,7 @@ public class SyncManager {
         mDB = DBHelper.getWritableDatabase(context);
         mSpinner = spinner;
         mSpinner.setCancelable(false);
+        simplifier = PathSimplifier.getPathSimplifierForExport(context);
     }
     public SyncManager(Activity activity) {
         init(activity, activity, new ProgressDialog(activity));
@@ -178,45 +181,46 @@ public class SyncManager {
         if (synchronizers.containsKey(synchronizerName)) {
             return synchronizers.get(synchronizerName);
         }
+
         Synchronizer synchronizer = null;
         if (synchronizerName.contentEquals(RunKeeperSynchronizer.NAME)) {
-            synchronizer = new RunKeeperSynchronizer(this);
+            synchronizer = new RunKeeperSynchronizer(this,simplifier);
         } else if (synchronizerName.contentEquals(GarminSynchronizer.NAME)) {
-            synchronizer = new GarminSynchronizer();
+            synchronizer = new GarminSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(FunBeatSynchronizer.NAME)) {
-            synchronizer = new FunBeatSynchronizer(this);
+            synchronizer = new FunBeatSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(MapMyRunSynchronizer.NAME)) {
-            synchronizer = new MapMyRunSynchronizer(this);
+            synchronizer = new MapMyRunSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(NikePlusSynchronizer.NAME)) {
-            synchronizer = new NikePlusSynchronizer(this);
+            synchronizer = new NikePlusSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(JoggSESynchronizer.NAME)) {
-            synchronizer = new JoggSESynchronizer(this);
+            synchronizer = new JoggSESynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(EndomondoSynchronizer.NAME)) {
-            synchronizer = new EndomondoSynchronizer();
+            synchronizer = new EndomondoSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(RunningAHEADSynchronizer.NAME)) {
-            synchronizer = new RunningAHEADSynchronizer(this);
+            synchronizer = new RunningAHEADSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(RunnerUpLiveSynchronizer.NAME)) {
             synchronizer = new RunnerUpLiveSynchronizer(mContext);
         } else if (synchronizerName.contentEquals(DigifitSynchronizer.NAME)) {
-            synchronizer = new DigifitSynchronizer();
+            synchronizer = new DigifitSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(StravaSynchronizer.NAME)) {
-            synchronizer = new StravaSynchronizer(this);
+            synchronizer = new StravaSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(FacebookSynchronizer.NAME)) {
-            synchronizer = new FacebookSynchronizer(mContext, this);
+            synchronizer = new FacebookSynchronizer(mContext, this, simplifier);
         } else if (synchronizerName.contentEquals(GooglePlusSynchronizer.NAME)) {
             synchronizer = new GooglePlusSynchronizer(this);
         } else if (synchronizerName.contentEquals(RuntasticSynchronizer.NAME)) {
-            synchronizer = new RuntasticSynchronizer();
+            synchronizer = new RuntasticSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
         } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
-            synchronizer = new RunningFreeOnlineSynchronizer();
+            synchronizer = new RunningFreeOnlineSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
-            synchronizer = new FileSynchronizer(mContext);
+            synchronizer = new FileSynchronizer(mContext, simplifier);
         } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
-            synchronizer = new RunalyzeSynchronizer();
+            synchronizer = new RunalyzeSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {
-            synchronizer = new DropboxSynchronizer(mContext);
+            synchronizer = new DropboxSynchronizer(mContext, simplifier);
         } else {
             Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);;
         }

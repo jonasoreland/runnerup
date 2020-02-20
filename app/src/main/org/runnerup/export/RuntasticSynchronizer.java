@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
@@ -66,6 +67,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
 
     private Integer userId = null;
     private String authToken = null;
+    private PathSimplifier simplifier;
 
     private static final SparseArray<Sport> runtastic2sportMap = new SparseArray<>();
     private static final Map<Sport, Integer> sport2runtasticMap = new HashMap<>();
@@ -77,6 +79,9 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         }
     }
 
+    public RuntasticSynchronizer(PathSimplifier simplifier) {
+        this.simplifier = simplifier;
+    }
 
     @Override
     public long getId() {
@@ -281,7 +286,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         }
 
         StringWriter writer = new StringWriter();
-        TCX tcx = new TCX(db);
+        TCX tcx = new TCX(db, simplifier);
 
         HttpURLConnection conn = null;
         try {

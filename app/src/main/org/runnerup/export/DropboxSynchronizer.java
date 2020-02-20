@@ -63,13 +63,11 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
     private FileFormats mFormat;
     private PathSimplifier simplifier = null;
 
-    DropboxSynchronizer(Context context) {
+    DropboxSynchronizer(Context context, PathSimplifier simplifier) {
         if (ENABLED == 0) {
             Log.w(NAME, "No client id configured in this build");
         }
-        this.simplifier = PathSimplifier.isEnabledForExportGpx(context) ?
-                new PathSimplifier(context) :
-                null;
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -314,14 +312,15 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
                 }
             }
 
-            StringWriter writer = new StringWriter();
             if (mFormat.contains(FileFormats.TCX)) {
-                TCX tcx = new TCX(db);
+                TCX tcx = new TCX(db, simplifier);
+                StringWriter writer = new StringWriter();
                 tcx.export(mID, writer);
                 s = uploadFile(db, mID, sport, writer, FileFormats.TCX.getValue());
             }
             if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
                 GPX gpx = new GPX(db, true, true, simplifier);
+                StringWriter writer = new StringWriter();
                 gpx.export(mID, writer);
                 s = uploadFile(db, mID, sport, writer, FileFormats.GPX.getValue());
             }

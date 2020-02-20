@@ -26,6 +26,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathCursor;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.util.Formatter;
 
 import java.text.SimpleDateFormat;
@@ -43,10 +45,12 @@ public class FacebookCourse {
     private Formatter formatter = null;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
+    private PathSimplifier simplifier;
 
-    public FacebookCourse(Context ctx, SQLiteDatabase db) {
+    public FacebookCourse(Context ctx, SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
         formatter = new Formatter(ctx);
+        this.simplifier = simplifier;
     }
 
     private String formatTime(long time) {
@@ -123,10 +127,10 @@ public class FacebookCourse {
     private JSONArray trail(long activityId) throws JSONException {
         final String cols[] = {
                 DB.LOCATION.TYPE, DB.LOCATION.LATITUDE,
-                DB.LOCATION.LONGITUDE, DB.LOCATION.TIME, DB.LOCATION.SPEED
+                DB.LOCATION.LONGITUDE, DB.LOCATION.TIME, DB.LOCATION.SPEED,
+                DB.PRIMARY_KEY // 5
         };
-        Cursor c = mDB.query(DB.LOCATION.TABLE, cols, DB.LOCATION.ACTIVITY
-                + " = " + activityId, null, null, null, null);
+        PathCursor c = new PathCursor(mDB, activityId, cols, 5, simplifier);
         if (c.moveToFirst()) {
             Location prev = null, last = null;
             double sumDist = 0;

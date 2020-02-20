@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.GPX;
 import org.runnerup.util.KXmlSerializer;
 import org.w3c.dom.DOMException;
@@ -67,8 +68,10 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     private String username = null;
     private String password = null;
     private boolean isConnected = false;
+    private PathSimplifier simplifier;
 
-    JoggSESynchronizer(final SyncManager syncManager) {
+
+    JoggSESynchronizer(final SyncManager syncManager, PathSimplifier simplifier) {
         if (MASTER_USER == null || MASTER_KEY == null) {
             try {
                 final JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -78,6 +81,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
                 ex.printStackTrace();
             }
         }
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -274,7 +278,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
         Exception ex;
         HttpURLConnection conn = null;
-        final GPX gpx = new GPX(db);
+        final GPX gpx = new GPX(db, simplifier);
         try {
             final StringWriter gpxString = new StringWriter();
             gpx.export(mID, gpxString);

@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -77,8 +78,9 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
+    private PathSimplifier simplifier;
 
-    FacebookSynchronizer(Context context, SyncManager syncManager) {
+    FacebookSynchronizer(Context context, SyncManager syncManager, PathSimplifier simplifier) {
         this.context = context;
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
@@ -89,6 +91,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 ex.printStackTrace();
             }
         }
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -248,7 +251,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
             return s;
         }
 
-        FacebookCourse courseFactory = new FacebookCourse(context, db);
+        FacebookCourse courseFactory = new FacebookCourse(context, db, simplifier);
         try {
             JSONObject runObj = new JSONObject();
             JSONObject course = courseFactory.export(mID, !skipMapInPost, runObj);

@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.NikeXML;
 import org.runnerup.export.util.FormValues;
@@ -80,8 +81,9 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
     private String password = null;
     private String access_token = null;
     private long expires_timeout = 0;
+    private PathSimplifier simplifier;
 
-    NikePlusSynchronizer(SyncManager syncManager) {
+    NikePlusSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (CLIENT_ID == null || CLIENT_SECRET == null || APP_ID == null) {
             try {
                 JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -92,6 +94,7 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
                 ex.printStackTrace();
             }
         }
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -235,8 +238,8 @@ public class NikePlusSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        NikeXML nikeXML = new NikeXML(db);
-        GPX nikeGPX = new GPX(db);
+        NikeXML nikeXML = new NikeXML(db, simplifier);
+        GPX nikeGPX = new GPX(db, simplifier);
         HttpURLConnection conn;
         Exception ex;
         try {
