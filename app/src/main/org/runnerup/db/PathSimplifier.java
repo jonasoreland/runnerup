@@ -145,29 +145,26 @@ public class PathSimplifier {
         if (c.moveToFirst()) {
             do {
                 int lstate = c.getInt(3);
-                // save ID of the location entry
-                Location l = new Location(String.format(Locale.US, "%d", c.getInt(0)));
-                // get location's coordinates
-                l.setLatitude(c.getDouble(1));
-                l.setLongitude(c.getDouble(2));
+
                 // Only TYPE_GPS locations are considered for simplification
                 if (lstate == Constants.DB.LOCATION.TYPE_GPS) {
+                    // save ID of the location entry
+                    Location l = new Location(String.format(Locale.US, "%d", c.getInt(0)));
+                    // get location's coordinates
+                    l.setLatitude(c.getDouble(1));
+                    l.setLongitude(c.getDouble(2));
                     ids.add(l.getProvider());
                     locations.add(l);
-                }
 
-                if ((lstate == Constants.DB.LOCATION.TYPE_PAUSE)
-                    || (lstate == Constants.DB.LOCATION.TYPE_END)) {
+                } else if ((lstate == Constants.DB.LOCATION.TYPE_PAUSE)
+                        || (lstate == Constants.DB.LOCATION.TYPE_END)) {
                     // this is the end of a segment
 
-                    // No need to simplify segments with less than 3 GPS locations
-                    if (locations.size() > 2) {
-                        // simplify current segment
-                        Location[] simplifiedLocations = simplifySegment(locations);
-                        // store locations to keep
-                        for (Location sl : simplifiedLocations) {
-                            simplifiedIDs.add(sl.getProvider());
-                        }
+                    // simplify current segment
+                    Location[] simplifiedLocations = simplifySegment(locations);
+                    // store locations to keep
+                    for (Location sl : simplifiedLocations) {
+                        simplifiedIDs.add(sl.getProvider());
                     }
 
                     // start new segment
