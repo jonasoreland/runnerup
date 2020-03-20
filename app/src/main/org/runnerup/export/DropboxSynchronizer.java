@@ -45,9 +45,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Server {
