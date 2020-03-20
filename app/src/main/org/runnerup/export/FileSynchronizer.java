@@ -33,6 +33,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
+import org.runnerup.util.FileNameHelper;
 import org.runnerup.workout.FileFormats;
 import org.runnerup.workout.Sport;
 
@@ -43,6 +44,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class FileSynchronizer extends DefaultSynchronizer {
@@ -154,9 +157,11 @@ public class FileSynchronizer extends DefaultSynchronizer {
         }
 
         Sport sport = Sport.RUNNING;
+        long startTime = 0;
         try {
             String[] columns = {
-                    Constants.DB.ACTIVITY.SPORT
+                    Constants.DB.ACTIVITY.SPORT,
+                    DB.ACTIVITY.START_TIME,
             };
             Cursor c = null;
             try {
@@ -164,15 +169,17 @@ public class FileSynchronizer extends DefaultSynchronizer {
                         null, null, null, null);
                 if (c.moveToFirst()) {
                     sport = Sport.valueOf(c.getInt(0));
+                    startTime = c.getLong(1);
                 }
             } finally {
                 if (c != null) {
                     c.close();
                 }
             }
+
             String fileBase = new File(mPath).getAbsolutePath() + File.separator +
-                    String.format(Locale.getDefault(), "RunnerUp_%04d_%s.", mID, sport.TapiriikType());
-            
+                    FileNameHelper.getExportFileName(mID, sport.TapiriikType(), startTime);
+
             if (mFormat.contains(FileFormats.TCX)) {
                 TCX tcx = new TCX(db, simplifier);
                 File file = new File(fileBase + FileFormats.TCX.getValue());

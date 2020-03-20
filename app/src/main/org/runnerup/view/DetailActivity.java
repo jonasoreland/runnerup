@@ -65,6 +65,7 @@ import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
 import org.runnerup.util.Bitfield;
+import org.runnerup.util.FileNameHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GraphWrapper;
 import org.runnerup.util.MapWrapper;
@@ -72,7 +73,9 @@ import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -116,6 +119,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private SyncManager syncManager = null;
     private Formatter formatter = null;
+
+    private long startTime = 0; // activity start time in unix timestamp
 
     /**
      * Called when the activity is first created.
@@ -488,6 +493,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
             long st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
+            startTime = st;
             setTitle(formatter.formatDateTime(st));
         }
         double d = 0;
@@ -950,11 +956,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         } else {
                             intent.setType(GPX_MIME);
                         }
+
                         //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
                         //Solid Explorer File Manager works though
                         Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
                                 + "/" + mID
-                                + "/" + String.format(Locale.getDefault(), "RunnerUp_%04d.%s", mID, fmt));
+                                + "/" + String.format(Locale.getDefault(), "RunnerUp_%04d_%s.%s", mID,
+                                FileNameHelper.unixTimeToString(startTime), fmt));
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
                         context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
                     }

@@ -35,6 +35,7 @@ import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.util.FileNameHelper;
 import org.runnerup.workout.FileFormats;
 import org.runnerup.workout.Sport;
 
@@ -44,6 +45,8 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 
@@ -223,15 +226,16 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
     // upload a single file
     private Status uploadFile(SQLiteDatabase db, final long mID, Sport sport,
+                              long startTime,
                               StringWriter writer, String fileExt)
             throws IOException, JSONException {
 
         Status s;
 
+        String date = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+
         // Upload to default directory /Apps/RunnerUp
-        String file = String.format(Locale.getDefault(), "/RunnerUp_%s_%04d_%s.%s",
-                android.os.Build.MODEL.replaceAll("\\s","_"), mID, sport.TapiriikType(),
-                fileExt);
+        String file = FileNameHelper.getDropBoxUploadFileName(mID, sport.TapiriikType(), startTime, fileExt);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
         conn.setDoOutput(true);
@@ -296,15 +300,20 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         }
 
         Sport sport = Sport.RUNNING;
+        long start_time = 0;
         try {
 
-            String[] columns = { Constants.DB.ACTIVITY.SPORT };
+            String[] columns = {
+                    Constants.DB.ACTIVITY.SPORT,
+                    DB.ACTIVITY.START_TIME,
+            };
             Cursor c = null;
             try {
                 c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
                         null, null, null, null);
                 if (c.moveToFirst()) {
                     sport = Sport.valueOf(c.getInt(0));
+                    start_time = c.getLong(1);
                 }
             } finally {
                 if (c != null) {
@@ -316,13 +325,13 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
                 TCX tcx = new TCX(db, simplifier);
                 StringWriter writer = new StringWriter();
                 tcx.export(mID, writer);
-                s = uploadFile(db, mID, sport, writer, FileFormats.TCX.getValue());
+                s = uploadFile(db, mID, sport, start_time, writer, FileFormats.TCX.getValue());
             }
             if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
                 GPX gpx = new GPX(db, true, true, simplifier);
                 StringWriter writer = new StringWriter();
                 gpx.export(mID, writer);
-                s = uploadFile(db, mID, sport, writer, FileFormats.GPX.getValue());
+                s = uploadFile(db, mID, sport, start_time, writer, FileFormats.GPX.getValue());
             }
 
         } catch (Exception e) {
