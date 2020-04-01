@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathCursor;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.EndomondoSynchronizer;
 import org.runnerup.workout.Sport;
 
@@ -41,12 +43,14 @@ public class EndomondoTrack {
 
     private SQLiteDatabase mDB = null;
     private SimpleDateFormat simpleDateFormat = null;
+    private PathSimplifier simplifier;
 
-    public EndomondoTrack(final SQLiteDatabase db) {
+    public EndomondoTrack(final SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'UTC'",
                 Locale.US);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        this.simplifier = simplifier;
     }
 
     public static class Summary {
@@ -97,11 +101,11 @@ public class EndomondoTrack {
                 DB.LOCATION.HR, // 6
                 DB.LOCATION.DISTANCE, // 7
                 DB.LOCATION.SPEED, // 8
-                DB.LOCATION.CADENCE // 9
+                DB.LOCATION.CADENCE, // 9
+                DB.PRIMARY_KEY // 10
         };
 
-        final Cursor c = mDB.query(DB.LOCATION.TABLE, pColumns, DB.LOCATION.ACTIVITY
-                + " = " + activityId, null, null, null, null);
+        PathCursor c = new PathCursor(mDB, activityId, pColumns, 10, simplifier);
 
         double distance = 0;
         Location lastLoc = null;

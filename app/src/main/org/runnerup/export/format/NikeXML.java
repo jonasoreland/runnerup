@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathCursor;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.KXmlSerializer;
 
@@ -44,9 +46,11 @@ public class NikeXML {
     private SQLiteDatabase mDB = null;
     private KXmlSerializer mXML = null;
     private SimpleDateFormat simpleDateFormat = null;
+    private PathSimplifier simplifier;
 
-    public NikeXML(final SQLiteDatabase db) {
+    public NikeXML(final SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
+        this.simplifier = simplifier;
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ",
                 Locale.US);
     }
@@ -446,11 +450,11 @@ public class NikeXML {
                 DB.LOCATION.LONGITUDE,// 3
                 DB.LOCATION.ALTITUDE, // 4
                 DB.LOCATION.TYPE, // 5
-                DB.LOCATION.HR
+                DB.LOCATION.HR, // 6
+                DB.PRIMARY_KEY // 7
         }; // 6
 
-        final Cursor c = mDB.query(DB.LOCATION.TABLE, pColumns, DB.LOCATION.ACTIVITY
-                + " = " + activityId, null, null, null, null);
+        PathCursor c = new PathCursor(mDB, activityId, pColumns, 7, simplifier);
 
         try {
             final Pos p = new Pos();

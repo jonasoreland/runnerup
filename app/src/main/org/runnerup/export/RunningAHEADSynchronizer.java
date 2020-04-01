@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -63,8 +64,9 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
     private long id = 0;
     private String access_token = null;
+    private PathSimplifier simplifier;
 
-    RunningAHEADSynchronizer(SyncManager syncManager) {
+    RunningAHEADSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
                 JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -74,6 +76,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
                 ex.printStackTrace();
             }
         }
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -203,7 +206,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
         }
 
         String URL = IMPORT_URL + "?access_token=" + access_token;
-        TCX tcx = new TCX(db);
+        TCX tcx = new TCX(db, simplifier);
         HttpURLConnection conn;
         Exception ex;
         try {

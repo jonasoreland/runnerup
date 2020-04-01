@@ -26,6 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathCursor;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.db.entities.LapEntity;
 import org.runnerup.db.entities.LocationEntity;
@@ -58,9 +60,11 @@ import java.util.concurrent.TimeUnit;
 public class RunKeeper {
 
     private SQLiteDatabase mDB = null;
+    private PathSimplifier simplifier;
 
-    public RunKeeper(SQLiteDatabase db) {
+    public RunKeeper(SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
+        this.simplifier = simplifier;
     }
 
     private static String formatTime(long time) {
@@ -134,11 +138,10 @@ public class RunKeeper {
             throws IOException {
         String[] pColumns = {
                 DB.LOCATION.TIME, DB.LOCATION.LATITUDE,
-                DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE
+                DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE, DB.LOCATION.TYPE,
+                DB.PRIMARY_KEY
         };
-        Cursor cursor = mDB.query(DB.LOCATION.TABLE, pColumns,
-                DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
-                null);
+        PathCursor cursor = new PathCursor(mDB, activityId, pColumns, 5, simplifier);
         if (cursor.moveToFirst()) {
             w.name(name);
             w.beginArray();

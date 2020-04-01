@@ -342,11 +342,7 @@
   <string name="Speed_unit_preference">スピード単位</string>
   <string name="path_simplification">経路の単純化</string>
   <string name="path_simplification_info">GPS経路の解像度を下げます (時間の経過とともに記録された場所)。 経路を滑らかにして、データベースやエクスポートされたファイル内のアクティビティのサイズを小さくします。</string>
-  <string name="path_simplification_save">アクティビティの保存時に単純化</string>
-  <string name="path_simplification_save_info">保存時にデータベース内のGPS経路を単純化します</string>
-  <string name="path_simplification_export_gpx">GPXのエクスポート時に単純化</string>
-  <string name="path_simplification_export_gpx_info">GPXへのエクスポート時にGPS経路を単純化します</string>
-  <string name="path_simplification_tolerance">公差（m）</string>
+    <string name="path_simplification_tolerance">公差（m）</string>
   <string name="path_simplification_algorithm">アルゴリズム</string>
   <string name="path_simplification_algorithm_info">高速または高品質の経路簡素化を選択</string>
   <string name="path_simplification_menu">経路を単純化する</string>

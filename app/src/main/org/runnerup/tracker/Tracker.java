@@ -564,18 +564,6 @@ public class Tracker extends android.app.Service implements
         if (save) {
             saveActivity();
             liveLog(DB.LOCATION.TYPE_END);
-
-            // path simplification (reduce resolution of location entries in database)
-            try {
-                if (PathSimplifier.isEnabledForSave(this)) {
-                    PathSimplifier simplifier = new PathSimplifier(this);
-                    ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mActivityId);
-                    ActivityCleaner.deleteLocations(mDB, ids);
-                    (new ActivityCleaner()).recompute(mDB, mActivityId);
-                }
-            } catch (Exception e) {
-                Log.e(getClass().getName(), "Failed to simplify path: " + e.getMessage());
-            }
         } else {
             ContentValues tmp = new ContentValues();
             tmp.put("deleted", 1);

@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.oauth2client.OAuth2Activity;
@@ -85,6 +86,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     private String access_token = null;
     private String fitnessActivitiesUrl = null;
     private String userName = null;
+    private PathSimplifier simplifier;
 
     public static final Map<String, Sport> runkeeper2sportMap = new HashMap<>();
     public static final Map<Sport, String> sport2runkeeperMap = new HashMap<>();
@@ -119,7 +121,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         POINT_TYPE.put("manual", DB.LOCATION.TYPE_GPS);
     }
 
-    RunKeeperSynchronizer(SyncManager syncManager) {
+    RunKeeperSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {
             try {
                 JSONObject tmp = new JSONObject(syncManager.loadData(this));
@@ -130,6 +132,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             }
         }
         context = syncManager.getContext();
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -402,7 +405,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             conn.addRequestProperty("Authorization", "Bearer " + access_token);
             conn.addRequestProperty("Content-type",
                     "application/vnd.com.runkeeper.NewFitnessActivity+json");
-            RunKeeper rk = new RunKeeper(db);
+            RunKeeper rk = new RunKeeper(db, simplifier);
             BufferedWriter w = new BufferedWriter(new OutputStreamWriter(
                     conn.getOutputStream()));
             rk.export(mID, w);

@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.util.Part;
 import org.runnerup.export.util.StringWritable;
@@ -62,7 +63,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         String username = args[0];
         String password = args[1];
 
-        DigifitSynchronizer du = new DigifitSynchronizer();
+        DigifitSynchronizer du = new DigifitSynchronizer(null);
         du.init(username, password);
 
         Log.e("DigifitSynchronizer", du.connect().toString());
@@ -72,6 +73,11 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
     private boolean _loggedin;
     private String _password;
     private String _username;
+    private PathSimplifier simplifier;
+
+    public DigifitSynchronizer(PathSimplifier simplifier) {
+        this.simplifier = simplifier;
+    }
 
 // --Commented out by Inspection START (2017-08-11 13:14):
 //    private JSONObject buildRequest(String root, Map<String, String> requestParameters)
@@ -438,7 +444,7 @@ public class DigifitSynchronizer extends DefaultSynchronizer {
         }
 
         Status errorStatus = Status.ERROR;
-        TCX tcx = new TCX(db);
+        TCX tcx = new TCX(db, simplifier);
         tcx.setAddGratuitousTrack(true);
 
         try {

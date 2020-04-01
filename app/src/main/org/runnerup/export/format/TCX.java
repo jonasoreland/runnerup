@@ -23,6 +23,8 @@ import android.location.Location;
 import android.util.Pair;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathCursor;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.util.KXmlSerializer;
 import org.runnerup.workout.Sport;
 
@@ -50,11 +52,13 @@ public class TCX {
     private String notes = null;
     private SimpleDateFormat simpleDateFormat = null;
     private Sport sport = null;
+    private PathSimplifier simplifier;
 
     private boolean addGratuitousTrack = false;
 
-    public TCX(SQLiteDatabase mDB) {
+    public TCX(SQLiteDatabase mDB, PathSimplifier simplifier) {
         this.mDB = mDB;
+        this.simplifier = simplifier;
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -165,11 +169,9 @@ public class TCX {
                 DB.LOCATION.LAP, DB.LOCATION.TYPE,
                 DB.LOCATION.TIME, DB.LOCATION.DISTANCE,
                 DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.ALTITUDE,
-                DB.LOCATION.HR, DB.LOCATION.CADENCE //, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE
+                DB.LOCATION.HR, DB.LOCATION.CADENCE, DB.PRIMARY_KEY //, DB.LOCATION.TEMPERATURE, DB.LOCATION.PRESSURE
         };
-        Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
-                DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
-                null);
+        PathCursor cLocation = new PathCursor(mDB, activityId, pColumns, 9, simplifier);
         boolean lok = cLap.moveToFirst();
         boolean pok = cLocation.moveToFirst();
 

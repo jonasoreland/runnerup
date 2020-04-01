@@ -169,18 +169,18 @@
                 android:summary="@string/path_simplification_info" />
 
             <CheckBoxPreference
-                android:key="@string/pref_path_simplification_save"
                 android:defaultValue="false"
+                android:key="@string/pref_path_simplification_on_save"
                 android:persistent="true"
-                android:title="@string/path_simplification_save"
-                android:summary="@string/path_simplification_save_info" />
+                android:title="@string/path_simplification_on_save"
+                android:disableDependentsState="true" />
 
             <CheckBoxPreference
-                android:key="@string/pref_path_simplification_export_gpx"
                 android:defaultValue="false"
+                android:key="@string/pref_path_simplification_on_export"
                 android:persistent="true"
-                android:title="@string/path_simplification_export_gpx"
-                android:summary="@string/path_simplification_export_gpx_info" />
+                android:title="@string/path_simplification_on_export"
+                android:dependency="@string/pref_path_simplification_on_save" />
 
             <org.runnerup.widget.TextPreference
                 android:key="@string/pref_path_simplification_tolerance"

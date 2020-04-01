@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.Constants.DB.FEED;
+import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.EndomondoTrack;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
@@ -73,6 +74,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     private String password = null;
     private String deviceId = null;
     private String authToken = null;
+    private PathSimplifier simplifier;
 
     private static final SparseArray<Sport> endomondo2sportMap = new SparseArray<>();
     public static final Map<Sport, Integer> sport2endomondoMap = new HashMap<>();
@@ -87,6 +89,10 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         for (Sport s : sport2endomondoMap.keySet()) {
             endomondo2sportMap.put(sport2endomondoMap.get(s), s);
         }
+    }
+
+    public EndomondoSynchronizer(PathSimplifier simplifier) {
+        this.simplifier = simplifier;
     }
 
     @Override
@@ -251,7 +257,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             return s;
         }
 
-        EndomondoTrack tcx = new EndomondoTrack(db);
+        EndomondoTrack tcx = new EndomondoTrack(db, simplifier);
         HttpURLConnection conn;
         Exception ex;
         try {

@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathCursor;
+import org.runnerup.db.PathSimplifier;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -30,9 +32,11 @@ import java.net.URLEncoder;
 public class GoogleStaticMap {
 
     private SQLiteDatabase mDB = null;
+    private PathSimplifier simplifier;
 
-    public GoogleStaticMap(SQLiteDatabase mDB) {
+    public GoogleStaticMap(SQLiteDatabase mDB, PathSimplifier simplifier) {
         this.mDB = mDB;
+        this.simplifier = simplifier;
     }
 
     public static void main(final String args[]) {
@@ -101,19 +105,17 @@ public class GoogleStaticMap {
             final int points = maxLen / avgLen;
             final int skip = (int) (1 + count / points);
 
-            String[] args = {
-                Long.toString(activityId)
+            String[] cols = {
+                    DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE,
+                    DB.PRIMARY_KEY
             };
-            Cursor c = mDB.rawQuery("SELECT DISTINCT cast(round(" + DB.LOCATION.LATITUDE
-                    + "*100000) as integer), cast(round(" + DB.LOCATION.LONGITUDE
-                    + "*100000) as integer) FROM " + DB.LOCATION.TABLE + " WHERE "
-                    + DB.LOCATION.ACTIVITY + " = ?", args);
+            PathCursor c = new PathCursor(mDB, activityId, cols, 2, null);
             if (c.moveToFirst()) {
                 long lat0 = 0;
                 long long0 = 0;
                 do {
-                    long lat = c.getLong(0);
-                    long longi = c.getLong(1);
+                    long lat = Math.round(c.getDouble(0) * 100000);
+                    long longi = Math.round(c.getDouble(1) * 100000);
                     encode(dst, lat, longi, lat0, long0);
                     lat0 = lat;
                     long0 = longi;

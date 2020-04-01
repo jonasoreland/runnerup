@@ -37,6 +37,17 @@ public class PathSimplifier {
     /** Multiplier to avoid deltas < 1 between points. */
     private static final double MULTIPLIER = 1e6;
 
+    /*
+     Below fields are used as a cache of simplification results, to avoid repeating computation
+     when uploading to multiple accounts
+     */
+    /** noisy IDs as String */
+    private ArrayList<String> idsStr;
+    /** noisy IDs as Integer */
+    private ArrayList<Integer> idsInt;
+    /** activity on which simplification was applied */
+    private long actID = -1;
+
     /**
      * Wrapper needed by simplifyPath to use Location as 2D point.
      * Extracts (lat,long) from the Location class needed by com.goebl.simplify.simplify for (x,y).
@@ -87,22 +98,26 @@ public class PathSimplifier {
         this.high_quality = high_quality_setting.equals(algorithm);
     }
 
-    /** Returns true if simplification should be applied when completion and saving an activity. */
-    public static boolean isEnabledForSave(Context context) {
+    /** Returns a simplifier for DB saving configured according to preferences, or null if no simplification on save */
+    public static PathSimplifier getPathSimplifierForSave(Context context) {
         Resources res = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-        return prefs.getBoolean(
-                res.getString(R.string.pref_path_simplification_save), false);
+        boolean simplifyOnSave = prefs.getBoolean(res.getString(R.string.pref_path_simplification_on_save), false);
+        if (simplifyOnSave) {
+            return new PathSimplifier(context);
+        }
+        return null;
     }
 
-    /** Returns true if simplification should be applied when exporting an activity in GPX format. */
-    public static boolean isEnabledForExportGpx(Context context) {
+    /** Returns a simplifier for export configured according to preferences, or null if no simplification on export */
+    public static PathSimplifier getPathSimplifierForExport(Context context) {
         Resources res = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-        return prefs.getBoolean(
-                res.getString(R.string.pref_path_simplification_export_gpx), false);
+        boolean simplifyOnExport = prefs.getBoolean(res.getString(R.string.pref_path_simplification_on_export), false);
+        if (simplifyOnExport) {
+            return new PathSimplifier(context);
+        }
+        return null;
     }
 
     /**
@@ -123,65 +138,70 @@ public class PathSimplifier {
      */
     public ArrayList<String> getNoisyLocationIDsAsStrings(SQLiteDatabase db, long activityId) {
 
-        // columns to query from the "LOCATION" table in database
-        String[] pColumns = {
-                "_id", Constants.DB.LOCATION.LATITUDE, Constants.DB.LOCATION.LONGITUDE,
-                Constants.DB.LOCATION.TYPE
-        };
+        // Only perform computation if not yet computed or activity has changed
+        if ((idsStr == null) || (activityId != actID)) {
+
+            // reset cache
+            actID = activityId;
+            idsInt = null;
+
+            // columns to query from the "LOCATION" table in database
+            String[] pColumns = {
+                    "_id", Constants.DB.LOCATION.LATITUDE, Constants.DB.LOCATION.LONGITUDE,
+                    Constants.DB.LOCATION.TYPE
+            };
 
 
-        // get table from database
-        Cursor c = db.query(Constants.DB.LOCATION.TABLE, pColumns,
-                Constants.DB.LOCATION.ACTIVITY + " = " + activityId,
-                null, null, null, Constants.DB.LOCATION.TIME);
+            // get table from database
+            Cursor c = db.query(Constants.DB.LOCATION.TABLE, pColumns,
+                    Constants.DB.LOCATION.ACTIVITY + " = " + activityId,
+                    null, null, null, Constants.DB.LOCATION.TIME);
 
-        // List of a segment activity's locations (lat,long).
-        ArrayList<Location> locations = new ArrayList<>();
-        // IDs of the full activity's locations
-        ArrayList<String> ids = new ArrayList<>();
-        // Location IDs to remove from the activity
-        ArrayList<String> simplifiedIDs = new ArrayList<>();
+            // List of a segment activity's locations (lat,long).
+            ArrayList<Location> locations = new ArrayList<>();
+            // IDs of the full activity's locations
+            idsStr = new ArrayList<>();
+            // Location IDs to remove from the activity
+            ArrayList<String> simplifiedIDs = new ArrayList<>();
 
-        if (c.moveToFirst()) {
-            do {
-                int lstate = c.getInt(3);
-                // save ID of the location entry
-                Location l = new Location(String.format(Locale.US, "%d", c.getInt(0)));
-                // get location's coordinates
-                l.setLatitude(c.getDouble(1));
-                l.setLongitude(c.getDouble(2));
-                // Only TYPE_GPS locations are considered for simplification
-                if (lstate == Constants.DB.LOCATION.TYPE_GPS) {
-                    ids.add(l.getProvider());
-                    locations.add(l);
-                }
+            if (c.moveToFirst()) {
+                do {
+                    int lstate = c.getInt(3);
 
-                if ((lstate == Constants.DB.LOCATION.TYPE_PAUSE)
-                    || (lstate == Constants.DB.LOCATION.TYPE_END)) {
-                    // this is the end of a segment
+                    // Only TYPE_GPS locations are considered for simplification
+                    if (lstate == Constants.DB.LOCATION.TYPE_GPS) {
+                        // save ID of the location entry
+                        Location l = new Location(String.format(Locale.US, "%d", c.getInt(0)));
+                        // get location's coordinates
+                        l.setLatitude(c.getDouble(1));
+                        l.setLongitude(c.getDouble(2));
+                        idsStr.add(l.getProvider());
+                        locations.add(l);
 
-                    // No need to simplify segments with less than 3 GPS locations
-                    if (locations.size() > 2) {
+                    } else if ((lstate == Constants.DB.LOCATION.TYPE_PAUSE)
+                            || (lstate == Constants.DB.LOCATION.TYPE_END)) {
+                        // this is the end of a segment
+
                         // simplify current segment
                         Location[] simplifiedLocations = simplifySegment(locations);
                         // store locations to keep
                         for (Location sl : simplifiedLocations) {
                             simplifiedIDs.add(sl.getProvider());
                         }
+
+                        // start new segment
+                        locations = new ArrayList<>();
                     }
 
-                    // start new segment
-                    locations = new ArrayList<>();
-                }
+                } while (c.moveToNext());
+            }
+            c.close();
 
-            } while (c.moveToNext());
+            // remove the locations to keep in the simplified path
+            idsStr.removeAll(simplifiedIDs);
         }
-        c.close();
 
-        // remove the locations to keep in the simplified path
-        ids.removeAll(simplifiedIDs);
-
-        return ids;
+        return idsStr;
     }
 
     /**
@@ -193,14 +213,23 @@ public class PathSimplifier {
      * @param activityId ID of the activity to simplify.
      */
     public ArrayList<Integer> getNoisyLocationIDs(SQLiteDatabase db, long activityId) {
-        ArrayList<String> strIDs = getNoisyLocationIDsAsStrings(db, activityId);
 
-        // convert (back) to integers
-        ArrayList<Integer> ids = new ArrayList<>();
-        for (String str: strIDs)
-            ids.add(Integer.parseInt(str));
+        // Only perform computation if not yet computed or activity has changed
+        if ((idsInt == null) || (activityId != actID)) {
 
-        return ids;
+            // reset cache
+            actID = activityId;
+            idsStr = null;
+
+            getNoisyLocationIDsAsStrings(db, activityId);
+
+            // convert (back) to integers
+            idsInt = new ArrayList<>();
+            for (String str : idsStr)
+                idsInt.add(Integer.parseInt(str));
+        }
+
+        return idsInt;
     }
 
     /**

@@ -21,6 +21,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.db.PathCursor;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.util.KXmlSerializer;
 import org.runnerup.workout.Sport;
@@ -43,9 +44,10 @@ public class GPX {
     private final boolean mAccuracyExtensions;
     private PathSimplifier simplifier;
 
-    public GPX(SQLiteDatabase mDB) {
-        this(mDB, true, false, null);
+    public GPX(SQLiteDatabase mDB, PathSimplifier simplifier) {
+        this(mDB, true, false, simplifier);
     }
+
 
     public GPX(SQLiteDatabase mDB, boolean garminExt, boolean accuracyExtensions, PathSimplifier simplifier) {
         this.mDB = mDB;
@@ -55,10 +57,6 @@ public class GPX {
         this.mGarminExt = garminExt;
         this.mAccuracyExtensions = accuracyExtensions;
         this.simplifier = simplifier;
-    }
-
-    public GPX(SQLiteDatabase mDB, boolean garminExt, boolean accuracyExtensions) {
-        this(mDB, garminExt, accuracyExtensions, null);
     }
 
     private String formatTime(long time) {
@@ -165,9 +163,7 @@ public class GPX {
                 DB.LOCATION.SATELLITES, DB.LOCATION.GPS_ALTITUDE,
                 DB.PRIMARY_KEY
         };
-        Cursor cLocation = mDB.query(DB.LOCATION.TABLE, pColumns,
-                DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null,
-                null);
+        PathCursor cLocation = new PathCursor(mDB, activityId, pColumns, 15, simplifier);
         boolean lok = cLap.moveToFirst();
         boolean pok = cLocation.moveToFirst();
 
