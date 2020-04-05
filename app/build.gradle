@@ -121,6 +121,7 @@ dependencies {
         latestWearApp project(':wear')
     }
 
+    latestImplementation "androidx.preference:preference:1.1.0"
     //noinspection GradleCompatible
     latestImplementation "com.google.android.material:material:1.1.0"
     latestImplementation "androidx.cardview:cardview:1.0.0"
