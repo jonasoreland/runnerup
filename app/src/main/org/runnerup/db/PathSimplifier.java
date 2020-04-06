@@ -79,13 +79,13 @@ public class PathSimplifier {
 
         // get user settings
 
-        // tolerance in meters (default to 3)
+        // tolerance in meters (default to R.string.path_simplification_default_tolerance)
         double tolerance;
         try {
             tolerance = Double.parseDouble(prefs.getString(
-                    res.getString(R.string.pref_path_simplification_tolerance), "3"));
+                    res.getString(R.string.pref_path_simplification_tolerance), res.getString(R.string.path_simplification_default_tolerance)));
         } catch (Exception ex) {
-            tolerance = 3;
+            tolerance = Double.parseDouble(res.getString(R.string.path_simplification_default_tolerance));
         }
         // squared tolerance in meters has to be transformed to tolerance in degrees
         this.toleranceDeg = tolerance / ONE_DEGREE;
