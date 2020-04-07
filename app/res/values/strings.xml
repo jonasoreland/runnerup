@@ -17,4 +17,5 @@
   <string name="mm31kz513sg5" translatable="false">mm(31);kz(5,13);sg(5)</string>
   <string name="_sign_plus" translatable="false">+</string>
   <string name="_sign_minus" translatable="false">-</string>
+  <string name="path_simplification_default_tolerance" translatable="false">3</string>
 </resources>

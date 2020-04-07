@@ -65,6 +65,9 @@ public class TextPreference extends android.preference.EditTextPreference {
                 if (this.getKey().equals(res.getString(R.string.pref_mapbox_default_style))) {
                     val = res.getString(R.string.mapboxDefaultStyle);
                     super.setText(val);
+                } else if (this.getKey().equals(res.getString(R.string.pref_path_simplification_tolerance))) {
+                    val = res.getString(R.string.path_simplification_default_tolerance);
+                    super.setText(val);
                 }
             }
             super.setSummary(val);
