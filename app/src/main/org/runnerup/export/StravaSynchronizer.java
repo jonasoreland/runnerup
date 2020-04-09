@@ -148,6 +148,11 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     public int getColorId() {return R.color.serviceStrava;}
 
     @Override
+    public int getIconId() {
+        return R.drawable.service_strava;
+    }
+
+    @Override
     public void init(ContentValues config) {
         String authConfig = config.getAsString(DB.ACCOUNT.AUTH_CONFIG);
         if (authConfig != null) {
