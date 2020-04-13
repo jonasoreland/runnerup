@@ -161,6 +161,13 @@
             android:title="@string/log_extended_gps_title"
             android:summary="@string/log_extended_gps_summary" />
 
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_runneruplive_active"
+            android:persistent="true"
+            android:title="@string/Enable_RunnerUpLive"
+            android:summary="@string/Note_you_need_to_connect_to_the_account_too"/>
+
         <PreferenceCategory
             android:key="@string/path_simplification"
             android:title="@string/path_simplification">
@@ -376,13 +383,6 @@
                 android:title="@string/Smooth_pace_filters" />
         </PreferenceCategory>
     </PreferenceScreen>
-
-    <!--CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/pref_runneruplive_active"
-        android:persistent="true"
-        android:title="@string/Enable_RunnerUpLive"
-        android:summary="@string/Note_you_need_to_connect_to_the_account_too" /-->
 
     <PreferenceScreen
         android:key="advanced_preferencescreen"
