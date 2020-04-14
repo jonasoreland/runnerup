@@ -17,6 +17,7 @@
 
 package org.runnerup.export;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -25,7 +26,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.export.format.GoogleFitData;
+import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.SyncHelper;
 
 import java.io.IOException;
@@ -38,7 +41,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 
-public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
+public class GoogleFitSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "GoogleFit";
     private static final String PUBLIC_URL = "https://fit.google.com";
@@ -54,15 +57,44 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
                     "https://www.googleapis.com/auth/fitness.location.write " +
                     "https://www.googleapis.com/auth/fitness.location.read";
     private static final int MAX_ATTEMPTS = 3;
+    private static final String DUMMY_REDIRECT_URI = "https://localhost";
+    private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
+    private static final String TOKEN_URL = "https://accounts.google.com/o/oauth2/token";
+    
+    private String mClientId = null;
+    private String mClientSecret = null;
+    private String projectId = null;
+    private String access_token;
 
     private final Context context;
 
     GoogleFitSynchronizer(Context ctx, SyncManager syncManager) {
-        super(syncManager);
+        if (getClientId() == null || getClientSecret() == null) {
+            try {
+                JSONObject tmp = new JSONObject(syncManager.loadData(this));
+                this.mClientId = tmp.getString("CLIENT_ID");
+                this.mClientSecret = tmp.getString("CLIENT_SECRET");
+                this.projectId = tmp.getString("PROJECT_ID");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
         this.context = ctx;
     }
 
     @Override
+    public void init(ContentValues config) {
+        String authConfig = config.getAsString(Constants.DB.ACCOUNT.AUTH_CONFIG);
+        if (authConfig != null) {
+            try {
+                JSONObject tmp = new JSONObject(authConfig);
+                access_token = tmp.optString("access_token", null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     String getScopes() {
         return SCOPES;
     }
@@ -70,6 +102,26 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getClientId() {
+        return mClientId;
+    }
+
+    @Override
+    public String getRedirectUri() {
+        return DUMMY_REDIRECT_URI;
+    }
+
+    @Override
+    public String getClientSecret() {
+        return mClientSecret;
+    }
+
+    @Override
+    public String getAuthUrl() {
+        return AUTH_URL;
     }
 
     @Override
@@ -82,6 +134,14 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
 
     private Context getContext() {
         return context;
+    }
+
+    private String getAccessToken() {
+        return access_token;
+    }
+
+    private String getProjectId() {
+        return projectId;
     }
 
     @Override
@@ -102,6 +162,16 @@ public class GoogleFitSynchronizer extends GooglePlusSynchronizer {
     @Override
     public String getAuthExtra() {
         return "scope=" + SyncHelper.URLEncode(getScopes());
+    }
+
+    @Override
+    public String getTokenUrl() {
+        return TOKEN_URL;
+    }
+
+    @Override
+    public String getRevokeUrl() {
+        return null;
     }
 
     @Override

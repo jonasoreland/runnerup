@@ -17,7 +17,6 @@
 
 package org.runnerup.db;
 
-import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,6 +25,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -33,28 +33,23 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
-import org.runnerup.export.DigifitSynchronizer;
 import org.runnerup.export.DropboxSynchronizer;
 import org.runnerup.export.EndomondoSynchronizer;
 import org.runnerup.export.FacebookSynchronizer;
 import org.runnerup.export.FileSynchronizer;
-import org.runnerup.export.FunBeatSynchronizer;
 import org.runnerup.export.GarminSynchronizer;
 import org.runnerup.export.GoogleFitSynchronizer;
 import org.runnerup.export.JoggSESynchronizer;
 import org.runnerup.export.MapMyRunSynchronizer;
-import org.runnerup.export.NikePlusSynchronizer;
 import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.export.RunalyzeSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
-import org.runnerup.export.RunningFreeOnlineSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.util.FileUtil;
 import org.runnerup.workout.FileFormats;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -473,19 +468,14 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, GarminSynchronizer.NAME, 0);
         insertAccount(arg0, RunKeeperSynchronizer.NAME, 1);
         insertAccount(arg0, JoggSESynchronizer.NAME, 0);
-        insertAccount(arg0, FunBeatSynchronizer.NAME, 0);
         insertAccount(arg0, MapMyRunSynchronizer.NAME, 0);
-        insertAccount(arg0, NikePlusSynchronizer.NAME, 0);
         insertAccount(arg0, EndomondoSynchronizer.NAME, 1);
         insertAccount(arg0, RunningAHEADSynchronizer.NAME, 0);
-        insertAccount(arg0, DigifitSynchronizer.NAME, 0);
         insertAccount(arg0, StravaSynchronizer.NAME, 1);
         insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
         insertAccount(arg0, FacebookSynchronizer.NAME, 0);
-        //insertAccount(arg0, GooglePlusSynchronizer.NAME, 0);
         insertAccount(arg0, RuntasticSynchronizer.NAME, 0);
         insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
-        insertAccount(arg0, RunningFreeOnlineSynchronizer.NAME, 0);
         insertAccount(arg0, FileSynchronizer.NAME, 1);
         insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
         insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED);
@@ -522,6 +512,16 @@ public class DBHelper extends SQLiteOpenHelper implements
             Log.v("DBhelper", "update: " + arg1);
         }
     }
+
+    public static void deleteAccount(SQLiteDatabase db, long id) {
+        Log.e("DBHelper", "deleting account: " + id);
+        String args[] = {
+                Long.toString(id)
+        };
+        db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
+        db.delete(DB.ACCOUNT.TABLE, "_id = ?", args);
+    }
+
 
     public static ContentValues get(Cursor c) {
         if (c.isClosed() || c.isAfterLast() || c.isBeforeFirst())
