@@ -12,7 +12,7 @@ Track your sport activities with RunnerUp using the GPS in your Android phone.
 * Get stats and progress with built-in highly configurable audio cues
 * Run free runs with target pace or target heart rate zone
 * Easily configure and run effective interval workouts modeled after Garmin
-* Automatic upload to various providers including Endomondo, RunKeeper and Strava, some also support download and feed updates ([see here for details](SYNCHRONIZERS.md)).
+* Automatic upload to various external applications such as Strava, Runalyze and Dropbox. Some also support download and feed updates ([see here for details](https://github.com/jonasoreland/runnerup/wiki/Synchronization-with-external-providers)).
 * Share your favorite workouts with friends (using email)
 * Heart rate monitor: Bluetooth SMART (BLE) and ANT+ (as well as PolarWearLink and Zephyr)
 * Configure and use heart rate zones
@@ -40,7 +40,7 @@ Patches, forks, pull requests, suggestions or harsh flame is welcome!
 Please read the [wiki](https://github.com/jonasoreland/runnerup/wiki).
 
 ## Translations
-<a target="_blank" style="text-decoration:none; color:black; font-size:66%" href="https://www.transifex.com/projects/p/runner-up-android" 
+<a target="_blank" style="text-decoration:none; color:black; font-size:66%" href="https://www.transifex.com/projects/p/runner-up-android"
 title="See more information on Transifex.com"><img src="https://ds0k0en9abmn1.cloudfront.net/static/charts/images/tx-logo-micro.646b0065fce6.png" ></a>
 
 Interested in helping to translate RunnerUp? Contribute [on Transifex](https://www.transifex.com/projects/p/runner-up-android).

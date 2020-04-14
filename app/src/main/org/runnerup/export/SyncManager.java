@@ -20,8 +20,6 @@ package org.runnerup.export;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.support.v4.util.LongSparseArray;
-import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -38,6 +36,8 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.LongSparseArray;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -187,12 +187,8 @@ public class SyncManager {
             synchronizer = new RunKeeperSynchronizer(this,simplifier);
         } else if (synchronizerName.contentEquals(GarminSynchronizer.NAME)) {
             synchronizer = new GarminSynchronizer(simplifier);
-        } else if (synchronizerName.contentEquals(FunBeatSynchronizer.NAME)) {
-            synchronizer = new FunBeatSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(MapMyRunSynchronizer.NAME)) {
             synchronizer = new MapMyRunSynchronizer(this, simplifier);
-        } else if (synchronizerName.contentEquals(NikePlusSynchronizer.NAME)) {
-            synchronizer = new NikePlusSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(JoggSESynchronizer.NAME)) {
             synchronizer = new JoggSESynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(EndomondoSynchronizer.NAME)) {
@@ -201,20 +197,14 @@ public class SyncManager {
             synchronizer = new RunningAHEADSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(RunnerUpLiveSynchronizer.NAME)) {
             synchronizer = new RunnerUpLiveSynchronizer(mContext);
-        } else if (synchronizerName.contentEquals(DigifitSynchronizer.NAME)) {
-            synchronizer = new DigifitSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(StravaSynchronizer.NAME)) {
             synchronizer = new StravaSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(FacebookSynchronizer.NAME)) {
             synchronizer = new FacebookSynchronizer(mContext, this, simplifier);
-        } else if (synchronizerName.contentEquals(GooglePlusSynchronizer.NAME)) {
-            synchronizer = new GooglePlusSynchronizer(this);
         } else if (synchronizerName.contentEquals(RuntasticSynchronizer.NAME)) {
             synchronizer = new RuntasticSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
             synchronizer = new GoogleFitSynchronizer(mContext, this);
-        } else if (synchronizerName.contentEquals(RunningFreeOnlineSynchronizer.NAME)) {
-            synchronizer = new RunningFreeOnlineSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
             synchronizer = new FileSynchronizer(mContext, simplifier);
         } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
@@ -236,6 +226,13 @@ public class SyncManager {
             synchronizersById.put(synchronizer.getId(), synchronizer);
         } else {
             Log.e(getClass().getName(), "Synchronizer not found for " + synchronizerName);
+            try {
+                long synchronizerId = Long.parseLong(config.getAsString(DB.PRIMARY_KEY));
+                DBHelper.deleteAccount(mDB, synchronizerId);
+            } catch (Exception ex) {
+                Log.e(getClass().getName(), "Failed to deleted deprecated synchronizer", ex);
+            }
+
         }
         return synchronizer;
     }

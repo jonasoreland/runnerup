@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -206,14 +207,23 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 sectionTitle.setVisibility(View.VISIBLE);
             }
 
+            accountNameText.setText(name);
+
             if (synchronizer == null) {
                 accountUploadBox.setVisibility(View.GONE);
                 accountFeedBox.setVisibility(View.GONE);
                 accountIcon.setVisibility(View.GONE);
                 accountIconText.setVisibility(View.GONE);
-                accountNameText.setText(name);
+                accountNameText.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                accountNameText.setEnabled(false);
                 return;
             }
+            accountNameText.setPaintFlags(0);
+            accountNameText.setEnabled(true);
+            accountUploadBox.setVisibility(View.VISIBLE);
+            accountFeedBox.setVisibility(View.VISIBLE);
+            accountIcon.setVisibility(View.VISIBLE);
+            accountIconText.setVisibility(View.VISIBLE);
 
             // service icon
             int synchronizerIcon = synchronizer.getIconId();
@@ -226,9 +236,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
                 accountIconText.setText(null);
             }
-            
-            // service title
-            accountNameText.setText(name);
 
             // upload box
             accountUploadBox.setTag(synchronizer);

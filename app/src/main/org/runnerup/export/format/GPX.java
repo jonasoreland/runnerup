@@ -29,7 +29,6 @@ import org.runnerup.workout.Sport;
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -167,10 +166,6 @@ public class GPX {
         boolean lok = cLap.moveToFirst();
         boolean pok = cLocation.moveToFirst();
 
-        // simplify path, if this option is selected by the user
-        ArrayList<Integer> ignoreIDs = simplifier != null ?
-                simplifier.getNoisyLocationIDs(mDB, activityId) :
-                new ArrayList<>();
         // Tracks with time gaps may show as unconnected, mostly the same as this setting
         final boolean useLapTrkSeg = (simplifier == null);
 
@@ -198,10 +193,7 @@ public class GPX {
                                 }
                                 mXML.comment(" State change: " + locType + " " + formatTime(time));
                             }
-                        } else if (time > last_time &&
-                                // ignore IDs that have been marked unnecessary by path simplification
-                                // reduces resolution of the exported path
-                                ! ignoreIDs.contains(cLocation.getInt(15))) {
+                        } else if (time > last_time) {
                             if (segmentPoints == 0) {
                                 mXML.startTag("", "trkseg");
                             }
