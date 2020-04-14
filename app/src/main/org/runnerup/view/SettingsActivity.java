@@ -23,13 +23,17 @@ import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
 
 import org.runnerup.R;
 import org.runnerup.view.fragments.PrefsFragment;
 
-public class SettingsActivity extends AppCompatActivity {
-    @Override
+public class SettingsActivity extends AppCompatActivity
+implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback{
+/*    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportFragmentManager()
@@ -37,7 +41,20 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(R.id.settings_container, new PrefsFragment())
                 .commit();
     }
+*/
+@Override
+public boolean onPreferenceStartScreen(PreferenceFragmentCompat preferenceFragmentCompat, PreferenceScreen preferenceScreen) {
+    PreferenceFragmentCompat fragment = new PrefsFragment();
+            Bundle args = new Bundle();
+    args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, preferenceScreen.getKey());
+    fragment.setArguments(args);
+    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+    ft.replace(R.id.content, fragment, preferenceScreen.getKey());
+    ft.addToBackStack(preferenceScreen.getKey());
+    ft.commit();
 
+    return true;
+}
     public static boolean hasHR(Context ctx) {
         Resources res = ctx.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
