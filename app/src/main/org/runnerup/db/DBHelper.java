@@ -47,6 +47,7 @@ import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
+import org.runnerup.export.WebDavSynchronizer;
 import org.runnerup.util.FileUtil;
 import org.runnerup.workout.FileFormats;
 
@@ -479,6 +480,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, FileSynchronizer.NAME, 1);
         insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
         insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED);
+        insertAccount(arg0, WebDavSynchronizer.NAME, 1);
     }
 
     private static void insertAccount(SQLiteDatabase arg0, String name, int enabled) {
@@ -671,3 +673,4 @@ public class DBHelper extends SQLiteOpenHelper implements
         builder.show();
     }
 }
+
