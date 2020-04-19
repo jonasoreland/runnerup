@@ -41,7 +41,7 @@ project.ext {
     allowNonFree = !project.hasProperty('org.runnerup.free') && rootProject.file("wear").exists()
 
     // Note: AntPlus may have to be downloaded explicitly due to licensing
-    antPlusLib = "ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-6-0.jar"
+    antPlusLib = "ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-8-0.aar"
     if (!allowNonFree || project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLib).exists()) {
         antPlusLib = ""
     }
