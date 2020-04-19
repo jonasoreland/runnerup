@@ -3,10 +3,10 @@
 ############################
 # RunnerUp internal
 
-# All implemetations of internal interfaces do not use all methods
--dontnote org.runnerup.view.StepButton
--dontnote org.runnerup.widget.ClassicSpinner
--dontnote org.runnerup.widget.TitleSpinner
+# All implementations of internal interfaces do not use all methods
+#-dontnote org.runnerup.view.StepButton
+#-dontnote org.runnerup.widget.ClassicSpinner
+#-dontnote org.runnerup.widget.TitleSpinner
 
 #PlayServices related?
 -dontnote com.google.protobuf.zz*
@@ -25,7 +25,8 @@
 
 #ref to fit
 -keep class com.dsi.ant.plugins.**
--dontwarn com.dsi.ant.**
+#-dontwarn com.dsi.ant.**
+-keeppackagenames com.dsi.ant.**
 
 ############################
 # GraphView
