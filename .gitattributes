@@ -3,3 +3,4 @@ assets/*.data binary
 gradlew text eol=lf
 gradlew.bat text eol=crlf
 *.jar filter=lfs diff=lfs merge=lfs -text
+*.properties eol=lf
