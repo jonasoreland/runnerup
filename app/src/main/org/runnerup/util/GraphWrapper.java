@@ -105,13 +105,18 @@ public class GraphWrapper implements Constants {
         graphView2.getViewport().setScalable(true);
         graphView2.getViewport().setScrollable(true);
 
-        // Get maximum of heart rate and use 110% for y axis
+        // Get min-/maximum of heart rate and use 90%/110% for y axis
         HRZones hrZones = new HRZones(context);
         HRZoneCalculator hrZoneCalculator = new HRZoneCalculator(context);
         int zoneCount = hrZoneCalculator.getZoneCount();
-        Pair<Integer, Integer> values = hrZones.getHRValues(zoneCount);
-        graphView2.getViewport().setMaxY(values.second*1.1);
-        graphView2.getViewport().setYAxisBoundsManual(true);
+        Pair<Integer, Integer> MaxValues = hrZones.getHRValues(zoneCount);
+        Pair<Integer, Integer> MinValues = hrZones.getHRValues(1);
+        if(MaxValues != null && MinValues != null){
+            graphView2.getViewport().setMaxY(MaxValues.second*1.1);
+            graphView2.getViewport().setMinY(MinValues.first*0.9);
+            graphView2.getViewport().setYAxisBoundsManual(true);
+        }
+
 
         hrzonesBar = new HRZonesBar(context);
     }
