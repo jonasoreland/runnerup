@@ -331,10 +331,6 @@
   <string name="Speed_unit_preference">Geschwindigkeitseinheit</string>
   <string name="path_simplification">Weg-Vereinfachung</string>
   <string name="path_simplification_info">Reduziere die Auflösung des GPS-Weges (protokollierte Standorte im Laufe der Zeit). Glättet den Weg und verringert die Größe einer Aktivität in der Datenbank oder einer exportierten Datei.</string>
-  <string name="path_simplification_save">Vereinfachung beim Speichern der Aktivität</string>
-  <string name="path_simplification_save_info">Vereinfache GPS-Wege in der Datenbank beim Speichern.</string>
-  <string name="path_simplification_export_gpx">Vereinfachung beim GPX-Export</string>
-  <string name="path_simplification_export_gpx_info">GPS-Weg beim Export nach GPX vereinfachen.</string>
   <string name="path_simplification_tolerance">Toleranz (m)</string>
   <string name="path_simplification_algorithm">Algorithmus</string>
   <string name="path_simplification_algorithm_info">Wähle schnelle oder qualitativ hochwertige Wegvereinfachung</string>

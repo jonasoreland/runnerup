@@ -333,9 +333,6 @@
   <string name="Speed_unit_preference">Snelheideenheid</string>
   <string name="path_simplification">Padversimpeling</string>
   <string name="path_simplification_info">Verminder de resolutie van het gps-pad (in de tijd gelogde locaties). Maakt het pad gladder en verminderd de grootte van een activiteit in de database of in een geëxporteerd bestand.</string>
-  <string name="path_simplification_save_info">Versimpel gps-pad bij opslaan in de database</string>
-  <string name="path_simplification_export_gpx">Vereenvoudig GPX-export</string>
-  <string name="path_simplification_export_gpx_info">Vereenvoudig gps-pad tijdens exporteren naar GPX</string>
   <string name="path_simplification_tolerance">Tollerantie (m)</string>
   <string name="path_simplification_algorithm">Algoritme</string>
   <string name="path_simplification_menu">Vereenvoudig pad</string>
