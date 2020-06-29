@@ -16,19 +16,19 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <string name="cue_activity">activitat</string>
   <string name="cue_interval">interval</string>
-  <string name="cue_lap">volta</string>
+  <string name="cue_lap">tram</string>
   <string name="cue_warmup">escalfament</string>
   <string name="cue_cooldown">refredament</string>
   <string name="cue_current">actual</string>
   <string name="cue_perkilometer">per kilòmetre</string>
   <string name="cue_permile">per milla</string>
   <string name="cue_started">iniciat</string>
-  <string name="cue_paused">pausat</string>
-  <string name="cue_resumed">continuada</string>
+  <string name="cue_paused">en pausa</string>
+  <string name="cue_resumed">reprès</string>
   <string name="cue_stopped">aturat</string>
-  <string name="cue_completed">completat</string>
-  <string name="cue_speedup">accelera</string>
-  <string name="cue_slowdown">frena</string>
+  <string name="cue_completed">finalitzat</string>
+  <string name="cue_speedup">accelereu</string>
+  <string name="cue_slowdown">alentiu</string>
   <plurals name="cue_hour">
     <item quantity="one">%d hora</item>
     <item quantity="other">%d hores</item>
@@ -55,7 +55,7 @@
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s quilòmetre per hora</item>
-    <item quantity="other">%s quilòmetres per hora</item>
+    <item quantity="other">%s kilòmetres per hora</item>
   </plurals>
   <plurals name="cue_miles_per_hour">
     <item quantity="one">%s milla per hora</item>
@@ -63,13 +63,17 @@
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
-    <item quantity="other">%d bpm</item>
+    <item quantity="other">%d ppm</item>
   </plurals>
-  <string name="cue_activity_paused">activitat pausada</string>
-  <string name="cue_activity_resumed">activitat continuada</string>
+  <plurals name="cue_rpm">
+    <item quantity="one">%drpm</item>
+    <item quantity="other">%d rpm</item>
+  </plurals>
+  <string name="cue_activity_paused">activitat en pausa</string>
+  <string name="cue_activity_resumed">activitat represa</string>
   <string name="cue_activity_stopped">activitat aturada</string>
-  <string name="cue_lap_started">volta iniciada</string>
-  <string name="cue_lap_completed">volta completada</string>
+  <string name="cue_lap_started">tram iniciat</string>
+  <string name="cue_lap_completed">tram finalitzat</string>
   <string name="cue_warmup_started">escalfament iniciat</string>
   <string name="cue_cooldown_started">refredament iniciat</string>
 </resources>

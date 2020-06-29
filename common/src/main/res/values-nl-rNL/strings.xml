@@ -197,6 +197,8 @@
   <string name="Convert_rest_on_Interval_tab">Intervalruststappen</string>
   <string name="Convert_rest_on_Advanced_tab">Herstel in aftelstappen</string>
   <string name="Autolap_during_intervals">Automatische ronde in trainingen</string>
+  <string name="Autolap_basic_summary">Autolap voor basisworkouts</string>
+  <string name="Autolap_during_intervals_summary">Autolap in laatste stap en \"Actieve\" stappen</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Tel af na indrukken toets</string>
   <string name="Step_countdown_time_s">Aftellen tot staptijd (s)</string>
   <string name="Smooth_pace_graph">Gladde tempo grafiek</string>
@@ -218,6 +220,7 @@
   <string name="Distance_triggered_audio_cue_summary">Periodieke feedback</string>
   <string name="Cue_intervall_m">Cue-interval (m)</string>
   <string name="End_of_lap_audio_cue">Einde van ronde</string>
+  <string name="End_of_lap_audio_cue_summary">Einde van autolap en \"Active\" stappen</string>
   <string name="Mute_music_during_audio_cues">Demp muziek audiocue</string>
   <string name="Cue_information">Cue-informatie</string>
   <string name="Total_distance">Totale afstand</string>
@@ -333,8 +336,11 @@
   <string name="Speed_unit_preference">Snelheideenheid</string>
   <string name="path_simplification">Padversimpeling</string>
   <string name="path_simplification_info">Verminder de resolutie van het gps-pad (in de tijd gelogde locaties). Maakt het pad gladder en verminderd de grootte van een activiteit in de database of in een geëxporteerd bestand.</string>
+  <string name="path_simplification_on_save">Vereenvoudig wanneer activiteit wordt opgeslagen</string>
+  <string name="path_simplification_on_export">Vereenvoudig wanneer accounts worden geüpload</string>
   <string name="path_simplification_tolerance">Tollerantie (m)</string>
   <string name="path_simplification_algorithm">Algoritme</string>
+  <string name="path_simplification_algorithm_info">Kies snelle of hoge kwaliteit padvereenvoudiging</string>
   <string name="path_simplification_menu">Vereenvoudig pad</string>
   <string name="File_format">Upload bestand(en) als:</string>
   <string name="File_need_one_format">Tenminste een formaat is nodig!</string>
