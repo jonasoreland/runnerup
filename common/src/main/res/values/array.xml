@@ -35,20 +35,20 @@
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>Warmup</item>
-    <item>Active</item>
+    <item>Activity</item>
     <item>Rest</item>
     <item>Recovery</item>
     <item>Cooldown</item>
   </string-array>
   <string-array name="duration_types">
-    <item>Until pressed</item>
+    <item>Until Pressed</item>
     <item>Time</item>
     <item>Distance</item>
   </string-array>
   <string-array name="target_types">
     <item>None</item>
     <item>Pace</item>
-    <item>Heartrate zone</item>
+    <item>Heart Rate Zone</item>
   </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
