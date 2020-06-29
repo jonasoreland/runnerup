@@ -29,6 +29,7 @@
   <string name="Target_pace_HHMMSS">Tikslinis tempas</string>
   <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$sprie %2$s</string>
   <!--weird stuff: should it be placeholders or even removed?-->
   <string name="ok_rats">gerai, draugužiai</string>
   <!--other-->
@@ -39,12 +40,16 @@
   <string name="warm_up">apšilimas</string>
   <string name="cool_down">atvėsimas</string>
   <string name="repeat">pakartoti</string>
+  <string name="repeat_times">Pakartoti %1$dx </string>
   <string name="time">laikas</string>
   <string name="distance">atstumas</string>
   <string name="Distance">Atstumas</string>
   <string name="speed">greitis</string>
   <string name="pace">tempas</string>
   <string name="heart_rate_zone">širdies ritmo zona</string>
+  <string name="cadence">ritmas</string>
+  <string name="temperature">temperatūra</string>
+  <string name="pressure">slėgis</string>
   <string name="Zone">Zona</string>
   <string name="Device">Prietaisas</string>
   <string name="Start_hour">Pradžios laikas</string>
@@ -73,7 +78,16 @@
   <string name="Rest_type">Poilsio tipas</string>
   <string name="Repetitions">Pakartojimai</string>
   <string name="Date">Data</string>
+  <string name="No_devices_connected">Nėra pajungtų prietaisų</string>
   <string name="GPS_satellites">GPS palydovai</string>
+  <string name="GPS_indicator_off">GPS išjungta</string>
+  <string name="GPS_status_accuracy">GPS: %1$d/%2$d pal. (%3$s)</string>
+  <string name="GPS_status_no_accuracy">GPS: %1$d/%2$d palydovų</string>
+  <string name="GPS_accuracy_elevation">tiksl. %1$s, aukšt. %2$s</string>
+  <string name="GPS_accuracy_no_elevation">tikslumas %s</string>
+  <string name="GPS_level_poor">Prastas GPS ryšys</string>
+  <string name="GPS_level_acceptable">Vidutinis GPS ryšys</string>
+  <string name="GPS_level_good">Geras GPS ryšys</string>
   <string name="Start_GPS">Įjungti GPS</string>
   <string name="Duration">Trukmė</string>
   <string name="Cancel">Nutraukti</string>
@@ -106,9 +120,13 @@
   <string name="Configure_accounts">Konfigūruoti sąskaitas</string>
   <string name="Refresh">Atnaujinti</string>
   <string name="Age">Amžius</string>
-  <string name="Synchronizing">Sinchronizavimas</string>
+  <string name="Synchronizing">Sinchronizuojama</string>
   <string name="synchronizing_feed">sinchronizuoja kanalą…</string>
   <string name="OK">Gerai</string>
+  <string name="accounts_category_connected">Tvarkyti ryšius</string>
+  <string name="accounts_category_unconnected">Prijungti paskyrą</string>
+  <string name="Show_disabled_accounts">Rodyti atjungtas paskyras</string>
+  <string name="Hide_disabled_accounts">Slėpti atjungtas paskyras</string>
   <string name="Clear_uploads">Išvalyti įkėlimus</string>
   <string name="Upload_missing_workouts">Įkelti (trūkstamas) treniruotes</string>
   <string name="Disconnect_account">Atjungti sąskaitą</string>
@@ -126,6 +144,7 @@
   <string name="Enable_GPS">Leisti GPS</string>
   <string name="Waiting_for_GPS">Laukia GPS</string>
   <string name="Start_activity">Pradėk veiklą</string>
+  <string name="Wear_OS_Device">Wear OS įrenginys</string>
   <string name="Clear_HR_settings">Išvalyti ŠR nustatymus</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Širdies ritmo stebėsena nepalaikoma Jūsų įrenginyje</string>
   <string name="Select_type_of_Bluetooth_device">Pasirinkti Bluetooth įrangos tipą</string>
@@ -150,12 +169,10 @@
   <string name="Downloadeditremove_workouts">Atsisiųsti/redaguoti/ištrinti treniruotes</string>
   <string name="Note_you_need_to_connect_to_the_account_too">Atmink, turi prisijungti ir prie sąskaitos</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Naudoti laisvų rankų įrangą RunnerUp paleidimui/stabdymui/pratęsimui</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Konvertuoti poilsio intervalą su atstumo tipu į atsistatymo intervalą \"Intervalo\" skirtuke</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Konvertuoti poilsio intervalą su atstumo tipu į atsistatymo intervalą \"Sudėtingesni\" skirtuke</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Intervalo kortelėje naudoti \"Atsistatymas\" vietoj \"Poilsis\" (pauzė) etapą</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksportuoti duomenų bazę į SD kortelę (pvz. atnaujinimui)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importuoti duomenų bazę iš SD kortelės (pvz. po atnaujinimo)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Padėti pasiekti tikslą (jei tikslas yra nustatytas)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Tylus pradedant/pristabdant/tęsiant/baigiant treniruotę </string>
   <string name="Test_audio_cue">Išbandyti garsinius nurodymus</string>
   <string name="Accounts">Sąskaitos</string>
   <string name="Audio_cues">Garsiniai nurodymai</string>
@@ -166,20 +183,12 @@
   <string name="Autopause">Automatinė pauzė</string>
   <string name="Enable_RunnerUpLive">Leisti Live</string>
   <string name="Headset_key_startstop">Laisvų rankų įrangos start/stop mygtukas</string>
-  <string name="Activity_countdown">Veiklos atskaita</string>
   <string name="Countdown_time_s">Atskaitos laikas (s)</string>
-  <string name="Unit_preference">Vienetų pirmenybė</string>
   <string name="Auto_start_GPS">Automatinis GPS paleidimas</string>
   <string name="Advanced_options">Išplėstiniai nustatymai</string>
   <string name="RunnerUp_live_address">RunnerUpLive adresas</string>
   <string name="Autopause_after_s">Automatinė pauzė po (s)</string>
   <string name="Autopause_min_pace_minkm">Automatinė pauzė min tempas (min/km)</string>
-  <string name="Convert_rest_on_Interval_tab">Konvertuoti poilsį \"Intervalo\" skirtuke</string>
-  <string name="Convert_rest_on_Advanced_tab">Konvertuoti poilsį \"Sudėtingesni\" skirtuke</string>
-  <string name="Target_pace_moving_average_seconds">Slenkančio vidurkio tikslinis tempas sekundėmis</string>
-  <string name="Target_pace_grace_seconds">Tikslinio tempo leistinasis nuokrypis sekundėmis</string>
-  <string name="Autolap_during_intervals">Automatiniai etapai intervalų metu</string>
-  <string name="Add_countdown_after_step_that_ends_with_user_press">Pridėti laiko atskaitą po intervalo, kuris baigiasi vartotojo paspaudimu</string>
   <string name="Step_countdown_time_s">Intervalo atskaitos laikas (s)</string>
   <string name="Smooth_pace_graph">Glotninti tempo kreivę</string>
   <string name="Smooth_pace_filters">Tempo glotninimo filtrai</string>
@@ -192,11 +201,8 @@
   <string name="Mock_HRM_devices">Fiktyvūs pulsometrai</string>
   <string name="About_RunnerUp">Apie RunnerUp</string>
   <string name="Triggers">Leistukai</string>
-  <string name="Time_triggered_audio_cue">Laiko garsinis nurodymas</string>
   <string name="Cue_interval_s">Nurodymo intervalas (s)</string>
-  <string name="Distance_triggered_audio_cue">Atstumo garsinis nurodymas</string>
   <string name="Cue_intervall_m">Nurodymo intervalas (m)</string>
-  <string name="End_of_lap_audio_cue">Etapo pabaigos garsinis nurodymas</string>
   <string name="Mute_music_during_audio_cues">Nutildyti muziką garsinio nurodymo metu</string>
   <string name="Cue_information">Nurodymo informacija</string>
   <string name="Total_distance">Bendras atstumas</string>
@@ -258,15 +264,10 @@
   <string name="Include_map_in_post">Įterpti žemėlapį į postą</string>
   <string name="Clear_uploads_from_phone">Išvalyti įkėlimus (iš telefono atminties)</string>
   <string name="my_phone">mano telefonas</string>
-  <string name="Failed_to_import">Nepavyko importuoti:</string>
-  <string name="Import_workout">Importuoti treniruotę:</string>
-  <string name="Saving_as">Išsaugoti kaip</string>
   <string name="Overwrite_existing">Perrašyti esamą</string>
   <string name="Create_new_workout">Sukurti naują treniruotę</string>
   <string name="Set_workout_name">Pavadinti treniruotę</string>
   <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s įkėlimas perrašys %2$s treniruotę tuo pačiu pavadinimu</string>
-  <string name="Delete_workout">Ištrinti treniruotę</string>
-  <string name="RunnerUp_workout">RunnerUp treniruotė:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Labas\nČia treniruotė, kuri manau tau patiks.</string>
   <string name="Share_workout">Dalintis treniruote…</string>
   <string name="New_audio_scheme">Nauja audio schema</string>
@@ -277,4 +278,12 @@
   <string name="Loading_activities">Pakraunamos veiklos</string>
   <string name="Fetching_activities_from_1s">Gaunamos veiklos iš %1$s</string>
   <string name="Unknown">Nežinoma</string>
+  <string name="path_simplification_info">Sumažinti GPS kelio rezoliuciją (per laiko tarpą įrašytos lokacijos). Išlygina kelią ir sumažina veiklos dydį duomenų bazėje ar eksportuotoje byloje.</string>
+  <string name="path_simplification_on_save">Supaprastinti išsaugant veiklą</string>
+  <string name="path_simplification_on_export">Supaprastinti įkeliant į paskyras</string>
+  <string name="path_simplification_tolerance">Tolerancija (m)</string>
+  <string name="path_simplification_algorithm">Algoritmas</string>
+  <string name="path_simplification_algorithm_info">Naudoti greitą ar aukštos kokybės kelio supaprastinimą</string>
+  <string name="path_simplification_menu">Supaprastinti kelią</string>
+  <string name="File_format">Įkelti bylą(-as) kaip:</string>
 </resources>
